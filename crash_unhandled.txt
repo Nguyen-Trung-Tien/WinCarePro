@@ -1,0 +1,27 @@
+Unhandled Exception:
+Message: Object reference not set to an instance of an object.
+Exception: System.NullReferenceException: Object reference not set to an instance of an object.
+   at WinCarePro.Views.SettingsPage.SaveSettings() in D:\WinCare\Views\SettingsPage.xaml.cs:line 91
+   at WinCarePro.Views.SettingsPage.OnThemeChanged(Object sender, SelectionChangedEventArgs e) in D:\WinCare\Views\SettingsPage.xaml.cs:line 97
+   at WinRT._EventSource_global__Microsoft_UI_Xaml_Controls_SelectionChangedEventHandler.EventState.<GetEventInvoke>b__1_0(Object sender, SelectionChangedEventArgs e)
+   at ABI.Microsoft.UI.Xaml.Controls.SelectionChangedEventHandler.Do_Abi_Invoke(IntPtr thisPtr, IntPtr sender, IntPtr e)
+--- End of stack trace from previous location ---
+   at WinRT.ExceptionHelpers.<ThrowExceptionForHR>g__Throw|38_0(Int32 hr)
+   at ABI.Microsoft.UI.Xaml.Controls.INavigateMethods.Navigate(IObjectReference _obj, Type sourcePageType)
+   at Microsoft.UI.Xaml.Controls.Frame.Navigate(Type sourcePageType)
+   at WinCarePro.MainPage.NavigateToPage(String tag) in D:\WinCare\MainPage.xaml.cs:line 52
+   at WinCarePro.MainPage.OnNavSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) in D:\WinCare\MainPage.xaml.cs:line 24
+   at WinRT._EventSource_global__Windows_Foundation_TypedEventHandler_global__Microsoft_UI_Xaml_Controls_NavigationView__global__Microsoft_UI_Xaml_Controls_NavigationViewSelectionChangedEventArgs_.EventState.<GetEventInvoke>b__1_0(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+   at WinRT.GenericTypeInstantiations.Windows_Foundation_TypedEventHandler_2_Microsoft_UI_Xaml_Controls_NavigationView__Microsoft_UI_Xaml_Controls_NavigationViewSelectionChangedEventArgs.Do_Abi_Invoke(IntPtr thisPtr, IntPtr sender, IntPtr args)
+StackTrace:    at WinCarePro.Views.SettingsPage.SaveSettings() in D:\WinCare\Views\SettingsPage.xaml.cs:line 91
+   at WinCarePro.Views.SettingsPage.OnThemeChanged(Object sender, SelectionChangedEventArgs e) in D:\WinCare\Views\SettingsPage.xaml.cs:line 97
+   at WinRT._EventSource_global__Microsoft_UI_Xaml_Controls_SelectionChangedEventHandler.EventState.<GetEventInvoke>b__1_0(Object sender, SelectionChangedEventArgs e)
+   at ABI.Microsoft.UI.Xaml.Controls.SelectionChangedEventHandler.Do_Abi_Invoke(IntPtr thisPtr, IntPtr sender, IntPtr e)
+--- End of stack trace from previous location ---
+   at WinRT.ExceptionHelpers.<ThrowExceptionForHR>g__Throw|38_0(Int32 hr)
+   at ABI.Microsoft.UI.Xaml.Controls.INavigateMethods.Navigate(IObjectReference _obj, Type sourcePageType)
+   at Microsoft.UI.Xaml.Controls.Frame.Navigate(Type sourcePageType)
+   at WinCarePro.MainPage.NavigateToPage(String tag) in D:\WinCare\MainPage.xaml.cs:line 52
+   at WinCarePro.MainPage.OnNavSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) in D:\WinCare\MainPage.xaml.cs:line 24
+   at WinRT._EventSource_global__Windows_Foundation_TypedEventHandler_global__Microsoft_UI_Xaml_Controls_NavigationView__global__Microsoft_UI_Xaml_Controls_NavigationViewSelectionChangedEventArgs_.EventState.<GetEventInvoke>b__1_0(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+   at WinRT.GenericTypeInstantiations.Windows_Foundation_TypedEventHandler_2_Microsoft_UI_Xaml_Controls_NavigationView__Microsoft_UI_Xaml_Controls_NavigationViewSelectionChangedEventArgs.Do_Abi_Invoke(IntPtr thisPtr, IntPtr sender, IntPtr args)

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinCarePro.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <NavigationView x:Name="NavView" PaneDisplayMode="Left" SelectionChanged="OnNavSelectionChanged" IsBackButtonVisible="Collapsed" Header="Dashboard" IsSettingsVisible="True">
+            <NavigationView.MenuItems>
+                <!-- Dashboard -->
+                <NavigationViewItem Content="Dashboard" Tag="Dashboard">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xECF2;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                
+                <NavigationViewItemSeparator />
+
+                <!-- Cleanup & Care -->
+                <NavigationViewItemHeader Content="Care &amp; Clean" />
+                <NavigationViewItem Content="Junk Cleaner" Tag="Junk">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEA99;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Network Center" Tag="Network">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE774;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="System Repair" Tag="Repair">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE90F;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                
+                <NavigationViewItemSeparator />
+
+                <!-- Optimization & Diagnostics -->
+                <NavigationViewItemHeader Content="System Tuning" />
+                <NavigationViewItem Content="Startup &amp; Services" Tag="Startup">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEC7A;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Process Manager" Tag="Process">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEEA1;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Disk Tools" Tag="Disk">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7F1;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                
+                <NavigationViewItemSeparator />
+
+                <!-- Security & Snapshots -->
+                <NavigationViewItemHeader Content="Safety &amp; Audits" />
+                <NavigationViewItem Content="Security &amp; Privacy" Tag="Security">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEA18;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Registry &amp; Backup" Tag="Registry">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE753;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Hardware Specs" Tag="Hardware">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE950;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                
+                <NavigationViewItemSeparator />
+
+                <!-- Database event listings -->
+                <NavigationViewItem Content="Logs &amp; Reports" Tag="Logs">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEECB;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <!-- Navigation Frame Content Area -->
+            <Frame x:Name="ContentFrame" Margin="0,4,0,0">
+                <Frame.ContentTransitions>
+                    <TransitionCollection>
+                        <NavigationThemeTransition />
+                    </TransitionCollection>
+                </Frame.ContentTransitions>
+            </Frame>
+        </NavigationView>
+    </Grid>
+</Page>

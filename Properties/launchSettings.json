@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WinCarePro (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "WinCarePro (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

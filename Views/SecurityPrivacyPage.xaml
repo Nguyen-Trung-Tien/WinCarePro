@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinCarePro.Views.SecurityPrivacyPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Security &amp; Privacy Center" Style="{ThemeResource TitleTextBlockStyle}" FontWeight="Bold" />
+                <TextBlock Text="Audit antivirus protection, configure tracking parameters, and flush identity metadata." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+            </StackPanel>
+            <Button Grid.Column="1" Content="Perform Audit" Style="{StaticResource AccentButtonStyle}" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Center" Padding="16,8" CornerRadius="6" />
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid RowSpacing="24" ColumnSpacing="24">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Col 1: Security Monitoring & Warnings -->
+                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="24">
+                    <!-- Security Auditing Details -->
+                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Text="Protection Status" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" Margin="0,0,0,16" />
+                            
+                            <Grid Grid.Row="1" RowSpacing="12" ColumnSpacing="20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="12">
+                                    <FontIcon Glyph="&#xE73A;" FontSize="20" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
+                                    <StackPanel>
+                                        <TextBlock Text="Antivirus Software" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind ViewModel.AntivirusStatus, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="Bold" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                                    <FontIcon Glyph="&#xE7F4;" FontSize="20" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
+                                    <StackPanel>
+                                        <TextBlock Text="Windows Firewall" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind ViewModel.FirewallStatus, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="Bold" />
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Spacing="12">
+                                    <FontIcon Glyph="&#xE8A5;" FontSize="20" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
+                                    <StackPanel>
+                                        <TextBlock Text="BitLocker Device Encryption" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind ViewModel.BitLockerStatus, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="Bold" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                    <!-- Auditing Logs warnings -->
+                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Vulnerability Audits" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                            
+                            <!-- If no warnings -->
+                            <TextBlock Text="No immediate security threats detected. Antivirus shield is active." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Visibility="{x:Bind GetVisibility(ViewModel.AuditWarnings.Count), Mode=OneWay}" />
+                            
+                            <ItemsControl ItemsSource="{x:Bind ViewModel.AuditWarnings, Mode=OneWay}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Border BorderBrush="Red" BorderThickness="1" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="6" Margin="0,0,0,8" Padding="12">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <FontIcon Glyph="&#xE7BA;" FontSize="16" Foreground="Red" VerticalAlignment="Center" Margin="0,0,12,0" />
+                                                <TextBlock Grid.Column="1" Text="{x:Bind}" TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="Red" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Col 2: Privacy Controls and Cleaners -->
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="16,0,0,0" Spacing="24">
+                    <!-- Privacy Switches -->
+                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Privacy Toggles" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                            
+                            <ToggleSwitch Header="Personalized Advertising ID" IsOn="{x:Bind ViewModel.AdvertisingIdEnabled, Mode=TwoWay}" CornerRadius="4" />
+                            <ToggleSwitch Header="Diagnostics Telemetry Logs" IsOn="{x:Bind ViewModel.TelemetryEnabled, Mode=TwoWay}" CornerRadius="4" />
+                            <ToggleSwitch Header="Clipboard Cloud History" IsOn="{x:Bind ViewModel.ClipboardHistoryEnabled, Mode=TwoWay}" CornerRadius="4" />
+                            <ToggleSwitch Header="Restrict Implicit Search tracking" IsOn="{x:Bind ViewModel.RestrictTrackingEnabled, Mode=TwoWay}" CornerRadius="4" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Quick Cleaners -->
+                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Privacy Quick Cleaners" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                            <TextBlock Text="Purge immediate activity data caching locally." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,0,8"/>
+                            
+                            <Button Content="Purge Clipboard History" Click="OnClearClipboardClick" HorizontalAlignment="Stretch" CornerRadius="6" Margin="0,0,0,8" />
+                            <Button Content="Clear Recent Files &amp; Explorer MRUs" Click="OnClearRecentClick" HorizontalAlignment="Stretch" CornerRadius="6" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+        <TextBlock Grid.Row="1" Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" VerticalAlignment="Bottom" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,0,8" />
+    </Grid>
+</Page>

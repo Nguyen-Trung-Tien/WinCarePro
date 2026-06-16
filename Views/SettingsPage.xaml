@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinCarePro.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="Settings &amp; Configuration" Style="{ThemeResource TitleTextBlockStyle}" FontWeight="Bold" />
+            <TextBlock Text="Personalize application UI preferences and logs storage thresholds." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="20" MaxWidth="600" HorizontalAlignment="Left">
+                
+                <!-- Personalization -->
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="UI Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                        
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="App Color Theme" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <ComboBox x:Name="ThemeCombo" SelectionChanged="OnThemeChanged" SelectedIndex="1" CornerRadius="4" Width="180">
+                                <ComboBoxItem Content="Light Theme" />
+                                <ComboBoxItem Content="Dark Theme (Recommended)" />
+                                <ComboBoxItem Content="System Default" />
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Operations configuration -->
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Maintenance Automation" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                        
+                        <ToggleSwitch x:Name="AutoScanToggle" Toggled="OnAutoScanToggled" Header="Automated Maintenance Scan" CornerRadius="4" />
+                        
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Default Reports Export Format" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <ComboBox x:Name="ReportFormatCombo" SelectionChanged="OnReportFormatChanged" SelectedIndex="0" CornerRadius="4" Width="180">
+                                <ComboBoxItem Content="Plain Text Document (.txt)" Tag="TXT" />
+                                <ComboBoxItem Content="JSON Data (.json)" Tag="JSON" />
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Data Management -->
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Local Database Management" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                        <TextBlock Text="Delete old log files and reports registered in the SQLite tables." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                        
+                        <Button Content="Purge Database Logs History" Click="OnPurgeDatabaseClick" Style="{StaticResource DefaultButtonStyle}" Foreground="Red" CornerRadius="6" Padding="12,6" />
+                    </StackPanel>
+                </Border>
+
+                <!-- About WinCare Pro -->
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="WinCare Pro Version 1.0.0" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                        <TextBlock Text="All-in-One Windows Maintenance, Optimization, and Repair Suite." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="Powered by WinUI 3, .NET 10.0, and SQLite." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="© 2026 WinCare Pro Studio. All rights reserved." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                    </StackPanel>
+                </Border>
+                
+                <TextBlock x:Name="StatusLabel" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

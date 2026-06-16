@@ -22,4 +22,5 @@ echo   Your packaged application is in the 'PublishOutput' folder.
 echo   You only need to share 'WinCarePro.exe' from that folder.
 echo ===================================================
 echo.
-pause
+timeout /t 3
+exit

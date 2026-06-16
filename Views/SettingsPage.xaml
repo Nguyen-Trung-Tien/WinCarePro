@@ -65,11 +65,26 @@
                     </StackPanel>
                 </Border>
 
-                <!-- About WinCare Pro -->
+                <!-- About WinCare Pro & Updates -->
                 <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                    <StackPanel Spacing="8">
-                        <TextBlock Text="WinCare Pro Version 1.0.0" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="WinCare Pro" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                        <TextBlock x:Name="AppVersionLabel" Text="Version 1.0.0" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         <TextBlock Text="All-in-One Windows Maintenance, Optimization, and Repair Suite." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        
+                        <MenuFlyoutSeparator Margin="0,4" />
+                        
+                        <TextBlock Text="Software Updates" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="SemiBold" />
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <Button x:Name="CheckUpdatesBtn" Content="Check for Updates" Click="OnCheckUpdatesClick" CornerRadius="6" Padding="12,6" />
+                            <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Width="20" Height="20" VerticalAlignment="Center" />
+                            <TextBlock x:Name="UpdateStatusLabel" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        
+                        <ProgressBar x:Name="UpdateProgressBar" Visibility="Collapsed" Maximum="100" Value="0" Height="6" CornerRadius="3" Margin="0,4,0,0" />
+                        
+                        <MenuFlyoutSeparator Margin="0,4" />
+                        
                         <TextBlock Text="Powered by WinUI 3, .NET 10.0, and SQLite." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         <TextBlock Text="© 2026 WinCare Pro Studio. All rights reserved." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                     </StackPanel>

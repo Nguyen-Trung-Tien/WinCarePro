@@ -15,7 +15,7 @@ public sealed partial class ProcessPage : Page
     {
         InitializeComponent();
         ViewModel = new ProcessViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private async void OnRefreshClick(object sender, RoutedEventArgs e)

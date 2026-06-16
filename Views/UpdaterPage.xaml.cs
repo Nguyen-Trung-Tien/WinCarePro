@@ -15,7 +15,7 @@ public sealed partial class UpdaterPage : Page
     {
         InitializeComponent();
         ViewModel = new UpdaterViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private async void OnScanClick(object sender, RoutedEventArgs e)

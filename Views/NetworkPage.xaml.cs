@@ -13,7 +13,7 @@ public sealed partial class NetworkPage : Page
     {
         InitializeComponent();
         ViewModel = new NetworkViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private async void OnRefreshClick(object sender, RoutedEventArgs e)

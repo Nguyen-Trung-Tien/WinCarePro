@@ -13,7 +13,7 @@ public sealed partial class SecurityPrivacyPage : Page
     {
         InitializeComponent();
         ViewModel = new SecurityPrivacyViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private async void OnRefreshClick(object sender, RoutedEventArgs e)

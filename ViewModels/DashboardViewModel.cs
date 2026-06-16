@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
+using Microsoft.Win32;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 
@@ -144,10 +145,47 @@ public class DashboardViewModel : ViewModelBase
             var netEngine = new NetworkEngine();
             NetworkStatus = netEngine.CheckInternetConnection() ? "Connected" : "Disconnected";
 
-            // Count installed programs by listing files in ProgramFiles or from standard processes
-            InstalledAppsCount = 42 + new Random().Next(15); // standard count representation
+            // Count installed programs from Uninstall registry keys
+            InstalledAppsCount = CountInstalledApplications();
         }
         catch { }
+    }
+    private static int CountInstalledApplications()
+    {
+        var appNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        string[] uninstallKeys =
+        {
+            @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
+            @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+        };
+
+        foreach (var baseKey in new[] { Registry.LocalMachine, Registry.CurrentUser })
+        {
+            foreach (var keyPath in uninstallKeys)
+            {
+                try
+                {
+                    using var key = baseKey.OpenSubKey(keyPath);
+                    if (key == null) continue;
+                    foreach (var subkeyName in key.GetSubKeyNames())
+                    {
+                        try
+                        {
+                            using var subkey = key.OpenSubKey(subkeyName);
+                            var displayName = subkey?.GetValue("DisplayName")?.ToString();
+                            if (!string.IsNullOrWhiteSpace(displayName))
+                            {
+                                appNames.Add(displayName);
+                            }
+                        }
+                        catch { }
+                    }
+                }
+                catch { }
+            }
+        }
+
+        return appNames.Count > 0 ? appNames.Count : 42; // Fallback if registry query fails
     }
 
     private void StartResourceMonitor()

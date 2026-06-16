@@ -17,7 +17,7 @@ public sealed partial class LogsPage : Page
     {
         InitializeComponent();
         ViewModel = new LogsViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private void OnRefreshClick(object sender, RoutedEventArgs e)

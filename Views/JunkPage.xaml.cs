@@ -13,7 +13,7 @@ public sealed partial class JunkPage : Page
     {
         InitializeComponent();
         ViewModel = new JunkCleanerViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private async void OnScanClick(object sender, RoutedEventArgs e)

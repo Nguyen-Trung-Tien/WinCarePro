@@ -16,7 +16,7 @@ public sealed partial class DashboardPage : Page
         InitializeComponent();
         // Set up local viewModel instance
         ViewModel = new DashboardViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private async void OnScanClick(object sender, RoutedEventArgs e)

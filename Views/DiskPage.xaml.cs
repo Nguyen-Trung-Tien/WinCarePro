@@ -15,7 +15,7 @@ public sealed partial class DiskPage : Page
     {
         InitializeComponent();
         ViewModel = new DiskToolsViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private async void OnRefreshDrivesClick(object sender, RoutedEventArgs e)

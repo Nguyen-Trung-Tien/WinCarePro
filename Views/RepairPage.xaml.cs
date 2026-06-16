@@ -15,7 +15,7 @@ public sealed partial class RepairPage : Page
     {
         InitializeComponent();
         ViewModel = new RepairViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private async void OnSfcScanClick(object sender, RoutedEventArgs e)

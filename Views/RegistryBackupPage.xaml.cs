@@ -14,7 +14,7 @@ public sealed partial class RegistryBackupPage : Page
     {
         InitializeComponent();
         ViewModel = new RegistryBackupViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private async void OnScanRegistryClick(object sender, RoutedEventArgs e)

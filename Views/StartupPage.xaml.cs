@@ -16,7 +16,7 @@ public sealed partial class StartupPage : Page
     {
         InitializeComponent();
         ViewModel = new StartupViewModel();
-        DataContext = ViewModel;
+        this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
     private async void OnRefreshClick(object sender, RoutedEventArgs e)

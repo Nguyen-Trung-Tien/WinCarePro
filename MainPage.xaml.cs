@@ -42,6 +42,7 @@ public sealed partial class MainPage : Page
             "disk" => typeof(DiskPage),
             "security" => typeof(SecurityPrivacyPage),
             "registry" => typeof(RegistryBackupPage),
+            "hardware" => typeof(HardwarePage),
             "logs" => typeof(LogsPage),
             "settings" => typeof(SettingsPage),
             _ => null

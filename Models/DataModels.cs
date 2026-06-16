@@ -67,15 +67,44 @@ public class JunkCategory
     }
 }
 
-public class SoftwareUpdateInfo
+public class SoftwareUpdateInfo : System.ComponentModel.INotifyPropertyChanged
 {
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+    private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+
     public string Name { get; set; } = "";
     public string Id { get; set; } = "";
     public string InstalledVersion { get; set; } = "";
     public string AvailableVersion { get; set; } = "";
-    public bool IsSelected { get; set; } = true;
     public string Source { get; set; } = "winget";
-    public string UpdateStatus { get; set; } = "Available"; // Available, Updating, Completed, Failed
+
+    private bool _isSelected = true;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            if (_isSelected != value)
+            {
+                _isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
+    }
+
+    private string _updateStatus = "Available";
+    public string UpdateStatus // Available, Updating, Completed, Failed
+    {
+        get => _updateStatus;
+        set
+        {
+            if (_updateStatus != value)
+            {
+                _updateStatus = value;
+                OnPropertyChanged(nameof(UpdateStatus));
+            }
+        }
+    }
 }
 
 public enum StartupSource

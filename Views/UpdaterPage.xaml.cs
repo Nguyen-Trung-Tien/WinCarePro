@@ -3,6 +3,7 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using WinCarePro.Models;
 using WinCarePro.ViewModels;
 
 namespace WinCarePro.Views;
@@ -31,6 +32,24 @@ public sealed partial class UpdaterPage : Page
     private async void OnUpdateAllClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.UpdateAllAppsAsync();
+    }
+
+    private async void OnUpdateSingleClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is SoftwareUpdateInfo app)
+        {
+            await ViewModel.UpdateSingleAppAsync(app);
+        }
+    }
+
+    private void OnSelectAllClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectAllApps();
+    }
+
+    private void OnDeselectAllClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.DeselectAllApps();
     }
 
     internal bool IsNot(bool val) => !val;

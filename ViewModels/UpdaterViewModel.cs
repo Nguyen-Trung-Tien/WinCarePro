@@ -17,6 +17,7 @@ public class UpdaterViewModel : ViewModelBase
     private bool _isUpdating;
     private string _progressMessage = "Ready to scan for application updates";
     private int _progressPercent;
+    private int _selectedCount;
 
     public bool IsScanning
     {
@@ -42,6 +43,12 @@ public class UpdaterViewModel : ViewModelBase
         set => SetProperty(ref _progressPercent, value);
     }
 
+    public int SelectedCount
+    {
+        get => _selectedCount;
+        set => SetProperty(ref _selectedCount, value);
+    }
+
     public ObservableCollection<SoftwareUpdateInfo> Updates { get; } = new();
 
     public UpdaterViewModel()
@@ -56,6 +63,29 @@ public class UpdaterViewModel : ViewModelBase
         {
             ProgressMessage = msg;
         });
+    }
+
+    public void RefreshSelectedCount()
+    {
+        SelectedCount = Updates.Count(x => x.IsSelected);
+    }
+
+    public void SelectAllApps()
+    {
+        foreach (var app in Updates)
+        {
+            app.IsSelected = true;
+        }
+        RefreshSelectedCount();
+    }
+
+    public void DeselectAllApps()
+    {
+        foreach (var app in Updates)
+        {
+            app.IsSelected = false;
+        }
+        RefreshSelectedCount();
     }
 
     public async Task ScanUpdatesAsync()
@@ -74,10 +104,18 @@ public class UpdaterViewModel : ViewModelBase
             {
                 foreach (var item in list)
                 {
+                    item.PropertyChanged += (s, e) =>
+                    {
+                        if (e.PropertyName == nameof(SoftwareUpdateInfo.IsSelected))
+                        {
+                            RefreshSelectedCount();
+                        }
+                    };
                     Updates.Add(item);
                 }
                 ProgressPercent = 100;
-                ProgressMessage = $"Scan complete. {Updates.Count} updates found.";
+                RefreshSelectedCount();
+                ProgressMessage = $"Scan complete. {Updates.Count} updates available.";
                 IsScanning = false;
             });
         }
@@ -91,16 +129,49 @@ public class UpdaterViewModel : ViewModelBase
         }
     }
 
+    public async Task UpdateSingleAppAsync(SoftwareUpdateInfo app)
+    {
+        if (IsScanning || IsUpdating) return;
+        IsUpdating = true;
+        ProgressPercent = 0;
+
+        try
+        {
+            app.UpdateStatus = "Updating...";
+            ProgressMessage = $"Updating {app.Name}...";
+            ProgressPercent = 30;
+
+            bool ok = await _engine.UpdateApplicationAsync(app.Id);
+
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                app.UpdateStatus = ok ? "Completed" : "Failed";
+                ProgressPercent = 100;
+                ProgressMessage = ok
+                    ? $"{app.Name} updated successfully."
+                    : $"Failed to update {app.Name}.";
+            });
+        }
+        catch (Exception ex)
+        {
+            ProgressMessage = $"Update failed: {ex.Message}";
+        }
+        finally
+        {
+            IsUpdating = false;
+        }
+    }
+
     public async Task UpdateSelectedAppsAsync()
     {
         if (IsScanning || IsUpdating || Updates.Count == 0) return;
         IsUpdating = true;
         ProgressPercent = 0;
 
-        var selected = Updates.Where(x => x.IsSelected).ToList();
+        var selected = Updates.Where(x => x.IsSelected && x.UpdateStatus != "Completed").ToList();
         if (selected.Count == 0)
         {
-            ProgressMessage = "No applications selected.";
+            ProgressMessage = "No applications selected for update.";
             IsUpdating = false;
             return;
         }
@@ -109,31 +180,29 @@ public class UpdaterViewModel : ViewModelBase
         {
             double step = 100.0 / selected.Count;
             double current = 0;
+            int successCount = 0;
+            int failCount = 0;
 
             foreach (var app in selected)
             {
                 app.UpdateStatus = "Updating...";
-                ProgressMessage = $"Updating {app.Name}...";
+                ProgressMessage = $"Updating {app.Name} ({successCount + failCount + 1}/{selected.Count})...";
                 
                 bool ok = await _engine.UpdateApplicationAsync(app.Id);
                 
                 _dispatcherQueue.TryEnqueue(() =>
                 {
                     app.UpdateStatus = ok ? "Completed" : "Failed";
-                    // Refresh bindings in view
-                    var idx = Updates.IndexOf(app);
-                    if (idx >= 0)
-                    {
-                        Updates[idx] = app;
-                    }
                 });
+
+                if (ok) successCount++; else failCount++;
 
                 current += step;
                 ProgressPercent = (int)current;
             }
 
             ProgressPercent = 100;
-            ProgressMessage = "Selected applications successfully updated.";
+            ProgressMessage = $"Update complete. {successCount} succeeded, {failCount} failed.";
         }
         catch (Exception ex)
         {
@@ -147,10 +216,7 @@ public class UpdaterViewModel : ViewModelBase
 
     public async Task UpdateAllAppsAsync()
     {
-        foreach (var app in Updates)
-        {
-            app.IsSelected = true;
-        }
+        SelectAllApps();
         await UpdateSelectedAppsAsync();
     }
 }

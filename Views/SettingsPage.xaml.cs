@@ -57,6 +57,7 @@ public sealed partial class SettingsPage : Page
 
     private void SaveSettings()
     {
+        if (ThemeCombo == null || ReportFormatCombo == null || AutoScanToggle == null || StatusLabel == null) return;
         try
         {
             string theme = ThemeCombo.SelectedIndex switch

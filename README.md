@@ -1,5 +1,7 @@
 # 🚀 WinCare Pro Suite
 
+[![Download WinCare Pro](https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=windows)](https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/latest/download/WinCarePro.exe)
+
 **WinCare Pro** is a modern, lightweight, and comprehensive Windows Maintenance, Optimization, and Repair Suite built using **WinUI 3 (Windows App SDK)**, **.NET 10.0**, and **SQLite**. 
 
 It provides users with an all-in-one utility dashboard to scan, diagnose, optimize, and secure their Windows operating system with a sleek, clean Fluent Design user interface.

@@ -61,8 +61,9 @@
                                 <TextBlock Text="A scan verifies diagnostic alerts, junk file volumes, startup overhead, and available security fixes. Optimize now to clean garbage files and improve loading speeds." TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                 
                                 <StackPanel Orientation="Horizontal" Margin="0,12,0,0" Spacing="12">
-                                    <Button Content="Scan System" Style="{StaticResource AccentButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="16,8" CornerRadius="8" />
-                                    <ProgressRing IsActive="{x:Bind ViewModel.IsScanning, Mode=OneWay}" Width="24" Height="24" Margin="8,0,0,0" />
+                                    <Button Content="Scan System" Style="{StaticResource DefaultButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="16,8" CornerRadius="8" />
+                                    <Button Content="Optimize Now" Style="{StaticResource AccentButtonStyle}" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Padding="16,8" CornerRadius="8" />
+                                    <ProgressRing IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="24" Height="24" Margin="8,0,0,0" />
                                 </StackPanel>
                                 <TextBlock Text="{x:Bind ViewModel.ScanStatus, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0"/>
                             </StackPanel>

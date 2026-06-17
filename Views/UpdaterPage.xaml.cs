@@ -24,6 +24,17 @@ public sealed partial class UpdaterPage : Page
         await ViewModel.ScanUpdatesAsync();
     }
 
+    private void OnEngineChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox cb && cb.SelectedItem is ComboBoxItem item && item.Tag is string tag)
+        {
+            if (ViewModel != null)
+            {
+                ViewModel.UpdateEngine = tag;
+            }
+        }
+    }
+
     private async void OnUpdateSelectedClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.UpdateSelectedAppsAsync();

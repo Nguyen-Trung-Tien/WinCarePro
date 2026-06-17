@@ -27,6 +27,10 @@
             </StackPanel>
             
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <ComboBox x:Name="EngineCombo" SelectedIndex="0" SelectionChanged="OnEngineChanged" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" CornerRadius="6" Width="220" VerticalAlignment="Center">
+                    <ComboBoxItem Content="Windows Package Manager (winget)" Tag="winget" />
+                    <ComboBoxItem Content="WinCare Custom Downloader" Tag="direct" />
+                </ComboBox>
                 <Button Content="Scan Updates" Style="{StaticResource DefaultButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="16,8" CornerRadius="6" />
                 <Button Content="Update Selected" Style="{StaticResource AccentButtonStyle}" Click="OnUpdateSelectedClick" IsEnabled="{x:Bind CanUpdate(ViewModel.IsUpdating, ViewModel.Updates.Count), Mode=OneWay}" Padding="16,8" CornerRadius="6" />
                 <Button Content="Update All" Click="OnUpdateAllClick" IsEnabled="{x:Bind CanUpdate(ViewModel.IsUpdating, ViewModel.Updates.Count), Mode=OneWay}" Padding="16,8" CornerRadius="6" />
@@ -170,7 +174,9 @@
                         <TextBlock Grid.Row="0" Text="Updater Information" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" Margin="0,0,0,12" />
                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                             <StackPanel Spacing="12">
-                                <TextBlock Text="• Click 'Scan Updates' to discover outdated applications via Windows Package Manager (winget)." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="• Choose 'Windows Package Manager' to update via standard Microsoft package catalog (winget)." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="• Choose 'WinCare Custom Downloader' to download official installer files directly and run them silently." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                <TextBlock Text="• Click 'Scan Updates' to discover outdated applications on your system." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                 <TextBlock Text="• Use checkboxes to select specific apps, then click 'Update Selected' to batch update." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                 <TextBlock Text="• Click the 'Update' button on each row to update a single application individually." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                 <TextBlock Text="• Third-party licenses and agreements are accepted automatically during batch operations." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />

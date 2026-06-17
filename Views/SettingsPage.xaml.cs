@@ -46,14 +46,6 @@ public sealed partial class SettingsPage : Page
                 var profile = JsonSerializer.Deserialize<SettingsProfile>(raw);
                 if (profile != null)
                 {
-                    ThemeCombo.SelectedIndex = profile.Theme switch
-                    {
-                        "Light" => 0,
-                        "Dark" => 1,
-                        "System" => 2,
-                        _ => 1
-                    };
-
                     AutoScanToggle.IsOn = profile.AutoScan;
 
                     ReportFormatCombo.SelectedIndex = profile.ReportFormat switch
@@ -70,17 +62,9 @@ public sealed partial class SettingsPage : Page
 
     private void SaveSettings()
     {
-        if (ThemeCombo == null || ReportFormatCombo == null || AutoScanToggle == null || StatusLabel == null) return;
+        if (ReportFormatCombo == null || AutoScanToggle == null || StatusLabel == null) return;
         try
         {
-            string theme = ThemeCombo.SelectedIndex switch
-            {
-                0 => "Light",
-                1 => "Dark",
-                2 => "System",
-                _ => "Dark"
-            };
-
             string format = ReportFormatCombo.SelectedIndex switch
             {
                 0 => "TXT",
@@ -90,7 +74,7 @@ public sealed partial class SettingsPage : Page
 
             var profile = new SettingsProfile
             {
-                Theme = theme,
+                Theme = "Dark",
                 AutoScan = AutoScanToggle.IsOn,
                 ReportFormat = format
             };
@@ -104,13 +88,6 @@ public sealed partial class SettingsPage : Page
         {
             StatusLabel.Text = $"Failed to save settings: {ex.Message}";
         }
-    }
-
-    private void OnThemeChanged(object sender, SelectionChangedEventArgs e)
-    {
-        SaveSettings();
-        // Theme switching would trigger Window.Content.RequestedTheme in a full app refresh,
-        // which can be done at shell level or prompt user for restart.
     }
 
     private void OnAutoScanToggled(object sender, RoutedEventArgs e)

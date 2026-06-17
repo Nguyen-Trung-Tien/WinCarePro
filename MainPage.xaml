@@ -56,6 +56,11 @@
                         <FontIcon Glyph="&#xE7F1;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Software Updater" Tag="Updater">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE896;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 
                 <NavigationViewItemSeparator />
 

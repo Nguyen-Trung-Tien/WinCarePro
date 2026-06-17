@@ -18,6 +18,13 @@ public class UpdaterViewModel : ViewModelBase
     private string _progressMessage = "Ready to scan for application updates";
     private int _progressPercent;
     private int _selectedCount;
+    private string _updateEngine = "winget";
+
+    public string UpdateEngine
+    {
+        get => _updateEngine;
+        set => SetProperty(ref _updateEngine, value);
+    }
 
     public bool IsScanning
     {
@@ -97,7 +104,7 @@ public class UpdaterViewModel : ViewModelBase
 
         try
         {
-            var list = await _engine.ScanUpdatesAsync();
+            var list = await _engine.ScanUpdatesAsync(UpdateEngine);
             ProgressPercent = 80;
 
             _dispatcherQueue.TryEnqueue(() =>
@@ -141,7 +148,7 @@ public class UpdaterViewModel : ViewModelBase
             ProgressMessage = $"Updating {app.Name}...";
             ProgressPercent = 30;
 
-            bool ok = await _engine.UpdateApplicationAsync(app.Id);
+            bool ok = await _engine.UpdateApplicationAsync(app.Id, UpdateEngine);
 
             _dispatcherQueue.TryEnqueue(() =>
             {
@@ -188,7 +195,7 @@ public class UpdaterViewModel : ViewModelBase
                 app.UpdateStatus = "Updating...";
                 ProgressMessage = $"Updating {app.Name} ({successCount + failCount + 1}/{selected.Count})...";
                 
-                bool ok = await _engine.UpdateApplicationAsync(app.Id);
+                bool ok = await _engine.UpdateApplicationAsync(app.Id, UpdateEngine);
                 
                 _dispatcherQueue.TryEnqueue(() =>
                 {

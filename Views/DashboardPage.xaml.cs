@@ -24,6 +24,11 @@ public sealed partial class DashboardPage : Page
         await ViewModel.RunFullDiagnosticsAsync();
     }
 
+    private async void OnOptimizeClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.OptimizeSystemAsync();
+    }
+
     internal string GetStatusText(int score)
     {
         if (score >= 90) return "EXCELLENT - Your system is highly optimized and clean.";
@@ -37,6 +42,16 @@ public sealed partial class DashboardPage : Page
     internal Visibility GetVisibility(int count)
     {
         return count == 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    internal Visibility GetOptimizeVisibility(bool hasScanned, bool isScanning)
+    {
+        return (hasScanned && !isScanning) ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    internal bool GetProgressRingActive(bool isScanning, bool isOptimizing)
+    {
+        return isScanning || isOptimizing;
     }
 
     internal static string GetStatusIcon(bool healthy)

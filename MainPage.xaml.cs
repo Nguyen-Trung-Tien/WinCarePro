@@ -44,6 +44,7 @@ public sealed partial class MainPage : Page
             "registry" => typeof(RegistryBackupPage),
             "hardware" => typeof(HardwarePage),
             "logs" => typeof(LogsPage),
+            "updater" => typeof(UpdaterPage),
             "settings" => typeof(SettingsPage),
             _ => null
         };

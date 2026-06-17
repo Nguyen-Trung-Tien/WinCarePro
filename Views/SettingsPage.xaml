@@ -22,21 +22,6 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel Spacing="20" MaxWidth="600" HorizontalAlignment="Left">
                 
-                <!-- Personalization -->
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                    <StackPanel Spacing="12">
-                        <TextBlock Text="UI Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                        
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="App Color Theme" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            <ComboBox x:Name="ThemeCombo" SelectionChanged="OnThemeChanged" SelectedIndex="1" CornerRadius="4" Width="180">
-                                <ComboBoxItem Content="Light Theme" />
-                                <ComboBoxItem Content="Dark Theme (Recommended)" />
-                                <ComboBoxItem Content="System Default" />
-                            </ComboBox>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
 
                 <!-- Operations configuration -->
                 <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">

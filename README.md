@@ -1,6 +1,6 @@
 # 🚀 WinCare Pro Suite
 
-[![Download WinCare Pro](https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=windows)](https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/latest/download/WinCarePro.exe)
+[![Download WinCare Pro](https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=windows)](https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/latest/download/WinCareProSetup.exe)
 
 **WinCare Pro** is a modern, lightweight, and comprehensive Windows Maintenance, Optimization, and Repair Suite built using **WinUI 3 (Windows App SDK)**, **.NET 10.0**, and **SQLite**. 
 
@@ -38,7 +38,7 @@ To distribute the app or run it on another machine without setting up the source
 ### Method 1: Download from GitHub Releases (Recommended for Users)
 1. Go to the **Releases** section on the right side of this GitHub repository page.
 2. Click on the latest version (e.g., `v1.0.0`).
-3. Under **Assets**, download **`WinCarePro_Setup.exe`** (or the standalone `WinCarePro.exe`).
+3. Under **Assets**, download **`WinCareProSetup.exe`**.
 4. Open the downloaded file to run or install.
 
 ### Method 2: Package standalone version from Source Code (For Developers)

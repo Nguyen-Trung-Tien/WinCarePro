@@ -55,6 +55,7 @@
                     <StackPanel Spacing="12">
                         <TextBlock Text="WinCare Pro" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
                         <TextBlock x:Name="AppVersionLabel" Text="Version 1.0.0" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="Author: Nguyen Trung Tien" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         <TextBlock Text="All-in-One Windows Maintenance, Optimization, and Repair Suite." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         
                         <MenuFlyoutSeparator Margin="0,4" />

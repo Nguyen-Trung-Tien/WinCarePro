@@ -119,6 +119,10 @@ public sealed partial class SettingsPage : Page
                 {
                     cmd.ExecuteNonQuery();
                 }
+                using (var cmd = new SqliteCommand("DELETE FROM UpdatedApps", connection))
+                {
+                    cmd.ExecuteNonQuery();
+                }
             }
 
             // Also clean report files folder

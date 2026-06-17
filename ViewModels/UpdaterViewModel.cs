@@ -148,7 +148,7 @@ public class UpdaterViewModel : ViewModelBase
             ProgressMessage = $"Updating {app.Name}...";
             ProgressPercent = 30;
 
-            bool ok = await _engine.UpdateApplicationAsync(app.Id, UpdateEngine);
+            bool ok = await _engine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
 
             _dispatcherQueue.TryEnqueue(() =>
             {
@@ -195,7 +195,7 @@ public class UpdaterViewModel : ViewModelBase
                 app.UpdateStatus = "Updating...";
                 ProgressMessage = $"Updating {app.Name} ({successCount + failCount + 1}/{selected.Count})...";
                 
-                bool ok = await _engine.UpdateApplicationAsync(app.Id, UpdateEngine);
+                bool ok = await _engine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
                 
                 _dispatcherQueue.TryEnqueue(() =>
                 {

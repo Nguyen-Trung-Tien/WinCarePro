@@ -82,6 +82,7 @@ public class SoftwareUpdaterEngine
     public async Task<List<SoftwareUpdateInfo>> ScanUpdatesAsync(string updateEngine = "winget")
     {
         var list = new List<SoftwareUpdateInfo>();
+        var updatedApps = Database.DbManager.GetUpdatedApps();
 
         if (updateEngine == "direct")
         {
@@ -92,6 +93,14 @@ public class SoftwareUpdaterEngine
             {
                 foreach (var app in SupportedApps)
                 {
+                    if (updatedApps.TryGetValue(app.Id, out string? storedVer))
+                    {
+                        if (!IsVersionOlder(storedVer, app.LatestVersion))
+                        {
+                            continue; // Already updated to this version or newer
+                        }
+                    }
+
                     string? installedVer = GetInstalledVersionFromRegistry(app.RegistryNameQuery);
                     if (installedVer != null)
                     {
@@ -119,11 +128,11 @@ public class SoftwareUpdaterEngine
             {
                 Log("No installed outdated applications found in registry. Listing simulated updates for testing...");
                 await Task.Delay(1000);
-                list.Add(new SoftwareUpdateInfo { Name = "Git for Windows", Id = "Git.Git", InstalledVersion = "2.40.1", AvailableVersion = "2.45.2", Source = "direct" });
-                list.Add(new SoftwareUpdateInfo { Name = "Visual Studio Code", Id = "Microsoft.VisualStudioCode", InstalledVersion = "1.85.0", AvailableVersion = "1.90.1", Source = "direct" });
-                list.Add(new SoftwareUpdateInfo { Name = "Node.js (LTS)", Id = "OpenJS.NodeJS.LTS", InstalledVersion = "20.10.0", AvailableVersion = "20.14.0", Source = "direct" });
-                list.Add(new SoftwareUpdateInfo { Name = "Mozilla Firefox", Id = "Mozilla.Firefox", InstalledVersion = "120.0", AvailableVersion = "126.0.1", Source = "direct" });
-                list.Add(new SoftwareUpdateInfo { Name = "Google Chrome", Id = "Google.Chrome", InstalledVersion = "121.0.6167.85", AvailableVersion = "125.0.6422.142", Source = "direct" });
+                AddSimulatedItem(list, updatedApps, "Git for Windows", "Git.Git", "2.40.1", "2.45.2", "direct");
+                AddSimulatedItem(list, updatedApps, "Visual Studio Code", "Microsoft.VisualStudioCode", "1.85.0", "1.90.1", "direct");
+                AddSimulatedItem(list, updatedApps, "Node.js (LTS)", "OpenJS.NodeJS.LTS", "20.10.0", "20.14.0", "direct");
+                AddSimulatedItem(list, updatedApps, "Mozilla Firefox", "Mozilla.Firefox", "120.0", "126.0.1", "direct");
+                AddSimulatedItem(list, updatedApps, "Google Chrome", "Google.Chrome", "121.0.6167.85", "125.0.6422.142", "direct");
             }
         }
         else
@@ -150,7 +159,18 @@ public class SoftwareUpdaterEngine
 
                 if (process.ExitCode == 0 || !string.IsNullOrEmpty(output))
                 {
-                    list = ParseWingetUpgradeOutput(output);
+                    var parsedList = ParseWingetUpgradeOutput(output);
+                    foreach (var item in parsedList)
+                    {
+                        if (updatedApps.TryGetValue(item.Id, out string? storedVer))
+                        {
+                            if (!IsVersionOlder(storedVer, item.AvailableVersion))
+                            {
+                                continue;
+                            }
+                        }
+                        list.Add(item);
+                    }
                 }
             }
             catch (Exception ex)
@@ -163,16 +183,28 @@ public class SoftwareUpdaterEngine
                 Log("Performing system registries software scan...");
                 await Task.Delay(1500); // Simulate scanning
                 
-                list.Add(new SoftwareUpdateInfo { Name = "Git for Windows", Id = "Git.Git", InstalledVersion = "2.40.1", AvailableVersion = "2.45.2", Source = "winget" });
-                list.Add(new SoftwareUpdateInfo { Name = "Visual Studio Code", Id = "Microsoft.VisualStudioCode", InstalledVersion = "1.85.0", AvailableVersion = "1.90.1", Source = "winget" });
-                list.Add(new SoftwareUpdateInfo { Name = "Node.js (LTS)", Id = "OpenJS.NodeJS.LTS", InstalledVersion = "20.10.0", AvailableVersion = "20.14.0", Source = "winget" });
-                list.Add(new SoftwareUpdateInfo { Name = "Mozilla Firefox", Id = "Mozilla.Firefox", InstalledVersion = "120.0", AvailableVersion = "126.0.1", Source = "winget" });
-                list.Add(new SoftwareUpdateInfo { Name = "Google Chrome", Id = "Google.Chrome", InstalledVersion = "121.0.6167.85", AvailableVersion = "125.0.6422.142", Source = "winget" });
+                AddSimulatedItem(list, updatedApps, "Git for Windows", "Git.Git", "2.40.1", "2.45.2", "winget");
+                AddSimulatedItem(list, updatedApps, "Visual Studio Code", "Microsoft.VisualStudioCode", "1.85.0", "1.90.1", "winget");
+                AddSimulatedItem(list, updatedApps, "Node.js (LTS)", "OpenJS.NodeJS.LTS", "20.10.0", "20.14.0", "winget");
+                AddSimulatedItem(list, updatedApps, "Mozilla Firefox", "Mozilla.Firefox", "120.0", "126.0.1", "winget");
+                AddSimulatedItem(list, updatedApps, "Google Chrome", "Google.Chrome", "121.0.6167.85", "125.0.6422.142", "winget");
             }
         }
 
         Log($"Found {list.Count} software updates available.");
         return list;
+    }
+
+    private void AddSimulatedItem(List<SoftwareUpdateInfo> list, Dictionary<string, string> updatedApps, string name, string id, string installedVersion, string availableVersion, string source)
+    {
+        if (updatedApps.TryGetValue(id, out string? storedVer))
+        {
+            if (!IsVersionOlder(storedVer, availableVersion))
+            {
+                return; // Already updated to this or a newer version
+            }
+        }
+        list.Add(new SoftwareUpdateInfo { Name = name, Id = id, InstalledVersion = installedVersion, AvailableVersion = availableVersion, Source = source });
     }
 
     private string? GetInstalledVersionFromRegistry(string displayNameQuery)
@@ -280,11 +312,17 @@ public class SoftwareUpdaterEngine
         return list;
     }
 
-    public async Task<bool> UpdateApplicationAsync(string appId, string updateEngine = "winget")
+    public async Task<bool> UpdateApplicationAsync(string appId, string version = "", string updateEngine = "winget")
     {
+        if (string.IsNullOrEmpty(version))
+        {
+            var appDef = SupportedApps.FirstOrDefault(x => x.Id == appId);
+            version = appDef?.LatestVersion ?? "1.0.0";
+        }
+
         if (updateEngine == "direct")
         {
-            return await UpdateApplicationDirectAsync(appId);
+            return await UpdateApplicationDirectAsync(appId, version);
         }
 
         Log($"Upgrading application: {appId}...");
@@ -317,9 +355,11 @@ public class SoftwareUpdaterEngine
                 await Task.Delay(2000);
                 Log($"Successfully updated {appId} (Simulated).");
                 Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
+                Database.DbManager.SaveUpdatedApp(appId, version);
                 return true;
             }
 
+            Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
         }
         catch (Exception ex)
@@ -329,11 +369,12 @@ public class SoftwareUpdaterEngine
             await Task.Delay(3000);
             Log($"Successfully updated {appId} (Simulated).");
             Database.DbManager.LogAction($"Update Software {appId} (Simulated)", "Software Updater", "Success");
+            Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
         }
     }
 
-    public async Task<bool> UpdateApplicationDirectAsync(string appId)
+    public async Task<bool> UpdateApplicationDirectAsync(string appId, string version = "")
     {
         Log($"Upgrading application {appId} via WinCare Custom Downloader...");
         var app = SupportedApps.FirstOrDefault(x => x.Id == appId);
@@ -341,6 +382,11 @@ public class SoftwareUpdaterEngine
         {
             Log($"Unknown application ID: {appId}");
             return false;
+        }
+
+        if (string.IsNullOrEmpty(version))
+        {
+            version = app.LatestVersion;
         }
 
         try
@@ -425,9 +471,11 @@ public class SoftwareUpdaterEngine
                 await Task.Delay(2000);
                 Log($"Successfully updated {appId} (Simulated).");
                 Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
+                Database.DbManager.SaveUpdatedApp(appId, version);
                 return true;
             }
 
+            Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
         }
         catch (Exception ex)
@@ -437,6 +485,7 @@ public class SoftwareUpdaterEngine
             await Task.Delay(3000);
             Log($"Successfully updated {appId} (Simulated).");
             Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
+            Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
         }
     }

@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:WinCarePro.ViewModels"
     mc:Ignorable="d">
 
     <Grid Padding="24">
@@ -64,10 +65,44 @@
 
                     <!-- Services Configuration -->
                     <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                        <StackPanel Spacing="10">
+                        <StackPanel Spacing="12">
                             <TextBlock Text="Services Restoration" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                            <TextBlock Text="Restores start limits and configurations of core services (WMI, Windows Update, BITS, Cryptography) to default profiles." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
-                            <Button Content="Restore Services Default" Click="OnRestoreServicesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" />
+                            <TextBlock Text="Selectively restore and enable core Windows services to default configurations." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                            
+                            <!-- Services Checklist -->
+                            <ItemsControl ItemsSource="{x:Bind ViewModel.Services, Mode=OneWay}" Margin="0,4,0,8">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:RepairServiceItem">
+                                        <Grid Padding="0,4" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                            
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,8,0">
+                                                <TextBlock Text="{x:Bind DisplayName}" FontWeight="SemiBold" Style="{ThemeResource BodyTextBlockStyle}" FontSize="13" />
+                                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                                    <TextBlock Text="{x:Bind Name}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                            
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="2">
+                                                <TextBlock Text="{x:Bind Status}" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Right" />
+                                                <TextBlock Text="{x:Bind StartupType}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Right" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Button Content="Select All" Click="OnSelectAllServicesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" FontSize="11" />
+                                <Button Content="Deselect All" Click="OnDeselectAllServicesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" FontSize="11" />
+                                <Button Content="Restore Selected" Style="{StaticResource AccentButtonStyle}" Click="OnRestoreServicesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" FontSize="11" />
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </StackPanel>

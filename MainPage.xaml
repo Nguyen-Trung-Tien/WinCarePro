@@ -41,6 +41,11 @@
 
                 <!-- Optimization & Diagnostics -->
                 <NavigationViewItemHeader Content="System Tuning" />
+                <NavigationViewItem Content="System Optimizer" Tag="Optimizer">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEC15;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Startup &amp; Services" Tag="Startup">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEC7A;" />

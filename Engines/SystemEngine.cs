@@ -167,26 +167,35 @@ public class SystemEngine
         }
     }
 
-    public async Task<bool> RepairServicesConfigAsync()
+    public async Task<bool> RepairServicesConfigAsync(System.Collections.Generic.IEnumerable<string> servicesToRepair)
     {
-        Log("Restoring default configuration for critical services...");
+        Log("Restoring default configuration for selected services...");
         ProgressChanged?.Invoke(20);
 
         try
         {
-            // We set critical services startup type to Automatic
-            string[] autoServices = { "wuauserv", "bits", "cryptsvc", "winmgmt", "mpssvc" };
-            foreach (var svc in autoServices)
+            var serviceList = new System.Collections.Generic.List<string>(servicesToRepair);
+            if (serviceList.Count == 0)
+            {
+                Log("No services selected for restoration.");
+                ProgressChanged?.Invoke(100);
+                return true;
+            }
+
+            int count = 0;
+            foreach (var svc in serviceList)
             {
                 Log($"Setting service {svc} startup type to Automatic...");
                 RunCmd($"sc config {svc} start= auto");
                 RunCmd($"sc start {svc}");
+                count++;
+                ProgressChanged?.Invoke(20 + (80 * count / serviceList.Count));
                 await Task.Delay(500);
             }
             ProgressChanged?.Invoke(100);
 
-            Log("Critical services configuration restored.");
-            Database.DbManager.LogAction("Restore Services Config", "System Repair", "Success");
+            Log("Selected services configuration restored.");
+            Database.DbManager.LogAction($"Restore Services Config ({string.Join(", ", serviceList)})", "System Repair", "Success");
             return true;
         }
         catch (Exception ex)

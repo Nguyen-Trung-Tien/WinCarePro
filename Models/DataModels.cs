@@ -206,3 +206,58 @@ public class RegistryBackupItem
     public string Name { get; set; } = "";
     public string FilePath { get; set; } = "";
 }
+
+public class SystemTweak : System.ComponentModel.INotifyPropertyChanged
+{
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+    private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+
+    public string Id { get; set; } = "";
+    public string Name { get; set; } = "";
+    public string Description { get; set; } = "";
+    public string Category { get; set; } = ""; // Performance, Network, Disk, UI Responsiveness
+    public string RecommendedValue { get; set; } = "";
+
+    private string _currentValue = "";
+    public string CurrentValue
+    {
+        get => _currentValue;
+        set
+        {
+            if (_currentValue != value)
+            {
+                _currentValue = value;
+                OnPropertyChanged(nameof(CurrentValue));
+            }
+        }
+    }
+
+    private bool _isOptimized;
+    public bool IsOptimized
+    {
+        get => _isOptimized;
+        set
+        {
+            if (_isOptimized != value)
+            {
+                _isOptimized = value;
+                OnPropertyChanged(nameof(IsOptimized));
+            }
+        }
+    }
+
+    private bool _isSelected = true;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            if (_isSelected != value)
+            {
+                _isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
+    }
+}
+

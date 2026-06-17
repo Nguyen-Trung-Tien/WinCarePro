@@ -64,6 +64,18 @@ public class DbManager
             command.ExecuteNonQuery();
         }
 
+        // Create UpdatedApps table
+        var createUpdatedAppsTable = @"
+            CREATE TABLE IF NOT EXISTS UpdatedApps (
+                AppId TEXT PRIMARY KEY,
+                Version TEXT NOT NULL,
+                UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+            );";
+        using (var command = new SqliteCommand(createUpdatedAppsTable, connection))
+        {
+            command.ExecuteNonQuery();
+        }
+
         // Check if default user exists, if not, create one
         var checkUser = "SELECT COUNT(*) FROM Users";
         long userCount = 0;
@@ -234,6 +246,46 @@ public class DbManager
         {
             // Fail silently
         }
+    }
+
+    public static void SaveUpdatedApp(string appId, string version)
+    {
+        try
+        {
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            var query = "INSERT OR REPLACE INTO UpdatedApps (AppId, Version) VALUES ($appId, $version)";
+            using var command = new SqliteCommand(query, connection);
+            command.Parameters.AddWithValue("$appId", appId);
+            command.Parameters.AddWithValue("$version", version);
+            command.ExecuteNonQuery();
+        }
+        catch
+        {
+            // Fail silently
+        }
+    }
+
+    public static Dictionary<string, string> GetUpdatedApps()
+    {
+        var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        try
+        {
+            using var connection = new SqliteConnection(ConnectionString);
+            connection.Open();
+            var query = "SELECT AppId, Version FROM UpdatedApps";
+            using var command = new SqliteCommand(query, connection);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                dict[reader.GetString(0)] = reader.GetString(1);
+            }
+        }
+        catch
+        {
+            // Fail silently
+        }
+        return dict;
     }
 }
 

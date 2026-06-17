@@ -15,7 +15,10 @@ public sealed partial class RepairPage : Page
     {
         InitializeComponent();
         ViewModel = new RepairViewModel();
-        this.Loaded += (s, e) => DataContext = ViewModel;
+        this.Loaded += (s, e) => {
+            DataContext = ViewModel;
+            ViewModel.LoadServices();
+        };
     }
 
     private async void OnSfcScanClick(object sender, RoutedEventArgs e)
@@ -51,6 +54,22 @@ public sealed partial class RepairPage : Page
     private async void OnRestoreServicesClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.RepairServicesConfigAsync();
+    }
+
+    private void OnSelectAllServicesClick(object sender, RoutedEventArgs e)
+    {
+        foreach (var svc in ViewModel.Services)
+        {
+            svc.IsSelected = true;
+        }
+    }
+
+    private void OnDeselectAllServicesClick(object sender, RoutedEventArgs e)
+    {
+        foreach (var svc in ViewModel.Services)
+        {
+            svc.IsSelected = false;
+        }
     }
 
     internal bool IsNot(bool val) => !val;

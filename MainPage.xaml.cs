@@ -37,6 +37,7 @@ public sealed partial class MainPage : Page
             "junk" => typeof(JunkPage),
             "network" => typeof(NetworkPage),
             "repair" => typeof(RepairPage),
+            "optimizer" => typeof(SystemOptimizerPage),
             "startup" => typeof(StartupPage),
             "process" => typeof(ProcessPage),
             "disk" => typeof(DiskPage),

@@ -20,7 +20,7 @@ if exist "%LocalAppData%\Programs\Inno Setup 6\ISCC.exe" (
     "%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe" setup.iss
 ) else (
     echo.
-    echo [ERROR] Inno Setup compiler (ISCC.exe) not found!
+    echo [ERROR] Inno Setup compiler [ISCC.exe] not found!
     echo Please make sure Inno Setup 6 is installed.
     pause
     exit /b 1

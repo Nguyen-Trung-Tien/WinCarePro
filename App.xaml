@@ -8,9 +8,84 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
-            <!-- Other app resources here -->
+
+            <!-- Brand Linear Gradients -->
+            <LinearGradientBrush x:Key="PrimaryAccentGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FF7F56D9" Offset="0" />
+                <GradientStop Color="#FF6366F1" Offset="0.5" />
+                <GradientStop Color="#FF3B82F6" Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="GlassBorderBrush" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#25FFFFFF" Offset="0" />
+                <GradientStop Color="#05FFFFFF" Offset="0.5" />
+                <GradientStop Color="#10FFFFFF" Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="HealthGoodGradient" StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Color="#FF10B981" Offset="0" />
+                <GradientStop Color="#FF059669" Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="HealthWarningGradient" StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Color="#FFF59E0B" Offset="0" />
+                <GradientStop Color="#FFD97706" Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="HealthCriticalGradient" StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Color="#FFEF4444" Offset="0" />
+                <GradientStop Color="#FFDC2626" Offset="1" />
+            </LinearGradientBrush>
+
+            <!-- Resource Specific Brushes -->
+            <SolidColorBrush x:Key="CpuAccentBrush" Color="#FFF59E0B" />
+            <SolidColorBrush x:Key="RamAccentBrush" Color="#FF3B82F6" />
+            <SolidColorBrush x:Key="GpuAccentBrush" Color="#FF8B5CF6" />
+            <SolidColorBrush x:Key="DiskAccentBrush" Color="#FF10B981" />
+
+            <SolidColorBrush x:Key="CpuTrackBrush" Color="#20F59E0B" />
+            <SolidColorBrush x:Key="RamTrackBrush" Color="#203B82F6" />
+            <SolidColorBrush x:Key="GpuTrackBrush" Color="#208B5CF6" />
+            <SolidColorBrush x:Key="DiskTrackBrush" Color="#2010B981" />
+
+            <!-- Card Containers Styling -->
+            <Style x:Key="ModernCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="16" />
+            </Style>
+
+            <Style x:Key="GradientBorderCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="CornerRadius" Value="16" />
+            </Style>
+
+            <Style x:Key="GlowCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="CornerRadius" Value="16" />
+            </Style>
+
+            <Style x:Key="DarkTerminalStyle" TargetType="TextBox">
+                <Setter Property="Background" Value="#0A0E1A" />
+                <Setter Property="Foreground" Value="#00F2FE" />
+                <Setter Property="BorderBrush" Value="#447F56D9" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="FontFamily" Value="Consolas" />
+                <Setter Property="FontSize" Value="12.5" />
+                <Setter Property="Padding" Value="16" />
+            </Style>
+
+            <!-- Global default style for standard buttons -->
+            <Style TargetType="Button">
+                <Setter Property="CornerRadius" Value="8" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

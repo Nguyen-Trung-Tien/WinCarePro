@@ -11,21 +11,31 @@
     NavigationCacheMode="Enabled">
 
     <Grid Padding="24">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Page Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,16">
-            <TextBlock Text="System Dashboard" Style="{ThemeResource TitleTextBlockStyle}" FontWeight="Bold" />
-            <TextBlock Text="Monitor and optimize your Windows operating system in one click." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-        </StackPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="System Dashboard" FontSize="28" FontWeight="ExtraBold" CharacterSpacing="-10" />
+                <TextBlock Text="Real-time performance monitors, PC diagnostics diagnostics, and speed optimizer." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
+            </StackPanel>
+        </Grid>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <Grid RowSpacing="24">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid RowSpacing="24" ColumnSpacing="24">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -37,8 +47,8 @@
 
                 <!-- Column 1: Health Status & Resources -->
                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="24">
-                    <!-- Health Gauge Card -->
-                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="24">
+                    <!-- Health Gauge Card (Glowing Border) -->
+                    <Border Style="{StaticResource GradientBorderCardStyle}" Padding="28">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -46,32 +56,41 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Circular Progress -->
-                            <Grid Grid.Column="0" Width="180" Height="180" Margin="0,0,24,0">
-                                <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}" Width="160" Height="160" Foreground="{ThemeResource SystemAccentColor}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
-                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" Style="{ThemeResource HeaderTextBlockStyle}" FontWeight="ExtraBold" HorizontalAlignment="Center" />
-                                    <TextBlock Text="Health Score" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
+                            <Grid Grid.Column="0" Width="180" Height="180" Margin="0,0,28,0">
+                                <!-- Background ring track -->
+                                <Ellipse Width="154" Height="154" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="8" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
+                                <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}" Width="160" Height="160" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
+                                    <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="44" FontWeight="ExtraBold" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" CharacterSpacing="-20"/>
+                                    <TextBlock Text="Health Score" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
                                 </StackPanel>
                             </Grid>
 
                             <!-- Score status description -->
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="8">
-                                <TextBlock Text="Your System Health Status" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="SemiBold" />
-                                <TextBlock Text="{x:Bind GetStatusText(ViewModel.HealthScore), Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" />
-                                <TextBlock Text="A scan verifies diagnostic alerts, junk file volumes, startup overhead, and available security fixes. Optimize now to clean garbage files and improve loading speeds." TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="12">
+                                <TextBlock Text="System Health Overview" FontSize="20" FontWeight="Bold" />
+                                <Border Background="{x:Bind GetHealthScoreBadgeBackground(ViewModel.HealthScore), Mode=OneWay}" HorizontalAlignment="Left" Padding="12,6" CornerRadius="6">
+                                    <TextBlock Text="{x:Bind GetStatusText(ViewModel.HealthScore), Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" />
+                                </Border>
+                                <TextBlock Text="A scan verifies diagnostic alerts, junk file volumes, startup overhead, and available security fixes. Optimize now to clean garbage files and improve loading speeds." TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18" />
                                 
-                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0" Spacing="12">
-                                    <Button Content="Scan System" Style="{StaticResource DefaultButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="16,8" CornerRadius="8" />
-                                    <Button Content="Optimize Now" Style="{StaticResource AccentButtonStyle}" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Padding="16,8" CornerRadius="8" />
+                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0" Spacing="12">
+                                    <Button Content="Scan System" Style="{StaticResource DefaultButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="20,10" CornerRadius="8" FontWeight="SemiBold" />
+                                    <Button Content="Optimize Now" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Padding="20,10" CornerRadius="8" FontWeight="SemiBold" />
                                     <ProgressRing IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="24" Height="24" Margin="8,0,0,0" />
                                 </StackPanel>
-                                <TextBlock Text="{x:Bind ViewModel.ScanStatus, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0"/>
+                                
+                                <StackPanel Visibility="{x:Bind GetProgressVisibility(ViewModel.IsScanning), Mode=OneWay}" Spacing="6" Margin="0,4,0,0">
+                                    <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="6" Foreground="{ThemeResource SystemAccentColor}" CornerRadius="3" />
+                                </StackPanel>
+                                
+                                <TextBlock Text="{x:Bind ViewModel.ScanStatus, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,2,0,0"/>
                             </StackPanel>
                         </Grid>
                     </Border>
 
                     <!-- Realtime Resource Metrics (2x2 Grid) -->
-                    <Grid RowSpacing="12" ColumnSpacing="12">
+                    <Grid RowSpacing="16" ColumnSpacing="16">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -82,47 +101,81 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- CPU Card -->
-                        <Border Grid.Row="0" Grid.Column="0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="CPU Processor Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <Grid>
-                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.CpuUsage), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" HorizontalAlignment="Left" />
-                                </Grid>
-                                <ProgressBar Value="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" Maximum="100" Height="6" Foreground="{ThemeResource SystemAccentColor}" CornerRadius="3" />
-                            </StackPanel>
+                        <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" Grid.Column="0">
+                                    <TextBlock Text="CPU Processor Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.CpuUsage), Mode=OneWay}" FontSize="24" FontWeight="ExtraBold" />
+                                    <ProgressBar Value="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" Maximum="100" Height="6" Foreground="{StaticResource CpuAccentBrush}" Background="{StaticResource CpuTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Width="44" Height="44" Background="#15F59E0B" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                    <FontIcon Glyph="&#xE7F4;" FontSize="18" Foreground="{StaticResource CpuAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </Border>
 
                         <!-- Memory (RAM) Card -->
-                        <Border Grid.Row="0" Grid.Column="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Memory (RAM) Footprint" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind FormatPercent(ViewModel.RamUsage), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                                <ProgressBar Value="{x:Bind ViewModel.RamUsage, Mode=OneWay}" Maximum="100" Height="6" Foreground="{ThemeResource SystemAccentColor}" CornerRadius="3" />
-                            </StackPanel>
+                        <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" Grid.Column="0">
+                                    <TextBlock Text="Memory (RAM) Footprint" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.RamUsage), Mode=OneWay}" FontSize="24" FontWeight="ExtraBold" />
+                                    <ProgressBar Value="{x:Bind ViewModel.RamUsage, Mode=OneWay}" Maximum="100" Height="6" Foreground="{StaticResource RamAccentBrush}" Background="{StaticResource RamTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Width="44" Height="44" Background="#153B82F6" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                    <FontIcon Glyph="&#xE950;" FontSize="18" Foreground="{StaticResource RamAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </Border>
 
                         <!-- GPU Card -->
-                        <Border Grid.Row="1" Grid.Column="0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Graphics Card (GPU) Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind FormatPercent(ViewModel.GpuUsage), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                                <ProgressBar Value="{x:Bind ViewModel.GpuUsage, Mode=OneWay}" Maximum="100" Height="6" Foreground="{ThemeResource SystemAccentColor}" CornerRadius="3" />
-                            </StackPanel>
+                        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" Grid.Column="0">
+                                    <TextBlock Text="Graphics Card (GPU) Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.GpuUsage), Mode=OneWay}" FontSize="24" FontWeight="ExtraBold" />
+                                    <ProgressBar Value="{x:Bind ViewModel.GpuUsage, Mode=OneWay}" Maximum="100" Height="6" Foreground="{StaticResource GpuAccentBrush}" Background="{StaticResource GpuTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Width="44" Height="44" Background="#158B5CF6" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                    <FontIcon Glyph="&#xE9F5;" FontSize="18" Foreground="{StaticResource GpuAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </Border>
 
                         <!-- Storage Card -->
-                        <Border Grid.Row="1" Grid.Column="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="System Disk Activity" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind FormatPercent(ViewModel.DiskUsage), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                                <ProgressBar Value="{x:Bind ViewModel.DiskUsage, Mode=OneWay}" Maximum="100" Height="6" Foreground="{ThemeResource SystemAccentColor}" CornerRadius="3" />
-                            </StackPanel>
+                        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" Grid.Column="0">
+                                    <TextBlock Text="System Disk Activity" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.DiskUsage), Mode=OneWay}" FontSize="24" FontWeight="ExtraBold" />
+                                    <ProgressBar Value="{x:Bind ViewModel.DiskUsage, Mode=OneWay}" Maximum="100" Height="6" Foreground="{StaticResource DiskAccentBrush}" Background="{StaticResource DiskTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Width="44" Height="44" Background="#1510B981" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                    <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="{StaticResource DiskAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </Border>
                     </Grid>
                 </StackPanel>
 
                 <!-- Column 2: Quick Recommendations -->
-                <Border Grid.Row="0" Grid.Column="1" Margin="16,0,0,0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="24">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -130,7 +183,7 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Grid.Row="0" Margin="0,0,0,16" Spacing="4">
-                            <TextBlock Text="Smart AI Advice" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                            <TextBlock Text="Smart AI Advice" FontSize="18" FontWeight="Bold" />
                             <TextBlock Text="Suggested actions based on scanning diagnostics:" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         </StackPanel>
 
@@ -142,14 +195,16 @@
                                 <ItemsControl ItemsSource="{x:Bind ViewModel.Recommendations, Mode=OneWay}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="x:String">
-                                            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="6" Margin="0,0,0,8" Padding="12">
+                                            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="10" Margin="0,0,0,10" Padding="14">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
-                                                    <FontIcon Glyph="&#xE7BA;" FontSize="16" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" Margin="0,0,12,0" />
-                                                    <TextBlock Grid.Column="1" Text="{x:Bind}" TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" VerticalAlignment="Center" />
+                                                    <Border Width="28" Height="28" Background="#157F56D9" CornerRadius="14" VerticalAlignment="Center" Margin="0,0,12,0">
+                                                        <FontIcon Glyph="&#xE7BA;" FontSize="12" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                    </Border>
+                                                    <TextBlock Grid.Column="1" Text="{x:Bind}" TextWrapping="Wrap" FontSize="12" LineHeight="16" VerticalAlignment="Center" />
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>
@@ -161,48 +216,56 @@
                 </Border>
 
                 <!-- Row 1, Col Span 2: Detailed Audits Table -->
-                <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="0,24,0,0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                <Border Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource ModernCardStyle}" Padding="24">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Diagnostics Discoveries" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" Margin="0,0,0,16" />
+                        <TextBlock Grid.Row="0" Text="Diagnostics Discoveries" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
 
                         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.DiagnosticItems, Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False">
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
                             <ListView.HeaderTemplate>
                                 <DataTemplate>
-                                    <Grid Padding="12,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,4">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="150" />
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="200" />
+                                            <ColumnDefinition Width="180" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Category" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="Check Name" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="2" Text="Description" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="3" Text="Status" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Text="Category" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="1" Text="Check Name" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="2" Text="Description" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="3" Text="Status" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Left" />
                                     </Grid>
                                 </DataTemplate>
                             </ListView.HeaderTemplate>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:DiagnosticResult" xmlns:models="using:WinCarePro.Models">
-                                    <Grid Padding="12" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="150" />
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="200" />
+                                            <ColumnDefinition Width="180" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{x:Bind Category}" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="{x:Bind CheckName}" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" FontWeight="Bold" />
-                                        <TextBlock Grid.Column="2" Text="{x:Bind Description}" TextWrapping="Wrap" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,12,0"/>
-                                        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
-                                            <FontIcon Glyph="{x:Bind local:DashboardPage.GetStatusIcon(IsHealthy)}" Foreground="{x:Bind local:DashboardPage.GetStatusColor(IsHealthy)}" FontSize="14" />
-                                            <TextBlock Text="{x:Bind local:DashboardPage.GetStatusLabel(IsHealthy)}" Foreground="{x:Bind local:DashboardPage.GetStatusColor(IsHealthy)}" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        </StackPanel>
+                                        <TextBlock Text="{x:Bind Category}" VerticalAlignment="Center" FontSize="12.5" />
+                                        <TextBlock Grid.Column="1" Text="{x:Bind CheckName}" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold" />
+                                        <TextBlock Grid.Column="2" Text="{x:Bind Description}" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,16,0" LineHeight="16"/>
+                                        <Border Grid.Column="3" Background="{x:Bind local:DashboardPage.GetStatusBadgeBg(IsHealthy)}" CornerRadius="6" Padding="10,5" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <FontIcon Glyph="{x:Bind local:DashboardPage.GetStatusIcon(IsHealthy)}" Foreground="{x:Bind local:DashboardPage.GetStatusColor(IsHealthy)}" FontSize="11" VerticalAlignment="Center" />
+                                                <TextBlock Text="{x:Bind local:DashboardPage.GetStatusLabel(IsHealthy)}" Foreground="{x:Bind local:DashboardPage.GetStatusColor(IsHealthy)}" FontWeight="Bold" FontSize="11" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>

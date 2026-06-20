@@ -10,6 +10,11 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="15" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -45,56 +50,110 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- OS Card -->
-                        <Border Grid.Row="0" Grid.Column="0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Operating System" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind Specs.OsVersion, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" TextWrapping="Wrap" />
-                                <TextBlock Text="{x:Bind FormatUptime(Specs.SystemUptime), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            </StackPanel>
+                        <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" Grid.Column="0">
+                                    <TextBlock Text="Operating System" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="{x:Bind Specs.OsVersion, Mode=OneWay}" FontSize="18" FontWeight="Bold" TextWrapping="Wrap" />
+                                    <TextBlock Text="{x:Bind FormatUptime(Specs.SystemUptime), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Width="44" Height="44" Background="#1500D2FF" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                    <FontIcon Glyph="&#xE7F4;" FontSize="18" Foreground="DeepSkyBlue" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </Border>
 
                         <!-- CPU Card -->
-                        <Border Grid.Row="0" Grid.Column="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Processor (CPU)" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind Specs.CpuModel, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" TextWrapping="Wrap" />
-                                <TextBlock Text="{x:Bind GetCpuDetailString(Specs.CpuCores, Specs.CpuThreads, Specs.CpuSpeed), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            </StackPanel>
+                        <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" Grid.Column="0">
+                                    <TextBlock Text="Processor (CPU)" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="{x:Bind Specs.CpuModel, Mode=OneWay}" FontSize="18" FontWeight="Bold" TextWrapping="Wrap" />
+                                    <TextBlock Text="{x:Bind GetCpuDetailString(Specs.CpuCores, Specs.CpuThreads, Specs.CpuSpeed), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Width="44" Height="44" Background="#15F59E0B" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                    <FontIcon Glyph="&#xEC15;" FontSize="18" Foreground="Orange" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </Border>
 
                         <!-- RAM Card -->
-                        <Border Grid.Row="1" Grid.Column="0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Memory (RAM)" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind FormatRamSize(Specs.RamCapacityGb), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                                <TextBlock Text="{x:Bind FormatRamSpeed(Specs.RamSpeed), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            </StackPanel>
+                        <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" Grid.Column="0">
+                                    <TextBlock Text="Memory (RAM)" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="{x:Bind FormatRamSize(Specs.RamCapacityGb), Mode=OneWay}" FontSize="18" FontWeight="Bold" />
+                                    <TextBlock Text="{x:Bind FormatRamSpeed(Specs.RamSpeed), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Width="44" Height="44" Background="#153B82F6" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                    <FontIcon Glyph="&#xE950;" FontSize="18" Foreground="DodgerBlue" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </Border>
 
                         <!-- GPU Card -->
-                        <Border Grid.Row="1" Grid.Column="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Graphics Card (GPU)" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind Specs.GpuModel, Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" TextWrapping="Wrap" />
-                                <TextBlock Text="{x:Bind GetGpuDetailString(Specs.GpuVram, Specs.GpuDriverVersion), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            </StackPanel>
+                        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" Grid.Column="0">
+                                    <TextBlock Text="Graphics Card (GPU)" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="{x:Bind Specs.GpuModel, Mode=OneWay}" FontSize="18" FontWeight="Bold" TextWrapping="Wrap" />
+                                    <TextBlock Text="{x:Bind GetGpuDetailString(Specs.GpuVram, Specs.GpuDriverVersion), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Width="44" Height="44" Background="#158B5CF6" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                    <FontIcon Glyph="&#xE9F5;" FontSize="18" Foreground="MediumPurple" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </Border>
 
                         <!-- Motherboard Card -->
-                        <Border Grid.Row="2" Grid.Column="0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Motherboard &amp; BIOS" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind GetMotherboardString(Specs.MotherboardManufacturer, Specs.MotherboardModel), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" TextWrapping="Wrap" />
-                                <TextBlock Text="{x:Bind FormatBiosVersion(Specs.BiosVersion), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            </StackPanel>
+                        <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" Grid.Column="0">
+                                    <TextBlock Text="Motherboard &amp; BIOS" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="{x:Bind GetMotherboardString(Specs.MotherboardManufacturer, Specs.MotherboardModel), Mode=OneWay}" FontSize="18" FontWeight="Bold" TextWrapping="Wrap" />
+                                    <TextBlock Text="{x:Bind FormatBiosVersion(Specs.BiosVersion), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Width="44" Height="44" Background="#1500D2FF" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                    <FontIcon Glyph="&#xE78B;" FontSize="18" Foreground="Teal" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </Border>
 
                         <!-- Storage Summary Card -->
-                        <Border Grid.Row="2" Grid.Column="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Logical Storage Partitions" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind Specs.StorageInfo, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="SemiBold" TextWrapping="Wrap" />
-                            </StackPanel>
+                        <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Spacing="6" Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Logical Storage Partitions" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="{x:Bind Specs.StorageInfo, Mode=OneWay}" FontSize="14.5" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <Border Grid.Column="1" Width="44" Height="44" Background="#1510B981" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                    <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="ForestGreen" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                            </Grid>
                         </Border>
                     </Grid>
                 </ScrollViewer>
@@ -112,6 +171,12 @@
                         <TextBox x:Name="DriverSearchInput" TextChanged="OnDriverSearchChanged" PlaceholderText="Search drivers by name or provider..." Margin="0,0,0,16" CornerRadius="6" Width="300" HorizontalAlignment="Left" />
 
                         <ListView Grid.Row="1" ItemsSource="{x:Bind FilteredDrivers, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
                             <ListView.HeaderTemplate>
                                 <DataTemplate>
                                     <Grid Padding="12,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">

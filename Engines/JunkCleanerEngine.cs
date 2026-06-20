@@ -35,186 +35,192 @@ public class JunkCleanerEngine
 
     public async Task<List<JunkCategory>> ScanJunkAsync()
     {
-        Log("Starting Junk scan...");
-        ProgressChanged?.Invoke(5);
-        var categories = new List<JunkCategory>();
-
-        // 1. User Temp
-        Log("Scanning User Temp files...");
-        string userTemp = Path.GetTempPath();
-        var userTempCat = ScanDirectory(userTemp, "User Temporary Files", "Temporary files created by active applications.", JunkType.UserTemp);
-        categories.Add(userTempCat);
-        ProgressChanged?.Invoke(20);
-
-        // 2. Windows Temp
-        Log("Scanning Windows Temp directory...");
-        string winTemp = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "Temp");
-        var winTempCat = ScanDirectory(winTemp, "System Temporary Files", "Temporary files created by the Windows OS.", JunkType.WindowsTemp);
-        categories.Add(winTempCat);
-        ProgressChanged?.Invoke(40);
-
-        // 3. Windows Update Cache
-        Log("Scanning Windows Update Cache...");
-        string winUpdate = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "SoftwareDistribution\\Download");
-        var winUpdateCat = ScanDirectory(winUpdate, "Windows Update Cache", "Old downloaded Windows Update installers.", JunkType.UpdateCache);
-        categories.Add(winUpdateCat);
-        ProgressChanged?.Invoke(55);
-
-        // 4. Recycle Bin
-        Log("Querying Recycle Bin status...");
-        var rbCat = GetRecycleBinCategory();
-        categories.Add(rbCat);
-        ProgressChanged?.Invoke(70);
-
-        // 5. Browser Caches (Edge & Chrome)
-        Log("Scanning Browser caches...");
-        long browserBytes = 0;
-        int browserFiles = 0;
-
-        string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        string chromeCache = Path.Combine(localAppData, @"Google\Chrome\User Data\Default\Cache\Cache_Data");
-        string edgeCache = Path.Combine(localAppData, @"Microsoft\Edge\User Data\Default\Cache\Cache_Data");
-        string braveCache = Path.Combine(localAppData, @"BraveSoftware\Brave-Browser\User Data\Default\Cache\Cache_Data");
-
-        var caches = new[] { chromeCache, edgeCache, braveCache };
-        foreach (var cachePath in caches)
+        return await Task.Run(() =>
         {
-            if (Directory.Exists(cachePath))
+            Log("Starting Junk scan...");
+            ProgressChanged?.Invoke(5);
+            var categories = new List<JunkCategory>();
+
+            // 1. User Temp
+            Log("Scanning User Temp files...");
+            string userTemp = Path.GetTempPath();
+            var userTempCat = ScanDirectory(userTemp, "User Temporary Files", "Temporary files created by active applications.", JunkType.UserTemp);
+            categories.Add(userTempCat);
+            ProgressChanged?.Invoke(20);
+
+            // 2. Windows Temp
+            Log("Scanning Windows Temp directory...");
+            string winTemp = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "Temp");
+            var winTempCat = ScanDirectory(winTemp, "System Temporary Files", "Temporary files created by the Windows OS.", JunkType.WindowsTemp);
+            categories.Add(winTempCat);
+            ProgressChanged?.Invoke(40);
+
+            // 3. Windows Update Cache
+            Log("Scanning Windows Update Cache...");
+            string winUpdate = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "SoftwareDistribution\\Download");
+            var winUpdateCat = ScanDirectory(winUpdate, "Windows Update Cache", "Old downloaded Windows Update installers.", JunkType.UpdateCache);
+            categories.Add(winUpdateCat);
+            ProgressChanged?.Invoke(55);
+
+            // 4. Recycle Bin
+            Log("Querying Recycle Bin status...");
+            var rbCat = GetRecycleBinCategory();
+            categories.Add(rbCat);
+            ProgressChanged?.Invoke(70);
+
+            // 5. Browser Caches (Edge & Chrome)
+            Log("Scanning Browser caches...");
+            long browserBytes = 0;
+            int browserFiles = 0;
+
+            string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string chromeCache = Path.Combine(localAppData, @"Google\Chrome\User Data\Default\Cache\Cache_Data");
+            string edgeCache = Path.Combine(localAppData, @"Microsoft\Edge\User Data\Default\Cache\Cache_Data");
+            string braveCache = Path.Combine(localAppData, @"BraveSoftware\Brave-Browser\User Data\Default\Cache\Cache_Data");
+
+            var caches = new[] { chromeCache, edgeCache, braveCache };
+            foreach (var cachePath in caches)
             {
-                var (bytes, count) = GetDirectorySize(cachePath);
-                browserBytes += bytes;
-                browserFiles += count;
+                if (Directory.Exists(cachePath))
+                {
+                    var (bytes, count) = GetDirectorySize(cachePath);
+                    browserBytes += bytes;
+                    browserFiles += count;
+                }
             }
-        }
 
-        categories.Add(new JunkCategory
-        {
-            Name = "Web Browser Caches",
-            Description = "Cached web pages, scripts, and media files from Edge, Chrome, and Brave.",
-            Type = JunkType.BrowserCache,
-            SizeBytes = browserBytes,
-            FileCount = browserFiles,
-            IsSelected = true
-        });
-        ProgressChanged?.Invoke(85);
-
-        // 6. DirectX Shader Cache & Diagnostics
-        Log("Scanning DirectX shader caches...");
-        string shaderCachePath = Path.Combine(localAppData, @"D3DSCache");
-        long shaderBytes = 0;
-        int shaderCount = 0;
-        if (Directory.Exists(shaderCachePath))
-        {
-            var (bytes, count) = GetDirectorySize(shaderCachePath);
-            shaderBytes += bytes;
-            shaderCount += count;
-        }
-
-        categories.Add(new JunkCategory
-        {
-            Name = "DirectX Shader Cache",
-            Description = "Graphics processor shader cache. Speed up application load times, but safe to clear.",
-            Type = JunkType.ShaderCache,
-            SizeBytes = shaderBytes,
-            FileCount = shaderCount,
-            IsSelected = true
-        });
-
-        // 7. System Error Reports and Logs
-        Log("Scanning System Error Reports and Log files...");
-        long logBytes = 0;
-        int logCount = 0;
-
-        string werLocal = Path.Combine(localAppData, @"Microsoft\Windows\WER");
-        string werCommon = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\Windows\WER");
-        string iisLogs = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"LogFiles");
-
-        var logPaths = new[] { werLocal, werCommon, iisLogs };
-        foreach (var logPath in logPaths)
-        {
-            if (Directory.Exists(logPath))
+            categories.Add(new JunkCategory
             {
-                var (bytes, count) = GetDirectorySize(logPath);
-                logBytes += bytes;
-                logCount += count;
+                Name = "Web Browser Caches",
+                Description = "Cached web pages, scripts, and media files from Edge, Chrome, and Brave.",
+                Type = JunkType.BrowserCache,
+                SizeBytes = browserBytes,
+                FileCount = browserFiles,
+                IsSelected = true
+            });
+            ProgressChanged?.Invoke(85);
+
+            // 6. DirectX Shader Cache & Diagnostics
+            Log("Scanning DirectX shader caches...");
+            string shaderCachePath = Path.Combine(localAppData, @"D3DSCache");
+            long shaderBytes = 0;
+            int shaderCount = 0;
+            if (Directory.Exists(shaderCachePath))
+            {
+                var (bytes, count) = GetDirectorySize(shaderCachePath);
+                shaderBytes += bytes;
+                shaderCount += count;
             }
-        }
 
-        categories.Add(new JunkCategory
-        {
-            Name = "System Log Files & Error Reports",
-            Description = "Activity logs, crash dump registers, and error reports generated by Windows.",
-            Type = JunkType.SystemLog,
-            SizeBytes = logBytes,
-            FileCount = logCount,
-            IsSelected = true
+            categories.Add(new JunkCategory
+            {
+                Name = "DirectX Shader Cache",
+                Description = "Graphics processor shader cache. Speed up application load times, but safe to clear.",
+                Type = JunkType.ShaderCache,
+                SizeBytes = shaderBytes,
+                FileCount = shaderCount,
+                IsSelected = true
+            });
+
+            // 7. System Error Reports and Logs
+            Log("Scanning System Error Reports and Log files...");
+            long logBytes = 0;
+            int logCount = 0;
+
+            string werLocal = Path.Combine(localAppData, @"Microsoft\Windows\WER");
+            string werCommon = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\Windows\WER");
+            string iisLogs = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"LogFiles");
+
+            var logPaths = new[] { werLocal, werCommon, iisLogs };
+            foreach (var logPath in logPaths)
+            {
+                if (Directory.Exists(logPath))
+                {
+                    var (bytes, count) = GetDirectorySize(logPath);
+                    logBytes += bytes;
+                    logCount += count;
+                }
+            }
+
+            categories.Add(new JunkCategory
+            {
+                Name = "System Log Files & Error Reports",
+                Description = "Activity logs, crash dump registers, and error reports generated by Windows.",
+                Type = JunkType.SystemLog,
+                SizeBytes = logBytes,
+                FileCount = logCount,
+                IsSelected = true
+            });
+
+            ProgressChanged?.Invoke(100);
+            Log("Junk scan completed.");
+            return categories;
         });
-
-        ProgressChanged?.Invoke(100);
-        Log("Junk scan completed.");
-        return categories;
     }
 
     public async Task<long> CleanJunkAsync(List<JunkCategory> categories)
     {
-        Log("Starting Junk cleaning process...");
-        long totalCleanedBytes = 0;
-        ProgressChanged?.Invoke(5);
-
-        double increment = 95.0 / categories.Count;
-        double currentProgress = 5.0;
-
-        foreach (var cat in categories)
+        return await Task.Run(async () =>
         {
-            if (!cat.IsSelected) continue;
+            Log("Starting Junk cleaning process...");
+            long totalCleanedBytes = 0;
+            ProgressChanged?.Invoke(5);
 
-            Log($"Cleaning category: {cat.Name}...");
-            long cleaned = 0;
+            double increment = 95.0 / categories.Count;
+            double currentProgress = 5.0;
 
-            switch (cat.Type)
+            foreach (var cat in categories)
             {
-                case JunkType.UserTemp:
-                    cleaned = await ClearDirectoryAsync(Path.GetTempPath());
-                    break;
-                case JunkType.WindowsTemp:
-                    string winTemp = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "Temp");
-                    cleaned = await ClearDirectoryAsync(winTemp);
-                    break;
-                case JunkType.UpdateCache:
-                    string winUpdate = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "SoftwareDistribution\\Download");
-                    cleaned = await ClearDirectoryAsync(winUpdate);
-                    break;
-                case JunkType.RecycleBin:
-                    cleaned = cat.SizeBytes;
-                    ClearRecycleBin();
-                    break;
-                case JunkType.BrowserCache:
-                    string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    cleaned += await ClearDirectoryAsync(Path.Combine(localAppData, @"Google\Chrome\User Data\Default\Cache\Cache_Data"));
-                    cleaned += await ClearDirectoryAsync(Path.Combine(localAppData, @"Microsoft\Edge\User Data\Default\Cache\Cache_Data"));
-                    cleaned += await ClearDirectoryAsync(Path.Combine(localAppData, @"BraveSoftware\Brave-Browser\User Data\Default\Cache\Cache_Data"));
-                    break;
-                case JunkType.ShaderCache:
-                    string shaderCachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"D3DSCache");
-                    cleaned = await ClearDirectoryAsync(shaderCachePath);
-                    break;
-                case JunkType.SystemLog:
-                    string localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    cleaned += await ClearDirectoryAsync(Path.Combine(localApp, @"Microsoft\Windows\WER"));
-                    cleaned += await ClearDirectoryAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\Windows\WER"));
-                    cleaned += await ClearDirectoryAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"LogFiles"));
-                    break;
+                if (!cat.IsSelected) continue;
+
+                Log($"Cleaning category: {cat.Name}...");
+                long cleaned = 0;
+
+                switch (cat.Type)
+                {
+                    case JunkType.UserTemp:
+                        cleaned = await ClearDirectoryAsync(Path.GetTempPath());
+                        break;
+                    case JunkType.WindowsTemp:
+                        string winTemp = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "Temp");
+                        cleaned = await ClearDirectoryAsync(winTemp);
+                        break;
+                    case JunkType.UpdateCache:
+                        string winUpdate = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "SoftwareDistribution\\Download");
+                        cleaned = await ClearDirectoryAsync(winUpdate);
+                        break;
+                    case JunkType.RecycleBin:
+                        cleaned = cat.SizeBytes;
+                        ClearRecycleBin();
+                        break;
+                    case JunkType.BrowserCache:
+                        string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(localAppData, @"Google\Chrome\User Data\Default\Cache\Cache_Data"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(localAppData, @"Microsoft\Edge\User Data\Default\Cache\Cache_Data"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(localAppData, @"BraveSoftware\Brave-Browser\User Data\Default\Cache\Cache_Data"));
+                        break;
+                    case JunkType.ShaderCache:
+                        string shaderCachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"D3DSCache");
+                        cleaned = await ClearDirectoryAsync(shaderCachePath);
+                        break;
+                    case JunkType.SystemLog:
+                        string localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(localApp, @"Microsoft\Windows\WER"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\Windows\WER"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"LogFiles"));
+                        break;
+                }
+
+                totalCleanedBytes += cleaned;
+                currentProgress += increment;
+                ProgressChanged?.Invoke((int)currentProgress);
             }
 
-            totalCleanedBytes += cleaned;
-            currentProgress += increment;
-            ProgressChanged?.Invoke((int)currentProgress);
-        }
-
-        ProgressChanged?.Invoke(100);
-        Log($"Junk cleaning complete. Cleaned: {(totalCleanedBytes / 1024.0 / 1024.0):F2} MB");
-        Database.DbManager.LogAction($"Cleaned {totalCleanedBytes} bytes", "Junk Cleaner", "Success");
-        return totalCleanedBytes;
+            ProgressChanged?.Invoke(100);
+            Log($"Junk cleaning complete. Cleaned: {(totalCleanedBytes / 1024.0 / 1024.0):F2} MB");
+            Database.DbManager.LogAction($"Cleaned {totalCleanedBytes} bytes", "Junk Cleaner", "Success");
+            return totalCleanedBytes;
+        });
     }
 
     private JunkCategory ScanDirectory(string path, string name, string description, JunkType type)

@@ -184,7 +184,7 @@ public class SecurityPrivacyEngine
                 case "tracking":
                     using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\InputPersonalization"))
                     {
-                        return Convert.ToInt32(key?.GetValue("RestrictImplicitConsent") ?? 0) == 0;
+                        return Convert.ToInt32(key?.GetValue("RestrictImplicitConsent") ?? 0) == 1;
                     }
             }
         }
@@ -230,7 +230,7 @@ public class SecurityPrivacyEngine
                     using (var key = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\InputPersonalization", true))
                     {
                         // 1 = restrict/disable implicit tracking, 0 = allow
-                        key.SetValue("RestrictImplicitConsent", enabled ? 0 : 1, RegistryValueKind.DWord);
+                        key.SetValue("RestrictImplicitConsent", enabled ? 1 : 0, RegistryValueKind.DWord);
                         Database.DbManager.LogAction($"Privacy: Set Input Tracking to {enabled}", "Privacy Center", "Success");
                         return true;
                     }

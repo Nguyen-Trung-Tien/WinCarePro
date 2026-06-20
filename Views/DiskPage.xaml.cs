@@ -14,6 +14,7 @@ public sealed partial class DiskPage : Page
     public DiskPage()
     {
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = new DiskToolsViewModel();
         this.Loaded += (s, e) => DataContext = ViewModel;
     }
@@ -50,13 +51,25 @@ public sealed partial class DiskPage : Page
 
     internal static Brush GetHealthColor(string status)
     {
-        var color = status == "Healthy" ? Colors.LightGreen : Colors.Orange;
+        var color = status == "Healthy" ? Windows.UI.Color.FromArgb(255, 16, 185, 129) : Windows.UI.Color.FromArgb(255, 245, 158, 11);
+        return new SolidColorBrush(color);
+    }
+
+    internal static Brush GetHealthBadgeBg(string status)
+    {
+        var color = status == "Healthy" ? Windows.UI.Color.FromArgb(30, 16, 185, 129) : Windows.UI.Color.FromArgb(30, 245, 158, 11);
         return new SolidColorBrush(color);
     }
 
     internal static Brush GetTempColor(double temp)
     {
-        var color = temp > 45.0 ? Colors.Orange : Colors.LightGreen;
+        var color = temp > 45.0 ? Windows.UI.Color.FromArgb(255, 245, 158, 11) : Windows.UI.Color.FromArgb(255, 16, 185, 129);
+        return new SolidColorBrush(color);
+    }
+
+    internal static Brush GetTempBadgeBg(double temp)
+    {
+        var color = temp > 45.0 ? Windows.UI.Color.FromArgb(30, 245, 158, 11) : Windows.UI.Color.FromArgb(30, 16, 185, 129);
         return new SolidColorBrush(color);
     }
 

@@ -60,7 +60,7 @@ public class ProcessViewModel : ViewModelBase
 
         try
         {
-            var list = await _service.GetRunningProcessesAsync();
+            var list = await Task.Run(() => _service.GetRunningProcessesAsync());
             _dispatcherQueue.TryEnqueue(() =>
             {
                 _allProcesses = new ObservableCollection<ProcessInfo>(list);

@@ -10,24 +10,29 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="15" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid Grid.Row="0" Margin="0,0,0,24">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel>
-                <TextBlock Text="Startup, Tasks &amp; Services" Style="{ThemeResource TitleTextBlockStyle}" FontWeight="Bold" />
-                <TextBlock Text="Manage items running automatically on system boot. Accelerate startup and clean service overhead." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+            <StackPanel Spacing="4">
+                <TextBlock Text="Startup, Tasks &amp; Services" FontSize="28" FontWeight="ExtraBold" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                <TextBlock Text="Manage items running automatically on system boot. Accelerate startup and clean service overhead." FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
             </StackPanel>
             
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button Content="Refresh List" Style="{StaticResource AccentButtonStyle}" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" Padding="16,8" CornerRadius="6" />
+                <Button Content="Refresh List" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" Padding="20,10" CornerRadius="8" FontWeight="Bold" />
             </StackPanel>
         </Grid>
 
@@ -35,7 +40,7 @@
         <Pivot Grid.Row="1">
             <!-- Startup Applications Tab -->
             <PivotItem Header="Startup Apps">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,12,12,12" Padding="16">
+                <Border Style="{StaticResource ModernCardStyle}" CornerRadius="0,16,16,16" Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -43,42 +48,53 @@
                         </Grid.RowDefinitions>
                         
                         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.StartupApps, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
                             <ListView.HeaderTemplate>
                                 <DataTemplate>
-                                    <Grid Padding="12,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,4">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="200" />
+                                            <ColumnDefinition Width="220" />
                                             <ColumnDefinition Width="150" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="140" />
                                             <ColumnDefinition Width="100" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Application Name" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="Source" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="2" Text="Registry Command Path" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="3" Text="Enable Status" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="4" Text="Action" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Application Name" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="1" Text="Source" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="2" Text="Registry Command Path" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="3" Text="Enable Status" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="4" Text="Action" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
                                     </Grid>
                                 </DataTemplate>
                             </ListView.HeaderTemplate>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:StartupEntry">
-                                    <Grid Padding="12" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="200" />
+                                            <ColumnDefinition Width="220" />
                                             <ColumnDefinition Width="150" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="140" />
                                             <ColumnDefinition Width="100" />
                                         </Grid.ColumnDefinitions>
                                         
-                                        <TextBlock Text="{x:Bind Name}" VerticalAlignment="Center" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="{x:Bind SourceFormatted}" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                        <TextBlock Grid.Column="2" Text="{x:Bind Command}" VerticalAlignment="Center" TextWrapping="NoWrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,12,0" />
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <Border Width="24" Height="24" Background="#157F56D9" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE71D;" Foreground="#FF7F56D9" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="{x:Bind Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12.5" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{x:Bind SourceFormatted}" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Grid.Column="2" Text="{x:Bind Command}" VerticalAlignment="Center" TextWrapping="NoWrap" FontSize="11.5" FontFamily="Consolas" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,12,0" />
                                         
-                                        <ToggleSwitch Grid.Column="3" IsOn="{x:Bind IsEnabled, Mode=OneWay}" Toggled="OnStartupToggled" OffContent="Disabled" OnContent="Enabled" VerticalAlignment="Center" FontSize="11" />
+                                        <ToggleSwitch Grid.Column="3" IsOn="{x:Bind IsEnabled, Mode=OneWay}" Toggled="OnStartupToggled" OffContent="Disabled" OnContent="Enabled" VerticalAlignment="Center" FontSize="11.5" />
                                         
-                                        <Button Grid.Column="4" Content="Delete" Click="OnDeleteStartupClick" Foreground="Red" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="8,4" FontSize="11" />
+                                        <Button Grid.Column="4" Content="Delete" Click="OnDeleteStartupClick" Style="{StaticResource DefaultButtonStyle}" Foreground="#EF4444" BorderBrush="#33EF4444" CornerRadius="6" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="12,5" FontSize="11" FontWeight="Bold" />
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -89,7 +105,7 @@
 
             <!-- Services Manager Tab -->
             <PivotItem Header="Background Services">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,12,12,12" Padding="16">
+                <Border Style="{StaticResource ModernCardStyle}" CornerRadius="0,16,16,16" Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -97,53 +113,66 @@
                         </Grid.RowDefinitions>
 
                         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Services, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
                             <ListView.HeaderTemplate>
                                 <DataTemplate>
-                                    <Grid Padding="12,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,4">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="250" />
-                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="140" />
                                             <ColumnDefinition Width="150" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Service ID" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="Display Description" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="2" Text="State" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="3" Text="Startup Configuration" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="4" Text="Operations" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Service ID" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="1" Text="Display Description" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="2" Text="State" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="3" Text="Startup Configuration" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="4" Text="Operations" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
                                     </Grid>
                                 </DataTemplate>
                             </ListView.HeaderTemplate>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:ServiceEntry">
-                                    <Grid Padding="12" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="250" />
-                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="140" />
                                             <ColumnDefinition Width="150" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Text="{x:Bind Name}" VerticalAlignment="Center" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="{x:Bind DisplayName}" VerticalAlignment="Center" TextWrapping="NoWrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,12,0" />
-                                        
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Spacing="6">
-                                            <FontIcon Glyph="&#xF5B0;" Foreground="{x:Bind local:StartupPage.GetServiceColor(Status), Mode=OneWay}" FontSize="12" />
-                                            <TextBlock Text="{x:Bind Status}" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <Border Width="24" Height="24" Background="#153B82F6" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE817;" Foreground="#FF3B82F6" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="{x:Bind Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12.5" />
                                         </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{x:Bind DisplayName}" VerticalAlignment="Center" TextWrapping="NoWrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,12,0" />
+                                        
+                                        <Border Grid.Column="2" Background="{x:Bind local:StartupPage.GetServiceBg(Status), Mode=OneWay}" CornerRadius="6" Padding="10,5" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <FontIcon Glyph="{x:Bind local:StartupPage.GetServiceIcon(Status), Mode=OneWay}" Foreground="{x:Bind local:StartupPage.GetServiceColor(Status), Mode=OneWay}" FontSize="11" VerticalAlignment="Center" />
+                                                <TextBlock Text="{x:Bind Status}" Foreground="{x:Bind local:StartupPage.GetServiceColor(Status), Mode=OneWay}" FontWeight="Bold" FontSize="11" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
 
-                                        <ComboBox Grid.Column="3" SelectedIndex="{x:Bind local:StartupPage.GetStartupIndex(StartupType), Mode=OneWay}" SelectionChanged="OnServiceStartupChanged" VerticalAlignment="Center" CornerRadius="4" FontSize="11">
+                                        <ComboBox Grid.Column="3" SelectedIndex="{x:Bind local:StartupPage.GetStartupIndex(StartupType), Mode=OneWay}" SelectionChanged="OnServiceStartupChanged" VerticalAlignment="Center" CornerRadius="6" FontSize="11.5" Height="32">
                                             <ComboBoxItem Content="Automatic" />
                                             <ComboBoxItem Content="Manual" />
                                             <ComboBoxItem Content="Disabled" />
                                         </ComboBox>
 
-                                        <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                            <Button Content="Start" Click="OnServiceControlClick" Tag="Start" IsEnabled="{x:Bind local:StartupPage.CanStartService(Status), Mode=OneWay}" CornerRadius="4" FontSize="11" Padding="8,4" />
-                                            <Button Content="Stop" Click="OnServiceControlClick" Tag="Stop" IsEnabled="{x:Bind local:StartupPage.CanStopService(Status, CanStop), Mode=OneWay}" CornerRadius="4" FontSize="11" Padding="8,4" />
-                                            <Button Content="Restart" Click="OnServiceControlClick" Tag="Restart" IsEnabled="{x:Bind local:StartupPage.CanStopService(Status, CanStop), Mode=OneWay}" CornerRadius="4" FontSize="11" Padding="8,4" />
+                                        <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Button Content="Start" Click="OnServiceControlClick" Tag="Start" IsEnabled="{x:Bind local:StartupPage.CanStartService(Status), Mode=OneWay}" CornerRadius="6" FontSize="11" Padding="10,5" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" FontWeight="Bold" />
+                                            <Button Content="Stop" Click="OnServiceControlClick" Tag="Stop" IsEnabled="{x:Bind local:StartupPage.CanStopService(Status, CanStop), Mode=OneWay}" CornerRadius="6" FontSize="11" Padding="10,5" Foreground="#EF4444" BorderBrush="#33EF4444" FontWeight="Bold" />
+                                            <Button Content="Restart" Click="OnServiceControlClick" Tag="Restart" IsEnabled="{x:Bind local:StartupPage.CanStopService(Status, CanStop), Mode=OneWay}" CornerRadius="6" FontSize="11" Padding="10,5" Foreground="{ThemeResource SystemAccentColor}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" FontWeight="Bold" />
                                         </StackPanel>
                                     </Grid>
                                 </DataTemplate>
@@ -155,7 +184,7 @@
 
             <!-- Scheduled Tasks Tab -->
             <PivotItem Header="Scheduled Tasks">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,12,12,12" Padding="16">
+                <Border Style="{StaticResource ModernCardStyle}" CornerRadius="0,16,16,16" Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -163,42 +192,53 @@
                         </Grid.RowDefinitions>
 
                         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.ScheduledTasks, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
                             <ListView.HeaderTemplate>
                                 <DataTemplate>
-                                    <Grid Padding="12,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,4">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="150" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="140" />
                                             <ColumnDefinition Width="100" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Task Name" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="Hierarchy Directory" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="2" Text="Trigger Command Action" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="3" Text="Enable Status" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="4" Text="Operations" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Task Name" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="1" Text="Hierarchy Directory" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="2" Text="Trigger Command Action" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="3" Text="Enable Status" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="4" Text="Operations" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
                                     </Grid>
                                 </DataTemplate>
                             </ListView.HeaderTemplate>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:ScheduledTaskEntry">
-                                    <Grid Padding="12" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="200" />
                                             <ColumnDefinition Width="150" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="140" />
                                             <ColumnDefinition Width="100" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Text="{x:Bind Name}" VerticalAlignment="Center" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="{x:Bind Path}" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                        <TextBlock Grid.Column="2" Text="{x:Bind Action}" VerticalAlignment="Center" TextWrapping="NoWrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,12,0" />
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <Border Width="24" Height="24" Background="#158B5CF6" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE81C;" Foreground="#FF8B5CF6" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="{x:Bind Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12.5" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{x:Bind Path}" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Grid.Column="2" Text="{x:Bind Action}" VerticalAlignment="Center" TextWrapping="NoWrap" FontSize="11.5" FontFamily="Consolas" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,12,0" />
 
-                                        <ToggleSwitch Grid.Column="3" IsOn="{x:Bind IsEnabled, Mode=OneWay}" Toggled="OnTaskToggled" OffContent="Disabled" OnContent="Enabled" VerticalAlignment="Center" FontSize="11" />
+                                        <ToggleSwitch Grid.Column="3" IsOn="{x:Bind IsEnabled, Mode=OneWay}" Toggled="OnTaskToggled" OffContent="Disabled" OnContent="Enabled" VerticalAlignment="Center" FontSize="11.5" />
 
-                                        <Button Grid.Column="4" Content="Delete" Click="OnDeleteTaskClick" Foreground="Red" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="8,4" FontSize="11" />
+                                        <Button Grid.Column="4" Content="Delete" Click="OnDeleteTaskClick" Style="{StaticResource DefaultButtonStyle}" Foreground="#EF4444" BorderBrush="#33EF4444" CornerRadius="6" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="12,5" FontSize="11" FontWeight="Bold" />
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>

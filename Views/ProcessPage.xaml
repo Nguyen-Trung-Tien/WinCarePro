@@ -10,6 +10,11 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="15" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -42,6 +47,12 @@
                 </Grid.RowDefinitions>
                 
                 <ListView Grid.Row="0" ItemsSource="{x:Bind ViewModel.Processes, Mode=OneWay}" SelectionMode="None">
+                    <ListView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <AddDeleteThemeTransition />
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </ListView.ItemContainerTransitions>
                     <ListView.HeaderTemplate>
                         <DataTemplate>
                             <Grid Padding="12,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">

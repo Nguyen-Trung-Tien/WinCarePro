@@ -15,6 +15,7 @@ public sealed partial class UpdaterPage : Page
     public UpdaterPage()
     {
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = new UpdaterViewModel();
         this.Loaded += (s, e) => DataContext = ViewModel;
     }
@@ -47,9 +48,13 @@ public sealed partial class UpdaterPage : Page
 
     private async void OnUpdateSingleClick(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.Tag is SoftwareUpdateInfo app)
+        if (sender is Button btn)
         {
-            await ViewModel.UpdateSingleAppAsync(app);
+            var app = btn.Tag as SoftwareUpdateInfo ?? btn.DataContext as SoftwareUpdateInfo;
+            if (app != null)
+            {
+                await ViewModel.UpdateSingleAppAsync(app);
+            }
         }
     }
 

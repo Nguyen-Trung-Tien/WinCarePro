@@ -12,6 +12,7 @@ public sealed partial class NetworkPage : Page
     public NetworkPage()
     {
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = new NetworkViewModel();
         this.Loaded += (s, e) => DataContext = ViewModel;
     }

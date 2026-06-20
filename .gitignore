@@ -57,3 +57,6 @@ Generated\ Files/
 PublishOutput/
 PublishOutputFolder/
 PublishOutputFolder.zip
+
+# Backup folder
+Assets_backup/

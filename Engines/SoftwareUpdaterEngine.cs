@@ -154,8 +154,17 @@ public class SoftwareUpdaterEngine
                 using var process = new Process { StartInfo = psi };
                 process.Start();
 
-                string output = await process.StandardOutput.ReadToEndAsync();
-                await process.WaitForExitAsync();
+                var readTask = process.StandardOutput.ReadToEndAsync();
+                
+                // Wait for process exit or 15-second timeout to prevent indefinite hangs
+                var completedTask = await Task.WhenAny(process.WaitForExitAsync(), Task.Delay(15000));
+                if (completedTask != process.WaitForExitAsync())
+                {
+                    try { process.Kill(); } catch {}
+                    throw new TimeoutException("Winget scan timed out.");
+                }
+
+                string output = await readTask;
 
                 if (process.ExitCode == 0 || !string.IsNullOrEmpty(output))
                 {
@@ -325,25 +334,28 @@ public class SoftwareUpdaterEngine
             return await UpdateApplicationDirectAsync(appId, version);
         }
 
-        Log($"Upgrading application: {appId}...");
+        Log($"Upgrading application: {appId} (requires Administrator permission)...");
         try
         {
             var psi = new ProcessStartInfo
             {
                 FileName = "winget.exe",
                 Arguments = $"upgrade --id {appId} --silent --accept-package-agreements --accept-source-agreements",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
+                UseShellExecute = true,
+                Verb = "runas",
+                WindowStyle = ProcessWindowStyle.Hidden
             };
 
             using var process = new Process { StartInfo = psi };
-            process.OutputDataReceived += (s, e) => { if (e.Data != null) Log(e.Data); };
             process.Start();
-            process.BeginOutputReadLine();
 
-            await process.WaitForExitAsync();
+            // Wait for installation process exit or 120-second timeout to prevent indefinite hangs
+            var completedTask = await Task.WhenAny(process.WaitForExitAsync(), Task.Delay(120000));
+            if (completedTask != process.WaitForExitAsync())
+            {
+                try { process.Kill(); } catch {}
+                throw new TimeoutException("Winget upgrade timed out.");
+            }
 
             bool ok = process.ExitCode == 0;
             Log($"Upgrade of {appId} finished. Exit Code: {process.ExitCode}");
@@ -453,7 +465,14 @@ public class SoftwareUpdaterEngine
             }
 
             Log("Installer running in background, waiting for completion...");
-            await process.WaitForExitAsync();
+            
+            // Wait for installation process exit or 180-second timeout to prevent indefinite hangs
+            var completedTask = await Task.WhenAny(process.WaitForExitAsync(), Task.Delay(180000));
+            if (completedTask != process.WaitForExitAsync())
+            {
+                try { process.Kill(); } catch {}
+                throw new TimeoutException("Installer process timed out.");
+            }
 
             bool success = process.ExitCode == 0 || process.ExitCode == 3010 || process.ExitCode == 1641;
             Log($"Installer exited with code: {process.ExitCode}");

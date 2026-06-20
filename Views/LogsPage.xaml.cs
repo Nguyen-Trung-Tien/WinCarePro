@@ -16,6 +16,7 @@ public sealed partial class LogsPage : Page
     public LogsPage()
     {
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = new LogsViewModel();
         this.Loaded += (s, e) => DataContext = ViewModel;
     }
@@ -78,8 +79,16 @@ public sealed partial class LogsPage : Page
 
     internal static Brush GetStatusColor(string status)
     {
-        var color = status == "Success" ? Colors.LightGreen : Colors.Red;
-        return new SolidColorBrush(color);
+        return status == "Success" 
+            ? new SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 16, 185, 129)) 
+            : new SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 239, 68, 68));
+    }
+
+    internal static Brush GetStatusBg(string status)
+    {
+        return status == "Success" 
+            ? new SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(30, 16, 185, 129)) 
+            : new SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(30, 239, 68, 68));
     }
 
     internal static string FormatDateTime(DateTime dt) => dt.ToString("yyyy-MM-dd HH:mm:ss");

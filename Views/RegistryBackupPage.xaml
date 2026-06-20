@@ -12,22 +12,29 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="15" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,16">
-            <TextBlock Text="Registry Diagnostics &amp; Snapshots" Style="{ThemeResource TitleTextBlockStyle}" FontWeight="Bold" />
-            <TextBlock Text="Scan registry trees for broken keys, export hive backups, and manage Windows System Restore snapshots." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-        </StackPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <StackPanel Spacing="4">
+                <TextBlock Text="Registry Diagnostics &amp; Snapshots" FontSize="28" FontWeight="ExtraBold" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                <TextBlock Text="Scan registry trees for broken keys, export hive backups, and manage Windows System Restore snapshots." FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+            </StackPanel>
+        </Grid>
 
         <!-- Pivot Tabs -->
         <Pivot Grid.Row="1">
             <!-- Registry Scanner Tab -->
             <PivotItem Header="Registry Scanner">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,12,12,12" Padding="16">
+                <Border Style="{StaticResource ModernCardStyle}" CornerRadius="0,16,16,16" Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -35,42 +42,54 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12" Margin="0,0,0,16">
-                            <Button Content="Scan Registry" Style="{StaticResource AccentButtonStyle}" Click="OnScanRegistryClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanningRegistry), Mode=OneWay}" Padding="16,8" CornerRadius="6" />
-                            <Button Content="Fix Selected" Style="{StaticResource DefaultButtonStyle}" Click="OnFixRegistryClick" IsEnabled="{x:Bind CanFix(ViewModel.RegistryIssues.Count, ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" />
+                            <Button Content="Scan Registry" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanRegistryClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanningRegistry), Mode=OneWay}" Padding="20,10" CornerRadius="8" FontWeight="Bold" />
+                            <Button Content="Fix Selected" Style="{StaticResource DefaultButtonStyle}" Click="OnFixRegistryClick" IsEnabled="{x:Bind CanFix(ViewModel.RegistryIssues.Count, ViewModel.IsBusy), Mode=OneWay}" Padding="20,10" CornerRadius="8" Foreground="#FF3B82F6" BorderBrush="#333B82F6" FontWeight="Bold" />
                         </StackPanel>
 
                         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.RegistryIssues, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
                             <ListView.HeaderTemplate>
                                 <DataTemplate>
-                                    <Grid Padding="12,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,4">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="180" />
                                             <ColumnDefinition Width="350" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Select" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="Category" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" Margin="12,0,0,0" />
-                                        <TextBlock Grid.Column="2" Text="Registry Key Path" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="3" Text="Diagnostics Details" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Text="Select" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="1" Text="Category" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" Margin="12,0,0,0" />
+                                        <TextBlock Grid.Column="2" Text="Registry Key Path" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="3" Text="Diagnostics Details" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
                                     </Grid>
                                 </DataTemplate>
                             </ListView.HeaderTemplate>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:RegistryIssue">
-                                    <Grid Padding="12" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="180" />
                                             <ColumnDefinition Width="350" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
                                         <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" />
                                         
-                                        <TextBlock Grid.Column="1" Text="{x:Bind Section}" FontWeight="SemiBold" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" Margin="12,0,0,0" />
-                                        <TextBlock Grid.Column="2" Text="{x:Bind KeyPath}" VerticalAlignment="Center" TextWrapping="NoWrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,12,0" />
-                                        <TextBlock Grid.Column="3" Text="{x:Bind Description}" VerticalAlignment="Center" TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="12,0,0,0">
+                                            <Border Width="24" Height="24" Background="#15FF8B00" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE945;" Foreground="Orange" FontSize="11" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="{x:Bind Section}" FontWeight="SemiBold" FontSize="12.5" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        
+                                        <TextBlock Grid.Column="2" Text="{x:Bind KeyPath}" VerticalAlignment="Center" TextWrapping="NoWrap" FontSize="11.5" FontFamily="Consolas" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,12,0" />
+                                        <TextBlock Grid.Column="3" Text="{x:Bind Description}" VerticalAlignment="Center" TextWrapping="Wrap" FontSize="12.5" />
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -81,8 +100,8 @@
 
             <!-- Registry Backup Tab -->
             <PivotItem Header="Registry Backups">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,12,12,12" Padding="16">
-                    <Grid ColumnSpacing="24">
+                <Border Style="{StaticResource ModernCardStyle}" CornerRadius="0,16,16,16" Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <Grid ColumnSpacing="28">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="3*" />
@@ -90,11 +109,11 @@
 
                         <!-- Creator -->
                         <StackPanel Grid.Column="0" Spacing="16">
-                            <TextBlock Text="Create Registry Backup" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                            <TextBlock Text="Exports your Current User registry keys. Safely restore them if program settings get corrupted." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                            <TextBlock Text="Create Registry Backup" FontSize="18" FontWeight="Bold" />
+                            <TextBlock Text="Exports your Current User registry keys. Safely restore them if program settings get corrupted." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="18" />
                             
                             <TextBox Header="Backup Filename Name" Text="{x:Bind ViewModel.BackupName, Mode=TwoWay}" CornerRadius="6" />
-                            <Button Content="Create Backup File" Style="{StaticResource AccentButtonStyle}" Click="OnCreateBackupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,6" />
+                            <Button Content="Create Backup File" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnCreateBackupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,10" FontWeight="Bold" />
                         </StackPanel>
 
                         <!-- List & Restore -->
@@ -103,21 +122,27 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="Available Registry Backup Files" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" Margin="0,0,0,12" />
+                            <TextBlock Grid.Row="0" Text="Available Registry Backup Files" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
                             
                             <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.RegistryBackups, Mode=OneWay}" SelectionMode="None">
+                                <ListView.ItemContainerTransitions>
+                                    <TransitionCollection>
+                                        <AddDeleteThemeTransition />
+                                        <RepositionThemeTransition />
+                                    </TransitionCollection>
+                                </ListView.ItemContainerTransitions>
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="models:RegistryBackupItem">
-                                        <Grid Padding="8,12" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                        <Grid Padding="8,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                                <TextBlock Text="{x:Bind FilePath}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="10" TextWrapping="NoWrap" />
+                                            <StackPanel VerticalAlignment="Center" Spacing="2">
+                                                <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold" FontSize="13" />
+                                                <TextBlock Text="{x:Bind FilePath}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" FontFamily="Consolas" />
                                             </StackPanel>
-                                            <Button Grid.Column="1" Content="Restore Backup" Click="OnRestoreBackupClick" Tag="{x:Bind FilePath}" IsEnabled="{Binding DataContext.IsNotBusy, ElementName=RootPage}" CornerRadius="4" FontSize="11" Padding="8,4" />
+                                            <Button Grid.Column="1" Content="Restore Backup" Click="OnRestoreBackupClick" Tag="{x:Bind FilePath}" IsEnabled="{Binding DataContext.IsNotBusy, ElementName=RootPage}" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" FontSize="11" Padding="12,6" Foreground="{ThemeResource SystemAccentColor}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" FontWeight="Bold" />
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -129,8 +154,8 @@
 
             <!-- System Restore Points Tab -->
             <PivotItem Header="System Restore Snapshots">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,12,12,12" Padding="16">
-                    <Grid ColumnSpacing="24">
+                <Border Style="{StaticResource ModernCardStyle}" CornerRadius="0,16,16,16" Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <Grid ColumnSpacing="28">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="3*" />
@@ -138,16 +163,16 @@
 
                         <!-- Creator -->
                         <StackPanel Grid.Column="0" Spacing="16">
-                            <TextBlock Text="Create Restore Point" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                            <TextBlock Text="Create a system state snapshot. Recommended before applying major Windows changes or driver updates." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                            <TextBlock Text="Create Restore Point" FontSize="18" FontWeight="Bold" />
+                            <TextBlock Text="Create a system state snapshot. Recommended before applying major Windows changes or driver updates." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="18" />
 
                             <TextBox Header="Restore Point Description" Text="{x:Bind ViewModel.RestorePointName, Mode=TwoWay}" CornerRadius="6" />
-                            <Button Content="Create System Point" Style="{StaticResource AccentButtonStyle}" Click="OnCreateRestorePointClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,6" />
+                            <Button Content="Create System Point" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnCreateRestorePointClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,10" FontWeight="Bold" />
 
                             <MenuFlyoutSeparator Margin="0,12" />
-                            <TextBlock Text="Recovery Wizard" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                            <TextBlock Text="Launch the official Windows System Restore recovery wizard to roll back your entire computer." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
-                            <Button Content="Launch Restore Wizard" Click="OnLaunchWizardClick" CornerRadius="6" Padding="12,6" />
+                            <TextBlock Text="Recovery Wizard" FontSize="18" FontWeight="Bold" />
+                            <TextBlock Text="Launch the official Windows System Restore recovery wizard to roll back your entire computer." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="18" />
+                            <Button Content="Launch Restore Wizard" Click="OnLaunchWizardClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="8" Padding="16,10" Foreground="{ThemeResource SystemAccentColor}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" FontWeight="Bold" />
                         </StackPanel>
 
                         <!-- List -->
@@ -156,35 +181,44 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="System Restore Points History" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" Margin="0,0,0,12" />
+                            <TextBlock Grid.Row="0" Text="System Restore Points History" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
 
                             <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.RestorePoints, Mode=OneWay}" SelectionMode="None">
+                                <ListView.ItemContainerTransitions>
+                                     <TransitionCollection>
+                                         <AddDeleteThemeTransition />
+                                         <RepositionThemeTransition />
+                                     </TransitionCollection>
+                                 </ListView.ItemContainerTransitions>
                                 <ListView.HeaderTemplate>
                                     <DataTemplate>
-                                        <Grid Padding="12,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                        <Grid Padding="12,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,4">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="80" />
+                                                <ColumnDefinition Width="100" />
                                                 <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="150" />
+                                                <ColumnDefinition Width="160" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Text="Sequence" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                            <TextBlock Grid.Column="1" Text="Description" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                            <TextBlock Grid.Column="2" Text="Created Date" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                            <TextBlock Text="Sequence" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                            <TextBlock Grid.Column="1" Text="Description" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                            <TextBlock Grid.Column="2" Text="Created Date" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.HeaderTemplate>
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="engines:RestorePointInfo">
-                                        <Grid Padding="12" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                        <Grid Padding="12,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="80" />
+                                                <ColumnDefinition Width="100" />
                                                 <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="150" />
+                                                <ColumnDefinition Width="160" />
                                             </Grid.ColumnDefinitions>
                                             
-                                            <TextBlock Text="{x:Bind SequenceNumber}" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind Description}" FontWeight="SemiBold" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                            <TextBlock Grid.Column="2" Text="{x:Bind CreatedTime}" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                            <Border Width="24" Height="24" Background="#157F56D9" CornerRadius="12" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind SequenceNumber}" FontSize="11" Foreground="#FF7F56D9" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            
+                                            <TextBlock Grid.Column="1" Text="{x:Bind Description}" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="12.5" />
+                                            <TextBlock Grid.Column="2" Text="{x:Bind CreatedTime}" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>

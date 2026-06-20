@@ -13,6 +13,7 @@ public sealed partial class RegistryBackupPage : Page
     public RegistryBackupPage()
     {
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = new RegistryBackupViewModel();
         this.Loaded += (s, e) => DataContext = ViewModel;
     }

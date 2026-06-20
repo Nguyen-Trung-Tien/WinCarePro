@@ -15,6 +15,7 @@ public sealed partial class StartupPage : Page
     public StartupPage()
     {
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = new StartupViewModel();
         this.Loaded += (s, e) => DataContext = ViewModel;
     }
@@ -98,8 +99,21 @@ public sealed partial class StartupPage : Page
 
     internal static Brush GetServiceColor(string status)
     {
-        var color = status == "Running" ? Colors.LightGreen : Colors.Gray;
-        return new SolidColorBrush(color);
+        return status == "Running" 
+            ? new SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 16, 185, 129)) 
+            : new SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 156, 163, 175));
+    }
+
+    internal static Brush GetServiceBg(string status)
+    {
+        return status == "Running" 
+            ? new SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(30, 16, 185, 129)) 
+            : new SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(30, 156, 163, 175));
+    }
+
+    internal static string GetServiceIcon(string status)
+    {
+        return status == "Running" ? "\uE73E" : "\uE71A";
     }
 
     internal static bool CanStartService(string status)

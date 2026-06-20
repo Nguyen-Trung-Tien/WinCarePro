@@ -123,7 +123,7 @@ public class SystemEngine
             ProgressChanged?.Invoke(40);
 
             // 2. Rename SoftwareDistribution & Catroot2 folder
-            Log("Renaming SoftwareDistribution directory...");
+            Log("Renaming SoftwareDistribution & catroot2 directories...");
             string windir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
             string softDist = Path.Combine(windir, "SoftwareDistribution");
             string softDistOld = softDist + ".old";
@@ -143,6 +143,27 @@ public class SystemEngine
                 catch (Exception ex)
                 {
                     Log($"Could not rename SoftwareDistribution folder: {ex.Message}");
+                }
+            }
+
+            string catroot2 = Path.Combine(windir, @"System32\catroot2");
+            string catroot2Old = catroot2 + ".old";
+
+            if (Directory.Exists(catroot2Old))
+            {
+                try { Directory.Delete(catroot2Old, true); } catch { }
+            }
+
+            if (Directory.Exists(catroot2))
+            {
+                try
+                {
+                    Directory.Move(catroot2, catroot2Old);
+                    Log("catroot2 successfully renamed to catroot2.old");
+                }
+                catch (Exception ex)
+                {
+                    Log($"Could not rename catroot2 folder: {ex.Message}");
                 }
             }
             ProgressChanged?.Invoke(70);

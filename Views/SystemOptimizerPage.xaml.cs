@@ -14,6 +14,7 @@ public sealed partial class SystemOptimizerPage : Page
     public SystemOptimizerPage()
     {
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = new SystemOptimizerViewModel();
         this.Loaded += (s, e) => DataContext = ViewModel;
     }
@@ -58,7 +59,13 @@ public sealed partial class SystemOptimizerPage : Page
 
     public static Brush GetTweakStatusColor(bool optimized)
     {
-        var color = optimized ? Colors.LightGreen : Colors.Orange;
+        var color = optimized ? Windows.UI.Color.FromArgb(255, 16, 185, 129) : Windows.UI.Color.FromArgb(255, 245, 158, 11);
+        return new SolidColorBrush(color);
+    }
+
+    public static Brush GetTweakStatusBadgeBg(bool optimized)
+    {
+        var color = optimized ? Windows.UI.Color.FromArgb(30, 16, 185, 129) : Windows.UI.Color.FromArgb(30, 245, 158, 11);
         return new SolidColorBrush(color);
     }
 }

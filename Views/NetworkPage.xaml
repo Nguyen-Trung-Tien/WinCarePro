@@ -8,22 +8,27 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid Grid.Row="0" Margin="0,0,0,24">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <TextBlock Text="Network Center &amp; Diagnostics" Style="{ThemeResource TitleTextBlockStyle}" FontWeight="Bold" />
-                <TextBlock Text="Check connectivity stability, test network performance, and repair network configuration adapters." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                <TextBlock Text="Network Center &amp; Diagnostics" FontSize="28" FontWeight="ExtraBold" CharacterSpacing="-10" />
+                <TextBlock Text="Check connectivity stability, test network performance, and repair network configuration adapters." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
             </StackPanel>
-            <Button Grid.Column="1" Content="Refresh Diagnostics" Style="{StaticResource AccentButtonStyle}" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Center" Padding="16,8" CornerRadius="6" />
+            <Button Grid.Column="1" Content="Refresh Diagnostics" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Center" Padding="18,9" CornerRadius="8" FontWeight="SemiBold" />
         </Grid>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -40,16 +45,16 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Row 0, Col 0: Diagnostics Status Overview -->
-                <Border Grid.Row="0" Grid.Column="0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         
-                        <TextBlock Grid.Row="0" Text="Connectivity Status" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" Margin="0,0,0,16" />
+                        <TextBlock Grid.Row="0" Text="Connectivity Diagnostics" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
                         
-                        <Grid Grid.Row="1" RowSpacing="12" ColumnSpacing="20">
+                        <Grid Grid.Row="1" RowSpacing="12" ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
@@ -59,76 +64,118 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="12">
-                                <FontIcon Glyph="&#xE774;" FontSize="20" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
-                                <StackPanel>
-                                    <TextBlock Text="Internet Status" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.InternetStatus, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="Bold" />
-                                </StackPanel>
-                            </StackPanel>
+                            <!-- Internet Status Info Card -->
+                            <Border Grid.Row="0" Grid.Column="0" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="10" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="32" Height="32" Background="#151E90FF" CornerRadius="16" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE774;" FontSize="16" Foreground="DodgerBlue" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Internet Status" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind ViewModel.InternetStatus, Mode=OneWay}" FontSize="14" FontWeight="Bold" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
 
-                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="12">
-                                <FontIcon Glyph="&#xE815;" FontSize="20" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
-                                <StackPanel>
-                                    <TextBlock Text="Gateway IP Address" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.GatewayAddress, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="Bold" />
-                                </StackPanel>
-                            </StackPanel>
+                            <!-- Gateway Info Card -->
+                            <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="10" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="32" Height="32" Background="#152E8B57" CornerRadius="16" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE815;" FontSize="16" Foreground="MediumSeaGreen" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="Gateway IP Address" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind ViewModel.GatewayAddress, Mode=OneWay}" FontSize="14" FontWeight="Bold" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
 
-                            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Spacing="12">
-                                <FontIcon Glyph="&#xE909;" FontSize="20" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
-                                <StackPanel>
-                                    <TextBlock Text="DNS Resolution" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.DnsStatus, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="Bold" />
-                                </StackPanel>
-                            </StackPanel>
+                            <!-- DNS Info Card -->
+                            <Border Grid.Row="1" Grid.Column="0" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="10" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="32" Height="32" Background="#15FFA500" CornerRadius="16" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE909;" FontSize="16" Foreground="Orange" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="DNS Resolution" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind ViewModel.DnsStatus, Mode=OneWay}" FontSize="14" FontWeight="Bold" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
 
-                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="12">
-                                <FontIcon Glyph="&#xF137;" FontSize="20" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
-                                <StackPanel>
-                                    <TextBlock Text="IP Address Stack" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.IpStatus, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="Bold" />
-                                </StackPanel>
-                            </StackPanel>
+                            <!-- IP Address Stack Card -->
+                            <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="10" Padding="14">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="32" Height="32" Background="#15708090" CornerRadius="16" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xF137;" FontSize="16" Foreground="SlateGray" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="IP Address Stack" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind ViewModel.IpStatus, Mode=OneWay}" FontSize="14" FontWeight="Bold" />
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
                         </Grid>
                     </Grid>
                 </Border>
 
                 <!-- Row 0, Col 1: Ping / Speed Indicators -->
-                <Border Grid.Row="0" Grid.Column="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
-                    <StackPanel Spacing="12">
-                        <TextBlock Text="Signal &amp; Speed Quality" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Signal &amp; Speed Quality" FontSize="18" FontWeight="Bold" />
                         
-                        <Grid ColumnSpacing="8">
+                        <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                <TextBlock Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="ExtraBold" Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center" />
-                                <TextBlock Text="Latency" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                <TextBlock Text="{x:Bind FormatPercent(ViewModel.PacketLossPercent), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="ExtraBold" Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center" />
-                                <TextBlock Text="Packet Loss" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
-                            </StackPanel>
+                            
+                            <Border Grid.Column="0" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="10" Padding="14" HorizontalAlignment="Stretch">
+                                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                    <TextBlock Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}" FontSize="24" FontWeight="ExtraBold" Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center" />
+                                    <TextBlock Text="Latency" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            
+                            <Border Grid.Column="1" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="10" Padding="14" HorizontalAlignment="Stretch">
+                                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.PacketLossPercent), Mode=OneWay}" FontSize="24" FontWeight="ExtraBold" Foreground="Tomato" HorizontalAlignment="Center" />
+                                    <TextBlock Text="Packet Loss" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
                         </Grid>
 
                         <MenuFlyoutSeparator />
 
-                        <StackPanel Spacing="6">
+                        <StackPanel Spacing="8">
                             <TextBlock Text="Internet Speed Test" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                             <Grid>
-                                <TextBlock Text="{x:Bind FormatMbps(ViewModel.DownloadSpeedMbps), Mode=OneWay}" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" HorizontalAlignment="Left" />
-                                <Button Content="Test Speed" Style="{StaticResource DefaultButtonStyle}" Click="OnSpeedTestClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" HorizontalAlignment="Right" Padding="12,4" CornerRadius="4" />
+                                <TextBlock Text="{x:Bind FormatMbps(ViewModel.DownloadSpeedMbps), Mode=OneWay}" FontSize="22" FontWeight="ExtraBold" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="{ThemeResource SystemAccentColor}" />
+                                <Button Content="Test Speed" Style="{StaticResource DefaultButtonStyle}" Click="OnSpeedTestClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" HorizontalAlignment="Right" Padding="14,6" CornerRadius="6" />
                             </Grid>
-                            <ProgressBar Value="{x:Bind ViewModel.DownloadSpeedMbps, Mode=OneWay}" Maximum="100" Height="4" Foreground="{ThemeResource SystemAccentColor}" CornerRadius="2" />
+                            <ProgressBar Value="{x:Bind ViewModel.DownloadSpeedMbps, Mode=OneWay}" Maximum="100" Height="8" Foreground="{StaticResource PrimaryAccentGradient}" CornerRadius="4" Margin="0,4,0,0"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
                 <!-- Row 1, Col 0: Diagnostics Panel Console -->
-                <Border Grid.Row="1" Grid.Column="0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -136,7 +183,7 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Diagnostics Terminal" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="0" Text="Diagnostics Terminal" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
 
                         <Grid Grid.Row="1" ColumnSpacing="12" Margin="0,0,0,16">
                             <Grid.ColumnDefinitions>
@@ -145,48 +192,48 @@
                             </Grid.ColumnDefinitions>
                             <TextBox x:Name="HostInput" Text="{x:Bind ViewModel.TestHost, Mode=TwoWay}" PlaceholderText="Enter Domain or IP (e.g. google.com)" CornerRadius="6" VerticalAlignment="Center" />
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                <Button Content="Ping" Click="OnPingClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" />
-                                <Button Content="Trace" Click="OnTraceClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" />
-                                <Button Content="DNS Lookup" Click="OnDnsLookupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" />
+                                <Button Content="Ping" Click="OnPingClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" />
+                                <Button Content="Trace" Click="OnTraceClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" />
+                                <Button Content="DNS Lookup" Click="OnDnsLookupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" />
                             </StackPanel>
                         </Grid>
 
-                        <TextBox Grid.Row="2" Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" FontFamily="Consolas" FontSize="12" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" BorderThickness="0" CornerRadius="6" ScrollViewer.VerticalScrollBarVisibility="Auto" Height="280" />
+                        <TextBox Grid.Row="2" Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" Style="{StaticResource DarkTerminalStyle}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Height="280" />
                     </Grid>
                 </Border>
 
                 <!-- Row 1, Col 1: Repair Center Toolkit -->
-                <Border Grid.Row="1" Grid.Column="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Network Repair Toolkit" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="0" Text="Network Repair Toolkit" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
 
                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                             <StackPanel Spacing="10">
-                                <Button Content="Flush DNS Cache" Click="OnRepairClick" Tag="dns" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" />
-                                <Button Content="Reset Winsock Catalog" Click="OnRepairClick" Tag="winsock" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" />
-                                <Button Content="Reset TCP/IP Stack" Click="OnRepairClick" Tag="tcpip" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" />
-                                <Button Content="Release / Renew IP" Click="OnRepairClick" Tag="iprenew" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" />
-                                <Button Content="Restart Active Adapter" Click="OnRepairClick" Tag="adapter" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" />
-                                <Button Content="Reset Windows Firewall" Click="OnRepairClick" Tag="firewall" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" />
-                                <Button Content="Reset Proxy Settings" Click="OnRepairClick" Tag="proxy" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" />
+                                <Button Content="Flush DNS Cache" Click="OnRepairClick" Tag="dns" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,8" />
+                                <Button Content="Reset Winsock Catalog" Click="OnRepairClick" Tag="winsock" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,8" />
+                                <Button Content="Reset TCP/IP Stack" Click="OnRepairClick" Tag="tcpip" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,8" />
+                                <Button Content="Release / Renew IP" Click="OnRepairClick" Tag="iprenew" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,8" />
+                                <Button Content="Restart Active Adapter" Click="OnRepairClick" Tag="adapter" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,8" />
+                                <Button Content="Reset Windows Firewall" Click="OnRepairClick" Tag="firewall" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,8" />
+                                <Button Content="Reset Proxy Settings" Click="OnRepairClick" Tag="proxy" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,8" />
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>
                 </Border>
 
                 <!-- Port Scanner Row 2, Col 0 -->
-                <Border Grid.Row="2" Grid.Column="0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="12" Padding="20">
+                <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="Port Scanner" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" Margin="0,0,0,12" />
+                        <TextBlock Grid.Row="0" Text="Port Scanner" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
                         
                         <Grid Grid.Row="1" ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
@@ -196,7 +243,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBox Text="{x:Bind ViewModel.PortScannerHost, Mode=TwoWay}" PlaceholderText="Host IP (e.g. localhost)" Header="Target IP" CornerRadius="6" />
                             <TextBox Grid.Column="1" Text="{x:Bind ViewModel.PortScannerPorts, Mode=TwoWay}" PlaceholderText="e.g. 80, 443, 21, 22" Header="Ports to Scan" CornerRadius="6" />
-                            <Button Grid.Column="2" Content="Scan Ports" Click="OnScanPortsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Bottom" Padding="16,8" CornerRadius="6" />
+                            <Button Grid.Column="2" Content="Scan Ports" Click="OnScanPortsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Bottom" Padding="18,9" CornerRadius="8" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" FontWeight="SemiBold" />
                         </Grid>
                     </Grid>
                 </Border>

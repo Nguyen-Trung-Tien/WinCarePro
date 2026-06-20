@@ -12,6 +12,7 @@ public sealed partial class SecurityPrivacyPage : Page
     public SecurityPrivacyPage()
     {
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = new SecurityPrivacyViewModel();
         this.Loaded += (s, e) => DataContext = ViewModel;
     }

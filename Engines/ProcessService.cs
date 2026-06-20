@@ -11,6 +11,42 @@ namespace WinCarePro.Engines;
 
 public class ProcessService
 {
+    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+    private static extern IntPtr OpenProcess(int processAccess, bool bInheritHandle, int processId);
+
+    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+    private static extern bool QueryFullProcessImageName(IntPtr hProcess, int dwFlags, System.Text.StringBuilder lpExeName, ref int lpdwSize);
+
+    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool CloseHandle(IntPtr hObject);
+
+    private const int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
+
+    private static string GetProcessExecutablePath(Process p)
+    {
+        if (p.Id <= 4) return "System Process";
+
+        IntPtr hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, p.Id);
+        if (hProcess != IntPtr.Zero)
+        {
+            try
+            {
+                int capacity = 2048;
+                var builder = new System.Text.StringBuilder(capacity);
+                if (QueryFullProcessImageName(hProcess, 0, builder, ref capacity))
+                {
+                    return builder.ToString();
+                }
+            }
+            catch { }
+            finally
+            {
+                CloseHandle(hProcess);
+            }
+        }
+        return "System Process";
+    }
+
     public async Task<List<ProcessInfo>> GetRunningProcessesAsync()
     {
         var rawProcesses = Process.GetProcesses();
@@ -85,11 +121,16 @@ public class ProcessService
             // Get FilePath and Publisher
             try
             {
-                info.FilePath = p.MainModule?.FileName ?? "";
-                if (!string.IsNullOrEmpty(info.FilePath) && File.Exists(info.FilePath))
+                info.FilePath = GetProcessExecutablePath(p);
+                if (info.FilePath != "System Process" && !string.IsNullOrEmpty(info.FilePath) && File.Exists(info.FilePath))
                 {
                     var fileInfo = FileVersionInfo.GetVersionInfo(info.FilePath);
                     info.Publisher = fileInfo.CompanyName ?? "Unknown Publisher";
+                }
+                else
+                {
+                    info.FilePath = "System Process";
+                    info.Publisher = "Microsoft Corporation";
                 }
             }
             catch

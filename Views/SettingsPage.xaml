@@ -8,31 +8,37 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="15" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,16">
-            <TextBlock Text="Settings &amp; Configuration" Style="{ThemeResource TitleTextBlockStyle}" FontWeight="Bold" />
-            <TextBlock Text="Personalize application UI preferences and logs storage thresholds." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-        </StackPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <StackPanel Spacing="4">
+                <TextBlock Text="Settings &amp; Configuration" FontSize="28" FontWeight="ExtraBold" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                <TextBlock Text="Personalize application UI preferences and logs storage thresholds." FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+            </StackPanel>
+        </Grid>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="20" MaxWidth="600" HorizontalAlignment="Left">
+            <StackPanel Spacing="24" MaxWidth="600" HorizontalAlignment="Left">
                 
-
                 <!-- Operations configuration -->
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                    <StackPanel Spacing="16">
-                        <TextBlock Text="Maintenance Automation" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
+                <Border Style="{StaticResource ModernCardStyle}" Padding="24" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel Spacing="20">
+                        <TextBlock Text="Maintenance Automation" FontSize="18" FontWeight="Bold" />
                         
-                        <ToggleSwitch x:Name="AutoScanToggle" Toggled="OnAutoScanToggled" Header="Automated Maintenance Scan" CornerRadius="4" />
+                        <ToggleSwitch x:Name="AutoScanToggle" Toggled="OnAutoScanToggled" Header="Automated Maintenance Scan" CornerRadius="6" FontSize="12.5" />
                         
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Default Reports Export Format" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            <ComboBox x:Name="ReportFormatCombo" SelectionChanged="OnReportFormatChanged" SelectedIndex="0" CornerRadius="4" Width="180">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Default Reports Export Format" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <ComboBox x:Name="ReportFormatCombo" SelectionChanged="OnReportFormatChanged" SelectedIndex="0" CornerRadius="6" Width="180" Height="32">
                                 <ComboBoxItem Content="Plain Text Document (.txt)" Tag="TXT" />
                                 <ComboBoxItem Content="JSON Data (.json)" Tag="JSON" />
                             </ComboBox>
@@ -41,28 +47,46 @@
                 </Border>
 
                 <!-- Data Management -->
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                    <StackPanel Spacing="12">
-                        <TextBlock Text="Local Database Management" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                        <TextBlock Text="Delete old log files and reports registered in the SQLite tables." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                <Border Style="{StaticResource ModernCardStyle}" Padding="24" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Local Database Management" FontSize="18" FontWeight="Bold" />
+                        <TextBlock Text="Delete old log files and reports registered in the SQLite tables." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="18" />
                         
-                        <Button Content="Purge Database Logs History" Click="OnPurgeDatabaseClick" Style="{StaticResource DefaultButtonStyle}" Foreground="Red" CornerRadius="6" Padding="12,6" />
+                        <Button Content="Purge Database Logs History" Click="OnPurgeDatabaseClick" Style="{StaticResource DefaultButtonStyle}" Foreground="#EF4444" BorderBrush="#33EF4444" CornerRadius="8" Padding="16,10" FontWeight="Bold" HorizontalAlignment="Left" />
                     </StackPanel>
                 </Border>
 
                 <!-- About WinCare Pro & Updates -->
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
-                    <StackPanel Spacing="12">
-                        <TextBlock Text="WinCare Pro" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                        <TextBlock x:Name="AppVersionLabel" Text="Version 1.0.0" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="Author: Nguyen Trung Tien" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="All-in-One Windows Maintenance, Optimization, and Repair Suite." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                <Border Style="{StaticResource ModernCardStyle}" Padding="24" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="WinCare Pro" FontSize="18" FontWeight="Bold" />
+                        
+                        <Grid RowSpacing="8" ColumnSpacing="20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Text="Version:" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Column="1" x:Name="AppVersionLabel" Text="Version 1.0.0" FontSize="12.5" FontWeight="SemiBold" />
+                            
+                            <TextBlock Grid.Row="1" Text="Author:" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="Nguyen Trung Tien" FontSize="12.5" FontWeight="SemiBold" />
+
+                            <TextBlock Grid.Row="2" Text="Description:" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="All-in-One Windows Maintenance, Optimization, and Repair Suite." FontSize="12.5" FontWeight="SemiBold" TextWrapping="Wrap" />
+                        </Grid>
                         
                         <MenuFlyoutSeparator Margin="0,4" />
                         
-                        <TextBlock Text="Software Updates" Style="{ThemeResource BodyTextBlockStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Software Updates" FontSize="14" FontWeight="Bold" />
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <Button x:Name="CheckUpdatesBtn" Content="Check for Updates" Click="OnCheckUpdatesClick" CornerRadius="6" Padding="12,6" />
+                            <Button x:Name="CheckUpdatesBtn" Content="Check for Updates" Click="OnCheckUpdatesClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="8" Padding="16,10" FontWeight="Bold" />
                             <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Width="20" Height="20" VerticalAlignment="Center" />
                             <TextBlock x:Name="UpdateStatusLabel" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
                         </StackPanel>
@@ -71,8 +95,8 @@
                         
                         <MenuFlyoutSeparator Margin="0,4" />
                         
-                        <TextBlock Text="Powered by WinUI 3, .NET 10.0, and SQLite." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="© 2026 WinCare Pro Studio. All rights reserved." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="Powered by WinUI 3, .NET 10.0, and SQLite." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="© 2026 WinCare Pro Studio. All rights reserved." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                     </StackPanel>
                 </Border>
                 

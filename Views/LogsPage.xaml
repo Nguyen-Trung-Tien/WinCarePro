@@ -10,24 +10,29 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="15" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid Grid.Row="0" Margin="0,0,0,24">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel>
-                <TextBlock Text="Logs Center &amp; Reports Explorer" Style="{ThemeResource TitleTextBlockStyle}" FontWeight="Bold" />
-                <TextBlock Text="Review system optimization activities history and compile detailed diagnostic reports." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+            <StackPanel Spacing="4">
+                <TextBlock Text="Logs Center &amp; Reports Explorer" FontSize="28" FontWeight="ExtraBold" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                <TextBlock Text="Review system optimization activities history and compile detailed diagnostic reports." FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
             </StackPanel>
             
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button Content="Refresh Registers" Style="{StaticResource AccentButtonStyle}" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" />
+                <Button Content="Refresh Registers" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Padding="20,10" CornerRadius="8" FontWeight="Bold" />
             </StackPanel>
         </Grid>
 
@@ -35,7 +40,7 @@
         <Pivot Grid.Row="1">
             <!-- Activity Logs Tab -->
             <PivotItem Header="Activity Log History">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,12,12,12" Padding="16">
+                <Border Style="{StaticResource ModernCardStyle}" CornerRadius="0,16,16,16" Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -47,7 +52,7 @@
                                 <ColumnDefinition Width="200" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ComboBox x:Name="ModuleFilterCombo" SelectionChanged="OnModuleFilterChanged" PlaceholderText="Filter by Module" CornerRadius="6" VerticalAlignment="Center" Width="180">
+                            <ComboBox x:Name="ModuleFilterCombo" SelectionChanged="OnModuleFilterChanged" PlaceholderText="Filter by Module" CornerRadius="6" VerticalAlignment="Center" Width="180" Height="32">
                                 <ComboBoxItem Content="All Modules" />
                                 <ComboBoxItem Content="Junk Cleaner" />
                                 <ComboBoxItem Content="System Repair" />
@@ -61,48 +66,63 @@
                                 <ComboBoxItem Content="Backup &amp; Restore" />
                                 <ComboBoxItem Content="Software Updater" />
                             </ComboBox>
-                            <TextBox Grid.Column="1" Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}" PlaceholderText="Search action logs..." CornerRadius="6" VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1" Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}" PlaceholderText="Search action logs..." CornerRadius="6" VerticalAlignment="Center" Height="32" />
                         </Grid>
 
                         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Logs, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                    <RepositionThemeTransition />
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
                             <ListView.HeaderTemplate>
                                 <DataTemplate>
-                                    <Grid Padding="12,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,4">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="80" />
-                                            <ColumnDefinition Width="150" />
-                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="160" />
+                                            <ColumnDefinition Width="160" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="150" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Log ID" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="Timestamp" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="2" Text="Engine Module" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="3" Text="Executed Action" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="4" Text="Result Status" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="Log ID" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="1" Text="Timestamp" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="2" Text="Engine Module" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="3" Text="Executed Action" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Grid.Column="4" Text="Result Status" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Left" />
                                     </Grid>
                                 </DataTemplate>
                             </ListView.HeaderTemplate>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="database:LogEntry">
-                                    <Grid Padding="12" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                    <Grid Padding="12,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="80" />
-                                            <ColumnDefinition Width="150" />
-                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="160" />
+                                            <ColumnDefinition Width="160" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="150" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Text="{x:Bind Id}" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="1" Text="{x:Bind local:LogsPage.FormatDateTime(CreatedAt), Mode=OneWay}" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                        <TextBlock Grid.Column="2" Text="{x:Bind Module}" FontWeight="SemiBold" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                        <TextBlock Grid.Column="3" Text="{x:Bind Action}" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                        <TextBlock Text="{x:Bind Id}" VerticalAlignment="Center" FontSize="12.5" />
+                                        <TextBlock Grid.Column="1" Text="{x:Bind local:LogsPage.FormatDateTime(CreatedAt), Mode=OneWay}" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                         
-                                        <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <FontIcon Glyph="{x:Bind local:LogsPage.GetStatusIcon(Status), Mode=OneWay}" Foreground="{x:Bind local:LogsPage.GetStatusColor(Status), Mode=OneWay}" FontSize="12" />
-                                            <TextBlock Text="{x:Bind Status}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{x:Bind local:LogsPage.GetStatusColor(Status), Mode=OneWay}" FontWeight="SemiBold" />
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <Border Width="20" Height="20" Background="#103B82F6" CornerRadius="4" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE946;" Foreground="#FF3B82F6" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <TextBlock Text="{x:Bind Module}" FontWeight="SemiBold" FontSize="12.5" VerticalAlignment="Center" />
                                         </StackPanel>
+                                        
+                                        <TextBlock Grid.Column="3" Text="{x:Bind Action}" VerticalAlignment="Center" FontSize="12.5" />
+                                        
+                                        <Border Grid.Column="4" Background="{x:Bind local:LogsPage.GetStatusBg(Status), Mode=OneWay}" CornerRadius="6" Padding="10,5" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <FontIcon Glyph="{x:Bind local:LogsPage.GetStatusIcon(Status), Mode=OneWay}" Foreground="{x:Bind local:LogsPage.GetStatusColor(Status), Mode=OneWay}" FontSize="11" VerticalAlignment="Center" />
+                                                <TextBlock Text="{x:Bind Status}" Foreground="{x:Bind local:LogsPage.GetStatusColor(Status), Mode=OneWay}" FontWeight="Bold" FontSize="11" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -113,8 +133,8 @@
 
             <!-- Exported Reports Tab -->
             <PivotItem Header="System Diagnostic Reports">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,12,12,12" Padding="16">
-                    <Grid ColumnSpacing="24">
+                <Border Style="{StaticResource ModernCardStyle}" CornerRadius="0,16,16,16" Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <Grid ColumnSpacing="28">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="3*" />
@@ -122,15 +142,15 @@
 
                         <!-- Compiler -->
                         <StackPanel Grid.Column="0" Spacing="16">
-                            <TextBlock Text="Compile Diagnostic Report" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" />
-                            <TextBlock Text="Generates an immediate system configuration sheet, listing hardware specifications and logged optimizations." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                            <TextBlock Text="Compile Diagnostic Report" FontSize="18" FontWeight="Bold" />
+                            <TextBlock Text="Generates an immediate system configuration sheet, listing hardware specifications and logged optimizations." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="18" />
 
-                            <ComboBox x:Name="FormatCombo" SelectionChanged="OnFormatChanged" Header="Report Output Format" CornerRadius="6" Width="180">
+                            <ComboBox x:Name="FormatCombo" SelectionChanged="OnFormatChanged" Header="Report Output Format" CornerRadius="6" Width="180" Height="32" Margin="0,0,0,4">
                                 <ComboBoxItem Content="Plain Text (.txt)" Tag="TXT" IsSelected="True" />
                                 <ComboBoxItem Content="JSON Structure (.json)" Tag="JSON" />
                             </ComboBox>
                             
-                            <Button Content="Generate Diagnostic Report" Style="{StaticResource AccentButtonStyle}" Click="OnGenerateReportClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,6" />
+                            <Button Content="Generate Diagnostic Report" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnGenerateReportClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,10" FontWeight="Bold" />
                         </StackPanel>
 
                         <!-- History List -->
@@ -139,38 +159,44 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="Generated Reports History" Style="{ThemeResource SubtitleTextBlockStyle}" FontWeight="Bold" Margin="0,0,0,12" />
+                            <TextBlock Grid.Row="0" Text="Generated Reports History" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
 
                             <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Reports, Mode=OneWay}" SelectionMode="None">
+                                <ListView.ItemContainerTransitions>
+                                    <TransitionCollection>
+                                        <AddDeleteThemeTransition />
+                                        <RepositionThemeTransition />
+                                    </TransitionCollection>
+                                </ListView.ItemContainerTransitions>
                                 <ListView.HeaderTemplate>
                                     <DataTemplate>
-                                        <Grid Padding="12,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                        <Grid Padding="12,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,4">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="150" />
-                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="140" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Text="Report Document Filename" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                            <TextBlock Grid.Column="1" Text="Compiled Timestamp" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                            <TextBlock Grid.Column="2" Text="Operations" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
+                                            <TextBlock Text="Report Document Filename" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                            <TextBlock Grid.Column="1" Text="Compiled Timestamp" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" />
+                                            <TextBlock Grid.Column="2" Text="Operations" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Center" />
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.HeaderTemplate>
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="database:ReportEntry">
-                                        <Grid Padding="12" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                        <Grid Padding="12,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="150" />
-                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="140" />
                                             </Grid.ColumnDefinitions>
 
-                                            <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind ReportName}" FontWeight="SemiBold" Style="{ThemeResource CaptionTextBlockStyle}" />
-                                                <TextBlock Text="{x:Bind FilePath}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="10" TextWrapping="NoWrap" />
+                                            <StackPanel VerticalAlignment="Center" Spacing="2">
+                                                <TextBlock Text="{x:Bind ReportName}" FontWeight="SemiBold" FontSize="13" />
+                                                <TextBlock Text="{x:Bind FilePath}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" FontFamily="Consolas" />
                                             </StackPanel>
-                                            <TextBlock Grid.Column="1" Text="{x:Bind local:LogsPage.FormatDateTimeShort(CreatedAt), Mode=OneWay}" VerticalAlignment="Center" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            <Button Grid.Column="2" Content="Open Directory" Click="OnOpenReportFolderClick" Tag="{x:Bind FilePath}" CornerRadius="4" FontSize="11" Padding="8,4" HorizontalAlignment="Center" />
+                                            <TextBlock Grid.Column="1" Text="{x:Bind local:LogsPage.FormatDateTimeShort(CreatedAt), Mode=OneWay}" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                            <Button Grid.Column="2" Content="Open Directory" Click="OnOpenReportFolderClick" Tag="{x:Bind FilePath}" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" FontSize="11" Padding="12,6" Foreground="{ThemeResource SystemAccentColor}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" FontWeight="Bold" HorizontalAlignment="Center" />
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>

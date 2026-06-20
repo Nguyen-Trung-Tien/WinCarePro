@@ -8,12 +8,30 @@
     mc:Ignorable="d">
 
     <Grid>
-        <NavigationView x:Name="NavView" PaneDisplayMode="Left" SelectionChanged="OnNavSelectionChanged" IsBackButtonVisible="Collapsed" Header="Dashboard" IsSettingsVisible="True">
+        <NavigationView x:Name="NavView" PaneDisplayMode="Left" SelectionChanged="OnNavSelectionChanged" IsBackButtonVisible="Collapsed" Header="Dashboard" IsSettingsVisible="True" OpenPaneLength="280">
+            <NavigationView.PaneHeader>
+                <StackPanel Padding="20,24,16,16" Spacing="4">
+                    <TextBlock Text="WinCare Pro" FontWeight="ExtraBold" FontSize="20" CharacterSpacing="1" />
+                    <Border Background="#207F56D9" HorizontalAlignment="Left" Padding="6,2" CornerRadius="4">
+                        <TextBlock Text="Version 1.0.2" FontSize="9.5" FontWeight="Bold" Foreground="#FF7F56D9"/>
+                    </Border>
+                </StackPanel>
+            </NavigationView.PaneHeader>
+
+            <NavigationView.PaneFooter>
+                <StackPanel Padding="20,16,16,24" Spacing="6">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Ellipse Width="8" Height="8" Fill="#FF10B981" VerticalAlignment="Center"/>
+                        <TextBlock Text="System Shield Active" FontSize="12" FontWeight="SemiBold" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </NavigationView.PaneFooter>
+
             <NavigationView.MenuItems>
                 <!-- Dashboard -->
                 <NavigationViewItem Content="Dashboard" Tag="Dashboard">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xECF2;" />
+                        <FontIcon Glyph="&#xE80F;" Foreground="#FF7F56D9" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
@@ -23,17 +41,17 @@
                 <NavigationViewItemHeader Content="Care &amp; Clean" />
                 <NavigationViewItem Content="Junk Cleaner" Tag="Junk">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEA99;" />
+                        <FontIcon Glyph="&#xEA99;" Foreground="Orange" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Network Center" Tag="Network">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE774;" />
+                        <FontIcon Glyph="&#xE774;" Foreground="DodgerBlue" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="System Repair" Tag="Repair">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE90F;" />
+                        <FontIcon Glyph="&#xE780;" Foreground="Tomato" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
@@ -43,27 +61,27 @@
                 <NavigationViewItemHeader Content="System Tuning" />
                 <NavigationViewItem Content="System Optimizer" Tag="Optimizer">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEC15;" />
+                        <FontIcon Glyph="&#xE945;" Foreground="MediumPurple" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Startup &amp; Services" Tag="Startup">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEC7A;" />
+                        <FontIcon Glyph="&#xE7B5;" Foreground="Gold" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Process Manager" Tag="Process">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEEA1;" />
+                        <FontIcon Glyph="&#xE8F1;" Foreground="Teal" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Disk Tools" Tag="Disk">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7F1;" />
+                        <FontIcon Glyph="&#xE7F1;" Foreground="DeepSkyBlue" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Software Updater" Tag="Updater">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE896;" />
+                        <FontIcon Glyph="&#xE777;" Foreground="HotPink" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
@@ -73,17 +91,17 @@
                 <NavigationViewItemHeader Content="Safety &amp; Audits" />
                 <NavigationViewItem Content="Security &amp; Privacy" Tag="Security">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEA18;" />
+                        <FontIcon Glyph="&#xE727;" Foreground="MediumSeaGreen" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Registry &amp; Backup" Tag="Registry">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE753;" />
+                        <FontIcon Glyph="&#xE949;" Foreground="Orchid" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Content="Hardware Specs" Tag="Hardware">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE950;" />
+                        <FontIcon Glyph="&#xE770;" Foreground="SteelBlue" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
@@ -92,7 +110,7 @@
                 <!-- Database event listings -->
                 <NavigationViewItem Content="Logs &amp; Reports" Tag="Logs">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEECB;" />
+                        <FontIcon Glyph="&#xE8A2;" Foreground="SlateGray" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

@@ -73,33 +73,45 @@ public class LogsViewModel : ViewModelBase
 
     public void RefreshLogs()
     {
-        Logs.Clear();
-        try
+        Task.Run(() =>
         {
-            var dbLogs = DbManager.GetLogs(
-                string.IsNullOrEmpty(SelectedModuleFilter) ? null : SelectedModuleFilter,
-                string.IsNullOrEmpty(SearchQuery) ? null : SearchQuery
-            );
-            foreach (var log in dbLogs)
+            try
             {
-                Logs.Add(log);
+                var dbLogs = DbManager.GetLogs(
+                    string.IsNullOrEmpty(SelectedModuleFilter) ? null : SelectedModuleFilter,
+                    string.IsNullOrEmpty(SearchQuery) ? null : SearchQuery
+                );
+                _dispatcherQueue.TryEnqueue(() =>
+                {
+                    Logs.Clear();
+                    foreach (var log in dbLogs)
+                    {
+                        Logs.Add(log);
+                    }
+                });
             }
-        }
-        catch { }
+            catch { }
+        });
     }
 
     public void RefreshReports()
     {
-        Reports.Clear();
-        try
+        Task.Run(() =>
         {
-            var dbReports = DbManager.GetReports();
-            foreach (var r in dbReports)
+            try
             {
-                Reports.Add(r);
+                var dbReports = DbManager.GetReports();
+                _dispatcherQueue.TryEnqueue(() =>
+                {
+                    Reports.Clear();
+                    foreach (var r in dbReports)
+                    {
+                        Reports.Add(r);
+                    }
+                });
             }
-        }
-        catch { }
+            catch { }
+        });
     }
 
     public async Task GenerateNewReportAsync(DashboardViewModel dashboardVm)

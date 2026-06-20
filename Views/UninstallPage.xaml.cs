@@ -31,6 +31,31 @@ public sealed partial class UninstallPage : Page
         }
     }
 
+    private async void OnUninstallSelectedClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.UninstallSelectedAppsAsync();
+    }
+
+    private void OnSelectAllThirdPartyApps(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectAllApps(true, false);
+    }
+
+    private void OnDeselectAllThirdPartyApps(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectAllApps(false, false);
+    }
+
+    private void OnSelectAllSystemApps(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectAllApps(true, true);
+    }
+
+    private void OnDeselectAllSystemApps(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectAllApps(false, true);
+    }
+
     private async void OnDeleteLeftoversClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.DeleteLeftoversAsync();

@@ -272,8 +272,25 @@ public class OptimizationSummary
     public int TweaksApplied { get; set; }
 }
 
-public class InstalledAppInfo
+public class InstalledAppInfo : System.ComponentModel.INotifyPropertyChanged
 {
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+    protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+
+    private bool _isSelected;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            if (_isSelected != value)
+            {
+                _isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
+    }
+
     public string DisplayName { get; set; } = "";
     public string Publisher { get; set; } = "";
     public string Version { get; set; } = "";

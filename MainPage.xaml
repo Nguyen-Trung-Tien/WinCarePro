@@ -13,7 +13,7 @@
                 <StackPanel Padding="20,24,16,16" Spacing="4">
                     <TextBlock Text="WinCare Pro" FontWeight="ExtraBold" FontSize="20" CharacterSpacing="1" />
                     <Border Background="#207F56D9" HorizontalAlignment="Left" Padding="6,2" CornerRadius="4">
-                        <TextBlock Text="Version 1.0.2" FontSize="9.5" FontWeight="Bold" Foreground="#FF7F56D9"/>
+                        <TextBlock Text="Version 1.0.3" FontSize="9.5" FontWeight="Bold" Foreground="#FF7F56D9"/>
                     </Border>
                 </StackPanel>
             </NavigationView.PaneHeader>

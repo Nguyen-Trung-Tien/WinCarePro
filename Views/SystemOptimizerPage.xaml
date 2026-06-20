@@ -177,7 +177,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- Status Progress -->
-                <Border Style="{StaticResource ModernCardStyle}" Padding="16">
+                <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="16">
                     <StackPanel Spacing="8">
                         <Grid>
                             <TextBlock Text="Optimization Progress" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Left" />
@@ -189,7 +189,7 @@
                 </Border>
 
                 <!-- Delivery Optimization Cache Cleaner -->
-                <Border Style="{StaticResource ModernCardStyle}" Padding="18">
+                <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="18">
                     <StackPanel Spacing="10">
                         <TextBlock Text="Delivery Optimization Cleanup" FontSize="16" FontWeight="Bold" />
                         <TextBlock Text="Clear Windows Delivery Optimization peer update caches. Safe to purge at any time." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="14" />

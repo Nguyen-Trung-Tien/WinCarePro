@@ -1,15 +1,4 @@
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,7 +11,12 @@ namespace WinCarePro;
 public partial class App : Application
 {
     private Window? _window;
-    
+
+    private static readonly string CrashLogDir = System.IO.Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "WinCarePro", "Logs"
+    );
+
     /// <summary>
     /// Initializes the singleton application object.  This is the first line of authored code
     /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -30,14 +24,18 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
+
+        // Catch low-level CLR exceptions (e.g. missing DLLs, type load failures)
+        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+        {
+            WriteCrashLog("crash_appdomain.txt",
+                $"AppDomain Unhandled Exception:\n{e.ExceptionObject}");
+        };
+
         this.UnhandledException += (sender, e) =>
         {
-            try
-            {
-                System.IO.File.WriteAllText("d:\\WinCare\\crash_unhandled.txt", 
-                    $"Unhandled Exception:\nMessage: {e.Message}\nException: {e.Exception}\nStackTrace: {e.Exception?.StackTrace}");
-            }
-            catch { }
+            WriteCrashLog("crash_unhandled.txt",
+                $"Unhandled Exception:\nMessage: {e.Message}\nException: {e.Exception}\nStackTrace: {e.Exception?.StackTrace}");
         };
     }
 
@@ -57,12 +55,23 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
-            try
-            {
-                System.IO.File.WriteAllText("d:\\WinCare\\crash_onlaunched.txt", ex.ToString());
-            }
-            catch { }
+            WriteCrashLog("crash_onlaunched.txt", ex.ToString());
             throw;
         }
+    }
+
+    private static void WriteCrashLog(string fileName, string content)
+    {
+        try
+        {
+            if (!System.IO.Directory.Exists(CrashLogDir))
+            {
+                System.IO.Directory.CreateDirectory(CrashLogDir);
+            }
+            System.IO.File.WriteAllText(
+                System.IO.Path.Combine(CrashLogDir, fileName),
+                $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]\n{content}");
+        }
+        catch { }
     }
 }

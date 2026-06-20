@@ -44,6 +44,11 @@
                         <FontIcon Glyph="&#xEA99;" Foreground="Orange" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="App Uninstaller" Tag="Uninstaller">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE75C;" Foreground="Crimson" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Network Center" Tag="Network">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE774;" Foreground="DodgerBlue" />
@@ -85,34 +90,7 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
-                <NavigationViewItemSeparator />
 
-                <!-- Security & Snapshots -->
-                <NavigationViewItemHeader Content="Safety &amp; Audits" />
-                <NavigationViewItem Content="Security &amp; Privacy" Tag="Security">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE727;" Foreground="MediumSeaGreen" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Registry &amp; Backup" Tag="Registry">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE949;" Foreground="Orchid" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Hardware Specs" Tag="Hardware">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE770;" Foreground="SteelBlue" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                
-                <NavigationViewItemSeparator />
-
-                <!-- Database event listings -->
-                <NavigationViewItem Content="Logs &amp; Reports" Tag="Logs">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8A2;" Foreground="SlateGray" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <!-- Navigation Frame Content Area -->

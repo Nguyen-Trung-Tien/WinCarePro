@@ -262,10 +262,11 @@ public sealed partial class SettingsPage : Page
             UpdateStatusLabel.Text = "Launching installer...";
             await Task.Delay(1000);
 
-            // Start the setup file
+            // Start the setup file with silent/automatic parameters
             Process.Start(new ProcessStartInfo
             {
                 FileName = setupFilePath,
+                Arguments = "/SILENT /SP- /NOICONS /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS",
                 UseShellExecute = true
             });
 

@@ -272,4 +272,132 @@ public class OptimizationSummary
     public int TweaksApplied { get; set; }
 }
 
+public class InstalledAppInfo
+{
+    public string DisplayName { get; set; } = "";
+    public string Publisher { get; set; } = "";
+    public string Version { get; set; } = "";
+    public string InstallDate { get; set; } = "";
+    public string InstallLocation { get; set; } = "";
+    public string UninstallString { get; set; } = "";
+    public string RegistryKeyName { get; set; } = "";
+    public string Hive { get; set; } = ""; // HKLM or HKCU
+    public string RegistryPath { get; set; } = "";
+    public string DisplayIcon { get; set; } = "";
+    public bool IsStoreApp { get; set; } = false;
+    public string IconPath { get; set; } = "";
+    
+    public Microsoft.UI.Xaml.Media.ImageSource? IconImageSource
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(IconPath)) return null;
+            try
+            {
+                if (Uri.TryCreate(IconPath, UriKind.Absolute, out var uri))
+                {
+                    return new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(uri);
+                }
+                else
+                {
+                    return new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(new Uri(System.IO.Path.GetFullPath(IconPath)));
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+    }
+    
+    public bool HasIcon => !string.IsNullOrWhiteSpace(IconPath);
+
+    public Microsoft.UI.Xaml.Visibility IconVisibility => HasIcon 
+        ? Microsoft.UI.Xaml.Visibility.Visible 
+        : Microsoft.UI.Xaml.Visibility.Collapsed;
+
+    public Microsoft.UI.Xaml.Visibility FallbackVisibility => HasIcon 
+        ? Microsoft.UI.Xaml.Visibility.Collapsed 
+        : Microsoft.UI.Xaml.Visibility.Visible;
+
+    public Microsoft.UI.Xaml.Media.Brush IconBackground => IsStoreApp 
+        ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(25, 0, 193, 238)) 
+        : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(25, 127, 86, 217));
+
+    public Microsoft.UI.Xaml.Media.Brush IconForeground => IsStoreApp 
+        ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 0, 193, 238)) 
+        : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 127, 86, 217));
+
+    public string DefaultIconGlyph => IsStoreApp ? "\uE719" : "\uE736";
+
+    public long SizeBytes { get; set; }
+    public string SizeFormatted
+    {
+        get
+        {
+            if (SizeBytes <= 0) return "Unknown";
+            string[] suffix = { "B", "KB", "MB", "GB", "TB" };
+            int i = 0;
+            double doubleBytes = SizeBytes;
+            while (doubleBytes >= 1024 && i < suffix.Length - 1)
+            {
+                i++;
+                doubleBytes /= 1024;
+            }
+            return $"{doubleBytes:F1} {suffix[i]}";
+        }
+    }
+}
+
+public enum LeftoverType
+{
+    File,
+    Directory,
+    RegistryKey,
+    RegistryValue
+}
+
+public class LeftoverItem : System.ComponentModel.INotifyPropertyChanged
+{
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+    private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+
+    public string Path { get; set; } = "";
+    public string DisplayName { get; set; } = "";
+    public LeftoverType Type { get; set; }
+    public long SizeBytes { get; set; }
+    public string SizeFormatted
+    {
+        get
+        {
+            if (Type == LeftoverType.RegistryKey || Type == LeftoverType.RegistryValue) return "N/A";
+            if (SizeBytes <= 0) return "0 B";
+            string[] suffix = { "B", "KB", "MB", "GB", "TB" };
+            int i = 0;
+            double doubleBytes = SizeBytes;
+            while (doubleBytes >= 1024 && i < suffix.Length - 1)
+            {
+                i++;
+                doubleBytes /= 1024;
+            }
+            return $"{doubleBytes:F1} {suffix[i]}";
+        }
+    }
+
+    private bool _isSelected = true;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            if (_isSelected != value)
+            {
+                _isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
+    }
+}
+
+
 

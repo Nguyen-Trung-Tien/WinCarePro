@@ -30,79 +30,79 @@ public class NetworkViewModel : ViewModelBase
     public string InternetStatus
     {
         get => _internetStatus;
-        set => SetProperty(ref _internetStatus, value);
+        set => SetPropertyOnUI(() => _internetStatus, v => _internetStatus = v, value);
     }
 
     public string GatewayAddress
     {
         get => _gatewayAddress;
-        set => SetProperty(ref _gatewayAddress, value);
+        set => SetPropertyOnUI(() => _gatewayAddress, v => _gatewayAddress = v, value);
     }
 
     public string GatewayReachability
     {
         get => _gatewayReachability;
-        set => SetProperty(ref _gatewayReachability, value);
+        set => SetPropertyOnUI(() => _gatewayReachability, v => _gatewayReachability = v, value);
     }
 
     public string DnsStatus
     {
         get => _dnsStatus;
-        set => SetProperty(ref _dnsStatus, value);
+        set => SetPropertyOnUI(() => _dnsStatus, v => _dnsStatus = v, value);
     }
 
     public string IpStatus
     {
         get => _ipStatus;
-        set => SetProperty(ref _ipStatus, value);
+        set => SetPropertyOnUI(() => _ipStatus, v => _ipStatus = v, value);
     }
 
     public string TestHost
     {
         get => _testHost;
-        set => SetProperty(ref _testHost, value);
+        set => SetPropertyOnUI(() => _testHost, v => _testHost = v, value);
     }
 
     public string ConsoleOutput
     {
         get => _consoleOutput;
-        set => SetProperty(ref _consoleOutput, value);
+        set => SetPropertyOnUI(() => _consoleOutput, v => _consoleOutput = v, value);
     }
 
     public string PortScannerHost
     {
         get => _portScannerHost;
-        set => SetProperty(ref _portScannerHost, value);
+        set => SetPropertyOnUI(() => _portScannerHost, v => _portScannerHost = v, value);
     }
 
     public string PortScannerPorts
     {
         get => _portScannerPorts;
-        set => SetProperty(ref _portScannerPorts, value);
+        set => SetPropertyOnUI(() => _portScannerPorts, v => _portScannerPorts = v, value);
     }
 
     public bool IsBusy
     {
         get => _isBusy;
-        set => SetProperty(ref _isBusy, value);
+        set => SetPropertyOnUI(() => _isBusy, v => _isBusy = v, value);
     }
 
     public double LatencyMs
     {
         get => _latencyMs;
-        set => SetProperty(ref _latencyMs, value);
+        set => SetPropertyOnUI(() => _latencyMs, v => _latencyMs = v, value);
     }
 
     public double PacketLossPercent
     {
         get => _packetLossPercent;
-        set => SetProperty(ref _packetLossPercent, value);
+        set => SetPropertyOnUI(() => _packetLossPercent, v => _packetLossPercent = v, value);
     }
 
     public double DownloadSpeedMbps
     {
         get => _downloadSpeedMbps;
-        set => SetProperty(ref _downloadSpeedMbps, value);
+        set => SetPropertyOnUI(() => _downloadSpeedMbps, v => _downloadSpeedMbps = v, value);
     }
 
     public NetworkViewModel()
@@ -112,9 +112,32 @@ public class NetworkViewModel : ViewModelBase
         _ = RunDiagnosticsAsync();
     }
 
+    private void SetPropertyOnUI<T>(Func<T> getter, Action<T> setter, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+    {
+        if (Equals(getter(), value)) return;
+
+        if (_dispatcherQueue != null && !_dispatcherQueue.HasThreadAccess)
+        {
+            T localValue = value;
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                if (!Equals(getter(), localValue))
+                {
+                    setter(localValue);
+                    OnPropertyChanged(propertyName);
+                }
+            });
+        }
+        else
+        {
+            setter(value);
+            OnPropertyChanged(propertyName);
+        }
+    }
+
     private void LogText(string msg)
     {
-        _dispatcherQueue.TryEnqueue(() =>
+        _dispatcherQueue?.TryEnqueue(() =>
         {
             ConsoleOutput += msg + "\n";
         });

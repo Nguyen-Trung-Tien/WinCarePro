@@ -35,16 +35,13 @@ public sealed partial class MainPage : Page
         {
             "dashboard" => typeof(DashboardPage),
             "junk" => typeof(JunkPage),
+            "uninstaller" => typeof(UninstallPage),
             "network" => typeof(NetworkPage),
             "repair" => typeof(RepairPage),
             "optimizer" => typeof(SystemOptimizerPage),
             "startup" => typeof(StartupPage),
             "process" => typeof(ProcessPage),
             "disk" => typeof(DiskPage),
-            "security" => typeof(SecurityPrivacyPage),
-            "registry" => typeof(RegistryBackupPage),
-            "hardware" => typeof(HardwarePage),
-            "logs" => typeof(LogsPage),
             "updater" => typeof(UpdaterPage),
             "settings" => typeof(SettingsPage),
             _ => null

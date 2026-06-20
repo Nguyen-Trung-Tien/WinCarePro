@@ -7,10 +7,12 @@ echo.
 
 echo [1/3] Cleaning previous builds...
 dotnet clean -c Release
+if exist .\PublishOutputFolder rmdir /s /q .\PublishOutputFolder
+if exist .\PublishOutput rmdir /s /q .\PublishOutput
 
 echo.
 echo [2/3] Publishing project to folder...
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:PublishReadyToRun=true -o .\PublishOutputFolder
+dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=false -o .\PublishOutputFolder
 
 echo.
 echo [3/3] Compiling installer with Inno Setup...

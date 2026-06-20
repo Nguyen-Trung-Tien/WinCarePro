@@ -13,7 +13,7 @@ dotnet restore -r win-x64
 
 echo.
 echo [3/3] Publishing project to single executable...
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -o .\PublishOutput
+dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=false -o .\PublishOutput
 
 echo.
 echo ===================================================

@@ -10,42 +10,38 @@ namespace WinCarePro.ViewModels;
 public class RepairViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly SystemEngine _engine = new();
+    private readonly SystemEngine _repairEngine = new();
 
     private bool _isBusy;
-    private string _consoleLog = "Windows Repair Center Console Ready.\n";
-    private int _progressPercent;
-
     public bool IsBusy
     {
         get => _isBusy;
         set => SetProperty(ref _isBusy, value);
     }
 
+    private string _consoleLog = "Windows Repair Center Console Ready.\n";
     public string ConsoleLog
     {
         get => _consoleLog;
         set => SetProperty(ref _consoleLog, value);
     }
 
-    public int ProgressPercent
+    private int _repairProgressPercent;
+    public int RepairProgressPercent
     {
-        get => _progressPercent;
-        set => SetProperty(ref _progressPercent, value);
+        get => _repairProgressPercent;
+        set => SetProperty(ref _repairProgressPercent, value);
     }
 
-    private ObservableCollection<RepairServiceItem> _services = new();
-    public ObservableCollection<RepairServiceItem> Services
-    {
-        get => _services;
-        set => SetProperty(ref _services, value);
-    }
+    public ObservableCollection<RepairServiceItem> Services { get; } = new();
 
     public RepairViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        _engine.OutputReceived += LogText;
-        _engine.ProgressChanged += Pct => _dispatcherQueue.TryEnqueue(() => ProgressPercent = Pct);
+
+        _repairEngine.OutputReceived += LogText;
+        _repairEngine.ProgressChanged += Pct => _dispatcherQueue.TryEnqueue(() => RepairProgressPercent = Pct);
+
         LoadServices();
     }
 
@@ -99,11 +95,11 @@ public class RepairViewModel : ViewModelBase
     {
         if (IsBusy) return;
         IsBusy = true;
-        ProgressPercent = 0;
+        RepairProgressPercent = 0;
 
         try
         {
-            await _engine.RunSfcScanAsync(repair);
+            await _repairEngine.RunSfcScanAsync(repair);
         }
         catch (Exception ex)
         {
@@ -119,11 +115,11 @@ public class RepairViewModel : ViewModelBase
     {
         if (IsBusy) return;
         IsBusy = true;
-        ProgressPercent = 0;
+        RepairProgressPercent = 0;
 
         try
         {
-            await _engine.RunDismAsync(mode);
+            await _repairEngine.RunDismAsync(mode);
         }
         catch (Exception ex)
         {
@@ -139,11 +135,11 @@ public class RepairViewModel : ViewModelBase
     {
         if (IsBusy) return;
         IsBusy = true;
-        ProgressPercent = 0;
+        RepairProgressPercent = 0;
 
         try
         {
-            await _engine.RepairWindowsUpdateAsync();
+            await _repairEngine.RepairWindowsUpdateAsync();
         }
         catch (Exception ex)
         {
@@ -159,7 +155,7 @@ public class RepairViewModel : ViewModelBase
     {
         if (IsBusy) return;
         IsBusy = true;
-        ProgressPercent = 0;
+        RepairProgressPercent = 0;
 
         try
         {
@@ -171,7 +167,7 @@ public class RepairViewModel : ViewModelBase
                     selected.Add(s.Name);
                 }
             }
-            await _engine.RepairServicesConfigAsync(selected);
+            await _repairEngine.RepairServicesConfigAsync(selected);
             LoadServices();
         }
         catch (Exception ex)
@@ -185,38 +181,39 @@ public class RepairViewModel : ViewModelBase
     }
 }
 
+// RepairServiceItem is kept here since it was originally in OptimizationViewModel
+// and is used by the RepairPage
 public class RepairServiceItem : ViewModelBase
 {
     private string _name = "";
-    private string _displayName = "";
-    private string _status = "";
-    private string _startupType = "";
-    private bool _isSelected;
-
     public string Name
     {
         get => _name;
         set => SetProperty(ref _name, value);
     }
 
+    private string _displayName = "";
     public string DisplayName
     {
         get => _displayName;
         set => SetProperty(ref _displayName, value);
     }
 
+    private string _status = "";
     public string Status
     {
         get => _status;
         set => SetProperty(ref _status, value);
     }
 
+    private string _startupType = "";
     public string StartupType
     {
         get => _startupType;
         set => SetProperty(ref _startupType, value);
     }
 
+    private bool _isSelected;
     public bool IsSelected
     {
         get => _isSelected;

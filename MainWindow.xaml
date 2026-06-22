@@ -12,23 +12,47 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TitleBar x:Name="AppTitleBar" Title="WinCarePro">
-            <TitleBar.IconSource>
-                <ImageIconSource ImageSource="Assets/AppIcon.ico" />
-            </TitleBar.IconSource>
-        </TitleBar>
+        <!-- Custom Title Bar Grid -->
+        <Grid x:Name="TitleBarGrid" Grid.Row="0" Height="56" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" /> <!-- Logo & Brand -->
+                <ColumnDefinition Width="*" />    <!-- Drag Area & Search -->
+                <ColumnDefinition Width="Auto" /> <!-- Right Controls -->
+            </Grid.ColumnDefinitions>
 
-        <!--
-            The Frame hosts pages for your application content. Add your UI to
-            MainPage.xaml rather than here so you can use Page features such as
-            navigation events and the Loaded lifecycle.
-        -->
+            <!-- Drag Area Canvas (Acts as window drag region) -->
+            <Grid x:Name="AppTitleDragArea" Grid.ColumnSpan="3" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+
+            <!-- Brand (Left) -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Padding="16,0" VerticalAlignment="Center" Spacing="8" Canvas.ZIndex="10">
+                <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="20" Height="20" VerticalAlignment="Center" Stretch="Uniform"/>
+                <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Search (Center) -->
+            <Grid Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="420" Height="36" Canvas.ZIndex="10">
+                <AutoSuggestBox x:Name="SearchBox" PlaceholderText="Search tools, settings, apps... (Ctrl + F)" QueryIcon="Find" CornerRadius="18" Width="420" Height="34" HorizontalAlignment="Center" VerticalAlignment="Center" QuerySubmitted="OnSearchQuerySubmitted"/>
+            </Grid>
+
+            <!-- Controls (Right) -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Padding="0,0,142,0" Spacing="8" VerticalAlignment="Center" Canvas.ZIndex="10">
+
+                <!-- Theme Switcher -->
+                <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ThemeButton_Click">
+                    <FontIcon x:Name="ThemeIcon" Glyph="&#xE706;" FontSize="15" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Main Frame -->
         <Frame x:Name="RootFrame" Grid.Row="1" />
+
+
     </Grid>
 </Window>

@@ -1,4 +1,30 @@
-# 📝 Nhật ký Phát hành (Release Notes) - WinCare Pro v1.0.3
+# 📝 Nhật ký Phát hành (Release Notes)
+
+---
+
+## 🚀 WinCare Pro v2.0.0 (Bản nâng cấp lớn)
+
+Chào mừng bạn đến với **WinCare Pro v2.0.0**! Đây là một cột mốc quan trọng, tái cấu trúc toàn diện kiến trúc phần mềm, khôi phục các module dọn dẹp Registry, Bảo mật & Riêng tư, Quản lý Driver và đặc biệt là tích hợp **Chẩn đoán Hệ thống bằng Trí tuệ Nhân tạo (AI Diagnostics)**.
+
+### 🌟 Điểm nổi bật (Highlights)
+* **Trợ lý Chẩn đoán Hệ thống bằng AI (AI Diagnostics):** Tích hợp động cơ chẩn đoán thông minh, tự động phân tích sức khỏe hệ thống, dung lượng đĩa, RAM và các lỗ hổng bảo mật để đưa ra đề xuất tối ưu hóa cá nhân hóa.
+* **Trung tâm Bảo mật & Riêng tư (Security & Privacy):** Bảo vệ thông tin cá nhân, dọn dẹp các tệp tin theo dõi và tối ưu hóa cài đặt bảo mật của Windows.
+* **Dọn dẹp & Tối ưu Registry (Registry Cleaner):** Quét và sửa các lỗi Registry phân mảnh, khóa Registry không hợp lệ để tăng độ ổn định của hệ thống.
+* **Quản lý Driver & Thiết bị phần cứng (Hardware Drivers):** Quét danh sách driver hiện tại, hiển thị trạng thái và đề xuất cập nhật các driver lỗi thời.
+* **Thông số phần cứng chi tiết (Hardware Specs):** Cung cấp thông tin chi tiết cấu hình CPU, GPU, RAM, Bo mạch chủ, BIOS và hệ thống.
+* **Tái cấu trúc Kiến trúc (Refactoring MVVM):** Tổ chức lại các ViewModels (ví dụ: `JunkViewModel`, `DiskViewModel`, `DriverViewModel`, `HardwareViewModel`, `RegistryViewModel`, `SecurityViewModel`) giúp ứng dụng mượt mà, phản hồi nhanh và giảm tiêu hao tài nguyên.
+
+### 💾 Hướng dẫn Cập nhật lên v2.0.0
+1. Mở ứng dụng **WinCare Pro** hiện tại của bạn.
+2. Di chuyển đến mục **Cài đặt (Settings)**.
+3. Nhấp chọn **Check for Updates**.
+4. Ứng dụng sẽ phát hiện phiên bản mới `2.0.0` thông qua tệp `update.json` đã cấu hình.
+5. Nhấp chọn **Update Now** để tự động tải về và chạy Silent Install cài đè phiên bản mới mà không cần thao tác thêm.
+6. *Hoặc* tải trực tiếp file cài đặt từ mục **Releases** trên GitHub: [Releases của WinCarePro](https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/tag/v2.0.0).
+
+---
+
+## 🚀 WinCare Pro v1.0.3 (Phiên bản trước)
 
 Chào mừng bạn đến với phiên bản **WinCare Pro v1.0.3**! Đây là một bản cập nhật đột phá mang tính tối giản hệ thống, tối ưu hóa trải nghiệm người dùng, sửa các lỗi crash nghiêm trọng và bổ sung tính năng nâng cấp tự động hoàn toàn không cần tương tác.
 

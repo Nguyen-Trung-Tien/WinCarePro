@@ -8,6 +8,7 @@ public class ProcessInfo
     public string Name { get; set; } = "";
     public string DisplayName => $"{Name} ({Id})";
     public double CpuUsage { get; set; }
+    public string CpuUsageFormatted => $"{CpuUsage:F1}%";
     public long RamUsageBytes { get; set; }
     public string RamUsageFormatted => FormatSize(RamUsageBytes);
     public double DiskUsageMb { get; set; }
@@ -52,6 +53,7 @@ public class JunkCategory
     public string SizeFormatted => FormatSize(SizeBytes);
     public bool IsSelected { get; set; } = true;
     public int FileCount { get; set; }
+    public string FileCountFormatted => $"{FileCount} files";
 
     private static string FormatSize(long bytes)
     {
@@ -125,6 +127,14 @@ public class StartupEntry
     public StartupSource Source { get; set; }
     public string SourceFormatted => Source.ToString();
     public bool IsEnabled { get; set; } = true;
+    public int StartupDelayMs { get; set; }
+    public string Impact => StartupDelayMs switch
+    {
+        < 150 => "Low",
+        < 500 => "Medium",
+        < 2000 => "High",
+        _ => "Critical"
+    };
 }
 
 public class ServiceEntry
@@ -147,8 +157,11 @@ public class ScheduledTaskEntry
     public DateTime? NextRunTime { get; set; }
 }
 
-public class DriverInfo
+public class DriverInfo : System.ComponentModel.INotifyPropertyChanged
 {
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+    private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(name));
+
     public string Name { get; set; } = "";
     public string DeviceClass { get; set; } = "";
     public string Provider { get; set; } = "";
@@ -157,6 +170,34 @@ public class DriverInfo
     public string Status { get; set; } = "";
     public bool HasUpdate { get; set; }
     public string AvailableVersion { get; set; } = "";
+
+    private bool _isSelected = true;
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            if (_isSelected != value)
+            {
+                _isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
+    }
+
+    private string _updateStatus = "Available";
+    public string UpdateStatus
+    {
+        get => _updateStatus;
+        set
+        {
+            if (_updateStatus != value)
+            {
+                _updateStatus = value;
+                OnPropertyChanged(nameof(UpdateStatus));
+            }
+        }
+    }
 }
 
 public class RegistryIssue
@@ -242,9 +283,12 @@ public class SystemTweak : System.ComponentModel.INotifyPropertyChanged
             {
                 _isOptimized = value;
                 OnPropertyChanged(nameof(IsOptimized));
+                OnPropertyChanged(nameof(StatusFormatted));
             }
         }
     }
+
+    public string StatusFormatted => IsOptimized ? "Optimized" : "Available";
 
     private bool _isSelected = true;
     public bool IsSelected

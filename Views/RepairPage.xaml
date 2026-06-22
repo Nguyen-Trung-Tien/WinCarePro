@@ -8,150 +8,112 @@
     xmlns:vm="using:WinCarePro.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Grid Padding="24" ColumnSpacing="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2.2*" />
+            <ColumnDefinition Width="2.8*" />
+        </Grid.ColumnDefinitions>
 
-        <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,24">
-            <StackPanel>
-                <TextBlock Text="Windows OS Repair Center" FontSize="28" FontWeight="ExtraBold" CharacterSpacing="-10" />
-                <TextBlock Text="Diagnose and repair corrupted Windows image files, service configurations, and update components." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
+        <!-- Left: Diagnostics Actions -->
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="12">
+                <Border Style="{StaticResource ModernCardStyle}" Padding="16">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="SFC Component Verification" FontSize="15" FontWeight="Bold" />
+                        <TextBlock Text="Scans and restores system file indices against the local Windows components store." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+                            <Button Content="SFC Scan" Click="OnSfcScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" />
+                            <Button Content="SFC Scan &amp; Repair" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnSfcRepairClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" FontWeight="Bold" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource ModernCardStyle}" Padding="16">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="DISM OS Image Verification" FontSize="15" FontWeight="Bold" />
+                        <TextBlock Text="Validates OS image components against official cloud-based Windows Update feeds." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+                            <Button Content="DISM Check" Click="OnDismCheckClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" />
+                            <Button Content="DISM Restore Health" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDismRestoreClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" FontWeight="Bold" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource ModernCardStyle}" Padding="16">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Scheduled Automations" FontSize="15" FontWeight="Bold" />
+                        <TextBlock Text="Stop update loops, flush local download cache directories, and reconstruct database schemas." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                        <Button Content="Reset Windows Update Components" Click="OnResetUpdateClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,6" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Services Restore -->
+                <Border Style="{StaticResource ModernCardStyle}" Padding="16">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Services Restoration Registry" FontSize="15" FontWeight="Bold" />
+                        <TextBlock Text="Restore background core update services to standard boot setups." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.Services, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:RepairServiceItem">
+                                    <Grid Padding="0,4" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,8,0" MinWidth="20" />
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind DisplayName}" FontWeight="SemiBold" FontSize="11.5" />
+                                            <TextBlock Text="{x:Bind Name}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{x:Bind Status}" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+                            <Button Content="Restore Selected Services" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnRestoreServicesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" FontWeight="Bold" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
             </StackPanel>
-        </Grid>
+        </ScrollViewer>
 
-        <Grid Grid.Row="1" ColumnSpacing="24">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2.2*" />
-                <ColumnDefinition Width="2.8*" />
-            </Grid.ColumnDefinitions>
+        <!-- Right: Terminal Console Output -->
+        <Grid Grid.Column="1" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-            <!-- Repair Actions List -->
-            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                <StackPanel Spacing="16" Margin="0,0,4,0">
-                    <!-- SFC Card -->
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="18">
-                        <StackPanel Spacing="10">
-                            <TextBlock Text="System File Checker (SFC)" FontSize="16" FontWeight="Bold" />
-                            <TextBlock Text="Scans and restores corrupted Windows system files from local component store." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="14" />
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Button Content="Scan Only" Click="OnSfcScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,6" />
-                                <Button Content="Scan &amp; Repair" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnSfcRepairClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="14,6" FontWeight="SemiBold" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- DISM Card -->
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="18">
-                        <StackPanel Spacing="10">
-                            <TextBlock Text="DISM Deployment Imaging" FontSize="16" FontWeight="Bold" />
-                            <TextBlock Text="Validates operating system image components and repairs corruption against official Windows Update source." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="14" />
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Button Content="Check" Click="OnDismCheckClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="10,6" />
-                                <Button Content="Scan" Click="OnDismScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="10,6" />
-                                <Button Content="Restore Health" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDismRestoreClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="14,6" FontWeight="SemiBold" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Windows Update Troubleshooter -->
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="18">
-                        <StackPanel Spacing="10">
-                            <TextBlock Text="Windows Update Repair" FontSize="16" FontWeight="Bold" />
-                            <TextBlock Text="Stops update services, purges SoftwareDistribution cache download directory, and restores update registries." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="14" />
-                            <Button Content="Reset Update Components" Click="OnResetUpdateClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="14,8" />
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Services Configuration -->
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="18">
-                        <StackPanel Spacing="12">
-                            <TextBlock Text="Services Restoration" FontSize="16" FontWeight="Bold" />
-                            <TextBlock Text="Selectively restore and enable core Windows services to default configurations." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="14" />
-                            
-                            <!-- Services Checklist -->
-                            <ItemsControl ItemsSource="{x:Bind ViewModel.Services, Mode=OneWay}" Margin="0,4,0,8">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:RepairServiceItem" xmlns:vm="using:WinCarePro.ViewModels">
-                                        <Grid Padding="0,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            
-                                            <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,8,0" MinWidth="24" />
-                                            
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,8,0">
-                                                <TextBlock Text="{x:Bind DisplayName}" FontWeight="SemiBold" FontSize="12.5" />
-                                                <TextBlock Text="{x:Bind Name}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            </StackPanel>
-                                            
-                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="1">
-                                                <TextBlock Text="{x:Bind Status}" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Right" />
-                                                <TextBlock Text="{x:Bind StartupType}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Right" />
-                                            </StackPanel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Button Content="Select All" Click="OnSelectAllServicesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" FontSize="11" Padding="8,4" />
-                                <Button Content="Deselect All" Click="OnDeselectAllServicesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" FontSize="11" Padding="8,4" />
-                                <Button Content="Restore Selected" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnRestoreServicesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" FontSize="11" Padding="10,4" FontWeight="Bold" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
+            <Border Style="{StaticResource ModernCardStyle}" Padding="12">
+                <StackPanel Spacing="6">
+                    <Grid>
+                        <TextBlock Text="Operation Progress" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Left" />
+                        <TextBlock Text="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
                 </StackPanel>
-            </ScrollViewer>
+            </Border>
 
-            <!-- Console Output & Progress -->
-            <Grid Grid.Column="1" RowSpacing="16">
+            <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Border Style="{StaticResource ModernCardStyle}" Padding="14">
-                    <StackPanel Spacing="8">
-                        <Grid>
-                            <TextBlock Text="Progress Status" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Left" />
-                            <TextBlock Text="{x:Bind FormatPercent(ViewModel.ProgressPercent), Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" FontWeight="Bold" HorizontalAlignment="Right" />
-                        </Grid>
-                        <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="8" Foreground="{StaticResource PrimaryAccentGradient}" CornerRadius="4" />
+                <Border Grid.Row="0" Background="#1E293B" CornerRadius="8,8,0,0" Padding="12,8" BorderBrush="#447F56D9" BorderThickness="1,1,1,0">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <Ellipse Width="8" Height="8" Fill="#FFEF4444" />
+                        <Ellipse Width="8" Height="8" Fill="#FFF59E0B" />
+                        <Ellipse Width="8" Height="8" Fill="#FF10B981" />
+                        <TextBlock Text="ANSI Syntax Log Console" FontSize="11.5" FontWeight="Bold" Foreground="#94A3B8" Margin="8,0,0,0"/>
                     </StackPanel>
                 </Border>
 
-                <!-- Professional Console Layout -->
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    
-                    <!-- Title Bar -->
-                    <Border Grid.Row="0" Background="#1E293B" CornerRadius="12,12,0,0" Padding="12,10" BorderBrush="#447F56D9" BorderThickness="1.5,1.5,1.5,0">
-                        <Grid>
-                            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                                <Ellipse Width="10" Height="10" Fill="#FFEF4444" />
-                                <Ellipse Width="10" Height="10" Fill="#FFF59E0B" />
-                                <Ellipse Width="10" Height="10" Fill="#FF10B981" />
-                                <TextBlock Text="System Repair Terminal" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" Margin="8,0,0,0" VerticalAlignment="Center" />
-                            </StackPanel>
-                            <FontIcon Glyph="&#xE756;" FontSize="12" Foreground="#94A3B8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                        </Grid>
-                    </Border>
-
-                    <TextBox Grid.Row="1" Text="{x:Bind ViewModel.ConsoleLog, Mode=OneWay}" Style="{StaticResource DarkTerminalStyle}" CornerRadius="0,0,12,12" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                </Grid>
+                <TextBox Grid.Row="1" Text="{x:Bind ViewModel.ConsoleLog, Mode=OneWay}" Style="{StaticResource DarkTerminalStyle}" CornerRadius="0,0,8,8" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
             </Grid>
         </Grid>
     </Grid>

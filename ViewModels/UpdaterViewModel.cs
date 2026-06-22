@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
@@ -11,49 +10,27 @@ namespace WinCarePro.ViewModels;
 public class UpdaterViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly SoftwareUpdaterEngine _engine = new();
+    private readonly SoftwareUpdaterEngine _updaterEngine = new();
 
-    private bool _isScanning;
-    private bool _isUpdating;
-    private string _progressMessage = "Ready to scan for application updates";
-    private int _progressPercent;
-    private int _selectedCount;
-    private string _updateEngine = "winget";
-
-    public string UpdateEngine
+    private bool _isBusy;
+    public bool IsBusy
     {
-        get => _updateEngine;
-        set => SetProperty(ref _updateEngine, value);
+        get => _isBusy;
+        set => SetProperty(ref _isBusy, value);
     }
 
-    public bool IsScanning
-    {
-        get => _isScanning;
-        set => SetProperty(ref _isScanning, value);
-    }
-
-    public bool IsUpdating
-    {
-        get => _isUpdating;
-        set => SetProperty(ref _isUpdating, value);
-    }
-
+    private string _progressMessage = "Ready";
     public string ProgressMessage
     {
         get => _progressMessage;
         set => SetProperty(ref _progressMessage, value);
     }
 
+    private int _progressPercent;
     public int ProgressPercent
     {
         get => _progressPercent;
         set => SetProperty(ref _progressPercent, value);
-    }
-
-    public int SelectedCount
-    {
-        get => _selectedCount;
-        set => SetProperty(ref _selectedCount, value);
     }
 
     public ObservableCollection<SoftwareUpdateInfo> Updates { get; } = new();
@@ -61,169 +38,70 @@ public class UpdaterViewModel : ViewModelBase
     public UpdaterViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        _engine.OutputReceived += LogText;
-    }
-
-    private void LogText(string msg)
-    {
-        _dispatcherQueue.TryEnqueue(() =>
-        {
-            ProgressMessage = msg;
-        });
-    }
-
-    public void RefreshSelectedCount()
-    {
-        SelectedCount = Updates.Count(x => x.IsSelected);
-    }
-
-    public void SelectAllApps()
-    {
-        foreach (var app in Updates)
-        {
-            app.IsSelected = true;
-        }
-        RefreshSelectedCount();
-    }
-
-    public void DeselectAllApps()
-    {
-        foreach (var app in Updates)
-        {
-            app.IsSelected = false;
-        }
-        RefreshSelectedCount();
+        _updaterEngine.OutputReceived += msg => _dispatcherQueue.TryEnqueue(() => ProgressMessage = msg);
+        _ = ScanUpdatesAsync();
     }
 
     public async Task ScanUpdatesAsync()
     {
-        if (IsScanning || IsUpdating) return;
-        IsScanning = true;
-        ProgressPercent = 10;
+        if (IsBusy) return;
+        IsBusy = true;
         Updates.Clear();
+        ProgressMessage = "Auditing winget packages database...";
 
         try
         {
-            var list = await _engine.ScanUpdatesAsync(UpdateEngine);
-            ProgressPercent = 80;
-
+            var list = await _updaterEngine.ScanUpdatesAsync("winget");
             _dispatcherQueue.TryEnqueue(() =>
             {
                 foreach (var item in list)
                 {
-                    item.PropertyChanged += (s, e) =>
-                    {
-                        if (e.PropertyName == nameof(SoftwareUpdateInfo.IsSelected))
-                        {
-                            RefreshSelectedCount();
-                        }
-                    };
                     Updates.Add(item);
                 }
-                ProgressPercent = 100;
-                RefreshSelectedCount();
-                ProgressMessage = $"Scan complete. {Updates.Count} updates available.";
-                IsScanning = false;
+                ProgressMessage = $"Updates scan completed. {Updates.Count} packages available.";
+                IsBusy = false;
             });
         }
-        catch (Exception ex)
+        catch
         {
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                ProgressMessage = $"Scan failed: {ex.Message}";
-                IsScanning = false;
-            });
+            IsBusy = false;
         }
     }
 
-    public async Task UpdateSingleAppAsync(SoftwareUpdateInfo app)
+    public async Task UpdateAllAppsAsync()
     {
-        if (IsScanning || IsUpdating) return;
-        IsUpdating = true;
+        if (Updates.Count == 0 || IsBusy) return;
+        IsBusy = true;
         ProgressPercent = 0;
 
         try
         {
-            app.UpdateStatus = "Updating...";
-            ProgressMessage = $"Updating {app.Name}...";
-            ProgressPercent = 30;
-
-            bool ok = await _engine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
-
-            _dispatcherQueue.TryEnqueue(() =>
-            {
-                app.UpdateStatus = ok ? "Completed" : "Failed";
-                ProgressPercent = 100;
-                ProgressMessage = ok
-                    ? $"{app.Name} updated successfully."
-                    : $"Failed to update {app.Name}.";
-            });
-        }
-        catch (Exception ex)
-        {
-            ProgressMessage = $"Update failed: {ex.Message}";
-        }
-        finally
-        {
-            IsUpdating = false;
-        }
-    }
-
-    public async Task UpdateSelectedAppsAsync()
-    {
-        if (IsScanning || IsUpdating || Updates.Count == 0) return;
-        IsUpdating = true;
-        ProgressPercent = 0;
-
-        var selected = Updates.Where(x => x.IsSelected && x.UpdateStatus != "Completed").ToList();
-        if (selected.Count == 0)
-        {
-            ProgressMessage = "No applications selected for update.";
-            IsUpdating = false;
-            return;
-        }
-
-        try
-        {
-            double step = 100.0 / selected.Count;
+            double step = 100.0 / Updates.Count;
             double current = 0;
-            int successCount = 0;
-            int failCount = 0;
 
-            foreach (var app in selected)
+            for (int i = 0; i < Updates.Count; i++)
             {
+                var app = Updates[i];
                 app.UpdateStatus = "Updating...";
-                ProgressMessage = $"Updating {app.Name} ({successCount + failCount + 1}/{selected.Count})...";
-                
-                bool ok = await _engine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
-                
-                _dispatcherQueue.TryEnqueue(() =>
-                {
-                    app.UpdateStatus = ok ? "Completed" : "Failed";
-                });
+                ProgressMessage = $"Silent updating {app.Name} ({i + 1}/{Updates.Count})...";
 
-                if (ok) successCount++; else failCount++;
+                bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, "winget");
+                _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? "Completed" : "Failed"; });
 
                 current += step;
                 ProgressPercent = (int)current;
             }
 
             ProgressPercent = 100;
-            ProgressMessage = $"Update complete. {successCount} succeeded, {failCount} failed.";
+            ProgressMessage = "All background installations complete.";
         }
         catch (Exception ex)
         {
-            ProgressMessage = $"Update failed: {ex.Message}";
+            ProgressMessage = $"Updates failed: {ex.Message}";
         }
         finally
         {
-            IsUpdating = false;
+            IsBusy = false;
         }
-    }
-
-    public async Task UpdateAllAppsAsync()
-    {
-        SelectAllApps();
-        await UpdateSelectedAppsAsync();
     }
 }

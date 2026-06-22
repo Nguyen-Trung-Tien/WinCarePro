@@ -1,9 +1,10 @@
 using System;
-using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
+using Windows.UI;
 
 namespace WinCarePro.Views;
 
@@ -13,59 +14,63 @@ public sealed partial class SystemOptimizerPage : Page
 
     public SystemOptimizerPage()
     {
+        ViewModel = App.Services.GetRequiredService<SystemOptimizerViewModel>();
         InitializeComponent();
-        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        ViewModel = new SystemOptimizerViewModel();
-        this.Loaded += (s, e) => DataContext = ViewModel;
-    }
-
-    private async void OnScanTweaksClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.ScanAsync();
+        this.DataContext = ViewModel;
     }
 
     private async void OnApplyTweaksClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ApplySelectedTweaksAsync();
+        await ViewModel.ApplySelectedAsync();
     }
 
-    private async void OnRevertTweaksClick(object sender, RoutedEventArgs e)
+    private void OnReloadTweaksClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.RevertSelectedTweaksAsync();
-    }
-
-    private async void OnBoostRamClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.BoostRamAsync();
-    }
-
-    private async void OnCleanDoCacheClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.CleanDoCacheAsync();
+        ViewModel.LoadTweaks();
     }
 
     internal bool IsNot(bool val) => !val;
-    internal string FormatPercent(double val) => $"{val:F1}%";
 
-    public static string GetTweakStatusIcon(bool optimized)
+    internal Brush GetBorderBrush(bool active)
     {
-        return optimized ? "\uE73E" : "\uE7BA"; // Checkmark or Warning glyph
+        if (active)
+        {
+            return new SolidColorBrush(Color.FromArgb(255, 232, 17, 35));
+        }
+        else
+        {
+            if (Application.Current.Resources.TryGetValue("CardStrokeColorDefaultBrush", out var brushObj) && brushObj is Brush brush)
+            {
+                return brush;
+            }
+            return new SolidColorBrush(Color.FromArgb(255, 204, 204, 204));
+        }
     }
 
-    public static string GetTweakStatusLabel(bool optimized)
+    internal Brush GetCircleBg(bool active)
     {
-        return optimized ? "Optimized" : "Needs Tuning";
+        return active 
+            ? new SolidColorBrush(Color.FromArgb(30, 232, 17, 35)) 
+            : new SolidColorBrush(Color.FromArgb(20, 127, 86, 217));
     }
 
-    public static Brush GetTweakStatusColor(bool optimized)
+    internal Brush GetGlyphColor(bool active)
     {
-        var color = optimized ? Windows.UI.Color.FromArgb(255, 16, 185, 129) : Windows.UI.Color.FromArgb(255, 245, 158, 11);
-        return new SolidColorBrush(color);
-    }
-
-    public static Brush GetTweakStatusBadgeBg(bool optimized)
-    {
-        var color = optimized ? Windows.UI.Color.FromArgb(30, 16, 185, 129) : Windows.UI.Color.FromArgb(30, 245, 158, 11);
-        return new SolidColorBrush(color);
+        if (active)
+        {
+            return new SolidColorBrush(Color.FromArgb(255, 232, 17, 35));
+        }
+        else
+        {
+            if (Application.Current.Resources.TryGetValue("SystemAccentColorBrush", out var brushObj) && brushObj is Brush brush)
+            {
+                return brush;
+            }
+            if (Application.Current.Resources.TryGetValue("SystemAccentColor", out var colorObj) && colorObj is Color color)
+            {
+                return new SolidColorBrush(color);
+            }
+            return new SolidColorBrush(Color.FromArgb(255, 0, 120, 212));
+        }
     }
 }

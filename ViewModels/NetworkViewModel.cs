@@ -2,14 +2,15 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
-using WinCarePro.Engines;
+using WinCarePro.Services.Contracts;
+using WinCarePro.Services.Implementations;
 
 namespace WinCarePro.ViewModels;
 
 public class NetworkViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly NetworkEngine _engine = new();
+    private readonly INetworkService _engine;
 
     private string _internetStatus = "Checking...";
     private string _gatewayAddress = "Loading...";
@@ -105,11 +106,16 @@ public class NetworkViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _downloadSpeedMbps, v => _downloadSpeedMbps = v, value);
     }
 
-    public NetworkViewModel()
+    public NetworkViewModel(INetworkService engine)
     {
+        _engine = engine;
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         _engine.OutputReceived += LogText;
         _ = RunDiagnosticsAsync();
+    }
+
+    public NetworkViewModel() : this(new NetworkService())
+    {
     }
 
     private void SetPropertyOnUI<T>(Func<T> getter, Action<T> setter, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)

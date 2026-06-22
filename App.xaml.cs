@@ -1,4 +1,11 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
+using Microsoft.Extensions.DependencyInjection;
+using WinCarePro.Services.Contracts;
+using WinCarePro.Services.Implementations;
+using WinCarePro.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,6 +46,33 @@ public partial class App : Application
         };
     }
 
+    public static IServiceProvider Services { get; private set; } = null!;
+
+    private static void ConfigureServices()
+    {
+        var services = new ServiceCollection();
+
+        // Register core engines wrapped in services
+        services.AddSingleton<IJunkCleanerService, JunkCleanerService>();
+        services.AddSingleton<INetworkService, NetworkService>();
+
+        // Register ViewModels
+        services.AddTransient<NetworkViewModel>();
+        services.AddTransient<JunkViewModel>();
+        services.AddTransient<UninstallViewModel>();
+        services.AddTransient<RepairViewModel>();
+        services.AddTransient<SystemOptimizerViewModel>();
+        services.AddTransient<StartupViewModel>();
+        services.AddTransient<ProcessViewModel>();
+        services.AddTransient<DiskViewModel>();
+        services.AddTransient<HardwareViewModel>();
+        services.AddTransient<RegistryViewModel>();
+        services.AddTransient<UpdaterViewModel>();
+        services.AddTransient<DriverViewModel>();
+
+        Services = services.BuildServiceProvider();
+    }
+
     /// <summary>
     /// Invoked when the application is launched.
     /// </summary>
@@ -47,8 +81,20 @@ public partial class App : Application
     {
         try
         {
+            // Initialize DI Container
+            ConfigureServices();
+
             // Initialize SQLite database
             Database.DbManager.InitializeDatabase();
+
+            // Check if launched in background mode
+            var commandLineArgs = Environment.GetCommandLineArgs();
+            if (commandLineArgs.Any(arg => arg.Equals("/background", StringComparison.OrdinalIgnoreCase) || 
+                                           arg.Equals("-background", StringComparison.OrdinalIgnoreCase)))
+            {
+                RunSilentCleanup();
+                return;
+            }
 
             _window = new MainWindow();
             _window.Activate();
@@ -57,6 +103,36 @@ public partial class App : Application
         {
             WriteCrashLog("crash_onlaunched.txt", ex.ToString());
             throw;
+        }
+    }
+
+    private static void RunSilentCleanup()
+    {
+        try
+        {
+            var cleaner = new Engines.JunkCleanerEngine();
+            // Scan for all categories
+            var categories = cleaner.ScanJunkAsync().GetAwaiter().GetResult();
+            // Perform clean
+            long cleanedBytes = cleaner.CleanJunkAsync(categories).GetAwaiter().GetResult();
+
+            Database.DbManager.LogAction(
+                $"Silent background clean completed. Freed {(cleanedBytes / 1024.0 / 1024.0):F2} MB.", 
+                "Background Scheduler", 
+                "Success"
+            );
+        }
+        catch (Exception ex)
+        {
+            Database.DbManager.LogAction(
+                $"Silent background clean failed: {ex.Message}", 
+                "Background Scheduler", 
+                "Failed"
+            );
+        }
+        finally
+        {
+            Environment.Exit(0);
         }
     }
 

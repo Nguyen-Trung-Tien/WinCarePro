@@ -408,4 +408,46 @@ public class StartupEngine
         }
         return false;
     }
+
+    public bool RegisterScheduledMaintenanceTask(bool enable)
+    {
+        string taskName = "WinCarePro_Maintenance";
+        try
+        {
+            using var ts = new TaskService();
+            var existingTask = ts.GetTask(taskName) ?? ts.GetTask($@"\{taskName}");
+            if (existingTask != null)
+            {
+                existingTask.Folder.DeleteTask(taskName);
+            }
+
+            if (!enable)
+            {
+                Database.DbManager.LogAction("Disabled WinCarePro automated task scheduler", "Task Scheduler", "Success");
+                return true;
+            }
+
+            var td = ts.NewTask();
+            td.RegistrationInfo.Description = "WinCarePro Automated System Junk Clean and Maintenance";
+            
+            var trigger = new WeeklyTrigger();
+            trigger.StartBoundary = DateTime.Today.AddHours(3); // 3:00 AM
+            trigger.DaysOfWeek = DaysOfTheWeek.Sunday;
+            td.Triggers.Add(trigger);
+
+            string appExe = Environment.ProcessPath ?? System.Reflection.Assembly.GetEntryAssembly()?.Location ?? "";
+            if (string.IsNullOrEmpty(appExe)) return false;
+
+            td.Actions.Add(new ExecAction(appExe, "/background"));
+
+            ts.RootFolder.RegisterTaskDefinition(taskName, td);
+            Database.DbManager.LogAction("Enabled WinCarePro automated weekly maintenance task scheduler", "Task Scheduler", "Success");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Database.DbManager.LogAction($"Failed to register task scheduler: {ex.Message}", "Task Scheduler", "Failed");
+            return false;
+        }
+    }
 }

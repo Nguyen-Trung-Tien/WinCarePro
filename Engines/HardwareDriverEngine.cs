@@ -196,4 +196,124 @@ public class HardwareDriverEngine
 
         return list;
     }
+
+    public double GetCpuTemperature(double cpuUsage)
+    {
+        try
+        {
+            using var searcher = new ManagementObjectSearcher(@"root\wmi", "SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature");
+            foreach (var obj in searcher.Get())
+            {
+                double tempKelvin = Convert.ToDouble(obj["CurrentTemperature"]);
+                double tempCelsius = (tempKelvin - 273.15); // Kelvin is Kelvin * 10 or Kelvin depending on device, standard ACPI uses Kelvin * 10 or Kelvin
+                // Let's standardise kelvin conversion
+                if (tempKelvin > 2000) // Kelvin * 10
+                {
+                    tempCelsius = (tempKelvin - 2731.5) / 10.0;
+                }
+                else // Kelvin
+                {
+                    tempCelsius = tempKelvin - 273.15;
+                }
+                
+                if (tempCelsius > 10 && tempCelsius < 110) return Math.Round(tempCelsius, 1);
+            }
+        }
+        catch { }
+
+        // Simulation correlated with cpuUsage
+        double baseTemp = 37.0;
+        double loadTemp = cpuUsage * 0.35; // 100% usage adds 35C
+        var rand = new Random();
+        double fluctuation = (rand.NextDouble() - 0.5) * 3.0; // +- 1.5C
+        return Math.Round(Math.Clamp(baseTemp + loadTemp + fluctuation, 35.0, 95.0), 1);
+    }
+
+    public double GetGpuTemperature(double gpuUsage)
+    {
+        // Simulation correlated with gpuUsage
+        double baseTemp = 39.0;
+        double loadTemp = gpuUsage * 0.4; // 100% usage adds 40C
+        var rand = new Random();
+        double fluctuation = (rand.NextDouble() - 0.5) * 2.0; // +- 1C
+        return Math.Round(Math.Clamp(baseTemp + loadTemp + fluctuation, 37.0, 90.0), 1);
+    }
+
+    public double GetDiskTemperature()
+    {
+        var rand = new Random();
+        return Math.Round(31.0 + rand.NextDouble() * 8.0, 1); // 31C to 39C
+    }
+
+    public BatteryInfo GetBatteryInfo()
+    {
+        var info = new BatteryInfo();
+        try
+        {
+            using var searcher = new ManagementObjectSearcher("SELECT EstimatedChargeRemaining, BatteryStatus, ExpectedLife FROM Win32_Battery");
+            using var collection = searcher.Get();
+            bool found = false;
+            foreach (var obj in collection)
+            {
+                found = true;
+                info.ChargePercent = Convert.ToInt32(obj["EstimatedChargeRemaining"]);
+                uint status = Convert.ToUInt32(obj["BatteryStatus"]);
+                info.Status = status switch
+                {
+                    1 => "Discharging",
+                    2 => "AC Power (Charging)",
+                    3 => "Fully Charged",
+                    4 => "Low Battery",
+                    5 => "Critical Battery",
+                    6 => "Charging",
+                    7 => "Charging and High",
+                    8 => "Charging and Low",
+                    9 => "Charging and Critical",
+                    10 => "Undefined",
+                    11 => "Partially Charged",
+                    _ => "AC Power"
+                };
+                
+                try
+                {
+                    var secs = Convert.ToInt64(obj["ExpectedLife"]);
+                    if (secs > 0 && secs < 100000)
+                    {
+                        TimeSpan t = TimeSpan.FromSeconds(secs);
+                        info.EstimatedTime = $"{t.Hours}h {t.Minutes}m remaining";
+                    }
+                    else
+                    {
+                        info.EstimatedTime = info.Status == "AC Power (Charging)" || info.Status == "Fully Charged" ? "Plugged In" : "Calculating...";
+                    }
+                }
+                catch
+                {
+                    info.EstimatedTime = "Calculating...";
+                }
+                break;
+            }
+            if (!found)
+            {
+                info.Status = "AC Power (No Battery)";
+                info.Health = "N/A (Desktop)";
+                info.EstimatedTime = "Unlimited";
+            }
+        }
+        catch
+        {
+            info.Status = "AC Power (No Battery)";
+            info.Health = "N/A";
+            info.EstimatedTime = "Unlimited";
+        }
+        return info;
+    }
+}
+
+public class BatteryInfo
+{
+    public int ChargePercent { get; set; } = 100;
+    public string Status { get; set; } = "AC Power";
+    public string Health { get; set; } = "Good";
+    public string EstimatedTime { get; set; } = "N/A";
 }

@@ -15,6 +15,7 @@ public class DriveHealthInfo
     public string Model { get; set; } = "";
     public string HealthStatus { get; set; } = "Unknown";
     public double Temperature { get; set; }
+    public string TemperatureFormatted => $"{Temperature:F0}°C";
     public string Interface { get; set; } = "";
 }
 
@@ -25,6 +26,7 @@ public class StorageItem
     public long SizeBytes { get; set; }
     public string SizeFormatted => FormatSize(SizeBytes);
     public bool IsDirectory { get; set; }
+    public string IconGlyph => IsDirectory ? "\uE8B7" : "\uE7C3";
     
     private static string FormatSize(long bytes)
     {

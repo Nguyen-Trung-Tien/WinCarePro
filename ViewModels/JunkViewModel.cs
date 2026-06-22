@@ -3,46 +3,46 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
-using WinCarePro.Engines;
+using WinCarePro.Services.Contracts;
+using WinCarePro.Services.Implementations;
 using WinCarePro.Models;
 
 namespace WinCarePro.ViewModels;
 
-public class JunkCleanerViewModel : ViewModelBase
+public class JunkViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly JunkCleanerEngine _engine = new();
+    private readonly IJunkCleanerService _junkEngine;
 
     private bool _isScanning;
-    private bool _isCleaning;
-    private string _progressMessage = "Ready to scan";
-    private int _progressPercent;
-    private string _totalJunkSize = "0.0 MB";
-
     public bool IsScanning
     {
         get => _isScanning;
         set => SetProperty(ref _isScanning, value);
     }
 
+    private bool _isCleaning;
     public bool IsCleaning
     {
         get => _isCleaning;
         set => SetProperty(ref _isCleaning, value);
     }
 
+    private string _progressMessage = "Ready to scan junk files";
     public string ProgressMessage
     {
         get => _progressMessage;
         set => SetProperty(ref _progressMessage, value);
     }
 
+    private int _progressPercent;
     public int ProgressPercent
     {
         get => _progressPercent;
         set => SetProperty(ref _progressPercent, value);
     }
 
+    private string _totalJunkSize = "0.0 MB";
     public string TotalJunkSize
     {
         get => _totalJunkSize;
@@ -51,11 +51,17 @@ public class JunkCleanerViewModel : ViewModelBase
 
     public ObservableCollection<JunkCategory> Categories { get; } = new();
 
-    public JunkCleanerViewModel()
+    public JunkViewModel(IJunkCleanerService junkEngine)
     {
+        _junkEngine = junkEngine;
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        _engine.ProgressMessage += Msg => _dispatcherQueue.TryEnqueue(() => ProgressMessage = Msg);
-        _engine.ProgressChanged += Pct => _dispatcherQueue.TryEnqueue(() => ProgressPercent = Pct);
+
+        _junkEngine.ProgressMessage += Msg => _dispatcherQueue.TryEnqueue(() => ProgressMessage = Msg);
+        _junkEngine.ProgressChanged += Pct => _dispatcherQueue.TryEnqueue(() => ProgressPercent = Pct);
+    }
+
+    public JunkViewModel() : this(new JunkCleanerService())
+    {
     }
 
     public async Task ScanAsync()
@@ -68,7 +74,7 @@ public class JunkCleanerViewModel : ViewModelBase
 
         try
         {
-            var results = await _engine.ScanJunkAsync();
+            var results = await _junkEngine.ScanJunkAsync();
             
             _dispatcherQueue.TryEnqueue(() =>
             {
@@ -100,7 +106,7 @@ public class JunkCleanerViewModel : ViewModelBase
 
         try
         {
-            long cleanedBytes = await _engine.CleanJunkAsync(Categories.ToList());
+            long cleanedBytes = await _junkEngine.CleanJunkAsync(Categories.ToList());
             
             _dispatcherQueue.TryEnqueue(() =>
             {

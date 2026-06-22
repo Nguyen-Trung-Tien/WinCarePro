@@ -2,6 +2,7 @@ using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro.Views;
 
@@ -13,7 +14,7 @@ public sealed partial class NetworkPage : Page
     {
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        ViewModel = new NetworkViewModel();
+        ViewModel = App.Services?.GetService<NetworkViewModel>() ?? new NetworkViewModel();
         this.Loaded += (s, e) => DataContext = ViewModel;
     }
 

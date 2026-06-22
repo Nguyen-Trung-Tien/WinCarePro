@@ -29,24 +29,138 @@ public class AiDiagnosticsEngine
         double avgLatencyMs,
         double packetLossPercent,
         int startupAppsCount,
-        List<string> securityAudits)
+        List<string> securityAudits,
+        double cpuUsage = 0,
+        double cpuTemp = 45,
+        double ramUsagePercent = 45,
+        int servicesCount = 50,
+        double diskActiveTime = 5,
+        double freeSpacePercent = 50,
+        double ssdHealthPercent = 100,
+        bool isThrottling = false,
+        bool isExplorerOptimized = true)
     {
         var summary = new DiagnosticSummary();
 
         await Task.Run(() =>
         {
-            // Category scoring parameters (Start at 100, subtract points for issues)
-            double performanceScore = 100.0;
+            // 7 Subsystem scores starting at 100
+            double cpuScore = 100.0;
+            double memoryScore = 100.0;
             double storageScore = 100.0;
+            double startupScore = 100.0;
+            double servicesScore = 100.0;
+            double responsivenessScore = 100.0;
             double networkScore = 100.0;
-            double securityScore = 100.0;
-            double softwareScore = 100.0;
 
-            // 1. Storage Evaluation
+            // 1. CPU Evaluation
+            if (cpuUsage > 90.0)
+            {
+                cpuScore -= 30.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "High CPU Usage",
+                    Category = "Performance",
+                    IsHealthy = false,
+                    Description = $"CPU usage is extremely high at {cpuUsage:F1}%.",
+                    Recommendation = "Close resource-heavy applications or run One-Click Optimization."
+                });
+                summary.Recommendations.Add("Reduce CPU overhead by terminating background tasks.");
+            }
+            if (cpuTemp > 90.0)
+            {
+                cpuScore -= 40.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "CPU Thermal Warning",
+                    Category = "Performance",
+                    IsHealthy = false,
+                    Description = $"CPU temperature is critical at {cpuTemp:F1}°C.",
+                    Recommendation = "Check system cooling fans and ventilation."
+                });
+                summary.Recommendations.Add("Resolve CPU thermal throttling risks.");
+            }
+            if (isThrottling)
+            {
+                cpuScore -= 30.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "CPU Throttling",
+                    Category = "Performance",
+                    IsHealthy = false,
+                    Description = "CPU frequency throttling detected.",
+                    Recommendation = "Improve cooling or change Windows power plan."
+                });
+            }
+
+            // 2. Memory Evaluation
+            if (ramUsagePercent > 85.0)
+            {
+                memoryScore -= 30.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "High RAM Usage",
+                    Category = "Performance",
+                    IsHealthy = false,
+                    Description = $"RAM usage is high at {ramUsagePercent:F1}%.",
+                    Recommendation = "Run RAM booster to free up standby memory."
+                });
+                summary.Recommendations.Add("Free memory using the RAM Optimization tool.");
+            }
+            if (ramUsagePercent > 90.0)
+            {
+                memoryScore -= 20.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "Critical Commit Charge",
+                    Category = "Performance",
+                    IsHealthy = false,
+                    Description = "Memory commit charge exceeds warning levels.",
+                    Recommendation = "Close unused web browser tabs and background applications."
+                });
+            }
+
+            // 3. Storage Evaluation
+            if (diskActiveTime > 95.0)
+            {
+                storageScore -= 40.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "Disk Bottleneck",
+                    Category = "Storage",
+                    IsHealthy = false,
+                    Description = $"Disk active time is elevated at {diskActiveTime:F1}%.",
+                    Recommendation = "Check resource monitor for processes with high Disk IO."
+                });
+            }
+            if (freeSpacePercent < 10.0)
+            {
+                storageScore -= 30.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "Low Free Space",
+                    Category = "Storage",
+                    IsHealthy = false,
+                    Description = $"System drive free space is critical at {freeSpacePercent:F1}%.",
+                    Recommendation = "Delete temporary files and browser cache to free space."
+                });
+            }
+            if (ssdHealthPercent < 20.0)
+            {
+                storageScore -= 50.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "SSD Wear Warning",
+                    Category = "Storage",
+                    IsHealthy = false,
+                    Description = $"SSD health is critical at {ssdHealthPercent:F0}%.",
+                    Recommendation = "Backup data immediately. SSD replacement recommended."
+                });
+            }
             double junkMb = junkSizeBytes / 1024.0 / 1024.0;
             if (junkMb > 10000) // 10GB
             {
-                storageScore -= 30;
+                storageScore -= 30.0;
                 summary.Results.Add(new DiagnosticResult
                 {
                     CheckName = "Disk Clutter Size",
@@ -59,7 +173,7 @@ public class AiDiagnosticsEngine
             }
             else if (junkMb > 500)
             {
-                storageScore -= 10;
+                storageScore -= 10.0;
                 summary.Results.Add(new DiagnosticResult
                 {
                     CheckName = "Junk Space Size",
@@ -71,26 +185,11 @@ public class AiDiagnosticsEngine
                 summary.Recommendations.Add("Clear temporary junk files and cache.");
             }
 
-            // 2. Registry Evaluation
-            if (registryIssuesCount > 5)
-            {
-                storageScore -= 10; // registry affects storage/organization
-                summary.Results.Add(new DiagnosticResult
-                {
-                    CheckName = "Registry Health",
-                    Category = "Storage",
-                    IsHealthy = false,
-                    Description = $"Found {registryIssuesCount} invalid shortcuts, missing file associations, or broken registry references.",
-                    Recommendation = "Scan and repair registry values via Registry Tools."
-                });
-                summary.Recommendations.Add($"Repair {registryIssuesCount} broken registry path entries.");
-            }
-
-            // 3. Performance / Startup Apps Evaluation
+            // 4. Startup Optimization
             if (startupAppsCount > 8)
             {
-                performanceScore -= (startupAppsCount - 8) * 4; // subtract 4 points for each app above 8
-                performanceScore = Math.Max(40, performanceScore);
+                startupScore -= (startupAppsCount - 8) * 5;
+                startupScore = Math.Max(40, startupScore);
                 summary.Results.Add(new DiagnosticResult
                 {
                     CheckName = "Startup Applications overhead",
@@ -113,10 +212,47 @@ public class AiDiagnosticsEngine
                 });
             }
 
-            // 4. Network Evaluation
-            if (packetLossPercent > 0.0)
+            // 5. Background Services
+            if (servicesCount > 120)
             {
-                networkScore -= 40;
+                servicesScore -= 40.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "Excessive Background Services",
+                    Category = "Performance",
+                    IsHealthy = false,
+                    Description = $"Detected {servicesCount} active background services running.",
+                    Recommendation = "Disable unnecessary non-essential service entries."
+                });
+            }
+            else if (servicesCount > 80)
+            {
+                servicesScore -= 20.0;
+            }
+
+            // 6. System Responsiveness
+            if (registryIssuesCount > 5)
+            {
+                responsivenessScore -= 20.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "Registry Health",
+                    Category = "Storage",
+                    IsHealthy = false,
+                    Description = $"Found {registryIssuesCount} invalid shortcuts, missing file associations, or broken registry references.",
+                    Recommendation = "Scan and repair registry values via Registry Tools."
+                });
+                summary.Recommendations.Add($"Repair {registryIssuesCount} broken registry path entries.");
+            }
+            if (!isExplorerOptimized)
+            {
+                responsivenessScore -= 15.0;
+            }
+
+            // 7. Network Health
+            if (packetLossPercent > 5.0)
+            {
+                networkScore -= 50.0;
                 summary.Results.Add(new DiagnosticResult
                 {
                     CheckName = "Packet Loss Detection",
@@ -127,9 +263,14 @@ public class AiDiagnosticsEngine
                 });
                 summary.Recommendations.Add("Repair network connection to eliminate packet loss.");
             }
-            if (avgLatencyMs > 150)
+            else if (packetLossPercent > 0.0)
             {
-                networkScore -= 20;
+                networkScore -= 10.0;
+            }
+
+            if (avgLatencyMs > 200.0)
+            {
+                networkScore -= 30.0;
                 summary.Results.Add(new DiagnosticResult
                 {
                     CheckName = "Network Latency",
@@ -138,6 +279,10 @@ public class AiDiagnosticsEngine
                     Description = $"Average response latency is elevated at {avgLatencyMs:F0} ms.",
                     Recommendation = "Verify proxy parameters, flush DNS, or check ISP connectivity."
                 });
+            }
+            else if (avgLatencyMs > 150.0)
+            {
+                networkScore -= 10.0;
             }
             
             if (packetLossPercent == 0 && avgLatencyMs < 80)
@@ -152,10 +297,10 @@ public class AiDiagnosticsEngine
                 });
             }
 
-            // 5. Security Evaluation
+            // Security Risks & Software updates
             if (securityAudits.Count > 0)
             {
-                securityScore -= 40;
+                responsivenessScore -= 10.0;
                 foreach (var issue in securityAudits)
                 {
                     summary.Results.Add(new DiagnosticResult
@@ -169,22 +314,9 @@ public class AiDiagnosticsEngine
                 }
                 summary.Recommendations.Add("Apply Windows security settings and check Defender policy.");
             }
-            else
-            {
-                summary.Results.Add(new DiagnosticResult
-                {
-                    CheckName = "Security Protection Status",
-                    Category = "Security",
-                    IsHealthy = true,
-                    Description = "Antivirus protection and firewalls are active. No startup vulnerabilities detected.",
-                    Recommendation = "System is secure."
-                });
-            }
-
-            // 6. Software Updates Evaluation
             if (outdatedAppsCount > 0)
             {
-                softwareScore -= Math.Min(40, outdatedAppsCount * 10);
+                responsivenessScore -= 10.0;
                 summary.Results.Add(new DiagnosticResult
                 {
                     CheckName = "Outdated Software Packages",
@@ -195,20 +327,24 @@ public class AiDiagnosticsEngine
                 });
                 summary.Recommendations.Add($"Upgrade {outdatedAppsCount} outdated software applications.");
             }
-            else
-            {
-                summary.Results.Add(new DiagnosticResult
-                {
-                    CheckName = "Installed Software Updates",
-                    Category = "Software Updates",
-                    IsHealthy = true,
-                    Description = "All monitored system packages and tools are up-to-date.",
-                    Recommendation = "No updates required."
-                });
-            }
 
             // Final Composite Health Score (Weighted Average)
-            double finalScore = (performanceScore * 0.3) + (storageScore * 0.2) + (networkScore * 0.15) + (securityScore * 0.25) + (softwareScore * 0.1);
+            cpuScore = Math.Clamp(cpuScore, 0.0, 100.0);
+            memoryScore = Math.Clamp(memoryScore, 0.0, 100.0);
+            storageScore = Math.Clamp(storageScore, 0.0, 100.0);
+            startupScore = Math.Clamp(startupScore, 0.0, 100.0);
+            servicesScore = Math.Clamp(servicesScore, 0.0, 100.0);
+            responsivenessScore = Math.Clamp(responsivenessScore, 0.0, 100.0);
+            networkScore = Math.Clamp(networkScore, 0.0, 100.0);
+
+            double finalScore = (cpuScore * 0.20) + 
+                                (memoryScore * 0.20) + 
+                                (storageScore * 0.15) + 
+                                (startupScore * 0.15) + 
+                                (servicesScore * 0.10) + 
+                                (responsivenessScore * 0.15) + 
+                                (networkScore * 0.05);
+
             summary.HealthScore = (int)Math.Clamp(finalScore, 0, 100);
         });
 

@@ -12,7 +12,7 @@ public sealed partial class MainPage : Page
     {
         InitializeComponent();
         
-        // Load default page
+        // Load default page on startup
         NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
         NavigateToPage("Dashboard");
     }
@@ -29,20 +29,44 @@ public sealed partial class MainPage : Page
         }
     }
 
+    public void NavigateToPageExternal(string tag)
+    {
+        if (tag.Equals("Settings", StringComparison.OrdinalIgnoreCase))
+        {
+            NavView.SelectedItem = NavView.SettingsItem;
+            NavigateToPage("Settings");
+            return;
+        }
+
+        var menuItem = NavView.MenuItems
+            .OfType<NavigationViewItem>()
+            .FirstOrDefault(x => x.Tag?.ToString().Equals(tag, StringComparison.OrdinalIgnoreCase) == true);
+        
+        if (menuItem != null)
+        {
+            NavView.SelectedItem = menuItem;
+            NavigateToPage(tag);
+        }
+    }
+
     private void NavigateToPage(string tag)
     {
         Type? pageType = tag.ToLower() switch
         {
             "dashboard" => typeof(DashboardPage),
             "junk" => typeof(JunkPage),
-            "uninstaller" => typeof(UninstallPage),
+            "uninstall" => typeof(UninstallPage),
             "network" => typeof(NetworkPage),
             "repair" => typeof(RepairPage),
+            "security" => typeof(SecurityPage),
             "optimizer" => typeof(SystemOptimizerPage),
             "startup" => typeof(StartupPage),
             "process" => typeof(ProcessPage),
             "disk" => typeof(DiskPage),
+            "hardware" => typeof(HardwarePage),
+            "registry" => typeof(RegistryPage),
             "updater" => typeof(UpdaterPage),
+            "driver" => typeof(DriverPage),
             "settings" => typeof(SettingsPage),
             _ => null
         };
@@ -52,15 +76,15 @@ public sealed partial class MainPage : Page
             ContentFrame.Navigate(pageType);
             
             // Set header text
-            if (tag == "Settings")
+            if (tag.Equals("Settings", StringComparison.OrdinalIgnoreCase))
             {
-                NavView.Header = "Settings & Preferences";
+                NavView.Header = "Settings & Personalization";
             }
             else
             {
                 var menuItem = NavView.MenuItems
                     .OfType<NavigationViewItem>()
-                    .FirstOrDefault(x => x.Tag?.ToString() == tag);
+                    .FirstOrDefault(x => x.Tag?.ToString().Equals(tag, StringComparison.OrdinalIgnoreCase) == true);
                 if (menuItem != null)
                 {
                     NavView.Header = menuItem.Content;

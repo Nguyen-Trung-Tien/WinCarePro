@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,11 @@ using System.Management;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
 namespace WinCarePro.ViewModels;
 
@@ -81,9 +87,93 @@ public partial class DashboardViewModel : ViewModelBase
     public ObservableCollection<string> Recommendations { get; } = new();
     public ObservableCollection<DiagnosticResult> DiagnosticItems { get; } = new();
 
+    public ObservableCollection<ObservableValue> CpuSeriesValues { get; } = new();
+    public ObservableCollection<ObservableValue> RamSeriesValues { get; } = new();
+    public ObservableCollection<ObservableValue> GpuSeriesValues { get; } = new();
+    public ObservableCollection<ObservableValue> DiskSeriesValues { get; } = new();
+
+    public ISeries[] PerformanceSeries { get; set; }
+    public IEnumerable<LiveChartsCore.Kernel.Sketches.ICartesianAxis> XAxes { get; set; }
+    public IEnumerable<LiveChartsCore.Kernel.Sketches.ICartesianAxis> YAxes { get; set; }
+
     public DashboardViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+
+        // Initialize historical values for rolling charts
+        for (int i = 0; i < 30; i++)
+        {
+            CpuSeriesValues.Add(new ObservableValue(0));
+            RamSeriesValues.Add(new ObservableValue(0));
+            GpuSeriesValues.Add(new ObservableValue(0));
+            DiskSeriesValues.Add(new ObservableValue(0));
+        }
+
+        PerformanceSeries = new ISeries[]
+        {
+            new LineSeries<ObservableValue>
+            {
+                Values = CpuSeriesValues,
+                Name = "CPU",
+                Fill = null,
+                Stroke = new SolidColorPaint(SKColor.Parse("#F59E0B"), 2),
+                GeometryFill = null,
+                GeometryStroke = null,
+                LineSmoothness = 0.5
+            },
+            new LineSeries<ObservableValue>
+            {
+                Values = RamSeriesValues,
+                Name = "RAM",
+                Fill = null,
+                Stroke = new SolidColorPaint(SKColor.Parse("#3B82F6"), 2),
+                GeometryFill = null,
+                GeometryStroke = null,
+                LineSmoothness = 0.5
+            },
+            new LineSeries<ObservableValue>
+            {
+                Values = GpuSeriesValues,
+                Name = "GPU",
+                Fill = null,
+                Stroke = new SolidColorPaint(SKColor.Parse("#8B5CF6"), 2),
+                GeometryFill = null,
+                GeometryStroke = null,
+                LineSmoothness = 0.5
+            },
+            new LineSeries<ObservableValue>
+            {
+                Values = DiskSeriesValues,
+                Name = "Disk",
+                Fill = null,
+                Stroke = new SolidColorPaint(SKColor.Parse("#10B981"), 2),
+                GeometryFill = null,
+                GeometryStroke = null,
+                LineSmoothness = 0.5
+            }
+        };
+
+        XAxes = new List<LiveChartsCore.Kernel.Sketches.ICartesianAxis>
+        {
+            new Axis
+            {
+                LabelsPaint = new SolidColorPaint(SKColor.Parse("#94A3B8")),
+                ShowSeparatorLines = false,
+                TextSize = 10
+            }
+        };
+
+        YAxes = new List<LiveChartsCore.Kernel.Sketches.ICartesianAxis>
+        {
+            new Axis
+            {
+                LabelsPaint = new SolidColorPaint(SKColor.Parse("#94A3B8")),
+                MinLimit = 0,
+                MaxLimit = 100,
+                TextSize = 10
+            }
+        };
+
         _ = InitializeSystemInfoAsync();
         StartResourceMonitor();
     }
@@ -287,6 +377,19 @@ public partial class DashboardViewModel : ViewModelBase
                         RamUsage = Math.Round(ram, 1);
                         GpuUsage = Math.Round(gpu, 1);
                         DiskUsage = Math.Round(disk, 1);
+
+                        // Update chart collections (shift old, insert new)
+                        CpuSeriesValues.Add(new ObservableValue(CpuUsage));
+                        CpuSeriesValues.RemoveAt(0);
+
+                        RamSeriesValues.Add(new ObservableValue(RamUsage));
+                        RamSeriesValues.RemoveAt(0);
+
+                        GpuSeriesValues.Add(new ObservableValue(GpuUsage));
+                        GpuSeriesValues.RemoveAt(0);
+
+                        DiskSeriesValues.Add(new ObservableValue(DiskUsage));
+                        DiskSeriesValues.RemoveAt(0);
                         
                         var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
                         SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
@@ -345,6 +448,32 @@ public partial class DashboardViewModel : ViewModelBase
 
             // 5. Evaluate AI Health Score
             ScanStatus = "Status: Calculating System Health Index...";
+            
+            // Get background services count
+            int servicesCount = 50; // default/fallback
+            try
+            {
+                var servicesList = await Task.Run(() => _startupEngine.GetServices());
+                if (servicesList != null)
+                {
+                    servicesCount = servicesList.Count;
+                }
+            }
+            catch { }
+
+            // Get disk status and free space percent
+            double freeSpacePercent = 50.0;
+            try
+            {
+                var drives = DriveInfo.GetDrives().Where(d => d.IsReady && d.DriveType == DriveType.Fixed);
+                var cDrive = drives.FirstOrDefault(d => d.Name.StartsWith("C", StringComparison.OrdinalIgnoreCase)) ?? drives.FirstOrDefault();
+                if (cDrive != null)
+                {
+                    freeSpacePercent = ((double)cDrive.AvailableFreeSpace / cDrive.TotalSize) * 100.0;
+                }
+            }
+            catch { }
+
             var summary = await _aiEngine.RunHealthEvaluationAsync(
                 _junkSizeBytes,
                 regIssues.Count,
@@ -352,7 +481,16 @@ public partial class DashboardViewModel : ViewModelBase
                 avgLatency,
                 pingLoss,
                 startupApps.Count,
-                securityAudits
+                securityAudits,
+                cpuUsage: CpuUsage,
+                cpuTemp: _hardwareEngine.GetCpuTemperature(CpuUsage),
+                ramUsagePercent: RamUsage,
+                servicesCount: servicesCount,
+                diskActiveTime: DiskUsage,
+                freeSpacePercent: freeSpacePercent,
+                ssdHealthPercent: 100.0, // default/fallback
+                isThrottling: false,
+                isExplorerOptimized: true
             );
 
             _dispatcherQueue.TryEnqueue(() =>

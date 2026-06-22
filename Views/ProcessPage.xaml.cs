@@ -1,62 +1,92 @@
 using System;
-using Microsoft.UI;
+using System.Diagnostics;
+using System.IO;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
+using WinCarePro.Models;
 
 namespace WinCarePro.Views;
 
 public sealed partial class ProcessPage : Page
 {
     public ProcessViewModel ViewModel { get; }
+    private ProcessInfo? _rightClickedProcess;
 
     public ProcessPage()
     {
+        ViewModel = App.Services.GetRequiredService<ProcessViewModel>();
         InitializeComponent();
-        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        ViewModel = new ProcessViewModel();
-        this.Loaded += (s, e) => DataContext = ViewModel;
+        this.DataContext = ViewModel;
     }
 
-    private async void OnRefreshClick(object sender, RoutedEventArgs e)
+    private async void OnRefreshProcessesClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.RefreshProcessesAsync();
     }
 
-    private async void OnEndTaskClick(object sender, RoutedEventArgs e)
+    private void ProcessRow_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        if (sender is Button btn && btn.Tag is int pid)
+        if (sender is Grid grid)
         {
-            await ViewModel.EndProcessAsync(pid);
+            var flyout = FlyoutBase.GetAttachedFlyout(grid) as MenuFlyout;
+            if (flyout != null)
+            {
+                _rightClickedProcess = grid.DataContext as ProcessInfo;
+                if (args.TryGetPosition(grid, out var point))
+                {
+                    flyout.ShowAt(grid, point);
+                }
+                else
+                {
+                    flyout.ShowAt(grid);
+                }
+                args.Handled = true;
+            }
         }
     }
 
-    private async void OnEndTreeClick(object sender, RoutedEventArgs e)
+    private async void OnEndTaskContextClick(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.Tag is int pid)
+        if (_rightClickedProcess != null)
         {
-            await ViewModel.EndProcessTreeAsync(pid);
+            await ViewModel.EndProcessAsync(_rightClickedProcess.Id);
         }
     }
 
-    private void OnHeaderClick(object sender, RoutedEventArgs e)
+    private async void OnEndProcessTreeContextClick(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.Tag is string col)
+        if (_rightClickedProcess != null)
         {
-            ViewModel.ChangeSort(col);
+            await ViewModel.EndProcessTreeAsync(_rightClickedProcess.Id);
         }
     }
 
-    internal bool IsNot(bool val) => !val;
-
-    internal static Brush GetCpuColor(double cpu)
+    private void OnOpenLocationContextClick(object sender, RoutedEventArgs e)
     {
-        if (cpu > 70.0) return new SolidColorBrush(Colors.Red);
-        if (cpu > 20.0) return new SolidColorBrush(Colors.Orange);
-        // Standard theme foreground (dark mode safe default color)
-        return (Brush)Application.Current.Resources["TextControlForeground"];
+        if (_rightClickedProcess != null && !string.IsNullOrEmpty(_rightClickedProcess.FilePath) && File.Exists(_rightClickedProcess.FilePath))
+        {
+            try
+            {
+                Process.Start("explorer.exe", $"/select,\"{_rightClickedProcess.FilePath}\"");
+            }
+            catch { }
+        }
     }
 
-    internal static string FormatCpu(double cpu) => $"{cpu:F1}%";
+    private void OnSearchOnlineContextClick(object sender, RoutedEventArgs e)
+    {
+        if (_rightClickedProcess != null)
+        {
+            try
+            {
+                string url = $"https://www.google.com/search?q={Uri.EscapeDataString(_rightClickedProcess.Name)}";
+                Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+            }
+            catch { }
+        }
+    }
 }

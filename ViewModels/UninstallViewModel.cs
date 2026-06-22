@@ -6,108 +6,98 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
 using WinCarePro.Models;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WinCarePro.ViewModels;
 
-public partial class UninstallViewModel : ViewModelBase
+public class UninstallViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly UninstallEngine _engine = new();
-    private List<InstalledAppInfo> _allApps = new();
+    private readonly UninstallEngine _uninstallEngine = new();
 
-    [ObservableProperty]
-    private bool _isScanning;
+    private bool _isBusy;
+    public bool IsBusy
+    {
+        get => _isBusy;
+        set => SetProperty(ref _isBusy, value);
+    }
 
-    [ObservableProperty]
-    private bool _isUninstalling;
-
-    [ObservableProperty]
-    private bool _isScanningLeftovers;
-
-    [ObservableProperty]
-    private bool _isCleaningLeftovers;
-
-    [ObservableProperty]
-    private int _progressPercent;
-
-    [ObservableProperty]
     private string _progressMessage = "Ready";
+    public string ProgressMessage
+    {
+        get => _progressMessage;
+        set => SetProperty(ref _progressMessage, value);
+    }
 
-    [ObservableProperty]
-    private string _searchText = "";
+    private int _progressPercent;
+    public int ProgressPercent
+    {
+        get => _progressPercent;
+        set => SetProperty(ref _progressPercent, value);
+    }
 
-    [ObservableProperty]
-    private int _currentStep = 0; // 0 = List of apps, 1 = Uninstalling/Scanning, 2 = Leftovers review
-
-    [ObservableProperty]
-    private InstalledAppInfo? _selectedApp;
-
-    [ObservableProperty]
-    private string _leftoversSizeFormatted = "0 B";
-
-    [ObservableProperty]
-    private string _uninstallSelectedText = "Uninstall Selected";
-
-    [ObservableProperty]
-    private bool _canUninstallSelected = false;
-
+    private List<InstalledAppInfo> _allApps = new();
     public ObservableCollection<InstalledAppInfo> FilteredApps { get; } = new();
-    public ObservableCollection<InstalledAppInfo> FilteredThirdPartyApps { get; } = new();
-    public ObservableCollection<InstalledAppInfo> FilteredSystemApps { get; } = new();
     public ObservableCollection<LeftoverItem> Leftovers { get; } = new();
+
+    private string _searchText = "";
+    public string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            if (SetProperty(ref _searchText, value))
+            {
+                ApplyAppFilter();
+            }
+        }
+    }
+
+    private int _uninstallStep = 0;
+    public int UninstallStep
+    {
+        get => _uninstallStep;
+        set => SetProperty(ref _uninstallStep, value);
+    }
+
+    private string _leftoversSizeFormatted = "0 B";
+    public string LeftoversSizeFormatted
+    {
+        get => _leftoversSizeFormatted;
+        set => SetProperty(ref _leftoversSizeFormatted, value);
+    }
 
     public UninstallViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        _engine.OutputReceived += msg => _dispatcherQueue.TryEnqueue(() => ProgressMessage = msg);
-        _engine.ProgressChanged += pct => _dispatcherQueue.TryEnqueue(() => ProgressPercent = pct);
-        
-        // Scan apps on initialization
-        _ = ScanAppsAsync();
-    }
 
-    partial void OnSearchTextChanged(string value)
-    {
-        ApplyFilter();
+        _uninstallEngine.OutputReceived += msg => _dispatcherQueue.TryEnqueue(() => ProgressMessage = msg);
+        _uninstallEngine.ProgressChanged += pct => _dispatcherQueue.TryEnqueue(() => ProgressPercent = pct);
+
+        _ = ScanAppsAsync();
     }
 
     public async Task ScanAppsAsync()
     {
-        if (IsScanning || IsUninstalling || IsCleaningLeftovers) return;
-
-        IsScanning = true;
-        ProgressPercent = 20;
+        if (IsBusy) return;
+        IsBusy = true;
+        ProgressPercent = 10;
         ProgressMessage = "Scanning registry for installed applications...";
-        
-        foreach (var app in _allApps)
-        {
-            app.PropertyChanged -= OnAppPropertyChanged;
-        }
-        
+
         FilteredApps.Clear();
-        FilteredThirdPartyApps.Clear();
-        FilteredSystemApps.Clear();
         _allApps.Clear();
-        UpdateSelectionProperties();
 
         try
         {
-            var apps = await Task.Run(() => _engine.ScanInstalledApps());
+            var apps = await Task.Run(() => _uninstallEngine.ScanInstalledApps());
             ProgressPercent = 80;
 
             _dispatcherQueue.TryEnqueue(() =>
             {
                 _allApps = apps;
-                foreach (var app in _allApps)
-                {
-                    app.PropertyChanged -= OnAppPropertyChanged;
-                    app.PropertyChanged += OnAppPropertyChanged;
-                }
-                ApplyFilter();
+                ApplyAppFilter();
                 ProgressPercent = 100;
                 ProgressMessage = $"Loaded {_allApps.Count} applications.";
-                IsScanning = false;
+                IsBusy = false;
             });
         }
         catch (Exception ex)
@@ -115,138 +105,51 @@ public partial class UninstallViewModel : ViewModelBase
             _dispatcherQueue.TryEnqueue(() =>
             {
                 ProgressMessage = $"Scan failed: {ex.Message}";
-                IsScanning = false;
+                IsBusy = false;
             });
         }
     }
 
-    private void ApplyFilter()
+    private void ApplyAppFilter()
     {
         FilteredApps.Clear();
-        FilteredThirdPartyApps.Clear();
-        FilteredSystemApps.Clear();
         var query = SearchText.Trim();
         var list = _allApps.AsEnumerable();
-        
+
         if (!string.IsNullOrEmpty(query))
         {
-            list = list.Where(x => 
-                x.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase) || 
-                x.Publisher.Contains(query, StringComparison.OrdinalIgnoreCase)
-            );
+            list = list.Where(x => x.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase) || x.Publisher.Contains(query, StringComparison.OrdinalIgnoreCase));
         }
 
         foreach (var app in list)
         {
             FilteredApps.Add(app);
-            if (app.IsStoreApp)
-            {
-                FilteredSystemApps.Add(app);
-            }
-            else
-            {
-                FilteredThirdPartyApps.Add(app);
-            }
         }
-
-        UpdateSelectionProperties();
-    }
-
-    private void OnAppPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(InstalledAppInfo.IsSelected))
-        {
-            _dispatcherQueue.TryEnqueue(UpdateSelectionProperties);
-        }
-    }
-
-    private void UpdateSelectionProperties()
-    {
-        int count = _allApps.Count(x => x.IsSelected);
-        UninstallSelectedText = count > 0 ? $"Uninstall Selected ({count})" : "Uninstall Selected";
-        CanUninstallSelected = count > 0 && !IsScanning && !IsUninstalling && !IsCleaningLeftovers;
-    }
-
-    public void SelectAllApps(bool select, bool system)
-    {
-        var apps = _allApps.Where(x => x.IsStoreApp == system);
-        var query = SearchText.Trim();
-        if (!string.IsNullOrEmpty(query))
-        {
-            apps = apps.Where(x => 
-                x.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase) || 
-                x.Publisher.Contains(query, StringComparison.OrdinalIgnoreCase)
-            );
-        }
-
-        foreach (var app in apps)
-        {
-            app.IsSelected = select;
-        }
-        UpdateSelectionProperties();
     }
 
     public async Task UninstallAppAsync(InstalledAppInfo app)
     {
-        if (IsScanning || IsUninstalling || IsCleaningLeftovers) return;
-
-        foreach (var a in _allApps)
-        {
-            a.IsSelected = (a == app);
-        }
-        await UninstallSelectedAppsAsync();
-    }
-
-    public async Task UninstallSelectedAppsAsync()
-    {
-        if (IsScanning || IsUninstalling || IsCleaningLeftovers) return;
-
-        var appsToUninstall = _allApps.Where(x => x.IsSelected).ToList();
-        if (appsToUninstall.Count == 0) return;
-
-        CurrentStep = 1;
-        IsUninstalling = true;
-        UpdateSelectionProperties();
+        UninstallStep = 1;
+        IsBusy = true;
 
         try
         {
-            var allLeftovers = new List<LeftoverItem>();
-            int totalApps = appsToUninstall.Count;
+            ProgressPercent = 10;
+            ProgressMessage = $"Uninstalling {app.DisplayName}...";
 
-            for (int i = 0; i < totalApps; i++)
-            {
-                var app = appsToUninstall[i];
-                SelectedApp = app;
+            bool uninstalled = await _uninstallEngine.RunStandardUninstallerAsync(app);
 
-                int appStepBase = (int)((double)i / totalApps * 100);
-                ProgressPercent = appStepBase + 5;
-                ProgressMessage = $"[{i + 1}/{totalApps}] Uninstalling {app.DisplayName}...";
+            ProgressPercent = 60;
+            ProgressMessage = $"Scanning leftovers for {app.DisplayName}...";
 
-                // Step 1: Run standard uninstaller
-                bool uninstalled = await _engine.RunStandardUninstallerAsync(app);
-                if (!uninstalled)
-                {
-                    _dispatcherQueue.TryEnqueue(() =>
-                    {
-                        ProgressMessage = $"Standard uninstaller for {app.DisplayName} could not be launched or failed.";
-                    });
-                }
+            var leftoverList = await Task.Run(() => _uninstallEngine.ScanLeftovers(app));
 
-                // Step 2: Scan for leftovers
-                ProgressPercent = appStepBase + (int)(50.0 / totalApps);
-                ProgressMessage = $"[{i + 1}/{totalApps}] Scanning leftovers for {app.DisplayName}...";
-
-                var leftoverList = await Task.Run(() => _engine.ScanLeftovers(app));
-                allLeftovers.AddRange(leftoverList);
-            }
-
-            IsUninstalling = false;
-            IsScanningLeftovers = false;
+            IsBusy = false;
 
             _dispatcherQueue.TryEnqueue(() =>
             {
                 Leftovers.Clear();
-                foreach (var item in allLeftovers)
+                foreach (var item in leftoverList)
                 {
                     item.PropertyChanged += (s, e) =>
                     {
@@ -263,14 +166,14 @@ public partial class UninstallViewModel : ViewModelBase
 
                 if (Leftovers.Count > 0)
                 {
-                    CurrentStep = 2; // Move to Leftovers view
-                    ProgressMessage = $"Scanned {Leftovers.Count} leftover items from {totalApps} uninstalled applications.";
+                    UninstallStep = 2;
+                    ProgressMessage = $"Scanned {Leftovers.Count} leftover items.";
                 }
                 else
                 {
-                    CurrentStep = 0; // Go back to app list
-                    ProgressMessage = $"Successfully uninstalled {totalApps} applications. No leftovers found.";
-                    _ = ScanAppsAsync(); // Refresh list
+                    UninstallStep = 0;
+                    ProgressMessage = $"Successfully uninstalled. No leftovers found.";
+                    _ = ScanAppsAsync();
                 }
             });
         }
@@ -278,35 +181,31 @@ public partial class UninstallViewModel : ViewModelBase
         {
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ProgressMessage = $"Batch uninstallation process error: {ex.Message}";
-                IsUninstalling = false;
-                IsScanningLeftovers = false;
-                CurrentStep = 0;
+                ProgressMessage = $"Uninstallation failed: {ex.Message}";
+                IsBusy = false;
+                UninstallStep = 0;
             });
         }
     }
 
     public async Task DeleteLeftoversAsync()
     {
-        if (IsCleaningLeftovers || Leftovers.Count == 0) return;
-
-        IsCleaningLeftovers = true;
-        ProgressPercent = 20;
+        if (Leftovers.Count == 0) return;
+        IsBusy = true;
         ProgressMessage = "Deleting leftover components...";
 
         try
         {
             var selectedItems = Leftovers.Where(x => x.IsSelected).ToList();
-            int deleted = await _engine.DeleteLeftoversAsync(selectedItems);
-            ProgressPercent = 80;
-
+            int deleted = await _uninstallEngine.DeleteLeftoversAsync(selectedItems);
+            
             _dispatcherQueue.TryEnqueue(() =>
             {
                 ProgressPercent = 100;
-                ProgressMessage = $"Successfully cleaned up residual files and registry entries.";
-                IsCleaningLeftovers = false;
-                CurrentStep = 0;
-                _ = ScanAppsAsync(); // Refresh installed apps list
+                ProgressMessage = $"Cleaned leftover files and registry entries.";
+                IsBusy = false;
+                UninstallStep = 0;
+                _ = ScanAppsAsync();
             });
         }
         catch (Exception ex)
@@ -314,28 +213,19 @@ public partial class UninstallViewModel : ViewModelBase
             _dispatcherQueue.TryEnqueue(() =>
             {
                 ProgressMessage = $"Error deleting leftovers: {ex.Message}";
-                IsCleaningLeftovers = false;
+                IsBusy = false;
             });
         }
     }
 
     public void CancelLeftovers()
     {
-        CurrentStep = 0;
+        UninstallStep = 0;
         ProgressMessage = "Leftover deletion cancelled.";
         _ = ScanAppsAsync();
     }
 
-    public void SelectAllLeftovers(bool select)
-    {
-        foreach (var item in Leftovers)
-        {
-            item.IsSelected = select;
-        }
-        UpdateLeftoversSize();
-    }
-
-    public void UpdateLeftoversSize()
+    private void UpdateLeftoversSize()
     {
         long bytes = Leftovers.Where(x => x.IsSelected && x.Type != LeftoverType.RegistryKey && x.Type != LeftoverType.RegistryValue).Sum(x => x.SizeBytes);
         string[] suffix = { "B", "KB", "MB", "GB", "TB" };

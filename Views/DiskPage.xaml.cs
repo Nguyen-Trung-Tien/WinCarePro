@@ -3,25 +3,21 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 
 namespace WinCarePro.Views;
 
 public sealed partial class DiskPage : Page
 {
-    public DiskToolsViewModel ViewModel { get; }
+    public DiskViewModel ViewModel { get; }
 
     public DiskPage()
     {
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        ViewModel = new DiskToolsViewModel();
-        this.Loaded += (s, e) => DataContext = ViewModel;
-    }
-
-    private async void OnRefreshDrivesClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.LoadDrivesAsync();
+        ViewModel = App.Services.GetRequiredService<DiskViewModel>();
+        this.DataContext = ViewModel;
     }
 
     private async void OnAnalyzeClick(object sender, RoutedEventArgs e)
@@ -29,21 +25,30 @@ public sealed partial class DiskPage : Page
         await ViewModel.AnalyzeStorageAsync();
     }
 
-    private async void OnFindDuplicatesClick(object sender, RoutedEventArgs e)
+    private async void OnScanDuplicatesClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.FindDuplicatesAsync();
     }
 
-    private async void OnCleanEmptyClick(object sender, RoutedEventArgs e)
+    private async void OnDeleteDuplicatesClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.CleanEmptyFoldersAsync();
+        await ViewModel.CleanSelectedDuplicatesAsync();
     }
 
-    private async void OnRunChkdskClick(object sender, RoutedEventArgs e)
+    private void OnPivotSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (sender is Button btn && btn.Tag is string drive)
+        // Optional tracking or cleanup
+    }
+
+    private async void StorageItem_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+    {
+        if (sender is Grid grid && grid.DataContext is WinCarePro.Engines.StorageItem item)
         {
-            await ViewModel.RunChkdskAsync(drive);
+            if (item.IsDirectory)
+            {
+                ViewModel.StorageScanPath = item.Path;
+                await ViewModel.AnalyzeStorageAsync();
+            }
         }
     }
 

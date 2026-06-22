@@ -143,7 +143,11 @@ public sealed partial class SettingsPage : Page
 
     private void UpdateAppTheme(bool dark)
     {
-        if (this.XamlRoot?.Content is FrameworkElement rootElement)
+        if (App.MainWindowInstance is MainWindow mainWindow)
+        {
+            mainWindow.ApplyAppTheme(dark);
+        }
+        else if (this.XamlRoot?.Content is FrameworkElement rootElement)
         {
             rootElement.RequestedTheme = dark ? ElementTheme.Dark : ElementTheme.Light;
         }

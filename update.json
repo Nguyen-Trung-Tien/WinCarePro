@@ -1,5 +1,5 @@
 {
   "version": "2.0.1",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v2.0.0/WinCareProSetup.exe",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v2.0.1/WinCareProSetup.exe",
   "changelog": "Bản vá lỗi và tối ưu v2.0.1: Khắc phục triệt để lỗi thoát ứng dụng đột ngột khi chuyển đổi giữa các trang chức năng, ngăn chặn rò rỉ bộ nhớ/tiến trình nền ở Process Manager & Dashboard, đồng thời sửa lỗi hiển thị giao diện ở chế độ nền sáng."
 }

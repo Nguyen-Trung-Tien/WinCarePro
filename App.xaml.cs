@@ -18,6 +18,8 @@ namespace WinCarePro;
 public partial class App : Application
 {
     private Window? _window;
+    
+    public static MainWindow? MainWindowInstance => (Application.Current as App)?._window as MainWindow;
 
     private static readonly string CrashLogDir = System.IO.Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),

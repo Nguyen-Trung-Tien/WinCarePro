@@ -22,6 +22,12 @@ public sealed partial class DashboardPage : Page
         this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        ViewModel.StopMonitoring();
+    }
+
     private async void OnScanClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.RunFullDiagnosticsAsync();

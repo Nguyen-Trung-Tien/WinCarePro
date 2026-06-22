@@ -84,6 +84,7 @@ public class StartupViewModel : ViewModelBase
         {
             StatusText = $"Failed to toggle startup app {entry.Name}.";
         }
+        IsLoading = false;
         await LoadAllDataAsync();
     }
 
@@ -100,6 +101,7 @@ public class StartupViewModel : ViewModelBase
         {
             StatusText = $"Failed to {action} service {entry.Name}.";
         }
+        IsLoading = false;
         await LoadAllDataAsync();
     }
 }

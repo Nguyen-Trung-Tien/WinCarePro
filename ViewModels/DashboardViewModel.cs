@@ -30,6 +30,7 @@ public partial class DashboardViewModel : ViewModelBase
     private readonly AiDiagnosticsEngine _aiEngine = new();
 
     private double _cachedRamCapacityGb = 16.0;
+    private bool _isRunning = true;
 
     private List<JunkCategory>? _scannedJunkCategories;
     private List<RegistryIssue>? _scannedRegistryIssues;
@@ -359,7 +360,7 @@ public partial class DashboardViewModel : ViewModelBase
         Task.Run(async () =>
         {
             var rand = new Random();
-            while (true)
+            while (_isRunning)
             {
                 try
                 {
@@ -371,8 +372,10 @@ public partial class DashboardViewModel : ViewModelBase
                     if (cpu > 40.0) gpu += 15.0;
                     double disk = 1.0 + rand.NextDouble() * 12.0;
 
+                    if (!_isRunning) break;
                     _dispatcherQueue.TryEnqueue(() =>
                     {
+                        if (!_isRunning) return;
                         CpuUsage = Math.Round(cpu, 1);
                         RamUsage = Math.Round(ram, 1);
                         GpuUsage = Math.Round(gpu, 1);
@@ -400,6 +403,11 @@ public partial class DashboardViewModel : ViewModelBase
                 await Task.Delay(2000); // Poll every 2s to conserve CPU
             }
         });
+    }
+
+    public void StopMonitoring()
+    {
+        _isRunning = false;
     }
 
     public async Task RunFullDiagnosticsAsync()

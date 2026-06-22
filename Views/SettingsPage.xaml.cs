@@ -215,4 +215,147 @@ public sealed partial class SettingsPage : Page
     {
         return selectedIndex == targetIndex ? Visibility.Visible : Visibility.Collapsed;
     }
+
+    private async void OnCheckUpdatesClick(object sender, RoutedEventArgs e)
+    {
+        CheckUpdatesBtn.IsEnabled = false;
+        UpdateProgressRing.IsActive = true;
+        UpdateStatusLabel.Text = "Checking for updates...";
+        UpdateProgressBar.Visibility = Visibility.Collapsed;
+
+        try
+        {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
+            
+            string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
+            string response;
+            if (File.Exists(@"D:\WinCare\update.json"))
+            {
+                response = File.ReadAllText(@"D:\WinCare\update.json");
+            }
+            else
+            {
+                response = await client.GetStringAsync(jsonUrl);
+            }
+            
+            using var doc = JsonDocument.Parse(response);
+            var root = doc.RootElement;
+            string remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
+            string downloadUrl = root.GetProperty("url").GetString() ?? "";
+            string changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
+
+            var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
+            var remoteVersion = new Version(remoteVerStr);
+
+            UpdateProgressRing.IsActive = false;
+
+            if (remoteVersion > currentVersion)
+            {
+                UpdateStatusLabel.Text = $"New version {remoteVerStr} is available.";
+
+                ContentDialog updateDialog = new ContentDialog
+                {
+                    Title = "Update Available",
+                    Content = $"Version {remoteVerStr} has been released (Current: {currentVersion.ToString(3)}).\n\nWhat's New:\n{changelog}\n\nWould you like to download and install this update now?",
+                    PrimaryButtonText = "Update Now",
+                    CloseButtonText = "Later",
+                    DefaultButton = ContentDialogButton.Primary,
+                    XamlRoot = this.Content.XamlRoot
+                };
+
+                var result = await updateDialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    await DownloadAndInstallUpdateAsync(downloadUrl);
+                }
+            }
+            else
+            {
+                UpdateStatusLabel.Text = $"You are running the latest version (v{currentVersion.ToString(3)}).";
+            }
+        }
+        catch (Exception ex)
+        {
+            UpdateProgressRing.IsActive = false;
+            UpdateStatusLabel.Text = $"Failed to check for updates: {ex.Message}";
+        }
+        finally
+        {
+            CheckUpdatesBtn.IsEnabled = true;
+        }
+    }
+
+    private async Task DownloadAndInstallUpdateAsync(string downloadUrl)
+    {
+        if (string.IsNullOrEmpty(downloadUrl)) return;
+
+        CheckUpdatesBtn.IsEnabled = false;
+        UpdateStatusLabel.Text = "Downloading update...";
+        UpdateProgressBar.Visibility = Visibility.Visible;
+        UpdateProgressBar.Value = 0;
+
+        try
+        {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
+            
+            using var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            long? totalBytes = response.Content.Headers.ContentLength;
+            using var contentStream = await response.Content.ReadAsStreamAsync();
+            
+            string tempFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");
+            if (!Directory.Exists(tempFolder))
+            {
+                Directory.CreateDirectory(tempFolder);
+            }
+            string setupFilePath = Path.Combine(tempFolder, "WinCarePro_Setup.exe");
+
+            using var fileStream = new FileStream(setupFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+            
+            var buffer = new byte[8192];
+            long totalRead = 0;
+            int read;
+            
+            while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                await fileStream.WriteAsync(buffer, 0, read);
+                totalRead += read;
+                
+                if (totalBytes.HasValue)
+                {
+                    double progress = (double)totalRead / totalBytes.Value * 100.0;
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        UpdateProgressBar.Value = progress;
+                        UpdateStatusLabel.Text = $"Downloading update... {progress:F0}%";
+                    });
+                }
+            }
+            
+            fileStream.Close();
+
+            UpdateStatusLabel.Text = "Launching installer...";
+            await Task.Delay(1000);
+
+            // Start the setup file with silent/automatic parameters
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = setupFilePath,
+                Arguments = "/SILENT /SP- /NOICONS /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS",
+                UseShellExecute = true
+            });
+
+            // Close the current application
+            Microsoft.UI.Xaml.Application.Current.Exit();
+        }
+        catch (Exception ex)
+        {
+            UpdateStatusLabel.Text = $"Download failed: {ex.Message}";
+            UpdateProgressBar.Visibility = Visibility.Collapsed;
+            CheckUpdatesBtn.IsEnabled = true;
+        }
+    }
 }

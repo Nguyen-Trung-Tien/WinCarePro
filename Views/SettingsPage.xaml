@@ -49,6 +49,22 @@
                         </StackPanel>
                     </Border>
 
+                    <!-- Software Updates -->
+                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Software Updates" FontSize="14" FontWeight="Bold" />
+                            <TextBlock Text="Check if there is a newer version of WinCare Pro available." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button x:Name="CheckUpdatesBtn" Content="Check for Updates" Click="OnCheckUpdatesClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="6" Padding="12,6" FontWeight="Bold" />
+                                <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Width="20" Height="20" VerticalAlignment="Center" />
+                                <TextBlock x:Name="UpdateStatusLabel" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            
+                            <ProgressBar x:Name="UpdateProgressBar" Visibility="Collapsed" Maximum="100" Value="0" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
+                        </StackPanel>
+                    </Border>
+
                     <Border Style="{StaticResource ModernCardStyle}" Padding="16">
                         <StackPanel Spacing="12">
                             <TextBlock Text="Local database logs size limit" FontSize="14" FontWeight="Bold" />

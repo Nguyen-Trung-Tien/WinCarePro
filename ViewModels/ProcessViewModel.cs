@@ -47,6 +47,8 @@ public class ProcessViewModel : ViewModelBase
     private ObservableCollection<ProcessInfo> _allProcesses = new();
     public ObservableCollection<ProcessInfo> Processes { get; } = new();
 
+    private bool _isRunning = true;
+
     public ProcessViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
@@ -56,13 +58,15 @@ public class ProcessViewModel : ViewModelBase
 
     private async Task StartRunningProcessesMonitor()
     {
-        while (true)
+        while (_isRunning)
         {
             try
             {
                 var list = await Task.Run(() => _processService.GetRunningProcessesAsync());
+                if (!_isRunning) break;
                 _dispatcherQueue.TryEnqueue(() =>
                 {
+                    if (!_isRunning) return;
                     _allProcesses = new ObservableCollection<ProcessInfo>(list);
                     ApplyFilterAndSort();
                 });
@@ -71,6 +75,11 @@ public class ProcessViewModel : ViewModelBase
 
             await Task.Delay(3000);
         }
+    }
+
+    public void StopMonitoring()
+    {
+        _isRunning = false;
     }
 
     public async Task RefreshProcessesAsync()

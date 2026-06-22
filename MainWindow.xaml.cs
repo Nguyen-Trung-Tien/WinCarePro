@@ -27,6 +27,11 @@ public sealed partial class MainWindow : Window
     [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
     private static extern IntPtr SetWindowLong32(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
+    [DllImport("dwmapi.dll")]
+    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+
+    private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+
     private static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
     {
         if (IntPtr.Size == 8)
@@ -150,6 +155,16 @@ public sealed partial class MainWindow : Window
         RootGrid.RequestedTheme = dark ? ElementTheme.Dark : ElementTheme.Light;
         ThemeIcon.Glyph = dark ? "\uE708" : "\uE706"; // Moon vs Sun glyph
         SetBackdropType(dark ? "micaalt" : "mica");
+
+        try
+        {
+            if (_hwnd != IntPtr.Zero)
+            {
+                int isDark = dark ? 1 : 0;
+                DwmSetWindowAttribute(_hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref isDark, sizeof(int));
+            }
+        }
+        catch { }
     }
 
     public void SetBackdropType(string type)

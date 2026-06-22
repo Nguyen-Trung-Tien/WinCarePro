@@ -25,6 +25,8 @@ public sealed partial class StartupPage : Page
 
     private async void OnStartupToggled(object sender, RoutedEventArgs e)
     {
+        if (ViewModel.IsLoading) return;
+
         if (sender is ToggleSwitch ts && ts.DataContext is StartupEntry entry)
         {
             if (entry.IsEnabled != ts.IsOn)

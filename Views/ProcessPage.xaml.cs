@@ -23,6 +23,12 @@ public sealed partial class ProcessPage : Page
         this.DataContext = ViewModel;
     }
 
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        ViewModel.StopMonitoring();
+    }
+
     private async void OnRefreshProcessesClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.RefreshProcessesAsync();

@@ -18,21 +18,24 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Custom Title Bar Grid -->
+        <!-- Custom Title Bar Grid — v3.0 Nova -->
         <Grid x:Name="TitleBarGrid" Grid.Row="0" Height="56" Background="Transparent">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" /> <!-- Logo & Brand -->
-                <ColumnDefinition Width="*" />    <!-- Drag Area & Search -->
-                <ColumnDefinition Width="Auto" /> <!-- Right Controls -->
+                <ColumnDefinition Width="Auto" />  <!-- Logo & Brand -->
+                <ColumnDefinition Width="*" />     <!-- Drag Area & Search -->
+                <ColumnDefinition Width="Auto" />  <!-- Right Controls -->
             </Grid.ColumnDefinitions>
 
             <!-- Drag Area Canvas (Acts as window drag region) -->
             <Grid x:Name="AppTitleDragArea" Grid.ColumnSpan="3" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 
-            <!-- Brand (Left) -->
+            <!-- Brand (Left) — v3.0 with version badge -->
             <StackPanel Grid.Column="0" Orientation="Horizontal" Padding="16,0" VerticalAlignment="Center" Spacing="8" Canvas.ZIndex="10">
                 <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="20" Height="20" VerticalAlignment="Center" Stretch="Uniform"/>
                 <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                <Border Background="#207F56D9" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                    <TextBlock Text="v3.0" FontSize="10" FontWeight="Bold" Foreground="#FF7F56D9" VerticalAlignment="Center"/>
+                </Border>
             </StackPanel>
 
             <!-- Search (Center) -->
@@ -40,12 +43,30 @@
                 <AutoSuggestBox x:Name="SearchBox" PlaceholderText="Search tools, settings, apps... (Ctrl + F)" QueryIcon="Find" CornerRadius="18" HorizontalAlignment="Stretch" VerticalAlignment="Center" QuerySubmitted="OnSearchQuerySubmitted"/>
             </Grid>
 
-            <!-- Controls (Right) -->
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Padding="0,0,142,0" Spacing="8" VerticalAlignment="Center" Canvas.ZIndex="10">
+            <!-- Controls (Right) — Clock + Notification Bell + Theme -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Padding="0,0,142,0" Spacing="4" VerticalAlignment="Center" Canvas.ZIndex="10">
+
+                <!-- Live Clock -->
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <FontIcon Glyph="&#xE787;" FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ClockText" Text="--:--" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display"/>
+                </StackPanel>
+
+                <!-- Separator -->
+                <Border Width="1" Height="20" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="4,0" VerticalAlignment="Center" Opacity="0.5"/>
 
                 <!-- Theme Switcher -->
                 <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ThemeButton_Click">
                     <FontIcon x:Name="ThemeIcon" Glyph="&#xE706;" FontSize="15" />
+                </Button>
+                
+                <!-- Notification Bell -->
+                <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="NotificationButton_Click">
+                    <Grid>
+                        <FontIcon Glyph="&#xE7E8;" FontSize="15" />
+                        <!-- Red dot badge -->
+                        <Border x:Name="NotificationBadge" Background="Red" Width="8" Height="8" CornerRadius="4" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4,-2,-2,4" Visibility="Collapsed" />
+                    </Grid>
                 </Button>
             </StackPanel>
         </Grid>

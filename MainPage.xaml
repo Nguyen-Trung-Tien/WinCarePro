@@ -11,7 +11,24 @@
         <!-- OpenPaneLength set to 260px, CompactPaneLength to 72px -->
         <NavigationView x:Name="NavView" PaneDisplayMode="Auto" SelectionChanged="OnNavSelectionChanged" IsBackButtonVisible="Collapsed" AlwaysShowHeader="False" IsSettingsVisible="True" OpenPaneLength="260" CompactPaneLength="72">
 
+            <!-- v3.0 Nova — User Chip in Pane Header -->
+            <NavigationView.PaneHeader>
+                <Grid Padding="16,14,16,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Width="36" Height="36" CornerRadius="18" Background="{StaticResource PrimaryAccentGradient}" VerticalAlignment="Center" Margin="0,0,12,0">
+                        <FontIcon Glyph="&#xE77B;" FontSize="16" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                        <TextBlock x:Name="NavUserName" Text="User" FontSize="13" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock x:Name="NavMachineName" Text="PC" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Grid>
+            </NavigationView.PaneHeader>
 
+            <!-- v3.0 Nova — Health Status Footer -->
             <NavigationView.PaneFooter>
                 <StackPanel Padding="20,16,16,24" Spacing="6">
                     <StackPanel Orientation="Horizontal" Spacing="8">

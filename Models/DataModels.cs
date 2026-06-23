@@ -494,6 +494,27 @@ public class SettingsProfile
     // Advanced Developer
     public bool EnableVerboseLogs { get; set; } = false;
     public bool EnableExperimentalAi { get; set; } = false;
+
+    // v3.0 Notifications Settings
+    public bool ShowNotifications { get; set; } = true;
+    public double NotificationThreshold { get; set; } = 10.0; // Show notification if health score drops by more than this
+}
+
+public class NotificationItem
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = "";
+    public string Message { get; set; } = "";
+    public string Level { get; set; } = "Info"; // Info, Warning, Critical
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public bool IsRead { get; set; }
+}
+
+public class CpuTemperatureInfo
+{
+    public double TemperatureCelsius { get; set; }
+    public string SensorName { get; set; } = "";
+    public DateTime Timestamp { get; set; } = DateTime.Now;
 }
 
 

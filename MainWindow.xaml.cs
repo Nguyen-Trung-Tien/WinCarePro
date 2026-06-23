@@ -104,6 +104,9 @@ public sealed partial class MainWindow : Window
 
         // Navigate page frame
         RootFrame.Navigate(typeof(MainPage));
+
+        // Start live clock ticker
+        StartClockTicker();
     }
 
     private void SubclassWindow()
@@ -112,6 +115,21 @@ public sealed partial class MainWindow : Window
 
         _newWndProc = new WinProc(NewWindowProc);
         _oldWndProc = SetWindowLongPtr(_hwnd, GWL_WNDPROC, Marshal.GetFunctionPointerForDelegate(_newWndProc));
+    }
+
+    private void StartClockTicker()
+    {
+        // Update clock immediately
+        ClockText.Text = DateTime.Now.ToString("HH:mm");
+
+        // Create a DispatcherTimer for periodic updates
+        var timer = new Microsoft.UI.Xaml.DispatcherTimer();
+        timer.Interval = TimeSpan.FromSeconds(30);
+        timer.Tick += (s, e) =>
+        {
+            ClockText.Text = DateTime.Now.ToString("HH:mm");
+        };
+        timer.Start();
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -372,13 +390,16 @@ public sealed partial class MainWindow : Window
             client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
             
             string response;
-            if (File.Exists(@"D:\WinCare\update.json"))
+            // Check for local update.json in app directory (for offline/dev testing)
+            string localUpdatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update.json");
+            if (File.Exists(localUpdatePath))
             {
-                response = File.ReadAllText(@"D:\WinCare\update.json");
+                response = File.ReadAllText(localUpdatePath);
             }
             else
             {
                 string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
+                client.Timeout = TimeSpan.FromSeconds(10);
                 response = await client.GetStringAsync(jsonUrl);
             }
             
@@ -532,6 +553,15 @@ public sealed partial class MainWindow : Window
         if (!string.IsNullOrEmpty(pageTag) && RootFrame.Content is MainPage mainPage)
         {
             mainPage.NavigateToPageExternal(pageTag);
+        }
+    }
+
+    private void NotificationButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (RootFrame.Content is MainPage mainPage)
+        {
+            mainPage.NavigationFrame.Navigate(typeof(WinCarePro.Views.NotificationPage));
+            NotificationBadge.Visibility = Visibility.Collapsed;
         }
     }
 

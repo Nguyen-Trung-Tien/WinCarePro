@@ -76,6 +76,21 @@ public class DbManager
             command.ExecuteNonQuery();
         }
 
+        // Create Notifications table
+        var createNotificationsTable = @"
+            CREATE TABLE IF NOT EXISTS Notifications (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Title TEXT NOT NULL,
+                Message TEXT NOT NULL,
+                Level TEXT NOT NULL,
+                IsRead INTEGER DEFAULT 0,
+                CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+            );";
+        using (var command = new SqliteCommand(createNotificationsTable, connection))
+        {
+            command.ExecuteNonQuery();
+        }
+
         // Check if default user exists, if not, create one
         var checkUser = "SELECT COUNT(*) FROM Users";
         long userCount = 0;
@@ -287,6 +302,106 @@ public class DbManager
         }
         return dict;
     }
+
+    /// <summary>
+    /// v3.0: Cleanup log entries older than specified days (default: 90 days).
+    /// </summary>
+    public static int CleanupOldLogs(int retentionDays = 90)
+    {
+        try
+        {
+            using var conn = new SqliteConnection(ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "DELETE FROM Logs WHERE CreatedAt < @cutoff";
+            cmd.Parameters.AddWithValue("@cutoff", DateTime.Now.AddDays(-retentionDays).ToString("o"));
+            return cmd.ExecuteNonQuery();
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    /// <summary>
+    /// v3.0: Get recent log entries (most recent first).
+    /// </summary>
+    public static List<LogEntry> GetRecentLogs(int limit = 50)
+    {
+        var logs = new List<LogEntry>();
+        try
+        {
+            using var conn = new SqliteConnection(ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT Id, Action, Module, Status, CreatedAt FROM Logs ORDER BY Id DESC LIMIT @limit";
+            cmd.Parameters.AddWithValue("@limit", limit);
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                logs.Add(new LogEntry
+                {
+                    Id = reader.GetInt32(0),
+                    Action = reader.GetString(1),
+                    Module = reader.GetString(2),
+                    Status = reader.GetString(3),
+                    CreatedAt = DateTime.TryParse(reader.GetString(4), out var dt) ? dt : DateTime.Now
+                });
+            }
+        }
+        catch { }
+        return logs;
+    }
+
+    /// <summary>
+    /// v3.0: Add a new system notification to the database.
+    /// </summary>
+    public static void AddNotification(string title, string message, string level = "Info")
+    {
+        try
+        {
+            using var conn = new SqliteConnection(ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "INSERT INTO Notifications (Title, Message, Level, IsRead) VALUES (@title, @message, @level, 0)";
+            cmd.Parameters.AddWithValue("@title", title);
+            cmd.Parameters.AddWithValue("@message", message);
+            cmd.Parameters.AddWithValue("@level", level);
+            cmd.ExecuteNonQuery();
+        }
+        catch { }
+    }
+
+    /// <summary>
+    /// v3.0: Get recent notification items from the database.
+    /// </summary>
+    public static List<WinCarePro.Models.NotificationItem> GetRecentNotifications(int limit = 50)
+    {
+        var list = new List<WinCarePro.Models.NotificationItem>();
+        try
+        {
+            using var conn = new SqliteConnection(ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT Id, Title, Message, Level, IsRead, CreatedAt FROM Notifications ORDER BY Id DESC LIMIT @limit";
+            cmd.Parameters.AddWithValue("@limit", limit);
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(new WinCarePro.Models.NotificationItem
+                {
+                    Id = reader.GetInt32(0),
+                    Title = reader.GetString(1),
+                    Message = reader.GetString(2),
+                    Level = reader.GetString(3),
+                    IsRead = reader.GetInt32(4) != 0,
+                    CreatedAt = DateTime.TryParse(reader.GetString(5), out var dt) ? dt : DateTime.Now
+                });
+            }
+        }
+        catch { }
+        return list;
+    }
 }
 
 public class LogEntry
@@ -296,6 +411,7 @@ public class LogEntry
     public string Module { get; set; } = "";
     public string Status { get; set; } = "";
     public DateTime CreatedAt { get; set; }
+    public string CreatedAtFormatted => CreatedAt.ToString("yyyy-MM-dd HH:mm:ss");
 }
 
 public class ReportEntry

@@ -2,6 +2,45 @@
 
 ---
 
+## 🚀 WinCare Pro v3.0.0 (Bản nâng cấp lớn "Nova")
+
+Chào mừng bạn đến với **WinCare Pro v3.0.0 "Nova"**! Đây là bản phát hành nâng cấp lớn nhất từ trước đến nay, mang đến giao diện thiết kế **Glassmorphism v3.0** tuyệt đẹp, tính năng giám sát phần cứng thời gian thực chính xác, trung tâm thông báo và lịch sử nhật ký hệ thống, cùng hàng loạt các cải tiến kiến trúc cốt lõi.
+
+### 🌟 Điểm nổi bật (Highlights)
+
+* **Giao diện Glassmorphism 3.0 Hiện đại:**
+  - Tích hợp bộ Design Tokens cao cấp vào hệ thống tài nguyên ứng dụng, mang lại hiệu ứng kính mờ (Glassmorphism), viền Neon Glow chạy động và độ đổ bóng sâu (Depth Shadows).
+  - Tích hợp **Widget Đồng hồ & Lịch** thời gian thực, cùng huy hiệu phiên bản `v3.0` ngay trên thanh Titlebar.
+  - Sidebar điều hướng được bổ sung thẻ thông tin người dùng (User Chip) lấy tự động từ hệ điều hành và thẻ hiển thị chỉ số sức khỏe tổng quan trực quan.
+
+* **Giám sát Phần cứng Thời gian thực Chính xác:**
+  - Loại bỏ các chỉ số mô phỏng ngẫu nhiên (Mock Data). Toàn bộ dữ liệu GPU và Disk Activity giờ đây được truy vấn trực tiếp từ phần cứng thông qua WMI (`Win32_PerfFormattedData_GPUPerformanceCounters_GPUEngine`) và hiệu năng luồng hệ thống.
+  - Tích hợp đo đạc và hiển thị trực quan **Nhiệt độ CPU (CPU Temperature)** thời gian thực trên giao diện Dashboard.
+
+* **Trang Nhật ký & Chuông Thông báo mới (Notification & Log System):**
+  - Biểu tượng chuông thông báo trên Titlebar tích hợp chấm đỏ báo hiệu khi có sự kiện mới. Khi click vào chuông sẽ chuyển hướng tới trang Nhật ký Hoạt động.
+  - Trang **Notification & Logs** mới cho phép người dùng theo dõi toàn bộ lịch sử quét, tối ưu và dọn dẹp hệ thống. Hỗ trợ tìm kiếm, bộ lọc theo Module và chức năng Xuất báo cáo ra định dạng `.csv`.
+
+* **Sửa các lỗi nghiêm trọng & Rò rỉ bộ nhớ (Memory Leak):**
+  - Loại bỏ hoàn toàn lỗi đường dẫn cứng `D:\WinCare\update.json` trong bộ tự động cập nhật, tự động phân tích và trỏ về thư mục chạy ứng dụng gốc (`AppDomain.CurrentDomain.BaseDirectory`).
+  - Sửa lỗi rò rỉ bộ nhớ (Memory Leak) bằng cách triển khai chuẩn mẫu thiết kế `IDisposable` giải phóng tài nguyên WMI và luồng định kỳ trong các ViewModel khi chuyển trang.
+  - Khắc phục lỗi biên dịch XAML layout của CPU Card trong trang Dashboard.
+
+* **Cải tiến Kỹ thuật:**
+  - Đăng ký toàn bộ các dịch vụ lõi (AiDiagnosticsEngine, JunkCleanerEngine, StartupEngine, SoftwareUpdaterEngine,...) làm Singleton trong bộ chứa DI (Dependency Injection) tại `App.xaml.cs`.
+  - Cập nhật cơ sở dữ liệu SQLite tự động tạo bảng `Notifications` và các tiến trình tự động dọn dẹp log cũ hơn 90 ngày.
+  - Nâng cấp phiên bản phần mềm trong Software Updater và bổ sung 5 app mới (VLC, 7-Zip, Notepad++, Python, Zoom).
+
+### 💾 Hướng dẫn Cập nhật lên v3.0.0
+1. Mở ứng dụng **WinCare Pro** hiện tại của bạn.
+2. Di chuyển đến mục **Cài đặt (Settings)**.
+3. Nhấp chọn **Check for Updates**.
+4. Ứng dụng sẽ phát hiện phiên bản mới `3.0.0` thông qua cấu hình `update.json` tự động.
+5. Nhấn chọn **Update Now** để tự động nâng cấp thông qua Silent Installer.
+6. *Hoặc* tải trực tiếp file cài đặt mới nhất tại mục **Releases** trên GitHub.
+
+---
+
 ## 🚀 WinCare Pro v2.0.5 (Bản cập nhật tối ưu & Sửa lỗi dịch thuật/tiêu đề)
 
 Chào mừng bạn đến với **WinCare Pro v2.0.5**! Bản cập nhật này sửa các lỗi giao diện quan trọng và tối ưu hóa hệ thống chuyển đổi ngôn ngữ động, giúp nâng cao trải nghiệm sử dụng.

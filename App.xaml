@@ -71,6 +71,56 @@
                 <Setter Property="CornerRadius" Value="16" />
             </Style>
 
+            <!-- v3.0 Nova — Glassmorphism Card (frosted glass effect) -->
+            <Style x:Key="GlassmorphismCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource GlassBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="20" />
+            </Style>
+
+            <!-- v3.0 Nova — Quick Stat Card (compact info chip) -->
+            <Style x:Key="QuickStatCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="Padding" Value="16,14" />
+            </Style>
+
+            <!-- v3.0 Nova — Status Badge Styles -->
+            <Style x:Key="StatusBadgeGoodStyle" TargetType="Border">
+                <Setter Property="Background" Value="#1E10B981" />
+                <Setter Property="BorderBrush" Value="#3010B981" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="12,6" />
+            </Style>
+
+            <Style x:Key="StatusBadgeWarningStyle" TargetType="Border">
+                <Setter Property="Background" Value="#1EF59E0B" />
+                <Setter Property="BorderBrush" Value="#30F59E0B" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="12,6" />
+            </Style>
+
+            <Style x:Key="StatusBadgeCriticalStyle" TargetType="Border">
+                <Setter Property="Background" Value="#1EEF4444" />
+                <Setter Property="BorderBrush" Value="#30EF4444" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="12,6" />
+            </Style>
+
+            <!-- v3.0 Nova — Accent Neon Glow Border -->
+            <Style x:Key="NeonGlowBorderStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="BorderThickness" Value="2" />
+                <Setter Property="CornerRadius" Value="20" />
+            </Style>
+
             <Style x:Key="DarkTerminalStyle" TargetType="TextBox">
                 <Setter Property="Background" Value="#0A0E1A" />
                 <Setter Property="Foreground" Value="#00F2FE" />
@@ -144,6 +194,7 @@
             <!-- Value Converters -->
             <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+            <local:StatusToBrushConverter x:Key="StatusToBrushConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

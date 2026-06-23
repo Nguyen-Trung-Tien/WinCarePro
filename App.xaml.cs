@@ -58,6 +58,18 @@ public partial class App : Application
         services.AddSingleton<IJunkCleanerService, JunkCleanerService>();
         services.AddSingleton<INetworkService, NetworkService>();
 
+        // v3.0 — Register engines in DI for testability
+        services.AddSingleton<Engines.AiDiagnosticsEngine>();
+        services.AddSingleton<Engines.JunkCleanerEngine>();
+        services.AddSingleton<Engines.SecurityPrivacyEngine>();
+        services.AddSingleton<Engines.SystemOptimizerEngine>();
+        services.AddSingleton<Engines.StartupEngine>();
+        services.AddSingleton<Engines.RegistryBackupEngine>();
+        services.AddSingleton<Engines.SoftwareUpdaterEngine>();
+        services.AddSingleton<Engines.HardwareDriverEngine>();
+        services.AddSingleton<Engines.DiskEngine>();
+        services.AddSingleton<Engines.ProcessService>();
+
         // Register ViewModels
         services.AddTransient<NetworkViewModel>();
         services.AddTransient<JunkViewModel>();

@@ -15,6 +15,10 @@ public sealed partial class MainPage : Page
     {
         InitializeComponent();
         
+        // Populate user chip with system info
+        NavUserName.Text = Environment.UserName;
+        NavMachineName.Text = Environment.MachineName;
+        
         // Auto-translate navigated pages
         ContentFrame.Navigated += (s, e) =>
         {

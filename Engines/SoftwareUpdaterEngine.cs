@@ -32,8 +32,8 @@ public class SoftwareUpdaterEngine
             Name = "Git for Windows",
             Id = "Git.Git",
             RegistryNameQuery = "Git",
-            LatestVersion = "2.45.2",
-            DownloadUrl = "https://github.com/git-for-windows/git/releases/download/v2.45.2.windows.1/Git-2.45.2-64-bit.exe",
+            LatestVersion = "2.48.1",
+            DownloadUrl = "https://github.com/git-for-windows/git/releases/download/v2.48.1.windows.1/Git-2.48.1-64-bit.exe",
             SilentArguments = "/VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS",
             FileExtension = ".exe"
         },
@@ -42,7 +42,7 @@ public class SoftwareUpdaterEngine
             Name = "Visual Studio Code",
             Id = "Microsoft.VisualStudioCode",
             RegistryNameQuery = "Visual Studio Code",
-            LatestVersion = "1.90.1",
+            LatestVersion = "1.98.2",
             DownloadUrl = "https://update.code.visualstudio.com/latest/win32-x64-user/stable",
             SilentArguments = "/VERYSILENT /MERGETASKS=!runcode /NORESTART",
             FileExtension = ".exe"
@@ -52,8 +52,8 @@ public class SoftwareUpdaterEngine
             Name = "Node.js (LTS)",
             Id = "OpenJS.NodeJS.LTS",
             RegistryNameQuery = "Node.js",
-            LatestVersion = "20.14.0",
-            DownloadUrl = "https://nodejs.org/dist/v20.14.0/node-v20.14.0-x64.msi",
+            LatestVersion = "22.14.0",
+            DownloadUrl = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-x64.msi",
             SilentArguments = "/qn /norestart",
             FileExtension = ".msi"
         },
@@ -62,7 +62,7 @@ public class SoftwareUpdaterEngine
             Name = "Mozilla Firefox",
             Id = "Mozilla.Firefox",
             RegistryNameQuery = "Mozilla Firefox",
-            LatestVersion = "126.0.1",
+            LatestVersion = "138.0.1",
             DownloadUrl = "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=en-US",
             SilentArguments = "/S",
             FileExtension = ".exe"
@@ -72,9 +72,60 @@ public class SoftwareUpdaterEngine
             Name = "Google Chrome",
             Id = "Google.Chrome",
             RegistryNameQuery = "Google Chrome",
-            LatestVersion = "125.0.6422.142",
+            LatestVersion = "136.0.7103.93",
             DownloadUrl = "https://dl.google.com/tag/s/appguid%3D%7B8A91EB1D-223C-4C1B-87BD-78F4B7E1857A%7D%26iid%3D%7B%7D%26lang%3Den%26browser%3D4%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dtrue%26ap%3Dx64-stable-statsdef_1/update2/installers/ChromeSetup.exe",
             SilentArguments = "/silent /install",
+            FileExtension = ".exe"
+        },
+        // v3.0 Nova — 5 new popular apps
+        new AppDefinition
+        {
+            Name = "VLC Media Player",
+            Id = "VideoLAN.VLC",
+            RegistryNameQuery = "VLC media player",
+            LatestVersion = "3.0.21",
+            DownloadUrl = "https://get.videolan.org/vlc/3.0.21/win64/vlc-3.0.21-win64.exe",
+            SilentArguments = "/S /L=1033",
+            FileExtension = ".exe"
+        },
+        new AppDefinition
+        {
+            Name = "7-Zip",
+            Id = "7zip.7zip",
+            RegistryNameQuery = "7-Zip",
+            LatestVersion = "24.09",
+            DownloadUrl = "https://www.7-zip.org/a/7z2409-x64.exe",
+            SilentArguments = "/S",
+            FileExtension = ".exe"
+        },
+        new AppDefinition
+        {
+            Name = "Notepad++",
+            Id = "Notepad++.Notepad++",
+            RegistryNameQuery = "Notepad++",
+            LatestVersion = "8.7.7",
+            DownloadUrl = "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.7.7/npp.8.7.7.Installer.x64.exe",
+            SilentArguments = "/S",
+            FileExtension = ".exe"
+        },
+        new AppDefinition
+        {
+            Name = "Python",
+            Id = "Python.Python.3.13",
+            RegistryNameQuery = "Python",
+            LatestVersion = "3.13.3",
+            DownloadUrl = "https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe",
+            SilentArguments = "/quiet InstallAllUsers=1 PrependPath=1",
+            FileExtension = ".exe"
+        },
+        new AppDefinition
+        {
+            Name = "WinRAR",
+            Id = "RARLab.WinRAR",
+            RegistryNameQuery = "WinRAR",
+            LatestVersion = "7.10",
+            DownloadUrl = "https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-710.exe",
+            SilentArguments = "/S",
             FileExtension = ".exe"
         }
     };

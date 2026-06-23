@@ -84,7 +84,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel>
                 <TextBlock Text="System Dashboard" FontSize="28" FontWeight="ExtraBold" CharacterSpacing="-10" />
-                <TextBlock Text="Real-time performance monitors, PC diagnostics diagnostics, and speed optimizer." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
+                <TextBlock Text="Real-time performance monitors, AI diagnostics, and one-click optimization." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
             </StackPanel>
         </Grid>
 
@@ -103,8 +103,8 @@
 
                 <!-- Column 1: Health Status & Resources -->
                 <StackPanel x:Name="LeftPanel" Grid.Row="0" Grid.Column="0" Spacing="24">
-                    <!-- Health Gauge Card (Glowing Border) -->
-                    <Border Style="{StaticResource GradientBorderCardStyle}" Padding="28">
+                    <!-- Health Gauge Card (Neon Glow Border) -->
+                    <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="28">
                         <Grid x:Name="HealthGaugeGrid">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" x:Name="GaugeCol0" />
@@ -164,20 +164,27 @@
 
                         <!-- CPU Card -->
                         <Border x:Name="CpuCard" Grid.Row="0" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="1" Style="{StaticResource ModernCardStyle}" Padding="20">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Spacing="6" Grid.Column="0">
-                                    <TextBlock Text="CPU Processor Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.CpuUsage), Mode=OneWay}" FontSize="24" FontWeight="ExtraBold" />
-                                    <ProgressBar Value="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" Maximum="100" Height="6" Foreground="{StaticResource CpuAccentBrush}" Background="{StaticResource CpuTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Spacing="6" Grid.Column="0">
+                                        <TextBlock Text="CPU Processor Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind FormatPercent(ViewModel.CpuUsage), Mode=OneWay}" FontSize="24" FontWeight="ExtraBold" />
+                                        <ProgressBar Value="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" Maximum="100" Height="6" Foreground="{StaticResource CpuAccentBrush}" Background="{StaticResource CpuTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
+                                    </StackPanel>
+                                    <Border Grid.Column="1" Width="44" Height="44" Background="#15F59E0B" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
+                                        <FontIcon Glyph="&#xE7F4;" FontSize="18" Foreground="{StaticResource CpuAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    </Border>
+                                </Grid>
+                                <!-- v3.0: CPU Temperature -->
+                                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
+                                    <FontIcon Glyph="&#xE9CA;" FontSize="12" Foreground="{StaticResource CpuAccentBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{x:Bind ViewModel.CpuTempFormatted, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
-                                <Border Grid.Column="1" Width="44" Height="44" Background="#15F59E0B" CornerRadius="22" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
-                                    <FontIcon Glyph="&#xE7F4;" FontSize="18" Foreground="{StaticResource CpuAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                </Border>
-                            </Grid>
+                            </StackPanel>
                         </Border>
 
                         <!-- Memory (RAM) Card -->
@@ -232,6 +239,56 @@
                                     <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="{StaticResource DiskAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                 </Border>
                             </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- v3.0: Quick Stats Strip -->
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+                            <StackPanel Spacing="4">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE916;" FontSize="12" Foreground="{StaticResource GpuAccentBrush}"/>
+                                    <TextBlock Text="Uptime" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind ViewModel.SystemUptime, Mode=OneWay}" FontSize="13" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+                            <StackPanel Spacing="4">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE774;" FontSize="12" Foreground="DodgerBlue"/>
+                                    <TextBlock Text="Network" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind ViewModel.NetworkStatus, Mode=OneWay}" FontSize="13" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+                            <StackPanel Spacing="4">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE71D;" FontSize="12" Foreground="MediumPurple"/>
+                                    <TextBlock Text="Apps" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind ViewModel.InstalledAppsCount, Mode=OneWay}" FontSize="13" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
+                            <StackPanel Spacing="4">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xEA99;" FontSize="12" Foreground="Orange"/>
+                                    <TextBlock Text="Junk" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind ViewModel.JunkFileSize, Mode=OneWay}" FontSize="13" FontWeight="Bold"/>
+                            </StackPanel>
                         </Border>
                     </Grid>
                 </StackPanel>

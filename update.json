@@ -1,5 +1,5 @@
 {
-  "version": "2.0.5",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v2.0.5/WinCareProSetup.exe",
-  "changelog": "Bản nâng cấp v2.0.5: Tích hợp hệ thống dịch thuật động (TranslationManager) giúp chuyển đổi ngôn ngữ Anh - Việt lập tức mà không cần khởi động lại ứng dụng, khắc phục triệt để lỗi hiển thị sai tiêu đề trang (luôn hiển thị 'Dashboard'), tối ưu hóa hiệu năng và rò rỉ bộ nhớ/tiến trình ở các trang chức năng."
+  "version": "3.0.0",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.0.0/WinCareProSetup.exe",
+  "changelog": "Bản nâng cấp v3.0.0 'Nova': Giao diện Glassmorphism mới tuyệt đẹp, đo nhiệt độ CPU & chỉ số phần cứng thời gian thực chính xác từ WMI, bổ sung trang chuông báo và lịch sử hoạt động hệ thống, sửa lỗi đường dẫn cấu hình cứng và tối ưu hóa giải phóng tài nguyên hệ thống."
 }

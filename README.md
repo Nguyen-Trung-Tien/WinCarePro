@@ -212,9 +212,9 @@ WinCare/
 
 Dự án được phân phối dưới giấy phép **MIT License**. Bạn hoàn toàn có thể tự do sao chép, sửa đổi, phân phối hoặc sử dụng cho mục đích thương mại với điều kiện giữ nguyên thông báo bản quyền gốc.
 
-Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này.
+Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng xem [Hướng dẫn đóng góp (CONTRIBUTING.md)](file:///d:/WinCare/CONTRIBUTING.md) và tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Lịch sử cập nhật (CHANGELOG.md)](file:///d:/WinCare/CHANGELOG.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.0.0.
 
 ---
 <div align="center">
-  <sub>Được phát triển và thiết kế bởi <b>Nguyen-Trung-Tien</b> với sự hỗ trợ từ cộng đồng mã nguồn mở Windows.</sub>
+  <sub>Được phát triển và thiết kế bởi <b>Nguyễn Trung Tiên</b></sub>
 </div>

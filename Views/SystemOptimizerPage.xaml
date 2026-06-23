@@ -9,29 +9,113 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 960px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="960" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <!-- Medium Layout: Viewport Width between 600px and 960px -->
+                <VisualState x:Name="MediumState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!-- Stack main layout columns -->
+                        <Setter Target="TweaksCard.(Grid.Row)" Value="0" />
+                        <Setter Target="TweaksCard.(Grid.Column)" Value="0" />
+                        <Setter Target="TweaksCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="TweaksCard.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="GameBoostCard.(Grid.Row)" Value="1" />
+                        <Setter Target="GameBoostCard.(Grid.Column)" Value="0" />
+                        <Setter Target="GameBoostCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="GameBoostCard.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="GameBoostCard.Padding" Value="24" />
+                        <Setter Target="Col1.Width" Value="Auto" />
+
+                        <!-- Stack header title and buttons inside tweaks card -->
+                        <Setter Target="TweaksTitle.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="TweaksTitle.HorizontalAlignment" Value="Left" />
+                        <Setter Target="TweaksTitle.Margin" Value="0,0,0,12" />
+                        <Setter Target="TweaksButtons.(Grid.Row)" Value="1" />
+                        <Setter Target="TweaksButtons.(Grid.Column)" Value="0" />
+                        <Setter Target="TweaksButtons.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="TweaksButtons.HorizontalAlignment" Value="Left" />
+                    </VisualState.Setters>
+                </VisualState>
+                <!-- Narrow Layout: Viewport Width < 600px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!-- Stack main layout columns -->
+                        <Setter Target="TweaksCard.(Grid.Row)" Value="0" />
+                        <Setter Target="TweaksCard.(Grid.Column)" Value="0" />
+                        <Setter Target="TweaksCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="TweaksCard.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="GameBoostCard.(Grid.Row)" Value="1" />
+                        <Setter Target="GameBoostCard.(Grid.Column)" Value="0" />
+                        <Setter Target="GameBoostCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="GameBoostCard.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="GameBoostCard.Padding" Value="16" />
+                        <Setter Target="Col1.Width" Value="Auto" />
+
+                        <!-- Stack header title and buttons inside tweaks card, stack buttons vertically and stretch -->
+                        <Setter Target="TweaksTitle.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="TweaksTitle.HorizontalAlignment" Value="Left" />
+                        <Setter Target="TweaksTitle.Margin" Value="0,0,0,12" />
+                        <Setter Target="TweaksButtons.(Grid.Row)" Value="1" />
+                        <Setter Target="TweaksButtons.(Grid.Column)" Value="0" />
+                        <Setter Target="TweaksButtons.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="TweaksButtons.HorizontalAlignment" Value="Stretch" />
+                        <Setter Target="TweaksButtons.Orientation" Value="Vertical" />
+                        <Setter Target="ApplyButton.HorizontalAlignment" Value="Stretch" />
+                        <Setter Target="ReloadButton.HorizontalAlignment" Value="Stretch" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" ColumnSpacing="20">
+        <Grid Grid.Row="0" ColumnSpacing="20" RowSpacing="20" x:Name="OptimizerGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" x:Name="GridRow0" />
+                <RowDefinition Height="Auto" x:Name="GridRow1" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="400" />
+                <ColumnDefinition Width="*" x:Name="Col0" />
+                <ColumnDefinition Width="400" x:Name="Col1" />
             </Grid.ColumnDefinitions>
 
             <!-- Tweaks List -->
-            <Border Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="16">
+            <Border x:Name="TweaksCard" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Style="{StaticResource ModernCardStyle}" Padding="16">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0" Margin="0,0,0,12">
-                        <TextBlock Text="System Optimization Tweaks" FontSize="16" FontWeight="Bold" />
-                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-                            <Button Content="Apply Selected" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="SemiBold" CornerRadius="6" Padding="16,8" />
-                            <Button Content="Reload" Click="OnReloadTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" CornerRadius="6" Padding="12,8" />
+                    
+                    <Grid Grid.Row="0" Margin="0,0,0,12" x:Name="TweaksHeaderGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" x:Name="HeaderRow0" />
+                            <RowDefinition Height="Auto" x:Name="HeaderRow1" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" x:Name="HeaderCol0" />
+                            <ColumnDefinition Width="Auto" x:Name="HeaderCol1" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock x:Name="TweaksTitle" Text="System Optimization Tweaks" FontSize="16" FontWeight="Bold" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" />
+                        <StackPanel x:Name="TweaksButtons" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">
+                            <Button x:Name="ApplyButton" Content="Apply Selected" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="SemiBold" CornerRadius="6" Padding="16,8" />
+                            <Button x:Name="ReloadButton" Content="Reload" Click="OnReloadTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" CornerRadius="6" Padding="12,8" />
                         </StackPanel>
                     </Grid>
 
@@ -60,7 +144,7 @@
             </Border>
 
             <!-- Game Boost Panel -->
-            <Border Grid.Column="1" Style="{StaticResource GradientBorderCardStyle}" Padding="36" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{x:Bind GetBorderBrush(ViewModel.GameBoostActive), Mode=OneWay}">
+            <Border x:Name="GameBoostCard" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Style="{StaticResource GradientBorderCardStyle}" Padding="36" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{x:Bind GetBorderBrush(ViewModel.GameBoostActive), Mode=OneWay}">
                 <StackPanel Spacing="24" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Border Width="72" Height="72" Background="{x:Bind GetCircleBg(ViewModel.GameBoostActive), Mode=OneWay}" CornerRadius="36" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE945;" FontSize="32" Foreground="{x:Bind GetGlyphColor(ViewModel.GameBoostActive), Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center"/>

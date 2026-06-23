@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -19,7 +20,7 @@ public class RepairViewModel : ViewModelBase
         set => SetProperty(ref _isBusy, value);
     }
 
-    private string _consoleLog = "Windows Repair Center Console Ready.\n";
+    private string _consoleLog = "Windows Repair Center Console Ready.\n".T();
     public string ConsoleLog
     {
         get => _consoleLog;
@@ -61,13 +62,13 @@ public class RepairViewModel : ViewModelBase
 
             foreach (var ts in targetServices)
             {
-                string status = "Not Found";
-                string startupType = "Unknown";
+                string status = "Not Found".T();
+                string startupType = "Unknown".T();
                 try
                 {
                     using var svc = new System.ServiceProcess.ServiceController(ts.Name);
-                    status = svc.Status.ToString();
-                    startupType = svc.StartType.ToString();
+                    status = svc.Status.ToString().T();
+                    startupType = svc.StartType.ToString().T();
                 }
                 catch {}
 
@@ -103,7 +104,7 @@ public class RepairViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            LogText($"SFC command execution failed: {ex.Message}");
+            LogText(string.Format("SFC command execution failed: {0}".T(), ex.Message));
         }
         finally
         {
@@ -123,7 +124,7 @@ public class RepairViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            LogText($"DISM execution failed: {ex.Message}");
+            LogText(string.Format("DISM execution failed: {0}".T(), ex.Message));
         }
         finally
         {
@@ -143,7 +144,7 @@ public class RepairViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            LogText($"Windows Update repair execution failed: {ex.Message}");
+            LogText(string.Format("Windows Update repair execution failed: {0}".T(), ex.Message));
         }
         finally
         {
@@ -172,7 +173,7 @@ public class RepairViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            LogText($"Services restoration failed: {ex.Message}");
+            LogText(string.Format("Services restoration failed: {0}".T(), ex.Message));
         }
         finally
         {

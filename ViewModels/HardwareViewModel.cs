@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -19,7 +20,7 @@ public class HardwareViewModel : ViewModelBase
     }
 
     // Specifications
-    private string _cpuModel = "Loading...";
+    private string _cpuModel = "Loading...".T();
     public string CpuModel
     {
         get => _cpuModel;
@@ -33,35 +34,35 @@ public class HardwareViewModel : ViewModelBase
         set => SetProperty(ref _cpuSpecs, value);
     }
 
-    private string _ramModel = "Loading...";
+    private string _ramModel = "Loading...".T();
     public string RamModel
     {
         get => _ramModel;
         set => SetProperty(ref _ramModel, value);
     }
 
-    private string _gpuModel = "Loading...";
+    private string _gpuModel = "Loading...".T();
     public string GpuModel
     {
         get => _gpuModel;
         set => SetProperty(ref _gpuModel, value);
     }
 
-    private string _motherboard = "Loading...";
+    private string _motherboard = "Loading...".T();
     public string Motherboard
     {
         get => _motherboard;
         set => SetProperty(ref _motherboard, value);
     }
 
-    private string _biosVersion = "Loading...";
+    private string _biosVersion = "Loading...".T();
     public string BiosVersion
     {
         get => _biosVersion;
         set => SetProperty(ref _biosVersion, value);
     }
 
-    private string _storageSummary = "Loading...";
+    private string _storageSummary = "Loading...".T();
     public string StorageSummary
     {
         get => _storageSummary;
@@ -132,7 +133,7 @@ public class HardwareViewModel : ViewModelBase
     }
     public string BatteryPercentFormatted => $"{BatteryPercent}%";
 
-    private string _batteryStatus = "AC Power";
+    private string _batteryStatus = "AC Power".T();
     public string BatteryStatus { get => _batteryStatus; set => SetProperty(ref _batteryStatus, value); }
 
     private int _batteryCycles = 84;
@@ -170,7 +171,7 @@ public class HardwareViewModel : ViewModelBase
             _dispatcherQueue.TryEnqueue(() =>
             {
                 CpuModel = specs.CpuModel;
-                CpuSpecs = $"{specs.CpuCores} Cores / {specs.CpuThreads} Threads - {specs.CpuSpeed}";
+                CpuSpecs = $"{specs.CpuCores} " + "Cores".T() + $" / {specs.CpuThreads} " + "Threads".T() + $" - {specs.CpuSpeed}";
                 RamModel = $"{specs.RamCapacityGb:F1} GB DDR ({specs.RamSpeed})";
                 GpuModel = $"{specs.GpuModel} ({specs.GpuVram})";
                 Motherboard = $"{specs.MotherboardManufacturer} {specs.MotherboardModel}";
@@ -215,7 +216,7 @@ public class HardwareViewModel : ViewModelBase
                         RamCachedGb = 2.0 + rand.NextDouble() * 1.0;
 
                         BatteryPercent = stats.ChargePercent;
-                        BatteryStatus = stats.Status;
+                        BatteryStatus = stats.Status.T();
                         BatteryCycles = 120 + rand.Next(5);
                         BatteryDesignCapacity = "54000 mWh";
                         BatteryFullChargeCapacity = "51800 mWh";

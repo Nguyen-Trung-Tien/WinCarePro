@@ -10,6 +10,57 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 960px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="960" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <!-- Narrow Layout: Viewport Width < 960px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!-- Security Center Tab Stacking -->
+                        <Setter Target="SecLeftPanel.(Grid.Row)" Value="0" />
+                        <Setter Target="SecLeftPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="SecLeftPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="SecLeftPanel.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="SecRightPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="SecRightPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="SecRightPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="SecRightPanel.(Grid.RowSpan)" Value="1" />
+
+                        <!-- Security Gauge Stacking -->
+                        <Setter Target="SecGaugeRingGrid.(Grid.Row)" Value="0" />
+                        <Setter Target="SecGaugeRingGrid.(Grid.Column)" Value="0" />
+                        <Setter Target="SecGaugeRingGrid.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="SecGaugeRingGrid.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="SecGaugeRingGrid.HorizontalAlignment" Value="Center" />
+                        <Setter Target="SecGaugeRingGrid.Margin" Value="0,0,0,16" />
+                        <Setter Target="SecGaugeDescPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="SecGaugeDescPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="SecGaugeDescPanel.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="SecGaugeDescPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="SecGaugeDescPanel.HorizontalAlignment" Value="Center" />
+
+                        <!-- Privacy Tuning Tab Stacking -->
+                        <Setter Target="PrivLeftPanel.(Grid.Row)" Value="0" />
+                        <Setter Target="PrivLeftPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="PrivLeftPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="PrivLeftPanel.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="PrivRightPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="PrivRightPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="PrivRightPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="PrivRightPanel.(Grid.RowSpan)" Value="1" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
@@ -33,24 +84,32 @@
             <!-- Security Center Tab -->
             <PivotItem Header="Security Center">
                 <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,16,16,16" Padding="20">
-                    <Grid ColumnSpacing="24">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <Grid ColumnSpacing="24" RowSpacing="24" x:Name="SecurityCenterGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" x:Name="SecCol0" />
+                                <ColumnDefinition Width="2*" x:Name="SecCol1" />
+                            </Grid.ColumnDefinitions>
 
-                        <!-- Left: Status Indicators -->
-                        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                            <StackPanel Spacing="24">
+                            <!-- Left: Status Indicators -->
+                            <StackPanel x:Name="SecLeftPanel" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Spacing="24">
                                 <!-- Security Score Gauge -->
                                 <Border Style="{StaticResource GradientBorderCardStyle}" Padding="24">
-                                    <Grid>
+                                    <Grid x:Name="SecGaugeGrid">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" x:Name="SecGaugeCol0" />
+                                            <ColumnDefinition Width="*" x:Name="SecGaugeCol1" />
                                         </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" x:Name="SecGaugeRow0" />
+                                            <RowDefinition Height="Auto" x:Name="SecGaugeRow1" />
+                                        </Grid.RowDefinitions>
 
-                                        <Grid Grid.Column="0" Width="140" Height="140" Margin="0,0,24,0">
+                                        <Grid x:Name="SecGaugeRingGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Width="140" Height="140" Margin="0,0,24,0">
                                             <Ellipse Width="124" Height="124" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="6" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
                                             <ProgressRing Value="{x:Bind ViewModel.SecurityScore, Mode=OneWay}" Width="130" Height="130" Foreground="{x:Bind GetScoreBrush(ViewModel.SecurityScore), Mode=OneWay}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
@@ -59,7 +118,7 @@
                                             </StackPanel>
                                         </Grid>
 
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="8">
+                                        <StackPanel x:Name="SecGaugeDescPanel" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center" Spacing="8">
                                             <TextBlock Text="System Protection Level" FontSize="18" FontWeight="Bold" />
                                             <Border Background="{x:Bind GetScoreBadgeBackground(ViewModel.SecurityScore), Mode=OneWay}" HorizontalAlignment="Left" Padding="10,5" CornerRadius="6">
                                                 <TextBlock Text="{x:Bind GetStatusText(ViewModel.SecurityScore), Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{x:Bind GetScoreBrush(ViewModel.SecurityScore), Mode=OneWay}" />
@@ -180,74 +239,78 @@
                                     </Border>
                                 </StackPanel>
                             </StackPanel>
-                        </ScrollViewer>
 
-                        <!-- Right: Warnings & Alerts -->
-                        <Grid Grid.Column="1" RowSpacing="24">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
+                            <!-- Right: Warnings & Alerts -->
+                            <Grid x:Name="SecRightPanel" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" RowSpacing="24">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
 
-                            <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="24">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
+                                <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="24">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Row="0" Text="Discovered Security Alerts" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
+                                        <TextBlock Grid.Row="0" Text="Discovered Security Alerts" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
 
-                                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                                        <StackPanel Spacing="10">
-                                            <TextBlock Text="No security risks or vulnerabilities detected. Your PC is secure." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Visibility="{x:Bind GetVisibility(ViewModel.SecurityAlerts.Count), Mode=OneWay}" Margin="0,16,0,0" TextAlignment="Center" />
+                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                            <StackPanel Spacing="10">
+                                                <TextBlock Text="No security risks or vulnerabilities detected. Your PC is secure." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Visibility="{x:Bind GetVisibility(ViewModel.SecurityAlerts.Count), Mode=OneWay}" Margin="0,16,0,0" TextAlignment="Center" />
 
-                                            <ItemsControl ItemsSource="{x:Bind ViewModel.SecurityAlerts, Mode=OneWay}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate x:DataType="x:String">
-                                                        <Border BorderBrush="#20EF4444" BorderThickness="1.5" Background="#10EF4444" CornerRadius="10" Margin="0,0,0,8" Padding="14">
-                                                            <Grid>
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto" />
-                                                                    <ColumnDefinition Width="*" />
-                                                                </Grid.ColumnDefinitions>
-                                                                <FontIcon Glyph="&#xE7BA;" FontSize="14" Foreground="#FFEF4444" Margin="0,0,12,0" VerticalAlignment="Center" />
-                                                                <TextBlock Grid.Column="1" Text="{x:Bind}" TextWrapping="Wrap" FontSize="12" LineHeight="16" VerticalAlignment="Center" Foreground="#FFEF4444" FontWeight="SemiBold" />
-                                                            </Grid>
-                                                        </Border>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </ScrollViewer>
-                                </Grid>
-                            </Border>
+                                                <ItemsControl ItemsSource="{x:Bind ViewModel.SecurityAlerts, Mode=OneWay}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate x:DataType="x:String">
+                                                            <Border BorderBrush="#20EF4444" BorderThickness="1.5" Background="#10EF4444" CornerRadius="10" Margin="0,0,0,8" Padding="14">
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto" />
+                                                                        <ColumnDefinition Width="*" />
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <FontIcon Glyph="&#xE7BA;" FontSize="14" Foreground="#FFEF4444" Margin="0,0,12,0" VerticalAlignment="Center" />
+                                                                    <TextBlock Grid.Column="1" Text="{x:Bind}" TextWrapping="Wrap" FontSize="12" LineHeight="16" VerticalAlignment="Center" Foreground="#FFEF4444" FontWeight="SemiBold" />
+                                                                </Grid>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </Grid>
+                                </Border>
 
-                            <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="24">
-                                <StackPanel Spacing="12">
-                                    <TextBlock Text="Security Guidance" FontSize="18" FontWeight="Bold" Margin="0,0,0,4" />
-                                    <TextBlock Text="• Windows Antivirus and Firewall block active malware processes and unsolicited remote port access." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
-                                    <TextBlock Text="• TPM chips securely store passwords and keys, which is a prerequisite for Windows 11 hardware trust." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
-                                    <TextBlock Text="• Secure Boot prevents malicious rootkits from loading during early BIOS handoff cycles." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
-                                </StackPanel>
-                            </Border>
+                                <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="24">
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="Security Guidance" FontSize="18" FontWeight="Bold" Margin="0,0,0,4" />
+                                        <TextBlock Text="• Windows Antivirus and Firewall block active malware processes and unsolicited remote port access." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
+                                        <TextBlock Text="• TPM chips securely store passwords and keys, which is a prerequisite for Windows 11 hardware trust." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
+                                        <TextBlock Text="• Secure Boot prevents malicious rootkits from loading during early BIOS handoff cycles." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
                         </Grid>
-                    </Grid>
+                    </ScrollViewer>
                 </Border>
             </PivotItem>
 
             <!-- Privacy Tuning Tab -->
             <PivotItem Header="Privacy Tuning">
                 <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,16,16,16" Padding="20">
-                    <Grid ColumnSpacing="24">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="2*" />
-                        </Grid.ColumnDefinitions>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <Grid ColumnSpacing="24" RowSpacing="24" x:Name="PrivacyGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" x:Name="PrivCol0" />
+                                <ColumnDefinition Width="2*" x:Name="PrivCol1" />
+                            </Grid.ColumnDefinitions>
 
-                        <!-- Left: Toggle Switches -->
-                        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                            <StackPanel Spacing="16">
+                            <!-- Left: Toggle Switches -->
+                            <StackPanel x:Name="PrivLeftPanel" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Spacing="16">
                                 <TextBlock Text="Windows Privacy Toggles" FontSize="18" FontWeight="Bold" Margin="0,0,0,8" />
 
                                 <!-- Advertising ID -->
@@ -310,35 +373,35 @@
                                     </Grid>
                                 </Border>
                             </StackPanel>
-                        </ScrollViewer>
 
-                        <!-- Right: Actions & Trace Cleaning -->
-                        <Grid Grid.Column="1" RowSpacing="24">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
+                            <!-- Right: Actions & Trace Cleaning -->
+                            <Grid x:Name="PrivRightPanel" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" RowSpacing="24">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
 
-                            <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="24">
-                                <StackPanel Spacing="16">
-                                    <TextBlock Text="Clear Activity Traces" FontSize="18" FontWeight="Bold" />
-                                    <TextBlock Text="Manually erase cached system activity logs and clipboard files:" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="24">
+                                    <StackPanel Spacing="16">
+                                        <TextBlock Text="Clear Activity Traces" FontSize="18" FontWeight="Bold" />
+                                        <TextBlock Text="Manually erase cached system activity logs and clipboard files:" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
 
-                                    <Button Content="Wipe Clipboard Cache" Click="OnClearClipboardClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" HorizontalAlignment="Stretch" Padding="14,8" />
-                                    <Button Content="Clear Recent Files &amp; Run History" Click="OnClearRecentClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" HorizontalAlignment="Stretch" Padding="14,8" />
-                                </StackPanel>
-                            </Border>
+                                        <Button Content="Wipe Clipboard Cache" Click="OnClearClipboardClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" HorizontalAlignment="Stretch" Padding="14,8" />
+                                        <Button Content="Clear Recent Files &amp; Run History" Click="OnClearRecentClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" HorizontalAlignment="Stretch" Padding="14,8" />
+                                    </StackPanel>
+                                </Border>
 
-                            <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="24">
-                                <StackPanel Spacing="12">
-                                    <TextBlock Text="Privacy Guard Summary" FontSize="18" FontWeight="Bold" Margin="0,0,0,4" />
-                                    <TextBlock Text="• WinCare Pro privacy settings configure official Windows Registry parameters. These apply instantly and do not run third party agent daemons." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
-                                    <TextBlock Text="• Disabling telemetry restricts Windows updates from monitoring usage diagnostics, which may reduce background data usage." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
-                                    <TextBlock Text="• Traces clearing deletes temporary shortcuts inside Explorer Recent files history." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
-                                </StackPanel>
-                            </Border>
+                                <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="24">
+                                    <StackPanel Spacing="12">
+                                        <TextBlock Text="Privacy Guard Summary" FontSize="18" FontWeight="Bold" Margin="0,0,0,4" />
+                                        <TextBlock Text="• WinCare Pro privacy settings configure official Windows Registry parameters. These apply instantly and do not run third party agent daemons." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
+                                        <TextBlock Text="• Disabling telemetry restricts Windows updates from monitoring usage diagnostics, which may reduce background data usage." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
+                                        <TextBlock Text="• Traces clearing deletes temporary shortcuts inside Explorer Recent files history." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
                         </Grid>
-                    </Grid>
+                    </ScrollViewer>
                 </Border>
             </PivotItem>
         </Pivot>

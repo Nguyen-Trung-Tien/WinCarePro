@@ -42,6 +42,7 @@ public sealed partial class ProcessPage : Page
             if (flyout != null)
             {
                 _rightClickedProcess = grid.DataContext as ProcessInfo;
+                Services.TranslationManager.Instance.Translate(flyout);
                 if (args.TryGetPosition(grid, out var point))
                 {
                     flyout.ShowAt(grid, point);

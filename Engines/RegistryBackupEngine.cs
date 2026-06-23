@@ -131,8 +131,27 @@ public class RegistryBackupEngine
         {
             bool allOk = true;
             
-            // Backup registry hive before fixing for safety
-            CreateRegistryBackup("AutoBackup_Before_Fix");
+            // Backup registry hive before fixing if enabled
+            bool backupEnabled = true;
+            try
+            {
+                string raw = Database.DbManager.GetSettings();
+                if (!string.IsNullOrEmpty(raw))
+                {
+                    using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                    var root = doc.RootElement;
+                    if (root.TryGetProperty("BackupRegistryHive", out var backupProp))
+                    {
+                        backupEnabled = backupProp.GetBoolean();
+                    }
+                }
+            }
+            catch { }
+
+            if (backupEnabled)
+            {
+                CreateRegistryBackup("AutoBackup_Before_Fix");
+            }
 
             foreach (var issue in issues)
             {

@@ -2,6 +2,28 @@
 
 ---
 
+## 🚀 WinCare Pro v2.0.5 (Bản cập nhật tối ưu & Sửa lỗi dịch thuật/tiêu đề)
+
+Chào mừng bạn đến với **WinCare Pro v2.0.5**! Bản cập nhật này sửa các lỗi giao diện quan trọng và tối ưu hóa hệ thống chuyển đổi ngôn ngữ động, giúp nâng cao trải nghiệm sử dụng.
+
+### 🌟 Các cải tiến & Khắc phục lỗi (Improvements & Fixes)
+* **Hệ thống dịch thuật động (Dynamic Translation Manager):** Tích hợp `TranslationManager` quản lý trực tiếp bộ dịch trong ứng dụng. Giờ đây khi bạn chuyển đổi ngôn ngữ (Tiếng Anh ⇆ Tiếng Việt) tại mục Cài đặt, toàn bộ giao diện, các bảng điều khiển, nút bấm, menu Sidebar và hộp thoại sẽ cập nhật ngay lập tức mà không cần phải khởi động lại ứng dụng.
+* **Sửa lỗi tiêu đề trang hiển thị sai (Page Header Title Fix):** Sửa triệt để lỗi tiêu đề thanh Header của ứng dụng luôn hiển thị cố định là "Dashboard" bất kể người dùng đang chọn trang chức năng nào hoặc ẩn đi theo cài đặt. Các tiêu đề trang giờ đây hiển thị chính xác theo tên của từng trang chức năng đang chọn (ví dụ: "Dọn tệp rác", "Thông tin phần cứng",...) bằng ngôn ngữ tương ứng.
+* **Tối ưu hóa hiệu năng & Rò rỉ tài nguyên:** 
+  * Cải tiến vòng lặp quét và xử lý của các dịch vụ chạy ngầm (`ProcessService`, `JunkCleanerEngine`, `DiskEngine`, `StartupEngine`, `SystemOptimizerEngine`) để loại bỏ hoàn toàn các lỗi rò rỉ bộ nhớ (Memory Leaks) và treo luồng khi chuyển đổi nhanh giữa các trang chức năng.
+  * Cấu trúc lại các ViewModels giúp cập nhật trạng thái UI mượt mà hơn.
+* **Đồng bộ màu sắc & Nền sáng (Light Mode Syncing):** Đồng bộ hóa và cải thiện hiển thị của các nút bấm trên thanh tiêu đề tùy chỉnh (custom titlebar) khi sử dụng giao diện nền sáng (Light Mode).
+
+### 💾 Hướng dẫn Cập nhật lên v2.0.5
+1. Mở ứng dụng **WinCare Pro** hiện tại của bạn.
+2. Di chuyển đến mục **Cài đặt (Settings)**.
+3. Nhấp chọn **Check for Updates**.
+4. Ứng dụng sẽ phát hiện phiên bản mới `2.0.5` thông qua cấu hình `update.json` tự động.
+5. Nhấn chọn **Update Now** để tự động tải về và nâng cấp thông qua Silent Installer.
+6. *Hoặc* tải trực tiếp file cài đặt mới nhất tại mục **Releases** trên GitHub: [Releases của WinCarePro](https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/tag/v2.0.5).
+
+---
+
 ## 🚀 WinCare Pro v2.0.0 (Bản nâng cấp lớn)
 
 Chào mừng bạn đến với **WinCare Pro v2.0.0**! Đây là một cột mốc quan trọng, tái cấu trúc toàn diện kiến trúc phần mềm, khôi phục các module dọn dẹp Registry, Bảo mật & Riêng tư, Quản lý Driver và đặc biệt là tích hợp **Chẩn đoán Hệ thống bằng Trí tuệ Nhân tạo (AI Diagnostics)**.

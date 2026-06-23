@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.Engines;
 
@@ -143,9 +144,9 @@ public class SystemOptimizerEngine
         list.Add(new SystemTweak
         {
             Id = "MenuShowDelay",
-            Name = "Menu Hover Delay Speedup",
-            Description = "Reduces the wait time before menus expand on hover from 400ms to 50ms, making the Windows desktop interface feel much faster.",
-            Category = "UI Responsiveness",
+            Name = "Menu Hover Delay Speedup".T(),
+            Description = "Reduces the wait time before menus expand on hover from 400ms to 50ms, making the Windows desktop interface feel much faster.".T(),
+            Category = "UI Responsiveness".T(),
             RecommendedValue = "50",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MenuShowDelay", "400")
         });
@@ -154,9 +155,9 @@ public class SystemOptimizerEngine
         list.Add(new SystemTweak
         {
             Id = "AutoEndTasks",
-            Name = "Auto-Close Hung Tasks on Shutdown",
-            Description = "Automatically terminates frozen programs during shutdown/restart instead of displaying the standard prompt delay.",
-            Category = "Performance",
+            Name = "Auto-Close Hung Tasks on Shutdown".T(),
+            Description = "Automatically terminates frozen programs during shutdown/restart instead of displaying the standard prompt delay.".T(),
+            Category = "Performance".T(),
             RecommendedValue = "1",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "AutoEndTasks", "0")
         });
@@ -165,9 +166,9 @@ public class SystemOptimizerEngine
         list.Add(new SystemTweak
         {
             Id = "WaitToKillAppTimeout",
-            Name = "App Termination Shutdown Speedup",
-            Description = "Reduces wait time before terminating unresponsive apps during shutdown from 20 seconds to 2 seconds.",
-            Category = "Performance",
+            Name = "App Termination Shutdown Speedup".T(),
+            Description = "Reduces wait time before terminating unresponsive apps during shutdown from 20 seconds to 2 seconds.".T(),
+            Category = "Performance".T(),
             RecommendedValue = "2000",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "WaitToKillAppTimeout", "20000")
         });
@@ -176,9 +177,9 @@ public class SystemOptimizerEngine
         list.Add(new SystemTweak
         {
             Id = "NtfsDisableLastAccessUpdate",
-            Name = "Disable NTFS File Last Access Logs",
-            Description = "Disables updating the last-access timestamp on files. Reduces disk write cycles on SSDs, extending lifespan and speed.",
-            Category = "Disk & SSD",
+            Name = "Disable NTFS File Last Access Logs".T(),
+            Description = "Disables updating the last-access timestamp on files. Reduces disk write cycles on SSDs, extending lifespan and speed.".T(),
+            Category = "Disk & SSD".T(),
             RecommendedValue = "1",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\FileSystem", "NtfsDisableLastAccessUpdate", "0")
         });
@@ -187,9 +188,9 @@ public class SystemOptimizerEngine
         list.Add(new SystemTweak
         {
             Id = "NetworkThrottlingIndex",
-            Name = "Disable Network Packet Throttling",
-            Description = "Disables default Windows network throttling for multimedia/gaming tasks, ensuring full network bandwidth usage.",
-            Category = "Network Center",
+            Name = "Disable Network Packet Throttling".T(),
+            Description = "Disables default Windows network throttling for multimedia/gaming tasks, ensuring full network bandwidth usage.".T(),
+            Category = "Network Center".T(),
             RecommendedValue = "-1",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "NetworkThrottlingIndex", "10")
         });
@@ -198,9 +199,9 @@ public class SystemOptimizerEngine
         list.Add(new SystemTweak
         {
             Id = "SystemResponsiveness",
-            Name = "Prioritize Active UI Applications",
-            Description = "Allocates 100% CPU resource priority to active foreground applications and games, disabling default system service reservations.",
-            Category = "Performance",
+            Name = "Prioritize Active UI Applications".T(),
+            Description = "Allocates 100% CPU resource priority to active foreground applications and games, disabling default system service reservations.".T(),
+            Category = "Performance".T(),
             RecommendedValue = "0",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", "20")
         });

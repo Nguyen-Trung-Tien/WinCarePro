@@ -7,15 +7,61 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
+    <Grid Padding="24" x:Name="SettingsRootGrid">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 768px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="768" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <!-- Narrow Layout: Viewport Width < 768px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!-- Stack navigation list and content vertically -->
+                        <Setter Target="SidebarBorder.(Grid.Row)" Value="0" />
+                        <Setter Target="SidebarBorder.(Grid.Column)" Value="0" />
+                        <Setter Target="SidebarBorder.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="SidebarBorder.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="SidebarBorder.BorderThickness" Value="0,0,0,1" />
+                        <Setter Target="SidebarBorder.Padding" Value="0,0,0,12" />
+                        
+                        <!-- Rotate list view orientation to horizontal -->
+                        <Setter Target="SettingsNavStackPanel.Orientation" Value="Horizontal" />
+                        <Setter Target="SettingsNavList.ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+                        <Setter Target="SettingsNavList.ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+                        
+                        <Setter Target="ContentScrollViewer.(Grid.Row)" Value="1" />
+                        <Setter Target="ContentScrollViewer.(Grid.Column)" Value="0" />
+                        <Setter Target="ContentScrollViewer.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="ContentScrollViewer.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="ContentScrollViewer.Padding" Value="0,16,0,0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" x:Name="Row0" />
+            <RowDefinition Height="*" x:Name="Row1" />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220" /> <!-- Secondary Sidebar -->
-            <ColumnDefinition Width="*" />   <!-- Content Area -->
+            <ColumnDefinition Width="220" x:Name="Col0" /> <!-- Secondary Sidebar -->
+            <ColumnDefinition Width="*" x:Name="Col1" />   <!-- Content Area -->
         </Grid.ColumnDefinitions>
 
         <!-- Vertical Navigation Panel (Secondary Sidebar) -->
-        <Border Grid.Column="0" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,1,0" Padding="0,0,16,0">
+        <Border x:Name="SidebarBorder" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,1,0" Padding="0,0,16,0">
             <ListView x:Name="SettingsNavList" SelectedIndex="0" SelectionChanged="SettingsNavList_SelectionChanged" SelectionMode="Single">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel x:Name="SettingsNavStackPanel" Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
                 <ListViewItem Content="General Configuration" Height="40" Padding="8,0" CornerRadius="4"/>
                 <ListViewItem Content="Appearance &amp; Theme" Height="40" Padding="8,0" CornerRadius="4"/>
                 <ListViewItem Content="Auto Cleanup Scheduler" Height="40" Padding="8,0" CornerRadius="4"/>
@@ -26,7 +72,7 @@
         </Border>
 
         <!-- Content Area -->
-        <ScrollViewer Grid.Column="1" Padding="20,0,0,0" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer x:Name="ContentScrollViewer" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Padding="20,0,0,0" VerticalScrollBarVisibility="Auto">
             <Grid>
                 <!-- Section 1: General Configuration -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 0), Mode=OneWay}">
@@ -36,16 +82,15 @@
                         <StackPanel Spacing="16">
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Language Selection" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <ComboBox SelectedIndex="0" Width="160" CornerRadius="4">
+                                <ComboBox x:Name="LanguageComboBox" SelectedIndex="0" Width="160" CornerRadius="4" SelectionChanged="OnLanguageSelectionChanged">
                                     <ComboBoxItem Content="English"/>
                                     <ComboBoxItem Content="Tiếng Việt"/>
-                                    <ComboBoxItem Content="日本語"/>
                                 </ComboBox>
                             </StackPanel>
 
                             <ToggleSwitch x:Name="AutoScanToggle" Toggled="OnAutoScanToggled" Header="Launch WinCare Pro automatically upon OS startup" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch Header="Check for updates automatically in the background" IsOn="True" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch Header="Minimize application to System Tray instead of closing" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="AutoUpdateToggle" Toggled="OnSettingsChanged" Header="Check for updates automatically in the background" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="MinimizeToTrayToggle" Toggled="OnSettingsChanged" Header="Minimize application to System Tray instead of closing" IsOn="True" CornerRadius="4" FontSize="12.5"/>
                         </StackPanel>
                     </Border>
 
@@ -89,22 +134,22 @@
                             <MenuFlyoutSeparator />
 
                             <TextBlock Text="Window Accent Colors Palette" FontSize="13" FontWeight="Bold" />
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Ellipse Width="24" Height="24" Fill="#FF0078D4" Stroke="White" StrokeThickness="2" PointerPressed="OnAccentClick" Tag="Default"/>
-                                <Ellipse Width="24" Height="24" Fill="#FF10B981" PointerPressed="OnAccentClick" Tag="Green"/>
-                                <Ellipse Width="24" Height="24" Fill="#FF8B5CF6" PointerPressed="OnAccentClick" Tag="Purple"/>
-                                <Ellipse Width="24" Height="24" Fill="#FFEC4899" PointerPressed="OnAccentClick" Tag="Pink"/>
-                                <Ellipse Width="24" Height="24" Fill="#FFF59E0B" PointerPressed="OnAccentClick" Tag="Amber"/>
+                            <StackPanel Orientation="Horizontal" Spacing="8" x:Name="AccentSelectorPanel">
+                                <Ellipse x:Name="AccentDefault" Width="24" Height="24" Fill="#FF0078D4" PointerPressed="OnAccentClick" Tag="Default"/>
+                                <Ellipse x:Name="AccentGreen" Width="24" Height="24" Fill="#FF10B981" PointerPressed="OnAccentClick" Tag="Green"/>
+                                <Ellipse x:Name="AccentPurple" Width="24" Height="24" Fill="#FF8B5CF6" PointerPressed="OnAccentClick" Tag="Purple"/>
+                                <Ellipse x:Name="AccentPink" Width="24" Height="24" Fill="#FFEC4899" PointerPressed="OnAccentClick" Tag="Pink"/>
+                                <Ellipse x:Name="AccentAmber" Width="24" Height="24" Fill="#FFF59E0B" PointerPressed="OnAccentClick" Tag="Amber"/>
                             </StackPanel>
 
                             <MenuFlyoutSeparator />
 
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Mica Acrylic Background Transparency Level" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <Slider Minimum="0" Maximum="100" Value="80" Width="300" HorizontalAlignment="Left"/>
+                                <Slider x:Name="TransparencySlider" ValueChanged="OnTransparencyChanged" Minimum="0" Maximum="100" Value="80" Width="300" HorizontalAlignment="Left"/>
                             </StackPanel>
 
-                            <ToggleSwitch Header="Enable UI fluid translation animations" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="EnableAnimationsToggle" Toggled="OnSettingsChanged" Header="Enable UI fluid translation animations" IsOn="True" CornerRadius="4" FontSize="12.5"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -117,14 +162,14 @@
                         <StackPanel Spacing="16">
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Automated Cleanup Trigger Size (GB)" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBox Text="5" Width="100" CornerRadius="4" HorizontalAlignment="Left"/>
+                                <TextBox x:Name="AutoCleanupSizeTextBox" TextChanged="OnAutoCleanupSizeChanged" Text="5" Width="100" CornerRadius="4" HorizontalAlignment="Left"/>
                             </StackPanel>
 
-                            <ToggleSwitch Header="Trigger Smart Boost optimization if free RAM falls below 10%" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="TriggerSmartBoostToggle" Toggled="OnSettingsChanged" Header="Trigger Smart Boost optimization if free RAM falls below 10%" IsOn="True" CornerRadius="4" FontSize="12.5"/>
                             
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Maintenance Frequency" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <ComboBox SelectedIndex="1" Width="160" CornerRadius="4">
+                                <ComboBox x:Name="MaintenanceFrequencyComboBox" SelectionChanged="OnMaintenanceFrequencyChanged" SelectedIndex="1" Width="160" CornerRadius="4">
                                     <ComboBoxItem Content="Daily run"/>
                                     <ComboBoxItem Content="Weekly scan"/>
                                     <ComboBoxItem Content="Monthly execution"/>
@@ -142,7 +187,7 @@
                         <StackPanel Spacing="16">
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Sensors Telemetry Update Interval" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <ComboBox SelectedIndex="1" Width="120" CornerRadius="4">
+                                <ComboBox x:Name="TelemetryIntervalComboBox" SelectionChanged="OnSettingsChanged" SelectedIndex="1" Width="120" CornerRadius="4">
                                     <ComboBoxItem Content="0.5 seconds"/>
                                     <ComboBoxItem Content="1.0 seconds"/>
                                     <ComboBoxItem Content="2.0 seconds"/>
@@ -152,14 +197,14 @@
 
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Performance history duration logger" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <ComboBox SelectedIndex="0" Width="120" CornerRadius="4">
+                                <ComboBox x:Name="PerformanceHistoryComboBox" SelectionChanged="OnSettingsChanged" SelectedIndex="0" Width="120" CornerRadius="4">
                                     <ComboBoxItem Content="7 Days logs"/>
                                     <ComboBoxItem Content="30 Days logs"/>
                                     <ComboBoxItem Content="90 Days logs"/>
                                 </ComboBox>
                             </StackPanel>
 
-                            <ToggleSwitch Header="Enable continuous low-overhead hardware sensors scanning thread" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="EnableHardwareSensorsToggle" Toggled="OnSettingsChanged" Header="Enable continuous low-overhead hardware sensors scanning thread" IsOn="True" CornerRadius="4" FontSize="12.5"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -170,13 +215,13 @@
                     
                     <Border Style="{StaticResource ModernCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
-                            <ToggleSwitch Header="Automatically create a System Restore Point before major updates" IsOn="True" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch Header="Automatically backup system registry hive partitions" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="CreateRestorePointToggle" Toggled="OnSettingsChanged" Header="Automatically create a System Restore Point before major updates" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="BackupRegistryToggle" Toggled="OnSettingsChanged" Header="Automatically backup system registry hive partitions" IsOn="True" CornerRadius="4" FontSize="12.5"/>
                             
                             <StackPanel Spacing="8">
                                 <TextBlock Text="Modification Confirmation Alerts Level" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 <Grid Width="300" HorizontalAlignment="Left">
-                                    <Slider Minimum="1" Maximum="3" Value="2" TickFrequency="1" SnapsTo="Ticks"/>
+                                    <Slider x:Name="AlertsLevelSlider" ValueChanged="OnSettingsChanged" Minimum="1" Maximum="3" Value="2" TickFrequency="1" SnapsTo="Ticks"/>
                                 </Grid>
                                 <TextBlock Text="Medium: Prompts warnings before major file tree mutations." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
@@ -190,7 +235,7 @@
                     
                     <Border Style="{StaticResource ModernCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
-                            <ToggleSwitch Header="Enable verbose debug logs trace files" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="EnableVerboseLogsToggle" Toggled="OnSettingsChanged" Header="Enable verbose debug logs trace files" CornerRadius="4" FontSize="12.5"/>
                             
                             <StackPanel Spacing="8">
                                 <TextBlock Text="Plugin &amp; Sandbox Modules Manager" FontSize="13" FontWeight="Bold" />
@@ -200,7 +245,7 @@
 
                             <MenuFlyoutSeparator />
 
-                            <ToggleSwitch Header="Enable experimental AI diagnostics auto-remediations (Pre-release)" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="EnableExperimentalAiToggle" Toggled="OnSettingsChanged" Header="Enable experimental AI diagnostics auto-remediations (Pre-release)" CornerRadius="4" FontSize="12.5"/>
                         </StackPanel>
                     </Border>
                     

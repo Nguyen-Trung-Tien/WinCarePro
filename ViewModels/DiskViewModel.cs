@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -20,7 +21,7 @@ public class DiskViewModel : ViewModelBase
         set => SetProperty(ref _storageScanPath, value);
     }
 
-    private string _consoleOutput = "Disk Tools ready.\n";
+    private string _consoleOutput = "Disk Tools ready.\n".T();
     public string ConsoleOutput
     {
         get => _consoleOutput;
@@ -87,13 +88,13 @@ public class DiskViewModel : ViewModelBase
     {
         if (IsBusy || !Directory.Exists(StorageScanPath))
         {
-            LogText($"Directory does not exist: {StorageScanPath}");
+            LogText(string.Format("Directory does not exist: {0}".T(), StorageScanPath));
             return;
         }
 
         IsBusy = true;
         StorageItems.Clear();
-        LogText($"Starting disk usage analysis for: {StorageScanPath}...");
+        LogText(string.Format("Starting disk usage analysis for: {0}...".T(), StorageScanPath));
 
         try
         {
@@ -102,11 +103,11 @@ public class DiskViewModel : ViewModelBase
             {
                 StorageItems.Add(item);
             }
-            LogText($"Analysis complete. Found {StorageItems.Count} items.");
+            LogText(string.Format("Analysis complete. Found {0} items.".T(), StorageItems.Count));
         }
         catch (Exception ex)
         {
-            LogText($"Storage analysis error: {ex.Message}");
+            LogText("Storage analysis error:".T() + " " + ex.Message);
         }
         finally
         {
@@ -120,7 +121,7 @@ public class DiskViewModel : ViewModelBase
 
         IsBusy = true;
         DuplicateGroups.Clear();
-        LogText($"Searching duplicate files in: {StorageScanPath}...");
+        LogText(string.Format("Searching duplicate files in: {0}...".T(), StorageScanPath));
 
         try
         {
@@ -155,11 +156,11 @@ public class DiskViewModel : ViewModelBase
 
                 DuplicateGroups.Add(uiGroup);
             }
-            LogText($"Scan complete. Found {DuplicateGroups.Count} duplicate groups.");
+            LogText(string.Format("Scan complete. Found {0} duplicate groups.".T(), DuplicateGroups.Count));
         }
         catch (Exception ex)
         {
-            LogText($"Duplicate finder error: {ex.Message}");
+            LogText("Duplicate finder error:".T() + " " + ex.Message);
         }
         finally
         {
@@ -172,7 +173,7 @@ public class DiskViewModel : ViewModelBase
         if (IsBusy || DuplicateGroups.Count == 0) return;
 
         IsBusy = true;
-        LogText("Starting duplicate files cleanup...");
+        LogText("Starting duplicate files cleanup...".T());
         int count = 0;
         long bytesSaved = 0;
 
@@ -201,7 +202,7 @@ public class DiskViewModel : ViewModelBase
                 }
             });
 
-            LogText($"Cleaned {count} duplicate files, reclaiming {(bytesSaved / 1024.0 / 1024.0):F2} MB.");
+            LogText(string.Format("Cleaned {0} duplicate files, reclaiming {1} MB.".T(), count, (bytesSaved / 1024.0 / 1024.0).ToString("F2")));
             _ = FindDuplicatesAsync();
         }
         finally

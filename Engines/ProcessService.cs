@@ -22,6 +22,8 @@ public class ProcessService
 
     private const int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
 
+    private Dictionary<int, (TimeSpan cpuTime, DateTime sampleTime)> _lastCpuSamples = new();
+
     private static string GetProcessExecutablePath(Process p)
     {
         if (p.Id <= 4) return "System Process";
@@ -50,15 +52,14 @@ public class ProcessService
     public async Task<List<ProcessInfo>> GetRunningProcessesAsync()
     {
         var rawProcesses = Process.GetProcesses();
-        var cpuSample1 = new Dictionary<int, TimeSpan>();
-        var sampleTime1 = DateTime.UtcNow;
+        var sampleTime = DateTime.UtcNow;
+        var currentSamples = new Dictionary<int, (TimeSpan cpuTime, DateTime sampleTime)>();
 
-        // Take first CPU sample
         foreach (var p in rawProcesses)
         {
             try
             {
-                cpuSample1[p.Id] = p.TotalProcessorTime;
+                currentSamples[p.Id] = (p.TotalProcessorTime, sampleTime);
             }
             catch
             {
@@ -66,27 +67,26 @@ public class ProcessService
             }
         }
 
-        // Wait a short time for differential measurement
-        await Task.Delay(200);
-
-        var cpuSample2 = new Dictionary<int, TimeSpan>();
-        var sampleTime2 = DateTime.UtcNow;
-        var rawProcesses2 = Process.GetProcesses();
-
-        foreach (var p in rawProcesses2)
+        // If this is the first execution or cache is empty, do a quick inline warmup:
+        if (_lastCpuSamples.Count == 0)
         {
-            try
+            await Task.Delay(200);
+            var warmProcesses = Process.GetProcesses();
+            var warmSampleTime = DateTime.UtcNow;
+            foreach (var p in warmProcesses)
             {
-                cpuSample2[p.Id] = p.TotalProcessorTime;
+                try
+                {
+                    _lastCpuSamples[p.Id] = (p.TotalProcessorTime, warmSampleTime);
+                }
+                catch { }
             }
-            catch { }
         }
 
-        double timeDiffMs = (sampleTime2 - sampleTime1).TotalMilliseconds;
-        int coreCount = Environment.ProcessorCount;
-
+        double coreCount = Environment.ProcessorCount;
         var result = new List<ProcessInfo>();
-        foreach (var p in rawProcesses2)
+
+        foreach (var p in rawProcesses)
         {
             if (p.Id == 0) continue; // Skip idle
 
@@ -107,11 +107,20 @@ public class ProcessService
             }
 
             // Calculate CPU
-            if (cpuSample1.TryGetValue(p.Id, out var t1) && cpuSample2.TryGetValue(p.Id, out var t2))
+            if (currentSamples.TryGetValue(p.Id, out var curSample) && 
+                _lastCpuSamples.TryGetValue(p.Id, out var prevSample))
             {
-                double cpuMs = (t2 - t1).TotalMilliseconds;
-                double cpuPercent = (cpuMs / (timeDiffMs * coreCount)) * 100.0;
-                info.CpuUsage = Math.Min(100.0, Math.Max(0.0, cpuPercent));
+                double timeDiffMs = (curSample.sampleTime - prevSample.sampleTime).TotalMilliseconds;
+                double cpuMs = (curSample.cpuTime - prevSample.cpuTime).TotalMilliseconds;
+                if (timeDiffMs > 0)
+                {
+                    double cpuPercent = (cpuMs / (timeDiffMs * coreCount)) * 100.0;
+                    info.CpuUsage = Math.Min(100.0, Math.Max(0.0, cpuPercent));
+                }
+                else
+                {
+                    info.CpuUsage = 0.0;
+                }
             }
             else
             {
@@ -154,6 +163,9 @@ public class ProcessService
 
             result.Add(info);
         }
+
+        // Save current samples for next call
+        _lastCpuSamples = currentSamples;
 
         return result.OrderByDescending(x => x.CpuUsage).ThenByDescending(x => x.RamUsageBytes).ToList();
     }

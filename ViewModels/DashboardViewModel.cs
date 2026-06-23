@@ -14,6 +14,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -355,6 +356,8 @@ public partial class DashboardViewModel : ViewModelBase
         return (cpu, ramPercent);
     }
 
+    private DateTime _lastSmartBoostTime = DateTime.MinValue;
+
     private void StartResourceMonitor()
     {
         Task.Run(async () =>
@@ -362,47 +365,116 @@ public partial class DashboardViewModel : ViewModelBase
             var rand = new Random();
             while (_isRunning)
             {
+                int delayMs = 2000;
+                bool enableSensors = true;
+                bool triggerSmartBoost = true;
+
                 try
                 {
-                    // Query CPU load and Memory load using WMI quickly
-                    var (cpu, ram) = GetSystemResourceUsage();
-
-                    // GPU & Disk mock load variations for smooth UI gauge animations
-                    double gpu = 2.0 + rand.NextDouble() * 8.0;
-                    if (cpu > 40.0) gpu += 15.0;
-                    double disk = 1.0 + rand.NextDouble() * 12.0;
-
-                    if (!_isRunning) break;
-                    _dispatcherQueue.TryEnqueue(() =>
+                    string raw = Database.DbManager.GetSettings();
+                    if (!string.IsNullOrEmpty(raw))
                     {
-                        if (!_isRunning) return;
-                        CpuUsage = Math.Round(cpu, 1);
-                        RamUsage = Math.Round(ram, 1);
-                        GpuUsage = Math.Round(gpu, 1);
-                        DiskUsage = Math.Round(disk, 1);
-
-                        // Update chart collections (shift old, insert new)
-                        CpuSeriesValues.Add(new ObservableValue(CpuUsage));
-                        CpuSeriesValues.RemoveAt(0);
-
-                        RamSeriesValues.Add(new ObservableValue(RamUsage));
-                        RamSeriesValues.RemoveAt(0);
-
-                        GpuSeriesValues.Add(new ObservableValue(GpuUsage));
-                        GpuSeriesValues.RemoveAt(0);
-
-                        DiskSeriesValues.Add(new ObservableValue(DiskUsage));
-                        DiskSeriesValues.RemoveAt(0);
+                        using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                        var root = doc.RootElement;
                         
-                        var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
-                        SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
-                    });
+                        // 1. Telemetry update interval
+                        if (root.TryGetProperty("TelemetryIntervalIndex", out var telProp))
+                        {
+                            int idx = telProp.GetInt32();
+                            delayMs = idx switch
+                            {
+                                0 => 500,
+                                1 => 1000,
+                                2 => 2000,
+                                3 => 5000,
+                                _ => 2000
+                            };
+                        }
+
+                        // 2. Enable Hardware Sensors Thread
+                        if (root.TryGetProperty("EnableSensorsThread", out var sensProp))
+                        {
+                            enableSensors = sensProp.GetBoolean();
+                        }
+
+                        // 3. Trigger Smart Boost Optimization
+                        if (root.TryGetProperty("TriggerSmartBoost", out var boostProp))
+                        {
+                            triggerSmartBoost = boostProp.GetBoolean();
+                        }
+                    }
                 }
                 catch { }
 
-                await Task.Delay(2000); // Poll every 2s to conserve CPU
+                if (enableSensors)
+                {
+                    try
+                    {
+                        // Query CPU load and Memory load using WMI quickly
+                        var (cpu, ram) = GetSystemResourceUsage();
+
+                        // GPU & Disk mock load variations for smooth UI gauge animations
+                        double gpu = 2.0 + rand.NextDouble() * 8.0;
+                        if (cpu > 40.0) gpu += 15.0;
+                        double disk = 1.0 + rand.NextDouble() * 12.0;
+
+                        // Check Smart Boost threshold (RAM > 90%)
+                        if (triggerSmartBoost && ram > 90.0 && (DateTime.Now - _lastSmartBoostTime).TotalMinutes >= 2.0)
+                        {
+                            _lastSmartBoostTime = DateTime.Now;
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    var optEngine = new SystemOptimizerEngine();
+                                    await optEngine.OptimizeRamAsync();
+                                    Database.DbManager.LogAction("Automated Smart Boost optimization triggered (RAM > 90%)", "Smart Boost", "Success");
+                                }
+                                catch { }
+                            });
+                        }
+
+                        if (!_isRunning) break;
+                        _dispatcherQueue.TryEnqueue(() =>
+                        {
+                            if (!_isRunning) return;
+                            CpuUsage = Math.Round(cpu, 1);
+                            RamUsage = Math.Round(ram, 1);
+                            GpuUsage = Math.Round(gpu, 1);
+                            DiskUsage = Math.Round(disk, 1);
+
+                            // Update chart collections (shift old, insert new)
+                            CpuSeriesValues.Add(new ObservableValue(CpuUsage));
+                            CpuSeriesValues.RemoveAt(0);
+
+                            RamSeriesValues.Add(new ObservableValue(RamUsage));
+                            RamSeriesValues.RemoveAt(0);
+
+                            GpuSeriesValues.Add(new ObservableValue(GpuUsage));
+                            GpuSeriesValues.RemoveAt(0);
+
+                            DiskSeriesValues.Add(new ObservableValue(DiskUsage));
+                            DiskSeriesValues.RemoveAt(0);
+                            
+                            var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
+                            SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
+                        });
+                    }
+                    catch { }
+                }
+
+                await Task.Delay(delayMs);
             }
         });
+    }
+
+    public void StartMonitoring()
+    {
+        if (!_isRunning)
+        {
+            _isRunning = true;
+            StartResourceMonitor();
+        }
     }
 
     public void StopMonitoring()
@@ -417,7 +489,7 @@ public partial class DashboardViewModel : ViewModelBase
         IsScanning = true;
         HasScanned = false;
         ScanProgress = 5;
-        ScanStatus = "Status: Scanning Junk Files...";
+        ScanStatus = "Status: Scanning Junk Files...".T();
         Recommendations.Clear();
         DiagnosticItems.Clear();
 
@@ -432,21 +504,21 @@ public partial class DashboardViewModel : ViewModelBase
             await Task.Delay(300);
 
             // 2. Scan Registry
-            ScanStatus = "Status: Scanning Registry Issues...";
+            ScanStatus = "Status: Scanning Registry Issues...".T();
             var regIssues = _registryEngine.ScanRegistryIssues();
             _scannedRegistryIssues = regIssues;
             ScanProgress = 55;
             await Task.Delay(300);
 
             // 3. Scan Software Updates
-            ScanStatus = "Status: Checking Available Software Updates...";
+            ScanStatus = "Status: Checking Available Software Updates...".T();
             var updates = await _updaterEngine.ScanUpdatesAsync();
             AvailableUpdatesCount = updates.Count;
             ScanProgress = 75;
             await Task.Delay(300);
 
             // 4. Scan Security and Network
-            ScanStatus = "Status: Evaluating Connection and Security Status...";
+            ScanStatus = "Status: Evaluating Connection and Security Status...".T();
             var netEngine = new NetworkEngine();
             var (pingLoss, avgLatency) = await netEngine.AnalyzePingQualityAsync();
             var securityAudits = _securityEngine.RunSecurityAudits();
@@ -455,7 +527,7 @@ public partial class DashboardViewModel : ViewModelBase
             await Task.Delay(300);
 
             // 5. Evaluate AI Health Score
-            ScanStatus = "Status: Calculating System Health Index...";
+            ScanStatus = "Status: Calculating System Health Index...".T();
             
             // Get background services count
             int servicesCount = 50; // default/fallback
@@ -513,7 +585,7 @@ public partial class DashboardViewModel : ViewModelBase
                     DiagnosticItems.Add(res);
                 }
                 ScanProgress = 100;
-                ScanStatus = $"Evaluation Complete. System Health is {HealthScore}/100";
+                ScanStatus = string.Format("Evaluation Complete. System Health is {0}/100".T(), HealthScore);
                 IsScanning = false;
                 HasScanned = true;
             });
@@ -522,7 +594,7 @@ public partial class DashboardViewModel : ViewModelBase
         {
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ScanStatus = $"Scan failed: {ex.Message}";
+                ScanStatus = "Scan failed:".T() + " " + ex.Message;
                 IsScanning = false;
                 HasScanned = false;
             });
@@ -536,7 +608,7 @@ public partial class DashboardViewModel : ViewModelBase
         _dispatcherQueue.TryEnqueue(() =>
         {
             IsOptimizing = true;
-            ScanStatus = "Status: Optimizing - Cleaning Junk Files...";
+            ScanStatus = "Status: Optimizing - Cleaning Junk Files...".T();
         });
 
         var summary = new OptimizationSummary();
@@ -559,7 +631,7 @@ public partial class DashboardViewModel : ViewModelBase
             // 2. Clean Delivery Optimization Cache
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ScanStatus = "Status: Optimizing - Cleaning Windows Update Cache...";
+                ScanStatus = "Status: Optimizing - Cleaning Windows Update Cache...".T();
             });
             var optEngine = new SystemOptimizerEngine();
             long doCleaned = await optEngine.CleanDeliveryOptimizationCacheAsync();
@@ -571,7 +643,7 @@ public partial class DashboardViewModel : ViewModelBase
             {
                 _dispatcherQueue.TryEnqueue(() =>
                 {
-                    ScanStatus = "Status: Optimizing - Repairing Registry Issues...";
+                    ScanStatus = "Status: Optimizing - Repairing Registry Issues...".T();
                 });
                 await _registryEngine.FixRegistryIssuesAsync(_scannedRegistryIssues);
                 summary.RegistryIssuesFixed = _scannedRegistryIssues.Count(i => i.IsSelected);
@@ -581,7 +653,7 @@ public partial class DashboardViewModel : ViewModelBase
             // 4. Boost RAM Memory
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ScanStatus = "Status: Optimizing - Performing Active RAM Boost...";
+                ScanStatus = "Status: Optimizing - Performing Active RAM Boost...".T();
             });
             var ramResult = await optEngine.OptimizeRamAsync();
             summary.RamBytesReclaimed = ramResult.memoryReclaimedBytes;
@@ -591,7 +663,7 @@ public partial class DashboardViewModel : ViewModelBase
             // 5. Flush DNS Cache
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ScanStatus = "Status: Optimizing - Flushing DNS Resolver Cache...";
+                ScanStatus = "Status: Optimizing - Flushing DNS Resolver Cache...".T();
             });
             var netEngine = new NetworkEngine();
             bool dnsOk = await netEngine.FlushDnsAsync();
@@ -601,7 +673,7 @@ public partial class DashboardViewModel : ViewModelBase
             // 6. Apply system speed & responsiveness tweaks
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ScanStatus = "Status: Optimizing - Applying Speed & UI Tweaks...";
+                ScanStatus = "Status: Optimizing - Applying Speed & UI Tweaks...".T();
             });
             var tweaks = optEngine.GetTweaks();
             int tweaksApplied = 0;
@@ -618,7 +690,7 @@ public partial class DashboardViewModel : ViewModelBase
 
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ScanStatus = "Optimization Complete! System is fully optimized.";
+                ScanStatus = "Optimization Complete! System is fully optimized.".T();
                 HealthScore = 100;
                 Recommendations.Clear();
                 
@@ -632,22 +704,22 @@ public partial class DashboardViewModel : ViewModelBase
                         item.IsHealthy = true;
                         if (item.CheckName.Contains("Junk") || item.CheckName.Contains("Clutter"))
                         {
-                            item.Description = "Junk files successfully cleaned.";
+                            item.Description = "Junk files successfully cleaned.".T();
                         }
                         else if (item.CheckName.Contains("Registry"))
                         {
-                            item.Description = "Registry errors successfully resolved.";
+                            item.Description = "Registry errors successfully resolved.".T();
                         }
                     }
                     else if (item.Category == "Performance")
                     {
                         item.IsHealthy = true;
-                        item.Description = "RAM optimized and speed tweaks successfully applied.";
+                        item.Description = "RAM optimized and speed tweaks successfully applied.".T();
                     }
                     else if (item.Category == "Network")
                     {
                         item.IsHealthy = true;
-                        item.Description = "DNS resolver cache flushed. Latency and quality optimized.";
+                        item.Description = "DNS resolver cache flushed. Latency and quality optimized.".T();
                     }
                     DiagnosticItems.Add(item);
                 }
@@ -661,7 +733,7 @@ public partial class DashboardViewModel : ViewModelBase
         {
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ScanStatus = $"Optimization failed: {ex.Message}";
+                ScanStatus = "Optimization failed:".T() + " " + ex.Message;
             });
             return null;
         }

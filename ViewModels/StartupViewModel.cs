@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -19,7 +20,7 @@ public class StartupViewModel : ViewModelBase
         set => SetProperty(ref _isLoading, value);
     }
 
-    private string _statusText = "Ready";
+    private string _statusText = "Ready".T();
     public string StatusText
     {
         get => _statusText;
@@ -39,7 +40,7 @@ public class StartupViewModel : ViewModelBase
     {
         if (IsLoading) return;
         IsLoading = true;
-        StatusText = "Loading startup configurations...";
+        StatusText = "Loading startup configurations...".T();
 
         StartupApps.Clear();
         Services.Clear();
@@ -58,11 +59,11 @@ public class StartupViewModel : ViewModelBase
                 foreach (var svc in svcs) Services.Add(svc);
             });
 
-            StatusText = "Startup data loaded successfully.";
+            StatusText = "Startup data loaded successfully.".T();
         }
         catch (Exception ex)
         {
-            StatusText = $"Load failed: {ex.Message}";
+            StatusText = string.Format("Load failed: {0}".T(), ex.Message);
         }
         finally
         {
@@ -73,16 +74,16 @@ public class StartupViewModel : ViewModelBase
     public async Task ToggleStartupAppAsync(StartupEntry entry, bool enable)
     {
         IsLoading = true;
-        StatusText = $"Toggling {entry.Name}...";
+        StatusText = string.Format("Toggling {0}...".T(), entry.Name);
 
         bool ok = await Task.Run(() => _startupEngine.ToggleStartupEntry(entry, enable));
         if (ok)
         {
-            StatusText = $"{entry.Name} toggled to {(enable ? "Enabled" : "Disabled")}.";
+            StatusText = string.Format("{0} toggled to {1}.".T(), entry.Name, (enable ? "Enabled" : "Disabled").T());
         }
         else
         {
-            StatusText = $"Failed to toggle startup app {entry.Name}.";
+            StatusText = string.Format("Failed to toggle startup app {0}.".T(), entry.Name);
         }
         IsLoading = false;
         await LoadAllDataAsync();
@@ -91,15 +92,15 @@ public class StartupViewModel : ViewModelBase
     public async Task ControlServiceAsync(ServiceEntry entry, string action)
     {
         IsLoading = true;
-        StatusText = $"Executing {action} on service {entry.Name}...";
+        StatusText = string.Format("Executing {0} on service {1}...".T(), action, entry.Name);
         bool ok = await Task.Run(() => _startupEngine.ControlService(entry.Name, action));
         if (ok)
         {
-            StatusText = $"Successfully sent {action} command to {entry.Name}.";
+            StatusText = string.Format("Successfully sent {0} command to {1}.".T(), action, entry.Name);
         }
         else
         {
-            StatusText = $"Failed to {action} service {entry.Name}.";
+            StatusText = string.Format("Failed to {0} service {1}.".T(), action, entry.Name);
         }
         IsLoading = false;
         await LoadAllDataAsync();

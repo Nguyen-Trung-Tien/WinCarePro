@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 
 using WinCarePro.Database;
+using WinCarePro.Services;
 
 namespace WinCarePro;
 
@@ -95,6 +96,12 @@ public sealed partial class MainWindow : Window
         };
         this.Content.KeyboardAccelerators.Add(ctrlF);
 
+        this.AppWindow.Closing += AppWindow_Closing;
+        this.Closed += MainWindow_Closed;
+
+        // Translate window contents on load
+        RootGrid.Loaded += (s, e) => TranslationManager.Instance.Translate(this.Content);
+
         // Navigate page frame
         RootFrame.Navigate(typeof(MainPage));
     }
@@ -107,21 +114,186 @@ public sealed partial class MainWindow : Window
         _oldWndProc = SetWindowLongPtr(_hwnd, GWL_WNDPROC, Marshal.GetFunctionPointerForDelegate(_newWndProc));
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    private struct NOTIFYICONDATA
+    {
+        public int cbSize;
+        public IntPtr hWnd;
+        public int uID;
+        public int uFlags;
+        public int uCallbackMessage;
+        public IntPtr hIcon;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string szTip;
+        public int dwState;
+        public int dwStateMask;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string szInfo;
+        public int uTimeoutOrVersion;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string szInfoTitle;
+        public int dwInfoFlags;
+        public Guid guidItem;
+        public IntPtr hBalloonIcon;
+    }
+
+    [DllImport("shell32.dll", EntryPoint = "Shell_NotifyIconW", CharSet = CharSet.Unicode)]
+    private static extern bool Shell_NotifyIcon(int dwMessage, ref NOTIFYICONDATA lpData);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr LoadImage(IntPtr hInst, string name, uint type, int cx, int cy, uint fuLoad);
+
+    [DllImport("user32.dll")]
+    private static extern bool DestroyIcon(IntPtr hIcon);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    private const int NIM_ADD = 0;
+    private const int NIM_MODIFY = 1;
+    private const int NIM_DELETE = 2;
+    private const int NIF_MESSAGE = 1;
+    private const int NIF_ICON = 2;
+    private const int NIF_TIP = 4;
+    private const int NIF_INFO = 0x10;
+    private const int WM_USER = 0x0400;
+    private const int WM_TRAYICON = WM_USER + 1024;
+    private const int WM_LBUTTONDBLCLK = 0x0203;
+    private const int WM_RBUTTONUP = 0x0205;
+
+    private bool _trayIconRegistered = false;
+    private IntPtr _hIcon = IntPtr.Zero;
+
     private IntPtr NewWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         if (msg == WM_GETMINMAXINFO)
         {
             var mmi = Marshal.PtrToStructure<MINMAXINFO>(lParam);
             
-            // Set minimum track sizing constraints (1280 x 800 px)
-            mmi.ptMinTrackSize.x = 1280;
-            mmi.ptMinTrackSize.y = 800;
+            // Set minimum track sizing constraints (800 x 600 px)
+            mmi.ptMinTrackSize.x = 800;
+            mmi.ptMinTrackSize.y = 600;
 
             Marshal.StructureToPtr(mmi, lParam, false);
             return IntPtr.Zero;
         }
+        else if (msg == WM_TRAYICON)
+        {
+            int eventId = (int)lParam;
+            if (eventId == WM_LBUTTONDBLCLK || eventId == WM_RBUTTONUP)
+            {
+                this.DispatcherQueue.TryEnqueue(() =>
+                {
+                    this.AppWindow.Show();
+                    BringToForeground();
+                });
+            }
+            return IntPtr.Zero;
+        }
 
         return CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
+    }
+
+    private void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
+    {
+        try
+        {
+            string raw = DbManager.GetSettings();
+            if (!string.IsNullOrEmpty(raw))
+            {
+                using var doc = JsonDocument.Parse(raw);
+                var root = doc.RootElement;
+                if (root.TryGetProperty("MinimizeToTray", out var minProp) && minProp.GetBoolean())
+                {
+                    args.Cancel = true;
+                    this.AppWindow.Hide();
+                    InitializeTrayIcon();
+                }
+                else
+                {
+                    CleanupTrayIcon();
+                }
+            }
+            else
+            {
+                CleanupTrayIcon();
+            }
+        }
+        catch
+        {
+            CleanupTrayIcon();
+        }
+    }
+
+    private void MainWindow_Closed(object sender, WindowEventArgs args)
+    {
+        CleanupTrayIcon();
+    }
+
+    private void InitializeTrayIcon()
+    {
+        if (_trayIconRegistered) return;
+
+        try
+        {
+            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "AppIcon.ico");
+            if (!File.Exists(iconPath))
+            {
+                iconPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AppIcon.ico");
+            }
+            
+            _hIcon = LoadImage(IntPtr.Zero, iconPath, 1, 0, 0, 0x00000010 | 0x00000020); // IMAGE_ICON | LR_LOADFROMFILE
+
+            var nid = new NOTIFYICONDATA
+            {
+                cbSize = Marshal.SizeOf(typeof(NOTIFYICONDATA)),
+                hWnd = _hwnd,
+                uID = 1,
+                uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_INFO,
+                uCallbackMessage = WM_TRAYICON,
+                hIcon = _hIcon,
+                szTip = "WinCare Pro Suite",
+                szInfo = "WinCare Pro is running in the background. Double-click the tray icon to open.",
+                szInfoTitle = "Minimized to System Tray",
+                dwInfoFlags = 1 // NIIF_INFO
+            };
+
+            _trayIconRegistered = Shell_NotifyIcon(NIM_ADD, ref nid);
+        }
+        catch { }
+    }
+
+    private void CleanupTrayIcon()
+    {
+        if (_trayIconRegistered)
+        {
+            var nid = new NOTIFYICONDATA
+            {
+                cbSize = Marshal.SizeOf(typeof(NOTIFYICONDATA)),
+                hWnd = _hwnd,
+                uID = 1
+            };
+            Shell_NotifyIcon(NIM_DELETE, ref nid);
+            _trayIconRegistered = false;
+        }
+
+        if (_hIcon != IntPtr.Zero)
+        {
+            DestroyIcon(_hIcon);
+            _hIcon = IntPtr.Zero;
+        }
+    }
+
+    private void BringToForeground()
+    {
+        if (_hwnd != IntPtr.Zero)
+        {
+            ShowWindow(_hwnd, 9); // SW_RESTORE
+            SetForegroundWindow(_hwnd);
+        }
     }
 
     private void LoadThemeConfiguration()
@@ -138,6 +310,31 @@ public sealed partial class MainWindow : Window
                     string theme = themeProp.GetString() ?? "Dark";
                     ApplyAppTheme(theme == "Dark");
                 }
+                else
+                {
+                    ApplyAppTheme(true);
+                }
+
+                // Load and apply Accent Color on start
+                if (root.TryGetProperty("AccentColor", out var accentProp))
+                {
+                    App.ApplyAccentColor(accentProp.GetString() ?? "Default");
+                }
+
+                // Load and apply Transparency Level on start
+                if (root.TryGetProperty("TransparencyLevel", out var transProp))
+                {
+                    ApplyTransparency(transProp.GetDouble());
+                }
+
+                // Check for updates automatically in the background
+                if (root.TryGetProperty("AutoCheckUpdates", out var autoProp) && autoProp.GetBoolean())
+                {
+                    Task.Delay(3000).ContinueWith(async t =>
+                    {
+                        await RunSilentUpdateCheckAsync();
+                    });
+                }
             }
             else
             {
@@ -150,8 +347,66 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    public void ApplyTransparency(double level)
+    {
+        if (RootGrid == null) return;
+        
+        bool isDark = RootGrid.RequestedTheme == ElementTheme.Dark;
+        byte colorAlpha = (byte)(255 * (level / 100.0));
+        
+        if (isDark)
+        {
+            RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 26, 26, 26));
+        }
+        else
+        {
+            RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 243, 243, 243));
+        }
+    }
+
+    private async Task RunSilentUpdateCheckAsync()
+    {
+        try
+        {
+            using var client = new System.Net.Http.HttpClient();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
+            
+            string response;
+            if (File.Exists(@"D:\WinCare\update.json"))
+            {
+                response = File.ReadAllText(@"D:\WinCare\update.json");
+            }
+            else
+            {
+                string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
+                response = await client.GetStringAsync(jsonUrl);
+            }
+            
+            using var doc = JsonDocument.Parse(response);
+            var root = doc.RootElement;
+            string remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
+            
+            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
+            var remoteVersion = new Version(remoteVerStr);
+
+            if (remoteVersion > currentVersion)
+            {
+                DbManager.LogAction($"Update available: v{remoteVerStr}", "Software Updater", "Success");
+            }
+        }
+        catch { }
+    }
+
     public void ApplyAppTheme(bool dark)
     {
+        if (RootGrid == null)
+        {
+            throw new NullReferenceException("RootGrid is null in ApplyAppTheme");
+        }
+        if (ThemeIcon == null)
+        {
+            throw new NullReferenceException("ThemeIcon is null in ApplyAppTheme");
+        }
         RootGrid.RequestedTheme = dark ? ElementTheme.Dark : ElementTheme.Light;
         ThemeIcon.Glyph = dark ? "\uE708" : "\uE706"; // Moon vs Sun glyph
         SetBackdropType(dark ? "micaalt" : "mica");
@@ -279,4 +534,6 @@ public sealed partial class MainWindow : Window
             mainPage.NavigateToPageExternal(pageTag);
         }
     }
+
+    public Frame MainFrame => RootFrame;
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -21,7 +22,7 @@ public class SystemOptimizerViewModel : ViewModelBase
         set => SetProperty(ref _isLoading, value);
     }
 
-    private string _statusText = "Ready";
+    private string _statusText = "Ready".T();
     public string StatusText
     {
         get => _statusText;
@@ -44,7 +45,7 @@ public class SystemOptimizerViewModel : ViewModelBase
         }
     }
 
-    private string _gameBoostStatus = "Game Boost is inactive.";
+    private string _gameBoostStatus = "Game Boost is inactive.".T();
     public string GameBoostStatus
     {
         get => _gameBoostStatus;
@@ -71,7 +72,7 @@ public class SystemOptimizerViewModel : ViewModelBase
     {
         if (IsLoading) return;
         IsLoading = true;
-        StatusText = "Applying selected tweaks...";
+        StatusText = "Applying selected tweaks...".T();
 
         int applied = 0;
         try
@@ -84,12 +85,12 @@ public class SystemOptimizerViewModel : ViewModelBase
                     if (ok) applied++;
                 }
             }
-            StatusText = $"Applied {applied} tweaks successfully.";
+            StatusText = string.Format("Applied {0} tweaks successfully.".T(), applied);
             LoadTweaks();
         }
         catch (Exception ex)
         {
-            StatusText = $"Failed: {ex.Message}";
+            StatusText = string.Format("Failed: {0}".T(), ex.Message);
         }
         finally
         {
@@ -99,7 +100,7 @@ public class SystemOptimizerViewModel : ViewModelBase
 
     public void RestoreDefaults()
     {
-        StatusText = "Restore defaults requires manual registry reset. Contact support.";
+        StatusText = "Restore defaults requires manual registry reset. Contact support.".T();
     }
 
     private async Task ToggleGameBoostAsync(bool active)
@@ -107,7 +108,7 @@ public class SystemOptimizerViewModel : ViewModelBase
         IsLoading = true;
         if (active)
         {
-            GameBoostStatus = "Activating Game Boost... Halting updates and freeing RAM cache lines.";
+            GameBoostStatus = "Activating Game Boost... Halting updates and freeing RAM cache lines.".T();
             await Task.Delay(600);
 
             await Task.Run(() =>
@@ -127,12 +128,12 @@ public class SystemOptimizerViewModel : ViewModelBase
             var (procs, reclaimed) = await _optimizerEngine.OptimizeRamAsync();
             double mb = reclaimed / 1024.0 / 1024.0;
 
-            GameBoostStatus = $"Active. Halting wuauserv completed. Purged RAM files cache ({mb:F1} MB freed). Foreground priorities raised.";
+            GameBoostStatus = string.Format("Active. Halting wuauserv completed. Purged RAM files cache ({0} MB freed). Foreground priorities raised.".T(), mb.ToString("F1"));
             Database.DbManager.LogAction("Game Boost Enabled: Suspended background daemons, optimized RAM", "System Optimizer", "Success");
         }
         else
         {
-            GameBoostStatus = "Deactivating Game Boost... Re-enabling background services.";
+            GameBoostStatus = "Deactivating Game Boost... Re-enabling background services.".T();
             await Task.Delay(400);
 
             await Task.Run(() =>
@@ -148,7 +149,7 @@ public class SystemOptimizerViewModel : ViewModelBase
                 catch { }
             });
 
-            GameBoostStatus = "Game Boost is inactive.";
+            GameBoostStatus = "Game Boost is inactive.".T();
             Database.DbManager.LogAction("Game Boost Disabled: Restored services start type", "System Optimizer", "Success");
         }
         IsLoading = false;

@@ -17,6 +17,18 @@ public sealed partial class JunkPage : Page
         this.DataContext = ViewModel;
     }
 
+    protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        ViewModel.Initialize();
+    }
+
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        ViewModel.Cleanup();
+    }
+
     private async void OnScanJunkClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.ScanAsync();

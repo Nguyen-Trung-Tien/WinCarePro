@@ -36,8 +36,8 @@
             </StackPanel>
 
             <!-- Search (Center) -->
-            <Grid Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="420" Height="36" Canvas.ZIndex="10">
-                <AutoSuggestBox x:Name="SearchBox" PlaceholderText="Search tools, settings, apps... (Ctrl + F)" QueryIcon="Find" CornerRadius="18" Width="420" Height="34" HorizontalAlignment="Center" VerticalAlignment="Center" QuerySubmitted="OnSearchQuerySubmitted"/>
+            <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxWidth="420" Margin="16,0" Height="36" Canvas.ZIndex="10">
+                <AutoSuggestBox x:Name="SearchBox" PlaceholderText="Search tools, settings, apps... (Ctrl + F)" QueryIcon="Find" CornerRadius="18" HorizontalAlignment="Stretch" VerticalAlignment="Center" QuerySubmitted="OnSearchQuerySubmitted"/>
             </Grid>
 
             <!-- Controls (Right) -->

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -19,7 +20,7 @@ public class UpdaterViewModel : ViewModelBase
         set => SetProperty(ref _isBusy, value);
     }
 
-    private string _progressMessage = "Ready";
+    private string _progressMessage = "Ready".T();
     public string ProgressMessage
     {
         get => _progressMessage;
@@ -47,7 +48,7 @@ public class UpdaterViewModel : ViewModelBase
         if (IsBusy) return;
         IsBusy = true;
         Updates.Clear();
-        ProgressMessage = "Auditing winget packages database...";
+        ProgressMessage = "Auditing winget packages database...".T();
 
         try
         {
@@ -58,7 +59,7 @@ public class UpdaterViewModel : ViewModelBase
                 {
                     Updates.Add(item);
                 }
-                ProgressMessage = $"Updates scan completed. {Updates.Count} packages available.";
+                ProgressMessage = string.Format("Updates scan completed. {0} packages available.".T(), Updates.Count);
                 IsBusy = false;
             });
         }
@@ -82,22 +83,22 @@ public class UpdaterViewModel : ViewModelBase
             for (int i = 0; i < Updates.Count; i++)
             {
                 var app = Updates[i];
-                app.UpdateStatus = "Updating...";
-                ProgressMessage = $"Silent updating {app.Name} ({i + 1}/{Updates.Count})...";
+                app.UpdateStatus = "Updating...".T();
+                ProgressMessage = string.Format("Silent updating {0} ({1}/{2})...".T(), app.Name, i + 1, Updates.Count);
 
                 bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, "winget");
-                _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? "Completed" : "Failed"; });
+                _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? "Completed".T() : "Failed".T(); });
 
                 current += step;
                 ProgressPercent = (int)current;
             }
 
             ProgressPercent = 100;
-            ProgressMessage = "All background installations complete.";
+            ProgressMessage = "All background installations complete.".T();
         }
         catch (Exception ex)
         {
-            ProgressMessage = $"Updates failed: {ex.Message}";
+            ProgressMessage = string.Format("Updates failed: {0}".T(), ex.Message);
         }
         finally
         {

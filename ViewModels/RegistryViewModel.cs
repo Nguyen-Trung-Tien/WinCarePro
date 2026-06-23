@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -20,7 +21,7 @@ public class RegistryViewModel : ViewModelBase
         set => SetProperty(ref _isBusy, value);
     }
 
-    private string _statusText = "Ready";
+    private string _statusText = "Ready".T();
     public string StatusText
     {
         get => _statusText;
@@ -58,7 +59,7 @@ public class RegistryViewModel : ViewModelBase
         if (IsBusy) return;
         IsBusy = true;
         ScanProgress = 0;
-        StatusText = "Scanning registry for broken paths...";
+        StatusText = "Scanning registry for broken paths...".T();
         Issues.Clear();
 
         try
@@ -71,12 +72,12 @@ public class RegistryViewModel : ViewModelBase
                     Issues.Add(issue);
                 }
                 ScanProgress = 100;
-                StatusText = $"Scan complete. Found {Issues.Count} issues.";
+                StatusText = string.Format("Scan complete. Found {0} issues.".T(), Issues.Count);
             });
         }
         catch (Exception ex)
         {
-            StatusText = $"Scan failed: {ex.Message}";
+            StatusText = "Scan failed:".T() + " " + ex.Message;
         }
         finally
         {
@@ -88,18 +89,18 @@ public class RegistryViewModel : ViewModelBase
     {
         if (IsBusy || Issues.Count == 0) return;
         IsBusy = true;
-        StatusText = "Repairing selected registry issues...";
+        StatusText = "Repairing selected registry issues...".T();
 
         try
         {
             var selected = Issues.Where(x => x.IsSelected).ToList();
             await _engine.FixRegistryIssuesAsync(selected);
-            StatusText = $"Repaired {selected.Count} registry issues.";
+            StatusText = string.Format("Repaired {0} registry issues.".T(), selected.Count);
             await ScanRegistryAsync();
         }
         catch (Exception ex)
         {
-            StatusText = $"Repair failed: {ex.Message}";
+            StatusText = "Repair failed:".T() + " " + ex.Message;
         }
         finally
         {
@@ -111,17 +112,17 @@ public class RegistryViewModel : ViewModelBase
     {
         if (IsBusy) return;
         IsBusy = true;
-        StatusText = "Creating registry backup...";
+        StatusText = "Creating registry backup...".T();
 
         try
         {
             await Task.Run(() => _engine.CreateRegistryBackup("UserBackup"));
-            StatusText = "Registry backup created successfully.";
+            StatusText = "Registry backup created successfully.".T();
             LoadBackups();
         }
         catch (Exception ex)
         {
-            StatusText = $"Backup failed: {ex.Message}";
+            StatusText = "Backup failed:".T() + " " + ex.Message;
         }
         finally
         {

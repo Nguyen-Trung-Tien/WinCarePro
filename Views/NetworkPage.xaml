@@ -8,6 +8,41 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 960px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="960" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <!-- Narrow Layout: Viewport Width < 960px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!-- Stack main columns -->
+                        <Setter Target="ConnectivityCard.(Grid.Row)" Value="0" />
+                        <Setter Target="ConnectivityCard.(Grid.Column)" Value="0" />
+                        <Setter Target="ConnectivityCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="SignalCard.(Grid.Row)" Value="1" />
+                        <Setter Target="SignalCard.(Grid.Column)" Value="0" />
+                        <Setter Target="SignalCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="TerminalCard.(Grid.Row)" Value="2" />
+                        <Setter Target="TerminalCard.(Grid.Column)" Value="0" />
+                        <Setter Target="TerminalCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="RepairToolkitCard.(Grid.Row)" Value="3" />
+                        <Setter Target="RepairToolkitCard.(Grid.Column)" Value="0" />
+                        <Setter Target="RepairToolkitCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="PortScannerCard.(Grid.Row)" Value="4" />
+                        <Setter Target="PortScannerCard.(Grid.Column)" Value="0" />
+                        <Setter Target="PortScannerCard.(Grid.ColumnSpan)" Value="2" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
@@ -32,20 +67,22 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <Grid RowSpacing="24" ColumnSpacing="24">
+            <Grid x:Name="ContentGrid" RowSpacing="24" ColumnSpacing="24">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" x:Name="Col0" />
+                    <ColumnDefinition Width="2*" x:Name="Col1" />
                 </Grid.ColumnDefinitions>
 
                 <!-- Row 0, Col 0: Diagnostics Status Overview -->
-                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
+                <Border x:Name="ConnectivityCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -136,7 +173,7 @@
                 </Border>
 
                 <!-- Row 0, Col 1: Ping / Speed Indicators -->
-                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
+                <Border x:Name="SignalCard" Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
                     <StackPanel Spacing="16">
                         <TextBlock Text="Signal &amp; Speed Quality" FontSize="18" FontWeight="Bold" />
                         
@@ -175,7 +212,7 @@
                 </Border>
 
                 <!-- Row 1, Col 0: Diagnostics Panel Console -->
-                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
+                <Border x:Name="TerminalCard" Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -203,7 +240,7 @@
                 </Border>
 
                 <!-- Row 1, Col 1: Repair Center Toolkit -->
-                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
+                <Border x:Name="RepairToolkitCard" Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -227,7 +264,7 @@
                 </Border>
 
                 <!-- Port Scanner Row 2, Col 0 -->
-                <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
+                <Border x:Name="PortScannerCard" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="1" Style="{StaticResource ModernCardStyle}" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />

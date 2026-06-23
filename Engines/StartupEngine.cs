@@ -429,10 +429,40 @@ public class StartupEngine
 
             var td = ts.NewTask();
             td.RegistrationInfo.Description = "WinCarePro Automated System Junk Clean and Maintenance";
-            
-            var trigger = new WeeklyTrigger();
-            trigger.StartBoundary = DateTime.Today.AddHours(3); // 3:00 AM
-            trigger.DaysOfWeek = DaysOfTheWeek.Sunday;
+
+            int freqIndex = 1; // Default: Weekly
+            try
+            {
+                string raw = Database.DbManager.GetSettings();
+                if (!string.IsNullOrEmpty(raw))
+                {
+                    using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                    var root = doc.RootElement;
+                    if (root.TryGetProperty("MaintenanceFrequencyIndex", out var freqProp))
+                    {
+                        freqIndex = freqProp.GetInt32();
+                    }
+                }
+            }
+            catch { }
+
+            Trigger trigger;
+            string frequencyName;
+            switch (freqIndex)
+            {
+                case 0:
+                    trigger = new DailyTrigger { StartBoundary = DateTime.Today.AddHours(3) };
+                    frequencyName = "daily";
+                    break;
+                case 2:
+                    trigger = new MonthlyTrigger { StartBoundary = DateTime.Today.AddHours(3), DaysOfMonth = new int[] { 1 } };
+                    frequencyName = "monthly";
+                    break;
+                default:
+                    trigger = new WeeklyTrigger { StartBoundary = DateTime.Today.AddHours(3), DaysOfWeek = DaysOfTheWeek.Sunday };
+                    frequencyName = "weekly";
+                    break;
+            }
             td.Triggers.Add(trigger);
 
             string appExe = Environment.ProcessPath ?? System.Reflection.Assembly.GetEntryAssembly()?.Location ?? "";
@@ -441,7 +471,7 @@ public class StartupEngine
             td.Actions.Add(new ExecAction(appExe, "/background"));
 
             ts.RootFolder.RegisterTaskDefinition(taskName, td);
-            Database.DbManager.LogAction("Enabled WinCarePro automated weekly maintenance task scheduler", "Task Scheduler", "Success");
+            Database.DbManager.LogAction($"Enabled WinCarePro automated {frequencyName} maintenance task scheduler", "Task Scheduler", "Success");
             return true;
         }
         catch (Exception ex)

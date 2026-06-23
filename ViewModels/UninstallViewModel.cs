@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -21,7 +22,7 @@ public class UninstallViewModel : ViewModelBase
         set => SetProperty(ref _isBusy, value);
     }
 
-    private string _progressMessage = "Ready";
+    private string _progressMessage = "Ready".T();
     public string ProgressMessage
     {
         get => _progressMessage;
@@ -70,7 +71,7 @@ public class UninstallViewModel : ViewModelBase
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
-        _uninstallEngine.OutputReceived += msg => _dispatcherQueue.TryEnqueue(() => ProgressMessage = msg);
+        _uninstallEngine.OutputReceived += msg => _dispatcherQueue.TryEnqueue(() => ProgressMessage = msg.T());
         _uninstallEngine.ProgressChanged += pct => _dispatcherQueue.TryEnqueue(() => ProgressPercent = pct);
 
         _ = ScanAppsAsync();
@@ -81,7 +82,7 @@ public class UninstallViewModel : ViewModelBase
         if (IsBusy) return;
         IsBusy = true;
         ProgressPercent = 10;
-        ProgressMessage = "Scanning registry for installed applications...";
+        ProgressMessage = "Scanning registry for installed applications...".T();
 
         FilteredApps.Clear();
         _allApps.Clear();
@@ -96,7 +97,7 @@ public class UninstallViewModel : ViewModelBase
                 _allApps = apps;
                 ApplyAppFilter();
                 ProgressPercent = 100;
-                ProgressMessage = $"Loaded {_allApps.Count} applications.";
+                ProgressMessage = string.Format("Loaded {0} applications.".T(), _allApps.Count);
                 IsBusy = false;
             });
         }
@@ -104,7 +105,7 @@ public class UninstallViewModel : ViewModelBase
         {
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ProgressMessage = $"Scan failed: {ex.Message}";
+                ProgressMessage = "Scan failed:".T() + " " + ex.Message;
                 IsBusy = false;
             });
         }
@@ -135,12 +136,12 @@ public class UninstallViewModel : ViewModelBase
         try
         {
             ProgressPercent = 10;
-            ProgressMessage = $"Uninstalling {app.DisplayName}...";
+            ProgressMessage = string.Format("Uninstalling {0}...".T(), app.DisplayName);
 
             bool uninstalled = await _uninstallEngine.RunStandardUninstallerAsync(app);
 
             ProgressPercent = 60;
-            ProgressMessage = $"Scanning leftovers for {app.DisplayName}...";
+            ProgressMessage = string.Format("Scanning leftovers for {0}...".T(), app.DisplayName);
 
             var leftoverList = await Task.Run(() => _uninstallEngine.ScanLeftovers(app));
 
@@ -167,12 +168,12 @@ public class UninstallViewModel : ViewModelBase
                 if (Leftovers.Count > 0)
                 {
                     UninstallStep = 2;
-                    ProgressMessage = $"Scanned {Leftovers.Count} leftover items.";
+                    ProgressMessage = string.Format("Scanned {0} leftover items.".T(), Leftovers.Count);
                 }
                 else
                 {
                     UninstallStep = 0;
-                    ProgressMessage = $"Successfully uninstalled. No leftovers found.";
+                    ProgressMessage = "Successfully uninstalled. No leftovers found.".T();
                     _ = ScanAppsAsync();
                 }
             });
@@ -181,7 +182,7 @@ public class UninstallViewModel : ViewModelBase
         {
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ProgressMessage = $"Uninstallation failed: {ex.Message}";
+                ProgressMessage = "Uninstallation failed:".T() + " " + ex.Message;
                 IsBusy = false;
                 UninstallStep = 0;
             });
@@ -192,7 +193,7 @@ public class UninstallViewModel : ViewModelBase
     {
         if (Leftovers.Count == 0) return;
         IsBusy = true;
-        ProgressMessage = "Deleting leftover components...";
+        ProgressMessage = "Deleting leftover components...".T();
 
         try
         {
@@ -202,7 +203,7 @@ public class UninstallViewModel : ViewModelBase
             _dispatcherQueue.TryEnqueue(() =>
             {
                 ProgressPercent = 100;
-                ProgressMessage = $"Cleaned leftover files and registry entries.";
+                ProgressMessage = "Cleaned leftover files and registry entries.".T();
                 IsBusy = false;
                 UninstallStep = 0;
                 _ = ScanAppsAsync();
@@ -212,7 +213,7 @@ public class UninstallViewModel : ViewModelBase
         {
             _dispatcherQueue.TryEnqueue(() =>
             {
-                ProgressMessage = $"Error deleting leftovers: {ex.Message}";
+                ProgressMessage = "Error deleting leftovers:".T() + " " + ex.Message;
                 IsBusy = false;
             });
         }
@@ -221,7 +222,7 @@ public class UninstallViewModel : ViewModelBase
     public void CancelLeftovers()
     {
         UninstallStep = 0;
-        ProgressMessage = "Leftover deletion cancelled.";
+        ProgressMessage = "Leftover deletion cancelled.".T();
         _ = ScanAppsAsync();
     }
 

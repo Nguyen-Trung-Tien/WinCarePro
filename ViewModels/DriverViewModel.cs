@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -20,7 +21,7 @@ public class DriverViewModel : ViewModelBase
         set => SetProperty(ref _isBusy, value);
     }
 
-    private string _progressMessage = "Ready";
+    private string _progressMessage = "Ready".T();
     public string ProgressMessage
     {
         get => _progressMessage;
@@ -60,7 +61,7 @@ public class DriverViewModel : ViewModelBase
                 foreach (var item in list)
                 {
                     item.IsSelected = item.HasUpdate;
-                    item.UpdateStatus = item.HasUpdate ? "Update Available" : "Up to date";
+                    item.UpdateStatus = item.HasUpdate ? "Update Available".T() : "Up to date".T();
                     Drivers.Add(item);
                 }
             });
@@ -73,43 +74,52 @@ public class DriverViewModel : ViewModelBase
         var selectedDrivers = Drivers.Where(x => x.IsSelected && x.HasUpdate).ToList();
         if (selectedDrivers.Count == 0)
         {
-            ProgressMessage = "No drivers selected for update.";
+            ProgressMessage = "No drivers selected for update.".T();
             return;
         }
 
         IsBusy = true;
-
-        DriverWizardStep = 1;
-        ProgressMessage = "Wizard Step 1: Analysing firmware components...";
-        await Task.Delay(1000);
-
-        DriverWizardStep = 2;
-        ProgressMessage = "Wizard Step 2: Downloading driver binaries from verified manufacturer nodes...";
-        ProgressPercent = 0;
-        for (int i = 0; i <= 100; i += 20)
+        try
         {
-            ProgressPercent = i;
-            await Task.Delay(200);
+            DriverWizardStep = 1;
+            ProgressMessage = "Wizard Step 1: Analysing firmware components...".T();
+            await Task.Delay(1000);
+
+            DriverWizardStep = 2;
+            ProgressMessage = "Wizard Step 2: Downloading driver binaries from verified manufacturer nodes...".T();
+            ProgressPercent = 0;
+            for (int i = 0; i <= 100; i += 20)
+            {
+                ProgressPercent = i;
+                await Task.Delay(200);
+            }
+
+            DriverWizardStep = 3;
+            ProgressMessage = "Wizard Step 3: Installing driver payloads. Display flicker or audio dropouts may occur during firmware compilation.".T();
+            ProgressPercent = 50;
+            await Task.Delay(2500);
+
+            DriverWizardStep = 4;
+            ProgressMessage = "Wizard Step 4: Verification of physical thread components complete.".T();
+            ProgressPercent = 100;
+
+            foreach (var d in selectedDrivers)
+            {
+                d.HasUpdate = false;
+                d.UpdateStatus = "Completed".T();
+                d.DriverVersion = d.AvailableVersion;
+                d.Status = "OK";
+            }
+
+            ProgressMessage = "All physical driver installations successfully verified.".T();
         }
-
-        DriverWizardStep = 3;
-        ProgressMessage = "Wizard Step 3: Installing driver payloads. Display flicker or audio dropouts may occur during firmware compilation.";
-        ProgressPercent = 50;
-        await Task.Delay(2500);
-
-        DriverWizardStep = 4;
-        ProgressMessage = "Wizard Step 4: Verification of physical thread components complete.";
-        ProgressPercent = 100;
-
-        foreach (var d in selectedDrivers)
+        catch (Exception ex)
         {
-            d.HasUpdate = false;
-            d.UpdateStatus = "Completed";
-            d.DriverVersion = d.AvailableVersion;
-            d.Status = "OK";
+            ProgressMessage = string.Format("Driver update failed: {0}".T(), ex.Message);
         }
-
-        IsBusy = false;
-        ProgressMessage = "All physical driver installations successfully verified.";
+        finally
+        {
+            IsBusy = false;
+        }
     }
 }

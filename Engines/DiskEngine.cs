@@ -203,9 +203,30 @@ public class DiskEngine
         long bytes = 0;
         try
         {
-            foreach (var file in Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories))
+            if (!Directory.Exists(path)) return 0;
+
+            string[] files = Array.Empty<string>();
+            try
+            {
+                files = Directory.GetFiles(path);
+            }
+            catch { }
+
+            foreach (var file in files)
             {
                 try { bytes += new FileInfo(file).Length; } catch { }
+            }
+
+            string[] dirs = Array.Empty<string>();
+            try
+            {
+                dirs = Directory.GetDirectories(path);
+            }
+            catch { }
+
+            foreach (var dir in dirs)
+            {
+                bytes += GetDirSizeRecursively(dir);
             }
         }
         catch { }
@@ -224,8 +245,8 @@ public class DiskEngine
             var filesBySize = new Dictionary<long, List<string>>();
             try
             {
-                // Enumerate all files recursively
-                foreach (var file in Directory.EnumerateFiles(scanPath, "*", SearchOption.AllDirectories))
+                // Enumerate all files recursively safely
+                foreach (var file in EnumerateFilesSafe(scanPath))
                 {
                     try
                     {
@@ -289,6 +310,42 @@ public class DiskEngine
         int bytesRead = stream.Read(buffer, 0, buffer.Length);
         byte[] hash = sha.ComputeHash(buffer, 0, bytesRead);
         return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+    }
+
+    private IEnumerable<string> EnumerateFilesSafe(string path)
+    {
+        IEnumerable<string> files = Array.Empty<string>();
+        try
+        {
+            if (Directory.Exists(path))
+            {
+                files = Directory.EnumerateFiles(path);
+            }
+        }
+        catch { }
+
+        foreach (var file in files)
+        {
+            yield return file;
+        }
+
+        IEnumerable<string> dirs = Array.Empty<string>();
+        try
+        {
+            if (Directory.Exists(path))
+            {
+                dirs = Directory.GetDirectories(path);
+            }
+        }
+        catch { }
+
+        foreach (var dir in dirs)
+        {
+            foreach (var file in EnumerateFilesSafe(dir))
+            {
+                yield return file;
+            }
+        }
     }
 
     public async Task<int> ClearEmptyFoldersAsync(string rootPath)

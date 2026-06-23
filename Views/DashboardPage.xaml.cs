@@ -22,6 +22,12 @@ public sealed partial class DashboardPage : Page
         this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
+    protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        ViewModel.StartMonitoring();
+    }
+
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);

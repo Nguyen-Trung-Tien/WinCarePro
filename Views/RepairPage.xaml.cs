@@ -14,6 +14,7 @@ public sealed partial class RepairPage : Page
     {
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<RepairViewModel>();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
     }
 

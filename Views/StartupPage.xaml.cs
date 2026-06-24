@@ -15,6 +15,7 @@ public sealed partial class StartupPage : Page
     {
         ViewModel = App.Services.GetRequiredService<StartupViewModel>();
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
     }
 

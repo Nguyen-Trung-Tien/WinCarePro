@@ -97,7 +97,7 @@ public partial class SecurityViewModel : ViewModelBase
         IsScanning = true;
         StatusMessage = "Analyzing system security indicators...".T();
         
-        _dispatcherQueue.TryEnqueue(() =>
+        _dispatcherQueue?.TryEnqueue(() =>
         {
             SecurityAlerts.Clear();
         });
@@ -131,9 +131,8 @@ public partial class SecurityViewModel : ViewModelBase
             if (alerts.Count > 0) score -= Math.Min(15, alerts.Count * 5);
             score = Math.Clamp(score, 10, 100);
 
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
-                // Translate statuses containing dynamic parts
                 AntivirusStatus = av.Replace("Enabled", "Enabled".T()).Replace("Disabled", "Disabled".T()).Replace("Running", "Running".T());
                 IsFirewallActive = fw;
                 FirewallStatusText = fw ? "Windows Firewall Active".T() : "Firewall Disabled or Misconfigured".T();
@@ -176,7 +175,7 @@ public partial class SecurityViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 StatusMessage = string.Format("Security analysis failed: {0}".T(), ex.Message);
                 IsScanning = false;

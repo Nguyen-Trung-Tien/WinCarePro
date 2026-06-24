@@ -31,7 +31,8 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     private readonly AiDiagnosticsEngine _aiEngine = new();
 
     private double _cachedRamCapacityGb = 16.0;
-    private bool _isRunning = true;
+    private CancellationTokenSource? _monitorCts;
+    private int _monitorRunning = 0; // 0 = stopped, 1 = running (Interlocked)
 
     private List<JunkCategory>? _scannedJunkCategories;
     private List<RegistryIssue>? _scannedRegistryIssues;
@@ -366,137 +367,159 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
 
     private void StartResourceMonitor()
     {
+        // Prevent double-start: only one monitor loop at a time
+        if (System.Threading.Interlocked.CompareExchange(ref _monitorRunning, 1, 0) != 0) return;
+
+        _monitorCts = new CancellationTokenSource();
+        var token = _monitorCts.Token;
+
         Task.Run(async () =>
         {
             var rand = new Random();
-            while (_isRunning)
+            try
             {
-                int delayMs = 2000;
-                bool enableSensors = true;
-                bool triggerSmartBoost = true;
-
-                try
+                while (!token.IsCancellationRequested)
                 {
-                    string raw = Database.DbManager.GetSettings();
-                    if (!string.IsNullOrEmpty(raw))
-                    {
-                        using var doc = System.Text.Json.JsonDocument.Parse(raw);
-                        var root = doc.RootElement;
-                        
-                        // 1. Telemetry update interval
-                        if (root.TryGetProperty("TelemetryIntervalIndex", out var telProp))
-                        {
-                            int idx = telProp.GetInt32();
-                            delayMs = idx switch
-                            {
-                                0 => 500,
-                                1 => 1000,
-                                2 => 2000,
-                                3 => 5000,
-                                _ => 2000
-                            };
-                        }
+                    int delayMs = 2000;
+                    bool enableSensors = true;
+                    bool triggerSmartBoost = true;
 
-                        // 2. Enable Hardware Sensors Thread
-                        if (root.TryGetProperty("EnableSensorsThread", out var sensProp))
-                        {
-                            enableSensors = sensProp.GetBoolean();
-                        }
-
-                        // 3. Trigger Smart Boost Optimization
-                        if (root.TryGetProperty("TriggerSmartBoost", out var boostProp))
-                        {
-                            triggerSmartBoost = boostProp.GetBoolean();
-                        }
-                    }
-                }
-                catch { }
-
-                if (enableSensors)
-                {
                     try
                     {
-                        // Query CPU load and Memory load via kernel32 API
-                        var (cpu, ram) = GetSystemResourceUsage();
-
-                        // Real GPU monitoring via WMI performance counters
-                        double gpu = GetGpuUsageWmi();
-
-                        // Real Disk I/O monitoring via WMI performance counters
-                        double disk = GetDiskUsageWmi();
-
-                        // CPU Temperature
-                        double cpuTemp = _hardwareEngine.GetCpuTemperature(cpu);
-
-                        // Check Smart Boost threshold (RAM > 90%)
-                        if (triggerSmartBoost && ram > 90.0 && (DateTime.Now - _lastSmartBoostTime).TotalMinutes >= 2.0)
+                        string raw = Database.DbManager.GetSettings();
+                        if (!string.IsNullOrEmpty(raw))
                         {
-                            _lastSmartBoostTime = DateTime.Now;
-                            _ = Task.Run(async () =>
+                            using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                            var root = doc.RootElement;
+
+                            // 1. Telemetry update interval
+                            if (root.TryGetProperty("TelemetryIntervalIndex", out var telProp))
                             {
-                                try
+                                int idx = telProp.GetInt32();
+                                delayMs = idx switch
                                 {
-                                    var optEngine = new SystemOptimizerEngine();
-                                    await optEngine.OptimizeRamAsync();
-                                    Database.DbManager.LogAction("Automated Smart Boost optimization triggered (RAM > 90%)", "Smart Boost", "Success");
-                                }
-                                catch { }
-                            });
+                                    0 => 500,
+                                    1 => 1000,
+                                    2 => 2000,
+                                    3 => 5000,
+                                    _ => 2000
+                                };
+                            }
+
+                            // 2. Enable Hardware Sensors Thread
+                            if (root.TryGetProperty("EnableSensorsThread", out var sensProp))
+                            {
+                                enableSensors = sensProp.GetBoolean();
+                            }
+
+                            // 3. Trigger Smart Boost Optimization
+                            if (root.TryGetProperty("TriggerSmartBoost", out var boostProp))
+                            {
+                                triggerSmartBoost = boostProp.GetBoolean();
+                            }
                         }
-
-                        if (!_isRunning) break;
-                        _dispatcherQueue.TryEnqueue(() =>
-                        {
-                            if (!_isRunning) return;
-                            CpuUsage = Math.Round(cpu, 1);
-                            RamUsage = Math.Round(ram, 1);
-                            GpuUsage = Math.Round(gpu, 1);
-                            DiskUsage = Math.Round(disk, 1);
-                            CpuTemperature = cpuTemp;
-                            CpuTempFormatted = $"{cpuTemp:F0}°C";
-
-                            // Update chart collections (shift old, insert new)
-                            CpuSeriesValues.Add(new ObservableValue(CpuUsage));
-                            CpuSeriesValues.RemoveAt(0);
-
-                            RamSeriesValues.Add(new ObservableValue(RamUsage));
-                            RamSeriesValues.RemoveAt(0);
-
-                            GpuSeriesValues.Add(new ObservableValue(GpuUsage));
-                            GpuSeriesValues.RemoveAt(0);
-
-                            DiskSeriesValues.Add(new ObservableValue(DiskUsage));
-                            DiskSeriesValues.RemoveAt(0);
-                            
-                            var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
-                            SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
-                        });
                     }
                     catch { }
-                }
 
-                await Task.Delay(delayMs);
+                    if (enableSensors && !token.IsCancellationRequested)
+                    {
+                        try
+                        {
+                            // Query CPU load and Memory load via kernel32 API
+                            var (cpu, ram) = GetSystemResourceUsage();
+
+                            // Real GPU monitoring via WMI performance counters
+                            double gpu = GetGpuUsageWmi();
+
+                            // Real Disk I/O monitoring via WMI performance counters
+                            double disk = GetDiskUsageWmi();
+
+                            // CPU Temperature
+                            double cpuTemp = _hardwareEngine.GetCpuTemperature(cpu);
+
+                            // Check Smart Boost threshold (RAM > 90%)
+                            if (triggerSmartBoost && ram > 90.0 && (DateTime.Now - _lastSmartBoostTime).TotalMinutes >= 2.0)
+                            {
+                                _lastSmartBoostTime = DateTime.Now;
+                                _ = Task.Run(async () =>
+                                {
+                                    try
+                                    {
+                                        var optEngine = new SystemOptimizerEngine();
+                                        await optEngine.OptimizeRamAsync();
+                                        Database.DbManager.LogAction("Automated Smart Boost optimization triggered (RAM > 90%)", "Smart Boost", "Success");
+                                    }
+                                    catch { }
+                                });
+                            }
+
+                            if (token.IsCancellationRequested) break;
+
+                            _dispatcherQueue?.TryEnqueue(() =>
+                            {
+                                if (token.IsCancellationRequested) return;
+                                CpuUsage = Math.Round(cpu, 1);
+                                RamUsage = Math.Round(ram, 1);
+                                GpuUsage = Math.Round(gpu, 1);
+                                DiskUsage = Math.Round(disk, 1);
+                                CpuTemperature = cpuTemp;
+                                CpuTempFormatted = $"{cpuTemp:F0}°C";
+
+                                // Update chart collections (shift old, insert new)
+                                CpuSeriesValues.Add(new ObservableValue(CpuUsage));
+                                CpuSeriesValues.RemoveAt(0);
+
+                                RamSeriesValues.Add(new ObservableValue(RamUsage));
+                                RamSeriesValues.RemoveAt(0);
+
+                                GpuSeriesValues.Add(new ObservableValue(GpuUsage));
+                                GpuSeriesValues.RemoveAt(0);
+
+                                DiskSeriesValues.Add(new ObservableValue(DiskUsage));
+                                DiskSeriesValues.RemoveAt(0);
+
+                                var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
+                                SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
+                            });
+                        }
+                        catch { }
+                    }
+
+                    try
+                    {
+                        await Task.Delay(delayMs, token);
+                    }
+                    catch (TaskCanceledException) { break; }
+                }
+            }
+            finally
+            {
+                System.Threading.Interlocked.Exchange(ref _monitorRunning, 0);
             }
         });
     }
 
     public void StartMonitoring()
     {
-        if (!_isRunning)
+        // CancellationToken already cancelled? Create fresh
+        if (_monitorCts == null || _monitorCts.IsCancellationRequested)
         {
-            _isRunning = true;
-            StartResourceMonitor();
+            _monitorCts?.Dispose();
+            _monitorCts = null;
         }
+        StartResourceMonitor();
     }
 
     public void StopMonitoring()
     {
-        _isRunning = false;
+        _monitorCts?.Cancel();
     }
 
     public void Dispose()
     {
         StopMonitoring();
+        _monitorCts?.Dispose();
+        _monitorCts = null;
         GC.SuppressFinalize(this);
     }
 

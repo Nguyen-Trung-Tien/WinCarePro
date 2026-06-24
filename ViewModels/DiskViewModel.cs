@@ -50,12 +50,25 @@ public class DiskViewModel : ViewModelBase
     public DiskViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        _engine.OutputReceived += LogText;
+        // Don't subscribe events in constructor; use SubscribeEvents/UnsubscribeEvents
+        // called from DiskPage.OnNavigatedTo/From to avoid double-subscription
 
         string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         StorageScanPath = Path.Combine(userProfile, "Downloads");
 
         _ = LoadDrivesAsync();
+    }
+
+    public void SubscribeEvents()
+    {
+        // Unsubscribe first to prevent double-registration (NavigationCacheMode.Required re-fires OnNavigatedTo)
+        _engine.OutputReceived -= LogText;
+        _engine.OutputReceived += LogText;
+    }
+
+    public void UnsubscribeEvents()
+    {
+        _engine.OutputReceived -= LogText;
     }
 
     private void LogText(string msg)

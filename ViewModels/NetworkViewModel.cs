@@ -120,6 +120,8 @@ public class NetworkViewModel : ViewModelBase
 
     public void Initialize()
     {
+        // Unsubscribe first to prevent double-registration when page is re-navigated (NavigationCacheMode.Required)
+        _engine.OutputReceived -= OnOutputReceived;
         _engine.OutputReceived += OnOutputReceived;
     }
 

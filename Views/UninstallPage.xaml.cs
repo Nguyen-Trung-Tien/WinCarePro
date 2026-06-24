@@ -15,6 +15,7 @@ public sealed partial class UninstallPage : Page
     {
         ViewModel = App.Services.GetRequiredService<UninstallViewModel>();
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
     }
 

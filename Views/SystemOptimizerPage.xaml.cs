@@ -16,6 +16,7 @@ public sealed partial class SystemOptimizerPage : Page
     {
         ViewModel = App.Services.GetRequiredService<SystemOptimizerViewModel>();
         InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
     }
 

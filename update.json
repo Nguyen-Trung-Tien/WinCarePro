@@ -1,5 +1,5 @@
 {
-  "version": "3.0.0",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.0.0/WinCareProSetup.exe",
-  "changelog": "Bản nâng cấp v3.0.0 'Nova': Giao diện Glassmorphism mới tuyệt đẹp, đo nhiệt độ CPU & chỉ số phần cứng thời gian thực chính xác từ WMI, bổ sung trang chuông báo và lịch sử hoạt động hệ thống, sửa lỗi đường dẫn cấu hình cứng và tối ưu hóa giải phóng tài nguyên hệ thống."
+  "version": "3.0.1",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.0.1/WinCareProSetup.exe",
+  "changelog": "Bản vá ổn định v3.0.1 'Stability Patch': Khắc phục hoàn toàn lỗi crash/thoát đột ngột khi click chuyển tab nhanh — sửa race condition monitoring thread (Dashboard, Hardware, Process), loại bỏ memory leak do event handler đăng ký trùng (Network, Junk, Disk), thêm null-safe dispatcher cho Security, và bổ sung NavigationCacheMode.Required cho 5 trang để ngăn ViewModel bị khởi tạo lại."
 }

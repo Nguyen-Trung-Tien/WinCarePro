@@ -153,7 +153,7 @@ public class HardwareViewModel : ViewModelBase
     }
     public string BatteryWearLevelFormatted => $"{BatteryWearLevel:F1}%";
 
-    private bool _isRunning = true;
+    private CancellationTokenSource? _monitorCts;
 
     public HardwareViewModel()
     {
@@ -188,10 +188,13 @@ public class HardwareViewModel : ViewModelBase
 
     private void StartSensorMonitoring()
     {
+        _monitorCts = new CancellationTokenSource();
+        var token = _monitorCts.Token;
+
         Task.Run(async () =>
         {
             var rand = new Random();
-            while (_isRunning)
+            while (!token.IsCancellationRequested)
             {
                 try
                 {
@@ -202,8 +205,11 @@ public class HardwareViewModel : ViewModelBase
                     double cTemp = _engine.GetCpuTemperature(cpuUsage);
                     double gTemp = _engine.GetGpuTemperature(gpuUsage);
 
-                    _dispatcherQueue.TryEnqueue(() =>
+                    if (token.IsCancellationRequested) break;
+
+                    _dispatcherQueue?.TryEnqueue(() =>
                     {
+                        if (token.IsCancellationRequested) return;
                         CpuTemp = cTemp;
                         GpuTemp = gTemp;
                         GpuLoad = Math.Round(gpuUsage, 1);
@@ -225,13 +231,19 @@ public class HardwareViewModel : ViewModelBase
                 }
                 catch { }
 
-                await Task.Delay(2000);
+                try
+                {
+                    await Task.Delay(2000, token);
+                }
+                catch (TaskCanceledException) { break; }
             }
         });
     }
 
     public void StopMonitoring()
     {
-        _isRunning = false;
+        _monitorCts?.Cancel();
+        _monitorCts?.Dispose();
+        _monitorCts = null;
     }
 }

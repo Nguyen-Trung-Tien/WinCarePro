@@ -64,6 +64,9 @@ public class JunkViewModel : ViewModelBase
 
     public void Initialize()
     {
+        // Unsubscribe first to prevent double-registration on re-navigation
+        _junkEngine.ProgressMessage -= OnProgressMessage;
+        _junkEngine.ProgressChanged -= OnProgressChanged;
         _junkEngine.ProgressMessage += OnProgressMessage;
         _junkEngine.ProgressChanged += OnProgressChanged;
     }

@@ -20,6 +20,18 @@ public sealed partial class DiskPage : Page
         this.DataContext = ViewModel;
     }
 
+    protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        ViewModel.SubscribeEvents();
+    }
+
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        ViewModel.UnsubscribeEvents();
+    }
+
     private async void OnAnalyzeClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.AnalyzeStorageAsync();

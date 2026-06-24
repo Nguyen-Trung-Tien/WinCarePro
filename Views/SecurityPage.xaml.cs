@@ -19,6 +19,13 @@ public sealed partial class SecurityPage : Page
         this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        // No active background thread in SecurityViewModel; scan is fire-and-forget
+        // NavigationCacheMode.Required ensures ViewModel is not re-created on back-navigation
+    }
+
     private async void OnScanClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.ScanSecurityAsync();

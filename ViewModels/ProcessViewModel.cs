@@ -48,39 +48,52 @@ public class ProcessViewModel : ViewModelBase
     private ObservableCollection<ProcessInfo> _allProcesses = new();
     public ObservableCollection<ProcessInfo> Processes { get; } = new();
 
-    private bool _isRunning = true;
+    private bool _isRunning = true; // kept for legacy compatibility; CancellationToken is the primary stop mechanism
+    private CancellationTokenSource? _monitorCts;
 
     public ProcessViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         _ = RefreshProcessesAsync();
-        _ = StartRunningProcessesMonitor();
+        StartRunningProcessesMonitor();
     }
 
-    private async Task StartRunningProcessesMonitor()
+    private void StartRunningProcessesMonitor()
     {
-        while (_isRunning)
+        _monitorCts = new CancellationTokenSource();
+        var token = _monitorCts.Token;
+        Task.Run(async () =>
         {
-            try
+            while (!token.IsCancellationRequested)
             {
-                var list = await Task.Run(() => _processService.GetRunningProcessesAsync());
-                if (!_isRunning) break;
-                _dispatcherQueue.TryEnqueue(() =>
+                try
                 {
-                    if (!_isRunning) return;
-                    _allProcesses = new ObservableCollection<ProcessInfo>(list);
-                    ApplyFilterAndSort();
-                });
-            }
-            catch { }
+                    var list = await Task.Run(() => _processService.GetRunningProcessesAsync(), token);
+                    if (token.IsCancellationRequested) break;
+                    _dispatcherQueue?.TryEnqueue(() =>
+                    {
+                        if (token.IsCancellationRequested) return;
+                        _allProcesses = new ObservableCollection<ProcessInfo>(list);
+                        ApplyFilterAndSort();
+                    });
+                }
+                catch { }
 
-            await Task.Delay(3000);
-        }
+                try
+                {
+                    await Task.Delay(3000, token);
+                }
+                catch (TaskCanceledException) { break; }
+            }
+        });
     }
 
     public void StopMonitoring()
     {
         _isRunning = false;
+        _monitorCts?.Cancel();
+        _monitorCts?.Dispose();
+        _monitorCts = null;
     }
 
     public async Task RefreshProcessesAsync()

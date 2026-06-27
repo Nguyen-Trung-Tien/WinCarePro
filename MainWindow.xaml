@@ -34,7 +34,7 @@
                 <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="20" Height="20" VerticalAlignment="Center" Stretch="Uniform"/>
                 <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                 <Border Background="#207F56D9" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
-                    <TextBlock Text="v3.0.1" FontSize="10" FontWeight="Bold" Foreground="#FF7F56D9" VerticalAlignment="Center"/>
+                    <TextBlock Text="v3.1.0" FontSize="10" FontWeight="Bold" Foreground="#FF7F56D9" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
@@ -63,10 +63,15 @@
                 <!-- Notification Bell -->
                 <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="NotificationButton_Click">
                     <Grid>
-                        <FontIcon Glyph="&#xE7E8;" FontSize="15" />
+                        <FontIcon Glyph="&#xEA8F;" FontSize="15" />
                         <!-- Red dot badge -->
                         <Border x:Name="NotificationBadge" Background="Red" Width="8" Height="8" CornerRadius="4" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="4,-2,-2,4" Visibility="Collapsed" />
                     </Grid>
+                </Button>
+
+                <!-- Exit App Button (Off Button) -->
+                <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ExitAppButton_Click">
+                    <FontIcon Glyph="&#xE7E8;" FontSize="15" Foreground="#FFEF4444" />
                 </Button>
             </StackPanel>
         </Grid>
@@ -74,6 +79,27 @@
         <!-- Main Frame -->
         <Frame x:Name="RootFrame" Grid.Row="1" />
 
-
+        <!-- Exit Overlay Grid (Premium Glassmorphism Backdrop) -->
+        <Grid x:Name="ExitOverlayGrid" Grid.Row="0" Grid.RowSpan="2" Background="#EB0A0A0C" Visibility="Collapsed" Canvas.ZIndex="1000" Opacity="0">
+            <Grid.Resources>
+                <Storyboard x:Name="FadeInExitOverlay">
+                    <DoubleAnimation Storyboard.TargetName="ExitOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.4">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </Grid.Resources>
+            
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
+                <!-- Glowing Ring with custom style -->
+                <ProgressRing IsActive="True" Width="64" Height="64" Foreground="#FF7F56D9"/>
+                
+                <StackPanel Spacing="8" HorizontalAlignment="Center">
+                    <TextBlock Text="Shutting Down" FontSize="22" FontWeight="Bold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Closing database connections and freeing resources..." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

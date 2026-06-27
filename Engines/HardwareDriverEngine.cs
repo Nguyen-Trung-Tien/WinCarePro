@@ -202,6 +202,7 @@ public class HardwareDriverEngine
         try
         {
             using var searcher = new ManagementObjectSearcher(@"root\wmi", "SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature");
+            searcher.Options.Timeout = TimeSpan.FromMilliseconds(800);
             foreach (var obj in searcher.Get())
             {
                 double tempKelvin = Convert.ToDouble(obj["CurrentTemperature"]);

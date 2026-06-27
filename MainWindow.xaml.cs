@@ -16,6 +16,7 @@ public sealed partial class MainWindow : Window
 {
 
     private IntPtr _hwnd = IntPtr.Zero;
+    private bool _forceClose = false;
 
     // WndProc subclassing to enforce minimum window dimensions (1280x800)
     private delegate IntPtr WinProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
@@ -100,7 +101,10 @@ public sealed partial class MainWindow : Window
         this.Closed += MainWindow_Closed;
 
         // Translate window contents on load
-        RootGrid.Loaded += (s, e) => TranslationManager.Instance.Translate(this.Content);
+        RootGrid.Loaded += (s, e) => {
+            TranslationManager.Instance.Translate(this.Content);
+            UpdateNotificationBadge();
+        };
 
         // Navigate page frame
         RootFrame.Navigate(typeof(MainPage));
@@ -217,6 +221,11 @@ public sealed partial class MainWindow : Window
 
     private void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
     {
+        if (_forceClose)
+        {
+            CleanupTrayIcon();
+            return;
+        }
         try
         {
             string raw = DbManager.GetSettings();
@@ -413,6 +422,7 @@ public sealed partial class MainWindow : Window
             if (remoteVersion > currentVersion)
             {
                 DbManager.LogAction($"Update available: v{remoteVerStr}", "Software Updater", "Success");
+                DbManager.AddNotification("Software Update Available".T(), string.Format("A new version v{0} of WinCare Pro is available for download.".T(), remoteVerStr), "Warning");
             }
         }
         catch { }
@@ -560,9 +570,38 @@ public sealed partial class MainWindow : Window
     {
         if (RootFrame.Content is MainPage mainPage)
         {
-            mainPage.NavigationFrame.Navigate(typeof(WinCarePro.Views.NotificationPage));
-            NotificationBadge.Visibility = Visibility.Collapsed;
+            mainPage.NavigateToNotificationPage();
+            DbManager.MarkAllNotificationsAsRead();
+            UpdateNotificationBadge();
         }
+    }
+
+    private async void ExitAppButton_Click(object sender, RoutedEventArgs e)
+    {
+        ExitOverlayGrid.Visibility = Visibility.Visible;
+        FadeInExitOverlay.Begin();
+        
+        // Let user experience the fade animation and show database cleanup context
+        await Task.Delay(1500);
+        
+        _forceClose = true;
+        this.Close();
+    }
+
+    public void UpdateNotificationBadge()
+    {
+        this.DispatcherQueue.TryEnqueue(() =>
+        {
+            int count = DbManager.GetUnreadNotificationsCount();
+            if (count > 0)
+            {
+                NotificationBadge.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                NotificationBadge.Visibility = Visibility.Collapsed;
+            }
+        });
     }
 
     public Frame MainFrame => RootFrame;

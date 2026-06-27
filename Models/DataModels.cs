@@ -346,6 +346,7 @@ public class InstalledAppInfo : System.ComponentModel.INotifyPropertyChanged
     public string RegistryPath { get; set; } = "";
     public string DisplayIcon { get; set; } = "";
     public bool IsStoreApp { get; set; } = false;
+    public bool IsDesktopApp => !IsStoreApp;
     public string IconPath { get; set; } = "";
     
     public Microsoft.UI.Xaml.Media.ImageSource? IconImageSource
@@ -458,6 +459,27 @@ public class LeftoverItem : System.ComponentModel.INotifyPropertyChanged
             }
         }
     }
+
+    public string IconGlyph => Type switch
+    {
+        LeftoverType.Directory => "\uE8B7", // Folder icon
+        LeftoverType.File => "\uE7C3",      // File icon
+        _ => "\uE945"                       // Registry Key icon
+    };
+
+    public Microsoft.UI.Xaml.Media.Brush IconBackground => Type switch
+    {
+        LeftoverType.Directory => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(25, 245, 158, 11)), // Orange
+        LeftoverType.File => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(25, 59, 130, 246)),      // Blue
+        _ => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(25, 139, 92, 246))                      // Purple
+    };
+
+    public Microsoft.UI.Xaml.Media.Brush IconForeground => Type switch
+    {
+        LeftoverType.Directory => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)),
+        LeftoverType.File => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246)),
+        _ => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246))
+    };
 }
 
 public class SettingsProfile
@@ -508,6 +530,7 @@ public class NotificationItem
     public string Level { get; set; } = "Info"; // Info, Warning, Critical
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public bool IsRead { get; set; }
+    public string CreatedAtFormatted => CreatedAt.ToString("yyyy-MM-dd HH:mm:ss");
 }
 
 public class CpuTemperatureInfo

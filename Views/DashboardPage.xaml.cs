@@ -18,13 +18,18 @@ public sealed partial class DashboardPage : Page
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         // Set up local viewModel instance
-        ViewModel = new DashboardViewModel();
-        this.Loaded += (s, e) => DataContext = ViewModel;
+        ViewModel = new DashboardViewModel(this.DispatcherQueue);
+        this.Loaded += (s, e) => 
+        {
+            ViewModel.DispatcherQueue = this.DispatcherQueue;
+            DataContext = ViewModel;
+        };
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+        ViewModel.DispatcherQueue = this.DispatcherQueue;
         ViewModel.StartMonitoring();
     }
 
@@ -234,5 +239,33 @@ public sealed partial class DashboardPage : Page
     {
         var color = healthy ? Windows.UI.Color.FromArgb(30, 16, 185, 129) : Windows.UI.Color.FromArgb(30, 245, 158, 11);
         return new SolidColorBrush(color);
+    }
+
+    private async void OnBoostRamClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.BoostRamAsync();
+    }
+
+    private async void OnCleanDiskClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.CleanDiskJunkAsync();
+    }
+
+    private async void OnFixItemClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.DataContext is DiagnosticResult item)
+        {
+            await ViewModel.FixDiagnosticItemAsync(item);
+        }
+    }
+
+    internal static Visibility GetFixButtonVisibility(bool isHealthy)
+    {
+        return isHealthy ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    internal static Visibility GetStatusBadgeVisibility(bool isHealthy)
+    {
+        return isHealthy ? Visibility.Visible : Visibility.Collapsed;
     }
 }

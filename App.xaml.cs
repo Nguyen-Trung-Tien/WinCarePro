@@ -21,6 +21,8 @@ public partial class App : Application
     
     public static MainWindow? MainWindowInstance => (Application.Current as App)?._window as MainWindow;
 
+    public static Microsoft.UI.Dispatching.DispatcherQueue? MainDispatcherQueue { get; private set; }
+
     private static readonly string CrashLogDir = System.IO.Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "WinCarePro", "Logs"
@@ -95,6 +97,8 @@ public partial class App : Application
     {
         try
         {
+            MainDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+
             // Initialize DI Container
             ConfigureServices();
 

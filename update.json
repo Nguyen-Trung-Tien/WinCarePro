@@ -1,5 +1,5 @@
 {
-  "version": "3.0.1",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.0.1/WinCareProSetup.exe",
-  "changelog": "Bản vá ổn định v3.0.1 'Stability Patch': Khắc phục hoàn toàn lỗi crash/thoát đột ngột khi click chuyển tab nhanh — sửa race condition monitoring thread (Dashboard, Hardware, Process), loại bỏ memory leak do event handler đăng ký trùng (Network, Junk, Disk), thêm null-safe dispatcher cho Security, và bổ sung NavigationCacheMode.Required cho 5 trang để ngăn ViewModel bị khởi tạo lại."
+  "version": "3.1.0",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.1.0/WinCareProSetup.exe",
+  "changelog": "Nâng cấp Trình gỡ ứng dụng (v3.1.0): Giao diện Master-Detail hiện đại, tích hợp 4 thẻ thống kê và bộ lọc/sắp xếp nâng cao; hỗ trợ gỡ cài đặt hàng loạt (Batch) thông qua thanh công cụ nổi; hỗ trợ gỡ cài đặt cưỡng bức (Force) ứng dụng Store bằng PowerShell; mở thư mục/registry trực tiếp và tìm kiếm online; tự động quét dọn tàn dư (leftovers) trên Registry, file system và Start Menu; hoàn tất bản địa hóa Tiếng Việt."
 }

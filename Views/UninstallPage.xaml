@@ -10,60 +10,317 @@
 
     <Grid Padding="24">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" /> <!-- Page Header Title -->
+            <RowDefinition Height="Auto" /> <!-- Statistics Cards -->
+            <RowDefinition Height="*" />    <!-- Main Content Area -->
         </Grid.RowDefinitions>
 
+        <!-- Page Header -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBox x:Name="AppSearch" PlaceholderText="Search installed applications..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" CornerRadius="6" Width="280" Height="32" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <Button Content="Scan Registry Apps" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}"/>
-                <Button Content="{x:Bind ViewModel.LeftoversSizeFormatted, Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnCleanLeftoversClick" Visibility="{x:Bind GetLeftoversVisibility(ViewModel.UninstallStep), Mode=OneWay}"/>
+            <StackPanel>
+                <TextBlock Text="App Uninstaller" FontSize="26" FontWeight="ExtraBold" CharacterSpacing="-10" />
+                <TextBlock Text="Manage installed programs, remove residual registry keys, delete leftover files, and force uninstall store applications." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1">
-            <!-- Step 0: App list -->
-            <Border Style="{StaticResource ModernCardStyle}" Padding="12" Visibility="{x:Bind GetStepListVisibility(ViewModel.UninstallStep), Mode=OneWay}">
-                <ListView ItemsSource="{x:Bind ViewModel.FilteredApps, Mode=OneWay}" SelectionMode="None">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:InstalledAppInfo">
-                            <Grid Padding="4,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="150" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" />
-                                
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="13"/>
-                                    <TextBlock Text="{x:Bind Publisher}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                </StackPanel>
+        <!-- Stats Cards Grid -->
+        <Grid Grid.Row="1" Margin="0,0,0,16" ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-                                <TextBlock Grid.Column="2" Text="{x:Bind SizeFormatted}" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,24,0"/>
-
-                                <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                                    <Button Content="Uninstall" FontSize="10" Padding="8,3" Click="OnSingleUninstallClick" Foreground="#FFE81123"/>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+            <!-- Stat 1: Total Apps -->
+            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Grid.Column="0" Glyph="&#xE71D;" FontSize="24" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Total Apps:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.TotalAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" />
+                    </StackPanel>
+                </Grid>
             </Border>
 
+            <!-- Stat 2: Desktop Apps -->
+            <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Grid.Column="0" Glyph="&#xE736;" FontSize="24" Foreground="#FF7F56D9" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Desktop Apps:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.DesktopAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Stat 3: Store Apps -->
+            <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Grid.Column="0" Glyph="&#xE719;" FontSize="24" Foreground="#FF00C1EE" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Store Apps:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.StoreAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Stat 4: Occupied Space -->
+            <Border Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Grid.Column="0" Glyph="&#xE95A;" FontSize="24" Foreground="#FF10B981" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Total Size:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.TotalAppsSizeFormatted, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="2">
+            
+            <!-- Step 0: Master-Detail List View -->
+            <Grid Visibility="{x:Bind GetStepListVisibility(ViewModel.UninstallStep), Mode=OneWay}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" /> <!-- Filters Bar -->
+                    <RowDefinition Height="*" />    <!-- Master-Detail Columns -->
+                    <RowDefinition Height="Auto" /> <!-- Batch Actions Bar -->
+                </Grid.RowDefinitions>
+
+                <!-- Filters Bar -->
+                <Grid Grid.Row="0" Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="280" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBox Grid.Column="0" x:Name="AppSearch" PlaceholderText="Search installed applications..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" CornerRadius="6" Height="32" VerticalAlignment="Center"/>
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedFilterIndex, Mode=TwoWay}" Width="160" Height="32" CornerRadius="6">
+                            <ComboBoxItem Content="All Types"/>
+                            <ComboBoxItem Content="Desktop Apps"/>
+                            <ComboBoxItem Content="Store Apps"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="Sort by:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedSortIndex, Mode=TwoWay}" Width="200" Height="32" CornerRadius="6">
+                            <ComboBoxItem Content="Sort by Name (A-Z)"/>
+                            <ComboBoxItem Content="Sort by Name (Z-A)"/>
+                            <ComboBoxItem Content="Sort by Size (Large-Small)"/>
+                            <ComboBoxItem Content="Sort by Size (Small-Large)"/>
+                            <ComboBoxItem Content="Sort by Install Date (Newest)"/>
+                            <ComboBoxItem Content="Sort by Install Date (Oldest)"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <Button Grid.Column="3" Content="Scan Registry Apps" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" CornerRadius="6"/>
+                </Grid>
+
+                <!-- Master-Detail Columns -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: Applications List -->
+                    <Border Style="{StaticResource ModernCardStyle}" Padding="12">
+                        <ListView ItemsSource="{x:Bind ViewModel.FilteredApps, Mode=OneWay}" SelectedItem="{Binding SelectedApp, Mode=TwoWay}" SelectionMode="Single">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:InstalledAppInfo">
+                                    <Grid Padding="4,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" /> <!-- Checkbox -->
+                                            <ColumnDefinition Width="Auto" /> <!-- Icon Wrapper -->
+                                            <ColumnDefinition Width="*" />    <!-- Name & Publisher -->
+                                            <ColumnDefinition Width="Auto" /> <!-- Badges -->
+                                            <ColumnDefinition Width="100" /> <!-- Size -->
+                                            <ColumnDefinition Width="Auto" /> <!-- Action Button -->
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" />
+                                        
+                                        <Grid Grid.Column="1" Width="40" Height="40" CornerRadius="8" Background="{x:Bind IconBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
+                                            <FontIcon Glyph="{x:Bind DefaultIconGlyph}" Foreground="{x:Bind IconForeground}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind FallbackVisibility, Mode=OneWay}"/>
+                                            <Image Source="{x:Bind IconImageSource, Mode=OneWay}" Width="32" Height="32" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind IconVisibility, Mode=OneWay}"/>
+                                        </Grid>
+
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
+                                            <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="13.5" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <TextBlock Text="{x:Bind Publisher}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                <TextBlock Text="•" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                <TextBlock Text="{x:Bind Version}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="12,0,12,0">
+                                            <!-- Desktop Badge -->
+                                            <Border Background="#1E7F56D9" BorderBrush="#307F56D9" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsDesktopApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                                <TextBlock Text="Desktop App" FontSize="9" FontWeight="Bold" Foreground="#FF7F56D9"/>
+                                            </Border>
+                                            <!-- Store Badge -->
+                                            <Border Background="#1E00C1EE" BorderBrush="#3000C1EE" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsStoreApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                                <TextBlock Text="Store App" FontSize="9" FontWeight="Bold" Foreground="#FF00C1EE"/>
+                                            </Border>
+                                        </StackPanel>
+
+                                        <TextBlock Grid.Column="4" Text="{x:Bind SizeFormatted}" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" FontWeight="SemiBold"/>
+
+                                        <Button Grid.Column="5" Content="Uninstall" FontSize="10.5" Padding="10,4" Click="OnSingleUninstallClick" Foreground="#FFE81123" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Border>
+
+                    <!-- Right: Selected Application Details Panel -->
+                    <Border Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="16,0,0,0" Padding="20">
+                        <Grid DataContext="{Binding SelectedApp}">
+                            <!-- Visible when SelectedApp is not null -->
+                            <Grid Visibility="{x:Bind ViewModel.IsSelectedAppNotNull, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" /> <!-- Header -->
+                                    <RowDefinition Height="*" />    <!-- Content Details list -->
+                                    <RowDefinition Height="Auto" /> <!-- Action buttons -->
+                                </Grid.RowDefinitions>
+
+                                <!-- Header: Icon + Info -->
+                                <Grid Grid.Row="0" Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid Grid.Column="0" Width="48" Height="48" CornerRadius="10" Background="{Binding IconBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="{Binding DefaultIconGlyph}" Foreground="{Binding IconForeground}" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding FallbackVisibility}"/>
+                                        <Image Source="{Binding IconImageSource}" Width="38" Height="38" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding IconVisibility}"/>
+                                    </Grid>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" FontSize="14.5" TextWrapping="Wrap" />
+                                        <TextBlock Text="{Binding Publisher}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Content details -->
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <StackPanel Spacing="12" Margin="0,0,0,16">
+                                        <TextBlock Text="App Details" FontWeight="Bold" FontSize="12.5"/>
+                                        <Grid>
+                                            <TextBlock Text="Version:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="{Binding Version}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid>
+                                            <TextBlock Text="Install Date:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="{Binding InstallDate}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid>
+                                            <TextBlock Text="Total Size:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="{Binding SizeFormatted}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid>
+                                            <TextBlock Text="Registry Hive:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="{Binding Hive}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        
+                                        <StackPanel Spacing="4" Margin="0,4,0,0">
+                                            <TextBlock Text="Install Location:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding InstallLocation, Mode=OneWay}" IsReadOnly="True" FontSize="10.5" CornerRadius="6" VerticalAlignment="Center" Height="28" Padding="6,4"/>
+                                                <Button Grid.Column="1" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="4,0,0,0" Padding="8,4" Click="OnOpenFolderClick" ToolTipService.ToolTip="Open Folder" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </StackPanel>
+
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Text="Registry Path:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding RegistryPath, Mode=OneWay}" IsReadOnly="True" FontSize="10.5" CornerRadius="6" VerticalAlignment="Center" Height="28" Padding="6,4"/>
+                                                <Button Grid.Column="1" Content="&#xE945;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="4,0,0,0" Padding="8,4" Click="OnOpenRegistryClick" ToolTipService.ToolTip="Open Registry Key" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+
+                                <!-- Actions -->
+                                <StackPanel Grid.Row="2" Spacing="8">
+                                    <Button Content="Uninstall" Click="OnDetailsUninstallClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Foreground="#FFE81123"/>
+                                    <Button Content="Force Uninstall" Click="OnDetailsForceUninstallClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Foreground="{ThemeResource SystemAccentColor}"/>
+                                    <Button Content="Search Online" Click="OnSearchOnlineClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Visible when SelectedApp is null -->
+                            <Grid Visibility="{x:Bind ViewModel.IsSelectedAppNotNull, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <StackPanel Spacing="12" HorizontalAlignment="Center">
+                                    <FontIcon Glyph="&#xE71D;" FontSize="48" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Opacity="0.3" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="No application selected" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextAlignment="Center"/>
+                                    <TextBlock Text="Choose an app from the list to view detailed specifications and advanced actions." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="220"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- Bottom Floating Batch Action Bar -->
+                <Border Grid.Row="2" Style="{StaticResource ModernCardStyle}" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" BorderBrush="{StaticResource PrimaryAccentGradient}" BorderThickness="1.5" Margin="0,12,0,0" Padding="16,10" Visibility="{x:Bind GetBatchBarVisibility(ViewModel.HasSelectedApps), Mode=OneWay}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE736;" FontSize="18" Foreground="{StaticResource PrimaryAccentGradient}" />
+                            <TextBlock Text="Batch Actions" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
+                            <TextBlock Text="-" FontSize="14" VerticalAlignment="Center" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="Multiple applications are checked for actions" FontSize="12.5" VerticalAlignment="Center" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        </StackPanel>
+                        
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                            <Button Content="Standard Uninstall Selected" Click="OnBatchUninstallClick" Style="{StaticResource DefaultButtonStyle}" FontSize="12"/>
+                            <Button Content="Force Uninstall Selected" Click="OnBatchForceUninstallClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" FontWeight="Bold" FontSize="12"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+
             <!-- Step 1: Progress overlay -->
-            <Border Style="{StaticResource ModernCardStyle}" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Visibility="{x:Bind GetStepProgressVisibility(ViewModel.UninstallStep), Mode=OneWay}">
-                <StackPanel Spacing="16" HorizontalAlignment="Center">
-                    <ProgressRing IsActive="True" Width="50" Height="50" HorizontalAlignment="Center"/>
-                    <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="13" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center"/>
-                    <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" Width="300" HorizontalAlignment="Center"/>
+            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center" Width="420" Visibility="{x:Bind GetStepProgressVisibility(ViewModel.UninstallStep), Mode=OneWay}">
+                <StackPanel Spacing="20" HorizontalAlignment="Center">
+                    <ProgressRing IsActive="True" Width="60" Height="60" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" LineHeight="20"/>
+                    <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="8" CornerRadius="4" Foreground="{StaticResource PrimaryAccentGradient}" Width="320" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Border>
 
@@ -71,35 +328,70 @@
             <Grid Visibility="{x:Bind GetStepLeftoversVisibility(ViewModel.UninstallStep), Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Leftovers Scanner Discovery" FontSize="15" FontWeight="Bold" Margin="0,0,0,12" />
+                <TextBlock Grid.Row="0" Text="Leftovers Scanner Discovery" FontSize="18" FontWeight="ExtraBold" Margin="0,0,0,12" />
 
-                <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="12">
+                <!-- Leftovers quick stats -->
+                <Grid Grid.Row="1" Margin="0,0,0,12" ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="12">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE7BA;" FontSize="20" Foreground="#FFEF4444" VerticalAlignment="Center"/>
+                            <StackPanel>
+                                <TextBlock Text="Residual Items Found" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="{x:Bind ViewModel.Leftovers.Count, Mode=OneWay}" FontSize="15" FontWeight="Bold"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="12">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE95A;" FontSize="20" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                            <StackPanel>
+                                <TextBlock Text="Reclaimable Space" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="{x:Bind ViewModel.LeftoversSizeFormatted, Mode=OneWay}" FontSize="15" FontWeight="Bold"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Grid.Row="2" Style="{StaticResource ModernCardStyle}" Padding="12">
                     <ListView ItemsSource="{x:Bind ViewModel.Leftovers, Mode=OneWay}" SelectionMode="None">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:LeftoverItem">
                                 <Grid Padding="4,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="100" />
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" />
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Text="{x:Bind Path}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" />
+                                    
+                                    <Grid Grid.Column="1" Width="28" Height="28" CornerRadius="6" Background="{x:Bind IconBackground, Mode=OneWay}" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}" Foreground="{x:Bind IconForeground, Mode=OneWay}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                        <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="12.5"/>
+                                        <TextBlock Text="{x:Bind Path}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
-                                    <TextBlock Grid.Column="2" Text="{x:Bind SizeFormatted}" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    <TextBlock Grid.Column="3" Text="{x:Bind SizeFormatted}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
                 </Border>
 
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0" HorizontalAlignment="Right">
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0" HorizontalAlignment="Right">
                     <Button Content="Cancel &amp; Back" Click="OnCancelLeftoversClick"/>
                     <Button Content="Wipe Leftovers" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDeleteLeftoversClick" FontWeight="Bold"/>
                 </StackPanel>

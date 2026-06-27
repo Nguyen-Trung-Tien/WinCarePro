@@ -97,6 +97,7 @@ public sealed partial class MainPage : Page
             "updater" => typeof(UpdaterPage),
             "driver" => typeof(DriverPage),
             "settings" => typeof(SettingsPage),
+            "notification" => typeof(NotificationPage),
             _ => null
         };
 
@@ -109,6 +110,12 @@ public sealed partial class MainPage : Page
             // Set header text using the centralized UpdateHeader method
             UpdateHeader();
         }
+    }
+
+    public void NavigateToNotificationPage()
+    {
+        NavView.SelectedItem = null;
+        NavigateToPage("notification");
     }
 
     private void LoadAnimationsConfiguration()

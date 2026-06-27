@@ -230,6 +230,14 @@ public class TranslationManager
                 pi.Header = T(original);
             }
         }
+        else if (parent is NavigationView nv)
+        {
+            if (nv.SettingsItem is NavigationViewItem settingsItem && settingsItem.Content is string settingsContent)
+            {
+                string original = GetOriginalValue(settingsItem, "Content", settingsContent);
+                settingsItem.Content = T(original);
+            }
+        }
         else if (parent is NavigationViewItem nvi)
         {
             if (nvi.Content is string nviContent)
@@ -312,6 +320,7 @@ public class TranslationManager
         _translations["PC Health Secured"] = "Sức khỏe PC An toàn";
         _translations["Search tools, settings, apps... (Ctrl + F)"] = "Tìm kiếm công cụ, cài đặt, ứng dụng... (Ctrl + F)";
         _translations["Settings & Personalization"] = "Cài đặt & Cá nhân hóa";
+        _translations["Settings"] = "Cài đặt";
 
         // --- System Dashboard Page ---
         _translations["System Dashboard"] = "Bảng điều khiển hệ thống";
@@ -400,6 +409,51 @@ public class TranslationManager
         _translations["Leftover analysis completed."] = "Phân tích tàn dư hoàn tất.";
         _translations["Cleaning leftover file system components and registries..."] = "Đang dọn dẹp các tệp và registry tàn dư...";
         _translations["Leftover cleanup completed successfully."] = "Dọn dẹp tàn dư hoàn tất thành công.";
+
+        // v3.0 App Uninstaller Redesign additions
+        _translations["Desktop App"] = "Ứng dụng Desktop";
+        _translations["Store App"] = "Ứng dụng Store";
+        _translations["Total Apps:"] = "Tổng số ứng dụng:";
+        _translations["Total Size:"] = "Tổng dung lượng:";
+        _translations["Desktop Apps:"] = "Ứng dụng Desktop:";
+        _translations["Store Apps:"] = "Ứng dụng Store:";
+        _translations["Sort by:"] = "Sắp xếp theo:";
+        _translations["Filter:"] = "Bộ lọc:";
+        _translations["Sort by Name (A-Z)"] = "Sắp xếp theo Tên (A-Z)";
+        _translations["Sort by Name (Z-A)"] = "Sắp xếp theo Tên (Z-A)";
+        _translations["Sort by Size (Large-Small)"] = "Sắp xếp theo Dung lượng (Lớn-Nhỏ)";
+        _translations["Sort by Size (Small-Large)"] = "Sắp xếp theo Dung lượng (Nhỏ-Lớn)";
+        _translations["Sort by Install Date (Newest)"] = "Sắp xếp theo Ngày cài đặt (Mới nhất)";
+        _translations["Sort by Install Date (Oldest)"] = "Sắp xếp theo Ngày cài đặt (Cũ nhất)";
+        _translations["All Types"] = "Tất cả các loại";
+        _translations["Desktop Apps"] = "Ứng dụng Desktop";
+        _translations["Store Apps"] = "Ứng dụng Windows Store";
+        _translations["App Details"] = "Chi tiết ứng dụng";
+        _translations["Version:"] = "Phiên bản:";
+        _translations["Publisher:"] = "Nhà xuất bản:";
+        _translations["Install Location:"] = "Vị trí cài đặt:";
+        _translations["Registry Path:"] = "Đường dẫn Registry:";
+        _translations["Uninstall String:"] = "Lệnh gỡ cài đặt:";
+        _translations["Open Folder"] = "Mở thư mục";
+        _translations["Open Registry"] = "Mở Registry";
+        _translations["Search Online"] = "Tìm kiếm Online";
+        _translations["Force Uninstall"] = "Gỡ cưỡng bức";
+        _translations["Batch Actions"] = "Hành động hàng loạt";
+        _translations["Standard Uninstall Selected"] = "Gỡ cài đặt mục đã chọn";
+        _translations["Force Uninstall Selected"] = "Gỡ cưỡng bức mục đã chọn";
+        _translations["Uninstalling {0}..."] = "Đang gỡ cài đặt {0}...";
+        _translations["Uninstalling {0} ({1}/{2})..."] = "Đang gỡ cài đặt {0} ({1}/{2})...";
+        _translations["Force uninstalling {0} ({1}/{2})..."] = "Đang gỡ cưỡng bức {0} ({1}/{2})...";
+        _translations["Scanning leftovers for {0}..."] = "Đang quét tàn dư cho {0}...";
+        _translations["Scanned {0} leftover items."] = "Đã phát hiện {0} tàn dư.";
+        _translations["Batch uninstall completed successfully. No leftovers found."] = "Gỡ cài đặt hàng loạt hoàn tất thành công. Không tìm thấy tàn dư.";
+        _translations["Cleaned {0} leftover files and registry entries."] = "Đã dọn sạch {0} tệp và khóa registry tàn dư.";
+        _translations["Batch uninstallation encountered an error:"] = "Gỡ cài đặt hàng loạt gặp lỗi:";
+        _translations["No application selected. Choose an app from the list to view its details."] = "Không có ứng dụng nào được chọn. Hãy chọn một ứng dụng từ danh sách để xem chi tiết.";
+        _translations["Error opening folder:"] = "Lỗi khi mở thư mục:";
+        _translations["Error opening registry:"] = "Lỗi khi mở registry:";
+        _translations["Error searching online:"] = "Lỗi khi tìm kiếm trực tuyến:";
+        _translations["Error deleting leftovers:"] = "Lỗi khi xóa tàn dư:";
 
         // --- Network Center Page ---
         _translations["Network Center"] = "Trung tâm mạng";
@@ -1094,6 +1148,36 @@ public class TranslationManager
 
         // --- General ---
         _translations["Failed: {0}"] = "Thất bại: {0}";
+
+        // --- Exit Overlay & Power off ---
+        _translations["Shutting Down"] = "Đang tắt ứng dụng";
+        _translations["Closing database connections and freeing resources..."] = "Đang đóng kết nối cơ sở dữ liệu và giải phóng tài nguyên...";
+
+        // --- Notifications Page & Pivot Headers ---
+        _translations["Notifications & Activity Log"] = "Thông báo & Nhật ký hoạt động";
+        _translations["Review system notifications, update alerts, and detailed operation history logs."] = "Xem các thông báo hệ thống, cảnh báo cập nhật và nhật ký lịch sử hoạt động chi tiết.";
+        _translations["System Alerts"] = "Cảnh báo hệ thống";
+        _translations["Activity Log"] = "Nhật ký hoạt động";
+        _translations["System Notifications"] = "Thông báo hệ thống";
+        _translations["Critical alerts, warnings, and system status updates."] = "Các cảnh báo quan trọng, cảnh báo thường và cập nhật trạng thái hệ thống.";
+        _translations["Clear Alerts"] = "Xóa cảnh báo";
+        _translations["All clear! No new notifications."] = "Hệ thống sạch sẽ! Không có thông báo mới.";
+        _translations["Search logs by action or status..."] = "Tìm kiếm nhật ký theo hành động hoặc trạng thái...";
+        _translations["Filter by Module"] = "Lọc theo Module";
+        _translations["All Modules"] = "Tất cả các Module";
+        _translations["Refresh"] = "Làm mới";
+        _translations["Clear Logs"] = "Xóa nhật ký";
+        _translations["Export Logs"] = "Xuất nhật ký";
+
+        // --- Notification DB Items ---
+        _translations["Software Update Available"] = "Có bản cập nhật phần mềm";
+        _translations["A new version v{0} of WinCare Pro is available for download."] = "Có một phiên bản mới v{0} của WinCare Pro sẵn sàng để tải về.";
+        _translations["System Health Alert"] = "Cảnh báo sức khỏe hệ thống";
+        _translations["Your PC health score is low ({0}/100). Please run an optimization scan."] = "Điểm sức khỏe máy tính của bạn đang thấp ({0}/100). Vui lòng chạy quét tối ưu hóa.";
+        _translations["PC diagnostics completed. Health score is {0}/100."] = "Hoàn tất chẩn đoán PC. Điểm sức khỏe là {0}/100.";
+        _translations["System Scan Completed"] = "Đã hoàn tất quét hệ thống";
+        _translations["Optimization Completed"] = "Đã hoàn tất tối ưu hóa";
+        _translations["System has been optimized to peak performance (Health Score: 100/100)."] = "Hệ thống đã được tối ưu hóa đạt hiệu suất tối đa (Điểm sức khỏe: 100/100).";
     }
 }
 

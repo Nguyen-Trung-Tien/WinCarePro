@@ -368,6 +368,8 @@ public class DbManager
             cmd.Parameters.AddWithValue("@message", message);
             cmd.Parameters.AddWithValue("@level", level);
             cmd.ExecuteNonQuery();
+
+            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
         }
         catch { }
     }
@@ -401,6 +403,58 @@ public class DbManager
         }
         catch { }
         return list;
+    }
+
+    /// <summary>
+    /// Mark all unread notifications as read.
+    /// </summary>
+    public static void MarkAllNotificationsAsRead()
+    {
+        try
+        {
+            using var conn = new SqliteConnection(ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "UPDATE Notifications SET IsRead = 1 WHERE IsRead = 0";
+            cmd.ExecuteNonQuery();
+
+            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
+        }
+        catch { }
+    }
+
+    /// <summary>
+    /// Get the count of unread notifications.
+    /// </summary>
+    public static int GetUnreadNotificationsCount()
+    {
+        try
+        {
+            using var conn = new SqliteConnection(ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT COUNT(*) FROM Notifications WHERE IsRead = 0";
+            return Convert.ToInt32(cmd.ExecuteScalar());
+        }
+        catch { return 0; }
+    }
+
+    /// <summary>
+    /// Clear all system notifications from the database.
+    /// </summary>
+    public static void ClearAllNotifications()
+    {
+        try
+        {
+            using var conn = new SqliteConnection(ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "DELETE FROM Notifications";
+            cmd.ExecuteNonQuery();
+
+            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
+        }
+        catch { }
     }
 }
 

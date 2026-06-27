@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Win32;
@@ -261,38 +262,67 @@ public class UninstallEngine
             string exe = "";
             string args = "";
             
+            // Robust parsing of UninstallString
             if (cmd.StartsWith("\""))
             {
                 int index = cmd.IndexOf("\"", 1);
                 if (index > 0)
                 {
-                    exe = cmd.Substring(1, index - 1);
+                    exe = cmd.Substring(1, index - 1).Trim();
                     args = cmd.Substring(index + 1).Trim();
                 }
                 else
                 {
-                    exe = cmd.Replace("\"", "");
+                    exe = cmd.Replace("\"", "").Trim();
                 }
             }
             else
             {
-                int exeIndex = cmd.IndexOf(".exe", StringComparison.OrdinalIgnoreCase);
-                if (exeIndex > 0)
+                // Look for typical executable extensions to split
+                string[] extensions = { ".exe", ".msi", ".bat", ".cmd" };
+                bool parsed = false;
+                foreach (var ext in extensions)
                 {
-                    exe = cmd.Substring(0, exeIndex + 4).Trim();
-                    args = cmd.Substring(exeIndex + 4).Trim();
-                }
-                else
-                {
-                    int spaceIndex = cmd.IndexOf(" ");
-                    if (spaceIndex > 0)
+                    int extIndex = cmd.IndexOf(ext, StringComparison.OrdinalIgnoreCase);
+                    if (extIndex > 0)
                     {
-                        exe = cmd.Substring(0, spaceIndex);
-                        args = cmd.Substring(spaceIndex + 1).Trim();
+                        exe = cmd.Substring(0, extIndex + ext.Length).Trim();
+                        args = cmd.Substring(extIndex + ext.Length).Trim();
+                        parsed = true;
+                        break;
                     }
-                    else
+                }
+                
+                if (!parsed)
+                {
+                    // Unquoted path with spaces: attempt to resolve by checking files
+                    int lastSpace = cmd.Length;
+                    while (lastSpace > 0)
                     {
-                        exe = cmd;
+                        string candidate = cmd.Substring(0, lastSpace).Trim();
+                        if (File.Exists(candidate))
+                        {
+                            exe = candidate;
+                            args = cmd.Substring(lastSpace).Trim();
+                            parsed = true;
+                            break;
+                        }
+                        lastSpace = candidate.LastIndexOf(' ');
+                    }
+                    
+                    if (!parsed)
+                    {
+                        // Fallback: split on first space
+                        int spaceIndex = cmd.IndexOf(" ");
+                        if (spaceIndex > 0)
+                        {
+                            exe = cmd.Substring(0, spaceIndex).Trim();
+                            args = cmd.Substring(spaceIndex + 1).Trim();
+                        }
+                        else
+                        {
+                            exe = cmd;
+                        }
                     }
                 }
             }
@@ -304,6 +334,24 @@ public class UninstallEngine
                 UseShellExecute = true,
                 Verb = "runas"
             };
+            
+            // Set working directory to installation folder if valid
+            if (!string.IsNullOrEmpty(app.InstallLocation) && Directory.Exists(app.InstallLocation))
+            {
+                psi.WorkingDirectory = app.InstallLocation;
+            }
+            else if (!string.IsNullOrEmpty(exe))
+            {
+                try
+                {
+                    string dir = Path.GetDirectoryName(exe);
+                    if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
+                    {
+                        psi.WorkingDirectory = dir;
+                    }
+                }
+                catch {}
+            }
             
             ProgressChanged?.Invoke(50);
             using var process = System.Diagnostics.Process.Start(psi);
@@ -379,6 +427,7 @@ public class UninstallEngine
                 catch {}
             }
             
+            ScanShortcutLeftovers(app, leftovers);
             ProgressChanged?.Invoke(100);
             return leftovers;
         }
@@ -557,6 +606,7 @@ public class UninstallEngine
             catch {}
         }
         
+        ScanShortcutLeftovers(app, leftovers);
         ProgressChanged?.Invoke(100);
         return leftovers;
     }
@@ -625,6 +675,22 @@ public class UninstallEngine
                         Log($"Failed to delete directory {item.Path}: {ex.Message}");
                     }
                 }
+                else if (item.Type == LeftoverType.File)
+                {
+                    try
+                    {
+                        if (File.Exists(item.Path))
+                        {
+                            Log($"Deleting leftover file: {item.Path}");
+                            File.Delete(item.Path);
+                            deletedCount++;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"Failed to delete file {item.Path}: {ex.Message}");
+                    }
+                }
                 else if (item.Type == LeftoverType.RegistryKey)
                 {
                     try
@@ -658,6 +724,39 @@ public class UninstallEngine
                         Log($"Failed to delete registry key {item.Path}: {ex.Message}");
                     }
                 }
+                else if (item.Type == LeftoverType.RegistryValue)
+                {
+                    try
+                    {
+                        int slashIndex = item.Path.IndexOf('\\');
+                        if (slashIndex > 0)
+                        {
+                            string hiveStr = item.Path.Substring(0, slashIndex);
+                            string relativePath = item.Path.Substring(slashIndex + 1);
+                            
+                            var hive = hiveStr == "HKLM" ? Registry.LocalMachine : Registry.CurrentUser;
+                            
+                            int lastSlash = relativePath.LastIndexOf('\\');
+                            if (lastSlash > 0)
+                            {
+                                string parentPath = relativePath.Substring(0, lastSlash);
+                                string valueToDelete = relativePath.Substring(lastSlash + 1);
+                                
+                                using var parentKey = hive.OpenSubKey(parentPath, true);
+                                if (parentKey != null)
+                                {
+                                    Log($"Deleting leftover registry value: {item.Path}");
+                                    parentKey.DeleteValue(valueToDelete);
+                                    deletedCount++;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"Failed to delete registry value {item.Path}: {ex.Message}");
+                    }
+                }
                 
                 current++;
                 if (total > 0)
@@ -671,6 +770,72 @@ public class UninstallEngine
         Log($"Residual cleanup complete. Successfully removed {deletedCount} leftovers.");
         ProgressChanged?.Invoke(100);
         return deletedCount;
+    }
+
+    private void ScanShortcutLeftovers(InstalledAppInfo app, List<LeftoverItem> leftovers)
+    {
+        string cleanName = CleanAppNameForMatching(app.DisplayName);
+        if (string.IsNullOrEmpty(cleanName) || cleanName.Length < 3) return;
+
+        var shortcutPaths = new List<string>
+        {
+            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory),
+            Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
+            Environment.GetFolderPath(Environment.SpecialFolder.Programs),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms)
+        };
+
+        foreach (var folder in shortcutPaths)
+        {
+            if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder)) continue;
+
+            try
+            {
+                var files = Directory.GetFiles(folder, "*.lnk", SearchOption.AllDirectories);
+                foreach (var file in files)
+                {
+                    try
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(file);
+                        
+                        bool nameMatch = fileName.Contains(cleanName, StringComparison.OrdinalIgnoreCase) || 
+                                         app.DisplayName.Contains(fileName, StringComparison.OrdinalIgnoreCase);
+
+                        bool targetMatch = false;
+                        if (!string.IsNullOrEmpty(app.InstallLocation))
+                        {
+                            byte[] lnkBytes = File.ReadAllBytes(file);
+                            string lnkText = System.Text.Encoding.Unicode.GetString(lnkBytes) + 
+                                             System.Text.Encoding.ASCII.GetString(lnkBytes);
+                            if (lnkText.Contains(app.InstallLocation, StringComparison.OrdinalIgnoreCase))
+                            {
+                                targetMatch = true;
+                            }
+                        }
+
+                        if (nameMatch || targetMatch)
+                        {
+                            if (leftovers.Any(x => x.Path.Equals(file, StringComparison.OrdinalIgnoreCase))) continue;
+
+                            long size = 0;
+                            try { size = new FileInfo(file).Length; } catch {}
+                            
+                            leftovers.Add(new LeftoverItem
+                            {
+                                Path = file,
+                                DisplayName = $"Shortcut Link: {Path.GetFileName(file)}",
+                                Type = LeftoverType.File,
+                                SizeBytes = size
+                            });
+                        }
+                    }
+                    catch {}
+                }
+            }
+            catch {}
+        }
     }
     
     private bool IsSystemFolder(string name)
@@ -815,6 +980,7 @@ public class UninstallEngine
         }
 
         Log($"Removing Microsoft Store package: {packageFullName}");
+        bool uwpSuccess = false;
         try
         {
             var packageManager = new Windows.Management.Deployment.PackageManager();
@@ -823,18 +989,50 @@ public class UninstallEngine
             if (result.ExtendedErrorCode == null || result.ExtendedErrorCode.HResult == 0)
             {
                 Log($"Successfully uninstalled Microsoft Store package.");
-                return true;
+                uwpSuccess = true;
             }
             else
             {
                 Log($"Deployment result error: {result.ErrorText}");
-                return false;
             }
         }
         catch (Exception ex)
         {
-            Log($"Error uninstalling Microsoft Store app: {ex.Message}");
-            return false;
+            Log($"PackageManager direct uninstall failed: {ex.Message}");
         }
+
+        if (uwpSuccess) return true;
+
+        Log("Attempting fallback uninstallation via PowerShell...");
+        try
+        {
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-NoProfile -WindowStyle Hidden -Command \"Remove-AppxPackage -Package '{packageFullName}'\"",
+                UseShellExecute = true,
+                Verb = "runas"
+            };
+            using var process = System.Diagnostics.Process.Start(psi);
+            if (process != null)
+            {
+                await process.WaitForExitAsync();
+                if (process.ExitCode == 0)
+                {
+                    Log("Successfully uninstalled Microsoft Store package via PowerShell fallback.");
+                    return true;
+                }
+                else
+                {
+                    Log($"PowerShell fallback exited with code: {process.ExitCode}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Log($"PowerShell fallback failed: {ex.Message}");
+        }
+
+        return false;
     }
 }

@@ -16,7 +16,7 @@
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
-    <Version>3.0.1</Version>
+    <Version>3.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

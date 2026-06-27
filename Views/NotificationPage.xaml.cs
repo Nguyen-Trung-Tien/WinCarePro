@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.Database;
+using WinCarePro.Models;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
@@ -16,21 +17,57 @@ public sealed partial class NotificationPage : Page
     public NotificationPage()
     {
         InitializeComponent();
-        this.Loaded += (s, e) => LoadLogs();
+        this.Loaded += (s, e) =>
+        {
+            LoadNotifications();
+            LoadLogs();
+            
+            // Mark all notifications as read when viewing the page
+            DbManager.MarkAllNotificationsAsRead();
+        };
+    }
+
+    private void LoadNotifications()
+    {
+        try
+        {
+            var notifications = DbManager.GetRecentNotifications();
+            NotificationsListView.ItemsSource = notifications;
+            
+            if (notifications == null || notifications.Count == 0)
+            {
+                NotificationsEmptyState.Visibility = Visibility.Visible;
+                NotificationsListView.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                NotificationsEmptyState.Visibility = Visibility.Collapsed;
+                NotificationsListView.Visibility = Visibility.Visible;
+            }
+        }
+        catch
+        {
+            NotificationsEmptyState.Visibility = Visibility.Visible;
+            NotificationsListView.Visibility = Visibility.Collapsed;
+        }
     }
 
     private void LoadLogs()
     {
-        string? module = null;
-        if (ModuleFilter.SelectedItem is ComboBoxItem item && item.Content.ToString() != "All Modules")
+        try
         {
-            module = item.Content.ToString();
+            string? module = null;
+            if (ModuleFilter.SelectedItem is ComboBoxItem item && item.Content.ToString() != "All Modules")
+            {
+                module = item.Content.ToString();
+            }
+
+            string? search = string.IsNullOrWhiteSpace(SearchBox.Text) ? null : SearchBox.Text.Trim();
+
+            var logs = DbManager.GetLogs(module, search);
+            LogsListView.ItemsSource = logs;
         }
-
-        string? search = string.IsNullOrWhiteSpace(SearchBox.Text) ? null : SearchBox.Text.Trim();
-
-        var logs = DbManager.GetLogs(module, search);
-        LogsListView.ItemsSource = logs;
+        catch { }
     }
 
     private void OnSearchChanged(object sender, TextChangedEventArgs e)
@@ -46,11 +83,18 @@ public sealed partial class NotificationPage : Page
     private void OnRefreshClick(object sender, RoutedEventArgs e)
     {
         LoadLogs();
+        LoadNotifications();
+    }
+
+    private void OnClearNotificationsClick(object sender, RoutedEventArgs e)
+    {
+        DbManager.ClearAllNotifications();
+        LoadNotifications();
     }
 
     private void OnClearOldLogsClick(object sender, RoutedEventArgs e)
     {
-        int deleted = DbManager.CleanupOldLogs(0); // Clear all logs
+        DbManager.CleanupOldLogs(0); // Clear all logs
         LoadLogs();
     }
 
@@ -78,5 +122,11 @@ public sealed partial class NotificationPage : Page
             }
             await Windows.Storage.FileIO.WriteTextAsync(file, sb.ToString(), Windows.Storage.Streams.UnicodeEncoding.Utf8);
         }
+    }
+
+    // Static helper method used by XAML binding
+    public static Visibility IsUnreadVisibility(bool isRead)
+    {
+        return !isRead ? Visibility.Visible : Visibility.Collapsed;
     }
 }

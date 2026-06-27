@@ -6,7 +6,10 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.Win32;
+using WinCarePro.Models;
 
 namespace WinCarePro.Engines;
 
@@ -415,5 +418,223 @@ public class NetworkEngine
             Log($"Process error running {filename}: {ex.Message}");
             return false;
         }
+    }
+
+    public List<NetworkAdapterInfo> GetNetworkAdapters()
+    {
+        var list = new List<NetworkAdapterInfo>();
+        try
+        {
+            foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+
+                var ipList = new List<string>();
+                try
+                {
+                    var ipProps = ni.GetIPProperties();
+                    foreach (var addr in ipProps.UnicastAddresses)
+                    {
+                        ipList.Add(addr.Address.ToString());
+                    }
+                }
+                catch { }
+
+                string speedStr = "Unknown";
+                if (ni.Speed > 0)
+                {
+                    double speedGbps = ni.Speed / 1_000_000_000.0;
+                    if (speedGbps >= 1.0)
+                        speedStr = $"{speedGbps:F1} Gbps";
+                    else
+                        speedStr = $"{ni.Speed / 1_000_000.0:F0} Mbps";
+                }
+
+                list.Add(new NetworkAdapterInfo
+                {
+                    Name = ni.Name,
+                    Description = ni.Description,
+                    Status = ni.OperationalStatus.ToString(),
+                    Type = ni.NetworkInterfaceType.ToString(),
+                    Speed = speedStr,
+                    MacAddress = ni.GetPhysicalAddress().ToString(),
+                    IpAddresses = string.Join(", ", ipList)
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Log($"Failed to retrieve adapters: {ex.Message}");
+        }
+        return list;
+    }
+
+    public async Task<List<DnsServerInfo>> RunDnsBenchmarkAsync()
+    {
+        var dnsList = new List<DnsServerInfo>
+        {
+            new() { Name = "Cloudflare DNS", PrimaryIp = "1.1.1.1", SecondaryIp = "1.0.0.1" },
+            new() { Name = "Google Public DNS", PrimaryIp = "8.8.8.8", SecondaryIp = "8.8.4.4" },
+            new() { Name = "Quad9 DNS", PrimaryIp = "9.9.9.9", SecondaryIp = "149.112.112.112" },
+            new() { Name = "OpenDNS", PrimaryIp = "208.67.222.222", SecondaryIp = "208.67.220.220" },
+            new() { Name = "AdGuard DNS", PrimaryIp = "94.140.14.14", SecondaryIp = "94.140.15.15" }
+        };
+
+        Log("Starting DNS benchmark...");
+        var tasks = new List<Task>();
+        foreach (var dns in dnsList)
+        {
+            tasks.Add(Task.Run(async () =>
+            {
+                try
+                {
+                    using var ping = new Ping();
+                    var reply = await ping.SendPingAsync(dns.PrimaryIp, 1000);
+                    if (reply.Status == IPStatus.Success)
+                    {
+                        dns.PingMs = reply.RoundtripTime;
+                    }
+                    else
+                    {
+                        dns.PingMs = -1;
+                    }
+                }
+                catch
+                {
+                    dns.PingMs = -1;
+                }
+            }));
+        }
+
+        await Task.WhenAll(tasks);
+
+        double minPing = double.MaxValue;
+        DnsServerInfo? fastest = null;
+        foreach (var dns in dnsList)
+        {
+            if (dns.PingMs >= 0 && dns.PingMs < minPing)
+            {
+                minPing = dns.PingMs;
+                fastest = dns;
+            }
+        }
+        if (fastest != null)
+        {
+            fastest.IsFastest = true;
+            Log($"DNS Benchmark complete. Fastest: {fastest.Name} ({fastest.PingMs}ms)");
+        }
+        else
+        {
+            Log("DNS Benchmark complete. No DNS servers responded.");
+        }
+
+        return dnsList;
+    }
+
+    public async Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp)
+    {
+        Log($"Applying DNS settings for {dnsName} ({primaryIp}, {secondaryIp})...");
+        try
+        {
+            string script = $"$adapters = Get-NetAdapter | Where-Object {{ $_.Status -eq 'Up' }}; " +
+                            $"foreach ($adapter in $adapters) {{ " +
+                            $"  Set-DnsClientServerAddress -InterfaceAlias $adapter.Name -ServerAddresses ('{primaryIp}', '{secondaryIp}'); " +
+                            $"}}";
+            var psi = new ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+            using var proc = Process.Start(psi);
+            if (proc != null)
+            {
+                await proc.WaitForExitAsync();
+                Log($"DNS configured successfully to {dnsName}.");
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log($"Failed to configure DNS: {ex.Message}");
+        }
+        return false;
+    }
+
+    public List<ActiveConnectionInfo> GetActiveConnections()
+    {
+        var list = new List<ActiveConnectionInfo>();
+        try
+        {
+            var procDict = Process.GetProcesses().ToDictionary(p => p.Id, p => p.ProcessName);
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = "netstat.exe",
+                Arguments = "-ano",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
+            using var proc = Process.Start(psi);
+            if (proc != null)
+            {
+                string? line;
+                while ((line = proc.StandardOutput.ReadLine()) != null)
+                {
+                    line = line.Trim();
+                    if (string.IsNullOrEmpty(line)) continue;
+                    if (line.StartsWith("Proto") || line.StartsWith("Active")) continue;
+
+                    var parts = Regex.Split(line, @"\s+");
+                    if (parts.Length >= 4)
+                    {
+                        string proto = parts[0];
+                        string local = parts[1];
+                        string foreign = parts[2];
+                        string state = "";
+                        string pidStr = "";
+
+                        if (proto.ToUpper() == "TCP")
+                        {
+                            if (parts.Length >= 5)
+                            {
+                                state = parts[3];
+                                pidStr = parts[4];
+                            }
+                        }
+                        else
+                        {
+                            state = "-";
+                            pidStr = parts[3];
+                        }
+
+                        if (int.TryParse(pidStr, out int pid))
+                        {
+                            procDict.TryGetValue(pid, out string? processName);
+                            processName ??= "System / Unknown";
+
+                            list.Add(new ActiveConnectionInfo
+                            {
+                                Protocol = proto,
+                                LocalAddress = local,
+                                ForeignAddress = foreign,
+                                State = state,
+                                ProcessName = processName,
+                                Pid = pid
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Log($"Failed to retrieve active connections: {ex.Message}");
+        }
+        return list;
     }
 }

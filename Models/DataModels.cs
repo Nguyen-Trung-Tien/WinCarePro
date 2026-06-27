@@ -1,4 +1,5 @@
 using System;
+using WinCarePro.Services;
 
 namespace WinCarePro.Models;
 
@@ -41,7 +42,33 @@ public enum JunkType
     RecycleBin,
     UpdateCache,
     ShaderCache,
-    ThumbnailCache
+    ThumbnailCache,
+    DeliveryOptimization,
+    Prefetch,
+    CrashDumps
+}
+
+public class JunkFileItem
+{
+    public string Path { get; set; } = "";
+    public long SizeBytes { get; set; }
+    public string SizeFormatted => FormatSize(SizeBytes);
+    public string FileName => System.IO.Path.GetFileName(Path);
+    public string IconGlyph => "\uE7C3"; // Document/File icon
+    public string IconColor => "#FFF59E0B"; // Amber color for files
+
+    private static string FormatSize(long bytes)
+    {
+        string[] suffix = { "B", "KB", "MB", "GB", "TB" };
+        int i = 0;
+        double doubleBytes = bytes;
+        while (doubleBytes >= 1024 && i < suffix.Length - 1)
+        {
+            i++;
+            doubleBytes /= 1024;
+        }
+        return $"{doubleBytes:F1} {suffix[i]}";
+    }
 }
 
 public class JunkCategory
@@ -54,6 +81,11 @@ public class JunkCategory
     public bool IsSelected { get; set; } = true;
     public int FileCount { get; set; }
     public string FileCountFormatted => $"{FileCount} files";
+    
+    public string IconGlyph { get; set; } = "\uEA99";
+    public string IconColor { get; set; } = "#FF7F56D9";
+    public string FolderPath { get; set; } = "";
+    public System.Collections.Generic.List<JunkFileItem> TopFiles { get; set; } = new();
 
     private static string FormatSize(long bytes)
     {
@@ -104,9 +136,48 @@ public class SoftwareUpdateInfo : System.ComponentModel.INotifyPropertyChanged
             {
                 _updateStatus = value;
                 OnPropertyChanged(nameof(UpdateStatus));
+                OnPropertyChanged(nameof(IsUpdating));
+                OnPropertyChanged(nameof(IsNotUpdating));
+                OnPropertyChanged(nameof(CanUpdate));
+                OnPropertyChanged(nameof(IsUpdatingVisibility));
+                OnPropertyChanged(nameof(IsNotUpdatingVisibility));
+                OnPropertyChanged(nameof(StatusBgColor));
+                OnPropertyChanged(nameof(StatusBorderColor));
+                OnPropertyChanged(nameof(StatusForegroundColor));
             }
         }
     }
+
+    public bool IsUpdating => UpdateStatus == "Updating...";
+    public bool IsNotUpdating => UpdateStatus != "Updating...";
+    public bool CanUpdate => UpdateStatus != "Completed" && UpdateStatus != "Updating...";
+
+    public Microsoft.UI.Xaml.Visibility IsUpdatingVisibility => IsUpdating ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
+    public Microsoft.UI.Xaml.Visibility IsNotUpdatingVisibility => IsNotUpdating ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
+
+    public Microsoft.UI.Xaml.Media.Brush StatusBgColor => UpdateStatus switch
+    {
+        "Completed" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(30, 16, 185, 129)),  // #1E10B981
+        "Failed" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(30, 239, 68, 68)),    // #1EEF4444
+        "Updating..." => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(30, 245, 158, 11)), // #1EF59E0B
+        _ => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(20, 59, 130, 246))           // #143B82F6
+    };
+
+    public Microsoft.UI.Xaml.Media.Brush StatusBorderColor => UpdateStatus switch
+    {
+        "Completed" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(48, 16, 185, 129)),
+        "Failed" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(48, 239, 68, 68)),
+        "Updating..." => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(48, 245, 158, 11)),
+        _ => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(32, 59, 130, 246))
+    };
+
+    public Microsoft.UI.Xaml.Media.Brush StatusForegroundColor => UpdateStatus switch
+    {
+        "Completed" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)),
+        "Failed" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)),
+        "Updating..." => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)),
+        _ => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246))
+    };
 }
 
 public enum StartupSource
@@ -488,10 +559,12 @@ public class SettingsProfile
     public bool AutoScan { get; set; }
     public string ReportFormat { get; set; } = "TXT";
     
-    // General
-    public int LanguageIndex { get; set; } = 0; // 0=English, 1=Tiếng Việt, 2=日本語
+    // General & Update policy
+    public int LanguageIndex { get; set; } = 0; // 0=English, 1=Tiếng Việt
     public bool AutoCheckUpdates { get; set; } = true;
+    public bool AutoInstallUpdates { get; set; } = false; // Auto download & install in background
     public bool MinimizeToTray { get; set; } = true;
+    public bool BetaUpdates { get; set; } = false; // Check for beta builds
 
     // Appearance
     public string AccentColor { get; set; } = "Default"; // Default, Green, Purple, Pink, Amber
@@ -517,9 +590,13 @@ public class SettingsProfile
     public bool EnableVerboseLogs { get; set; } = false;
     public bool EnableExperimentalAi { get; set; } = false;
 
-    // v3.0 Notifications Settings
+    // Notifications Settings
     public bool ShowNotifications { get; set; } = true;
     public double NotificationThreshold { get; set; } = 10.0; // Show notification if health score drops by more than this
+    public bool NotifyOnLowHealth { get; set; } = true;
+    public bool NotifyOnMaintenance { get; set; } = true;
+    public bool ShowUpdateNotifications { get; set; } = true;
+    public bool NotificationSound { get; set; } = true;
 }
 
 public class NotificationItem
@@ -538,6 +615,39 @@ public class CpuTemperatureInfo
     public double TemperatureCelsius { get; set; }
     public string SensorName { get; set; } = "";
     public DateTime Timestamp { get; set; } = DateTime.Now;
+}
+
+public class NetworkAdapterInfo
+{
+    public string Name { get; set; } = "";
+    public string Description { get; set; } = "";
+    public string Status { get; set; } = "";
+    public string Type { get; set; } = "";
+    public string Speed { get; set; } = "";
+    public string MacAddress { get; set; } = "";
+    public string IpAddresses { get; set; } = "";
+    public string StatusColor => Status == "Up" ? "MediumSeaGreen" : "Tomato";
+    public string StatusGlyph => Status == "Up" ? "\uE73E" : "\uF140";
+}
+
+public class DnsServerInfo
+{
+    public string Name { get; set; } = "";
+    public string PrimaryIp { get; set; } = "";
+    public string SecondaryIp { get; set; } = "";
+    public double PingMs { get; set; } = -1;
+    public bool IsFastest { get; set; }
+    public string PingFormatted => PingMs < 0 ? "Timeout".T() : $"{PingMs:F0} ms";
+}
+
+public class ActiveConnectionInfo
+{
+    public string Protocol { get; set; } = "";
+    public string LocalAddress { get; set; } = "";
+    public string ForeignAddress { get; set; } = "";
+    public string State { get; set; } = "";
+    public string ProcessName { get; set; } = "";
+    public int Pid { get; set; }
 }
 
 

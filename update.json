@@ -1,5 +1,5 @@
 {
-  "version": "3.1.0",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.1.0/WinCareProSetup.exe",
-  "changelog": "Nâng cấp Trình gỡ ứng dụng (v3.1.0): Giao diện Master-Detail hiện đại, tích hợp 4 thẻ thống kê và bộ lọc/sắp xếp nâng cao; hỗ trợ gỡ cài đặt hàng loạt (Batch) thông qua thanh công cụ nổi; hỗ trợ gỡ cài đặt cưỡng bức (Force) ứng dụng Store bằng PowerShell; mở thư mục/registry trực tiếp và tìm kiếm online; tự động quét dọn tàn dư (leftovers) trên Registry, file system và Start Menu; hoàn tất bản địa hóa Tiếng Việt."
+  "version": "3.2.0",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.2.0/WinCareProSetup.exe",
+  "changelog": "Nâng cấp toàn diện v3.2.0: Tối ưu hóa & Hiện đại hóa Trình dọn rác (Junk Cleaner) tích hợp biểu đồ dung lượng; Nâng cấp Bộ quét sửa lỗi Windows (System Repair) với chỉ số chi tiết và thanh tiến trình; Tối ưu hóa Trình quản lý mạng (Network Center) theo dõi băng thông thời gian thực; Cải tiến trang Software Update & Cài đặt hệ thống, sửa lỗi hiển thị thống kê App Uninstaller khi chuyển trang."
 }

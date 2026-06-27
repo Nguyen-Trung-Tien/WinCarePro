@@ -50,6 +50,13 @@ public class JunkViewModel : ViewModelBase
         set => SetProperty(ref _totalJunkSize, value);
     }
 
+    private JunkCategory? _selectedCategory;
+    public JunkCategory? SelectedCategory
+    {
+        get => _selectedCategory;
+        set => SetProperty(ref _selectedCategory, value);
+    }
+
     public ObservableCollection<JunkCategory> Categories { get; } = new();
 
     public JunkViewModel(IJunkCleanerService junkEngine)
@@ -94,6 +101,7 @@ public class JunkViewModel : ViewModelBase
         IsScanning = true;
         ProgressPercent = 0;
         Categories.Clear();
+        SelectedCategory = null;
 
         try
         {
@@ -106,6 +114,7 @@ public class JunkViewModel : ViewModelBase
                     Categories.Add(cat);
                 }
                 UpdateTotalSize();
+                SelectedCategory = Categories.FirstOrDefault();
                 IsScanning = false;
                 ProgressMessage = "Scan completed. Select items to clean.".T();
             });
@@ -136,6 +145,7 @@ public class JunkViewModel : ViewModelBase
                 IsCleaning = false;
                 ProgressMessage = string.Format("Cleanup complete. Reclaimed {0} MB.".T(), (cleanedBytes / 1024.0 / 1024.0).ToString("F2"));
                 Categories.Clear();
+                SelectedCategory = null;
                 TotalJunkSize = "0.0 MB";
             });
         }
@@ -161,5 +171,33 @@ public class JunkViewModel : ViewModelBase
             doubleBytes /= 1024;
         }
         TotalJunkSize = $"{doubleBytes:F1} {suffix[i]}";
+    }
+
+    public void OpenSelectedFolder()
+    {
+        if (SelectedCategory == null) return;
+        string path = SelectedCategory.FolderPath;
+        if (string.IsNullOrEmpty(path))
+        {
+            if (SelectedCategory.Type == JunkType.RecycleBin)
+            {
+                path = "shell:RecycleBinFolder";
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = path,
+                UseShellExecute = true
+            });
+        }
+        catch { }
     }
 }

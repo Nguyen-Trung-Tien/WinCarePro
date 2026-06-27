@@ -369,7 +369,12 @@ public class DbManager
             cmd.Parameters.AddWithValue("@level", level);
             cmd.ExecuteNonQuery();
 
-            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
+            var win = WinCarePro.App.MainWindowInstance;
+            if (win != null)
+            {
+                win.UpdateNotificationBadge();
+                win.ShowToastFromDb(title, message, level);
+            }
         }
         catch { }
     }
@@ -450,6 +455,22 @@ public class DbManager
             conn.Open();
             using var cmd = conn.CreateCommand();
             cmd.CommandText = "DELETE FROM Notifications";
+            cmd.ExecuteNonQuery();
+
+            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
+        }
+        catch { }
+    }
+
+    public static void DeleteNotification(int id)
+    {
+        try
+        {
+            using var conn = new SqliteConnection(ConnectionString);
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "DELETE FROM Notifications WHERE Id = @id";
+            cmd.Parameters.AddWithValue("@id", id);
             cmd.ExecuteNonQuery();
 
             WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();

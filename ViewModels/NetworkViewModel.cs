@@ -1,16 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Services.Implementations;
 using WinCarePro.Services;
+using WinCarePro.Models;
 
 namespace WinCarePro.ViewModels;
 
 public class NetworkViewModel : ViewModelBase
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private DispatcherQueue _dispatcherQueue;
     private readonly INetworkService _engine;
 
     private string _internetStatus = "Checking...".T();
@@ -28,6 +31,54 @@ public class NetworkViewModel : ViewModelBase
     private double _latencyMs;
     private double _packetLossPercent;
     private double _downloadSpeedMbps;
+
+    private ObservableCollection<NetworkAdapterInfo> _adapters = new();
+    private ObservableCollection<DnsServerInfo> _dnsServers = new();
+    private ObservableCollection<ActiveConnectionInfo> _connections = new();
+    private List<ActiveConnectionInfo> _rawConnections = new();
+    private string _connectionSearchQuery = "";
+    private string _fastestDnsText = "Not Tested".T();
+    private double _speedProgress = 0;
+
+    public ObservableCollection<NetworkAdapterInfo> Adapters
+    {
+        get => _adapters;
+        set => SetPropertyOnUI(() => _adapters, v => _adapters = v, value);
+    }
+
+    public ObservableCollection<DnsServerInfo> DnsServers
+    {
+        get => _dnsServers;
+        set => SetPropertyOnUI(() => _dnsServers, v => _dnsServers = v, value);
+    }
+
+    public ObservableCollection<ActiveConnectionInfo> Connections
+    {
+        get => _connections;
+        set => SetPropertyOnUI(() => _connections, v => _connections = v, value);
+    }
+
+    public string ConnectionSearchQuery
+    {
+        get => _connectionSearchQuery;
+        set
+        {
+            SetPropertyOnUI(() => _connectionSearchQuery, v => _connectionSearchQuery = v, value);
+            ApplyConnectionFilter();
+        }
+    }
+
+    public string FastestDnsText
+    {
+        get => _fastestDnsText;
+        set => SetPropertyOnUI(() => _fastestDnsText, v => _fastestDnsText = v, value);
+    }
+
+    public double SpeedProgress
+    {
+        get => _speedProgress;
+        set => SetPropertyOnUI(() => _speedProgress, v => _speedProgress = v, value);
+    }
 
     public string InternetStatus
     {
@@ -120,9 +171,14 @@ public class NetworkViewModel : ViewModelBase
 
     public void Initialize()
     {
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue ?? _dispatcherQueue;
+
         // Unsubscribe first to prevent double-registration when page is re-navigated (NavigationCacheMode.Required)
         _engine.OutputReceived -= OnOutputReceived;
         _engine.OutputReceived += OnOutputReceived;
+        LoadAdapters();
+        _ = LoadActiveConnectionsAsync();
+        _ = RunDiagnosticsAsync();
     }
 
     public void Cleanup()
@@ -168,6 +224,7 @@ public class NetworkViewModel : ViewModelBase
 
     public async Task RunDiagnosticsAsync()
     {
+        if (IsBusy) return;
         IsBusy = true;
         LogText("Starting connectivity diagnosis...".T());
 
@@ -285,14 +342,137 @@ public class NetworkViewModel : ViewModelBase
     {
         if (IsBusy) return;
         IsBusy = true;
+        SpeedProgress = 0;
+        LogText("Starting speed test...".T());
         try
         {
+            var progressTask = Task.Run(async () =>
+            {
+                for (int i = 1; i <= 95; i += 5)
+                {
+                    if (!IsBusy) break;
+                    SpeedProgress = i;
+                    await Task.Delay(100);
+                }
+            });
+
             double speed = await _engine.RunSpeedTestAsync();
             DownloadSpeedMbps = Math.Round(speed, 1);
+            SpeedProgress = 100;
+            LogText(string.Format("Speed test complete: {0} Mbps.".T(), DownloadSpeedMbps));
         }
         catch (Exception ex)
         {
             LogText(string.Format("Speed test failed: {0}".T(), ex.Message));
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public void LoadAdapters()
+    {
+        try
+        {
+            var list = _engine.GetNetworkAdapters();
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                Adapters = new ObservableCollection<NetworkAdapterInfo>(list);
+            });
+        }
+        catch (Exception ex)
+        {
+            LogText($"Failed to load adapters: {ex.Message}");
+        }
+    }
+
+    public async Task LoadActiveConnectionsAsync()
+    {
+        try
+        {
+            var list = await Task.Run(() => _engine.GetActiveConnections());
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                _rawConnections = list;
+                ApplyConnectionFilter();
+            });
+        }
+        catch (Exception ex)
+        {
+            LogText($"Failed to load active connections: {ex.Message}");
+        }
+    }
+
+    private void ApplyConnectionFilter()
+    {
+        _dispatcherQueue?.TryEnqueue(() =>
+        {
+            var query = _connectionSearchQuery?.Trim().ToLower() ?? "";
+            if (string.IsNullOrEmpty(query))
+            {
+                Connections = new ObservableCollection<ActiveConnectionInfo>(_rawConnections);
+            }
+            else
+            {
+                var filtered = _rawConnections.Where(c =>
+                    c.ProcessName.ToLower().Contains(query) ||
+                    c.Protocol.ToLower().Contains(query) ||
+                    c.LocalAddress.ToLower().Contains(query) ||
+                    c.ForeignAddress.ToLower().Contains(query) ||
+                    c.State.ToLower().Contains(query) ||
+                    c.Pid.ToString().Contains(query)
+                ).ToList();
+                Connections = new ObservableCollection<ActiveConnectionInfo>(filtered);
+            }
+        });
+    }
+
+    public async Task StartDnsBenchmarkAsync()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        LogText("Initiating DNS latency benchmark...".T());
+        try
+        {
+            var result = await _engine.RunDnsBenchmarkAsync();
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                DnsServers = new ObservableCollection<DnsServerInfo>(result);
+                var fastest = result.FirstOrDefault(d => d.IsFastest);
+                FastestDnsText = fastest != null ? $"{fastest.Name} ({fastest.PingMs:F0} ms)" : "Failed".T();
+            });
+        }
+        catch (Exception ex)
+        {
+            LogText($"DNS benchmark error: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task ApplyDnsAsync(DnsServerInfo server)
+    {
+        if (IsBusy || server == null) return;
+        IsBusy = true;
+        try
+        {
+            bool ok = await _engine.ApplyDnsSettingsAsync(server.Name, server.PrimaryIp, server.SecondaryIp);
+            if (ok)
+            {
+                LogText(string.Format("Successfully applied DNS: {0}".T(), server.Name));
+            }
+            else
+            {
+                LogText("Failed to apply DNS settings (Requires administrator privilege).".T());
+            }
+            await RunDiagnosticsAsync();
+        }
+        catch (Exception ex)
+        {
+            LogText($"Error applying DNS settings: {ex.Message}");
         }
         finally
         {

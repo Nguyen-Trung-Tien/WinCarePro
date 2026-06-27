@@ -11,65 +11,270 @@
 
     <Grid Padding="24">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" /> <!-- Header -->
+            <RowDefinition Height="Auto" /> <!-- Stats Cards Grid -->
+            <RowDefinition Height="Auto" /> <!-- Toolbar -->
+            <RowDefinition Height="*" />    <!-- Main Content Area -->
+            <RowDefinition Height="Auto" /> <!-- Terminal Panel -->
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,24">
+        <!-- 1. Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Spacing="4">
                 <TextBlock Text="Software Updater" FontSize="26" FontWeight="ExtraBold" CharacterSpacing="-0.5" />
-                <TextBlock Text="Local third-party winget packages out of date. Check available newer builds." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                <TextBlock Text="Check and install newer builds of local third-party applications securely." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button Content="Scan Updates" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}"/>
-                <Button Content="Update All" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateAllClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}"/>
+                <Button Content="Scan Updates" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Padding="16,6"/>
+                <Button Content="Update Selected" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateSelectedClick" IsEnabled="{x:Bind CanUpdateSelected(ViewModel.HasSelectedUpdates, ViewModel.IsBusy), Mode=OneWay}" Padding="16,6"/>
+                <Button Content="Update All" Click="OnUpdateAllClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Padding="16,6"/>
             </StackPanel>
         </Grid>
 
-        <!-- Main Content Area -->
-        <Grid Grid.Row="1" RowSpacing="16">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <!-- 2. Statistics Grid Section -->
+        <Grid Grid.Row="1" Margin="0,0,0,16" ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-            <!-- Progress Bar / Status overlay -->
-            <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="16" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <StackPanel Spacing="8">
-                    <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="13" FontWeight="SemiBold" />
+            <!-- Card 1: Updates Available -->
+            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Grid.Column="0" Glyph="&#xE787;" FontSize="24" Foreground="#FFF59E0B" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Updates Available" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.UpdatesCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 2: Last Checked -->
+            <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Grid.Column="0" Glyph="&#xEC92;" FontSize="24" Foreground="#FF3B82F6" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Last Checked" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.LastScanTime, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 3: Active Engine -->
+            <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Grid.Column="0" Glyph="&#xE945;" FontSize="24" Foreground="#FF7F56D9" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Active Engine" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.ActiveEngineName, Mode=OneWay}" FontSize="13" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 4: System Status with Visual Progress ring -->
+            <Border Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <ProgressRing Value="{x:Bind GetSecurityRating(ViewModel.UpdatesCount), Mode=OneWay}" IsActive="True" IsIndeterminate="False" Width="36" Height="36" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind GetSecurityRatingText(ViewModel.UpdatesCount), Mode=OneWay}" FontSize="9.5" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Security Health" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.SystemHealthStatus, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 3. Toolbar Section -->
+        <Grid Grid.Row="2" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <TextBox Grid.Column="0" PlaceholderText="Search outdated packages..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="6" Height="32" VerticalAlignment="Center"/>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
+                <TextBlock Text="Engine:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                <ComboBox SelectedValue="{x:Bind ViewModel.UpdateEngine, Mode=TwoWay}" SelectedValuePath="Tag" Width="200" Height="32" CornerRadius="6" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
+                    <ComboBoxItem Content="Windows Package Manager" Tag="winget"/>
+                    <ComboBoxItem Content="Direct Downloader" Tag="direct"/>
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="8">
+                <Button Content="Select All" Click="OnSelectAllClick" FontSize="11" Height="32" CornerRadius="6" Padding="12,0"/>
+                <Button Content="Deselect All" Click="OnDeselectAllClick" FontSize="11" Height="32" CornerRadius="6" Padding="12,0"/>
+            </StackPanel>
+
+            <Button Grid.Column="3" Content="Console Logs" Click="OnToggleLogClick" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" CornerRadius="6">
+                <Button.ContentTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE756;" FontSize="14" />
+                            <TextBlock Text="Console Logs" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
+        </Grid>
+
+        <!-- 4. Main Content Area -->
+        <Grid Grid.Row="3">
+            <!-- Progress Overlay -->
+            <Border Style="{StaticResource ModernCardStyle}" Padding="24" Height="100" VerticalAlignment="Center" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel Spacing="12" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                     <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
                 </StackPanel>
             </Border>
 
-            <!-- List of Updates -->
-            <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="12">
+            <!-- Updates List -->
+            <Border Style="{StaticResource ModernCardStyle}" Padding="12" Visibility="{x:Bind IsListNotEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}">
                 <ListView ItemsSource="{x:Bind ViewModel.Updates, Mode=OneWay}" SelectionMode="None">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0,2" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:SoftwareUpdateInfo">
-                            <Grid Padding="4,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="150" />
-                                    <ColumnDefinition Width="150" />
-                                    <ColumnDefinition Width="120" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="13"/>
-                                    <TextBlock Text="{x:Bind Id}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                </StackPanel>
-                                <TextBlock Grid.Column="1" Text="{x:Bind InstalledVersion}" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,24,0"/>
-                                <TextBlock Grid.Column="2" Text="{x:Bind AvailableVersion}" FontSize="12.5" Foreground="{ThemeResource SystemAccentColor}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,24,0"/>
-                                <TextBlock Grid.Column="3" Text="{x:Bind UpdateStatus}" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                            </Grid>
+                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,12" Margin="0,2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <!-- Checkbox for multi selection -->
+                                    <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                                    
+                                    <!-- Package Icon -->
+                                    <Border Grid.Column="1" Width="36" Height="36" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" CornerRadius="18" Margin="0,0,16,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE787;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Name and ID -->
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                        <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="14"/>
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="{x:Bind Id}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="4,1" CornerRadius="4">
+                                                <TextBlock Text="{x:Bind Source}" FontSize="9" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Version Comparison Pill -->
+                                    <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,0,24,0">
+                                        <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="8,4" CornerRadius="6">
+                                            <TextBlock Text="{x:Bind InstalledVersion}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        </Border>
+                                        <FontIcon Glyph="&#xE72A;" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                        <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="8,4" CornerRadius="6">
+                                            <TextBlock Text="{x:Bind AvailableVersion}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- Status Badge / Progress -->
+                                    <Grid Grid.Column="4" Margin="0,0,16,0" VerticalAlignment="Center" Width="140">
+                                        <StackPanel Visibility="{x:Bind IsUpdatingVisibility, Mode=OneWay}" Spacing="4">
+                                            <ProgressBar IsIndeterminate="True" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" />
+                                            <TextBlock Text="Installing..." FontSize="9.5" HorizontalAlignment="Center" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        </StackPanel>
+                                        <Border Visibility="{x:Bind IsNotUpdatingVisibility, Mode=OneWay}" Background="{x:Bind StatusBgColor, Mode=OneWay}" BorderBrush="{x:Bind StatusBorderColor, Mode=OneWay}" BorderThickness="1" CornerRadius="6" Padding="10,4" HorizontalAlignment="Center">
+                                            <TextBlock Text="{x:Bind UpdateStatus, Mode=OneWay}" Foreground="{x:Bind StatusForegroundColor, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Update Action Button -->
+                                    <Button Grid.Column="5" Content="Update" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateSingleClick" IsEnabled="{x:Bind CanUpdate, Mode=OneWay}" VerticalAlignment="Center" Padding="12,6"/>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
             </Border>
+
+            <!-- Empty State -->
+            <Grid Visibility="{x:Bind IsListEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,48,0,48">
+                <StackPanel Spacing="16" HorizontalAlignment="Center">
+                    <Border Width="80" Height="80" CornerRadius="40" Background="#1E10B981" BorderBrush="#3010B981" BorderThickness="2" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE73E;" FontSize="40" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Spacing="4" HorizontalAlignment="Center">
+                        <TextBlock Text="Your system is up to date!" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" />
+                        <TextBlock Text="No updates available for your third-party applications." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
+                    </StackPanel>
+                    <Button Content="Check Again" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanUpdatesClick" HorizontalAlignment="Center" Padding="16,8"/>
+                </StackPanel>
+            </Grid>
         </Grid>
+
+        <!-- 5. Advanced Console Logs Terminal Drawer -->
+        <Border Grid.Row="4" Style="{StaticResource ModernCardStyle}" Background="#0A0E1A" BorderBrush="#FF8B5CF6" BorderThickness="1.5" Height="180" Margin="0,16,0,0" Padding="12" Visibility="{x:Bind ViewModel.ShowLogPanel, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <!-- Terminal Header -->
+                <Grid Grid.Row="0" Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Ellipse Width="8" Height="8" Fill="#FFEF4444"/>
+                        <Ellipse Width="8" Height="8" Fill="#FFF59E0B"/>
+                        <Ellipse Width="8" Height="8" Fill="#FF10B981"/>
+                        <TextBlock Text="Console log - Software Updater" FontSize="11" Foreground="#88FFFFFF" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="Clear Logs" Click="OnClearLogsClick" FontSize="10" Padding="8,4" Height="24" Background="Transparent" BorderThickness="0" Foreground="#88FFFFFF"/>
+                </Grid>
+                <!-- Terminal Body -->
+                <TextBox Grid.Row="1" 
+                          Text="{x:Bind ViewModel.TerminalLog, Mode=OneWay}" 
+                          Style="{StaticResource DarkTerminalStyle}" 
+                          IsReadOnly="True" 
+                          AcceptsReturn="True" 
+                          TextWrapping="Wrap" 
+                          VerticalAlignment="Stretch"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          TextChanged="OnTerminalLogTextChanged"
+                          x:Name="TerminalTextBox"/>
+            </Grid>
+        </Border>
     </Grid>
 </Page>

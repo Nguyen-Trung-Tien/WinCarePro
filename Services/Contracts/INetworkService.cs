@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using WinCarePro.Models;
 
 namespace WinCarePro.Services.Contracts;
 
@@ -24,4 +26,8 @@ public interface INetworkService
     Task<bool> ResetFirewallAsync();
     Task<bool> ResetProxyAsync();
     Task<bool> RestartNetworkAdapterAsync();
+    List<NetworkAdapterInfo> GetNetworkAdapters();
+    Task<List<DnsServerInfo>> RunDnsBenchmarkAsync();
+    Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp);
+    List<ActiveConnectionInfo> GetActiveConnections();
 }

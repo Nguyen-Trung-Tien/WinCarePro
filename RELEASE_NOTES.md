@@ -2,6 +2,42 @@
 
 ---
 
+## 🚀 WinCare Pro v3.2.0 — Nâng cấp toàn diện các tính năng cốt lõi (Core Engines & UI Modernization)
+
+> **Phát hành:** 27/06/2026 · **Loại:** Nâng cấp tính năng lớn (Major Feature Enhancement) · **Phiên bản trước:** v3.1.0
+
+Bản cập nhật **v3.2.0** đánh dấu một bước tiến lớn với sự nâng cấp đồng bộ từ giao diện (UI) đến lõi xử lý (Engine) của các công cụ chính: Junk Cleaner, System Repair, Software Update và Network Center. Hệ thống cũng được tối ưu hóa khả năng chuyển dịch ngôn ngữ động, tinh chỉnh trang cài đặt và sửa triệt để lỗi thống kê số liệu của Trình gỡ cài đặt ứng dụng.
+
+### ✨ Các cải tiến nổi bật (Key Features)
+
+#### 1. 🧹 Tối ưu hóa & Hiện đại hóa Trình dọn rác (Junk Cleaner)
+* **Nâng cấp lõi quét (Junk Cleaner Engine):** Hỗ trợ thêm nhiều danh mục rác hệ thống sâu và chính xác hơn (System Temp, Windows Log, Memory Dumps, Delivery Optimization files, Thumbnail Cache).
+* **Giao diện Modernization:** Thiết kế hiện đại tích hợp biểu đồ hình tròn trực quan (Pie Chart) hiển thị chi tiết tỉ lệ dung lượng các loại rác chiếm dụng ổ đĩa.
+* **Hiệu ứng đồ họa mượt mà:** Thêm thanh tiến trình động trong quá trình quét/dọn dẹp và hiệu ứng chuyển đổi giữa các trạng thái.
+
+#### 2. 🛡️ Nâng cấp Bộ quét sửa lỗi Windows (System Repair)
+* **Lõi xử lý ổn định:** Nâng cấp System Engine để thực hiện quét và tự động sửa các lỗi hệ thống chuẩn xác hơn, hỗ trợ dọn dẹp các tệp tin lỗi hệ thống.
+* **Giao diện Trực quan:** Thiết kế UI mới chia rõ các giai đoạn quét (Chẩn đoán, Khắc phục, Hoàn tất), hiển thị thanh tiến trình phần trăm cụ thể và danh sách trạng thái chi tiết của từng thành phần hệ thống.
+
+#### 3. 🌐 Tối ưu hóa Trung tâm Quản lý mạng (Network Center)
+* **Giám sát thời gian thực (Real-time Network Monitoring):** Cải tiến Network Engine hỗ trợ đo đạc chính xác tốc độ tải xuống (Download) và tải lên (Upload) hiện thời của máy tính.
+* **Giao diện chuyên nghiệp:** Bổ sung biểu đồ đường (Line Chart) biểu diễn biến thiên băng thông mạng theo thời gian thực và danh sách các tiến trình đang chiếm dụng lưu lượng mạng nhiều nhất.
+
+#### 4. 🔄 Nâng cấp Trình cập nhật phần mềm (Software Update)
+* **Cơ chế phát hiện bản cập nhật thông minh:** Cải tiến công cụ Updater giúp tăng tốc độ kiểm tra các bản cập nhật mới cho WinCare Pro từ kho GitHub.
+* **Giao diện Updater hiện đại:** Tích hợp các nút hành động trực quan, hiển thị chi tiết tiến trình tải và cập nhật cùng với log thay đổi (Changelog) định dạng phong phú.
+
+#### 5. ⚙️ Cải tiến Cài đặt hệ thống & Quản lý thông báo (Settings & Notifications)
+* **Chuyển dịch ngôn ngữ động (Dynamic Translation):** Tối ưu hóa `TranslationManager` để chuyển đổi mượt mà giữa Tiếng Anh và Tiếng Việt toàn hệ thống mà không cần khởi động lại ứng dụng.
+* **Trang Cài đặt mới:** Bố cục dạng thẻ tinh tế, hỗ trợ thay đổi giao diện (Sáng/Tối/Mặc định hệ thống), cấu hình tần suất quét dọn tự động và quản lý thông báo linh hoạt.
+* **Trang Thông báo (Notifications):** Thiết kế hộp thoại thông báo hiện đại, phân loại theo mức độ quan trọng (Info, Warning, Error) giúp người dùng dễ dàng theo dõi lịch sử vận hành.
+
+#### 6. 🩹 Khắc phục lỗi (Bug Fixes & Stability)
+* **Sửa lỗi App Uninstaller:** Khắc phục triệt để lỗi chỉ số thống kê (Quick Stats) bị reset về 0 hoặc không hiển thị thông tin khi người dùng chuyển trang hoặc load lại ứng dụng lần thứ hai.
+* **Tối ưu hóa tài nguyên:** Giảm thiểu CPU & Memory footprint khi chạy nền các tác vụ giám sát hệ thống và mạng.
+
+---
+
 ## 🚀 WinCare Pro v3.1.0 — Nâng cấp trình gỡ cài đặt ứng dụng (App Uninstaller Upgrade)
 
 > **Phát hành:** 27/06/2026 · **Loại:** Nâng cấp tính năng (Feature Enhancement) · **Phiên bản trước:** v3.0.1

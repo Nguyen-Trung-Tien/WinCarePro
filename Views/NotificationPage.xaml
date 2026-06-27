@@ -10,6 +10,10 @@
     xmlns:local="using:WinCarePro.Views"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <CollectionViewSource x:Name="GroupedNotificationsCVS" IsSourceGrouped="True" />
+    </Page.Resources>
+
     <Grid Padding="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -36,56 +40,83 @@
 
                     <!-- Alert Controls -->
                     <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="16">
-                        <Grid>
+                        <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="160" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="System Notifications" FontWeight="Bold" FontSize="14"/>
-                                <TextBlock Text="Critical alerts, warnings, and system status updates." FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                            <Button Grid.Column="1" Content="Clear Alerts" Click="OnClearNotificationsClick" Style="{ThemeResource DefaultButtonStyle}" VerticalAlignment="Center"/>
+                            
+                            <TextBox x:Name="NotificationSearchBox" PlaceholderText="Search notifications..." TextChanged="OnNotificationSearchChanged" VerticalAlignment="Center" Height="32"/>
+                            
+                            <ComboBox x:Name="NotificationLevelFilter" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnNotificationFilterChanged" SelectedIndex="0" VerticalAlignment="Center" Height="32" CornerRadius="6">
+                                <ComboBoxItem Content="All Levels" Tag="All"/>
+                                <ComboBoxItem Content="Info" Tag="Info"/>
+                                <ComboBoxItem Content="Warning" Tag="Warning"/>
+                                <ComboBoxItem Content="Critical" Tag="Critical"/>
+                            </ComboBox>
+                            
+                            <Button Grid.Column="2" Content="Clear Alerts" Click="OnClearNotificationsClick" Style="{ThemeResource DefaultButtonStyle}" VerticalAlignment="Center" Padding="14,5"/>
                         </Grid>
                     </Border>
 
                     <!-- System Notifications List -->
                     <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="12">
                         <Grid>
-                            <ListView x:Name="NotificationsListView" SelectionMode="None">
+                            <ListView x:Name="NotificationsListView" ItemsSource="{x:Bind GroupedNotificationsCVS.View, Mode=OneWay}" SelectionMode="None">
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate x:DataType="local:NotificationGroup">
+                                                <Grid Padding="4,10,4,4">
+                                                    <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource SystemAccentColor}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="Padding" Value="0" />
+                                        <Setter Property="Margin" Value="0,2" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="models:NotificationItem">
-                                        <Grid Padding="4,10" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="180" />
-                                            </Grid.ColumnDefinitions>
+                                        <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,12" Margin="0,2">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
 
-                                            <!-- Status Indicator -->
-                                            <Border Background="{x:Bind Level, Converter={StaticResource StatusToBrushConverter}}" CornerRadius="3" Width="6" Height="36" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                                                <!-- Status Indicator -->
+                                                <Border Background="{x:Bind Level, Converter={StaticResource StatusToBrushConverter}}" CornerRadius="3" Width="6" Height="36" Margin="0,0,16,0" VerticalAlignment="Center"/>
 
-                                            <!-- Text Stack -->
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4" Margin="0,0,16,0">
-                                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                                    <TextBlock Text="{x:Bind Title}" FontWeight="Bold" FontSize="13.5"/>
-                                                    <!-- NEW Badge -->
-                                                    <Border Visibility="{x:Bind local:NotificationPage.IsUnreadVisibility(IsRead), Mode=OneWay}" Background="#FFEF4444" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
-                                                        <TextBlock Text="NEW" FontSize="9" FontWeight="Bold" Foreground="White"/>
-                                                    </Border>
+                                                <!-- Text Stack -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4" Margin="0,0,16,0">
+                                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                                        <TextBlock Text="{x:Bind Title}" FontWeight="Bold" FontSize="13.5"/>
+                                                        <!-- NEW Badge -->
+                                                        <Border Visibility="{x:Bind local:NotificationPage.IsUnreadVisibility(IsRead), Mode=OneWay}" Background="#FFEF4444" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
+                                                            <TextBlock Text="NEW" FontSize="9" FontWeight="Bold" Foreground="White"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{x:Bind Message}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="18"/>
                                                 </StackPanel>
-                                                <TextBlock Text="{x:Bind Message}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="18"/>
-                                            </StackPanel>
 
-                                            <!-- Level Badge -->
-                                            <Border Grid.Column="2" BorderBrush="{x:Bind Level, Converter={StaticResource StatusToBrushConverter}}" BorderThickness="1" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="6" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,16,0">
-                                                <TextBlock Text="{x:Bind Level}" Foreground="{x:Bind Level, Converter={StaticResource StatusToBrushConverter}}" FontWeight="Bold" FontSize="10"/>
-                                            </Border>
+                                                <!-- Timestamp -->
+                                                <TextBlock Grid.Column="2" Text="{x:Bind CreatedAtFormatted}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="0,0,16,0"/>
 
-                                            <!-- Timestamp -->
-                                            <TextBlock Grid.Column="3" Text="{x:Bind CreatedAtFormatted}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                        </Grid>
+                                                <!-- Action: delete button -->
+                                                <Button Grid.Column="3" Click="OnDeleteSingleNotificationClick" DataContext="{x:Bind}" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="14" VerticalAlignment="Center">
+                                                    <FontIcon Glyph="&#xE711;" FontSize="11" Foreground="#FFEF4444"/>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
@@ -117,8 +148,8 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBox x:Name="SearchBox" PlaceholderText="Search logs by action or status..." TextChanged="OnSearchChanged" VerticalAlignment="Center"/>
-                            <ComboBox x:Name="ModuleFilter" Grid.Column="1" HorizontalAlignment="Stretch" Header="Filter by Module" SelectionChanged="OnFilterChanged" VerticalAlignment="Center">
+                            <TextBox x:Name="SearchBox" PlaceholderText="Search logs by action or status..." TextChanged="OnSearchChanged" VerticalAlignment="Center" Height="32"/>
+                            <ComboBox x:Name="ModuleFilter" Grid.Column="1" HorizontalAlignment="Stretch" Header="Filter by Module" SelectionChanged="OnFilterChanged" VerticalAlignment="Center" Height="32" CornerRadius="6">
                                 <ComboBoxItem Content="All Modules" IsSelected="True"/>
                                 <ComboBoxItem Content="Dashboard"/>
                                 <ComboBoxItem Content="Junk Cleaner"/>
@@ -132,9 +163,9 @@
                                 <ComboBoxItem Content="System Optimizer"/>
                                 <ComboBoxItem Content="Repair Tools"/>
                             </ComboBox>
-                            <Button Grid.Column="2" Content="Refresh" Click="OnRefreshClick" VerticalAlignment="Bottom"/>
-                            <Button Grid.Column="3" Content="Clear Logs" Click="OnClearOldLogsClick" Style="{ThemeResource DefaultButtonStyle}" VerticalAlignment="Bottom"/>
-                            <Button Grid.Column="4" Content="Export Logs" Click="OnExportLogsClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Bottom"/>
+                            <Button Grid.Column="2" Content="Refresh" Click="OnRefreshClick" VerticalAlignment="Bottom" Padding="14,5"/>
+                            <Button Grid.Column="3" Content="Clear Logs" Click="OnClearOldLogsClick" Style="{ThemeResource DefaultButtonStyle}" VerticalAlignment="Bottom" Padding="14,5"/>
+                            <Button Grid.Column="4" Content="Export Logs" Click="OnExportLogsClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Bottom" Padding="14,5"/>
                         </Grid>
                     </Border>
 

@@ -45,6 +45,7 @@ graph TD
         DiskPage[DiskPage.xaml]
         RegistryBackupPage[RegistryBackupPage.xaml]
         UpdaterPage[UpdaterPage.xaml]
+        NetworkPage[NetworkPage.xaml]
     end
 
     subgraph Logic [Lớp Điều Hướng & Quản Lý - ViewModel Layer]
@@ -53,6 +54,7 @@ graph TD
         DiskToolsVM[DiskToolsViewModel]
         RegistryVM[RegistryBackupViewModel]
         UpdaterVM[UpdaterViewModel]
+        NetworkVM[NetworkViewModel]
     end
 
     subgraph CoreEngine [Bộ Máy Xử Lý - Service & Engine Layer]
@@ -78,12 +80,14 @@ graph TD
     DiskPage <--> DiskToolsVM
     RegistryBackupPage <--> RegistryVM
     UpdaterPage <--> UpdaterVM
+    NetworkPage <--> NetworkVM
 
     DashboardVM --> AiDiagnostics
     JunkVM --> JunkCleaner
     DiskToolsVM --> DiskEngine
     RegistryVM --> RegistryBackup
     UpdaterVM --> SoftwareUpdater
+    NetworkVM --> NetEngine
 
     AiDiagnostics --> SqliteDB
     JunkCleaner --> WinAPI
@@ -91,6 +95,7 @@ graph TD
     RegistryBackup --> RegistryStore
     SoftwareUpdater --> SqliteDB
     SysOptimizer --> WinAPI
+    NetEngine --> WinAPI
 ```
 
 ---
@@ -111,7 +116,9 @@ graph TD
 * **Sao lưu & Khôi phục Registry (Registry & Backup):** Quét phát hiện các lỗi đường dẫn hỏng, tệp liên kết lỗi trong Registry và cung cấp công cụ sao lưu, khôi phục điểm khôi phục nhanh để phòng ngừa sự cố.
 
 ### 4. 🌐 Quản trị mạng (Network Center)
-* **Trình giám sát Adapter (Network Diagnostics):** Hiển thị chi tiết trạng thái hoạt động của card mạng LAN/Wi-Fi, đo đạc băng thông hiện thời, thời gian phản hồi ping và tỷ lệ mất gói tin (Packet Loss). Hỗ trợ giải phóng/làm mới IP và xóa bộ nhớ đệm DNS (Flush DNS) chỉ với 1 click.
+* **Giám sát thời gian thực:** Hiển thị chi tiết trạng thái card mạng LAN/Wi-Fi, đo đạc tốc độ tải xuống/tải lên tức thời thông qua biểu đồ trực quan (Real-time Network Traffic Graph).
+* **Danh sách Tiến trình sử dụng mạng:** Thống kê chi tiết các phần mềm và tiến trình đang chiếm dụng băng thông mạng nhiều nhất.
+* **Chẩn đoán mạng nhanh:** Đo đạc thời gian phản hồi ping, tỷ lệ mất gói tin (Packet Loss), hỗ trợ giải phóng/làm mới IP và xóa bộ nhớ đệm DNS (Flush DNS) chỉ với 1 click.
 
 ### 5. 🛡️ Bảo mật & Phân tích AI (Safety & AI Audits)
 * **Kiểm tra an toàn (Security & Privacy):** Giám sát trạng thái hoạt động của Windows Defender, tường lửa (Firewall), mức độ kiểm soát tài khoản người dùng UAC và thực hiện kiểm tra quyền truy cập cục bộ.
@@ -212,7 +219,7 @@ WinCare/
 
 Dự án được phân phối dưới giấy phép **MIT License**. Bạn hoàn toàn có thể tự do sao chép, sửa đổi, phân phối hoặc sử dụng cho mục đích thương mại với điều kiện giữ nguyên thông báo bản quyền gốc.
 
-Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng xem [Hướng dẫn đóng góp (CONTRIBUTING.md)](file:///d:/WinCare/CONTRIBUTING.md) và tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Lịch sử cập nhật (CHANGELOG.md)](file:///d:/WinCare/CHANGELOG.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.0.0.
+Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.2.0.
 
 ---
 <div align="center">

@@ -22,7 +22,6 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <!-- Stack navigation list and content vertically -->
                         <Setter Target="SidebarBorder.(Grid.Row)" Value="0" />
                         <Setter Target="SidebarBorder.(Grid.Column)" Value="0" />
                         <Setter Target="SidebarBorder.(Grid.RowSpan)" Value="1" />
@@ -30,7 +29,6 @@
                         <Setter Target="SidebarBorder.BorderThickness" Value="0,0,0,1" />
                         <Setter Target="SidebarBorder.Padding" Value="0,0,0,12" />
                         
-                        <!-- Rotate list view orientation to horizontal -->
                         <Setter Target="SettingsNavStackPanel.Orientation" Value="Horizontal" />
                         <Setter Target="SettingsNavList.ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
                         <Setter Target="SettingsNavList.ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
@@ -50,7 +48,7 @@
             <RowDefinition Height="*" x:Name="Row1" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220" x:Name="Col0" /> <!-- Secondary Sidebar -->
+            <ColumnDefinition Width="240" x:Name="Col0" /> <!-- Secondary Sidebar -->
             <ColumnDefinition Width="*" x:Name="Col1" />   <!-- Content Area -->
         </Grid.ColumnDefinitions>
 
@@ -62,12 +60,43 @@
                         <ItemsStackPanel x:Name="SettingsNavStackPanel" Orientation="Vertical" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
-                <ListViewItem Content="General Configuration" Height="40" Padding="8,0" CornerRadius="4"/>
-                <ListViewItem Content="Appearance &amp; Theme" Height="40" Padding="8,0" CornerRadius="4"/>
-                <ListViewItem Content="Auto Cleanup Scheduler" Height="40" Padding="8,0" CornerRadius="4"/>
-                <ListViewItem Content="Monitoring Options" Height="40" Padding="8,0" CornerRadius="4"/>
-                <ListViewItem Content="Safety &amp; Rollback" Height="40" Padding="8,0" CornerRadius="4"/>
-                <ListViewItem Content="Advanced Developer" Height="40" Padding="8,0" CornerRadius="4"/>
+                
+                <ListViewItem Height="40" Padding="8,0" CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE713;" FontSize="16" Width="20" Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="General Configuration" VerticalAlignment="Center" FontSize="13"/>
+                    </StackPanel>
+                </ListViewItem>
+                <ListViewItem Height="40" Padding="8,0" CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE790;" FontSize="16" Width="20" Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="Appearance &amp; Theme" VerticalAlignment="Center" FontSize="13"/>
+                    </StackPanel>
+                </ListViewItem>
+                <ListViewItem Height="40" Padding="8,0" CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE812;" FontSize="16" Width="20" Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="Auto Cleanup Scheduler" VerticalAlignment="Center" FontSize="13"/>
+                    </StackPanel>
+                </ListViewItem>
+                <ListViewItem Height="40" Padding="8,0" CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xEA8F;" FontSize="16" Width="20" Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="Monitoring &amp; Alert" VerticalAlignment="Center" FontSize="13"/>
+                    </StackPanel>
+                </ListViewItem>
+                <ListViewItem Height="40" Padding="8,0" CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE727;" FontSize="16" Width="20" Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="Safety &amp; Rollback" VerticalAlignment="Center" FontSize="13"/>
+                    </StackPanel>
+                </ListViewItem>
+                <ListViewItem Height="40" Padding="8,0" CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE7B4;" FontSize="16" Width="20" Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="Advanced Developer" VerticalAlignment="Center" FontSize="13"/>
+                    </StackPanel>
+                </ListViewItem>
             </ListView>
         </Border>
 
@@ -89,19 +118,24 @@
                             </StackPanel>
 
                             <ToggleSwitch x:Name="AutoScanToggle" Toggled="OnAutoScanToggled" Header="Launch WinCare Pro automatically upon OS startup" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch x:Name="AutoUpdateToggle" Toggled="OnSettingsChanged" Header="Check for updates automatically in the background" IsOn="True" CornerRadius="4" FontSize="12.5"/>
                             <ToggleSwitch x:Name="MinimizeToTrayToggle" Toggled="OnSettingsChanged" Header="Minimize application to System Tray instead of closing" IsOn="True" CornerRadius="4" FontSize="12.5"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Software Updates -->
+                    <!-- Update policy -->
                     <Border Style="{StaticResource ModernCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
-                            <TextBlock Text="Software Updates" FontSize="14" FontWeight="Bold" />
-                            <TextBlock Text="Check if there is a newer version of WinCare Pro available." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Text="Software Update Policies" FontSize="14" FontWeight="Bold" />
+                            <TextBlock Text="Configure version checking and background installation options." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                             
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <Button x:Name="CheckUpdatesBtn" Content="Check for Updates" Click="OnCheckUpdatesClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="6" Padding="12,6" FontWeight="Bold" />
+                            <ToggleSwitch x:Name="AutoUpdateToggle" Toggled="OnSettingsChanged" Header="Check for updates automatically in the background" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="AutoInstallUpdatesToggle" Toggled="OnSettingsChanged" Header="Auto download &amp; install updates silently (Requires background check)" IsOn="False" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="BetaUpdatesToggle" Toggled="OnSettingsChanged" Header="Enroll in the pre-release channel (Beta updates)" IsOn="False" CornerRadius="4" FontSize="12.5"/>
+
+                            <MenuFlyoutSeparator />
+
+                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
+                                <Button x:Name="CheckUpdatesBtn" Content="Check for Updates Now" Click="OnCheckUpdatesClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="6" Padding="12,6" FontWeight="Bold" />
                                 <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Width="20" Height="20" VerticalAlignment="Center" />
                                 <TextBlock x:Name="UpdateStatusLabel" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
                             </StackPanel>
@@ -110,11 +144,49 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="16">
-                        <StackPanel Spacing="12">
-                            <TextBlock Text="Local database logs size limit" FontSize="14" FontWeight="Bold" />
-                            <TextBlock Text="Clean log rows and diagnostic assessment reports stored in SQLite." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            <Button Content="Purge Diagnostics History Logs" Click="OnPurgeDatabaseClick" Foreground="#FFE81123" CornerRadius="6" Padding="12,5" FontWeight="Bold"/>
+                    <!-- Storage footprint manager -->
+                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Database &amp; Storage Footprint" FontSize="14" FontWeight="Bold" />
+                            <TextBlock Text="Clean log files, diagnostic assessment reports, and temporary installation caches." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            
+                            <!-- DB statistics cards -->
+                            <Grid ColumnSpacing="12" Margin="0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="12">
+                                    <StackPanel Spacing="2">
+                                        <TextBlock Text="Activity Logs" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock x:Name="LogsDbSizeLabel" Text="Calculating..." FontSize="13" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="12">
+                                    <StackPanel Spacing="2">
+                                        <TextBlock Text="Reports Files" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock x:Name="ReportsDbSizeLabel" Text="Calculating..." FontSize="13" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}" Padding="12">
+                                    <StackPanel Spacing="2">
+                                        <TextBlock Text="Updates Cache" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock x:Name="CacheDbSizeLabel" Text="Calculating..." FontSize="13" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <StackPanel Spacing="8" Margin="0,8,0,0">
+                                <CheckBox x:Name="PurgeLogsCheckbox" Content="Purge SQLite Activity History Logs" IsChecked="True" FontSize="12.5"/>
+                                <CheckBox x:Name="PurgeReportsCheckbox" Content="Wipe Saved Diagnostic Report Files" IsChecked="True" FontSize="12.5"/>
+                                <CheckBox x:Name="PurgeCacheCheckbox" Content="Clear Temporary Updates Installation Cache" IsChecked="True" FontSize="12.5"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+                                <Button Content="Purge Selected Storage" Click="OnPurgeDatabaseClick" Foreground="#FFE81123" CornerRadius="6" Padding="14,6" FontWeight="Bold"/>
+                                <ProgressRing x:Name="PurgeProgressRing" IsActive="False" Width="20" Height="20" VerticalAlignment="Center" />
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -125,21 +197,45 @@
                     
                     <Border Style="{StaticResource ModernCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
-                            <TextBlock Text="Application Color Mode" FontSize="13" FontWeight="Bold" />
-                            <StackPanel Orientation="Horizontal" Spacing="12">
-                                <Button Content="Light Mode" Click="OnLightModeClick"/>
-                                <Button Content="Dark Mode" Click="OnDarkModeClick"/>
-                            </StackPanel>
+                            <TextBlock Text="Application Color Theme Mode" FontSize="13" FontWeight="Bold" />
+                            
+                            <!-- Elegant segmented cards for theme selection -->
+                            <Grid ColumnSpacing="16" Margin="0,4,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <Border x:Name="LightThemeCard" Grid.Column="0" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="10" Padding="16" PointerPressed="OnLightModeCardClick" Style="{StaticResource QuickStatCardStyle}">
+                                    <StackPanel Orientation="Horizontal" Spacing="12">
+                                        <FontIcon Glyph="&#xE706;" FontSize="20" Foreground="#FFF59E0B" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Light Theme" FontWeight="Bold" FontSize="13" />
+                                            <TextBlock Text="Clean and bright interface" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                                
+                                <Border x:Name="DarkThemeCard" Grid.Column="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="10" Padding="16" PointerPressed="OnDarkModeCardClick" Style="{StaticResource QuickStatCardStyle}">
+                                    <StackPanel Orientation="Horizontal" Spacing="12">
+                                        <FontIcon Glyph="&#xE708;" FontSize="20" Foreground="#FF8B5CF6" />
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Dark Theme" FontWeight="Bold" FontSize="13" />
+                                            <TextBlock Text="Deep dark and elegant tones" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
 
                             <MenuFlyoutSeparator />
 
                             <TextBlock Text="Window Accent Colors Palette" FontSize="13" FontWeight="Bold" />
-                            <StackPanel Orientation="Horizontal" Spacing="8" x:Name="AccentSelectorPanel">
-                                <Ellipse x:Name="AccentDefault" Width="24" Height="24" Fill="#FF0078D4" PointerPressed="OnAccentClick" Tag="Default"/>
-                                <Ellipse x:Name="AccentGreen" Width="24" Height="24" Fill="#FF10B981" PointerPressed="OnAccentClick" Tag="Green"/>
-                                <Ellipse x:Name="AccentPurple" Width="24" Height="24" Fill="#FF8B5CF6" PointerPressed="OnAccentClick" Tag="Purple"/>
-                                <Ellipse x:Name="AccentPink" Width="24" Height="24" Fill="#FFEC4899" PointerPressed="OnAccentClick" Tag="Pink"/>
-                                <Ellipse x:Name="AccentAmber" Width="24" Height="24" Fill="#FFF59E0B" PointerPressed="OnAccentClick" Tag="Amber"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12" x:Name="AccentSelectorPanel">
+                                <Ellipse x:Name="AccentDefault" Width="28" Height="28" Fill="#FF7F56D9" PointerPressed="OnAccentClick" Tag="Default"/>
+                                <Ellipse x:Name="AccentGreen" Width="28" Height="28" Fill="#FF10B981" PointerPressed="OnAccentClick" Tag="Green"/>
+                                <Ellipse x:Name="AccentPurple" Width="28" Height="28" Fill="#FF8B5CF6" PointerPressed="OnAccentClick" Tag="Purple"/>
+                                <Ellipse x:Name="AccentPink" Width="28" Height="28" Fill="#FFEC4899" PointerPressed="OnAccentClick" Tag="Pink"/>
+                                <Ellipse x:Name="AccentAmber" Width="28" Height="28" Fill="#FFF59E0B" PointerPressed="OnAccentClick" Tag="Amber"/>
                             </StackPanel>
 
                             <MenuFlyoutSeparator />
@@ -161,8 +257,11 @@
                     <Border Style="{StaticResource ModernCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <StackPanel Spacing="6">
-                                <TextBlock Text="Automated Cleanup Trigger Size (GB)" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBox x:Name="AutoCleanupSizeTextBox" TextChanged="OnAutoCleanupSizeChanged" Text="5" Width="100" CornerRadius="4" HorizontalAlignment="Left"/>
+                                <Grid Width="300" HorizontalAlignment="Left">
+                                    <TextBlock Text="Automated Cleanup Trigger Size" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock x:Name="CleanupSizeLabel" Text="5.0 GB" FontSize="12.5" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Slider x:Name="AutoCleanupSlider" ValueChanged="OnAutoCleanupSliderChanged" Minimum="1" Maximum="50" Value="5" StepFrequency="0.5" Width="300" HorizontalAlignment="Left"/>
                             </StackPanel>
 
                             <ToggleSwitch x:Name="TriggerSmartBoostToggle" Toggled="OnSettingsChanged" Header="Trigger Smart Boost optimization if free RAM falls below 10%" IsOn="True" CornerRadius="4" FontSize="12.5"/>
@@ -179,12 +278,34 @@
                     </Border>
                 </StackPanel>
 
-                <!-- Section 4: Monitoring Variables -->
+                <!-- Section 4: Telemetry & Alert Policy -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 3), Mode=OneWay}">
-                    <TextBlock Text="Telemetry Diagnostics Options" FontSize="18" FontWeight="Bold" />
+                    <TextBlock Text="Telemetry &amp; Notifications Configuration" FontSize="18" FontWeight="Bold" />
                     
+                    <!-- Notification manager policies -->
                     <Border Style="{StaticResource ModernCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
+                            <TextBlock Text="Notification Center Policy" FontSize="14" FontWeight="Bold" />
+                            <ToggleSwitch x:Name="ShowNotificationsToggle" Toggled="OnSettingsChanged" Header="Show dynamic in-app Toast Notifications" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            
+                            <StackPanel Spacing="6">
+                                <Grid Width="300" HorizontalAlignment="Left">
+                                    <TextBlock Text="PC Health Rating Severity Trigger Limit" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock x:Name="NotificationThresholdLabel" Text="10%" FontSize="12.5" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Slider x:Name="NotificationThresholdSlider" ValueChanged="OnNotificationThresholdSliderChanged" Minimum="5" Maximum="30" Value="10" StepFrequency="1" Width="300" HorizontalAlignment="Left"/>
+                            </StackPanel>
+
+                            <ToggleSwitch x:Name="NotifyOnLowHealthToggle" Toggled="OnSettingsChanged" Header="Notify when system overall health score drops below threshold" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="NotifyOnMaintenanceToggle" Toggled="OnSettingsChanged" Header="Notify when system automated cleaners finish runs" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="ShowUpdateNotificationsToggle" Toggled="OnSettingsChanged" Header="Notify when newer packages updates are available" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="NotificationSoundToggle" Toggled="OnSettingsChanged" Header="Play subtle system audio alert upon notification arrival" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Sensors Telemetry" FontSize="14" FontWeight="Bold" />
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Sensors Telemetry Update Interval" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 <ComboBox x:Name="TelemetryIntervalComboBox" SelectionChanged="OnSettingsChanged" SelectedIndex="1" Width="120" CornerRadius="4">
@@ -249,10 +370,24 @@
                         </StackPanel>
                     </Border>
                     
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="16">
-                        <StackPanel Spacing="8">
-                            <TextBlock Text="System Software Diagnostics Trace" FontSize="14" FontWeight="Bold" />
-                            <Button Content="Show Diagnostics Log Viewer Modal" Click="OnShowTraceClick" CornerRadius="6" Padding="12,5"/>
+                    <!-- Advanced diagnostic logs pane -->
+                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Diagnostics Trace Log Reader" FontSize="14" FontWeight="Bold" />
+                            <TextBlock Text="Real-time application framework execution events." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <Grid ColumnSpacing="8" Margin="0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Content="All Logs" Click="OnFilterTraceAllClick" FontSize="11" Padding="12,4" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" />
+                                <Button Grid.Column="1" Content="Warnings" Click="OnFilterTraceWarnClick" FontSize="11" Padding="12,4"/>
+                                <Button Grid.Column="2" Content="Errors" Click="OnFilterTraceErrClick" FontSize="11" Padding="12,4"/>
+                                <Button Grid.Column="3" Content="Clear Console" Click="OnClearTraceClick" HorizontalAlignment="Right" FontSize="11" Padding="12,4"/>
+                            </Grid>
+                            <TextBox x:Name="TraceLogTextBox" Height="180" Style="{StaticResource DarkTerminalStyle}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>

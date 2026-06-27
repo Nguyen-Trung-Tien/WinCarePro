@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
+using WinCarePro.Models;
 
 namespace WinCarePro.Views;
 
@@ -44,6 +45,11 @@ public sealed partial class JunkPage : Page
         ViewModel.UpdateTotalSize();
     }
 
+    private void OnOpenFolderClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.OpenSelectedFolder();
+    }
+
     internal bool IsNot(bool val) => !val;
 
     internal bool CanClean(bool isCleaning, int count)
@@ -54,5 +60,20 @@ public sealed partial class JunkPage : Page
     internal bool GetProgressRingActive(bool scanning, bool cleaning)
     {
         return scanning || cleaning;
+    }
+
+    internal Visibility GetDetailVisibility(JunkCategory? selectedItem, bool scanning, bool cleaning)
+    {
+        return (selectedItem != null && !scanning && !cleaning) ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    internal Visibility GetProgressVisibility(bool scanning, bool cleaning)
+    {
+        return (scanning || cleaning) ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    internal Visibility GetEmptyVisibility(JunkCategory? selectedItem, bool scanning, bool cleaning)
+    {
+        return (selectedItem == null && !scanning && !cleaning) ? Visibility.Visible : Visibility.Collapsed;
     }
 }

@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Engines;
+using WinCarePro.Models;
 
 namespace WinCarePro.Services.Implementations;
 
@@ -70,4 +72,15 @@ public class NetworkService : INetworkService
     public Task<bool> ResetProxyAsync() => _engine.ResetProxyAsync();
 
     public Task<bool> RestartNetworkAdapterAsync() => _engine.RestartNetworkAdapterAsync();
+
+    public List<NetworkAdapterInfo> GetNetworkAdapters() => _engine.GetNetworkAdapters();
+
+    public Task<List<DnsServerInfo>> RunDnsBenchmarkAsync() => _engine.RunDnsBenchmarkAsync();
+
+    public Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp)
+    {
+        return _engine.ApplyDnsSettingsAsync(dnsName, primaryIp, secondaryIp);
+    }
+
+    public List<ActiveConnectionInfo> GetActiveConnections() => _engine.GetActiveConnections();
 }

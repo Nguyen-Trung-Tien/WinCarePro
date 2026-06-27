@@ -34,7 +34,7 @@
                 <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="20" Height="20" VerticalAlignment="Center" Stretch="Uniform"/>
                 <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                 <Border Background="#207F56D9" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
-                    <TextBlock Text="v3.1.0" FontSize="10" FontWeight="Bold" Foreground="#FF7F56D9" VerticalAlignment="Center"/>
+                    <TextBlock Text="v3.2.0" FontSize="10" FontWeight="Bold" Foreground="#FF7F56D9" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
@@ -78,6 +78,19 @@
 
         <!-- Main Frame -->
         <Frame x:Name="RootFrame" Grid.Row="1" />
+
+        <!-- Dynamic Toast Notification Container -->
+        <ScrollViewer Grid.Row="0" Grid.RowSpan="2"
+                      VerticalAlignment="Bottom"
+                      HorizontalAlignment="Right"
+                      Margin="0,0,24,24"
+                      VerticalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Width="360"
+                      MaxHeight="500"
+                      Canvas.ZIndex="2000">
+            <StackPanel x:Name="ToastContainer" Spacing="10" VerticalAlignment="Bottom" />
+        </ScrollViewer>
 
         <!-- Exit Overlay Grid (Premium Glassmorphism Backdrop) -->
         <Grid x:Name="ExitOverlayGrid" Grid.Row="0" Grid.RowSpan="2" Background="#EB0A0A0C" Visibility="Collapsed" Canvas.ZIndex="1000" Opacity="0">

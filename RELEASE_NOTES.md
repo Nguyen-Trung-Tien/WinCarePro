@@ -70,5 +70,5 @@ Bản cập nhật **v3.3.0** đánh dấu một cột mốc quan trọng, hoàn
 
 ---
 <div align="center">
-  <sub>Bản quyền phát hành thuộc về <b>Nguyễn Trung Tiên</b></sub>
+  <sub>Bản quyền phát hành thuộc về <b>Nguyễn Trung Tiến</b></sub>
 </div>

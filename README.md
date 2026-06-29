@@ -232,5 +232,5 @@ Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát
 
 ---
 <div align="center">
-  <sub>Được phát triển và thiết kế bởi <b>Nguyễn Trung Tiên</b></sub>
+  <sub>Được phát triển và thiết kế bởi <b>Nguyễn Trung Tiến</b></sub>
 </div>

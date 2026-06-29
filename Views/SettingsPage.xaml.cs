@@ -647,15 +647,6 @@ public sealed partial class SettingsPage : Page
 
         try
         {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
-            
-            using var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
-            response.EnsureSuccessStatusCode();
-
-            long? totalBytes = response.Content.Headers.ContentLength;
-            using var contentStream = await response.Content.ReadAsStreamAsync();
-            
             string tempFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");
             if (!Directory.Exists(tempFolder))
             {
@@ -663,28 +654,56 @@ public sealed partial class SettingsPage : Page
             }
             string setupFilePath = Path.Combine(tempFolder, "WinCarePro_Setup.exe");
 
-            using var fileStream = new FileStream(setupFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
-            var buffer = new byte[8192];
-            long totalRead = 0;
-            int read;
-            
-            while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            if (downloadUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || downloadUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
             {
-                await fileStream.WriteAsync(buffer, 0, read);
-                totalRead += read;
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
                 
-                if (totalBytes.HasValue)
+                using var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+                long? totalBytes = response.Content.Headers.ContentLength;
+                using var contentStream = await response.Content.ReadAsStreamAsync();
+                using var fileStream = new FileStream(setupFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+                var buffer = new byte[8192];
+                long totalRead = 0;
+                int read;
+                
+                while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
-                    double progress = (double)totalRead / totalBytes.Value * 100.0;
+                    await fileStream.WriteAsync(buffer, 0, read);
+                    totalRead += read;
+                    
+                    if (totalBytes.HasValue)
+                    {
+                        double progress = (double)totalRead / totalBytes.Value * 100.0;
+                        DispatcherQueue.TryEnqueue(() =>
+                        {
+                            UpdateProgressBar.Value = progress;
+                            UpdateStatusLabel.Text = string.Format("Downloading update... {0}%".T(), progress.ToString("F0"));
+                        });
+                    }
+                }
+                fileStream.Close();
+            }
+            else
+            {
+                // Local file fallback for development testing
+                string localPath = downloadUrl.Replace("file:///", "").Replace("file://", "").Replace("/", "\\");
+                if (File.Exists(localPath))
+                {
+                    await Task.Run(() => File.Copy(localPath, setupFilePath, true));
                     DispatcherQueue.TryEnqueue(() =>
                     {
-                        UpdateProgressBar.Value = progress;
-                        UpdateStatusLabel.Text = string.Format("Downloading update... {0}%".T(), progress.ToString("F0"));
+                        UpdateProgressBar.Value = 100;
+                        UpdateStatusLabel.Text = "Copying local update... 100%".T();
                     });
                 }
+                else
+                {
+                    throw new FileNotFoundException("Local update file not found: " + localPath);
+                }
             }
-            
-            fileStream.Close();
 
             // System restore point policy check
             try

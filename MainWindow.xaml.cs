@@ -107,18 +107,20 @@ public sealed partial class MainWindow : Window
         // Load current configurations
         LoadThemeConfiguration();
 
-        // Keyboard Accelerator for Ctrl + F to focus search
-        var ctrlF = new Microsoft.UI.Xaml.Input.KeyboardAccelerator
+        // Manual preview key handler for Ctrl + F to focus search, avoiding WinUI 3 KeyboardAccelerator tooltip bugs and accidental triggers
+        this.Content.PreviewKeyDown += (s, e) =>
         {
-            Key = Windows.System.VirtualKey.F,
-            Modifiers = Windows.System.VirtualKeyModifiers.Control
+            if (e.Key == Windows.System.VirtualKey.F)
+            {
+                var ctrlState = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control);
+                bool isCtrlDown = (ctrlState & Windows.UI.Core.CoreVirtualKeyStates.Down) == Windows.UI.Core.CoreVirtualKeyStates.Down;
+                if (isCtrlDown)
+                {
+                    SearchBox.Focus(FocusState.Programmatic);
+                    e.Handled = true;
+                }
+            }
         };
-        ctrlF.Invoked += (s, e) =>
-        {
-            SearchBox.Focus(FocusState.Programmatic);
-            e.Handled = true;
-        };
-        this.Content.KeyboardAccelerators.Add(ctrlF);
 
         this.AppWindow.Closing += AppWindow_Closing;
         this.Closed += MainWindow_Closed;

@@ -34,6 +34,11 @@ public class JunkCleanerEngine
     private const uint SHERB_NOPROGRESSUI = 0x00000002;
     private const uint SHERB_NOSOUND = 0x00000004;
 
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern bool MoveFileEx(string lpExistingFileName, string? lpNewFileName, uint dwFlags);
+
+    private const uint MOVEFILE_DELAY_UNTIL_REBOOT = 0x00000004;
+
     private static string FormatSize(long bytes)
     {
         string[] suffix = { "B", "KB", "MB", "GB", "TB" };
@@ -47,15 +52,44 @@ public class JunkCleanerEngine
         return $"{doubleBytes:F1} {suffix[i]}";
     }
 
-    private (long bytes, int count, List<JunkFileItem> files) GetDirectoryDetails(string path, string searchPattern = "*", bool recursive = true)
+    private static bool IsFileLocked(string filePath)
+    {
+        if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) return false;
+        try
+        {
+            var info = new FileInfo(filePath);
+            var access = info.IsReadOnly ? FileAccess.Read : FileAccess.ReadWrite;
+            using (var stream = new FileStream(filePath, FileMode.Open, access, FileShare.None))
+            {
+                stream.Close();
+            }
+        }
+        catch (IOException)
+        {
+            return true;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return true;
+        }
+        catch
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private (long bytes, long cleanableBytes, long lockedBytes, int count, List<JunkFileItem> files) GetDirectoryDetails(string path, string searchPattern = "*", bool recursive = true)
     {
         long bytes = 0;
+        long cleanableBytes = 0;
+        long lockedBytes = 0;
         int count = 0;
         var fileItems = new List<JunkFileItem>();
 
         try
         {
-            if (!Directory.Exists(path)) return (0, 0, fileItems);
+            if (!Directory.Exists(path)) return (0, 0, 0, 0, fileItems);
 
             string[] files = Array.Empty<string>();
             try
@@ -70,9 +104,12 @@ public class JunkCleanerEngine
                 {
                     var info = new FileInfo(file);
                     long size = info.Length;
+                    bool isLocked = IsFileLocked(file);
                     bytes += size;
+                    if (isLocked) lockedBytes += size;
+                    else cleanableBytes += size;
                     count++;
-                    fileItems.Add(new JunkFileItem { Path = file, SizeBytes = size });
+                    fileItems.Add(new JunkFileItem { Path = file, SizeBytes = size, IsLocked = isLocked });
                 }
                 catch { }
             }
@@ -88,8 +125,20 @@ public class JunkCleanerEngine
 
                 foreach (var dir in dirs)
                 {
-                    var (subBytes, subCount, subFiles) = GetDirectoryDetails(dir, searchPattern, recursive);
+                    try
+                    {
+                        var dirInfo = new DirectoryInfo(dir);
+                        if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
+                        {
+                            continue;
+                        }
+                    }
+                    catch { }
+
+                    var (subBytes, subCleanable, subLocked, subCount, subFiles) = GetDirectoryDetails(dir, searchPattern, recursive);
                     bytes += subBytes;
+                    cleanableBytes += subCleanable;
+                    lockedBytes += subLocked;
                     count += subCount;
                     fileItems.AddRange(subFiles);
                 }
@@ -97,12 +146,14 @@ public class JunkCleanerEngine
         }
         catch { }
 
-        return (bytes, count, fileItems);
+        return (bytes, cleanableBytes, lockedBytes, count, fileItems);
     }
 
     private JunkCategory ScanPaths(IEnumerable<string> paths, string name, string description, JunkType type, string iconGlyph, string iconColor, string primaryFolder, string searchPattern = "*", bool recursive = true)
     {
         long bytes = 0;
+        long cleanableBytes = 0;
+        long lockedBytes = 0;
         int count = 0;
         var allFiles = new List<JunkFileItem>();
 
@@ -110,8 +161,10 @@ public class JunkCleanerEngine
         {
             if (Directory.Exists(path))
             {
-                var (totalBytes, totalCount, files) = GetDirectoryDetails(path, searchPattern, recursive);
+                var (totalBytes, totalCleanable, totalLocked, totalCount, files) = GetDirectoryDetails(path, searchPattern, recursive);
                 bytes += totalBytes;
+                cleanableBytes += totalCleanable;
+                lockedBytes += totalLocked;
                 count += totalCount;
                 allFiles.AddRange(files);
             }
@@ -120,9 +173,13 @@ public class JunkCleanerEngine
                 try
                 {
                     var info = new FileInfo(path);
-                    bytes += info.Length;
+                    long size = info.Length;
+                    bool isLocked = IsFileLocked(path);
+                    bytes += size;
+                    if (isLocked) lockedBytes += size;
+                    else cleanableBytes += size;
                     count++;
-                    allFiles.Add(new JunkFileItem { Path = path, SizeBytes = info.Length });
+                    allFiles.Add(new JunkFileItem { Path = path, SizeBytes = size, IsLocked = isLocked });
                 }
                 catch { }
             }
@@ -134,6 +191,8 @@ public class JunkCleanerEngine
             Description = Services.TranslationManager.Instance.T(description),
             Type = type,
             SizeBytes = bytes,
+            CleanableBytes = cleanableBytes,
+            LockedBytes = lockedBytes,
             FileCount = count,
             IsSelected = true,
             IconGlyph = iconGlyph,
@@ -243,8 +302,10 @@ public class JunkCleanerEngine
             {
                 try
                 {
-                    var (iconBytes, iconCount, iconFiles) = GetDirectoryDetails(explorerFolder, "iconcache_*.db", false);
+                    var (iconBytes, iconCleanable, iconLocked, iconCount, iconFiles) = GetDirectoryDetails(explorerFolder, "iconcache_*.db", false);
                     thumbCat.SizeBytes += iconBytes;
+                    thumbCat.CleanableBytes += iconCleanable;
+                    thumbCat.LockedBytes += iconLocked;
                     thumbCat.FileCount += iconCount;
                     thumbCat.TopFiles.AddRange(iconFiles);
                     thumbCat.TopFiles = thumbCat.TopFiles.OrderByDescending(f => f.SizeBytes).Take(50).ToList();
@@ -367,6 +428,7 @@ public class JunkCleanerEngine
                 }
 
                 totalCleanedBytes += cleaned;
+                Log($"Cleaned {cat.Name}: Reclaimed {FormatSize(cleaned)}");
                 currentProgress += increment;
                 ProgressChanged?.Invoke((int)currentProgress);
             }
@@ -392,13 +454,20 @@ public class JunkCleanerEngine
                 {
                     var info = new FileInfo(file);
                     long size = info.Length;
+                    if (info.IsReadOnly)
+                    {
+                        info.IsReadOnly = false;
+                    }
                     File.Delete(file);
                     bytesDeleted += size;
-                    Log($"Deleted file: {Path.GetFileName(file)} ({FormatSize(size)})");
                 }
                 catch
                 {
-                    Log($"Skipped locked file: {Path.GetFileName(file)}");
+                    try
+                    {
+                        MoveFileEx(file, null, MOVEFILE_DELAY_UNTIL_REBOOT);
+                    }
+                    catch { }
                 }
             }
         }
@@ -409,6 +478,18 @@ public class JunkCleanerEngine
         {
             foreach (var dir in Directory.GetDirectories(path))
             {
+                try
+                {
+                    var dirInfo = new DirectoryInfo(dir);
+                    if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
+                    {
+                        Directory.Delete(dir, false);
+                        Log($"Deleted directory link: {Path.GetFileName(dir)}");
+                        continue;
+                    }
+                }
+                catch { }
+
                 bytesDeleted += ClearDirectoryRecursively(dir);
                 try
                 {
@@ -442,13 +523,20 @@ public class JunkCleanerEngine
                     {
                         var info = new FileInfo(file);
                         long size = info.Length;
+                        if (info.IsReadOnly)
+                        {
+                            info.IsReadOnly = false;
+                        }
                         File.Delete(file);
                         bytesDeleted += size;
-                        Log($"Deleted file: {Path.GetFileName(file)} ({FormatSize(size)})");
                     }
                     catch
                     {
-                        Log($"Skipped locked file: {Path.GetFileName(file)}");
+                        try
+                        {
+                            MoveFileEx(file, null, MOVEFILE_DELAY_UNTIL_REBOOT);
+                        }
+                        catch { }
                     }
                 }
             }
@@ -505,6 +593,8 @@ public class JunkCleanerEngine
             Description = Services.TranslationManager.Instance.T("Deleted files stored in your Recycle Bin."),
             Type = JunkType.RecycleBin,
             SizeBytes = size,
+            CleanableBytes = size,
+            LockedBytes = 0,
             FileCount = (int)count,
             IsSelected = true,
             IconGlyph = "\uEB7E",

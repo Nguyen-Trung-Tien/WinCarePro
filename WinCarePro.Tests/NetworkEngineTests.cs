@@ -14,11 +14,12 @@ public class NetworkEngineTests
     {
         // Act
         // We use a small count (e.g. 2) to keep the test execution fast.
-        var (packetLoss, avgLatency) = await _engine.AnalyzePingQualityAsync(target: "127.0.0.1", count: 2);
+        var (packetLoss, avgLatency, jitter) = await _engine.AnalyzePingQualityAsync(target: "127.0.0.1", count: 2);
 
         // Assert
         Assert.True(packetLoss >= 0.0 && packetLoss <= 100.0, $"Packet loss ({packetLoss}%) out of range [0, 100]");
         Assert.True(avgLatency >= 0.0, $"Average latency ({avgLatency} ms) must be non-negative");
+        Assert.True(jitter >= 0.0, $"Jitter ({jitter} ms) must be non-negative");
     }
 
     [Fact]

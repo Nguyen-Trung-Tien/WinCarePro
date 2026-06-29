@@ -86,6 +86,7 @@
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="14" />
                 <Setter Property="Padding" Value="16,14" />
+                <Setter Property="MinHeight" Value="68" />
             </Style>
 
             <!-- v3.0 Nova — Status Badge Styles -->

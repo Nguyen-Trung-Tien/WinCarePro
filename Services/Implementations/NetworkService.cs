@@ -29,7 +29,7 @@ public class NetworkService : INetworkService
 
     public (bool ipv4, bool ipv6) CheckIpStatus() => _engine.CheckIpStatus();
 
-    public Task<(double packetLossPercent, double avgLatencyMs)> AnalyzePingQualityAsync(string target = "8.8.8.8", int count = 5)
+    public Task<(double packetLossPercent, double avgLatencyMs, double jitterMs)> AnalyzePingQualityAsync(string target = "8.8.8.8", int count = 5)
     {
         return _engine.AnalyzePingQualityAsync(target, count);
     }
@@ -54,9 +54,14 @@ public class NetworkService : INetworkService
         return _engine.RunPortScanAsync(host, ports);
     }
 
-    public Task<double> RunSpeedTestAsync()
+    public Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null)
     {
-        return _engine.RunSpeedTestAsync();
+        return _engine.RunSpeedTestAsync(progressCallback);
+    }
+
+    public Task<double> RunUploadSpeedTestAsync(Action<double, double>? progressCallback = null)
+    {
+        return _engine.RunUploadSpeedTestAsync(progressCallback);
     }
 
     public Task<bool> FlushDnsAsync() => _engine.FlushDnsAsync();
@@ -73,9 +78,15 @@ public class NetworkService : INetworkService
 
     public Task<bool> RestartNetworkAdapterAsync() => _engine.RestartNetworkAdapterAsync();
 
+    public Task<bool> ResetHostsFileAsync() => _engine.ResetHostsFileAsync();
+
+    public Task<bool> OptimizeTcpAutoTuningAsync() => _engine.OptimizeTcpAutoTuningAsync();
+
+    public Task<bool> DisableEnergyEfficientEthernetAsync() => _engine.DisableEnergyEfficientEthernetAsync();
+
     public List<NetworkAdapterInfo> GetNetworkAdapters() => _engine.GetNetworkAdapters();
 
-    public Task<List<DnsServerInfo>> RunDnsBenchmarkAsync() => _engine.RunDnsBenchmarkAsync();
+    public Task<List<DnsServerInfo>> RunDnsBenchmarkAsync(System.Threading.CancellationToken cancellationToken = default) => _engine.RunDnsBenchmarkAsync(cancellationToken);
 
     public Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp)
     {

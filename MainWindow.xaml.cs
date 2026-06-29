@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 
 using WinCarePro.Database;
 using WinCarePro.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro;
 
@@ -80,6 +81,21 @@ public sealed partial class MainWindow : Window
 
         // Custom window size (1400 x 900)
         this.AppWindow.Resize(new Windows.Graphics.SizeInt32(1400, 900));
+
+        // Set Window Icon programmatically
+        try
+        {
+            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "AppIcon.ico");
+            if (!File.Exists(iconPath))
+            {
+                iconPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AppIcon.ico");
+            }
+            if (File.Exists(iconPath))
+            {
+                this.AppWindow.SetIcon(iconPath);
+            }
+        }
+        catch { }
 
         // Subclass window to enforce minimum bounds (1280 x 800)
         SubclassWindow();
@@ -265,6 +281,14 @@ public sealed partial class MainWindow : Window
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
         CleanupTrayIcon();
+        try
+        {
+            if (RootFrame.Content is WinCarePro.Views.NetworkPage netPage)
+            {
+                netPage.ViewModel?.Cleanup();
+            }
+        }
+        catch { }
     }
 
     private void InitializeTrayIcon()
@@ -504,247 +528,100 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    public StackPanel ToastStackContainer => ToastContainer;
+
     public void ShowToastFromDb(string title, string message, string level)
     {
-        bool showNotifications = true;
-        bool playSound = true;
-        try
+        var severity = level.ToLower() switch
         {
-            string raw = DbManager.GetSettings();
-            if (!string.IsNullOrEmpty(raw))
-            {
-                using var doc = JsonDocument.Parse(raw);
-                var root = doc.RootElement;
-                if (root.TryGetProperty("ShowNotifications", out var showProp) && !showProp.GetBoolean())
-                {
-                    showNotifications = false;
-                }
-                if (root.TryGetProperty("NotificationSound", out var soundProp) && !soundProp.GetBoolean())
-                {
-                    playSound = false;
-                }
-                
-                // Specific notification type filters
-                if (level.Equals("Warning", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (title.Contains("Update") && root.TryGetProperty("ShowUpdateNotifications", out var upProp) && !upProp.GetBoolean())
-                        showNotifications = false;
-                    else if (root.TryGetProperty("NotifyOnLowHealth", out var lhProp) && !lhProp.GetBoolean())
-                        showNotifications = false;
-                }
-                else if (level.Equals("Info", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (root.TryGetProperty("NotifyOnMaintenance", out var maintProp) && !maintProp.GetBoolean())
-                        showNotifications = false;
-                }
-            }
-        }
-        catch { }
+            "warning" => Services.Contracts.NotificationSeverity.Warning,
+            "error" => Services.Contracts.NotificationSeverity.Error,
+            "critical" => Services.Contracts.NotificationSeverity.Critical,
+            "success" => Services.Contracts.NotificationSeverity.Success,
+            _ => Services.Contracts.NotificationSeverity.Info
+        };
 
-        if (showNotifications)
+        var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
+        if (notificationService != null)
         {
-            if (playSound)
-            {
-                try { MessageBeep(0); } catch { }
-            }
-            ShowToastNotification(title, message, level);
+            notificationService.EnqueueNotification(title, message, severity, actions: null, saveToDb: false);
         }
     }
 
     public void ShowToastNotification(string title, string message, string level, string targetPage = "")
     {
-        this.DispatcherQueue.TryEnqueue(() =>
+        var severity = level.ToLower() switch
         {
-            try
+            "warning" => Services.Contracts.NotificationSeverity.Warning,
+            "error" => Services.Contracts.NotificationSeverity.Error,
+            "critical" => Services.Contracts.NotificationSeverity.Critical,
+            "success" => Services.Contracts.NotificationSeverity.Success,
+            _ => Services.Contracts.NotificationSeverity.Info
+        };
+
+        List<Services.Contracts.NotificationAction>? actions = null;
+
+        // Context-aware actions
+        if (title.Contains("RAM", StringComparison.OrdinalIgnoreCase) || 
+            message.Contains("RAM", StringComparison.OrdinalIgnoreCase) || 
+            message.Contains("Memory", StringComparison.OrdinalIgnoreCase))
+        {
+            actions = new List<Services.Contracts.NotificationAction>
             {
-                var toastBorder = new Border
+                new Services.Contracts.NotificationAction
                 {
-                    Background = (Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"],
-                    BorderBrush = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"],
-                    BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(12),
-                    Padding = new Thickness(16, 12, 12, 12),
-                    Width = 340,
-                    Margin = new Thickness(0, 0, 0, 8),
-                    Opacity = 0
-                };
-
-                var toastGrid = new Grid();
-                toastGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(28) });
-                toastGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                toastGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
-
-                string glyph = "\uE946"; // Info
-                string hexColor = "#FF3B82F6"; // Blue
-                if (level.Equals("Warning", StringComparison.OrdinalIgnoreCase))
-                {
-                    glyph = "\uE7BA";
-                    hexColor = "#FFF59E0B"; // Amber
-                }
-                else if (level.Equals("Critical", StringComparison.OrdinalIgnoreCase))
-                {
-                    glyph = "\uEA39";
-                    hexColor = "#FFEF4444"; // Red
-                }
-                else if (level.Equals("Success", StringComparison.OrdinalIgnoreCase))
-                {
-                    glyph = "\uE73E";
-                    hexColor = "#FF10B981"; // Green
-                }
-
-                var statusBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 
-                    Convert.ToByte(hexColor.Substring(1, 2), 16), 
-                    Convert.ToByte(hexColor.Substring(3, 2), 16), 
-                    Convert.ToByte(hexColor.Substring(5, 2), 16)));
-
-                toastBorder.BorderBrush = statusBrush;
-                toastBorder.BorderThickness = new Thickness(4, 1, 1, 1);
-
-                var icon = new FontIcon
-                {
-                    Glyph = glyph,
-                    FontSize = 16,
-                    Foreground = statusBrush,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Margin = new Thickness(0, 2, 0, 0)
-                };
-                Grid.SetColumn(icon, 0);
-                toastGrid.Children.Add(icon);
-
-                var textStack = new StackPanel { Margin = new Thickness(8, 0, 8, 0), VerticalAlignment = VerticalAlignment.Center };
-                var titleBlock = new TextBlock { Text = title, FontWeight = Microsoft.UI.Text.FontWeights.Bold, FontSize = 12.5, TextWrapping = TextWrapping.Wrap };
-                var descBlock = new TextBlock { Text = message, FontSize = 11, Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"], TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 2, 0, 0) };
-                textStack.Children.Add(titleBlock);
-                textStack.Children.Add(descBlock);
-                Grid.SetColumn(textStack, 1);
-                toastGrid.Children.Add(textStack);
-
-                var closeBtn = new Button
-                {
-                    Style = (Style)Application.Current.Resources["DateTimeFlyoutCalendarButtonStyle"],
-                    Content = new FontIcon { Glyph = "\uE711", FontSize = 10, Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"] },
-                    Width = 24,
-                    Height = 24,
-                    CornerRadius = new CornerRadius(12),
-                    VerticalAlignment = VerticalAlignment.Top
-                };
-                Grid.SetColumn(closeBtn, 2);
-                toastGrid.Children.Add(closeBtn);
-
-                toastBorder.Child = toastGrid;
-
-                var trans = new TranslateTransform { X = 360 };
-                toastBorder.RenderTransform = trans;
-
-                var sb = new Storyboard();
-                var animX = new DoubleAnimation { From = 360, To = 0, Duration = TimeSpan.FromMilliseconds(300) };
-                var animOpacity = new DoubleAnimation { From = 0, To = 1, Duration = TimeSpan.FromMilliseconds(250) };
-
-                Storyboard.SetTarget(animX, toastBorder);
-                Storyboard.SetTargetProperty(animX, "(UIElement.RenderTransform).(TranslateTransform.X)");
-
-                Storyboard.SetTarget(animOpacity, toastBorder);
-                Storyboard.SetTargetProperty(animOpacity, "Opacity");
-
-                sb.Children.Add(animX);
-                sb.Children.Add(animOpacity);
-
-                toastBorder.PointerPressed += async (s, e) =>
-                {
-                    if (title.Contains("Update Ready") && !string.IsNullOrEmpty(_downloadedSetupPath) && File.Exists(_downloadedSetupPath))
+                    Label = "Optimize RAM".T(),
+                    Action = () =>
                     {
-                        try
+                        Task.Run(async () =>
                         {
-                            bool createRp = true;
-                            string rawSettings = DbManager.GetSettings();
-                            if (!string.IsNullOrEmpty(rawSettings))
+                            try
                             {
-                                using var setDoc = JsonDocument.Parse(rawSettings);
-                                if (setDoc.RootElement.TryGetProperty("CreateRestorePoint", out var rpProp))
+                                var optEngine = new Engines.SystemOptimizerEngine();
+                                await optEngine.OptimizeRamAsync();
+                                
+                                App.MainDispatcherQueue?.TryEnqueue(() =>
                                 {
-                                    createRp = rpProp.GetBoolean();
-                                }
+                                    DbManager.LogAction("Manual RAM optimization triggered from toast", "Smart Boost", "Success");
+                                    var service = App.Services.GetService<Services.Contracts.INotificationService>();
+                                    service?.ShowSuccess("RAM Cleaned".T(), "Memory has been successfully optimized.");
+                                });
                             }
-
-                            if (createRp)
-                            {
-                                var regEng = new Engines.RegistryBackupEngine();
-                                await Task.Run(() => regEng.CreateSystemRestorePoint("Before WinCare Pro Auto Update".T()));
-                            }
-
-                            Process.Start(new ProcessStartInfo
-                            {
-                                FileName = _downloadedSetupPath,
-                                Arguments = "/SILENT /SP- /NOICONS /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS",
-                                UseShellExecute = true
-                            });
-                            Application.Current.Exit();
-                        }
-                        catch { }
+                            catch { }
+                        });
                     }
-                    else
+                }
+            };
+        }
+        else if (title.Contains("Disk", StringComparison.OrdinalIgnoreCase) || 
+                 title.Contains("Junk", StringComparison.OrdinalIgnoreCase) || 
+                 message.Contains("junk", StringComparison.OrdinalIgnoreCase) ||
+                 message.Contains("files", StringComparison.OrdinalIgnoreCase))
+        {
+            actions = new List<Services.Contracts.NotificationAction>
+            {
+                new Services.Contracts.NotificationAction
+                {
+                    Label = "Clean Junk".T(),
+                    Action = () =>
                     {
-                        string pageTag = targetPage;
-                        if (string.IsNullOrEmpty(pageTag))
-                        {
-                            string lowerTitle = title.ToLower();
-                            if (lowerTitle.Contains("update") || lowerTitle.Contains("software") || lowerTitle.Contains("version"))
-                            {
-                                pageTag = "Updater";
-                            }
-                            else if (lowerTitle.Contains("notification") || lowerTitle.Contains("alert") || lowerTitle.Contains("clean") || lowerTitle.Contains("boost"))
-                            {
-                                pageTag = "notification";
-                            }
-                        }
-
-                        if (!string.IsNullOrEmpty(pageTag))
+                        App.MainDispatcherQueue?.TryEnqueue(() =>
                         {
                             if (RootFrame.Content is MainPage mp)
                             {
-                                mp.NavigateToPageExternal(pageTag);
+                                mp.NavigateToPageExternal("Junk");
                             }
-                        }
-                        DismissToast(toastBorder);
+                        });
                     }
-                };
+                }
+            };
+        }
 
-                closeBtn.Click += (s, e) => { DismissToast(toastBorder); };
-
-                ToastContainer.Children.Add(toastBorder);
-                sb.Begin();
-
-                Task.Delay(6000).ContinueWith(t =>
-                {
-                    this.DispatcherQueue.TryEnqueue(() => DismissToast(toastBorder));
-                });
-            }
-            catch { }
-        });
-    }
-
-    private void DismissToast(Border border)
-    {
-        if (!ToastContainer.Children.Contains(border)) return;
-
-        var sb = new Storyboard();
-        var animX = new DoubleAnimation { To = 360, Duration = TimeSpan.FromMilliseconds(250) };
-        var animOpacity = new DoubleAnimation { To = 0, Duration = TimeSpan.FromMilliseconds(200) };
-
-        Storyboard.SetTarget(animX, border);
-        Storyboard.SetTargetProperty(animX, "(UIElement.RenderTransform).(TranslateTransform.X)");
-
-        Storyboard.SetTarget(animOpacity, border);
-        Storyboard.SetTargetProperty(animOpacity, "Opacity");
-
-        sb.Children.Add(animX);
-        sb.Children.Add(animOpacity);
-        sb.Completed += (s, e) =>
+        var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
+        if (notificationService != null)
         {
-            ToastContainer.Children.Remove(border);
-        };
-        sb.Begin();
+            notificationService.EnqueueNotification(title, message, severity, actions, saveToDb: false);
+        }
     }
 
     public void ApplyAppTheme(bool dark)

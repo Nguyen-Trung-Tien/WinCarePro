@@ -146,7 +146,9 @@ public class SystemOptimizerEngine
             Id = "MenuShowDelay",
             Name = "Menu Hover Delay Speedup".T(),
             Description = "Reduces the wait time before menus expand on hover from 400ms to 50ms, making the Windows desktop interface feel much faster.".T(),
-            Category = "UI Responsiveness".T(),
+            Category = "Performance".T(),
+            IconGlyph = "\uE9D9",
+            RegistryPath = @"HKCU\Control Panel\Desktop -> MenuShowDelay",
             RecommendedValue = "50",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MenuShowDelay", "400")
         });
@@ -158,6 +160,8 @@ public class SystemOptimizerEngine
             Name = "Auto-Close Hung Tasks on Shutdown".T(),
             Description = "Automatically terminates frozen programs during shutdown/restart instead of displaying the standard prompt delay.".T(),
             Category = "Performance".T(),
+            IconGlyph = "\uE9D9",
+            RegistryPath = @"HKCU\Control Panel\Desktop -> AutoEndTasks",
             RecommendedValue = "1",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "AutoEndTasks", "0")
         });
@@ -169,6 +173,8 @@ public class SystemOptimizerEngine
             Name = "App Termination Shutdown Speedup".T(),
             Description = "Reduces wait time before terminating unresponsive apps during shutdown from 20 seconds to 2 seconds.".T(),
             Category = "Performance".T(),
+            IconGlyph = "\uE9D9",
+            RegistryPath = @"HKCU\Control Panel\Desktop -> WaitToKillAppTimeout",
             RecommendedValue = "2000",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "WaitToKillAppTimeout", "20000")
         });
@@ -179,7 +185,9 @@ public class SystemOptimizerEngine
             Id = "NtfsDisableLastAccessUpdate",
             Name = "Disable NTFS File Last Access Logs".T(),
             Description = "Disables updating the last-access timestamp on files. Reduces disk write cycles on SSDs, extending lifespan and speed.".T(),
-            Category = "Disk & SSD".T(),
+            Category = "System & Disk".T(),
+            IconGlyph = "\uE949",
+            RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Control\FileSystem -> NtfsDisableLastAccessUpdate",
             RecommendedValue = "1",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\FileSystem", "NtfsDisableLastAccessUpdate", "0")
         });
@@ -190,7 +198,9 @@ public class SystemOptimizerEngine
             Id = "NetworkThrottlingIndex",
             Name = "Disable Network Packet Throttling".T(),
             Description = "Disables default Windows network throttling for multimedia/gaming tasks, ensuring full network bandwidth usage.".T(),
-            Category = "Network Center".T(),
+            Category = "Performance".T(),
+            IconGlyph = "\uE9D9",
+            RegistryPath = @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile -> NetworkThrottlingIndex",
             RecommendedValue = "-1",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "NetworkThrottlingIndex", "10")
         });
@@ -202,8 +212,101 @@ public class SystemOptimizerEngine
             Name = "Prioritize Active UI Applications".T(),
             Description = "Allocates 100% CPU resource priority to active foreground applications and games, disabling default system service reservations.".T(),
             Category = "Performance".T(),
+            IconGlyph = "\uE9D9",
+            RegistryPath = @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile -> SystemResponsiveness",
             RecommendedValue = "0",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", "20")
+        });
+
+        // 7. Enable Windows Game Mode
+        list.Add(new SystemTweak
+        {
+            Id = "AllowAutoGameMode",
+            Name = "Enable Windows Game Mode".T(),
+            Description = "Enables Windows Game Mode to prioritize CPU, GPU, and RAM resources for gaming and suspend background updates.".T(),
+            Category = "Gaming & GPU".T(),
+            IconGlyph = "\uE7FC",
+            RegistryPath = @"HKCU\Software\Microsoft\GameBar -> AllowAutoGameMode",
+            RecommendedValue = "1",
+            CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Software\Microsoft\GameBar", "AllowAutoGameMode", "0")
+        });
+
+        // 8. Hardware Accelerated GPU Scheduling (HAGS)
+        list.Add(new SystemTweak
+        {
+            Id = "HwSchMode",
+            Name = "Enable Hardware Accelerated GPU Scheduling".T(),
+            Description = "Reduces graphic rendering latency and improves gaming performance by allowing direct GPU memory scheduling.".T(),
+            Category = "Gaming & GPU".T(),
+            IconGlyph = "\uE7F1",
+            RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers -> HwSchMode",
+            RecommendedValue = "2",
+            CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", "1")
+        });
+
+        // 9. Disable Telemetry & Diagnostic Data
+        list.Add(new SystemTweak
+        {
+            Id = "AllowTelemetry",
+            Name = "Disable Telemetry & Diagnostic Data".T(),
+            Description = "Disables background Windows telemetry data gathering, freeing CPU, memory, and network resources.".T(),
+            Category = "Privacy & Logs".T(),
+            IconGlyph = "\uE727",
+            RegistryPath = @"HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection -> AllowTelemetry",
+            RecommendedValue = "0",
+            CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\DataCollection", "AllowTelemetry", "1")
+        });
+
+        // 10. Disable Cortana Background Assistant
+        list.Add(new SystemTweak
+        {
+            Id = "AllowCortana",
+            Name = "Disable Cortana Background Assistant".T(),
+            Description = "Stops Cortana background assistant from running, freeing system memory and CPU cycles.".T(),
+            Category = "Privacy & Logs".T(),
+            IconGlyph = "\uE727",
+            RegistryPath = @"HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search -> AllowCortana",
+            RecommendedValue = "0",
+            CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCortana", "1")
+        });
+
+        // 11. Disable Windows Error Reporting
+        list.Add(new SystemTweak
+        {
+            Id = "WerDisabled",
+            Name = "Disable Windows Error Reporting".T(),
+            Description = "Disables sending error logs and reports to Microsoft, saving background resources and speed.".T(),
+            Category = "Privacy & Logs".T(),
+            IconGlyph = "\uE727",
+            RegistryPath = @"HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting -> Disabled",
+            RecommendedValue = "1",
+            CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", "0")
+        });
+
+        // 12. Disable Search Indexer Backoff
+        list.Add(new SystemTweak
+        {
+            Id = "DisableBackoff",
+            Name = "Disable Search Indexer Backoff".T(),
+            Description = "Prevents search indexing from slowing down or backing off when the system is in active use.".T(),
+            Category = "System & Disk".T(),
+            IconGlyph = "\uE949",
+            RegistryPath = @"HKLM\SOFTWARE\Microsoft\Windows\Windows Search -> DisableBackoff",
+            RecommendedValue = "1",
+            CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Search", "DisableBackoff", "0")
+        });
+
+        // 13. Optimize Window Animations
+        list.Add(new SystemTweak
+        {
+            Id = "MinAnimate",
+            Name = "Optimize Window Animations".T(),
+            Description = "Disables minimize and maximize window transition animations, making UI navigation feel instant.".T(),
+            Category = "Performance".T(),
+            IconGlyph = "\uE9D9",
+            RegistryPath = @"HKCU\Control Panel\Desktop\WindowMetrics -> MinAnimate",
+            RecommendedValue = "0",
+            CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop\WindowMetrics", "MinAnimate", "1")
         });
 
         // Determine IsOptimized states
@@ -277,6 +380,27 @@ public class SystemOptimizerEngine
                     case "SystemResponsiveness":
                         success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", 0, RegistryValueKind.DWord);
                         break;
+                    case "AllowAutoGameMode":
+                        success = SetRegistryValue(Registry.CurrentUser, @"Software\Microsoft\GameBar", "AllowAutoGameMode", 1, RegistryValueKind.DWord);
+                        break;
+                    case "HwSchMode":
+                        success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", 2, RegistryValueKind.DWord);
+                        break;
+                    case "AllowTelemetry":
+                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\DataCollection", "AllowTelemetry", 0, RegistryValueKind.DWord);
+                        break;
+                    case "AllowCortana":
+                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCortana", 0, RegistryValueKind.DWord);
+                        break;
+                    case "WerDisabled":
+                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", 1, RegistryValueKind.DWord);
+                        break;
+                    case "DisableBackoff":
+                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Search", "DisableBackoff", 1, RegistryValueKind.DWord);
+                        break;
+                    case "MinAnimate":
+                        success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MinAnimate", "0", RegistryValueKind.String);
+                        break;
                 }
 
                 if (success)
@@ -335,6 +459,34 @@ public class SystemOptimizerEngine
                     case "SystemResponsiveness":
                         success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", 20, RegistryValueKind.DWord);
                         tweak.CurrentValue = "20";
+                        break;
+                    case "AllowAutoGameMode":
+                        success = DeleteRegistryValue(Registry.CurrentUser, @"Software\Microsoft\GameBar", "AllowAutoGameMode");
+                        tweak.CurrentValue = "0";
+                        break;
+                    case "HwSchMode":
+                        success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", 1, RegistryValueKind.DWord);
+                        tweak.CurrentValue = "1";
+                        break;
+                    case "AllowTelemetry":
+                        success = DeleteRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\DataCollection", "AllowTelemetry");
+                        tweak.CurrentValue = "1";
+                        break;
+                    case "AllowCortana":
+                        success = DeleteRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCortana");
+                        tweak.CurrentValue = "1";
+                        break;
+                    case "WerDisabled":
+                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", 0, RegistryValueKind.DWord);
+                        tweak.CurrentValue = "0";
+                        break;
+                    case "DisableBackoff":
+                        success = DeleteRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Search", "DisableBackoff");
+                        tweak.CurrentValue = "0";
+                        break;
+                    case "MinAnimate":
+                        success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MinAnimate", "1", RegistryValueKind.String);
+                        tweak.CurrentValue = "1";
                         break;
                 }
 
@@ -450,5 +602,19 @@ public class SystemOptimizerEngine
         Log($"Cleaned {count} Delivery Optimization cache files. Freed {(bytesFreed / 1024.0 / 1024.0):F2} MB.");
         Database.DbManager.LogAction($"Cleaned Delivery Optimization Cache: freed {bytesFreed} bytes", "System Optimizer", "Success");
         return bytesFreed;
+    }
+
+    public (double totalGb, double availGb, double usedGb, double percentage) GetRamStatus()
+    {
+        var status = new MEMORYSTATUSEX();
+        if (GlobalMemoryStatusEx(ref status))
+        {
+            double total = status.ullTotalPhys / 1024.0 / 1024.0 / 1024.0;
+            double avail = status.ullAvailPhys / 1024.0 / 1024.0 / 1024.0;
+            double used = total - avail;
+            double pct = status.dwMemoryLoad;
+            return (total, avail, used, pct);
+        }
+        return (0, 0, 0, 0);
     }
 }

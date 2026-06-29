@@ -1,5 +1,5 @@
 {
-  "version": "3.2.0",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.2.0/WinCareProSetup.exe",
-  "changelog": "Nâng cấp toàn diện v3.2.0: Tối ưu hóa & Hiện đại hóa Trình dọn rác (Junk Cleaner) tích hợp biểu đồ dung lượng; Nâng cấp Bộ quét sửa lỗi Windows (System Repair) với chỉ số chi tiết và thanh tiến trình; Tối ưu hóa Trình quản lý mạng (Network Center) theo dõi băng thông thời gian thực; Cải tiến trang Software Update & Cài đặt hệ thống, sửa lỗi hiển thị thống kê App Uninstaller khi chuyển trang."
+  "version": "3.3.0",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.3.0/WinCareProSetup.exe",
+  "changelog": "Cập nhật v3.3.0: Nâng cấp và cải tiến toàn diện Hệ thống quản lý Driver (Driver Updater) tích hợp quy trình quét, tải xuống và cài đặt firmware Driver Wizard; Nâng cấp module Bảo mật & Quyền riêng tư (Security Center & Privacy Tuning) giám sát tường lửa, Defender và phân tích bảo mật hệ thống; Tinh chỉnh hiệu năng và tối ưu hóa giao diện người dùng theo chuẩn Fluent Design mới nhất; Sửa lỗi hiệu năng và tương thích trên Windows 11."
 }

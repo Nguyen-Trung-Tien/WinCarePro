@@ -13,12 +13,13 @@ public interface INetworkService
     bool CheckGatewayReachability();
     bool CheckDnsResolution();
     (bool ipv4, bool ipv6) CheckIpStatus();
-    Task<(double packetLossPercent, double avgLatencyMs)> AnalyzePingQualityAsync(string target = "8.8.8.8", int count = 5);
+    Task<(double packetLossPercent, double avgLatencyMs, double jitterMs)> AnalyzePingQualityAsync(string target = "8.8.8.8", int count = 5);
     Task RunPingTestAsync(string host, int count = 4);
     Task RunTracerouteAsync(string host, int maxHops = 30);
     Task RunDnsLookupAsync(string host);
     Task RunPortScanAsync(string host, int[] ports);
-    Task<double> RunSpeedTestAsync();
+    Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null);
+    Task<double> RunUploadSpeedTestAsync(Action<double, double>? progressCallback = null);
     Task<bool> FlushDnsAsync();
     Task<bool> ResetWinsockAsync();
     Task<bool> ResetTcpIpAsync();
@@ -26,8 +27,11 @@ public interface INetworkService
     Task<bool> ResetFirewallAsync();
     Task<bool> ResetProxyAsync();
     Task<bool> RestartNetworkAdapterAsync();
+    Task<bool> ResetHostsFileAsync();
+    Task<bool> OptimizeTcpAutoTuningAsync();
+    Task<bool> DisableEnergyEfficientEthernetAsync();
     List<NetworkAdapterInfo> GetNetworkAdapters();
-    Task<List<DnsServerInfo>> RunDnsBenchmarkAsync();
+    Task<List<DnsServerInfo>> RunDnsBenchmarkAsync(System.Threading.CancellationToken cancellationToken = default);
     Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp);
     List<ActiveConnectionInfo> GetActiveConnections();
 }

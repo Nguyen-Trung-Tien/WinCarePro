@@ -17,6 +17,7 @@ public sealed partial class NetworkPage : Page
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.Loaded += (s, e) => DataContext = ViewModel;
+        this.Unloaded += (s, e) => ViewModel.Cleanup();
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -114,4 +115,16 @@ public sealed partial class NetworkPage : Page
     internal string FormatMs(double val) => $"{val:F0} ms";
     internal string FormatPercent(double val) => $"{val:F1}%";
     internal string FormatMbps(double val) => $"{val:F1} Mbps";
+
+    internal string GetEstablishedCount(System.Collections.ObjectModel.ObservableCollection<ActiveConnectionInfo> connections)
+    {
+        if (connections == null) return "0";
+        return connections.Count(c => c.State != null && c.State.ToUpper() == "ESTABLISHED").ToString();
+    }
+
+    internal string GetListeningCount(System.Collections.ObjectModel.ObservableCollection<ActiveConnectionInfo> connections)
+    {
+        if (connections == null) return "0";
+        return connections.Count(c => c.State != null && (c.State.ToUpper() == "LISTENING" || c.State.ToUpper() == "LISTEN")).ToString();
+    }
 }

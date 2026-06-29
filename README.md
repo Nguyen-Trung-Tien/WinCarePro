@@ -9,7 +9,7 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/latest"><img src="https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=windows&logoColor=white" alt="Download WinCare Pro" /></a>
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.3.0/WinCareProSetup.exe"><img src="https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=windows&logoColor=white" alt="Download WinCare Pro" /></a>
   </p>
 
   <p align="center">
@@ -103,7 +103,7 @@ graph TD
 ## ✨ Các tính năng nổi bật
 
 ### 1. 🧹 Chăm sóc & Dọn dẹp (Care & Cleanup)
-* **Trình dọn rác nâng cao (Junk Cleaner):** Tự động phát hiện và xóa sạch an toàn các tệp tạm thời (Temp files), Nhật ký hệ thống (Log dumps), Bộ nhớ đệm trình duyệt (Browser cache) và các tệp cài đặt Windows Update đã lỗi thời.
+* **Trình dọn rác nâng cao (Junk Cleaner):** Tự động phát hiện và xóa sạch an toàn các tệp tạm thời (Temp files), Nhật ký hệ thống (Log dumps), Bộ nhớ đệm trình duyệt (Browser cache) và các tệp cài đặt Windows Update đã lỗi thời. Tích hợp biểu đồ hình tròn (Pie Chart) biểu diễn dung lượng trực quan.
 * **Sửa lỗi hệ thống (System Repair):** Tích hợp chuẩn đoán quét hệ thống nâng cao chạy trực tiếp các lệnh kiểm tra tệp tin hệ thống SFC (`sfc /scannow`) và công cụ sửa lỗi ổ đĩa/ảnh hệ thống DISM (`DISM.exe /Online /Cleanup-Image /RestoreHealth`).
 
 ### 2. ⚡ Tối ưu hiệu năng (Performance Tuning)
@@ -120,7 +120,16 @@ graph TD
 * **Danh sách Tiến trình sử dụng mạng:** Thống kê chi tiết các phần mềm và tiến trình đang chiếm dụng băng thông mạng nhiều nhất.
 * **Chẩn đoán mạng nhanh:** Đo đạc thời gian phản hồi ping, tỷ lệ mất gói tin (Packet Loss), hỗ trợ giải phóng/làm mới IP và xóa bộ nhớ đệm DNS (Flush DNS) chỉ với 1 click.
 
-### 5. 🛡️ Bảo mật & Phân tích AI (Safety & AI Audits)
+### 5. 🔌 Quản lý Driver (Driver Updater)
+* **Quét Driver phần cứng:** Tự động quét kiểm tra toàn bộ driver thiết bị, xác minh firmware phần cứng và tình trạng điều khiển của bo mạch chủ.
+* **Trình thuật sĩ Driver Wizard:** Quy trình 3 bước khép kín hỗ trợ chẩn đoán, tải gói cài đặt nhị phân, và cập nhật driver tự động một cách an toàn.
+
+### 6. 🚀 Trình gỡ ứng dụng nâng cao (App Uninstaller)
+* **Gỡ cài đặt hàng loạt (Batch Uninstall):** Chọn nhiều ứng dụng cùng lúc để tiến hành gỡ bỏ đồng thời, tối ưu thời gian thao tác.
+* **Gỡ cài đặt cưỡng bức (Force Uninstall):** Hỗ trợ gỡ bỏ hoàn toàn các ứng dụng Windows Store cứng đầu bằng PowerShell.
+* **Làm sạch tàn dư (Leftovers Purger):** Quét sâu toàn bộ thư mục hệ thống và Registry sau khi gỡ cài đặt để dọn dẹp các tệp tin và khóa registry tàn dư.
+
+### 7. 🛡️ Bảo mật & Phân tích AI (Safety & AI Audits)
 * **Kiểm tra an toàn (Security & Privacy):** Giám sát trạng thái hoạt động của Windows Defender, tường lửa (Firewall), mức độ kiểm soát tài khoản người dùng UAC và thực hiện kiểm tra quyền truy cập cục bộ.
 * **Chẩn đoán AI (AI Diagnostics):** Bộ máy phân tích thông minh tự động thu thập các chỉ số từ hệ thống, tính toán điểm số sức khỏe tổng quát (Composite Health Score từ 0 - 100) và đưa ra các đề xuất khắc phục cụ thể theo cấu trúc thời gian thực.
 * **Báo cáo chuyên nghiệp:** Hỗ trợ xuất nhật ký chẩn đoán ra tệp văn bản thô (.txt) hoặc cấu trúc dữ liệu JSON để phân tích sâu hơn.
@@ -219,7 +228,7 @@ WinCare/
 
 Dự án được phân phối dưới giấy phép **MIT License**. Bạn hoàn toàn có thể tự do sao chép, sửa đổi, phân phối hoặc sử dụng cho mục đích thương mại với điều kiện giữ nguyên thông báo bản quyền gốc.
 
-Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.2.0.
+Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.3.0.
 
 ---
 <div align="center">

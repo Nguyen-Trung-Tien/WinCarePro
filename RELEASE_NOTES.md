@@ -2,134 +2,73 @@
 
 ---
 
-## 🚀 WinCare Pro v3.2.0 — Nâng cấp toàn diện các tính năng cốt lõi (Core Engines & UI Modernization)
+## 🚀 WinCare Pro v3.3.0 — Nâng cấp toàn diện & Tối ưu hóa Hệ thống chuyên sâu
 
-> **Phát hành:** 27/06/2026 · **Loại:** Nâng cấp tính năng lớn (Major Feature Enhancement) · **Phiên bản trước:** v3.1.0
+> **Phát hành:** 29/06/2026 · **Loại:** Phiên bản nâng cấp lớn (Major Feature Upgrade) · **Phiên bản trước:** v3.2.0
 
-Bản cập nhật **v3.2.0** đánh dấu một bước tiến lớn với sự nâng cấp đồng bộ từ giao diện (UI) đến lõi xử lý (Engine) của các công cụ chính: Junk Cleaner, System Repair, Software Update và Network Center. Hệ thống cũng được tối ưu hóa khả năng chuyển dịch ngôn ngữ động, tinh chỉnh trang cài đặt và sửa triệt để lỗi thống kê số liệu của Trình gỡ cài đặt ứng dụng.
-
-### ✨ Các cải tiến nổi bật (Key Features)
-
-#### 1. 🧹 Tối ưu hóa & Hiện đại hóa Trình dọn rác (Junk Cleaner)
-* **Nâng cấp lõi quét (Junk Cleaner Engine):** Hỗ trợ thêm nhiều danh mục rác hệ thống sâu và chính xác hơn (System Temp, Windows Log, Memory Dumps, Delivery Optimization files, Thumbnail Cache).
-* **Giao diện Modernization:** Thiết kế hiện đại tích hợp biểu đồ hình tròn trực quan (Pie Chart) hiển thị chi tiết tỉ lệ dung lượng các loại rác chiếm dụng ổ đĩa.
-* **Hiệu ứng đồ họa mượt mà:** Thêm thanh tiến trình động trong quá trình quét/dọn dẹp và hiệu ứng chuyển đổi giữa các trạng thái.
-
-#### 2. 🛡️ Nâng cấp Bộ quét sửa lỗi Windows (System Repair)
-* **Lõi xử lý ổn định:** Nâng cấp System Engine để thực hiện quét và tự động sửa các lỗi hệ thống chuẩn xác hơn, hỗ trợ dọn dẹp các tệp tin lỗi hệ thống.
-* **Giao diện Trực quan:** Thiết kế UI mới chia rõ các giai đoạn quét (Chẩn đoán, Khắc phục, Hoàn tất), hiển thị thanh tiến trình phần trăm cụ thể và danh sách trạng thái chi tiết của từng thành phần hệ thống.
-
-#### 3. 🌐 Tối ưu hóa Trung tâm Quản lý mạng (Network Center)
-* **Giám sát thời gian thực (Real-time Network Monitoring):** Cải tiến Network Engine hỗ trợ đo đạc chính xác tốc độ tải xuống (Download) và tải lên (Upload) hiện thời của máy tính.
-* **Giao diện chuyên nghiệp:** Bổ sung biểu đồ đường (Line Chart) biểu diễn biến thiên băng thông mạng theo thời gian thực và danh sách các tiến trình đang chiếm dụng lưu lượng mạng nhiều nhất.
-
-#### 4. 🔄 Nâng cấp Trình cập nhật phần mềm (Software Update)
-* **Cơ chế phát hiện bản cập nhật thông minh:** Cải tiến công cụ Updater giúp tăng tốc độ kiểm tra các bản cập nhật mới cho WinCare Pro từ kho GitHub.
-* **Giao diện Updater hiện đại:** Tích hợp các nút hành động trực quan, hiển thị chi tiết tiến trình tải và cập nhật cùng với log thay đổi (Changelog) định dạng phong phú.
-
-#### 5. ⚙️ Cải tiến Cài đặt hệ thống & Quản lý thông báo (Settings & Notifications)
-* **Chuyển dịch ngôn ngữ động (Dynamic Translation):** Tối ưu hóa `TranslationManager` để chuyển đổi mượt mà giữa Tiếng Anh và Tiếng Việt toàn hệ thống mà không cần khởi động lại ứng dụng.
-* **Trang Cài đặt mới:** Bố cục dạng thẻ tinh tế, hỗ trợ thay đổi giao diện (Sáng/Tối/Mặc định hệ thống), cấu hình tần suất quét dọn tự động và quản lý thông báo linh hoạt.
-* **Trang Thông báo (Notifications):** Thiết kế hộp thoại thông báo hiện đại, phân loại theo mức độ quan trọng (Info, Warning, Error) giúp người dùng dễ dàng theo dõi lịch sử vận hành.
-
-#### 6. 🩹 Khắc phục lỗi (Bug Fixes & Stability)
-* **Sửa lỗi App Uninstaller:** Khắc phục triệt để lỗi chỉ số thống kê (Quick Stats) bị reset về 0 hoặc không hiển thị thông tin khi người dùng chuyển trang hoặc load lại ứng dụng lần thứ hai.
-* **Tối ưu hóa tài nguyên:** Giảm thiểu CPU & Memory footprint khi chạy nền các tác vụ giám sát hệ thống và mạng.
+Bản cập nhật **v3.3.0** đánh dấu một cột mốc quan trọng, hoàn thiện bộ công cụ bảo trì hệ thống toàn diện của **WinCare Pro** với sự nâng cấp mạnh mẽ từ lõi xử lý đến giao diện trực quan Fluent Design. Chúng tôi tập trung cải thiện trải nghiệm người dùng, mở rộng các chức năng chẩn đoán thông minh, dọn dẹp chuyên sâu, và tối ưu hóa hiệu năng hệ thống tuyệt đối.
 
 ---
 
-## 🚀 WinCare Pro v3.1.0 — Nâng cấp trình gỡ cài đặt ứng dụng (App Uninstaller Upgrade)
+### ✨ Các cải tiến nổi bật trong phiên bản v3.3.0 (Key Features)
 
-> **Phát hành:** 27/06/2026 · **Loại:** Nâng cấp tính năng (Feature Enhancement) · **Phiên bản trước:** v3.0.1
+#### 1. 🧹 Trình Dọn Rác Hệ Thống Chuyên Sâu (Junk Cleaner)
+* **Lõi quét cải tiến:** Hỗ trợ quét và dọn dẹp an toàn các tệp tin tạm (System Temp), Nhật ký hệ thống (Windows Log), tệp lỗi bộ nhớ (Memory Dumps), bộ nhớ đệm tối ưu hóa phân phối (Delivery Optimization files) và bộ nhớ đệm hình ảnh (Thumbnail Cache).
+* **Biểu đồ dung lượng trực quan:** Tích hợp biểu đồ hình tròn (Pie Chart) hiển thị tỉ lệ phần trăm dung lượng của từng loại rác trên ổ đĩa.
+* **Hiệu ứng mượt mà:** Bổ sung thanh tiến trình động và hiệu ứng chuyển đổi mượt mà giữa các trạng thái quét và dọn dẹp.
 
-Bản cập nhật **v3.1.0** mang đến giao diện thiết kế mới hiện đại theo phong cách Master-Detail trực quan, bổ sung các chức năng gỡ cài đặt hàng loạt (Batch Uninstall), gỡ cài đặt cưỡng bức (Force Uninstall) cho cả ứng dụng Desktop truyền thống lẫn Windows Store, quét sâu để phát hiện và làm sạch các tệp tin/registry tàn dư sau khi gỡ bỏ ứng dụng.
+#### 2. 🔌 Trình Quản Lý & Cập Nhật Driver (Driver Updater & Wizard)
+* **Quét Driver phần cứng:** Tự động phát hiện phiên bản driver của các thiết bị phần cứng, firmware hệ thống và thông tin bộ điều khiển bo mạch chủ (Motherboard controllers).
+* **Driver Wizard chuyên nghiệp:** Quy trình 3 bước khép kín (Quét firmware phần cứng, tải xuống gói cài đặt nhị phân, và tự động triển khai nâng cấp) giúp việc cập nhật driver an toàn và dễ dàng hơn bao giờ hết.
 
-### ✨ Các cải tiến nổi bật (Key Features)
+#### 3. 🛡️ Trung Tâm Bảo Mật & Quyền Riêng Tư (Security Center & Privacy Tuning)
+* **Giám sát trạng thái an toàn:** Kiểm tra thời gian thực trạng thái bảo vệ của Windows Defender, Tường lửa (Firewall), và cấp độ kiểm soát tài khoản người dùng UAC.
+* **Cấu hình bảo mật nâng cao:** Hỗ trợ tinh chỉnh các quyền riêng tư hệ thống để ngăn chặn rò rỉ thông tin cá nhân và tối ưu hóa bảo mật cục bộ.
 
-#### 1. Giao diện Master-Detail hiện đại và trực quan hơn
-* Bổ sung **4 thẻ thống kê nhanh (Quick Stats)** ở phía trên cùng: Tổng số ứng dụng, Số ứng dụng Desktop, Số ứng dụng Windows Store, Tổng dung lượng ổ đĩa bị chiếm dụng.
-* Thiết kế Master-Detail giúp tối ưu hóa không gian hiển thị: danh sách ứng dụng hiển thị ngắn gọn ở cột trái, bảng thông tin chi tiết (specifications) hiển thị ở cột phải khi chọn ứng dụng.
-* Bổ sung nhãn phân loại (badges) rõ ràng giữa **Desktop App** và **Store App**.
-* Tích hợp bộ lọc phân loại ứng dụng nhanh chóng (Tất cả, Desktop, Windows Store) và chức năng sắp xếp nâng cao (theo tên A-Z/Z-A, theo dung lượng, hoặc theo ngày cài đặt).
+#### 4. 🚀 Trình Gỡ Ứng Dụng Nâng Cao (App Uninstaller)
+* **Gỡ cài đặt hàng loạt (Batch Uninstall):** Hỗ trợ chọn nhiều ứng dụng để thực hiện gỡ cài đặt đồng thời, tiết kiệm thời gian.
+* **Gỡ cài đặt cưỡng bức (Force Uninstall):** Gỡ bỏ triệt để các ứng dụng Windows Store cứng đầu bằng các lệnh PowerShell nâng cao.
+* **Làm sạch tàn dư (Leftovers Purger):** Tự động tìm kiếm và xóa sạch các thư mục rác trong `ProgramFiles`, `AppData`, `ProgramData` và các khóa Registry hỏng sau khi gỡ cài đặt phần mềm.
 
-#### 2. Tính năng Gỡ cài đặt nâng cao và Xử lý tàn dư (Leftovers Scanner)
-* **Gỡ cài đặt hàng loạt (Batch Uninstall):** Hỗ trợ chọn hộp kiểm (checkbox) cạnh các ứng dụng và thực hiện gỡ cài đặt đồng thời thông qua thanh công cụ nổi (floating action bar) ở phía dưới cùng.
-* **Gỡ cài đặt cưỡng bức (Force Uninstall):** Hỗ trợ gỡ bỏ triệt để các ứng dụng Windows Store không có trình gỡ cài đặt mặc định thông qua các câu lệnh PowerShell nâng cao.
-* **Mở thư mục cài đặt & Registry:** Tích hợp nút chức năng mở trực tiếp thư mục cài đặt của ứng dụng trong Explorer, hoặc mở đường dẫn khóa registry của ứng dụng trong Regedit.
-* **Tìm kiếm trực tuyến (Search Online):** Tích hợp nút tìm kiếm nhanh các thông tin gỡ cài đặt của ứng dụng trên trình duyệt web mặc định.
-* **Quét và Dọn dẹp tàn dư (Leftovers Purger):** Sau khi ứng dụng được gỡ bỏ, hệ thống sẽ tự động quét các thư mục hệ thống tiêu chuẩn (`ProgramFiles`, `AppData`, `ProgramData`), danh sách shortcut Start Menu và Registry Hive (`HKLM`, `HKCU`) để tìm kiếm các thư mục/khóa tàn dư và cho phép người dùng xóa sạch chúng.
+#### 5. ⚙️ Bộ Máy Sửa Lỗi Hệ Thống (System Repair)
+* **Quét lỗi nâng cao:** Tích hợp trực tiếp công cụ quét tệp tin hệ thống SFC (`sfc /scannow`) và công cụ sửa lỗi ảnh đĩa DISM (`DISM.exe /Online /Cleanup-Image /RestoreHealth`).
+* **UI chia luồng trực quan:** Hiển thị chi tiết từng giai đoạn quét (Chẩn đoán, Khắc phục, Hoàn tất) cùng thanh tiến trình phần trăm cụ thể.
 
-#### 3. Bản địa hóa Tiếng Việt đầy đủ (Vietnamese Localization)
-* Bổ sung đầy đủ các chuỗi dịch nghĩa cho giao diện gỡ cài đặt mới, thống kê chi tiết và quá trình quét dọn tàn dư.
+#### 6. 🌐 Giám Sát Mạng Thời Gian Thực (Network Center)
+* **Đo lường băng thông:** Hiển thị lưu lượng tải xuống (Download) và tải lên (Upload) qua biểu đồ đường (Line Chart) thời gian thực.
+* **Quản lý tiến trình sử dụng mạng:** Liệt kê chi tiết các ứng dụng đang chiếm dụng băng thông nhiều nhất.
+* **Chẩn đoán mạng nhanh:** Hỗ trợ đo Ping, kiểm tra Packet Loss, giải phóng/làm mới IP và làm sạch bộ nhớ đệm DNS (Flush DNS) chỉ với một nút bấm.
 
----
+#### 7. 📊 Bảng Điều Khiển & Quản Lý Tiến Trình (Dashboard & Process Manager)
+* **Chỉ số CPU & RAM:** Theo dõi tải hệ thống thời gian thực với các biểu đồ trực quan.
+* **Điểm sức khỏe AI (Composite Health Score):** Bộ máy phân tích tự động chấm điểm sức khỏe hệ thống (0 - 100) và đưa ra các khuyến nghị tối ưu hóa thông minh.
+* **Quản lý tiến trình chuyên nghiệp:** Liệt kê chi tiết CPU, RAM, số lượng Thread, Handle của từng tiến trình đang chạy và cho phép đóng băng hoặc tắt nhanh các tác vụ bị treo (End Task).
 
-## 🩹 WinCare Pro v3.0.1 — Bản vá ổn định (Hotfix "Stability Patch")
+#### 8. ⚡ Tinh Chỉnh Tối Ưu Hóa Hiệu Năng (System Optimizer)
+* **Tối ưu hóa Windows Explorer:** Áp dụng các tinh chỉnh dịch vụ để Explorer hoạt động phản hồi nhanh hơn.
+* **Chế độ chơi game & làm việc:** Tối ưu hóa cấu hình bộ nhớ đệm hệ thống và các dịch vụ ngầm để đạt hiệu năng phần cứng tối đa.
 
-> **Phát hành:** 24/06/2026 · **Loại:** Hotfix / Bugfix · **Phiên bản trước:** v3.0.0
+#### 9. 📂 Quản Lý Khởi Động & Dịch Vụ Hệ Thống (Startup & Services)
+* **Tối ưu tốc độ khởi động:** Phân tích ảnh hưởng của các phần mềm tự chạy cùng Windows, hỗ trợ bật/tắt dễ dàng.
+* **Quản lý dịch vụ Windows:** Tắt bỏ các dịch vụ Windows ngầm không cần thiết để giải phóng dung lượng RAM.
 
-Bản cập nhật **v3.0.1** tập trung hoàn toàn vào việc khắc phục các lỗi **crash / thoát đột ngột** xảy ra khi người dùng **click chuyển tab nhanh** giữa các trang trong menu điều hướng. Không có thay đổi về tính năng hay giao diện.
+#### 10. 💾 Sao Lưu Registry & Phân Tích Ổ Cứng (Disk Tools & Registry Backup)
+* **Thông số S.M.A.R.T:** Đọc thông tin sức khỏe ổ cứng HDD/SSD để cảnh báo hỏng hóc.
+* **Tìm kiếm tệp trùng lặp:** Quét và liệt kê các tệp trùng tên/dung lượng để giải phóng ổ đĩa.
+* **Sao lưu Registry:** Tạo các điểm khôi phục nhanh (Restore Point) cho Windows Registry giúp khôi phục hệ thống an toàn khi xảy ra sự cố.
 
-### 🔴 Lỗi được khắc phục (Critical Fixes)
-
-#### 1. Race condition gây crash khi chuyển tab Dashboard ← → bất kỳ tab nào
-* **Nguyên nhân gốc:** `DashboardViewModel.StartResourceMonitor()` sử dụng `bool _isRunning` đơn giản không đủ để ngăn 2 vòng lặp background chạy đồng thời. Khi người dùng navigate ra rồi vào nhanh, 2 thread cùng gọi `CpuSeriesValues.Add()` / `RemoveAt()` trên cùng `ObservableCollection` → **CollectionModifiedException → crash**.
-* **Fix áp dụng (`DashboardViewModel.cs`):**
-  * Thay `bool _isRunning` bằng `CancellationTokenSource` + `Interlocked.CompareExchange` để đảm bảo **chỉ duy nhất 1 monitoring loop** chạy tại bất kỳ thời điểm nào.
-  * `Task.Delay(delayMs, token)` thay vì `Task.Delay(delayMs)` — thread hủy ngay lập tức khi navigate away, không phải đợi hết interval.
-  * Thêm `?.` null-safe cho tất cả `_dispatcherQueue.TryEnqueue()` calls.
-
-#### 2. `HardwareViewModel` — DispatcherQueue bị gọi sau khi đã bị thu hồi
-* **Nguyên nhân gốc:** `StartSensorMonitoring()` vẫn đang `await Task.Delay(2000)` khi `StopMonitoring()` được gọi. Sau khi delay xong, thread tiếp tục gọi `_dispatcherQueue.TryEnqueue()` trên một Page đã bị hủy → **InvalidOperationException → crash**.
-* **Fix áp dụng (`HardwareViewModel.cs`):**
-  * Thay `bool _isRunning` bằng `CancellationTokenSource`.
-  * Thêm `if (token.IsCancellationRequested) break;` trước mỗi lần dispatch.
-  * `_dispatcherQueue?.TryEnqueue()` với null-safe operator.
-  * `Task.Delay(2000, token)` với `catch (TaskCanceledException) { break; }`.
-
-#### 3. `ProcessViewModel` — monitoring loop không dừng gracefully
-* **Nguyên nhân gốc:** `StartRunningProcessesMonitor()` là `async Task` chạy bằng `_ = Task...` nhưng dùng `while (_isRunning)` — khi `StopMonitoring()` set `_isRunning = false`, thread đang trong `await Task.Run(GetRunningProcessesAsync)` không hay biết → tiếp tục dispatch `ApplyFilterAndSort()` vào collection đã bị detach.
-* **Fix áp dụng (`ProcessViewModel.cs`):**
-  * Chuyển sang `CancellationTokenSource` + truyền `token` vào `Task.Run(..., token)`.
-  * `_dispatcherQueue?.TryEnqueue()` với null-safe và kiểm tra token trước khi update collection.
-
-#### 4. `NetworkViewModel` — Event handler bị đăng ký nhiều lần (Memory leak + double dispatch)
-* **Nguyên nhân gốc:** `NetworkPage` có `NavigationCacheMode = Required` (page được giữ trong bộ nhớ) nhưng `OnNavigatedTo` luôn gọi `ViewModel.Initialize()` → `_engine.OutputReceived += OnOutputReceived` bị gọi nhiều lần → mỗi message được xử lý N lần → `ConsoleOutput` tăng theo cấp số nhân → **OutOfMemoryException** khi dùng lâu.
-* **Fix áp dụng (`NetworkViewModel.cs`):**
-  * Thêm `_engine.OutputReceived -= OnOutputReceived;` **trước** `+=` trong `Initialize()` để đảm bảo idempotent subscription.
-
-#### 5. `JunkViewModel` — Tương tự double-subscribe khi re-navigate
-* **Fix áp dụng (`JunkViewModel.cs`):**
-  * Thêm unsubscribe trước subscribe trong `Initialize()` (cùng pattern với NetworkViewModel).
-
-#### 6. `DiskViewModel` — `engine.OutputReceived` không bao giờ được unsubscribe
-* **Nguyên nhân gốc:** `_engine.OutputReceived += LogText` được gọi trong constructor nhưng không có đối ứng `-=` khi navigate away → memory leak và log text nhân đôi khi quay lại trang.
-* **Fix áp dụng (`DiskViewModel.cs` + `DiskPage.xaml.cs`):**
-  * Tách ra thành `SubscribeEvents()` / `UnsubscribeEvents()` được gọi từ `OnNavigatedTo` / `OnNavigatedFrom`.
-  * `SubscribeEvents()` luôn unsubscribe trước khi subscribe để đảm bảo an toàn.
-
-#### 7. `SecurityViewModel` — `_dispatcherQueue.TryEnqueue()` không null-safe
-* **Nguyên nhân gốc:** Nhiều WMI Task đang chạy dở (async), nếu navigate away nhanh → `_dispatcherQueue` có thể null khi task hoàn thành → **NullReferenceException**.
-* **Fix áp dụng (`SecurityViewModel.cs`):**
-  * Thay tất cả `_dispatcherQueue.TryEnqueue()` bằng `_dispatcherQueue?.TryEnqueue()`.
-
-### 🟡 Cải tiến phòng ngừa (Preventive Improvements)
-
-| Trang | Thay đổi |
-|-------|----------|
-| `SecurityPage.xaml.cs` | Thêm `NavigationCacheMode = Required` + `OnNavigatedFrom` handler |
-| `UninstallPage.xaml.cs` | Thêm `NavigationCacheMode = Required` — tránh registry scan lặp lại mỗi lần navigate |
-| `StartupPage.xaml.cs` | Thêm `NavigationCacheMode = Required` |
-| `RepairPage.xaml.cs` | Thêm `NavigationCacheMode = Required` |
-| `SystemOptimizerPage.xaml.cs` | Thêm `NavigationCacheMode = Required` |
-
-> **Lý do:** Với `NavigationCacheMode = Required`, WinUI giữ Page instance trong bộ nhớ. Khi người dùng quay lại trang, `OnNavigatedTo` được gọi lại nhưng constructor **không** chạy lại → ViewModel không bị tạo mới → không có background thread tích lũy.
-
-### ✅ Kết quả kiểm tra
-
-```
-dotnet build → Build succeeded | 0 Error(s) | 6 Warning(s) (pre-existing)
-dotnet run   → Build succeeded | App launched successfully
-```
+#### 11. ⚙️ Cài Đặt Hệ Thống & Chuyển Đổi Ngôn Ngữ (Settings & Dynamic Translation)
+* **Chuyển ngữ động:** Hỗ trợ thay đổi ngôn ngữ giao diện (Tiếng Việt / Tiếng Anh) ngay lập tức mà không cần khởi động lại ứng dụng nhờ module `TranslationManager`.
+* **Giao diện sáng/tối:** Hỗ trợ chuyển đổi Theme (Sáng/Tối/Mặc định hệ thống) và thiết lập tần suất quét dọn tự động.
 
 ---
+
+### 🩹 Các lỗi đã khắc phục và cải tiến hiệu năng (Bug Fixes & Tweaks)
+* Khắc phục hoàn toàn lỗi crash do xung đột luồng khi chuyển trang nhanh trên Dashboard và các thẻ giám sát tài nguyên.
+* Khắc phục lỗi hiển thị thống kê Quick Stats bị đặt lại về 0 trong tab App Uninstaller khi quay lại trang.
+* Tối ưu hóa bộ nhớ RAM và CPU khi ứng dụng chạy nền giám sát hệ thống.
+
+---
+<div align="center">
+  <sub>Bản quyền phát hành thuộc về <b>Nguyễn Trung Tiên</b></sub>
+</div>

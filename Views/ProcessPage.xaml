@@ -10,71 +10,345 @@
 
     <Grid Padding="24">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />  <!-- 1. Top Dashboard Cards -->
+            <RowDefinition Height="Auto" />  <!-- 2. Actions Toolbar -->
+            <RowDefinition Height="*" />     <!-- 3. Main Split Area -->
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,12">
+        <!-- 1. Top Dashboard Cards (Glassmorphism Header) -->
+        <Border Grid.Row="0" Margin="0,0,0,18" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal" Spacing="32" VerticalAlignment="Center">
+                    <!-- Stat 1: CPU load -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="System CPU Load" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontWeight="SemiBold"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE7F4;" Foreground="{StaticResource CpuAccentBrush}" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Bind FormatPercent(ViewModel.CpuUsageSummary), Mode=OneWay}" FontSize="22" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Separator -->
+                    <Border Width="1" Height="36" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.5"/>
+
+                    <!-- Stat 2: RAM load -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Memory Usage" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontWeight="SemiBold"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE950;" Foreground="{StaticResource RamAccentBrush}" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Bind FormatPercent(ViewModel.RamUsageSummary), Mode=OneWay}" FontSize="22" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Separator -->
+                    <Border Width="1" Height="36" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.5"/>
+
+                    <!-- Stat 3: Process Count -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Active Processes" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontWeight="SemiBold"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE9D9;" Foreground="{StaticResource GpuAccentBrush}" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Bind ViewModel.TotalProcessCount, Mode=OneWay}" FontSize="22" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- RAM Boost Button -->
+                <Button Grid.Column="1" 
+                        Style="{StaticResource AccentButtonStyle}" 
+                        Background="{StaticResource PrimaryAccentGradient}" 
+                        Foreground="White" 
+                        Click="OnRamBoostClick" 
+                        Padding="18,10" 
+                        CornerRadius="8" 
+                        FontWeight="SemiBold"
+                        VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xEA99;" FontSize="13" Foreground="White" />
+                        <TextBlock Text="RAM Boost" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- 2. Actions Toolbar -->
+        <Grid Grid.Row="1" Margin="0,0,0,14">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />  <!-- Search -->
+                <ColumnDefinition Width="Auto" />  <!-- Filters -->
+                <ColumnDefinition Width="*" />     <!-- Actions -->
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="ProcessSearch" PlaceholderText="Search running processes..." Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}" VerticalAlignment="Center" Width="280" Height="32" CornerRadius="6"/>
-            <Button Grid.Column="1" Content="Refresh Thread Count" Click="OnRefreshProcessesClick" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+            <!-- Search box -->
+            <TextBox x:Name="ProcessSearch" 
+                     PlaceholderText="Search processes..." 
+                     Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}" 
+                     VerticalAlignment="Center" 
+                     Width="260" 
+                     Height="32" 
+                     CornerRadius="6"
+                     Margin="0,0,16,0"/>
+
+            <!-- Filters -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                <CheckBox Content="Hide System Processes" 
+                          IsChecked="{x:Bind ViewModel.HideSystemProcesses, Mode=TwoWay}"
+                          VerticalAlignment="Center"/>
+                <CheckBox Content="High Resource Only" 
+                          IsChecked="{x:Bind ViewModel.HighResourceOnly, Mode=TwoWay}"
+                          VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Refresh Actions -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" VerticalAlignment="Center">
+                <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Width="20" Height="20" Margin="0,0,8,0"/>
+                <Button Content="Refresh List" Click="OnRefreshProcessesClick" Padding="12,6" CornerRadius="6" Style="{StaticResource DefaultButtonStyle}">
+                    <Button.ContentTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE72C;" FontSize="12"/>
+                                <TextBlock Text="Refresh" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </Button.ContentTemplate>
+                </Button>
+            </StackPanel>
         </Grid>
 
-        <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="12">
-            <ListView ItemsSource="{x:Bind ViewModel.Processes, Mode=OneWay}" SelectionMode="None">
-                <ListView.HeaderTemplate>
-                    <DataTemplate>
-                        <Grid Padding="12,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="90" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Process Module (Right-click to control)" FontWeight="Bold" FontSize="11.5"/>
-                            <TextBlock Grid.Column="1" Text="CPU Usage" FontWeight="Bold" FontSize="11.5" HorizontalAlignment="Right"/>
-                            <TextBlock Grid.Column="2" Text="Memory (RAM)" FontWeight="Bold" FontSize="11.5" HorizontalAlignment="Right"/>
-                            <TextBlock Grid.Column="3" Text="Disk I/O" FontWeight="Bold" FontSize="11.5" HorizontalAlignment="Right"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.HeaderTemplate>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:ProcessInfo">
-                        <Grid Padding="12,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" ContextRequested="ProcessRow_ContextRequested" Background="Transparent">
-                            <FlyoutBase.AttachedFlyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Text="End Task" Foreground="#FFE81123" Click="OnEndTaskContextClick"/>
-                                    <MenuFlyoutItem Text="End Process Tree" Click="OnEndProcessTreeContextClick"/>
-                                    <MenuFlyoutItem Text="Open File Location" Click="OnOpenLocationContextClick"/>
-                                    <MenuFlyoutItem Text="Search Process Online" Click="OnSearchOnlineContextClick"/>
-                                </MenuFlyout>
-                            </FlyoutBase.AttachedFlyout>
-                            
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="90" />
-                            </Grid.ColumnDefinitions>
-                            
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5"/>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="{x:Bind Id}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind Publisher}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                </StackPanel>
+        <!-- 3. Main Split Area -->
+        <Grid Grid.Row="2" ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Processes List Table -->
+            <Border Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Interactive Headers (Buttons for sorting) -->
+                    <Grid Grid.Row="0" Padding="12,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />        <!-- Process Name -->
+                            <ColumnDefinition Width="80" />       <!-- PID -->
+                            <ColumnDefinition Width="90" />       <!-- CPU -->
+                            <ColumnDefinition Width="100" />      <!-- RAM -->
+                            <ColumnDefinition Width="90" />       <!-- Publisher -->
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Headers -->
+                        <Button Grid.Column="0" Content="Process Name" Tag="Name" Click="Sort_Click" HorizontalAlignment="Left" Style="{ThemeResource DateTimeFlyoutCalendarButtonStyle}" FontWeight="Bold" FontSize="11"/>
+                        <Button Grid.Column="1" Content="PID" Tag="Id" Click="Sort_Click" HorizontalAlignment="Right" Style="{ThemeResource DateTimeFlyoutCalendarButtonStyle}" FontWeight="Bold" FontSize="11"/>
+                        <Button Grid.Column="2" Content="CPU" Tag="CpuUsage" Click="Sort_Click" HorizontalAlignment="Right" Style="{ThemeResource DateTimeFlyoutCalendarButtonStyle}" FontWeight="Bold" FontSize="11"/>
+                        <Button Grid.Column="3" Content="Memory" Tag="RamUsageBytes" Click="Sort_Click" HorizontalAlignment="Right" Style="{ThemeResource DateTimeFlyoutCalendarButtonStyle}" FontWeight="Bold" FontSize="11"/>
+                        <TextBlock Grid.Column="4" Text="Publisher" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" FontSize="11" Margin="0,0,8,0"/>
+                    </Grid>
+
+                    <!-- Process List View -->
+                    <ListView x:Name="ProcessList"
+                              Grid.Row="1" 
+                              ItemsSource="{x:Bind ViewModel.Processes, Mode=OneWay}" 
+                              SelectionMode="Single"
+                              SelectionChanged="ProcessList_SelectionChanged">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:ProcessInfo">
+                                <Grid Padding="12,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" ContextRequested="ProcessRow_ContextRequested" Background="Transparent">
+                                    <FlyoutBase.AttachedFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="End Task" Foreground="#FFE81123" Click="OnEndTaskContextClick"/>
+                                            <MenuFlyoutItem Text="End Process Tree" Click="OnEndProcessTreeContextClick"/>
+                                            <MenuFlyoutSeparator />
+                                            <MenuFlyoutItem Text="Open File Location" Click="OnOpenLocationContextClick"/>
+                                            <MenuFlyoutItem Text="Search Process Online" Click="OnSearchOnlineContextClick"/>
+                                        </MenuFlyout>
+                                    </FlyoutBase.AttachedFlyout>
+                                    
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="90" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="90" />
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <!-- Name & Icon -->
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <Grid Grid.Column="0" Width="22" Height="22" Margin="0,0,10,0" VerticalAlignment="Center">
+                                            <!-- Fallback Glyph -->
+                                            <FontIcon Glyph="&#xE736;" 
+                                                      FontSize="13" 
+                                                      Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                                                      HorizontalAlignment="Center" 
+                                                      VerticalAlignment="Center"
+                                                      Visibility="{x:Bind FallbackVisibility, Mode=OneWay}"/>
+                                            <!-- Application PNG Icon -->
+                                            <Image Source="{x:Bind IconImageSource, Mode=OneWay}" 
+                                                   Width="22" 
+                                                   Height="22" 
+                                                   Stretch="Uniform"
+                                                   HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center"
+                                                   Visibility="{x:Bind IconVisibility, Mode=OneWay}"/>
+                                        </Grid>
+                                        
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{x:Bind FilePath}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    
+                                    <!-- PID -->
+                                    <TextBlock Grid.Column="1" Text="{x:Bind Id}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    
+                                    <!-- CPU (Mini Meter) -->
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="2">
+                                        <TextBlock Text="{x:Bind CpuUsageFormatted}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                        <!-- ProgressBar for resource visualization -->
+                                        <ProgressBar Value="{x:Bind CpuUsage}" Maximum="100" Height="2" Width="60" CornerRadius="1" Foreground="{StaticResource CpuAccentBrush}"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Memory -->
+                                    <TextBlock Grid.Column="3" Text="{x:Bind RamUsageFormatted}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    
+                                    <!-- Publisher -->
+                                    <TextBlock Grid.Column="4" Text="{x:Bind Publisher}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" TextTrimming="CharacterEllipsis" Margin="0,0,8,0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Border>
+
+            <!-- Right: Collapsible Details Side Sheet -->
+            <Border Grid.Column="1" 
+                    Width="340" 
+                    Margin="12,0,0,0"
+                    Style="{StaticResource GlassmorphismCardStyle}" 
+                    Padding="18" 
+                    Visibility="{x:Bind ViewModel.IsDetailsVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    VerticalAlignment="Stretch">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />  <!-- Process Header -->
+                        <RowDefinition Height="*" />     <!-- Details Body -->
+                        <RowDefinition Height="Auto" />  <!-- Actions Bottom -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <Grid Grid.Row="0" Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Circular Icon -->
+                        <Border Width="40" Height="40" CornerRadius="20" Background="#157F56D9" Margin="0,0,12,0" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE9D9;" Foreground="#FF7F56D9" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+
+                        <!-- Title Info -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind ViewModel.SelectedProcess.Name, Mode=OneWay}" FontWeight="Bold" FontSize="15" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedProcess.Publisher, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+
+                        <!-- Close details panel -->
+                        <Button Grid.Column="2" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="30" Height="30" CornerRadius="15" Click="CloseDetails_Click">
+                            <FontIcon Glyph="&#xE711;" FontSize="11"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- Details Body -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Spacing="16">
+                            <!-- Process Info list -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Process ID (PID)" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="{x:Bind ViewModel.SelectedProcess.Id, Mode=OneWay}" FontWeight="SemiBold" FontSize="13"/>
                             </StackPanel>
-                            
-                            <TextBlock Grid.Column="1" Text="{x:Bind CpuUsageFormatted}" FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                            <TextBlock Grid.Column="2" Text="{x:Bind RamUsageFormatted}" FontSize="12.5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                            <TextBlock Grid.Column="3" Text="{x:Bind DiskUsageFormatted}" FontSize="12.5" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Status" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="{x:Bind ViewModel.SelectedProcess.Status, Mode=OneWay}" FontWeight="SemiBold" FontSize="13" Foreground="{ThemeResource SystemAccentColor}"/>
+                            </StackPanel>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Executable Path" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="{x:Bind ViewModel.SelectedProcess.FilePath, Mode=OneWay}" IsTextSelectionEnabled="True" TextWrapping="Wrap" FontSize="11.5"/>
+                            </StackPanel>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Command Line Arguments" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="{x:Bind ViewModel.SelectedProcess.CommandLine, Mode=OneWay}" IsTextSelectionEnabled="True" TextWrapping="Wrap" FontSize="11.5"/>
+                            </StackPanel>
+
+                            <!-- Mini Grid for Stats -->
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <TextBlock Text="Active Threads" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="{x:Bind ViewModel.SelectedProcess.ThreadCount, Mode=OneWay}" FontWeight="SemiBold" FontSize="13"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="4">
+                                    <TextBlock Text="Handles Count" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="{x:Bind ViewModel.SelectedProcess.HandleCount, Mode=OneWay}" FontWeight="SemiBold" FontSize="13"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Process Start Time" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="{x:Bind ViewModel.SelectedProcess.StartTime, Mode=OneWay}" FontWeight="SemiBold" FontSize="13"/>
+                            </StackPanel>
+
+                            <!-- Priority Tuning -->
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="CPU Allocation Priority" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <ComboBox x:Name="PriorityCombo" SelectionChanged="PriorityComboBox_SelectionChanged" Width="180" CornerRadius="6">
+                                    <ComboBoxItem Content="Idle" Tag="Idle" />
+                                    <ComboBoxItem Content="Below Normal" Tag="BelowNormal" />
+                                    <ComboBoxItem Content="Normal" Tag="Normal" />
+                                    <ComboBoxItem Content="Above Normal" Tag="AboveNormal" />
+                                    <ComboBoxItem Content="High" Tag="High" />
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Bottom Actions -->
+                    <StackPanel Grid.Row="2" Spacing="8" Margin="0,16,0,0">
+                        <!-- Suspend/Resume Toggles -->
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Suspend" Click="OnSuspendClick" HorizontalAlignment="Stretch" CornerRadius="6" Style="{StaticResource DefaultButtonStyle}"/>
+                            <Button Grid.Column="1" Content="Resume" Click="OnResumeClick" HorizontalAlignment="Stretch" CornerRadius="6" Style="{StaticResource DefaultButtonStyle}"/>
                         </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </Border>
+
+                        <Button Content="End Process Tree" Click="OnEndProcessTreeClick" HorizontalAlignment="Stretch" CornerRadius="6" Style="{StaticResource DefaultButtonStyle}"/>
+                        <Button Content="End Task" Click="OnEndTaskClick" HorizontalAlignment="Stretch" Background="#FFEF4444" Foreground="White" FontWeight="Bold" CornerRadius="6"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

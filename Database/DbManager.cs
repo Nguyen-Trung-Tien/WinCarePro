@@ -353,10 +353,7 @@ public class DbManager
         return logs;
     }
 
-    /// <summary>
-    /// v3.0: Add a new system notification to the database.
-    /// </summary>
-    public static void AddNotification(string title, string message, string level = "Info")
+    public static void AddNotification(string title, string message, string level = "Info", bool showToast = true)
     {
         try
         {
@@ -373,11 +370,15 @@ public class DbManager
             if (win != null)
             {
                 win.UpdateNotificationBadge();
-                win.ShowToastFromDb(title, message, level);
+                if (showToast)
+                {
+                    win.ShowToastFromDb(title, message, level);
+                }
             }
         }
         catch { }
     }
+
 
     /// <summary>
     /// v3.0: Get recent notification items from the database.

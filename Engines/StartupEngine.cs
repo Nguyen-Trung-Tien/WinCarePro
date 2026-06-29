@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
+using System.Xml;
 using Microsoft.Win32;
 using Microsoft.Win32.TaskScheduler;
 using WinCarePro.Models;
+using WinCarePro.Services.Implementations;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro.Engines;
 
@@ -20,6 +26,195 @@ public class StartupEngine
         Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
         @"Microsoft\Windows\Start Menu\Programs\Startup"
     );
+
+    private readonly IconCacheService _iconCache;
+    private readonly ServiceSafetyService _safety;
+
+    private class MetadataCacheItem
+    {
+        public string Publisher { get; set; } = "Unknown";
+        public string Company { get; set; } = "Unknown";
+        public string IconPath { get; set; } = "";
+        public string StartupImpact { get; set; } = "Medium";
+        public bool IsMicrosoft { get; set; }
+        public bool IsSystemItem { get; set; }
+        public int EstimatedLaunchTimeMs { get; set; }
+        public DateTime CachedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    private readonly ConcurrentDictionary<string, MetadataCacheItem> _metadataCache = new();
+    private static readonly TimeSpan CacheTtl = TimeSpan.FromMinutes(30);
+
+    public StartupEngine()
+    {
+        try
+        {
+            _iconCache = App.Services?.GetService<IconCacheService>() ?? new IconCacheService();
+            _safety = App.Services?.GetService<ServiceSafetyService>() ?? new ServiceSafetyService();
+        }
+        catch
+        {
+            _iconCache = new IconCacheService();
+            _safety = new ServiceSafetyService();
+        }
+    }
+
+    public StartupEngine(IconCacheService iconCache, ServiceSafetyService safety)
+    {
+        _iconCache = iconCache ?? new IconCacheService();
+        _safety = safety ?? new ServiceSafetyService();
+    }
+
+    private MetadataCacheItem GetOrAddMetadata(string filePath)
+    {
+        if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+        {
+            return new MetadataCacheItem
+            {
+                Publisher = "Unknown",
+                Company = "Unknown",
+                IconPath = "",
+                StartupImpact = "Low",
+                IsMicrosoft = false,
+                IsSystemItem = false,
+                EstimatedLaunchTimeMs = 0
+            };
+        }
+
+        if (_metadataCache.TryGetValue(filePath, out var cached) && (DateTime.UtcNow - cached.CachedAt) < CacheTtl)
+        {
+            return cached;
+        }
+
+        var item = new MetadataCacheItem();
+        try
+        {
+            var fileInfo = FileVersionInfo.GetVersionInfo(filePath);
+            item.Publisher = fileInfo.CompanyName ?? "Unknown";
+            item.Company = item.Publisher;
+            item.IsMicrosoft = item.Publisher.Contains("Microsoft", StringComparison.OrdinalIgnoreCase);
+
+            string systemRoot = Environment.GetFolderPath(Environment.SpecialFolder.Windows).ToLowerInvariant();
+            item.IsSystemItem = filePath.ToLowerInvariant().StartsWith(systemRoot);
+
+            // Synchronous call to resolve icon
+            item.IconPath = _iconCache.GetIconForExecutable(filePath);
+
+            long fileSize = 0;
+            try
+            {
+                fileSize = new FileInfo(filePath).Length;
+            }
+            catch { }
+
+            int baseTime = 50;
+            if (fileSize > 50 * 1024 * 1024) baseTime += 800;
+            else if (fileSize > 10 * 1024 * 1024) baseTime += 300;
+            else if (fileSize > 2 * 1024 * 1024) baseTime += 100;
+
+            if (item.IsMicrosoft) baseTime = (int)(baseTime * 0.7);
+
+            item.EstimatedLaunchTimeMs = baseTime;
+
+            if (baseTime < 150) item.StartupImpact = "Low";
+            else if (baseTime < 500) item.StartupImpact = "Medium";
+            else if (baseTime < 2000) item.StartupImpact = "High";
+            else item.StartupImpact = "Critical";
+        }
+        catch
+        {
+            item.Publisher = "Unknown";
+            item.Company = "Unknown";
+            item.IconPath = "";
+            item.StartupImpact = "Medium";
+            item.IsMicrosoft = false;
+            item.IsSystemItem = false;
+            item.EstimatedLaunchTimeMs = 150;
+        }
+
+        item.CachedAt = DateTime.UtcNow;
+        _metadataCache[filePath] = item;
+        return item;
+    }
+
+    private string GetServiceImagePath(string serviceName)
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\{serviceName}");
+            if (key != null)
+            {
+                string rawPath = key.GetValue("ImagePath")?.ToString() ?? "";
+                if (string.IsNullOrEmpty(rawPath)) return "";
+
+                string expanded = Environment.ExpandEnvironmentVariables(rawPath);
+                if (expanded.StartsWith(@"\SystemRoot\", StringComparison.OrdinalIgnoreCase))
+                {
+                    string windir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+                    expanded = windir + expanded.Substring(11);
+                }
+
+                if (expanded.StartsWith(@"system32\", StringComparison.OrdinalIgnoreCase) || 
+                    expanded.StartsWith(@"syswow64\", StringComparison.OrdinalIgnoreCase))
+                {
+                    string windir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+                    expanded = Path.Combine(windir, expanded);
+                }
+
+                expanded = expanded.Trim();
+                if (expanded.StartsWith("\""))
+                {
+                    int endQuote = expanded.IndexOf("\"", 1);
+                    if (endQuote > 1) return expanded.Substring(1, endQuote - 1);
+                }
+
+                int firstSpace = expanded.IndexOf(" ");
+                if (firstSpace > 0)
+                {
+                    string part = expanded.Substring(0, firstSpace);
+                    if (File.Exists(part)) return part;
+                    if (File.Exists(expanded)) return expanded;
+                    return part;
+                }
+
+                return expanded;
+            }
+        }
+        catch { }
+        return "";
+    }
+
+    public double GetLastBootTimeSeconds()
+    {
+        try
+        {
+            string query = "*[System/EventID=100]";
+            var logQuery = new EventLogQuery(
+                "Microsoft-Windows-Diagnostics-Performance/Operational", 
+                PathType.LogName, 
+                query)
+            {
+                ReverseDirection = true
+            };
+            using var reader = new EventLogReader(logQuery);
+            var eventInstance = reader.ReadEvent();
+            if (eventInstance != null)
+            {
+                string xml = eventInstance.ToXml();
+                var doc = new XmlDocument();
+                doc.LoadXml(xml);
+                var nsmgr = new XmlNamespaceManager(doc.NameTable);
+                nsmgr.AddNamespace("ns", "http://schemas.microsoft.com/win/2004/08/events/event");
+                var node = doc.SelectSingleNode("//ns:EventData/ns:Data[@Name='BootTime']", nsmgr);
+                if (node != null && double.TryParse(node.InnerText, out double bootMs))
+                {
+                    return bootMs / 1000.0;
+                }
+            }
+        }
+        catch { }
+        return -1;
+    }
 
     // Startup Apps Management
     public List<StartupEntry> GetStartupEntries()
@@ -56,13 +251,25 @@ public class StartupEngine
             foreach (var valueName in key.GetValueNames())
             {
                 var val = key.GetValue(valueName)?.ToString() ?? "";
+                string cleanPath = CleanCommandPath(val);
+                var meta = GetOrAddMetadata(cleanPath);
+
                 list.Add(new StartupEntry
                 {
                     Name = valueName,
                     Command = val,
-                    Path = CleanCommandPath(val),
+                    Path = cleanPath,
                     Source = source,
-                    IsEnabled = isEnabled
+                    IsEnabled = isEnabled,
+                    
+                    // Rich Metadata
+                    IconPath = meta.IconPath,
+                    Publisher = meta.Publisher,
+                    StartupImpact = meta.StartupImpact,
+                    IsMicrosoft = meta.IsMicrosoft,
+                    IsSystemItem = meta.IsSystemItem,
+                    EstimatedLaunchTimeMs = meta.EstimatedLaunchTimeMs,
+                    IsRecommendedDisable = !meta.IsMicrosoft && (meta.StartupImpact == "High" || meta.StartupImpact == "Critical")
                 });
             }
         }
@@ -81,13 +288,24 @@ public class StartupEngine
                 if (ext == ".lnk" || ext == ".disabled" || ext == ".exe")
                 {
                     bool isEnabled = ext != ".disabled";
+                    var meta = GetOrAddMetadata(file);
+
                     list.Add(new StartupEntry
                     {
                         Name = Path.GetFileNameWithoutExtension(file),
                         Command = file,
                         Path = file,
                         Source = source,
-                        IsEnabled = isEnabled
+                        IsEnabled = isEnabled,
+                        
+                        // Rich Metadata
+                        IconPath = meta.IconPath,
+                        Publisher = meta.Publisher,
+                        StartupImpact = meta.StartupImpact,
+                        IsMicrosoft = meta.IsMicrosoft,
+                        IsSystemItem = meta.IsSystemItem,
+                        EstimatedLaunchTimeMs = meta.EstimatedLaunchTimeMs,
+                        IsRecommendedDisable = !meta.IsMicrosoft && (meta.StartupImpact == "High" || meta.StartupImpact == "Critical")
                     });
                 }
             }
@@ -242,10 +460,30 @@ public class StartupEngine
                 string startupType = "Unknown";
                 try
                 {
-                    // Query startup type using registry or ServiceController
                     startupType = svc.StartType.ToString();
                 }
                 catch { }
+
+                string imagePath = GetServiceImagePath(svc.ServiceName);
+                var meta = GetOrAddMetadata(imagePath);
+
+                string description = "";
+                try
+                {
+                    using var key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\{svc.ServiceName}");
+                    description = key?.GetValue("Description")?.ToString() ?? "";
+                }
+                catch { }
+
+                bool isCritical = _safety.IsCriticalService(svc.ServiceName);
+                bool isSystem = _safety.IsCriticalService(svc.ServiceName) || meta.IsSystemItem || svc.ServiceName.StartsWith("wuauserv", StringComparison.OrdinalIgnoreCase);
+                bool isMicrosoft = meta.IsMicrosoft || svc.ServiceName.StartsWith("wuauserv", StringComparison.OrdinalIgnoreCase);
+
+                string riskLevel = "Low";
+                if (!isMicrosoft)
+                {
+                    riskLevel = "Medium";
+                }
 
                 list.Add(new ServiceEntry
                 {
@@ -253,7 +491,18 @@ public class StartupEngine
                     DisplayName = svc.DisplayName,
                     Status = svc.Status.ToString(),
                     StartupType = startupType,
-                    CanStop = svc.CanStop
+                    CanStop = svc.CanStop && !isCritical,
+                    
+                    // Rich Metadata
+                    ImagePath = imagePath,
+                    CompanyName = meta.Company,
+                    Publisher = meta.Publisher,
+                    IsSystemService = isSystem,
+                    IsCriticalService = isCritical,
+                    IsMicrosoftService = isMicrosoft,
+                    IconPath = meta.IconPath,
+                    ServiceDescription = description,
+                    RiskLevel = riskLevel
                 });
             }
         }
@@ -348,6 +597,24 @@ public class StartupEngine
                 }
                 catch { }
 
+                string author = "";
+                string desc = "";
+                try
+                {
+                    author = task.Definition.RegistrationInfo.Author ?? "";
+                    desc = task.Definition.RegistrationInfo.Description ?? "";
+                }
+                catch { }
+
+                bool isMsTask = author.Contains("Microsoft", StringComparison.OrdinalIgnoreCase) || 
+                               task.Path.Contains(@"\Microsoft\Windows", StringComparison.OrdinalIgnoreCase);
+                
+                bool isCriticalTask = isMsTask && (task.Name.Contains("Update", StringComparison.OrdinalIgnoreCase) || 
+                                                  task.Name.Contains("Defender", StringComparison.OrdinalIgnoreCase) ||
+                                                  task.Name.Contains("Maintenance", StringComparison.OrdinalIgnoreCase));
+
+                string riskLevel = isMsTask ? "Low" : "Medium";
+
                 list.Add(new ScheduledTaskEntry
                 {
                     Name = task.Name,
@@ -356,7 +623,16 @@ public class StartupEngine
                     Status = task.State.ToString(),
                     IsEnabled = task.Enabled,
                     LastRunTime = task.LastRunTime == DateTime.MinValue ? null : task.LastRunTime,
-                    NextRunTime = task.NextRunTime == DateTime.MinValue ? null : task.NextRunTime
+                    NextRunTime = task.NextRunTime == DateTime.MinValue ? null : task.NextRunTime,
+                    
+                    // Rich Metadata
+                    Author = author,
+                    Folder = task.Folder.Path,
+                    IsMicrosoftTask = isMsTask,
+                    IsCriticalTask = isCriticalTask,
+                    LastResult = task.LastTaskResult,
+                    TaskDescription = desc,
+                    RiskLevel = riskLevel
                 });
             }
 

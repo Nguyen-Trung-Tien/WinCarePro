@@ -59,6 +59,13 @@ public partial class App : Application
         // Register core engines wrapped in services
         services.AddSingleton<IJunkCleanerService, JunkCleanerService>();
         services.AddSingleton<INetworkService, NetworkService>();
+        services.AddSingleton<INetworkHistoryService, NetworkHistoryService>();
+        services.AddSingleton<ILockingAppService, LockingAppService>();
+        services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<INotificationService, NotificationService>();
+        services.AddSingleton<IconCacheService>();
+        services.AddSingleton<ServiceSafetyService>();
+        services.AddSingleton<AuditLogService>();
 
         // v3.0 — Register engines in DI for testability
         services.AddSingleton<Engines.AiDiagnosticsEngine>();

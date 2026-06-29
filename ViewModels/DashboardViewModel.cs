@@ -987,7 +987,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
 
             // 2. Scan Registry
             ScanStatus = "Status: Scanning Registry Issues...".T();
-            var regIssues = _registryEngine.ScanRegistryIssues();
+            var regIssues = await Task.Run(() => _registryEngine.ScanRegistryIssues());
             _scannedRegistryIssues = regIssues;
             ScanProgress = 55;
             await Task.Delay(300);
@@ -1003,8 +1003,8 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
             ScanStatus = "Status: Evaluating Connection and Security Status...".T();
             var netEngine = new NetworkEngine();
             var (pingLoss, avgLatency, _) = await netEngine.AnalyzePingQualityAsync();
-            var securityAudits = _securityEngine.RunSecurityAudits();
-            var startupApps = _startupEngine.GetStartupEntries();
+            var securityAudits = await Task.Run(() => _securityEngine.RunSecurityAudits());
+            var startupApps = await Task.Run(() => _startupEngine.GetStartupEntries());
             ScanProgress = 90;
             await Task.Delay(300);
 
@@ -1034,6 +1034,8 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
             }
             catch { }
 
+            double cpuTemp = await Task.Run(() => _hardwareEngine.GetCpuTemperature(CpuUsage));
+
             var summary = await _aiEngine.RunHealthEvaluationAsync(
                 _junkSizeBytes,
                 regIssues.Count,
@@ -1043,7 +1045,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
                 startupApps.Count,
                 securityAudits,
                 cpuUsage: CpuUsage,
-                cpuTemp: _hardwareEngine.GetCpuTemperature(CpuUsage),
+                cpuTemp: cpuTemp,
                 ramUsagePercent: RamUsage,
                 servicesCount: servicesCount,
                 diskActiveTime: DiskUsage,
@@ -1303,7 +1305,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
                 }
                 else
                 {
-                    var issues = _registryEngine.ScanRegistryIssues();
+                    var issues = await Task.Run(() => _registryEngine.ScanRegistryIssues());
                     await _registryEngine.FixRegistryIssuesAsync(issues);
                 }
             }

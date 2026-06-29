@@ -703,7 +703,8 @@ public sealed partial class MainWindow : Window
                 if (parsed != null) settingsDict = parsed;
             }
             settingsDict["Theme"] = nextIsDark ? "Dark" : "Light";
-            DbManager.SaveSettings(JsonSerializer.Serialize(settingsDict));
+            string themeJson = JsonSerializer.Serialize(settingsDict);
+            Task.Run(() => DbManager.SaveSettings(themeJson));
         }
         catch { }
     }
@@ -930,7 +931,7 @@ public sealed partial class MainWindow : Window
             if (versionChanged)
             {
                 string newRaw = MergeSetting(raw, "LastVersion", currentVersion.ToString());
-                DbManager.SaveSettings(newRaw);
+                Task.Run(() => DbManager.SaveSettings(newRaw));
 
                 // Log to Activity Log and add to Notifications database!
                 string logMessage = string.Format("System updated to version {0}".T(), currentVersion.ToString());

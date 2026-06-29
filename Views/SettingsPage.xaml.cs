@@ -162,7 +162,7 @@ public sealed partial class SettingsPage : Page
             };
 
             string json = JsonSerializer.Serialize(profile);
-            DbManager.SaveSettings(json);
+            Task.Run(() => DbManager.SaveSettings(json));
 
             // Apply modifications immediately
             ApplyRuntimeSettings(profile);
@@ -519,7 +519,8 @@ public sealed partial class SettingsPage : Page
                 if (parsed != null) settingsDict = parsed;
             }
             settingsDict["Theme"] = dark ? "Dark" : "Light";
-            DbManager.SaveSettings(JsonSerializer.Serialize(settingsDict));
+            string themeJson = JsonSerializer.Serialize(settingsDict);
+            Task.Run(() => DbManager.SaveSettings(themeJson));
         }
         catch { }
 

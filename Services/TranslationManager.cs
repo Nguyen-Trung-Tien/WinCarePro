@@ -37,6 +37,8 @@ public class TranslationManager
 
     private readonly Dictionary<string, string> _translations = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConditionalWeakTable<DependencyObject, Dictionary<string, string>> OriginalValues = new();
+    private static readonly ConditionalWeakTable<DependencyObject, object> RegisteredControlsMap = new();
+    private static readonly object DummyValue = new();
 
     private TranslationManager()
     {
@@ -150,14 +152,11 @@ public class TranslationManager
     {
         lock (_registeredControls)
         {
-            foreach (var wr in _registeredControls)
+            if (!RegisteredControlsMap.TryGetValue(control, out _))
             {
-                if (wr.TryGetTarget(out var target) && target == control)
-                {
-                    return;
-                }
+                _registeredControls.Add(new WeakReference<DependencyObject>(control));
+                RegisteredControlsMap.Add(control, DummyValue);
             }
-            _registeredControls.Add(new WeakReference<DependencyObject>(control));
         }
     }
 

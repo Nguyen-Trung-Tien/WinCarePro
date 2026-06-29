@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.Views;
 
@@ -27,7 +28,81 @@ public sealed partial class DashboardPage : Page
             // Lazy load the extended layer after initial UI renders to prevent lag
             await Task.Delay(200);
             ViewModel.IsExtendedLayerLoaded = true;
+            
+            // Force responsive update after extended layer is fully initialized
+            UpdateResponsiveLayout(this.ActualWidth);
         };
+
+        this.SizeChanged += (s, e) =>
+        {
+            UpdateResponsiveLayout(e.NewSize.Width);
+        };
+    }
+
+    private void UpdateResponsiveLayout(double width)
+    {
+        bool isWide = width >= 800;
+        
+        // Adjust Core Layer
+        if (CoreLeftCol != null && CoreRightCol != null && CoreRightPanel != null)
+        {
+            if (isWide)
+            {
+                CoreLeftCol.Width = new GridLength(3, GridUnitType.Star);
+                CoreRightCol.Width = new GridLength(2, GridUnitType.Star);
+                Grid.SetColumn(CoreRightPanel, 1);
+                Grid.SetRow(CoreRightPanel, 0);
+            }
+            else
+            {
+                CoreLeftCol.Width = new GridLength(1, GridUnitType.Star);
+                CoreRightCol.Width = new GridLength(0, GridUnitType.Pixel);
+                Grid.SetColumn(CoreRightPanel, 0);
+                Grid.SetRow(CoreRightPanel, 1);
+            }
+        }
+
+        // Adjust Extended Layer (if loaded)
+        if (ViewModel != null && ViewModel.IsExtendedLayerLoaded && ExtendedLayerPanel != null)
+        {
+            if (isWide)
+            {
+                ExtendedLeftCol.Width = new GridLength(3, GridUnitType.Star);
+                ExtendedRightCol.Width = new GridLength(2, GridUnitType.Star);
+                Grid.SetColumn(RecommendationsCard, 1);
+                Grid.SetRow(RecommendationsCard, 0);
+                Grid.SetRowSpan(RecommendationsCard, 2);
+
+                if (PerformanceHeaderGrid != null && PerformanceFiltersPanel != null)
+                {
+                    PerformanceHeaderCol1.Width = GridLength.Auto;
+                    Grid.SetColumn(PerformanceFiltersPanel, 1);
+                    Grid.SetRow(PerformanceFiltersPanel, 0);
+                    PerformanceFiltersPanel.Margin = new Thickness(0);
+                }
+            }
+            else
+            {
+                ExtendedLeftCol.Width = new GridLength(1, GridUnitType.Star);
+                ExtendedRightCol.Width = new GridLength(0, GridUnitType.Pixel);
+                Grid.SetColumn(RecommendationsCard, 0);
+                Grid.SetRow(RecommendationsCard, 2);
+                Grid.SetRowSpan(RecommendationsCard, 1);
+
+                if (PerformanceHeaderGrid != null && PerformanceFiltersPanel != null)
+                {
+                    PerformanceHeaderCol1.Width = new GridLength(0, GridUnitType.Pixel);
+                    Grid.SetColumn(PerformanceFiltersPanel, 0);
+                    Grid.SetRow(PerformanceFiltersPanel, 1);
+                    PerformanceFiltersPanel.Margin = new Thickness(0, 8, 0, 0);
+                }
+            }
+        }
+    }
+
+    private void OnExtendedLayerPanelLoaded(object sender, RoutedEventArgs e)
+    {
+        UpdateResponsiveLayout(this.ActualWidth);
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -204,9 +279,9 @@ public sealed partial class DashboardPage : Page
 
     internal string GetStatusText(int score)
     {
-        if (score >= 90) return "EXCELLENT - Your system is highly optimized and clean.";
-        if (score >= 70) return "GOOD - Some areas can be optimized to reclaim storage.";
-        return "NEEDS OPTIMIZATION - Heavy junk logs or updates required.";
+        if (score >= 90) return "EXCELLENT - Your system is highly optimized and clean.".T();
+        if (score >= 70) return "GOOD - Some areas can be optimized to reclaim storage.".T();
+        return "NEEDS OPTIMIZATION - Heavy junk logs or updates required.".T();
     }
 
     internal Brush GetHealthScoreBrush(int score)

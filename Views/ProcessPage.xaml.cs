@@ -17,11 +17,70 @@ public sealed partial class ProcessPage : Page
     private ProcessInfo? _rightClickedProcess;
     private bool _isSyncingPriorityCombo;
 
+    public static readonly DependencyProperty PidColumnWidthProperty =
+        DependencyProperty.Register(nameof(PidColumnWidth), typeof(GridLength), typeof(ProcessPage), new PropertyMetadata(new GridLength(80)));
+
+    public GridLength PidColumnWidth
+    {
+        get => (GridLength)GetValue(PidColumnWidthProperty);
+        set => SetValue(PidColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty PublisherColumnWidthProperty =
+        DependencyProperty.Register(nameof(PublisherColumnWidth), typeof(GridLength), typeof(ProcessPage), new PropertyMetadata(new GridLength(90)));
+
+    public GridLength PublisherColumnWidth
+    {
+        get => (GridLength)GetValue(PublisherColumnWidthProperty);
+        set => SetValue(PublisherColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty WideLayoutVisibilityProperty =
+        DependencyProperty.Register(nameof(WideLayoutVisibility), typeof(Visibility), typeof(ProcessPage), new PropertyMetadata(Visibility.Visible));
+
+    public Visibility WideLayoutVisibility
+    {
+        get => (Visibility)GetValue(WideLayoutVisibilityProperty);
+        set => SetValue(WideLayoutVisibilityProperty, value);
+    }
+
+    public static readonly DependencyProperty DetailsPaneVisibilityProperty =
+        DependencyProperty.Register(nameof(DetailsPaneVisibility), typeof(Visibility), typeof(ProcessPage), new PropertyMetadata(Visibility.Collapsed));
+
+    public Visibility DetailsPaneVisibility
+    {
+        get => (Visibility)GetValue(DetailsPaneVisibilityProperty);
+        set => SetValue(DetailsPaneVisibilityProperty, value);
+    }
+
+    private void UpdateDetailsPaneVisibility()
+    {
+        bool isWide = this.ActualWidth >= 800;
+        DetailsPaneVisibility = (isWide && ViewModel.IsDetailsVisible) ? Visibility.Visible : Visibility.Collapsed;
+    }
+
     public ProcessPage()
     {
         ViewModel = App.Services.GetRequiredService<ProcessViewModel>();
         InitializeComponent();
         this.DataContext = ViewModel;
+
+        ViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(ViewModel.IsDetailsVisible))
+            {
+                UpdateDetailsPaneVisibility();
+            }
+        };
+
+        this.SizeChanged += (s, e) =>
+        {
+            bool isWide = e.NewSize.Width >= 800;
+            PidColumnWidth = isWide ? new GridLength(80) : new GridLength(0);
+            PublisherColumnWidth = isWide ? new GridLength(90) : new GridLength(0);
+            WideLayoutVisibility = isWide ? Visibility.Visible : Visibility.Collapsed;
+            UpdateDetailsPaneVisibility();
+        };
     }
 
     internal string FormatPercent(double val) => $"{val:F1}%";

@@ -171,30 +171,35 @@
 
                     <!-- Logs List -->
                     <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="12">
-                        <ListView x:Name="LogsListView" SelectionMode="None">
-                            <ListView.ItemContainerTransitions>
-                                <TransitionCollection>
-                                    <AddDeleteThemeTransition />
-                                    <RepositionThemeTransition />
-                                </TransitionCollection>
-                            </ListView.ItemContainerTransitions>
-                            <ListView.HeaderTemplate>
-                                <DataTemplate>
-                                    <Grid Padding="12,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,4">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1.2*" />
-                                            <ColumnDefinition Width="1.8*" />
-                                            <ColumnDefinition Width="4*" />
-                                            <ColumnDefinition Width="1.5*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Category" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
-                                        <TextBlock Grid.Column="1" Text="Check Name" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
-                                        <TextBlock Grid.Column="2" Text="Description" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
-                                        <TextBlock Grid.Column="3" Text="Status" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Left" TextWrapping="Wrap" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.HeaderTemplate>
-                            <ListView.ItemTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Static Header Grid for Translation and alignment -->
+                            <Grid Grid.Row="0" Padding="12,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,4">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="18" /> <!-- Matches status indicator badge width + margin -->
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="180" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1" Text="Action / Operation" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Column="2" Text="Module" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Column="3" Text="Status" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Column="4" Text="Time Logged" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Right" TextWrapping="Wrap" />
+                            </Grid>
+
+                            <ListView x:Name="LogsListView" Grid.Row="1" SelectionMode="None">
+                                <ListView.ItemContainerTransitions>
+                                    <TransitionCollection>
+                                        <AddDeleteThemeTransition />
+                                        <RepositionThemeTransition />
+                                    </TransitionCollection>
+                                </ListView.ItemContainerTransitions>
+                                <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="database:LogEntry">
                                     <Grid Padding="4,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
                                         <Grid.ColumnDefinitions>
@@ -218,7 +223,8 @@
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
-                        </ListView>
+                            </ListView>
+                        </Grid>
                     </Border>
                 </Grid>
             </PivotItem>

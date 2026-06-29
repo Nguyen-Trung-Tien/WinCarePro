@@ -12,11 +12,40 @@ public sealed partial class JunkPage : Page
 {
     public JunkViewModel ViewModel { get; }
 
+    public static readonly DependencyProperty WideLayoutVisibilityProperty =
+        DependencyProperty.Register(nameof(WideLayoutVisibility), typeof(Visibility), typeof(JunkPage), new PropertyMetadata(Visibility.Visible));
+
+    public Visibility WideLayoutVisibility
+    {
+        get => (Visibility)GetValue(WideLayoutVisibilityProperty);
+        set => SetValue(WideLayoutVisibilityProperty, value);
+    }
+
     public JunkPage()
     {
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<JunkViewModel>();
         this.DataContext = ViewModel;
+
+        this.SizeChanged += (s, e) =>
+        {
+            bool isWide = e.NewSize.Width >= 800;
+            WideLayoutVisibility = isWide ? Visibility.Visible : Visibility.Collapsed;
+
+            if (LeftColumn != null && RightColumn != null)
+            {
+                if (isWide)
+                {
+                    LeftColumn.Width = new GridLength(1.2, GridUnitType.Star);
+                    RightColumn.Width = new GridLength(0.8, GridUnitType.Star);
+                }
+                else
+                {
+                    LeftColumn.Width = new GridLength(1, GridUnitType.Star);
+                    RightColumn.Width = new GridLength(0, GridUnitType.Pixel);
+                }
+            }
+        };
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)

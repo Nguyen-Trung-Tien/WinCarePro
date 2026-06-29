@@ -21,9 +21,9 @@ public class JunkCleanerService : IJunkCleanerService
         _engine.ProgressChanged += pct => ProgressChanged?.Invoke(pct);
     }
 
-    public Task<List<JunkCategory>> ScanJunkAsync()
+    public Task<List<JunkCategory>> ScanJunkAsync(System.Threading.CancellationToken token = default)
     {
-        return _engine.ScanJunkAsync();
+        return _engine.ScanJunkAsync(token);
     }
 
     public Task<long> CleanJunkAsync(List<JunkCategory> categories)

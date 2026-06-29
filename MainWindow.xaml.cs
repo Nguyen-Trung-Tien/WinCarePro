@@ -20,6 +20,9 @@ namespace WinCarePro;
 public sealed partial class MainWindow : Window
 {
 
+    public Grid MainRootGrid => RootGrid;
+    public FontIcon MainThemeIcon => ThemeIcon;
+
     private IntPtr _hwnd = IntPtr.Zero;
     private bool _forceClose = false;
 
@@ -104,9 +107,6 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleDragArea);
 
-        // Load current configurations
-        LoadThemeConfiguration();
-
         // Manual preview key handler for Ctrl + F to focus search, avoiding WinUI 3 KeyboardAccelerator tooltip bugs and accidental triggers
         this.Content.PreviewKeyDown += (s, e) =>
         {
@@ -125,10 +125,14 @@ public sealed partial class MainWindow : Window
         this.AppWindow.Closing += AppWindow_Closing;
         this.Closed += MainWindow_Closed;
 
-        // Translate window contents on load
+        // Translate and apply theme configurations on load
         RootGrid.Loaded += (s, e) => {
+            LoadThemeConfiguration();
             TranslationManager.Instance.Translate(this.Content);
             UpdateNotificationBadge();
+
+            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
+            CheckAndShowChangelog(currentVersion);
         };
 
         // Navigate page frame
@@ -136,6 +140,10 @@ public sealed partial class MainWindow : Window
 
         // Start live clock ticker
         StartClockTicker();
+
+        // Initialize Suggestion Search Registry
+        PopulateSearchRegistry();
+        TranslationManager.Instance.LanguageChanged += (s, e) => PopulateSearchRegistry();
     }
 
     private void SubclassWindow()
@@ -244,39 +252,53 @@ public sealed partial class MainWindow : Window
         return CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
     }
 
-    private void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
+    private async void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
     {
         if (_forceClose)
         {
             CleanupTrayIcon();
             return;
         }
+
+        args.Cancel = true;
         try
         {
             string raw = DbManager.GetSettings();
+            bool minimizeToTray = false;
             if (!string.IsNullOrEmpty(raw))
             {
                 using var doc = JsonDocument.Parse(raw);
                 var root = doc.RootElement;
                 if (root.TryGetProperty("MinimizeToTray", out var minProp) && minProp.GetBoolean())
                 {
-                    args.Cancel = true;
-                    this.AppWindow.Hide();
-                    InitializeTrayIcon();
+                    minimizeToTray = true;
                 }
-                else
-                {
-                    CleanupTrayIcon();
-                }
+            }
+
+            if (minimizeToTray)
+            {
+                this.AppWindow.Hide();
+                InitializeTrayIcon();
             }
             else
             {
-                CleanupTrayIcon();
+                // Show exit overlay with translation and close gracefully
+                ExitOverlayTitle.Text = "Shutting Down".T();
+                ExitOverlayMessage.Text = "Closing database connections and freeing resources...".T();
+                ExitOverlayGrid.Visibility = Visibility.Visible;
+                FadeInExitOverlay.Begin();
+
+                await Task.Delay(1500);
+
+                _forceClose = true;
+                this.Close();
             }
         }
         catch
         {
             CleanupTrayIcon();
+            _forceClose = true;
+            this.Close();
         }
     }
 
@@ -546,7 +568,22 @@ public sealed partial class MainWindow : Window
         var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
         if (notificationService != null)
         {
-            notificationService.EnqueueNotification(title, message, severity, actions: null, saveToDb: false);
+            System.Collections.Generic.List<Services.Contracts.NotificationAction>? actions = null;
+            if (title.Contains("Update Ready", StringComparison.OrdinalIgnoreCase))
+            {
+                actions = new System.Collections.Generic.List<Services.Contracts.NotificationAction>
+                {
+                    new Services.Contracts.NotificationAction
+                    {
+                        Label = "Install Now".T(),
+                        Action = () =>
+                        {
+                            InstallDownloadedUpdate();
+                        }
+                    }
+                };
+            }
+            notificationService.EnqueueNotification(title, message, severity, actions: actions, saveToDb: false);
         }
     }
 
@@ -628,58 +665,7 @@ public sealed partial class MainWindow : Window
 
     public void ApplyAppTheme(bool dark)
     {
-        if (RootGrid == null)
-        {
-            throw new NullReferenceException("RootGrid is null in ApplyAppTheme");
-        }
-        if (ThemeIcon == null)
-        {
-            throw new NullReferenceException("ThemeIcon is null in ApplyAppTheme");
-        }
-        RootGrid.RequestedTheme = dark ? ElementTheme.Dark : ElementTheme.Light;
-        ThemeIcon.Glyph = dark ? "\uE708" : "\uE706"; // Moon vs Sun glyph
-        SetBackdropType(dark ? "micaalt" : "mica");
-
-        try
-        {
-            if (_hwnd != IntPtr.Zero)
-            {
-                int isDark = dark ? 1 : 0;
-                DwmSetWindowAttribute(_hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref isDark, sizeof(int));
-            }
-        }
-        catch { }
-
-        try
-        {
-            if (Microsoft.UI.Windowing.AppWindowTitleBar.IsCustomizationSupported())
-            {
-                var titleBar = this.AppWindow.TitleBar;
-                if (dark)
-                {
-                    titleBar.ButtonForegroundColor = Microsoft.UI.Colors.White;
-                    titleBar.ButtonBackgroundColor = Microsoft.UI.Colors.Transparent;
-                    titleBar.ButtonHoverForegroundColor = Microsoft.UI.Colors.White;
-                    titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(255, 45, 45, 45);
-                    titleBar.ButtonPressedForegroundColor = Microsoft.UI.Colors.White;
-                    titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(255, 80, 80, 80);
-                    titleBar.ButtonInactiveForegroundColor = Microsoft.UI.Colors.Gray;
-                    titleBar.ButtonInactiveBackgroundColor = Microsoft.UI.Colors.Transparent;
-                }
-                else
-                {
-                    titleBar.ButtonForegroundColor = Microsoft.UI.Colors.Black;
-                    titleBar.ButtonBackgroundColor = Microsoft.UI.Colors.Transparent;
-                    titleBar.ButtonHoverForegroundColor = Microsoft.UI.Colors.Black;
-                    titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(255, 230, 230, 230);
-                    titleBar.ButtonPressedForegroundColor = Microsoft.UI.Colors.Black;
-                    titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(255, 200, 200, 200);
-                    titleBar.ButtonInactiveForegroundColor = Microsoft.UI.Colors.Gray;
-                    titleBar.ButtonInactiveBackgroundColor = Microsoft.UI.Colors.Transparent;
-                }
-            }
-        }
-        catch { }
+        Services.ThemeManager.Instance.ApplyTheme(dark ? ElementTheme.Dark : ElementTheme.Light);
     }
 
     public void SetBackdropType(string type)
@@ -722,46 +708,141 @@ public sealed partial class MainWindow : Window
         catch { }
     }
 
-    // Global Search AutoSuggestBox event handling
+    private List<SearchItem> _searchRegistry = new();
+
+    private void PopulateSearchRegistry()
+    {
+        _searchRegistry = new List<SearchItem>
+        {
+            new SearchItem { Title = "Dashboard".T(), Description = "Real-time performance monitors and system health overview.".T(), PageTag = "Dashboard", Keywords = "home diagnostic dashboard trang chu main", IconGlyph = "\uE80F" },
+            new SearchItem { Title = "Junk Cleaner".T(), Description = "Clean local application temp data, cache, and recycle bin.".T(), PageTag = "Junk", Keywords = "clean junk temp cache trash don rac", IconGlyph = "\uE74D" },
+            new SearchItem { Title = "App Uninstaller".T(), Description = "Uninstall desktop software and system packages completely.".T(), PageTag = "Uninstall", Keywords = "uninstall remove program app uninstaller go ung dung", IconGlyph = "\uE77C" },
+            new SearchItem { Title = "Network Center".T(), Description = "Run ping diagnostic benchmarks, network speed tests, and optimize DNS settings.".T(), PageTag = "Network", Keywords = "network ping dns benchmark speed test internet mang", IconGlyph = "\uE809" },
+            new SearchItem { Title = "System Repair".T(), Description = "Fix broken Windows components, SFC scan, and DISM restore.".T(), PageTag = "Repair", Keywords = "repair sfc dism fix component system sua loi", IconGlyph = "\uE777" },
+            new SearchItem { Title = "Security Shield".T(), Description = "Evaluate security parameters, defender configurations, and privacy safeguards.".T(), PageTag = "Security", Keywords = "security defender shield privacy firewalls bao mat", IconGlyph = "\uE727" },
+            new SearchItem { Title = "System Optimizer".T(), Description = "Tune speed settings, clean system memory RAM, and apply OS custom tweaks.".T(), PageTag = "Optimizer", Keywords = "optimizer ram speed performance memory boost toi uu", IconGlyph = "\uE916" },
+            new SearchItem { Title = "Startup & Services".T(), Description = "Configure system startup apps, background services, and delay triggers.".T(), PageTag = "Startup", Keywords = "startup services boot background tasks khoi dong dich vu", IconGlyph = "\uE7B4" },
+            new SearchItem { Title = "Process Manager".T(), Description = "Monitor and manage running tasks, CPU loads, and active processes.".T(), PageTag = "Process", Keywords = "process task manager kill cpu memory memory load tien trinh", IconGlyph = "\uE9D9" },
+            new SearchItem { Title = "Disk Tools".T(), Description = "Analyze storage layout, find duplicates, and clean heavy directories.".T(), PageTag = "Disk", Keywords = "disk storage folder analysis duplicates o dia", IconGlyph = "\uE770" },
+            new SearchItem { Title = "Hardware Center".T(), Description = "View detailed CPU, GPU, RAM, battery sensors, and device info.".T(), PageTag = "Hardware", Keywords = "hardware hardware cpu gpu specifications phan cung sensor", IconGlyph = "\uE950" },
+            new SearchItem { Title = "Registry Center".T(), Description = "Backup, restore, and repair broken system registry keys.".T(), PageTag = "Registry", Keywords = "registry backup hive restore scan database quan ly registry", IconGlyph = "\uE7B4" },
+            new SearchItem { Title = "Software Updater".T(), Description = "Check and install updates for installed applications.".T(), PageTag = "Updater", Keywords = "software updater winget upgrade phan mem", IconGlyph = "\uE895" },
+            new SearchItem { Title = "Driver Updater".T(), Description = "Scan and refresh system hardware driver files.".T(), PageTag = "Driver", Keywords = "driver updater hardware components cap nhat driver", IconGlyph = "\uE9A1" },
+            new SearchItem { Title = "Settings".T(), Description = "Personalization configurations, language options, and background scheduling.".T(), PageTag = "Settings", Keywords = "settings theme accent transparent language config cai dat", IconGlyph = "\uE713" }
+        };
+    }
+
+    private static string RemoveDiacritics(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return string.Empty;
+        
+        string normalizedString = text.Normalize(System.Text.NormalizationForm.FormD);
+        var stringBuilder = new System.Text.StringBuilder();
+
+        foreach (char c in normalizedString)
+        {
+            var unicodeCategory = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c);
+            if (unicodeCategory != System.Globalization.UnicodeCategory.NonSpacingMark)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+
+        return stringBuilder.ToString().Normalize(System.Text.NormalizationForm.FormC).ToLower();
+    }
+
+    private void OnSearchTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+        {
+            string rawQuery = sender.Text.Trim();
+            if (string.IsNullOrEmpty(rawQuery))
+            {
+                sender.ItemsSource = null;
+                return;
+            }
+
+            string cleanQuery = RemoveDiacritics(rawQuery);
+            var results = new List<SearchItemScore>();
+
+            foreach (var item in _searchRegistry)
+            {
+                string cleanTitle = RemoveDiacritics(item.Title);
+                string cleanDesc = RemoveDiacritics(item.Description);
+                string cleanKeywords = RemoveDiacritics(item.Keywords);
+
+                int score = 0;
+                if (cleanTitle.Equals(cleanQuery, StringComparison.OrdinalIgnoreCase))
+                {
+                    score = 100; // Exact match
+                }
+                else if (cleanTitle.StartsWith(cleanQuery, StringComparison.OrdinalIgnoreCase))
+                {
+                    score = 80;
+                }
+                else if (cleanTitle.Contains(cleanQuery, StringComparison.OrdinalIgnoreCase))
+                {
+                    score = 60;
+                }
+                else if (cleanKeywords.Contains(cleanQuery, StringComparison.OrdinalIgnoreCase))
+                {
+                    score = 40;
+                }
+                else if (cleanDesc.Contains(cleanQuery, StringComparison.OrdinalIgnoreCase))
+                {
+                    score = 20;
+                }
+
+                if (score > 0)
+                {
+                    results.Add(new SearchItemScore { Item = item, Score = score });
+                }
+            }
+
+            sender.ItemsSource = results.OrderByDescending(x => x.Score).Select(x => x.Item).ToList();
+        }
+    }
+
+    private void OnSearchSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+    {
+        if (args.SelectedItem is SearchItem item)
+        {
+            if (!string.IsNullOrEmpty(item.PageTag) && RootFrame.Content is MainPage mainPage)
+            {
+                mainPage.NavigateToPageExternal(item.PageTag);
+            }
+        }
+    }
+
     private void OnSearchQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        string query = sender.Text.Trim().ToLower();
+        if (args.ChosenSuggestion is SearchItem item)
+        {
+            if (!string.IsNullOrEmpty(item.PageTag) && RootFrame.Content is MainPage mainPage)
+            {
+                mainPage.NavigateToPageExternal(item.PageTag);
+            }
+            return;
+        }
+
+        string query = sender.Text.Trim();
         if (string.IsNullOrEmpty(query)) return;
 
-        string pageTag = "";
-        if (query.Contains("dọn") || query.Contains("clean") || query.Contains("rác") || query.Contains("junk"))
-            pageTag = "Junk";
-        else if (query.Contains("sửa") || query.Contains("repair") || query.Contains("lỗi"))
-            pageTag = "Repair";
-        else if (query.Contains("tiến") || query.Contains("process") || query.Contains("task") || query.Contains("chạy"))
-            pageTag = "Process";
-        else if (query.Contains("startup"))
-            pageTag = "Startup";
-        else if (query.Contains("đĩa") || query.Contains("disk") || query.Contains("storage") || query.Contains("trùng"))
-            pageTag = "Disk";
-        else if (query.Contains("mạng") || query.Contains("network") || query.Contains("ping") || query.Contains("dns"))
-            pageTag = "Network";
-        else if (query.Contains("bảo") || query.Contains("security") || query.Contains("defender") || query.Contains("shield"))
-            pageTag = "Security";
-        else if (query.Contains("phần mềm") || query.Contains("app") || query.Contains("uninstall"))
-            pageTag = "Uninstall";
-        else if (query.Contains("update") || query.Contains("updater"))
-            pageTag = "Updater";
-        else if (query.Contains("driver") || query.Contains("drivers"))
-            pageTag = "Driver";
-        else if (query.Contains("giám") || query.Contains("monitor") || query.Contains("telemetry") || query.Contains("phần cứng") || query.Contains("battery"))
-            pageTag = "Hardware";
-        else if (query.Contains("registry") || query.Contains("sao lưu") || query.Contains("backup"))
-            pageTag = "Registry";
-        else if (query.Contains("optimizer") || query.Contains("tối ưu"))
-            pageTag = "Optimizer";
-        else if (query.Contains("cài") || query.Contains("setting") || query.Contains("cấu hình"))
-            pageTag = "Settings";
+        string cleanQuery = RemoveDiacritics(query);
+        var firstMatch = _searchRegistry
+            .Select(i => new { Item = i, CleanTitle = RemoveDiacritics(i.Title), CleanKeywords = RemoveDiacritics(i.Keywords) })
+            .FirstOrDefault(x => x.CleanTitle.Contains(cleanQuery) || x.CleanKeywords.Contains(cleanQuery));
 
-        if (!string.IsNullOrEmpty(pageTag) && RootFrame.Content is MainPage mainPage)
+        if (firstMatch != null && RootFrame.Content is MainPage mainPage2)
         {
-            mainPage.NavigateToPageExternal(pageTag);
+            mainPage2.NavigateToPageExternal(firstMatch.Item.PageTag);
         }
+    }
+
+    private class SearchItemScore
+    {
+        public SearchItem Item { get; set; } = null!;
+        public int Score { get; set; }
     }
 
     private void NotificationButton_Click(object sender, RoutedEventArgs e)
@@ -776,14 +857,117 @@ public sealed partial class MainWindow : Window
 
     private async void ExitAppButton_Click(object sender, RoutedEventArgs e)
     {
+        ExitOverlayTitle.Text = "Shutting Down".T();
+        ExitOverlayMessage.Text = "Closing database connections and freeing resources...".T();
         ExitOverlayGrid.Visibility = Visibility.Visible;
         FadeInExitOverlay.Begin();
-        
+
         // Let user experience the fade animation and show database cleanup context
         await Task.Delay(1500);
-        
+
         _forceClose = true;
         this.Close();
+    }
+
+    private void InstallDownloadedUpdate()
+    {
+        if (string.IsNullOrEmpty(_downloadedSetupPath) || !File.Exists(_downloadedSetupPath))
+        {
+            var service = App.Services.GetService<Services.Contracts.INotificationService>();
+            service?.ShowError("Installer Not Found".T(), "The downloaded update installer could not be found. Please check again.");
+            return;
+        }
+
+        try
+        {
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = _downloadedSetupPath,
+                UseShellExecute = true
+            };
+            System.Diagnostics.Process.Start(psi);
+            Microsoft.UI.Xaml.Application.Current.Exit();
+        }
+        catch (Exception ex)
+        {
+            var service = App.Services.GetService<Services.Contracts.INotificationService>();
+            service?.ShowError("Installation Failed".T(), string.Format("Could not start installer: {0}".T(), ex.Message));
+        }
+    }
+
+    private void CheckAndShowChangelog(Version currentVersion)
+    {
+        try
+        {
+            string raw = DbManager.GetSettings();
+            string lastVersionStr = "";
+            bool versionChanged = false;
+
+            if (!string.IsNullOrEmpty(raw))
+            {
+                using (var doc = JsonDocument.Parse(raw))
+                {
+                    if (doc.RootElement.TryGetProperty("LastVersion", out var verProp))
+                    {
+                        lastVersionStr = verProp.GetString() ?? "";
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(lastVersionStr))
+            {
+                versionChanged = true;
+            }
+            else
+            {
+                var lastVersion = new Version(lastVersionStr);
+                if (currentVersion > lastVersion)
+                {
+                    versionChanged = true;
+                }
+            }
+
+            if (versionChanged)
+            {
+                string newRaw = MergeSetting(raw, "LastVersion", currentVersion.ToString());
+                DbManager.SaveSettings(newRaw);
+
+                // Log to Activity Log and add to Notifications database!
+                string logMessage = string.Format("System updated to version {0}".T(), currentVersion.ToString());
+                DbManager.LogAction(logMessage, "System", "Success");
+
+                string notificationTitle = string.Format("System Updated to Version {0}".T(), currentVersion.ToString());
+                string notificationMessage = 
+                    "WinCare Pro has been successfully updated.".T() + "\n\n" +
+                    "What's New:".T() + "\n" +
+                    "• " + "Responsive Layout: Dynamic collapse on narrower viewports.".T() + "\n" +
+                    "• " + "Skeleton Loader: Beautiful entry shimmer layouts during database scan.".T() + "\n" +
+                    "• " + "Stability Fixes: Upgraded SQLite concurrent engines with WAL journal mode.".T() + "\n" +
+                    "• " + "Theme Consistency: Optimized contrast ratios for elements in Light Mode.".T();
+
+                DbManager.AddNotification(notificationTitle, notificationMessage, "Success", showToast: false);
+            }
+        }
+        catch { }
+    }
+
+    private string MergeSetting(string rawJson, string key, string value)
+    {
+        var dict = new System.Collections.Generic.Dictionary<string, object>();
+        if (!string.IsNullOrEmpty(rawJson))
+        {
+            try
+            {
+                var parsed = JsonSerializer.Deserialize<System.Collections.Generic.Dictionary<string, object>>(rawJson);
+                if (parsed != null)
+                {
+                    dict = parsed;
+                }
+            }
+            catch { }
+        }
+        dict[key] = value;
+        return JsonSerializer.Serialize(dict);
     }
 
     public void UpdateNotificationBadge()
@@ -803,4 +987,15 @@ public sealed partial class MainWindow : Window
     }
 
     public Frame MainFrame => RootFrame;
+}
+
+public class SearchItem
+{
+    public string Title { get; set; } = "";
+    public string Description { get; set; } = "";
+    public string PageTag { get; set; } = "";
+    public string Keywords { get; set; } = "";
+    public string IconGlyph { get; set; } = "";
+
+    public override string ToString() => Title;
 }

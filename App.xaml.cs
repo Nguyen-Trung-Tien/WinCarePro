@@ -48,6 +48,14 @@ public partial class App : Application
             WriteCrashLog("crash_unhandled.txt",
                 $"Unhandled Exception:\nMessage: {e.Message}\nException: {e.Exception}\nStackTrace: {e.Exception?.StackTrace}");
         };
+
+        // Catch unobserved task exceptions in asynchronous code
+        TaskScheduler.UnobservedTaskException += (sender, e) =>
+        {
+            WriteCrashLog("crash_unobserved.txt",
+                $"Unobserved Task Exception:\nMessage: {e.Exception?.Message}\nException: {e.Exception}\nStackTrace: {e.Exception?.StackTrace}");
+            e.SetObserved();
+        };
     }
 
     public static IServiceProvider Services { get; private set; } = null!;
@@ -111,6 +119,9 @@ public partial class App : Application
 
             // Initialize SQLite database
             Database.DbManager.InitializeDatabase();
+
+            // Run weekly DB maintenance in background
+            Task.Run(() => Database.DbManager.RunDatabaseMaintenance());
 
             // Check if launched in background mode
             var commandLineArgs = Environment.GetCommandLineArgs();
@@ -178,41 +189,6 @@ public partial class App : Application
 
     public static void ApplyAccentColor(string tag)
     {
-        try
-        {
-            if (Current.Resources.TryGetValue("PrimaryAccentGradient", out var brushObj) && 
-                brushObj is Microsoft.UI.Xaml.Media.LinearGradientBrush brush)
-            {
-                switch (tag.ToLower())
-                {
-                    case "green":
-                        brush.GradientStops[0].Color = Windows.UI.Color.FromArgb(255, 16, 185, 129); // #FF10B981
-                        brush.GradientStops[1].Color = Windows.UI.Color.FromArgb(255, 5, 150, 105);  // #FF059669
-                        brush.GradientStops[2].Color = Windows.UI.Color.FromArgb(255, 4, 120, 87);   // #FF047857
-                        break;
-                    case "purple":
-                        brush.GradientStops[0].Color = Windows.UI.Color.FromArgb(255, 139, 92, 246); // #FF8B5CF6
-                        brush.GradientStops[1].Color = Windows.UI.Color.FromArgb(255, 124, 58, 237); // #FF7C3AED
-                        brush.GradientStops[2].Color = Windows.UI.Color.FromArgb(255, 109, 40, 217); // #FF6D28D9
-                        break;
-                    case "pink":
-                        brush.GradientStops[0].Color = Windows.UI.Color.FromArgb(255, 236, 72, 153); // #FFEC4899
-                        brush.GradientStops[1].Color = Windows.UI.Color.FromArgb(255, 217, 70, 239); // #FFD946EF
-                        brush.GradientStops[2].Color = Windows.UI.Color.FromArgb(255, 192, 132, 252); // #FFC084FC
-                        break;
-                    case "amber":
-                        brush.GradientStops[0].Color = Windows.UI.Color.FromArgb(255, 245, 158, 11); // #FFF59E0B
-                        brush.GradientStops[1].Color = Windows.UI.Color.FromArgb(255, 217, 119, 6);  // #FFD97706
-                        brush.GradientStops[2].Color = Windows.UI.Color.FromArgb(255, 180, 83, 9);   // #FFB45309
-                        break;
-                    default: // Default (Purple-Indigo-Blue)
-                        brush.GradientStops[0].Color = Windows.UI.Color.FromArgb(255, 127, 86, 217); // #FF7F56D9
-                        brush.GradientStops[1].Color = Windows.UI.Color.FromArgb(255, 99, 102, 241); // #FF6366F1
-                        brush.GradientStops[2].Color = Windows.UI.Color.FromArgb(255, 59, 130, 246); // #FF3B82F6
-                        break;
-                }
-            }
-        }
-        catch { }
+        WinCarePro.Services.ThemeManager.Instance.ApplyAccent(tag);
     }
 }

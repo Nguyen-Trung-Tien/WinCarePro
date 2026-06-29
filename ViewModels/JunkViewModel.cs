@@ -17,6 +17,7 @@ public class JunkViewModel : ViewModelBase
     private readonly IJunkCleanerService _junkEngine;
     private readonly ILockingAppService _lockingAppService;
     private readonly IDialogService _dialogService;
+    private System.Threading.CancellationTokenSource? _scanCts;
 
     private bool _isScanning;
     public bool IsScanning
@@ -119,6 +120,14 @@ public class JunkViewModel : ViewModelBase
     {
         _junkEngine.ProgressMessage -= OnProgressMessage;
         _junkEngine.ProgressChanged -= OnProgressChanged;
+
+        try
+        {
+            _scanCts?.Cancel();
+            _scanCts?.Dispose();
+            _scanCts = null;
+        }
+        catch { }
     }
 
     private void OnProgressMessage(string msg)
@@ -140,6 +149,16 @@ public class JunkViewModel : ViewModelBase
     {
         if (IsScanning || IsCleaning) return;
 
+        try
+        {
+            _scanCts?.Cancel();
+            _scanCts?.Dispose();
+        }
+        catch { }
+
+        _scanCts = new System.Threading.CancellationTokenSource();
+        var token = _scanCts.Token;
+
         IsScanning = true;
         ProgressPercent = 0;
         LiveLogs = "";
@@ -149,8 +168,10 @@ public class JunkViewModel : ViewModelBase
 
         try
         {
-            var results = await _junkEngine.ScanJunkAsync();
+            var results = await TaskSchedulerService.Instance.RunTaskAsync("junk", t => _junkEngine.ScanJunkAsync(t), token);
             var lockingApps = await _lockingAppService.GetLockingAppsAsync();
+            
+            token.ThrowIfCancellationRequested();
             
             _dispatcherQueue.TryEnqueue(() =>
             {
@@ -181,6 +202,14 @@ public class JunkViewModel : ViewModelBase
                 }
                 
                 ProgressMessage = "Scan completed. Select items to clean.".T();
+            });
+        }
+        catch (OperationCanceledException)
+        {
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                ProgressMessage = "Scan cancelled.".T();
+                IsScanning = false;
             });
         }
         catch (Exception ex)

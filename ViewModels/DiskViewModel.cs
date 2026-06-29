@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
 using WinCarePro.Services;
+using WinCarePro.Services.Implementations;
 
 namespace WinCarePro.ViewModels;
 
@@ -13,6 +14,18 @@ public class DiskViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly DiskEngine _engine = new();
+    private System.Threading.CancellationTokenSource? _diskCts;
+
+    public void Cleanup()
+    {
+        try
+        {
+            _diskCts?.Cancel();
+            _diskCts?.Dispose();
+            _diskCts = null;
+        }
+        catch { }
+    }
 
     private string _storageScanPath = "";
     public string StorageScanPath
@@ -105,18 +118,33 @@ public class DiskViewModel : ViewModelBase
             return;
         }
 
+        try
+        {
+            _diskCts?.Cancel();
+            _diskCts?.Dispose();
+        }
+        catch { }
+
+        _diskCts = new System.Threading.CancellationTokenSource();
+        var token = _diskCts.Token;
+
         IsBusy = true;
         StorageItems.Clear();
         LogText(string.Format("Starting disk usage analysis for: {0}...".T(), StorageScanPath));
 
         try
         {
-            var list = await _engine.AnalyzeStorageAsync(StorageScanPath);
+            var list = await TaskSchedulerService.Instance.RunTaskAsync("disk", t => _engine.AnalyzeStorageAsync(StorageScanPath, t), token);
+            token.ThrowIfCancellationRequested();
             foreach (var item in list)
             {
                 StorageItems.Add(item);
             }
             LogText(string.Format("Analysis complete. Found {0} items.".T(), StorageItems.Count));
+        }
+        catch (OperationCanceledException)
+        {
+            LogText("Storage analysis cancelled.".T());
         }
         catch (Exception ex)
         {

@@ -14,12 +14,68 @@ public sealed partial class StartupPage : Page
 {
     public StartupViewModel ViewModel { get; }
 
+    public static readonly DependencyProperty PublisherColWidthProperty =
+        DependencyProperty.Register(nameof(PublisherColWidth), typeof(GridLength), typeof(StartupPage), new PropertyMetadata(new GridLength(2, GridUnitType.Star)));
+
+    public GridLength PublisherColWidth
+    {
+        get => (GridLength)GetValue(PublisherColWidthProperty);
+        set => SetValue(PublisherColWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty ImpactColWidthProperty =
+        DependencyProperty.Register(nameof(ImpactColWidth), typeof(GridLength), typeof(StartupPage), new PropertyMetadata(new GridLength(1.2, GridUnitType.Star)));
+
+    public GridLength ImpactColWidth
+    {
+        get => (GridLength)GetValue(ImpactColWidthProperty);
+        set => SetValue(ImpactColWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty WideLayoutVisibilityProperty =
+        DependencyProperty.Register(nameof(WideLayoutVisibility), typeof(Visibility), typeof(StartupPage), new PropertyMetadata(Visibility.Visible));
+
+    public Visibility WideLayoutVisibility
+    {
+        get => (Visibility)GetValue(WideLayoutVisibilityProperty);
+        set => SetValue(WideLayoutVisibilityProperty, value);
+    }
+
     public StartupPage()
     {
         ViewModel = App.Services.GetRequiredService<StartupViewModel>();
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
+
+        this.SizeChanged += (s, e) =>
+        {
+            bool isWide = e.NewSize.Width >= 800;
+            PublisherColWidth = isWide ? new GridLength(2, GridUnitType.Star) : new GridLength(0);
+            ImpactColWidth = isWide ? new GridLength(1.2, GridUnitType.Star) : new GridLength(0);
+            WideLayoutVisibility = isWide ? Visibility.Visible : Visibility.Collapsed;
+
+            // Adjust top panel layout
+            if (TopGrid != null && Card1 != null && Card2 != null && Card3 != null)
+            {
+                if (isWide)
+                {
+                    TopCol2.Width = new GridLength(2.2, GridUnitType.Star);
+                    Grid.SetColumn(Card1, 0); Grid.SetRow(Card1, 0);
+                    Grid.SetColumn(Card2, 1); Grid.SetRow(Card2, 0);
+                    Grid.SetColumn(Card3, 2); Grid.SetRow(Card3, 0);
+                    Grid.SetColumnSpan(Card3, 1);
+                }
+                else
+                {
+                    TopCol2.Width = new GridLength(0, GridUnitType.Pixel);
+                    Grid.SetColumn(Card1, 0); Grid.SetRow(Card1, 0);
+                    Grid.SetColumn(Card2, 1); Grid.SetRow(Card2, 0);
+                    Grid.SetColumn(Card3, 0); Grid.SetRow(Card3, 1);
+                    Grid.SetColumnSpan(Card3, 2);
+                }
+            }
+        };
     }
 
     private async void OnReloadStartupClick(object sender, RoutedEventArgs e)

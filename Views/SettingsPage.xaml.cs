@@ -224,7 +224,12 @@ public sealed partial class SettingsPage : Page
 
         if (selectedEllipse != null)
         {
-            selectedEllipse.Stroke = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.White);
+            bool isDark = true;
+            if (App.MainWindowInstance != null)
+            {
+                isDark = (App.MainWindowInstance.MainRootGrid.RequestedTheme != ElementTheme.Light);
+            }
+            selectedEllipse.Stroke = new Microsoft.UI.Xaml.Media.SolidColorBrush(isDark ? Microsoft.UI.Colors.White : Microsoft.UI.Colors.DimGray);
             selectedEllipse.StrokeThickness = 2.5;
         }
     }
@@ -255,17 +260,14 @@ public sealed partial class SettingsPage : Page
         int index = LanguageComboBox.SelectedIndex;
         TranslationManager.Instance.CurrentLanguage = index == 1 ? AppLanguage.Vietnamese : AppLanguage.English;
         
+        // Fast-path cached translation update (Zero visual tree walks)
+        TranslationManager.Instance.ApplyLanguageChange();
+        
         if (App.MainWindowInstance is MainWindow mainWindow)
         {
-            TranslationManager.Instance.Translate(mainWindow.Content);
             if (mainWindow.MainFrame.Content is MainPage mainPage)
             {
-                TranslationManager.Instance.Translate(mainPage);
                 mainPage.UpdateHeader();
-                if (mainPage.NavigationFrame is Frame frame && frame.Content is Page activePage)
-                {
-                    TranslationManager.Instance.Translate(activePage);
-                }
             }
         }
         
@@ -520,6 +522,10 @@ public sealed partial class SettingsPage : Page
             DbManager.SaveSettings(JsonSerializer.Serialize(settingsDict));
         }
         catch { }
+
+        // Re-apply indicators to fit new theme contrast (DimGray/White)
+        string currentAccent = GetSelectedAccentColorTag();
+        ApplyAccentColorSelection(currentAccent);
     }
 
     private void OnAccentClick(object sender, PointerRoutedEventArgs e)

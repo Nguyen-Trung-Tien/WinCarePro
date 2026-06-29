@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="WinCarePro.Views.JunkPage"
+    x:Name="PageRoot"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -114,11 +115,10 @@
             </Grid>
         </Border>
 
-        <!-- Main Body: Two Pane Layout -->
         <Grid Grid.Row="2" ColumnSpacing="20">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.2*" />
-                <ColumnDefinition Width="0.8*" />
+                <ColumnDefinition x:Name="LeftColumn" Width="1.2*" />
+                <ColumnDefinition x:Name="RightColumn" Width="0.8*" />
             </Grid.ColumnDefinitions>
 
             <!-- Left Pane: Categories List -->
@@ -159,7 +159,7 @@
 
                                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="1" Margin="0,0,8,0">
                                             <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis" />
-                                            <TextBlock Text="{x:Bind Description}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{x:Bind Description}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}" />
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="1" Margin="4,0,0,0">
@@ -176,7 +176,7 @@
             </Border>
 
             <!-- Right Pane: Switchable Details, Progress or Empty State -->
-            <Grid Grid.Column="1">
+            <Grid Grid.Column="1" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}">
                 
                 <!-- STATE 1: Empty state (Initial state before scan) -->
                 <Border Style="{StaticResource ModernCardStyle}" Padding="24" Visibility="{x:Bind GetEmptyVisibility(ViewModel.SelectedCategory, ViewModel.IsScanning, ViewModel.IsCleaning), Mode=OneWay}">

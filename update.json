@@ -1,5 +1,5 @@
 {
-  "version": "3.3.0",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.3.0/WinCareProSetup.exe",
-  "changelog": "Cập nhật v3.3.0: Nâng cấp và cải tiến toàn diện Hệ thống quản lý Driver (Driver Updater) tích hợp quy trình quét, tải xuống và cài đặt firmware Driver Wizard; Nâng cấp module Bảo mật & Quyền riêng tư (Security Center & Privacy Tuning) giám sát tường lửa, Defender và phân tích bảo mật hệ thống; Tinh chỉnh hiệu năng và tối ưu hóa giao diện người dùng theo chuẩn Fluent Design mới nhất; Sửa lỗi hiệu năng và tương thích trên Windows 11."
+  "version": "3.3.1",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.3.1/WinCareProSetup.exe",
+  "changelog": "Cập nhật v3.3.1: Khắc phục sự cố xung đột và kích hoạt nhầm phím tắt tìm kiếm Ctrl+F thông qua bộ xử lý PreviewKeyDown, loại bỏ lỗi hiển thị Tooltip của WinUI 3; Hỗ trợ chạy cập nhật thông qua đường dẫn cục bộ (file:///) phục vụ mục đích kiểm thử và phát triển hệ thống; Cập nhật và đồng bộ hóa tài liệu hướng dẫn và ghi chú phát hành toàn hệ thống."
 }

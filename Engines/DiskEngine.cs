@@ -149,7 +149,7 @@ public class DiskEngine
 
 
 
-    public async Task<List<StorageItem>> AnalyzeStorageAsync(string folderPath)
+    public async Task<List<StorageItem>> AnalyzeStorageAsync(string folderPath, CancellationToken token = default)
     {
         var list = new List<StorageItem>();
         if (!Directory.Exists(folderPath)) return list;
@@ -161,6 +161,7 @@ public class DiskEngine
                 // Enumerate files
                 foreach (var file in Directory.GetFiles(folderPath))
                 {
+                    token.ThrowIfCancellationRequested();
                     try
                     {
                         var info = new FileInfo(file);
@@ -178,9 +179,10 @@ public class DiskEngine
                 // Enumerate folders
                 foreach (var dir in Directory.GetDirectories(folderPath))
                 {
+                    token.ThrowIfCancellationRequested();
                     try
                     {
-                        long size = GetDirSizeRecursively(dir);
+                        long size = GetDirSizeRecursively(dir, token);
                         list.Add(new StorageItem
                         {
                             Path = dir,
@@ -193,13 +195,14 @@ public class DiskEngine
                 }
             }
             catch { }
-        });
+        }, token);
 
         return list.OrderByDescending(x => x.SizeBytes).ToList();
     }
 
-    private long GetDirSizeRecursively(string path)
+    private long GetDirSizeRecursively(string path, CancellationToken token = default)
     {
+        token.ThrowIfCancellationRequested();
         long bytes = 0;
         try
         {
@@ -214,6 +217,7 @@ public class DiskEngine
 
             foreach (var file in files)
             {
+                token.ThrowIfCancellationRequested();
                 try { bytes += new FileInfo(file).Length; } catch { }
             }
 
@@ -226,7 +230,8 @@ public class DiskEngine
 
             foreach (var dir in dirs)
             {
-                bytes += GetDirSizeRecursively(dir);
+                token.ThrowIfCancellationRequested();
+                bytes += GetDirSizeRecursively(dir, token);
             }
         }
         catch { }

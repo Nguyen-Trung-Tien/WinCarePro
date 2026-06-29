@@ -34,14 +34,18 @@
             <StackPanel Spacing="24">
                 
                 <!-- 1. CORE LAYER (Always Visible) -->
-                <Grid ColumnSpacing="24" RowSpacing="24">
+                <Grid x:Name="CoreLayerGrid" ColumnSpacing="24" RowSpacing="24">
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="CoreRow0" Height="Auto" />
+                        <RowDefinition x:Name="CoreRow1" Height="Auto" />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition x:Name="CoreLeftCol" Width="3*" />
+                        <ColumnDefinition x:Name="CoreRightCol" Width="2*" />
                     </Grid.ColumnDefinitions>
                     
                     <!-- Left Side: Health Gauge & CPU/RAM Mini Cards -->
-                    <StackPanel Spacing="24">
+                    <StackPanel x:Name="CoreLeftPanel" Spacing="24">
                         <!-- Health Gauge Card (Neon Glow Border) -->
                         <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="28">
                             <Grid x:Name="HealthGaugeGrid">
@@ -62,7 +66,7 @@
                                 <StackPanel x:Name="GaugeDescPanel" Grid.Column="1" VerticalAlignment="Center" Spacing="12">
                                     <TextBlock Text="System Health Overview" FontSize="20" FontWeight="Bold" />
                                     <Border Background="{x:Bind GetHealthScoreBadgeBackground(ViewModel.HealthScore), Mode=OneWay}" HorizontalAlignment="Left" Padding="12,6" CornerRadius="6">
-                                        <TextBlock Text="{x:Bind GetStatusText(ViewModel.HealthScore), Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" />
+                                        <TextBlock Text="{x:Bind GetStatusText(ViewModel.HealthScore), Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" TextWrapping="Wrap" />
                                     </Border>
                                     <TextBlock Text="{x:Bind ViewModel.HealthBreakdownText, Mode=OneWay}" TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18" />
                                     
@@ -168,7 +172,7 @@
                     </StackPanel>
                     
                     <!-- Right Side: Bottleneck Advisor & Navigation Quick Stats -->
-                    <StackPanel Grid.Column="1" Spacing="24">
+                    <StackPanel x:Name="CoreRightPanel" Grid.Column="1" Spacing="24">
                         <!-- Bottleneck Advisor widget -->
                         <Border Style="{StaticResource ModernCardStyle}" Padding="20">
                             <StackPanel Spacing="10">
@@ -243,14 +247,15 @@
                 </Grid>
 
                 <!-- 2. EXTENDED LAYER (Lazy Loaded via x:Load) -->
-                <Grid x:Name="ExtendedLayerPanel" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" RowSpacing="24" ColumnSpacing="24">
+                <Grid x:Name="ExtendedLayerPanel" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" RowSpacing="24" ColumnSpacing="24">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition x:Name="ExtendedRow0" Height="Auto"/>
+                        <RowDefinition x:Name="ExtendedRow1" Height="Auto"/>
+                        <RowDefinition x:Name="ExtendedRow2" Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition x:Name="ExtendedLeftCol" Width="3*"/>
+                        <ColumnDefinition x:Name="ExtendedRightCol" Width="2*"/>
                     </Grid.ColumnDefinitions>
                     
                     <!-- GPU and Disk Cards -->
@@ -332,16 +337,20 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             
-                            <Grid Grid.Row="0" Margin="0,0,0,16">
+                            <Grid x:Name="PerformanceHeaderGrid" Grid.Row="0" Margin="0,0,0,16" RowSpacing="8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition x:Name="PerformanceHeaderRow0" Height="Auto" />
+                                    <RowDefinition x:Name="PerformanceHeaderRow1" Height="Auto" />
+                                </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition x:Name="PerformanceHeaderCol0" Width="*" />
+                                    <ColumnDefinition x:Name="PerformanceHeaderCol1" Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <StackPanel Spacing="4">
+                                <StackPanel Spacing="4" Grid.Column="0" Grid.Row="0">
                                     <TextBlock Text="Performance Trend History" FontSize="16" FontWeight="Bold" />
                                     <TextBlock Text="Rolling history of resource load levels (CPU, RAM, GPU, Disk)" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                 </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                                <StackPanel x:Name="PerformanceFiltersPanel" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
                                     <CheckBox x:Name="CpuFilterCheck" Content="CPU" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" />
                                     <CheckBox x:Name="RamFilterCheck" Content="RAM" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" />
                                     <CheckBox x:Name="GpuFilterCheck" Content="GPU" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" />

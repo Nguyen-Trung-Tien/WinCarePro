@@ -97,6 +97,12 @@
                         <TextBlock Text="Advanced Developer" VerticalAlignment="Center" FontSize="13"/>
                     </StackPanel>
                 </ListViewItem>
+                <ListViewItem Height="40" Padding="8,0" CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE946;" FontSize="16" Width="20" Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="About &amp; Developer" VerticalAlignment="Center" FontSize="13"/>
+                    </StackPanel>
+                </ListViewItem>
             </ListView>
         </Border>
 
@@ -388,6 +394,58 @@
                                 <Button Grid.Column="3" Content="Clear Console" Click="OnClearTraceClick" HorizontalAlignment="Right" FontSize="11" Padding="12,4"/>
                             </Grid>
                             <TextBox x:Name="TraceLogTextBox" Height="180" Style="{StaticResource DarkTerminalStyle}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Section 7: About & Developer Info -->
+                <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 6), Mode=OneWay}">
+                    <TextBlock Text="About WinCare Pro" FontSize="18" FontWeight="Bold" />
+                    
+                    <Border Style="{StaticResource ModernCardStyle}" Padding="24">
+                        <StackPanel Spacing="16">
+                            <!-- Logo and name -->
+                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                <Border Width="64" Height="64" Background="{StaticResource PrimaryAccentGradient}" CornerRadius="16" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE909;" FontSize="32" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Border>
+                                <StackPanel VerticalAlignment="Center" Spacing="2">
+                                    <TextBlock Text="WinCare Pro" FontSize="20" FontWeight="ExtraBold" />
+                                    <TextBlock Text="System Optimizer &amp; Security Shield" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="Version 1.2.0 (Stable Release)" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <MenuFlyoutSeparator />
+
+                            <!-- Developer info -->
+                            <Grid RowSpacing="12" ColumnSpacing="16" Margin="0,8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Author row -->
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Author:" FontWeight="SemiBold" FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="Nguyen Trung Tien" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+
+                                <!-- Contact row -->
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Contact Support:" FontWeight="SemiBold" FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                <HyperlinkButton Grid.Row="1" Grid.Column="1" Content="trungtiennguyen910@gmail.com" NavigateUri="mailto:trungtiennguyen910@gmail.com" Padding="0" VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <MenuFlyoutSeparator />
+
+                            <!-- Code repository -->
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Source Code Repository" FontSize="13" FontWeight="Bold" />
+                                <TextBlock Text="Contributions, bug reports, and suggestions are welcome on GitHub." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                <HyperlinkButton Content="https://github.com/Nguyen-Trung-Tien/WinCarePro" NavigateUri="https://github.com/Nguyen-Trung-Tien/WinCarePro" Padding="0" Margin="0,4,0,0"/>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </StackPanel>

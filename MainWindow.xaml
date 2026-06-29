@@ -34,13 +34,37 @@
                 <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="20" Height="20" VerticalAlignment="Center" Stretch="Uniform"/>
                 <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                 <Border Background="#207F56D9" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
-                    <TextBlock Text="v3.3.0" FontSize="10" FontWeight="Bold" Foreground="#FF7F56D9" VerticalAlignment="Center"/>
+                    <TextBlock Text="v3.3.1" FontSize="10" FontWeight="Bold" Foreground="#FF7F56D9" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
             <!-- Search (Center) -->
             <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxWidth="420" Margin="16,0" Height="36" Canvas.ZIndex="10">
-                <AutoSuggestBox x:Name="SearchBox" PlaceholderText="Search tools, settings, apps... (Ctrl + F)" QueryIcon="Find" CornerRadius="18" HorizontalAlignment="Stretch" VerticalAlignment="Center" QuerySubmitted="OnSearchQuerySubmitted"/>
+                <AutoSuggestBox x:Name="SearchBox" 
+                                PlaceholderText="Search tools, settings, apps... (Ctrl + F)" 
+                                QueryIcon="Find" 
+                                CornerRadius="18" 
+                                HorizontalAlignment="Stretch" 
+                                VerticalAlignment="Center" 
+                                QuerySubmitted="OnSearchQuerySubmitted"
+                                TextChanged="OnSearchTextChanged"
+                                SuggestionChosen="OnSearchSuggestionChosen">
+                    <AutoSuggestBox.ItemTemplate>
+                        <DataTemplate x:DataType="local:SearchItem">
+                            <Grid Padding="4" ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <FontIcon Grid.Column="0" Glyph="{Binding IconGlyph}" FontSize="16" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="12.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                    <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="NoWrap"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
             </Grid>
 
             <!-- Controls (Right) — Clock + Notification Bell + Theme -->
@@ -93,24 +117,69 @@
         </ScrollViewer>
 
         <!-- Exit Overlay Grid (Premium Glassmorphism Backdrop) -->
-        <Grid x:Name="ExitOverlayGrid" Grid.Row="0" Grid.RowSpan="2" Background="#EB0A0A0C" Visibility="Collapsed" Canvas.ZIndex="1000" Opacity="0">
+        <Grid x:Name="ExitOverlayGrid" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="1000" Opacity="0">
             <Grid.Resources>
                 <Storyboard x:Name="FadeInExitOverlay">
-                    <DoubleAnimation Storyboard.TargetName="ExitOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.4">
+                    <DoubleAnimation Storyboard.TargetName="ExitOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5">
                         <DoubleAnimation.EasingFunction>
                             <CubicEase EasingMode="EaseOut"/>
                         </DoubleAnimation.EasingFunction>
                     </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetName="ExitOverlayContent" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="40" To="0" Duration="0:0:0.6">
+                        <DoubleAnimation.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
                 </Storyboard>
             </Grid.Resources>
-            
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
-                <!-- Glowing Ring with custom style -->
-                <ProgressRing IsActive="True" Width="64" Height="64" Foreground="#FF7F56D9"/>
+
+            <!-- Background Ambient Glowing Mesh -->
+            <Grid x:Name="AmbientGlowContainer">
+                <!-- Outer Radial Glow Circle 1 -->
+                <Ellipse Width="450" Height="450" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.12">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#FF7F56D9" Offset="0" />
+                            <GradientStop Color="Transparent" Offset="1" />
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <!-- Outer Radial Glow Circle 2 -->
+                <Ellipse Width="350" Height="350" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="100,50,0,0" Opacity="0.08">
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="#FF00C1EE" Offset="0" />
+                            <GradientStop Color="Transparent" Offset="1" />
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
                 
-                <StackPanel Spacing="8" HorizontalAlignment="Center">
-                    <TextBlock Text="Shutting Down" FontSize="22" FontWeight="Bold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Closing database connections and freeing resources..." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
+                <!-- Frosted Glass Acrylic Layer -->
+                <Border BorderThickness="0">
+                    <Border.BackgroundSizing>OuterBorderEdge</Border.BackgroundSizing>
+                    <Border.Background>
+                        <AcrylicBrush TintColor="#050508" TintOpacity="0.80" FallbackColor="#050508"/>
+                    </Border.Background>
+                </Border>
+            </Grid>
+            
+            <StackPanel x:Name="ExitOverlayContent" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="32">
+                <StackPanel.RenderTransform>
+                    <TranslateTransform Y="40" />
+                </StackPanel.RenderTransform>
+                
+                <!-- Premium Custom Spinner Ring -->
+                <Grid Width="72" Height="72" HorizontalAlignment="Center">
+                    <!-- Pulsing outer ring -->
+                    <Ellipse Width="72" Height="72" Stroke="#307F56D9" StrokeThickness="2" />
+                    <!-- Indeterminate loader -->
+                    <ProgressRing IsActive="True" Width="56" Height="56" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>
+                
+                <StackPanel Spacing="12" HorizontalAlignment="Center">
+                    <TextBlock x:Name="ExitOverlayTitle" Text="Shutting Down" FontSize="26" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="1"/>
+                    <TextBlock x:Name="ExitOverlayMessage" Text="Closing database connections and freeing resources..." FontSize="14.5" Foreground="#FFA0A0B5" HorizontalAlignment="Center" FontWeight="Normal"/>
+                    <TextBlock Text="Please don't turn off your computer or close the app" FontSize="11" Foreground="#FF5B5B73" HorizontalAlignment="Center" FontWeight="Light" Margin="0,4,0,0"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

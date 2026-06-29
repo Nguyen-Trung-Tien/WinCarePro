@@ -19,7 +19,21 @@ public class TranslationManager
     private static TranslationManager? _instance;
     public static TranslationManager Instance => _instance ??= new TranslationManager();
 
-    public AppLanguage CurrentLanguage { get; set; } = AppLanguage.English;
+    private AppLanguage _currentLanguage = AppLanguage.English;
+    public AppLanguage CurrentLanguage
+    {
+        get => _currentLanguage;
+        set
+        {
+            if (_currentLanguage != value)
+            {
+                _currentLanguage = value;
+                LanguageChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+
+    public event EventHandler? LanguageChanged;
 
     private readonly Dictionary<string, string> _translations = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConditionalWeakTable<DependencyObject, Dictionary<string, string>> OriginalValues = new();
@@ -130,17 +144,52 @@ public class TranslationManager
         return false;
     }
 
-    public void Translate(DependencyObject? parent)
-    {
-        if (parent == null) return;
+    private readonly List<WeakReference<DependencyObject>> _registeredControls = new();
 
-        // Translate specific control types
+    private void RegisterControl(DependencyObject control)
+    {
+        lock (_registeredControls)
+        {
+            foreach (var wr in _registeredControls)
+            {
+                if (wr.TryGetTarget(out var target) && target == control)
+                {
+                    return;
+                }
+            }
+            _registeredControls.Add(new WeakReference<DependencyObject>(control));
+        }
+    }
+
+    public void ApplyLanguageChange()
+    {
+        lock (_registeredControls)
+        {
+            for (int i = _registeredControls.Count - 1; i >= 0; i--)
+            {
+                if (_registeredControls[i].TryGetTarget(out var control))
+                {
+                    TranslateSingleControl(control);
+                }
+                else
+                {
+                    _registeredControls.RemoveAt(i);
+                }
+            }
+        }
+    }
+
+    public void TranslateSingleControl(DependencyObject parent)
+    {
+        bool translated = false;
+
         if (parent is TextBlock tb)
         {
             if (ShouldTranslate(tb.Text))
             {
                 string original = GetOriginalValue(tb, "Text", tb.Text);
                 tb.Text = T(original);
+                translated = true;
             }
         }
         else if (parent is Button btn && btn.Content is string btnContent)
@@ -149,6 +198,16 @@ public class TranslationManager
             {
                 string original = GetOriginalValue(btn, "Content", btnContent);
                 btn.Content = T(original);
+                translated = true;
+            }
+        }
+        else if (parent is HyperlinkButton hb && hb.Content is string hbContent)
+        {
+            if (ShouldTranslate(hbContent))
+            {
+                string original = GetOriginalValue(hb, "Content", hbContent);
+                hb.Content = T(original);
+                translated = true;
             }
         }
         else if (parent is CheckBox cb && cb.Content is string cbContent)
@@ -157,6 +216,7 @@ public class TranslationManager
             {
                 string original = GetOriginalValue(cb, "Content", cbContent);
                 cb.Content = T(original);
+                translated = true;
             }
         }
         else if (parent is RadioButton rb && rb.Content is string rbContent)
@@ -165,6 +225,7 @@ public class TranslationManager
             {
                 string original = GetOriginalValue(rb, "Content", rbContent);
                 rb.Content = T(original);
+                translated = true;
             }
         }
         else if (parent is ToggleSwitch ts)
@@ -173,16 +234,19 @@ public class TranslationManager
             {
                 string originalHeader = GetOriginalValue(ts, "Header", headerStr);
                 ts.Header = T(originalHeader);
+                translated = true;
             }
             if (ts.OnContent is string onStr && ShouldTranslate(onStr))
             {
                 string originalOn = GetOriginalValue(ts, "OnContent", onStr);
                 ts.OnContent = T(originalOn);
+                translated = true;
             }
             if (ts.OffContent is string offStr && ShouldTranslate(offStr))
             {
                 string originalOff = GetOriginalValue(ts, "OffContent", offStr);
                 ts.OffContent = T(originalOff);
+                translated = true;
             }
         }
         else if (parent is TextBox txt)
@@ -191,11 +255,13 @@ public class TranslationManager
             {
                 string originalPlaceholder = GetOriginalValue(txt, "PlaceholderText", txt.PlaceholderText);
                 txt.PlaceholderText = T(originalPlaceholder);
+                translated = true;
             }
             if (txt.Header is string headerStr && ShouldTranslate(headerStr))
             {
                 string originalHeader = GetOriginalValue(txt, "Header", headerStr);
                 txt.Header = T(originalHeader);
+                translated = true;
             }
         }
         else if (parent is PasswordBox pwb)
@@ -204,11 +270,13 @@ public class TranslationManager
             {
                 string originalPlaceholder = GetOriginalValue(pwb, "PlaceholderText", pwb.PlaceholderText);
                 pwb.PlaceholderText = T(originalPlaceholder);
+                translated = true;
             }
             if (pwb.Header is string headerStr && ShouldTranslate(headerStr))
             {
                 string originalHeader = GetOriginalValue(pwb, "Header", headerStr);
                 pwb.Header = T(originalHeader);
+                translated = true;
             }
         }
         else if (parent is AutoSuggestBox asb)
@@ -217,11 +285,13 @@ public class TranslationManager
             {
                 string originalPlaceholder = GetOriginalValue(asb, "PlaceholderText", asb.PlaceholderText);
                 asb.PlaceholderText = T(originalPlaceholder);
+                translated = true;
             }
             if (asb.Header is string headerStr && ShouldTranslate(headerStr))
             {
                 string originalHeader = GetOriginalValue(asb, "Header", headerStr);
                 asb.Header = T(originalHeader);
+                translated = true;
             }
         }
         else if (parent is ComboBoxItem cbi && cbi.Content is string cbiContent)
@@ -230,6 +300,7 @@ public class TranslationManager
             {
                 string original = GetOriginalValue(cbi, "Content", cbiContent);
                 cbi.Content = T(original);
+                translated = true;
             }
         }
         else if (parent is ComboBox cbx)
@@ -238,6 +309,7 @@ public class TranslationManager
             {
                 string originalHeader = GetOriginalValue(cbx, "Header", headerStr);
                 cbx.Header = T(originalHeader);
+                translated = true;
             }
             foreach (var item in cbx.Items)
             {
@@ -247,6 +319,7 @@ public class TranslationManager
                     {
                         string originalCombi = GetOriginalValue(combi, "Content", combiContent);
                         combi.Content = T(originalCombi);
+                        translated = true;
                     }
                 }
             }
@@ -257,6 +330,7 @@ public class TranslationManager
             {
                 string original = GetOriginalValue(lvi, "Content", lviContent);
                 lvi.Content = T(original);
+                translated = true;
             }
         }
         else if (parent is PivotItem pi)
@@ -265,6 +339,7 @@ public class TranslationManager
             {
                 string original = GetOriginalValue(pi, "Header", piHeader);
                 pi.Header = T(original);
+                translated = true;
             }
         }
         else if (parent is NavigationView nv)
@@ -275,6 +350,7 @@ public class TranslationManager
                 {
                     string original = GetOriginalValue(settingsItem, "Content", settingsContent);
                     settingsItem.Content = T(original);
+                    translated = true;
                 }
             }
         }
@@ -284,6 +360,7 @@ public class TranslationManager
             {
                 string original = GetOriginalValue(nvi, "Content", nviContent);
                 nvi.Content = T(original);
+                translated = true;
             }
         }
         else if (parent is NavigationViewItemHeader nvih)
@@ -292,6 +369,7 @@ public class TranslationManager
             {
                 string original = GetOriginalValue(nvih, "Content", nvihContent);
                 nvih.Content = T(original);
+                translated = true;
             }
         }
         else if (parent is MenuFlyout mf)
@@ -307,13 +385,113 @@ public class TranslationManager
             {
                 string original = GetOriginalValue(mfi, "Text", mfi.Text);
                 mfi.Text = T(original);
+                translated = true;
             }
         }
+        else if (parent is MenuFlyoutSubItem mfsi)
+        {
+            if (!string.IsNullOrEmpty(mfsi.Text) && ShouldTranslate(mfsi.Text))
+            {
+                string original = GetOriginalValue(mfsi, "Text", mfsi.Text);
+                mfsi.Text = T(original);
+                translated = true;
+            }
+        }
+        else if (parent is ContentDialog cd)
+        {
+            if (cd.Title is string titleStr && ShouldTranslate(titleStr))
+            {
+                string originalTitle = GetOriginalValue(cd, "Title", titleStr);
+                cd.Title = T(originalTitle);
+                translated = true;
+            }
+            if (!string.IsNullOrEmpty(cd.PrimaryButtonText) && ShouldTranslate(cd.PrimaryButtonText))
+            {
+                string originalPrimary = GetOriginalValue(cd, "PrimaryButtonText", cd.PrimaryButtonText);
+                cd.PrimaryButtonText = T(originalPrimary);
+                translated = true;
+            }
+            if (!string.IsNullOrEmpty(cd.SecondaryButtonText) && ShouldTranslate(cd.SecondaryButtonText))
+            {
+                string originalSecondary = GetOriginalValue(cd, "SecondaryButtonText", cd.SecondaryButtonText);
+                cd.SecondaryButtonText = T(originalSecondary);
+                translated = true;
+            }
+            if (!string.IsNullOrEmpty(cd.CloseButtonText) && ShouldTranslate(cd.CloseButtonText))
+            {
+                string originalClose = GetOriginalValue(cd, "CloseButtonText", cd.CloseButtonText);
+                cd.CloseButtonText = T(originalClose);
+                translated = true;
+            }
+        }
+        else if (parent is TeachingTip tt)
+        {
+            if (!string.IsNullOrEmpty(tt.Title) && ShouldTranslate(tt.Title))
+            {
+                string originalTitle = GetOriginalValue(tt, "Title", tt.Title);
+                tt.Title = T(originalTitle);
+                translated = true;
+            }
+            if (!string.IsNullOrEmpty(tt.Subtitle) && ShouldTranslate(tt.Subtitle))
+            {
+                string originalSub = GetOriginalValue(tt, "Subtitle", tt.Subtitle);
+                tt.Subtitle = T(originalSub);
+                translated = true;
+            }
+            if (tt.ActionButtonContent is string actionStr && ShouldTranslate(actionStr))
+            {
+                string originalAction = GetOriginalValue(tt, "ActionButtonContent", actionStr);
+                tt.ActionButtonContent = T(originalAction);
+                translated = true;
+            }
+            if (tt.CloseButtonContent is string closeStr && ShouldTranslate(closeStr))
+            {
+                string originalClose = GetOriginalValue(tt, "CloseButtonContent", closeStr);
+                tt.CloseButtonContent = T(originalClose);
+                translated = true;
+            }
+        }
+
+        // Support ToolTip
+        if (parent is DependencyObject dobj)
+        {
+            var toolTipValue = ToolTipService.GetToolTip(dobj);
+            if (toolTipValue is string toolTipStr && ShouldTranslate(toolTipStr))
+            {
+                string originalToolTip = GetOriginalValue(dobj, "ToolTip", toolTipStr);
+                ToolTipService.SetToolTip(dobj, T(originalToolTip));
+                translated = true;
+            }
+        }
+
+        if (translated)
+        {
+            RegisterControl(parent);
+        }
+    }
+
+    public void Translate(DependencyObject? parent)
+    {
+        if (parent == null) return;
+
+        TranslateSingleControl(parent);
 
         // Translate ContextFlyout if present
         if (parent is UIElement ui && ui.ContextFlyout != null)
         {
             Translate(ui.ContextFlyout);
+        }
+
+        // Translate Items of ItemsControl (ListView items, ComboBox items, etc.)
+        if (parent is ItemsControl itemsControl)
+        {
+            foreach (var item in itemsControl.Items)
+            {
+                if (item is DependencyObject depObj)
+                {
+                    Translate(depObj);
+                }
+            }
         }
 
         // Recurse down visual tree children
@@ -1150,6 +1328,19 @@ public class TranslationManager
         _translations["30 Days logs"] = "Nhật ký 30 ngày";
         _translations["90 Days logs"] = "Nhật ký 90 ngày";
         _translations["Enable continuous low-overhead hardware sensors scanning thread"] = "Bật luồng quét cảm biến phần cứng liên tục tiêu tốn ít tài nguyên";
+        
+        // Monitoring & Alert section missing keys
+        _translations["Monitoring & Alert"] = "Giám sát & Cảnh báo";
+        _translations["Telemetry & Notifications Configuration"] = "Cấu hình Đo lường & Thông báo";
+        _translations["Notification Center Policy"] = "Chính sách Trung tâm Thông báo";
+        _translations["Show dynamic in-app Toast Notifications"] = "Hiển thị thông báo Toast trong ứng dụng";
+        _translations["PC Health Rating Severity Trigger Limit"] = "Ngưỡng cảnh báo độ nghiêm trọng sức khỏe PC";
+        _translations["Notify when system overall health score drops below threshold"] = "Thông báo khi điểm sức khỏe hệ thống giảm dưới ngưỡng";
+        _translations["Notify when system automated cleaners finish runs"] = "Thông báo khi trình tự động dọn dẹp chạy xong";
+        _translations["Notify when newer packages updates are available"] = "Thông báo khi có bản cập nhật gói mới hơn";
+        _translations["Play subtle system audio alert upon notification arrival"] = "Phát âm thanh cảnh báo tinh tế khi có thông báo đến";
+        _translations["Sensors Telemetry"] = "Đo lường Cảm biến";
+
         _translations["Rollback & Safety Registries"] = "Sao lưu an toàn & Đăng ký khôi phục";
         _translations["Automatically create a System Restore Point before major updates"] = "Tự động tạo Điểm khôi phục hệ thống trước các bản cập nhật lớn";
         _translations["Automatically backup system registry hive partitions"] = "Tự động sao lưu các phân vùng registry hệ thống";
@@ -1375,6 +1566,72 @@ public class TranslationManager
         _translations["Refresh"] = "Làm mới";
         _translations["Clear Logs"] = "Xóa nhật ký";
         _translations["Export Logs"] = "Xuất nhật ký";
+
+        // Missing level filters & headers
+        _translations["All Levels"] = "Tất cả các mức độ";
+        _translations["Search notifications..."] = "Tìm kiếm thông báo...";
+        _translations["Info"] = "Thông tin";
+        _translations["Warning"] = "Cảnh báo";
+        _translations["Critical"] = "Nghiêm trọng";
+        _translations["Action / Operation"] = "Hành động / Thao tác";
+        _translations["Module"] = "Phân hệ (Module)";
+        _translations["Status"] = "Trạng thái";
+        _translations["Time Logged"] = "Thời gian ghi nhận";
+
+        // Telemetry & settings logs
+        _translations["[*] System diagnostics trace initialized..."] = "[ * ] Tiến trình theo dõi chẩn đoán hệ thống đã được khởi tạo...";
+        _translations["[*] Registered local SQLite connection..."] = "[ * ] Đã đăng ký kết nối SQLite cục bộ...";
+        _translations["[*] Background scheduling task parsed..."] = "[ * ] Tác vụ lập lịch chạy nền đã được phân tích...";
+        _translations["[*] Telemetry sensor monitoring thread spawned..."] = "[ * ] Luồng giám sát cảm biến đo lường từ xa đã được tạo...";
+        _translations["[*] Safety policies integrity check: PASS"] = "[ * ] Kiểm tra tính toàn vẹn của chính sách an toàn: ĐẠT";
+        _translations["[*] No CPU bottlenecks or memory leaks detected."] = "[ * ] Không phát hiện thấy nghẽn cổ chai CPU hoặc rò rỉ bộ nhớ.";
+        _translations["[!] Warning: Winget update repository has outdated packages."] = "[ ! ] Cảnh báo: Kho lưu trữ cập nhật Winget có các gói đã cũ.";
+        _translations["[*] Diagnostic log purge: waiting user input..."] = "[ * ] Dọn dẹp nhật ký chẩn đoán: đang chờ người dùng nhập...";
+
+        // Software updates database notifications
+        _translations["Software Updated"] = "Đã cập nhật phần mềm";
+        _translations["WinCare Pro has been successfully updated to version {0}. Review the changelog to see all enhancements."] = "WinCare Pro đã được cập nhật thành công lên phiên bản {0}. Hãy xem nhật ký thay đổi để biết tất cả các cải tiến.";
+        _translations["System updated to version {0}"] = "Hệ thống đã cập nhật lên phiên bản {0}";
+
+        // About & Developer settings section
+        _translations["About & Developer"] = "Thông tin & Nhà phát triển";
+        _translations["About WinCare Pro"] = "Thông tin về WinCare Pro";
+        _translations["Author:"] = "Tác giả:";
+        _translations["Contact Support:"] = "Liên hệ hỗ trợ:";
+        _translations["Source Code Repository"] = "Kho lưu trữ mã nguồn";
+        _translations["Contributions, bug reports, and suggestions are welcome on GitHub."] = "Mọi đóng góp, báo cáo lỗi và đề xuất đều được chào đón trên GitHub.";
+
+        // Dashboard & Bottleneck localizations
+        _translations["Real-time performance monitors, AI diagnostics, and tiered optimization."] = "Theo dõi hiệu suất thời gian thực, chẩn đoán AI và tối ưu hóa phân tầng.";
+        _translations["Bottleneck Detection"] = "Phát hiện nghẽn cổ chai";
+        _translations["Our weighted detection checks CPU (40%), RAM (30%), and Disk (30%) parameters to warn you of active performance constraints."] = "Hệ thống kiểm tra trọng số các thông số CPU (40%), RAM (30%) và Ổ đĩa (30%) để cảnh báo cho bạn về các giới hạn hiệu suất hoạt động.";
+        _translations["CPU sustained high load"] = "Tải CPU ở mức cao liên tục";
+        _translations["RAM footprint capacity saturated"] = "Dung lượng bộ nhớ RAM đã bão hòa";
+        _translations["Disk active I/O saturation"] = "Hoạt động ghi/đọc (I/O) ổ đĩa đã bão hòa";
+        _translations["Bottleneck: "] = "Nghẽn cổ chai: ";
+        _translations["System Status: Stable"] = "Trạng thái hệ thống: Ổn định";
+        _translations["System Status: Idle"] = "Trạng thái hệ thống: Đang rảnh";
+        _translations["EXCELLENT - Your system is highly optimized and clean."] = "TUYỆT VỜI - Hệ thống của bạn đã được tối ưu hóa và sạch sẽ.";
+        _translations["GOOD - Some areas can be optimized to reclaim storage."] = "TỐT - Một số khu vực có thể được tối ưu hóa để thu hồi dung lượng lưu trữ.";
+        _translations["NEEDS OPTIMIZATION - Heavy junk logs or updates required."] = "CẦN TỐI ƯU HÓA - Cần dọn dẹp các tệp nhật ký rác nặng hoặc cập nhật phần mềm.";
+        _translations["Uptime"] = "Thời gian hoạt động";
+        _translations["Network"] = "Mạng";
+        _translations["Junk Size"] = "Dung lượng rác";
+        _translations["Apps"] = "Ứng dụng";
+        _translations["Optimize (Recommended)"] = "Tối ưu hóa (Khuyên dùng)";
+        _translations["Safe Mode (Temp & DNS)"] = "Chế độ an toàn (Tệp tạm & DNS)";
+        _translations["Recommended Mode (Caches & Startup)"] = "Chế độ khuyên dùng (Bộ nhớ đệm & Khởi động)";
+        _translations["Advanced Mode (Registry & Tweaks)"] = "Chế độ nâng cao (Registry & Tinh chỉnh)";
+        _translations["Undo Last Optimization"] = "Hoàn tác tối ưu hóa gần nhất";
+
+        // Startup Changelog Log notifications
+        _translations["System Updated to Version {0}"] = "Hệ thống đã cập nhật lên Phiên bản {0}";
+        _translations["WinCare Pro has been successfully updated."] = "WinCare Pro đã được cập nhật thành công.";
+        _translations["What's New:"] = "Có gì mới:";
+        _translations["Responsive Layout: Dynamic collapse on narrower viewports."] = "Bố cục Đáp ứng: Tự động thu gọn trên các màn hình hẹp hơn.";
+        _translations["Skeleton Loader: Beautiful entry shimmer layouts during database scan."] = "Trình tải Khung xương: Hiệu ứng lấp lánh đẹp mắt khi quét cơ sở dữ liệu.";
+        _translations["Stability Fixes: Upgraded SQLite concurrent engines with WAL journal mode."] = "Sửa lỗi Ổn định: Nâng cấp công cụ SQLite đồng thời với chế độ ghi WAL.";
+        _translations["Theme Consistency: Optimized contrast ratios for elements in Light Mode."] = "Nhất quán Chủ đề: Tối ưu hóa độ tương phản cho các phần tử ở Chế độ Sáng.";
 
         // --- Notification DB Items ---
         _translations["Software Update Available"] = "Có bản cập nhật phần mềm";

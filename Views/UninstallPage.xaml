@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="WinCarePro.Views.UninstallPage"
+    x:Name="PageRoot"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -24,16 +25,20 @@
         </Grid>
 
         <!-- Stats Cards Grid -->
-        <Grid Grid.Row="1" Margin="0,0,0,16" ColumnSpacing="16">
+        <Grid x:Name="StatsGrid" Grid.Row="1" Margin="0,0,0,16" ColumnSpacing="16" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="StatsRow0" Height="Auto" />
+                <RowDefinition x:Name="StatsRow1" Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="StatsCol0" Width="*" />
+                <ColumnDefinition x:Name="StatsCol1" Width="*" />
+                <ColumnDefinition x:Name="StatsCol2" Width="*" />
+                <ColumnDefinition x:Name="StatsCol3" Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- Stat 1: Total Apps -->
-            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard1" Grid.Column="0" Grid.Row="0" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -48,7 +53,7 @@
             </Border>
 
             <!-- Stat 2: Desktop Apps -->
-            <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard2" Grid.Column="1" Grid.Row="0" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -63,7 +68,7 @@
             </Border>
 
             <!-- Stat 3: Store Apps -->
-            <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard3" Grid.Column="2" Grid.Row="0" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -78,7 +83,7 @@
             </Border>
 
             <!-- Stat 4: Occupied Space -->
-            <Border Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard4" Grid.Column="3" Grid.Row="0" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -142,63 +147,108 @@
                 <!-- Master-Detail Columns -->
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*" />
-                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition x:Name="ListCol" Width="3*" />
+                        <ColumnDefinition x:Name="DetailCol" Width="2*" />
                     </Grid.ColumnDefinitions>
 
                     <!-- Left: Applications List -->
                     <Border Style="{StaticResource ModernCardStyle}" Padding="12">
-                        <ListView ItemsSource="{x:Bind ViewModel.FilteredApps, Mode=OneWay}" SelectedItem="{Binding SelectedApp, Mode=TwoWay}" SelectionMode="Single">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="models:InstalledAppInfo">
-                                    <Grid Padding="4,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" /> <!-- Checkbox -->
-                                            <ColumnDefinition Width="Auto" /> <!-- Icon Wrapper -->
-                                            <ColumnDefinition Width="*" />    <!-- Name & Publisher -->
-                                            <ColumnDefinition Width="Auto" /> <!-- Badges -->
-                                            <ColumnDefinition Width="100" /> <!-- Size -->
-                                            <ColumnDefinition Width="Auto" /> <!-- Action Button -->
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" />
-                                        
-                                        <Grid Grid.Column="1" Width="40" Height="40" CornerRadius="8" Background="{x:Bind IconBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
-                                            <FontIcon Glyph="{x:Bind DefaultIconGlyph}" Foreground="{x:Bind IconForeground}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind FallbackVisibility, Mode=OneWay}"/>
-                                            <Image Source="{x:Bind IconImageSource, Mode=OneWay}" Width="32" Height="32" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind IconVisibility, Mode=OneWay}"/>
-                                        </Grid>
+                        <Grid>
+                            <ListView Visibility="{x:Bind GetListViewVisibility(ViewModel.IsBusy), Mode=OneWay}" ItemsSource="{x:Bind ViewModel.FilteredApps, Mode=OneWay}" SelectedItem="{Binding SelectedApp, Mode=TwoWay}" SelectionMode="Single">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:InstalledAppInfo">
+                                        <Grid Padding="4,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" /> <!-- Checkbox -->
+                                                <ColumnDefinition Width="Auto" /> <!-- Icon Wrapper -->
+                                                <ColumnDefinition Width="*" />    <!-- Name & Publisher -->
+                                                <ColumnDefinition Width="{Binding ElementName=PageRoot, Path=BadgesColumnWidth}" /> <!-- Badges -->
+                                                <ColumnDefinition Width="{Binding ElementName=PageRoot, Path=SizeColumnWidth}" /> <!-- Size -->
+                                                <ColumnDefinition Width="Auto" /> <!-- Action Button -->
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" />
+                                            
+                                            <Grid Grid.Column="1" Width="40" Height="40" CornerRadius="8" Background="{x:Bind IconBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
+                                                <FontIcon Glyph="{x:Bind DefaultIconGlyph}" Foreground="{x:Bind IconForeground}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind FallbackVisibility, Mode=OneWay}"/>
+                                                <Image Source="{x:Bind IconImageSource, Mode=OneWay}" Width="32" Height="32" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind IconVisibility, Mode=OneWay}"/>
+                                            </Grid>
 
-                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
-                                            <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="13.5" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
-                                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                                <TextBlock Text="{x:Bind Publisher}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                                <TextBlock Text="•" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                                <TextBlock Text="{x:Bind Version}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
+                                                <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="13.5" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <TextBlock Text="{x:Bind Publisher}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                    <TextBlock Text="•" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                    <TextBlock Text="{x:Bind Version}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                </StackPanel>
                                             </StackPanel>
-                                        </StackPanel>
 
-                                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="12,0,12,0">
-                                            <!-- Desktop Badge -->
-                                            <Border Background="#1E7F56D9" BorderBrush="#307F56D9" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsDesktopApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                                <TextBlock Text="Desktop App" FontSize="9" FontWeight="Bold" Foreground="#FF7F56D9"/>
-                                            </Border>
-                                            <!-- Store Badge -->
-                                            <Border Background="#1E00C1EE" BorderBrush="#3000C1EE" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsStoreApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                                <TextBlock Text="Store App" FontSize="9" FontWeight="Bold" Foreground="#FF00C1EE"/>
-                                            </Border>
-                                        </StackPanel>
+                                            <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="12,0,12,0" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}">
+                                                <!-- Desktop Badge -->
+                                                <Border Background="#1E7F56D9" BorderBrush="#307F56D9" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsDesktopApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                                    <TextBlock Text="Desktop App" FontSize="9" FontWeight="Bold" Foreground="#FF7F56D9"/>
+                                                </Border>
+                                                <!-- Store Badge -->
+                                                <Border Background="#1E00C1EE" BorderBrush="#3000C1EE" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsStoreApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                                    <TextBlock Text="Store App" FontSize="9" FontWeight="Bold" Foreground="#FF00C1EE"/>
+                                                </Border>
+                                            </StackPanel>
 
-                                        <TextBlock Grid.Column="4" Text="{x:Bind SizeFormatted}" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="4" Text="{x:Bind SizeFormatted}" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" FontWeight="SemiBold" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}"/>
 
-                                        <Button Grid.Column="5" Content="Uninstall" FontSize="10.5" Padding="10,4" Click="OnSingleUninstallClick" Foreground="#FFE81123" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" VerticalAlignment="Center"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                                            <Button Grid.Column="5" Content="Uninstall" FontSize="10.5" Padding="10,4" Click="OnSingleUninstallClick" Foreground="#FFE81123" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <!-- Shimmer Skeleton Panel -->
+                            <StackPanel Visibility="{x:Bind GetSkeletonVisibility(ViewModel.IsBusy), Mode=OneWay}" Spacing="12" Margin="0,8,0,0">
+                                <Grid Padding="12,10" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.15" />
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0" Spacing="6">
+                                        <Border Width="150" Height="14" CornerRadius="4" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.15" HorizontalAlignment="Left" />
+                                        <Border Width="80" Height="10" CornerRadius="3" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.1" HorizontalAlignment="Left" />
+                                    </StackPanel>
+                                    <Border Grid.Column="2" Width="60" Height="22" CornerRadius="6" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.15" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                                <Grid Padding="12,10" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.15" />
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0" Spacing="6">
+                                        <Border Width="200" Height="14" CornerRadius="4" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.15" HorizontalAlignment="Left" />
+                                        <Border Width="100" Height="10" CornerRadius="3" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.1" HorizontalAlignment="Left" />
+                                    </StackPanel>
+                                    <Border Grid.Column="2" Width="60" Height="22" CornerRadius="6" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.15" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                                <Grid Padding="12,10" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.15" />
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0" Spacing="6">
+                                        <Border Width="120" Height="14" CornerRadius="4" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.15" HorizontalAlignment="Left" />
+                                        <Border Width="60" Height="10" CornerRadius="3" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.1" HorizontalAlignment="Left" />
+                                    </StackPanel>
+                                    <Border Grid.Column="2" Width="60" Height="22" CornerRadius="6" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.15" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
                     </Border>
 
                     <!-- Right: Selected Application Details Panel -->
-                    <Border Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="16,0,0,0" Padding="20">
+                    <Border x:Name="DetailPanelBorder" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="16,0,0,0" Padding="20" Visibility="{Binding ElementName=PageRoot, Path=DetailsPaneVisibility}">
                         <Grid DataContext="{Binding SelectedApp}">
                             <!-- Visible when SelectedApp is not null -->
                             <Grid Visibility="{x:Bind ViewModel.IsSelectedAppNotNull, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">

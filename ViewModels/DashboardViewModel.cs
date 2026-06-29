@@ -130,17 +130,17 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     private bool _isScanning;
 
     [ObservableProperty]
-    private string _scanStatus = "System Status: Idle";
+    private string _scanStatus = "System Status: Idle".T();
 
     [ObservableProperty]
     private int _scanProgress;
 
     // Bottleneck and health score breakdown extensions
     [ObservableProperty]
-    private string _healthBreakdownText = "No diagnostic scan performed yet.";
+    private string _healthBreakdownText = "No diagnostic scan performed yet.".T();
 
     [ObservableProperty]
-    private string _bottleneckStatus = "System Status: Stable";
+    private string _bottleneckStatus = "System Status: Stable".T();
 
     [ObservableProperty]
     private bool _hasBottleneck;
@@ -777,12 +777,12 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
         if (currentIssues.Count > 0)
         {
             HasBottleneck = true;
-            BottleneckStatus = "Bottleneck: " + string.Join(", ", currentIssues);
+            BottleneckStatus = "Bottleneck: ".T() + string.Join(", ", currentIssues.Select(issue => issue.T()));
         }
         else
         {
             HasBottleneck = false;
-            BottleneckStatus = "System Status: Stable";
+            BottleneckStatus = "System Status: Stable".T();
         }
     }
 

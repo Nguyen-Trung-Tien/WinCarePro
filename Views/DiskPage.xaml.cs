@@ -18,6 +18,7 @@ public sealed partial class DiskPage : Page
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = App.Services.GetRequiredService<DiskViewModel>();
         this.DataContext = ViewModel;
+        this.Unloaded += (s, e) => ViewModel.Cleanup();
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)

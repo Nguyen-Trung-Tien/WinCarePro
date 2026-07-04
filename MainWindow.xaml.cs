@@ -82,9 +82,6 @@ public sealed partial class MainWindow : Window
 
         _hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
 
-        // Custom window size (1400 x 900)
-        this.AppWindow.Resize(new Windows.Graphics.SizeInt32(1400, 900));
-
         // Set Window Icon programmatically
         try
         {
@@ -127,6 +124,12 @@ public sealed partial class MainWindow : Window
 
         // Translate and apply theme configurations on load
         RootGrid.Loaded += (s, e) => {
+            try
+            {
+                this.AppWindow.Resize(new Windows.Graphics.SizeInt32(1400, 900));
+            }
+            catch { }
+
             LoadThemeConfiguration();
             TranslationManager.Instance.Translate(this.Content);
             UpdateNotificationBadge();
@@ -252,7 +255,7 @@ public sealed partial class MainWindow : Window
         return CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
     }
 
-    private async void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
+    private void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
     {
         if (_forceClose)
         {
@@ -282,14 +285,7 @@ public sealed partial class MainWindow : Window
             }
             else
             {
-                // Show exit overlay with translation and close gracefully
-                ExitOverlayTitle.Text = "Shutting Down".T();
-                ExitOverlayMessage.Text = "Closing database connections and freeing resources...".T();
-                ExitOverlayGrid.Visibility = Visibility.Visible;
-                FadeInExitOverlay.Begin();
-
-                await Task.Delay(1500);
-
+                CleanupTrayIcon();
                 _forceClose = true;
                 this.Close();
             }
@@ -866,6 +862,7 @@ public sealed partial class MainWindow : Window
         // Let user experience the fade animation and show database cleanup context
         await Task.Delay(1500);
 
+        CleanupTrayIcon();
         _forceClose = true;
         this.Close();
     }
@@ -933,20 +930,9 @@ public sealed partial class MainWindow : Window
                 string newRaw = MergeSetting(raw, "LastVersion", currentVersion.ToString());
                 Task.Run(() => DbManager.SaveSettings(newRaw));
 
-                // Log to Activity Log and add to Notifications database!
+                // Log to Activity Log
                 string logMessage = string.Format("System updated to version {0}".T(), currentVersion.ToString());
                 DbManager.LogAction(logMessage, "System", "Success");
-
-                string notificationTitle = string.Format("System Updated to Version {0}".T(), currentVersion.ToString());
-                string notificationMessage = 
-                    "WinCare Pro has been successfully updated.".T() + "\n\n" +
-                    "What's New:".T() + "\n" +
-                    "• " + "Responsive Layout: Dynamic collapse on narrower viewports.".T() + "\n" +
-                    "• " + "Skeleton Loader: Beautiful entry shimmer layouts during database scan.".T() + "\n" +
-                    "• " + "Stability Fixes: Upgraded SQLite concurrent engines with WAL journal mode.".T() + "\n" +
-                    "• " + "Theme Consistency: Optimized contrast ratios for elements in Light Mode.".T();
-
-                DbManager.AddNotification(notificationTitle, notificationMessage, "Success", showToast: false);
             }
         }
         catch { }

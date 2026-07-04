@@ -60,3 +60,9 @@ PublishOutputFolder.zip
 
 # Backup folder
 Assets_backup/
+
+#Agents folder
+agents/
+
+#Plants folder
+plants/

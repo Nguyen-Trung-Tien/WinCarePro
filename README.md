@@ -9,7 +9,7 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.3.1/WinCareProSetup.exe"><img src="https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=windows&logoColor=white" alt="Download WinCare Pro" /></a>
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.0/WinCareProSetup.exe"><img src="https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=windows&logoColor=white" alt="Download WinCare Pro" /></a>
   </p>
 
   <p align="center">
@@ -233,11 +233,12 @@ Cấu trúc mã nguồn được phân bổ logic như sau:
 WinCare/
 │
 ├── Assets/                 # Chứa các tài nguyên đồ họa, hình ảnh và icon ứng dụng
-├── Database/               # Tương tác SQLite (DbManager.cs quản lý logs, reports)
-├── Engines/                # Bộ máy xử lý logic tính năng lõi (Junk, Disk, AI, Update, v.v.)
-├── Models/                 # Định nghĩa các cấu trúc dữ liệu mô hình (DataModels.cs)
-├── ViewModels/             # Các lớp liên kết dữ liệu ViewModels kế thừa ViewModelBase
-├── Views/                  # Tập hợp các tệp giao diện người dùng XAML và code-behind tương ứng
+├── Core/                   # Chứa các thành phần trợ giúp (Helpers) và mô hình dữ liệu (Models) dùng chung
+├── Engines/                # Bộ máy xử lý logic tính năng lõi phân tách theo nhóm (Diagnostics, Monitoring, Optimization, Repair)
+├── Infrastructure/         # Xử lý Caching, Database, Logging, Scheduling và Security
+├── Modules/                # Tập hợp các View và ViewModel khép kín theo từng trang chức năng độc lập (MVVM)
+├── Services/               # Các dịch vụ nghiệp vụ chính tách biệt Interface/Implementation
+├── Shared/                 # Các Component tùy biến và Converter giao diện dùng chung
 │
 ├── App.xaml / App.xaml.cs  # Điểm khởi đầu cấu hình và cấu trúc điều hướng toàn cục
 ├── MainWindow.xaml / .cs   # Cửa sổ chính hiển thị giao diện ứng dụng
@@ -254,7 +255,7 @@ WinCare/
 
 Dự án được phân phối dưới giấy phép **MIT License**. Bạn hoàn toàn có thể tự do sao chép, sửa đổi, phân phối hoặc sử dụng cho mục đích thương mại với điều kiện giữ nguyên thông báo bản quyền gốc.
 
-Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.3.1.
+Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.4.0.
 
 ---
 <div align="center">

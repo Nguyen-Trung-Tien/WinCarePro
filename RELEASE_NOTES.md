@@ -2,6 +2,46 @@
 
 ---
 
+## 🚀 WinCare Pro v3.4.0 — Tái cấu trúc mã nguồn & Tối ưu hóa hiệu năng
+
+> **Phát hành:** 04/07/2026 · **Loại:** Bản cập nhật tính năng & Tối ưu hóa cấu trúc (Feature Update & Code Refactoring) · **Phiên bản trước:** v3.3.1
+
+Bản cập nhật **v3.4.0** là bước tiến quan trọng trong việc chuẩn hóa cấu trúc dự án theo mô hình kiến trúc sạch (Clean Architecture/MVVM) và cải thiện hiệu năng toàn diện của các phân hệ cốt lõi.
+
+---
+
+### ✨ Các cải tiến nổi bật trong phiên bản v3.4.0 (Key Features)
+
+#### 1. 📂 Tái cấu trúc thư mục dự án (Clean Architecture & Directory Restructuring)
+* **Quy hoạch mã nguồn:** Quy hoạch lại toàn bộ mã nguồn vào các phân vùng chức năng rõ ràng:
+  * `Core/`: Chứa các thành phần trợ giúp (Helpers) và mô hình dữ liệu (Models) dùng chung.
+  * `Modules/`: Gom các View và ViewModel của từng màn hình thành một cụm chức năng khép kín (như Dashboard, Disk, Updates, ProcessManager...).
+  * `Infrastructure/`: Nơi xử lý bộ nhớ đệm (Caching), cơ sở dữ liệu (Database), ghi nhật ký (Logging) và bảo mật hệ thống.
+  * `Services/`: Các dịch vụ nghiệp vụ chính được thiết kế dạng Interface/Implementation tách biệt.
+  * `Shared/`: Chứa các Component tùy biến và Converter dùng chung trên giao diện.
+* **Vệ sinh tài liệu:** Loại bỏ tài liệu kiến trúc cũ đã lỗi thời (`docs/ARCHITECTURE.md`) để đồng bộ với cấu trúc mới.
+
+#### 2. ⚡ Tối ưu hóa phân hệ Quản lý Tiến trình (Process Manager Stability)
+* **Khắc phục lỗi nạp tiến trình:** Sử dụng cơ chế `SemaphoreSlim` (`_querySemaphore`) để đồng bộ hóa việc truy vấn tài nguyên hệ thống, ngăn ngừa triệt để tình trạng xung đột truy cập tài nguyên do gọi đồng thời, qua đó chấm dứt hiện tượng giao diện bị đơ/đóng băng khi tải danh sách tiến trình.
+
+#### 3. 🖥️ Tinh chỉnh trải nghiệm đóng ứng dụng (Exit & Shutdown Experience)
+* **Đóng nhanh không độ trễ:** Nút đóng (Close) mặc định trên cửa sổ chính nay sẽ bỏ qua hoạt động hiển thị màn hình chờ tắt máy (Shutdown overlay), giải phóng khay hệ thống (Tray Icon) ngay lập tức và thu nhỏ hoặc đóng ứng dụng tức thì theo cấu hình người dùng.
+* **Hoạt ảnh tắt máy chuyên biệt:** Nút nguồn đỏ tắt máy (Shutdown) được thiết kế hoạt ảnh tắt máy mượt mà riêng, đảm bảo thoát hoàn toàn ứng dụng ra khỏi nền ngay cả khi đang bật chế độ "Chạy ngầm" (Run in background).
+
+#### 4. 🌐 Cải tiến Trung tâm Mạng (Network Center Layout & Anti-Flicker)
+* **Trải nghiệm mượt mà:** Khắc phục triệt để tình trạng nháy giao diện (flicker) khi cập nhật dữ liệu lưu lượng mạng theo thời gian thực; tối ưu hóa layout hiển thị giúp phản hồi linh hoạt hơn trên các độ phân giải màn hình khác nhau.
+
+#### 5. 🩹 Tối ưu hệ thống tự động cập nhật (Updater Reliability)
+* **Phòng ngừa treo tiến trình:** Tinh chỉnh cơ chế so sánh Task bất đồng bộ khi gọi `process.WaitForExitAsync()` thông qua biến cục bộ thay vì tạo mới instance mỗi lần kiểm tra trong `Task.WhenAny`, loại bỏ hoàn toàn nguy cơ tranh chấp tài nguyên (race conditions) khi nâng cấp ứng dụng.
+
+---
+
+### 🩹 Chi tiết kỹ thuật & Thay đổi cấu hình
+* Cập nhật `.gitignore` loại bỏ các thư mục làm việc tạm thời `agents/` và `plants/`.
+* Nâng cấp phiên bản toàn hệ thống lên `3.4.0` tại các tệp tin cấu hình dự án (`WinCarePro.csproj`, `Package.appxmanifest`, `update.json`, `MainWindow.xaml`, `setup.iss`).
+
+---
+
 ## 🚀 WinCare Pro v3.3.1 — Vá lỗi phím tắt & Cải tiến bộ tự động cập nhật
 
 > **Phát hành:** 29/06/2026 · **Loại:** Bản vá bảo trì & Nâng cấp phụ (Maintenance & Minor Update) · **Phiên bản trước:** v3.3.0

@@ -249,15 +249,6 @@ WinCare/
 └── setup.iss               # Kịch bản biên dịch bộ cài đặt Inno Setup
 ```
 
----
-
-## 📝 Giấy phép (License) & Đóng góp ý kiến
-
-Dự án được phân phối dưới giấy phép **MIT License**. Bạn hoàn toàn có thể tự do sao chép, sửa đổi, phân phối hoặc sử dụng cho mục đích thương mại với điều kiện giữ nguyên thông báo bản quyền gốc.
-
-Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.4.0.
-
----
 <div align="center">
   <sub>Được phát triển và thiết kế bởi <b>Nguyễn Trung Tiến</b></sub>
 </div>

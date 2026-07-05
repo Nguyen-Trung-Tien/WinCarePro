@@ -72,7 +72,8 @@ public sealed partial class SystemOptimizerPage : Page
             Content = "Are you sure you want to restore default Windows settings for all tweaks?".T(),
             PrimaryButtonText = "Yes, Restore".T(),
             CloseButtonText = "Cancel".T(),
-            XamlRoot = this.XamlRoot
+            XamlRoot = this.XamlRoot,
+            RequestedTheme = ThemeManager.Instance.CurrentTheme
         };
 
         var result = await dialog.ShowAsync();

@@ -121,7 +121,8 @@ public sealed partial class StartupPage : Page
                 PrimaryButtonText = "Remove".T(),
                 CloseButtonText = "Cancel".T(),
                 DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                RequestedTheme = ThemeManager.Instance.CurrentTheme
             };
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
@@ -159,7 +160,8 @@ public sealed partial class StartupPage : Page
                         PrimaryButtonText = "Disable Service".T(),
                         CloseButtonText = "Cancel".T(),
                         DefaultButton = ContentDialogButton.Close,
-                        XamlRoot = this.XamlRoot
+                        XamlRoot = this.XamlRoot,
+                        RequestedTheme = ThemeManager.Instance.CurrentTheme
                     };
                     var result = await dialog.ShowAsync();
                     if (result != ContentDialogResult.Primary)
@@ -209,7 +211,8 @@ public sealed partial class StartupPage : Page
                 PrimaryButtonText = "Delete Task".T(),
                 CloseButtonText = "Cancel".T(),
                 DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                RequestedTheme = ThemeManager.Instance.CurrentTheme
             };
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)

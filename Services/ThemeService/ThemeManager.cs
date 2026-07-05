@@ -27,6 +27,7 @@ public class ThemeManager
             win.MainRootGrid.RequestedTheme = theme;
             win.MainThemeIcon.Glyph = (theme == ElementTheme.Dark) ? "\uE708" : "\uE706";
             win.SetBackdropType((theme == ElementTheme.Dark) ? "micaalt" : "mica");
+            win.ApplyTransparency(win.CurrentTransparencyLevel);
 
             // Apply Immersive Dark Mode attribute
             try

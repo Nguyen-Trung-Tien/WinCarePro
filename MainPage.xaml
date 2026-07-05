@@ -140,7 +140,9 @@
             <Frame x:Name="ContentFrame" Margin="0,4,0,0">
                 <Frame.ContentTransitions>
                     <TransitionCollection>
-                        <NavigationThemeTransition />
+                        <NavigationThemeTransition>
+                            <SlideNavigationTransitionInfo Effect="FromRight"/>
+                        </NavigationThemeTransition>
                     </TransitionCollection>
                 </Frame.ContentTransitions>
             </Frame>

@@ -219,6 +219,8 @@ public sealed partial class DashboardPage : Page
         double totalDiskCleanedMb = totalDiskCleanedBytes / 1024.0 / 1024.0;
         double ramReclaimedMb = summary.RamBytesReclaimed / 1024.0 / 1024.0;
 
+        bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
+
         var mainPanel = new StackPanel { Spacing = 16, Width = 380 };
 
         var headerPanel = new StackPanel { Spacing = 8, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 8, 0, 8) };
@@ -230,16 +232,16 @@ public sealed partial class DashboardPage : Page
         };
         var titleText = new TextBlock 
         { 
-            Text = "System Optimized Successfully", 
+            Text = "System Optimized Successfully".T(), 
             FontSize = 18, 
             FontWeight = Microsoft.UI.Text.FontWeights.Bold, 
             HorizontalAlignment = HorizontalAlignment.Center 
         };
         var subText = new TextBlock 
         { 
-            Text = "All diagnosed areas have been optimized to peak health.", 
+            Text = "All diagnosed areas have been optimized to peak health.".T(), 
             FontSize = 12, 
-            Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 148, 163, 184)), 
+            Foreground = new SolidColorBrush(isDark ? Windows.UI.Color.FromArgb(255, 148, 163, 184) : Windows.UI.Color.FromArgb(255, 100, 116, 139)), 
             HorizontalAlignment = HorizontalAlignment.Center 
         };
 
@@ -251,7 +253,7 @@ public sealed partial class DashboardPage : Page
         var separator = new Border 
         { 
             Height = 1, 
-            Background = new SolidColorBrush(Windows.UI.Color.FromArgb(30, 255, 255, 255)), 
+            Background = new SolidColorBrush(isDark ? Windows.UI.Color.FromArgb(30, 255, 255, 255) : Windows.UI.Color.FromArgb(30, 0, 0, 0)), 
             Margin = new Thickness(0, 4, 0, 4) 
         };
         mainPanel.Children.Add(separator);
@@ -306,21 +308,22 @@ public sealed partial class DashboardPage : Page
             rowIndex++;
         }
 
-        AddDetailRow("\uE7F1", Windows.UI.Color.FromArgb(255, 245, 158, 11), "Disk Junk Cleaned", $"{totalDiskCleanedMb:F1} MB");
-        AddDetailRow("\uE949", Windows.UI.Color.FromArgb(255, 168, 85, 247), "Registry Errors Fixed", $"{summary.RegistryIssuesFixed} resolved");
-        AddDetailRow("\uE950", Windows.UI.Color.FromArgb(255, 59, 130, 246), "RAM Reclaimed (Boost)", $"{ramReclaimedMb:F1} MB");
-        AddDetailRow("\uE8F1", Windows.UI.Color.FromArgb(255, 20, 184, 166), "Active Apps Boosted", $"{summary.RamProcessesOptimized} processes");
-        AddDetailRow("\uE774", Windows.UI.Color.FromArgb(255, 6, 182, 212), "DNS Resolver Cache", summary.DnsCacheFlushed ? "Flushed" : "Done");
-        AddDetailRow("\uE945", Windows.UI.Color.FromArgb(255, 236, 72, 153), "Performance Tweaks", $"{summary.TweaksApplied} activated");
+        AddDetailRow("\uE7F1", Windows.UI.Color.FromArgb(255, 245, 158, 11), "Disk Junk Cleaned".T(), $"{totalDiskCleanedMb:F1} MB");
+        AddDetailRow("\uE949", Windows.UI.Color.FromArgb(255, 168, 85, 247), "Registry Errors Fixed".T(), $"{summary.RegistryIssuesFixed} " + "resolved".T());
+        AddDetailRow("\uE950", Windows.UI.Color.FromArgb(255, 59, 130, 246), "RAM Reclaimed (Boost)".T(), $"{ramReclaimedMb:F1} MB");
+        AddDetailRow("\uE8F1", Windows.UI.Color.FromArgb(255, 20, 184, 166), "Active Apps Boosted".T(), $"{summary.RamProcessesOptimized} " + "processes".T());
+        AddDetailRow("\uE774", Windows.UI.Color.FromArgb(255, 6, 182, 212), "DNS Resolver Cache".T(), summary.DnsCacheFlushed ? "Flushed".T() : "Done".T());
+        AddDetailRow("\uE945", Windows.UI.Color.FromArgb(255, 236, 72, 153), "Performance Tweaks".T(), $"{summary.TweaksApplied} " + "activated".T());
 
         mainPanel.Children.Add(detailsGrid);
 
         ContentDialog dialog = new ContentDialog
         {
             Content = mainPanel,
-            CloseButtonText = "Done",
+            CloseButtonText = "Done".T(),
             DefaultButton = ContentDialogButton.Close,
-            XamlRoot = this.XamlRoot
+            XamlRoot = this.XamlRoot,
+            RequestedTheme = ThemeManager.Instance.CurrentTheme
         };
 
         try

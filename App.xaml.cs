@@ -108,7 +108,7 @@ public partial class App : Application
     /// Invoked when the application is launched.
     /// </summary>
     /// <param name="args">Details about the launch request and process.</param>
-    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
         try
         {
@@ -117,11 +117,11 @@ public partial class App : Application
             // Initialize DI Container
             ConfigureServices();
 
-            // Initialize SQLite database
-            Database.DbManager.InitializeDatabase();
+            // Initialize SQLite database asynchronously to keep startup smooth and avoid blocking UI thread
+            await Task.Run(() => Database.DbManager.InitializeDatabase());
 
             // Run weekly DB maintenance in background
-            Task.Run(() => Database.DbManager.RunDatabaseMaintenance());
+            _ = Task.Run(() => Database.DbManager.RunDatabaseMaintenance());
 
             // Check if launched in background mode
             var commandLineArgs = Environment.GetCommandLineArgs();

@@ -144,7 +144,13 @@ public sealed partial class MainPage : Page
             {
                 ContentFrame.ContentTransitions = new Microsoft.UI.Xaml.Media.Animation.TransitionCollection
                 {
-                    new Microsoft.UI.Xaml.Media.Animation.NavigationThemeTransition()
+                    new Microsoft.UI.Xaml.Media.Animation.NavigationThemeTransition
+                    {
+                        DefaultNavigationTransitionInfo = new Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionInfo
+                        {
+                            Effect = Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionEffect.FromRight
+                        }
+                    }
                 };
             }
         }

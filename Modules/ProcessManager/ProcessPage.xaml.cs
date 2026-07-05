@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.Views;
 
@@ -178,11 +179,12 @@ public sealed partial class ProcessPage : Page
         {
             var dialog = new ContentDialog
             {
-                Title = "Confirm End Task",
-                Content = $"Are you sure you want to terminate {ViewModel.SelectedProcess.Name}?",
-                PrimaryButtonText = "End Process",
-                CloseButtonText = "Cancel",
-                XamlRoot = this.XamlRoot
+                Title = "Confirm End Task".T(),
+                Content = string.Format("Are you sure you want to terminate {0}?".T(), ViewModel.SelectedProcess.Name),
+                PrimaryButtonText = "End Process".T(),
+                CloseButtonText = "Cancel".T(),
+                XamlRoot = this.XamlRoot,
+                RequestedTheme = ThemeManager.Instance.CurrentTheme
             };
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
@@ -198,11 +200,12 @@ public sealed partial class ProcessPage : Page
         {
             var dialog = new ContentDialog
             {
-                Title = "Confirm End Process Tree",
-                Content = $"Are you sure you want to terminate {ViewModel.SelectedProcess.Name} and all its child processes?",
-                PrimaryButtonText = "End Process Tree",
-                CloseButtonText = "Cancel",
-                XamlRoot = this.XamlRoot
+                Title = "Confirm End Process Tree".T(),
+                Content = string.Format("Are you sure you want to terminate {0} and all its child processes?".T(), ViewModel.SelectedProcess.Name),
+                PrimaryButtonText = "End Process Tree".T(),
+                CloseButtonText = "Cancel".T(),
+                XamlRoot = this.XamlRoot,
+                RequestedTheme = ThemeManager.Instance.CurrentTheme
             };
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)

@@ -23,70 +23,70 @@ public class JunkViewModel : ViewModelBase
     public bool IsScanning
     {
         get => _isScanning;
-        set => SetProperty(ref _isScanning, value);
+        set => SetPropertyOnUI(() => _isScanning, v => _isScanning = v, value);
     }
 
     private bool _isCleaning;
     public bool IsCleaning
     {
         get => _isCleaning;
-        set => SetProperty(ref _isCleaning, value);
+        set => SetPropertyOnUI(() => _isCleaning, v => _isCleaning = v, value);
     }
 
     private string _progressMessage = "Ready to scan junk files".T();
     public string ProgressMessage
     {
         get => _progressMessage;
-        set => SetProperty(ref _progressMessage, value);
+        set => SetPropertyOnUI(() => _progressMessage, v => _progressMessage = v, value);
     }
 
     private int _progressPercent;
     public int ProgressPercent
     {
         get => _progressPercent;
-        set => SetProperty(ref _progressPercent, value);
+        set => SetPropertyOnUI(() => _progressPercent, v => _progressPercent = v, value);
     }
 
     private string _totalJunkSize = "0.0 B";
     public string TotalJunkSize
     {
         get => _totalJunkSize;
-        set => SetProperty(ref _totalJunkSize, value);
+        set => SetPropertyOnUI(() => _totalJunkSize, v => _totalJunkSize = v, value);
     }
 
     private string _totalLockedSize = "0.0 B";
     public string TotalLockedSize
     {
         get => _totalLockedSize;
-        set => SetProperty(ref _totalLockedSize, value);
+        set => SetPropertyOnUI(() => _totalLockedSize, v => _totalLockedSize = v, value);
     }
 
     private bool _hasLockingApps;
     public bool HasLockingApps
     {
         get => _hasLockingApps;
-        set => SetProperty(ref _hasLockingApps, value);
+        set => SetPropertyOnUI(() => _hasLockingApps, v => _hasLockingApps = v, value);
     }
 
     private string _lockingAppsText = "";
     public string LockingAppsText
     {
         get => _lockingAppsText;
-        set => SetProperty(ref _lockingAppsText, value);
+        set => SetPropertyOnUI(() => _lockingAppsText, v => _lockingAppsText = v, value);
     }
 
     private string _liveLogs = "";
     public string LiveLogs
     {
         get => _liveLogs;
-        set => SetProperty(ref _liveLogs, value);
+        set => SetPropertyOnUI(() => _liveLogs, v => _liveLogs = v, value);
     }
 
     private JunkCategory? _selectedCategory;
     public JunkCategory? SelectedCategory
     {
         get => _selectedCategory;
-        set => SetProperty(ref _selectedCategory, value);
+        set => SetPropertyOnUI(() => _selectedCategory, v => _selectedCategory = v, value);
     }
 
     public ObservableCollection<JunkCategory> Categories { get; } = new();
@@ -98,6 +98,7 @@ public class JunkViewModel : ViewModelBase
         _lockingAppService = lockingAppService;
         _dialogService = dialogService;
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        DispatcherQueueInstance = _dispatcherQueue;
     }
 
     public JunkViewModel() : this(
@@ -329,15 +330,25 @@ public class JunkViewModel : ViewModelBase
         var apps = await _lockingAppService.GetLockingAppsAsync();
         if (apps.Count > 0)
         {
+            var userDecisions = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
             await _lockingAppService.CloseAppsAsync(apps, async (appName) =>
             {
-                var tcs = new TaskCompletionSource<bool>();
-                _dispatcherQueue.TryEnqueue(async () =>
+                if (userDecisions.TryGetValue(appName, out bool force))
                 {
-                    bool force = await _dialogService.ShowForceClosePromptAsync(appName);
-                    tcs.SetResult(force);
-                });
-                return await tcs.Task;
+                    return force;
+                }
+
+                try
+                {
+                    bool decision = await RunOnUIAsync(async () => 
+                        await _dialogService.ShowForceClosePromptAsync(appName));
+                    userDecisions[appName] = decision;
+                    return decision;
+                }
+                catch
+                {
+                    return false;
+                }
             });
         }
         IsCleaning = false;

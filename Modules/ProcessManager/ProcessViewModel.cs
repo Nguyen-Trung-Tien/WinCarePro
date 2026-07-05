@@ -21,14 +21,14 @@ public class ProcessViewModel : ViewModelBase
     public bool IsLoading
     {
         get => _isLoading;
-        set => SetProperty(ref _isLoading, value);
+        set => SetPropertyOnUI(() => _isLoading, v => _isLoading = v, value);
     }
 
     private string _statusText = "Ready".T();
     public string StatusText
     {
         get => _statusText;
-        set => SetProperty(ref _statusText, value);
+        set => SetPropertyOnUI(() => _statusText, v => _statusText = v, value);
     }
 
     private string _searchQuery = "";
@@ -74,21 +74,21 @@ public class ProcessViewModel : ViewModelBase
     public double CpuUsageSummary
     {
         get => _cpuUsageSummary;
-        set => SetProperty(ref _cpuUsageSummary, value);
+        set => SetPropertyOnUI(() => _cpuUsageSummary, v => _cpuUsageSummary = v, value);
     }
 
     private double _ramUsageSummary;
     public double RamUsageSummary
     {
         get => _ramUsageSummary;
-        set => SetProperty(ref _ramUsageSummary, value);
+        set => SetPropertyOnUI(() => _ramUsageSummary, v => _ramUsageSummary = v, value);
     }
 
     private int _totalProcessCount;
     public int TotalProcessCount
     {
         get => _totalProcessCount;
-        set => SetProperty(ref _totalProcessCount, value);
+        set => SetPropertyOnUI(() => _totalProcessCount, v => _totalProcessCount = v, value);
     }
 
     private string _sortColumn = "CpuUsage";
@@ -121,6 +121,7 @@ public class ProcessViewModel : ViewModelBase
     public ProcessViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        DispatcherQueueInstance = _dispatcherQueue;
         StartRunningProcessesMonitor();
     }
 

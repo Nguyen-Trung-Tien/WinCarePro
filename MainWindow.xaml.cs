@@ -425,8 +425,11 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    public double CurrentTransparencyLevel { get; private set; } = 80.0;
+
     public void ApplyTransparency(double level)
     {
+        CurrentTransparencyLevel = level;
         if (RootGrid == null) return;
         
         bool isDark = RootGrid.RequestedTheme == ElementTheme.Dark;

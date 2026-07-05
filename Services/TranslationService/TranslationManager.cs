@@ -91,6 +91,23 @@ public class TranslationManager
         return text;
     }
 
+    public string GetTranslationForLanguage(string key, AppLanguage language)
+    {
+        if (language == AppLanguage.English) return key;
+        string trimmed = key.Trim();
+        if (_translations.TryGetValue(trimmed, out string? translated))
+        {
+            if (key.StartsWith(" ") || key.EndsWith(" "))
+            {
+                int leading = key.Length - key.TrimStart().Length;
+                int trailing = key.Length - key.TrimEnd().Length;
+                return new string(' ', leading) + translated + new string(' ', trailing);
+            }
+            return translated;
+        }
+        return key;
+    }
+
     private static string GetOriginalValue(DependencyObject obj, string propertyName, string currentValue)
     {
         if (!OriginalValues.TryGetValue(obj, out var dict))
@@ -99,35 +116,46 @@ public class TranslationManager
             OriginalValues.Add(obj, dict);
         }
 
-        if (!dict.TryGetValue(propertyName, out var original))
+        string trimmedCandidate = currentValue?.Trim() ?? string.Empty;
+
+        // Check if we already have a recorded original value
+        if (dict.TryGetValue(propertyName, out var original))
         {
-            string originalCandidate = currentValue ?? string.Empty;
-            string trimmedCandidate = originalCandidate.Trim();
-
-            // Reverse map Vietnamese translation to original English key if already translated at initialization
-            foreach (var kvp in Instance._translations)
+            // Verify if the current value is just a translation of the recorded original.
+            // If the currentValue matches the original (English) or its Vietnamese translation,
+            // then it has NOT changed dynamically.
+            string translationVi = Instance.GetTranslationForLanguage(original, AppLanguage.Vietnamese);
+            
+            bool isSame = string.Equals(trimmedCandidate, original, StringComparison.OrdinalIgnoreCase) ||
+                          string.Equals(trimmedCandidate, translationVi, StringComparison.OrdinalIgnoreCase);
+            
+            if (isSame)
             {
-                if (string.Equals(kvp.Value, trimmedCandidate, StringComparison.OrdinalIgnoreCase))
-                {
-                    if (originalCandidate.StartsWith(" ") || originalCandidate.EndsWith(" "))
-                    {
-                        int leading = originalCandidate.Length - originalCandidate.TrimStart().Length;
-                        int trailing = originalCandidate.Length - originalCandidate.TrimEnd().Length;
-                        originalCandidate = new string(' ', leading) + kvp.Key + new string(' ', trailing);
-                    }
-                    else
-                    {
-                        originalCandidate = kvp.Key;
-                    }
-                    break;
-                }
+                return original;
             }
-
-            original = originalCandidate;
-            dict[propertyName] = original;
         }
 
-        return original;
+        // If it's a new control or the text changed dynamically, determine the English key.
+        // We look up trimmedCandidate in our translation values to find the English key.
+        string originalCandidate = trimmedCandidate;
+        foreach (var kvp in Instance._translations)
+        {
+            if (string.Equals(kvp.Value, trimmedCandidate, StringComparison.OrdinalIgnoreCase))
+            {
+                originalCandidate = kvp.Key;
+                break;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(currentValue) && (currentValue.StartsWith(" ") || currentValue.EndsWith(" ")))
+        {
+            int leading = currentValue.Length - currentValue.TrimStart().Length;
+            int trailing = currentValue.Length - currentValue.TrimEnd().Length;
+            originalCandidate = new string(' ', leading) + originalCandidate + new string(' ', trailing);
+        }
+
+        dict[propertyName] = originalCandidate;
+        return originalCandidate;
     }
 
     private bool ShouldTranslate(string? text)
@@ -162,6 +190,7 @@ public class TranslationManager
 
     public void ApplyLanguageChange()
     {
+        // First, translate all currently registered controls
         lock (_registeredControls)
         {
             for (int i = _registeredControls.Count - 1; i >= 0; i--)
@@ -176,6 +205,17 @@ public class TranslationManager
                 }
             }
         }
+
+        // Next, execute a visual tree walk on the active window content (if available)
+        // to catch any unregistered, dynamic, or newly added elements.
+        try
+        {
+            if (WinCarePro.App.MainWindowInstance != null)
+            {
+                Translate(WinCarePro.App.MainWindowInstance.Content);
+            }
+        }
+        catch { }
     }
 
     public void TranslateSingleControl(DependencyObject parent)
@@ -1877,6 +1917,207 @@ public class TranslationManager
         _translations["Operation '{0}' completed successfully."] = "Thao tác '{0}' hoàn thành thành công.";
         _translations["Repair operation encountered errors."] = "Sửa lỗi gặp một số lỗi.";
         _translations["Operation '{0}' failed or requires Administrator elevation."] = "Thao tác '{0}' thất bại hoặc cần quyền Administrator.";
+
+        // --- MainPage & MainWindow ---
+        _translations["User"] = "Người dùng";
+        _translations["PC"] = "PC";
+        _translations["Health Secured"] = "Sức khỏe PC An toàn";
+        _translations["WinCare Pro"] = "WinCare Pro";
+        _translations["Please don't turn off your computer or close the app"] = "Vui lòng không tắt máy tính hoặc đóng ứng dụng";
+        _translations["WinCarePro"] = "WinCarePro";
+
+        // --- Dashboard Page ---
+        _translations["Active Monitoring"] = "Giám sát hoạt động";
+        _translations["Performance Trend History"] = "Lịch sử xu hướng hiệu suất";
+        _translations["Rolling history of resource load levels (CPU, RAM, GPU, Disk)"] = "Lịch sử liên tục của tải lượng tài nguyên (CPU, RAM, GPU, Đĩa)";
+        _translations["Suggested actions based on diagnostics:"] = "Hành động đề xuất dựa trên chẩn đoán:";
+        _translations["Operations & Optimization Timeline"] = "Dòng thời gian hoạt động & tối ưu";
+        _translations["Audit log of optimizations, registry backups, and system scans."] = "Nhật ký kiểm tra của tối ưu, sao lưu registry, và quét hệ thống.";
+        _translations["Boost"] = "Tăng tốc";
+        _translations["Clean"] = "Dọn dẹp";
+        _translations["CPU"] = "CPU";
+        _translations["RAM"] = "RAM";
+        _translations["GPU"] = "GPU";
+        _translations["Disk"] = "Ổ đĩa";
+        _translations["Fix"] = "Sửa lỗi";
+        _translations["Show Advanced Details & History Log"] = "Hiển thị chi tiết nâng cao & Nhật ký lịch sử";
+        _translations["Export Report"] = "Xuất báo cáo";
+        _translations["Fix Now"] = "Sửa ngay";
+        _translations["Safe"] = "An toàn";
+        _translations["Recommended"] = "Khuyến nghị";
+        _translations["Standard"] = "Tiêu chuẩn";
+        _translations["Advanced"] = "Nâng cao";
+        _translations["Game Boost"] = "Tối ưu hóa Game";
+        _translations["System optimized successfully in {0} mode."] = "Hệ thống đã được tối ưu hóa thành công ở chế độ {0}.";
+
+        // --- Disk Page ---
+        _translations["S.M.A.R.T Status: OK"] = "Trạng thái S.M.A.R.T: Tốt";
+        _translations["Operations log"] = "Nhật ký hoạt động";
+
+        // --- Driver Page ---
+        _translations["Scan and verify hardware drivers, firmware updates, and motherboard controller status."] = "Quét và kiểm tra trình điều khiển phần cứng, cập nhật firmware, và trạng thái bộ điều khiển bo mạch chủ.";
+        _translations["Hardware Classification Drivers"] = "Trình điều khiển phân loại phần cứng";
+        _translations["Driver Wizard Installation"] = "Cài đặt trình hướng dẫn Driver";
+        _translations["Scan component firmware"] = "Quét firmware linh kiện";
+        _translations["Download installer binaries"] = "Tải tệp cài đặt nhị phân";
+        _translations["Compile & Install firmware"] = "Biên dịch & Cài đặt firmware";
+        _translations["Verify active hardware threads"] = "Xác minh các luồng phần cứng đang hoạt động";
+        _translations["Scan Drivers"] = "Quét Driver";
+        _translations["Run Driver Wizard"] = "Chạy trình hướng dẫn Driver";
+
+        // --- Junk Page ---
+        _translations["Current Garbage Debris:"] = "Tệp rác hiện tại:";
+        _translations["Locked:"] = "Đang bị khóa:";
+        _translations["Safely scan and clean up system logs, cache databases, download installers, and system debris."] = "Quét và dọn dẹp an toàn nhật ký hệ thống, cơ sở dữ liệu đệm, bộ cài đặt đã tải xuống và tệp rác hệ thống.";
+        _translations["These apps lock cache files and prevent them from being cleaned. Please close them before cleaning:"] = "Các ứng dụng này khóa tệp đệm và ngăn chúng bị dọn dẹp. Vui lòng đóng chúng trước khi dọn dẹp:";
+        _translations["Perform a quick scan of directories to evaluate safe-to-clean junk files and system caching logs."] = "Chạy quét nhanh các thư mục để đánh giá các tệp rác an toàn để dọn dẹp và nhật ký bộ nhớ đệm hệ thống.";
+
+        // --- Network Page ---
+        _translations["Success"] = "Thành công";
+
+        // --- Notifications & Sidebar Panels ---
+        _translations["NEW"] = "MỚI";
+        _translations["Registry Cleaner"] = "Dọn dẹp Registry";
+        _translations["Startup Manager"] = "Quản lý Khởi động";
+        _translations["Disk Analyzer"] = "Phân tích Ổ đĩa";
+        _translations["Network Service"] = "Dịch vụ Mạng";
+        _translations["Uninstaller"] = "Trình gỡ cài đặt";
+        _translations["Driver Manager"] = "Quản lý Driver";
+        _translations["Repair Tools"] = "Công cụ Sửa lỗi";
+
+        // --- Process Manager ---
+        _translations["Memory"] = "Bộ nhớ";
+        _translations["Idle"] = "Đang rảnh";
+        _translations["Below Normal"] = "Dưới bình thường";
+        _translations["Normal"] = "Bình thường";
+        _translations["Above Normal"] = "Trên bình thường";
+
+        // --- System Repair Page ---
+        _translations["System Repair Center"] = "Trung tâm sửa chữa hệ thống";
+        _translations["Diagnose registry policies, check Windows components integrity, fix core services, and restore network settings."] = "Chẩn đoán chính sách registry, kiểm tra tính toàn vẹn thành phần Windows, sửa lỗi các dịch vụ cốt lõi, và khôi phục cài đặt mạng.";
+        _translations["Scan Diagnostics"] = "Quét chẩn đoán";
+        _translations["Fix Selected"] = "Sửa lỗi đã chọn";
+        _translations["Services Active"] = "Dịch vụ đang hoạt động";
+        _translations["Policy Bans Found"] = "Lỗi chính sách phát hiện";
+        _translations["DNS Query Ping"] = "Phản hồi truy vấn DNS";
+        _translations["System Security Score"] = "Điểm bảo mật hệ thống";
+        _translations["Run System Diagnostics Scan"] = "Chạy quét chẩn đoán hệ thống";
+        _translations["Scan Windows configuration databases, network health, and core service registry startup properties."] = "Quét cơ sở dữ liệu cấu hình Windows, sức khỏe mạng, và thuộc tính khởi động dịch vụ cốt lõi trong registry.";
+        _translations["Diagnostics Findings"] = "Phát hiện chẩn đoán";
+        _translations["Issues detected in system registry policies, updates and background processes."] = "Các vấn đề được phát hiện trong chính sách registry, cập nhật và các tiến trình nền.";
+        _translations["Manual Troubleshooting Tools"] = "Công cụ khắc phục sự cố thủ công";
+        _translations["Registry & Policies"] = "Registry & Chính sách";
+        _translations["Restore standard policies allowing Task Manager, Command Prompt, Registry Editor and fix file links."] = "Khôi phục các chính sách tiêu chuẩn cho phép Task Manager, Command Prompt, Registry Editor và sửa liên kết tệp.";
+        _translations["System Protection"] = "Bảo vệ hệ thống";
+        _translations["Create a system restore point checkpoint immediately. Safely undo any system modifications."] = "Tạo điểm khôi phục hệ thống ngay lập tức. Hoàn tác an toàn các thay đổi hệ thống.";
+        _translations["Windows Update Fixer"] = "Sửa lỗi Windows Update";
+        _translations["Resets update databases, stops loops, flushes temporary system download cache files, and restarts services."] = "Đặt lại cơ sở dữ liệu cập nhật, dừng các vòng lặp, xóa tệp đệm tải xuống hệ thống tạm thời, và khởi động lại dịch vụ.";
+        _translations["Network Stack Reset"] = "Đặt lại cấu trúc Mạng";
+        _translations["Flushes DNS resolver logs, registers DNS names, releases/renews network adapter IP leases and resets Winsock catalog."] = "Xóa nhật ký phân giải DNS, đăng ký tên DNS, giải phóng/gia hạn IP adapter mạng và đặt lại danh mục Winsock.";
+        _translations["Scan Now"] = "Quét ngay";
+        _translations["Auto-Repair Selected Issues"] = "Tự động sửa các lỗi đã chọn";
+        _translations["SFC Repair"] = "Sửa SFC";
+        _translations["DISM Restore"] = "Khôi phục DISM";
+        _translations["Repair Registry Policies"] = "Sửa chính sách Registry";
+        _translations["Create Restore Point"] = "Tạo điểm khôi phục";
+        _translations["Reset Update Components"] = "Đặt lại thành phần Update";
+        _translations["Flush DNS & Winsock Reset"] = "Xóa DNS & Đặt lại Winsock";
+
+        // --- Security Page ---
+        _translations["Security Score"] = "Điểm bảo mật";
+
+        // --- Settings Page ---
+        _translations["Software Update Policies"] = "Chính sách cập nhật phần mềm";
+        _translations["Configure version checking and background installation options."] = "Cấu hình kiểm tra phiên bản và các tùy chọn cài đặt nền.";
+        _translations["Database & Storage Footprint"] = "Dung lượng bộ nhớ & Cơ sở dữ liệu";
+        _translations["Clean log files, diagnostic assessment reports, and temporary installation caches."] = "Dọn dẹp tệp nhật ký, báo cáo đánh giá chẩn đoán, và bộ nhớ đệm cài đặt tạm thời.";
+        _translations["Activity Logs"] = "Nhật ký hoạt động";
+        _translations["Reports Files"] = "Tệp báo cáo";
+        _translations["Updates Cache"] = "Bộ đệm cập nhật";
+        _translations["Application Color Theme Mode"] = "Chế độ giao diện màu ứng dụng";
+        _translations["Light Theme"] = "Giao diện Sáng";
+        _translations["Clean and bright interface"] = "Giao diện sạch và sáng";
+        _translations["Dark Theme"] = "Giao diện Tối";
+        _translations["Deep dark and elegant tones"] = "Tông màu tối sâu và thanh lịch";
+        _translations["Automated Cleanup Trigger Size"] = "Dung lượng kích hoạt dọn dẹp tự động";
+        _translations["Diagnostics Trace Log Reader"] = "Trình đọc nhật ký theo dõi chẩn đoán";
+        _translations["Real-time application framework execution events."] = "Các sự kiện thực thi framework ứng dụng theo thời gian thực.";
+        _translations["System Optimizer & Security Shield"] = "Tối ưu hóa hệ thống & Khiên bảo mật";
+        _translations["Version 3.4.1 (Stable Release)"] = "Phiên bản 3.4.1 (Bản ổn định)";
+        _translations["Check for Updates Now"] = "Kiểm tra cập nhật ngay";
+        _translations["Purge SQLite Activity History Logs"] = "Xóa nhật ký hoạt động SQLite";
+        _translations["Wipe Saved Diagnostic Report Files"] = "Xóa tệp báo cáo chẩn đoán đã lưu";
+        _translations["Clear Temporary Updates Installation Cache"] = "Xóa bộ đệm cài đặt cập nhật tạm thời";
+        _translations["Purge Selected Storage"] = "Dọn dẹp bộ nhớ đã chọn";
+        _translations["All Logs"] = "Tất cả nhật ký";
+        _translations["Warnings"] = "Cảnh báo";
+        _translations["Errors"] = "Lỗi";
+        _translations["Clear Console"] = "Xóa màn hình console";
+        _translations["Auto download & install updates silently (Requires background check)"] = "Tự động tải xuống & cài đặt cập nhật ngầm (Yêu cầu kiểm tra nền)";
+        _translations["Enroll in the pre-release channel (Beta updates)"] = "Tham gia kênh thử nghiệm trước (Cập nhật Beta)";
+
+        // --- Startup Manager ---
+        _translations["Performance Active"] = "Hiệu suất hoạt động";
+        _translations["Higher is better"] = "Càng cao càng tốt";
+        _translations["Undo"] = "Hoàn tác";
+        _translations["Restart"] = "Khởi động lại";
+        _translations["Search applications, services, tasks..."] = "Tìm kiếm ứng dụng, dịch vụ, tác vụ...";
+
+        // --- System Optimizer Page ---
+        _translations["Registry Key:"] = "Khóa Registry:";
+        _translations["Purge program working sets automatically"] = "Tự động giải phóng các vùng nhớ làm việc của ứng dụng";
+
+        // --- Uninstall Page ---
+        _translations["Manage installed programs, remove residual registry keys, delete leftover files, and force uninstall store applications."] = "Quản lý các chương trình đã cài đặt, xóa khóa registry thừa, xóa tệp còn sót lại và buộc gỡ cài đặt ứng dụng Microsoft Store.";
+        _translations["Install Date:"] = "Ngày cài đặt:";
+        _translations["Registry Hive:"] = "Nhánh Registry:";
+        _translations["No application selected"] = "Chưa chọn ứng dụng";
+        _translations["Choose an app from the list to view detailed specifications and advanced actions."] = "Chọn một ứng dụng từ danh sách để xem chi tiết thông số kỹ thuật và các thao tác nâng cao.";
+        _translations["Multiple applications are checked for actions"] = "Nhiều ứng dụng được chọn để xử lý";
+        _translations["Residual Items Found"] = "Tìm thấy thành phần còn sót lại";
+        _translations["Reclaimable Space"] = "Dung lượng có thể thu hồi";
+
+        // --- Software Updater Page ---
+        _translations["Check and install newer builds of local third-party applications securely."] = "Kiểm tra và cài đặt an toàn các phiên bản mới của các ứng dụng bên thứ ba cục bộ.";
+        _translations["Updates Available"] = "Cập nhật có sẵn";
+        _translations["Last Checked"] = "Kiểm tra lần cuối";
+        _translations["Active Engine"] = "Công cụ hoạt động";
+        _translations["Security Health"] = "Sức khỏe bảo mật";
+        _translations["Engine:"] = "Công cụ:";
+        _translations["Console Logs"] = "Nhật ký console";
+        _translations["Installing..."] = "Đang cài đặt...";
+        _translations["Your system is up to date!"] = "Hệ thống của bạn đã được cập nhật!";
+        _translations["No updates available for your third-party applications."] = "Không có bản cập nhật nào cho các ứng dụng bên thứ ba của bạn.";
+        _translations["Console log - Software Updater"] = "Nhật ký console - Cập nhật phần mềm";
+        _translations["Scan Updates"] = "Quét cập nhật";
+        _translations["Update Selected"] = "Cập nhật các mục đã chọn";
+        _translations["Update All"] = "Cập nhật tất cả";
+        _translations["Windows Package Manager"] = "Trình quản lý gói Windows";
+        _translations["Direct Downloader"] = "Trình tải xuống trực tiếp";
+        _translations["Select All"] = "Chọn tất cả";
+        _translations["Deselect All"] = "Bỏ chọn tất cả";
+        _translations["Update"] = "Cập nhật";
+        _translations["Check Again"] = "Kiểm tra lại";
+        _translations["Search outdated packages..."] = "Tìm kiếm các gói lỗi thời...";
+
+        // --- Shared Components (Progress Meters) ---
+        _translations["Optimal"] = "Tối ưu";
+        _translations["System Health"] = "Sức khỏe hệ thống";
+
+        // --- Brand names, formatting symbols, and constants ---
+        _translations["English"] = "English";
+        _translations["Tiếng Việt"] = "Tiếng Việt";
+        _translations["v3.4.0"] = "v3.4.0";
+        _translations["v3.4.1"] = "v3.4.1";
+        _translations["TXT"] = "TXT";
+        _translations["JSON"] = "JSON";
+        _translations["CSV"] = "CSV";
+        _translations["5.0 GB"] = "5.0 GB";
+        _translations["Nguyen Trung Tien"] = "Nguyen Trung Tien";
+        _translations["trungtiennguyen910@gmail.com"] = "trungtiennguyen910@gmail.com";
+        _translations["https://github.com/Nguyen-Trung-Tien/WinCarePro"] = "https://github.com/Nguyen-Trung-Tien/WinCarePro";
+        _translations["85%."] = "85%.";
+        _translations["•"] = "•";
     }
 }
 

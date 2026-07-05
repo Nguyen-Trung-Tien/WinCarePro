@@ -1,5 +1,5 @@
 {
-  "version": "3.4.0",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.0/WinCareProSetup.exe",
-  "changelog": "Cập nhật v3.4.0: Tái cấu trúc mã nguồn toàn dự án theo mô hình MVVM kiến trúc sạch; Tối ưu hóa phân hệ Quản lý Tiến trình (Process Manager) bằng cơ chế SemaphoreSlim tránh đơ/đóng băng UI; Tinh chỉnh hoạt ảnh nút tắt máy (Shutdown) và tối ưu hóa nút đóng (Close) tắt ứng dụng nhanh hơn; Cải tiến giao diện Trung tâm Mạng chống hiện tượng nhấp nháy giao diện và tăng hiệu năng hiển thị; Khắc phục lỗi so sánh tác vụ bất đồng bộ của trình tự động cập nhật tránh xung đột luồng."
+  "version": "3.4.1",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.1/WinCareProSetup.exe",
+  "changelog": "Cập nhật v3.4.1: Đồng bộ hóa và nâng cấp phiên bản toàn hệ thống; Cập nhật thông tin phiên bản hiển thị chính xác trong phần About & Developer; Cải tiến hiệu năng và độ ổn định của ứng dụng."
 }

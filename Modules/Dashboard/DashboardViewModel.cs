@@ -1303,7 +1303,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
 
             try
             {
-                Database.DbManager.AddNotification("Optimization Completed".T(), string.Format("System optimized successfully in {0} mode.", mode).T(), "Info");
+                Database.DbManager.AddNotification("Optimization Completed".T(), string.Format("System optimized successfully in {0} mode.".T(), mode.ToString().T()), "Info");
             }
             catch { }
 

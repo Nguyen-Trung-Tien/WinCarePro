@@ -2,6 +2,7 @@ using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using WinCarePro.Services;
 
 namespace WinCarePro.Components;
 
@@ -66,7 +67,7 @@ public sealed partial class CircularProgressMeter : UserControl
             ScoreLabel.Foreground = color;
         }
 
-        StatusLabel.Text = status;
+        StatusLabel.Text = status.T();
         StatusLabel.Foreground = color;
         HealthProgressRing.Foreground = color;
     }

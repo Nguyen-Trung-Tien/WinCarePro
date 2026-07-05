@@ -238,6 +238,7 @@ public class NetworkViewModel : ViewModelBase
         _historyService = historyService;
         _notificationService = notificationService;
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        DispatcherQueueInstance = _dispatcherQueue;
         _cts = new System.Threading.CancellationTokenSource();
     }
 
@@ -251,6 +252,7 @@ public class NetworkViewModel : ViewModelBase
     public void Initialize()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue ?? _dispatcherQueue;
+        DispatcherQueueInstance = _dispatcherQueue;
         try
         {
             _cts?.Cancel();
@@ -306,40 +308,7 @@ public class NetworkViewModel : ViewModelBase
         LogText(msg);
     }
 
-    private void SetPropertyOnUI<T>(Func<T> getter, Action<T> setter, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-    {
-        if (Equals(getter(), value)) return;
 
-        if (_dispatcherQueue != null && !_dispatcherQueue.HasThreadAccess)
-        {
-            T localValue = value;
-            try
-            {
-                _dispatcherQueue.TryEnqueue(() =>
-                {
-                    try
-                    {
-                        if (!Equals(getter(), localValue))
-                        {
-                            setter(localValue);
-                            OnPropertyChanged(propertyName);
-                        }
-                    }
-                    catch { }
-                });
-            }
-            catch { }
-        }
-        else
-        {
-            try
-            {
-                setter(value);
-                OnPropertyChanged(propertyName);
-            }
-            catch { }
-        }
-    }
 
     private void LogText(string msg)
     {

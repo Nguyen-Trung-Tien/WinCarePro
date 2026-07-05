@@ -64,8 +64,11 @@ public class DbManager
         }
     }
 
+    private static string? _cachedSettings;
+
     public static void InitializeDatabase()
     {
+        _cachedSettings = null; // Clear cache on database initialization
         if (!Directory.Exists(AppDataPath))
         {
             try
@@ -261,17 +264,20 @@ public class DbManager
 
     public static string GetSettings()
     {
+        if (_cachedSettings != null) return _cachedSettings;
         return ExecuteWithConnection(connection =>
         {
             var query = "SELECT Settings FROM Users LIMIT 1";
             using var command = new SqliteCommand(query, connection);
             var result = command.ExecuteScalar();
-            return result?.ToString() ?? "";
+            _cachedSettings = result?.ToString() ?? "";
+            return _cachedSettings;
         }, "");
     }
 
     public static void SaveSettings(string settings)
     {
+        _cachedSettings = settings;
         ExecuteWithConnection(connection =>
         {
             var updateSettings = "UPDATE Users SET Settings = $settings";

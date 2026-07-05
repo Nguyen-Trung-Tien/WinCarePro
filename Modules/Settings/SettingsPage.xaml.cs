@@ -42,6 +42,24 @@ public sealed partial class SettingsPage : Page
         LoadSettings();
         UpdateStorageSizes();
         PopulateTraceLogs();
+
+        this.Loaded += (s, e) =>
+        {
+            ThemeManager.Instance.ThemeChanged -= OnThemeChangedExternally;
+            ThemeManager.Instance.ThemeChanged += OnThemeChangedExternally;
+
+            // Sync with current theme on load
+            bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
+            ApplyThemeCardSelection(isDark);
+
+            string currentAccent = GetSelectedAccentColorTag();
+            ApplyAccentColorSelection(currentAccent);
+        };
+
+        this.Unloaded += (s, e) =>
+        {
+            ThemeManager.Instance.ThemeChanged -= OnThemeChangedExternally;
+        };
     }
 
     private void LoadSettings()
@@ -316,69 +334,79 @@ public sealed partial class SettingsPage : Page
     // Storage Purge Management
     private void UpdateStorageSizes()
     {
-        try
+        Task.Run(() =>
         {
-            string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "WinCarePro");
-            string dbPath = Path.Combine(appData, "wincaredb.db");
-            
-            // 1. Logs
-            long logsCount = 0;
-            long dbSize = 0;
-            if (File.Exists(dbPath))
-            {
-                dbSize = new FileInfo(dbPath).Length;
-            }
             try
             {
-                using var conn = new SqliteConnection($"Data Source={dbPath}");
-                conn.Open();
-                using var cmd = new SqliteCommand("SELECT COUNT(*) FROM Logs", conn);
-                logsCount = (long)(cmd.ExecuteScalar() ?? 0L);
+                string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "WinCarePro");
+                string dbPath = Path.Combine(appData, "wincaredb.db");
+                
+                // 1. Logs
+                long logsCount = 0;
+                long dbSize = 0;
+                if (File.Exists(dbPath))
+                {
+                    dbSize = new FileInfo(dbPath).Length;
+                }
+                try
+                {
+                    using var conn = new SqliteConnection($"Data Source={dbPath}");
+                    conn.Open();
+                    using var cmd = new SqliteCommand("SELECT COUNT(*) FROM Logs", conn);
+                    logsCount = (long)(cmd.ExecuteScalar() ?? 0L);
+                }
+                catch {}
+                string logsText = $"{logsCount} logs ({FormatSize(dbSize)})";
+
+                // 2. Reports
+                long reportsCount = 0;
+                long reportsSize = 0;
+                string reportsFolder = Path.Combine(appData, "Reports");
+                if (Directory.Exists(reportsFolder))
+                {
+                    var files = Directory.GetFiles(reportsFolder);
+                    reportsCount = files.Length;
+                    foreach (var f in files)
+                    {
+                        reportsSize += new FileInfo(f).Length;
+                    }
+                }
+                string reportsText = $"{reportsCount} files ({FormatSize(reportsSize)})";
+
+                // 3. Cache
+                long cacheCount = 0;
+                long cacheSize = 0;
+                string cacheFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");
+                if (Directory.Exists(cacheFolder))
+                {
+                    var files = Directory.GetFiles(cacheFolder);
+                    cacheCount = files.Length;
+                    foreach (var f in files)
+                    {
+                        cacheSize += new FileInfo(f).Length;
+                    }
+                }
+                string directCacheFolder = Path.Combine(Path.GetTempPath(), "WinCareUpdates");
+                if (Directory.Exists(directCacheFolder))
+                {
+                    var files = Directory.GetFiles(directCacheFolder);
+                    cacheCount += files.Length;
+                    foreach (var f in files)
+                    {
+                        cacheSize += new FileInfo(f).Length;
+                    }
+                }
+                string cacheText = $"{cacheCount} pkgs ({FormatSize(cacheSize)})";
+
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    if (LogsDbSizeLabel != null) LogsDbSizeLabel.Text = logsText;
+                    if (ReportsDbSizeLabel != null) ReportsDbSizeLabel.Text = reportsText;
+                    if (CacheDbSizeLabel != null) CacheDbSizeLabel.Text = cacheText;
+                });
             }
             catch {}
-            LogsDbSizeLabel.Text = $"{logsCount} logs ({FormatSize(dbSize)})";
-
-            // 2. Reports
-            long reportsCount = 0;
-            long reportsSize = 0;
-            string reportsFolder = Path.Combine(appData, "Reports");
-            if (Directory.Exists(reportsFolder))
-            {
-                var files = Directory.GetFiles(reportsFolder);
-                reportsCount = files.Length;
-                foreach (var f in files)
-                {
-                    reportsSize += new FileInfo(f).Length;
-                }
-            }
-            ReportsDbSizeLabel.Text = $"{reportsCount} files ({FormatSize(reportsSize)})";
-
-            // 3. Cache
-            long cacheCount = 0;
-            long cacheSize = 0;
-            string cacheFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");
-            if (Directory.Exists(cacheFolder))
-            {
-                var files = Directory.GetFiles(cacheFolder);
-                cacheCount = files.Length;
-                foreach (var f in files)
-                {
-                    cacheSize += new FileInfo(f).Length;
-                }
-            }
-            string directCacheFolder = Path.Combine(Path.GetTempPath(), "WinCareUpdates");
-            if (Directory.Exists(directCacheFolder))
-            {
-                var files = Directory.GetFiles(directCacheFolder);
-                cacheCount += files.Length;
-                foreach (var f in files)
-                {
-                    cacheSize += new FileInfo(f).Length;
-                }
-            }
-            CacheDbSizeLabel.Text = $"{cacheCount} pkgs ({FormatSize(cacheSize)})";
-        }
-        catch {}
+        });
     }
 
     private string FormatSize(long bytes)
@@ -468,13 +496,24 @@ public sealed partial class SettingsPage : Page
     private void OnLightModeCardClick(object sender, PointerRoutedEventArgs e)
     {
         UpdateAppTheme(false);
-        ApplyThemeCardSelection(false);
     }
 
     private void OnDarkModeCardClick(object sender, PointerRoutedEventArgs e)
     {
         UpdateAppTheme(true);
-        ApplyThemeCardSelection(true);
+    }
+
+    private void OnThemeChangedExternally(object? sender, EventArgs e)
+    {
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
+            ApplyThemeCardSelection(isDark);
+
+            // Re-apply indicators to fit new theme contrast (DimGray/White)
+            string currentAccent = GetSelectedAccentColorTag();
+            ApplyAccentColorSelection(currentAccent);
+        });
     }
 
     private void ApplyThemeCardSelection(bool dark)
@@ -618,7 +657,8 @@ public sealed partial class SettingsPage : Page
                     PrimaryButtonText = "Update Now".T(),
                     CloseButtonText = "Later".T(),
                     DefaultButton = ContentDialogButton.Primary,
-                    XamlRoot = this.Content.XamlRoot
+                    XamlRoot = this.Content.XamlRoot,
+                    RequestedTheme = ThemeManager.Instance.CurrentTheme
                 };
 
                 var result = await updateDialog.ShowAsync();

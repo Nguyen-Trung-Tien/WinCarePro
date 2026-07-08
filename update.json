@@ -1,5 +1,5 @@
 {
-  "version": "3.4.1",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.1/WinCareProSetup.exe",
-  "changelog": "Cập nhật v3.4.1: Đồng bộ hóa và nâng cấp phiên bản toàn hệ thống; Cập nhật thông tin phiên bản hiển thị chính xác trong phần About & Developer; Cải tiến hiệu năng và độ ổn định của ứng dụng."
+  "version": "3.4.2",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.2/WinCareProSetup.exe",
+  "changelog": "Cập nhật v3.4.2: Sửa lỗi không tương thích trên Windows cũ khi tải ứng dụng UWP; Khắc phục lỗi cảnh báo LiveCharts2 trong Dashboard; Nâng cao tính ổn định và xử lý ngoại lệ trong các mô-đun Hardware, Process, Network và Settings."
 }

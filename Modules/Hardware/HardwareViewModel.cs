@@ -154,12 +154,13 @@ public class HardwareViewModel : ViewModelBase
     public string BatteryWearLevelFormatted => $"{BatteryWearLevel:F1}%";
 
     private CancellationTokenSource? _monitorCts;
+    private int _monitorRunning = 0; // 0 = stopped, 1 = running
 
     public HardwareViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         _ = LoadSpecsAsync();
-        StartSensorMonitoring();
+        StartMonitoring();
     }
 
     private async Task LoadSpecsAsync()
@@ -186,56 +187,66 @@ public class HardwareViewModel : ViewModelBase
         }
     }
 
-    private void StartSensorMonitoring()
+    public void StartMonitoring()
     {
+        if (System.Threading.Interlocked.CompareExchange(ref _monitorRunning, 1, 0) != 0) return;
+
+        _monitorCts?.Dispose();
         _monitorCts = new CancellationTokenSource();
         var token = _monitorCts.Token;
 
         Task.Run(async () =>
         {
             var rand = new Random();
-            while (!token.IsCancellationRequested)
+            try
             {
-                try
+                while (!token.IsCancellationRequested)
                 {
-                    double cpuUsage = 5.0 + rand.NextDouble() * 10.0;
-                    double gpuUsage = 2.0 + rand.NextDouble() * 5.0;
-
-                    var stats = _engine.GetBatteryInfo();
-                    double cTemp = _engine.GetCpuTemperature(cpuUsage);
-                    double gTemp = _engine.GetGpuTemperature(gpuUsage);
-
-                    if (token.IsCancellationRequested) break;
-
-                    _dispatcherQueue?.TryEnqueue(() =>
+                    try
                     {
-                        if (token.IsCancellationRequested) return;
-                        CpuTemp = cTemp;
-                        GpuTemp = gTemp;
-                        GpuLoad = Math.Round(gpuUsage, 1);
-                        GpuFanRpm = 1100 + rand.Next(300);
+                        double cpuUsage = 5.0 + rand.NextDouble() * 10.0;
+                        double gpuUsage = 2.0 + rand.NextDouble() * 5.0;
 
-                        CpuFreq = 2.8 + rand.NextDouble() * 0.8;
-                        CpuPower = 12.0 + rand.NextDouble() * 8.0;
+                        var stats = _engine.GetBatteryInfo();
+                        double cTemp = _engine.GetCpuTemperature(cpuUsage);
+                        double gTemp = _engine.GetGpuTemperature(gpuUsage);
 
-                        RamCommittedGb = 5.8 + rand.NextDouble() * 1.5;
-                        RamCachedGb = 2.0 + rand.NextDouble() * 1.0;
+                        if (token.IsCancellationRequested) break;
 
-                        BatteryPercent = stats.ChargePercent;
-                        BatteryStatus = stats.Status.T();
-                        BatteryCycles = 120 + rand.Next(5);
-                        BatteryDesignCapacity = "54000 mWh";
-                        BatteryFullChargeCapacity = "51800 mWh";
-                        BatteryWearLevel = 4.1;
-                    });
+                        _dispatcherQueue?.TryEnqueue(() =>
+                        {
+                            if (token.IsCancellationRequested) return;
+                            CpuTemp = cTemp;
+                            GpuTemp = gTemp;
+                            GpuLoad = Math.Round(gpuUsage, 1);
+                            GpuFanRpm = 1100 + rand.Next(300);
+
+                            CpuFreq = 2.8 + rand.NextDouble() * 0.8;
+                            CpuPower = 12.0 + rand.NextDouble() * 8.0;
+
+                            RamCommittedGb = 5.8 + rand.NextDouble() * 1.5;
+                            RamCachedGb = 2.0 + rand.NextDouble() * 1.0;
+
+                            BatteryPercent = stats.ChargePercent;
+                            BatteryStatus = stats.Status.T();
+                            BatteryCycles = 120 + rand.Next(5);
+                            BatteryDesignCapacity = "54000 mWh";
+                            BatteryFullChargeCapacity = "51800 mWh";
+                            BatteryWearLevel = 4.1;
+                        });
+                    }
+                    catch { }
+
+                    try
+                    {
+                        await Task.Delay(2000, token);
+                    }
+                    catch (TaskCanceledException) { break; }
                 }
-                catch { }
-
-                try
-                {
-                    await Task.Delay(2000, token);
-                }
-                catch (TaskCanceledException) { break; }
+            }
+            finally
+            {
+                System.Threading.Interlocked.Exchange(ref _monitorRunning, 0);
             }
         });
     }
@@ -243,7 +254,5 @@ public class HardwareViewModel : ViewModelBase
     public void StopMonitoring()
     {
         _monitorCts?.Cancel();
-        _monitorCts?.Dispose();
-        _monitorCts = null;
     }
 }

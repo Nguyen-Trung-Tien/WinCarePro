@@ -2043,7 +2043,7 @@ public class TranslationManager
         _translations["Diagnostics Trace Log Reader"] = "Trình đọc nhật ký theo dõi chẩn đoán";
         _translations["Real-time application framework execution events."] = "Các sự kiện thực thi framework ứng dụng theo thời gian thực.";
         _translations["System Optimizer & Security Shield"] = "Tối ưu hóa hệ thống & Khiên bảo mật";
-        _translations["Version 3.4.1 (Stable Release)"] = "Phiên bản 3.4.1 (Bản ổn định)";
+        _translations["Version 3.4.2 (Stable Release)"] = "Phiên bản 3.4.2 (Bản ổn định)";
         _translations["Check for Updates Now"] = "Kiểm tra cập nhật ngay";
         _translations["Purge SQLite Activity History Logs"] = "Xóa nhật ký hoạt động SQLite";
         _translations["Wipe Saved Diagnostic Report Files"] = "Xóa tệp báo cáo chẩn đoán đã lưu";
@@ -2109,6 +2109,7 @@ public class TranslationManager
         _translations["Tiếng Việt"] = "Tiếng Việt";
         _translations["v3.4.0"] = "v3.4.0";
         _translations["v3.4.1"] = "v3.4.1";
+        _translations["v3.4.2"] = "v3.4.2";
         _translations["TXT"] = "TXT";
         _translations["JSON"] = "JSON";
         _translations["CSV"] = "CSV";

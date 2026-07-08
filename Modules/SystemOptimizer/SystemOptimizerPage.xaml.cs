@@ -49,7 +49,7 @@ public sealed partial class SystemOptimizerPage : Page
         _ramTimer?.Stop();
     }
 
-    private void RamTimer_Tick(object sender, object e)
+    private void RamTimer_Tick(object? sender, object e)
     {
         ViewModel.UpdateRamAndServices();
     }

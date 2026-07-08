@@ -101,7 +101,7 @@
                                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                                         <TextBlock Text="{x:Bind Title}" FontWeight="Bold" FontSize="13.5"/>
                                                         <!-- NEW Badge -->
-                                                        <Border Visibility="{x:Bind local:NotificationPage.IsUnreadVisibility(IsRead), Mode=OneWay}" Background="#FFEF4444" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
+                                                        <Border Visibility="{x:Bind local:NotificationPage.IsUnreadVisibility(IsRead)}" Background="#FFEF4444" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
                                                             <TextBlock Text="NEW" FontSize="9" FontWeight="Bold" Foreground="White"/>
                                                         </Border>
                                                     </StackPanel>

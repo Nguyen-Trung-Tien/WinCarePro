@@ -194,8 +194,8 @@
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="1" Margin="4,0,0,0">
-                                            <TextBlock Text="{x:Bind CleanableSizeFormatted, Mode=OneWay}" FontWeight="Bold" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Right" />
-                                            <TextBlock Text="{x:Bind LockedSizeFormatted, Mode=OneWay}" FontSize="10" Foreground="#FFEF4444" FontWeight="SemiBold" HorizontalAlignment="Right" Visibility="{x:Bind LockedSizeVisibility, Mode=OneWay}" />
+                                            <TextBlock Text="{x:Bind CleanableSizeFormatted}" FontWeight="Bold" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Right" />
+                                            <TextBlock Text="{x:Bind LockedSizeFormatted}" FontSize="10" Foreground="#FFEF4444" FontWeight="SemiBold" HorizontalAlignment="Right" Visibility="{x:Bind LockedSizeVisibility}" />
                                             <TextBlock Text="{x:Bind FileCountFormatted}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Right" />
                                         </StackPanel>
                                     </Grid>

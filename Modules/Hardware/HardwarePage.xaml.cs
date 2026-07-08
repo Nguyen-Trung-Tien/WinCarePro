@@ -17,6 +17,12 @@ public sealed partial class HardwarePage : Page
         this.DataContext = ViewModel;
     }
 
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        ViewModel.StartMonitoring();
+    }
+
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);

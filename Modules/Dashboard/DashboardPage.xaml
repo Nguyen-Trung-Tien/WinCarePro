@@ -383,7 +383,7 @@
                                 Series="{x:Bind ViewModel.PerformanceSeries, Mode=OneWay}"
                                 XAxes="{x:Bind ViewModel.XAxes, Mode=OneWay}"
                                 YAxes="{x:Bind ViewModel.YAxes, Mode=OneWay}"
-                                TooltipFindingStrategy="CompareAll" />
+                                FindingStrategy="CompareAll" />
                         </Grid>
                     </Border>
 
@@ -504,13 +504,13 @@
                                             <TextBlock Grid.Column="1" Text="{x:Bind CheckName}" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold" TextWrapping="Wrap" />
                                             <TextBlock Grid.Column="2" Text="{x:Bind Description}" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,16,0" LineHeight="16"/>
                                             <Grid Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                                <Border Background="{x:Bind local:DashboardPage.GetStatusBadgeBg(IsHealthy)}" CornerRadius="6" Padding="10,5" Visibility="{x:Bind local:DashboardPage.GetStatusBadgeVisibility(IsHealthy), Mode=OneWay}">
+                                                <Border Background="{x:Bind local:DashboardPage.GetStatusBadgeBg(IsHealthy)}" CornerRadius="6" Padding="10,5" Visibility="{x:Bind local:DashboardPage.GetStatusBadgeVisibility(IsHealthy)}">
                                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                                         <FontIcon Glyph="{x:Bind local:DashboardPage.GetStatusIcon(IsHealthy)}" Foreground="{x:Bind local:DashboardPage.GetStatusColor(IsHealthy)}" FontSize="11" VerticalAlignment="Center" />
                                                         <TextBlock Text="{x:Bind local:DashboardPage.GetStatusLabel(IsHealthy)}" Foreground="{x:Bind local:DashboardPage.GetStatusColor(IsHealthy)}" FontWeight="Bold" FontSize="11" VerticalAlignment="Center" />
                                                     </StackPanel>
                                                 </Border>
-                                                <Button Content="Fix Now" Style="{StaticResource DefaultButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Padding="12,5" Height="28" CornerRadius="6" FontSize="11" FontWeight="Bold" Visibility="{x:Bind local:DashboardPage.GetFixButtonVisibility(IsHealthy), Mode=OneWay}" Click="OnFixItemClick" />
+                                                <Button Content="Fix Now" Style="{StaticResource DefaultButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Padding="12,5" Height="28" CornerRadius="6" FontSize="11" FontWeight="Bold" Visibility="{x:Bind local:DashboardPage.GetFixButtonVisibility(IsHealthy)}" Click="OnFixItemClick" />
                                             </Grid>
                                         </Grid>
                                     </DataTemplate>

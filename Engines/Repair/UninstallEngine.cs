@@ -133,6 +133,9 @@ public class UninstallEngine
                     if (package.IsFramework || package.IsResourcePackage) 
                         continue;
                     
+                    if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041))
+                        continue;
+
                     var appEntries = package.GetAppListEntries();
                     if (appEntries == null || appEntries.Count == 0) 
                         continue;
@@ -344,7 +347,7 @@ public class UninstallEngine
             {
                 try
                 {
-                    string dir = Path.GetDirectoryName(exe);
+                    string? dir = Path.GetDirectoryName(exe);
                     if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
                     {
                         psi.WorkingDirectory = dir;

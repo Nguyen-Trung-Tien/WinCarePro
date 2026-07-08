@@ -621,56 +621,13 @@ public sealed partial class SettingsPage : Page
 
         try
         {
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
-            
-            string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
-            string response;
-            if (File.Exists(@"D:\WinCare\update.json"))
-            {
-                response = File.ReadAllText(@"D:\WinCare\update.json");
-            }
-            else
-            {
-                response = await client.GetStringAsync(jsonUrl);
-            }
-            
-            using var doc = JsonDocument.Parse(response);
-            var root = doc.RootElement;
-            string remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
-            string downloadUrl = root.GetProperty("url").GetString() ?? "";
-            string changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
-
-            var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
-            var remoteVersion = new Version(remoteVerStr);
-
+            await CheckForUpdatesInternalAsync();
+        }
+        catch (System.IO.FileNotFoundException fnfEx)
+        {
+            // System.Net.Http assembly not found — deployment/packaging issue
             UpdateProgressRing.IsActive = false;
-
-            if (remoteVersion > currentVersion)
-            {
-                UpdateStatusLabel.Text = string.Format("New version {0} is available.".T(), remoteVerStr);
-
-                ContentDialog updateDialog = new ContentDialog
-                {
-                    Title = "Update Available".T(),
-                    Content = string.Format("Version {0} has been released (Current: {1}).\n\nWhat's New:\n{2}\n\nWould you like to download and install this update now?".T(), remoteVerStr, currentVersion.ToString(3), changelog),
-                    PrimaryButtonText = "Update Now".T(),
-                    CloseButtonText = "Later".T(),
-                    DefaultButton = ContentDialogButton.Primary,
-                    XamlRoot = this.Content.XamlRoot,
-                    RequestedTheme = ThemeManager.Instance.CurrentTheme
-                };
-
-                var result = await updateDialog.ShowAsync();
-                if (result == ContentDialogResult.Primary)
-                {
-                    await DownloadAndInstallUpdateAsync(downloadUrl);
-                }
-            }
-            else
-            {
-                UpdateStatusLabel.Text = string.Format("You are running the latest version (v{0}).".T(), currentVersion.ToString(3));
-            }
+            UpdateStatusLabel.Text = string.Format("Network library unavailable: {0}".T(), fnfEx.FileName ?? fnfEx.Message);
         }
         catch (Exception ex)
         {
@@ -680,6 +637,60 @@ public sealed partial class SettingsPage : Page
         finally
         {
             CheckUpdatesBtn.IsEnabled = true;
+        }
+    }
+
+    private async Task CheckForUpdatesInternalAsync()
+    {
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
+        
+        string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
+        string response;
+        if (File.Exists(@"D:\WinCare\update.json"))
+        {
+            response = File.ReadAllText(@"D:\WinCare\update.json");
+        }
+        else
+        {
+            response = await client.GetStringAsync(jsonUrl);
+        }
+        
+        using var doc = JsonDocument.Parse(response);
+        var root = doc.RootElement;
+        string remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
+        string downloadUrl = root.GetProperty("url").GetString() ?? "";
+        string changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
+
+        var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
+        var remoteVersion = new Version(remoteVerStr);
+
+        UpdateProgressRing.IsActive = false;
+
+        if (remoteVersion > currentVersion)
+        {
+            UpdateStatusLabel.Text = string.Format("New version {0} is available.".T(), remoteVerStr);
+
+            ContentDialog updateDialog = new ContentDialog
+            {
+                Title = "Update Available".T(),
+                Content = string.Format("Version {0} has been released (Current: {1}).\n\nWhat's New:\n{2}\n\nWould you like to download and install this update now?".T(), remoteVerStr, currentVersion.ToString(3), changelog),
+                PrimaryButtonText = "Update Now".T(),
+                CloseButtonText = "Later".T(),
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = this.Content.XamlRoot,
+                RequestedTheme = ThemeManager.Instance.CurrentTheme
+            };
+
+            var result = await updateDialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                await DownloadAndInstallUpdateAsync(downloadUrl);
+            }
+        }
+        else
+        {
+            UpdateStatusLabel.Text = string.Format("You are running the latest version (v{0}).".T(), currentVersion.ToString(3));
         }
     }
 

@@ -117,6 +117,7 @@ public class ProcessViewModel : ViewModelBase
     public bool IsDetailsVisible => SelectedProcess != null;
 
     private CancellationTokenSource? _monitorCts;
+    private int _monitorRunning = 0; // 0 = stopped, 1 = running (Interlocked guard)
 
     public ProcessViewModel()
     {
@@ -127,50 +128,59 @@ public class ProcessViewModel : ViewModelBase
 
     private void StartRunningProcessesMonitor()
     {
+        if (Interlocked.CompareExchange(ref _monitorRunning, 1, 0) != 0) return;
+
         _monitorCts = new CancellationTokenSource();
         var token = _monitorCts.Token;
-        Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
-            // Perform the initial load sequentially to avoid race conditions.
-            await RefreshProcessesAsync();
-            if (token.IsCancellationRequested) return;
-
-            int tickCount = 1; // Start from 1 because the initial load (acting as tick 0) is complete
-            while (!token.IsCancellationRequested)
+            try
             {
-                try
-                {
-                    await Task.Delay(1500, token);
-                }
-                catch (TaskCanceledException) { break; }
+                // Perform the initial load sequentially to avoid race conditions.
+                await RefreshProcessesAsync();
+                if (token.IsCancellationRequested) return;
 
-                if (token.IsCancellationRequested) break;
-
-                try
+                int tickCount = 1; // Start from 1 because the initial load (acting as tick 0) is complete
+                while (!token.IsCancellationRequested)
                 {
-                    var list = await _processService.GetRunningProcessesAsync();
+                    try
+                    {
+                        await Task.Delay(1500, token);
+                    }
+                    catch (TaskCanceledException) { break; }
+
                     if (token.IsCancellationRequested) break;
 
-                    _dispatcherQueue?.TryEnqueue(() =>
+                    try
                     {
-                        if (token.IsCancellationRequested) return;
+                        var list = await _processService.GetRunningProcessesAsync();
+                        if (token.IsCancellationRequested) break;
 
-                        _allProcesses = list;
-                        
-                        // Tier 1: Every 1.5s (each tick) - Update metrics in-place
-                        SyncProcessMetrics(list);
-
-                        // Tier 2: Every 4.5s (every 3 ticks) - Synchronize process additions/removals and re-sort
-                        if (tickCount % 3 == 0)
+                        _dispatcherQueue?.TryEnqueue(() =>
                         {
-                            ApplyFilterAndSort();
-                        }
+                            if (token.IsCancellationRequested) return;
 
-                        UpdateStatsSummary(list);
-                        tickCount++;
-                    });
+                            _allProcesses = list;
+                            
+                            // Tier 1: Every 1.5s (each tick) - Update metrics in-place
+                            SyncProcessMetrics(list);
+
+                            // Tier 2: Every 4.5s (every 3 ticks) - Synchronize process additions/removals and re-sort
+                            if (tickCount % 3 == 0)
+                            {
+                                ApplyFilterAndSort();
+                            }
+
+                            UpdateStatsSummary(list);
+                            tickCount++;
+                        });
+                    }
+                    catch { }
                 }
-                catch { }
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _monitorRunning, 0);
             }
         });
     }

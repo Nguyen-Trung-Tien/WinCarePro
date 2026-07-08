@@ -556,25 +556,40 @@ public class NetworkViewModel : ViewModelBase
 
     public void LoadAdapters()
     {
-        Task.Run(() =>
+        _ = Task.Run(() =>
         {
             try
             {
                 var list = _engine.GetNetworkAdapters();
-                // Get DNS for first interface
+                // Get DNS for first interface — wrapped in separate try-catch
+                // because System.Net.NetworkInformation assembly may not resolve
+                // on some deployment configurations (FileNotFoundException crash fix)
                 string dnsText = "Unknown";
-                foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+                try
                 {
-                    if (ni.OperationalStatus == OperationalStatus.Up && ni.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+                    foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
                     {
-                        var props = ni.GetIPProperties();
-                        var dnsServers = props.DnsAddresses.Select(d => d.ToString()).ToList();
-                        if (dnsServers.Count > 0)
+                        if (ni.OperationalStatus == OperationalStatus.Up && ni.NetworkInterfaceType != NetworkInterfaceType.Loopback)
                         {
-                            dnsText = string.Join(", ", dnsServers);
-                            break;
+                            var props = ni.GetIPProperties();
+                            var dnsServers = props.DnsAddresses.Select(d => d.ToString()).ToList();
+                            if (dnsServers.Count > 0)
+                            {
+                                dnsText = string.Join(", ", dnsServers);
+                                break;
+                            }
                         }
                     }
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    // System.Net.NetworkInformation assembly not found — graceful fallback
+                    dnsText = "Unavailable";
+                }
+                catch (Exception dnsEx)
+                {
+                    dnsText = "Error";
+                    LogText($"DNS detection failed: {dnsEx.Message}");
                 }
                 
                 try

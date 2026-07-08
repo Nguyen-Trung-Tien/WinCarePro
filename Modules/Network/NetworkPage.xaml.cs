@@ -17,7 +17,6 @@ public sealed partial class NetworkPage : Page
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.Loaded += (s, e) => DataContext = ViewModel;
-        this.Unloaded += (s, e) => ViewModel.Cleanup();
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)

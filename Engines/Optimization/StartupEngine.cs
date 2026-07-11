@@ -317,13 +317,32 @@ public class StartupEngine
     {
         if (string.IsNullOrEmpty(cmd)) return "";
         cmd = cmd.Trim();
+        try
+        {
+            cmd = Environment.ExpandEnvironmentVariables(cmd);
+        }
+        catch { }
+
         if (cmd.StartsWith("\""))
         {
             int nextQuote = cmd.IndexOf("\"", 1);
             if (nextQuote > 1) return cmd.Substring(1, nextQuote - 1);
         }
         int space = cmd.IndexOf(" ");
-        if (space > 0) return cmd.Substring(0, space);
+        if (space > 0)
+        {
+            string[] parts = cmd.Split(' ');
+            string currentPath = "";
+            for (int i = 0; i < parts.Length; i++)
+            {
+                currentPath = string.IsNullOrEmpty(currentPath) ? parts[i] : currentPath + " " + parts[i];
+                if (currentPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && File.Exists(currentPath))
+                {
+                    return currentPath;
+                }
+            }
+            return cmd.Substring(0, space);
+        }
         return cmd;
     }
 

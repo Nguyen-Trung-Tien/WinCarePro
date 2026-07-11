@@ -20,16 +20,24 @@ public class DbManager
     private static SqliteConnection CreateAndOpenConnection()
     {
         var connection = new SqliteConnection(ConnectionString);
-        connection.Open();
-        using (var cmd = new SqliteCommand("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=5000;", connection))
+        try
         {
-            try
+            connection.Open();
+            using (var cmd = new SqliteCommand("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=5000;", connection))
             {
-                cmd.ExecuteNonQuery();
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch { }
             }
-            catch { }
+            return connection;
         }
-        return connection;
+        catch
+        {
+            connection.Dispose();
+            throw;
+        }
     }
 
     private static T ExecuteWithConnection<T>(Func<SqliteConnection, T> operation, T defaultValue = default!)
@@ -107,6 +115,13 @@ public class DbManager
                 command.ExecuteNonQuery();
             }
 
+            // Create index on Logs (Module, CreatedAt)
+            var createLogsIndex = "CREATE INDEX IF NOT EXISTS idx_logs_module_createdat ON Logs (Module, CreatedAt DESC);";
+            using (var command = new SqliteCommand(createLogsIndex, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
             // Create Reports table
             var createReportsTable = @"
                 CREATE TABLE IF NOT EXISTS Reports (
@@ -143,6 +158,13 @@ public class DbManager
                     CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
                 );";
             using (var command = new SqliteCommand(createNotificationsTable, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
+            // Create index on Notifications (IsRead, CreatedAt)
+            var createNotificationsIndex = "CREATE INDEX IF NOT EXISTS idx_notifications_isread_createdat ON Notifications (IsRead, CreatedAt DESC);";
+            using (var command = new SqliteCommand(createNotificationsIndex, connection))
             {
                 command.ExecuteNonQuery();
             }
@@ -360,17 +382,17 @@ public class DbManager
             cmd.Parameters.AddWithValue("@message", message);
             cmd.Parameters.AddWithValue("@level", level);
             cmd.ExecuteNonQuery();
-
-            var win = WinCarePro.App.MainWindowInstance;
-            if (win != null)
-            {
-                win.UpdateNotificationBadge();
-                if (showToast)
-                {
-                    win.ShowToastFromDb(title, message, level);
-                }
-            }
         });
+
+        var win = WinCarePro.App.MainWindowInstance;
+        if (win != null)
+        {
+            win.UpdateNotificationBadge();
+            if (showToast)
+            {
+                win.ShowToastFromDb(title, message, level);
+            }
+        }
     }
 
     public static List<WinCarePro.Models.NotificationItem> GetRecentNotifications(int limit = 50)
@@ -447,6 +469,31 @@ public class DbManager
 
     public static void RunDatabaseMaintenance()
     {
+        // Check if database maintenance was run in the last 7 days to avoid heavy VACUUM on every launch
+        bool shouldRun = false;
+        try
+        {
+            var logs = GetLogs("Database", "Database maintenance completed.");
+            if (logs.Count == 0)
+            {
+                shouldRun = true;
+            }
+            else
+            {
+                var lastRun = logs[0].CreatedAt;
+                if ((DateTime.Now - lastRun).TotalDays >= 7)
+                {
+                    shouldRun = true;
+                }
+            }
+        }
+        catch
+        {
+            shouldRun = true; // Safe fallback
+        }
+
+        if (!shouldRun) return;
+
         ExecuteWithConnection(connection =>
         {
             using var cmd = new SqliteCommand("VACUUM; ANALYZE;", connection);
@@ -458,6 +505,9 @@ public class DbManager
             cleanCmd.Parameters.AddWithValue("@cutoff", DateTime.Now.AddDays(-30).ToString("o"));
             cleanCmd.ExecuteNonQuery();
         });
+
+        // Log the completion of database maintenance to schedule the next run in 7 days
+        LogAction("Database maintenance completed.", "Database", "Success");
     }
 }
 

@@ -23,6 +23,7 @@ public sealed partial class JunkPage : Page
 
     public JunkPage()
     {
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<JunkViewModel>();
         this.DataContext = ViewModel;

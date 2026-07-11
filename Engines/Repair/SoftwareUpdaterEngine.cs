@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WinCarePro.Models;
@@ -416,12 +417,16 @@ public class SoftwareUpdaterEngine
             
             if (!ok)
             {
+#if DEBUG
                 Log($"Winget returned error code {process.ExitCode} (likely because application is not installed or already up-to-date). Falling back to simulated upgrade for development environment...");
                 await Task.Delay(2000);
                 Log($"Successfully updated {appId} (Simulated).");
                 Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
                 Database.DbManager.SaveUpdatedApp(appId, version);
                 return true;
+#else
+                return false;
+#endif
             }
 
             Database.DbManager.SaveUpdatedApp(appId, version);
@@ -430,12 +435,16 @@ public class SoftwareUpdaterEngine
         catch (Exception ex)
         {
             Log($"Failed to run winget upgrade for {appId}: {ex.Message}");
+#if DEBUG
             // Simulate updating successful fallback for mock updates in development
             await Task.Delay(3000);
             Log($"Successfully updated {appId} (Simulated).");
             Database.DbManager.LogAction($"Update Software {appId} (Simulated)", "Software Updater", "Success");
             Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
+#else
+            return false;
+#endif
         }
     }
 
@@ -499,6 +508,15 @@ public class SoftwareUpdaterEngine
             }
 
             Log($"Download completed. Saved to: {filePath}");
+
+            Log("Verifying digital signature of the downloaded installer...");
+            if (!VerifyDigitalSignature(filePath))
+            {
+                try { File.Delete(filePath); } catch {}
+                throw new System.Security.SecurityException("The installer does not have a valid or trusted digital signature.");
+            }
+            Log("Digital signature verification successful. The installer is verified.");
+
             Log($"Launching installer silently: {app.Name}");
 
             var psi = new ProcessStartInfo
@@ -540,12 +558,16 @@ public class SoftwareUpdaterEngine
 
             if (!success)
             {
+#if DEBUG
                 Log($"Installer returned exit code {process.ExitCode}. Falling back to simulated upgrade for development environment...");
                 await Task.Delay(2000);
                 Log($"Successfully updated {appId} (Simulated).");
                 Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
                 Database.DbManager.SaveUpdatedApp(appId, version);
                 return true;
+#else
+                return false;
+#endif
             }
 
             Database.DbManager.SaveUpdatedApp(appId, version);
@@ -554,12 +576,33 @@ public class SoftwareUpdaterEngine
         catch (Exception ex)
         {
             Log($"Direct update failed for {app.Name}: {ex.Message}");
+#if DEBUG
             Log("Falling back to simulated upgrade for development environment...");
             await Task.Delay(3000);
             Log($"Successfully updated {appId} (Simulated).");
             Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
             Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
+#else
+            return false;
+#endif
+        }
+    }
+
+    private bool VerifyDigitalSignature(string filePath)
+    {
+        if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) return false;
+        try
+        {
+            using (var cert = X509CertificateLoader.LoadCertificateFromFile(filePath))
+            {
+                return cert.Verify();
+            }
+        }
+        catch (Exception ex)
+        {
+            Log($"Digital signature verification failed: {ex.Message}");
+            return false;
         }
     }
 }

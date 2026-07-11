@@ -421,14 +421,14 @@
                                                     <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="13" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                                 <Border Grid.Column="1" Background="{x:Bind StatusColor}" CornerRadius="4" Padding="6,2">
-                                                    <TextBlock Text="{x:Bind Status}" FontSize="9.5" FontWeight="Bold" Foreground="White" />
+                                                    <TextBlock Text="{x:Bind DisplayStatus}" FontSize="9.5" FontWeight="Bold" Foreground="White" />
                                                 </Border>
                                             </Grid>
 
                                             <!-- Middle line: Description & Speed -->
                                             <Grid Grid.Row="1">
                                                 <TextBlock Text="{x:Bind Description}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" HorizontalAlignment="Left" />
-                                                <TextBlock Text="{x:Bind Speed}" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Right" />
+                                                <TextBlock Text="{x:Bind DisplaySpeed}" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Right" />
                                             </Grid>
 
                                             <!-- Bottom line: IP & MAC -->
@@ -528,7 +528,7 @@
                                                     <FontIcon Glyph="&#xE12B;" FontSize="12" Foreground="#FF7F56D9" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="13" />
+                                                    <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="13" />
                                                     <Border Visibility="{x:Bind IsFastest, Converter={StaticResource BooleanToVisibilityConverter}}" Background="MediumSeaGreen" CornerRadius="3" Padding="4,1" Margin="0,2,0,0" HorizontalAlignment="Left">
                                                         <TextBlock Text="Fastest" FontSize="9" FontWeight="Bold" Foreground="White" />
                                                     </Border>
@@ -551,7 +551,7 @@
                                             </StackPanel>
 
                                             <!-- Apply button -->
-                                            <Button Grid.Column="4" Style="{StaticResource DefaultButtonStyle}" Click="OnApplyDnsClick" Tag="{x:Bind}" IsEnabled="{Binding DataContext.ViewModel.IsNotBusy, ElementName=SectionDns}" CornerRadius="6" VerticalAlignment="Center">
+                                            <Button Grid.Column="4" Style="{StaticResource DefaultButtonStyle}" Click="OnApplyDnsClick" Tag="{x:Bind}" CornerRadius="6" VerticalAlignment="Center">
                                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                                     <FontIcon Glyph="&#xE8FB;" FontSize="12" />
                                                     <TextBlock Text="Apply DNS" />
@@ -585,125 +585,127 @@
             </ScrollViewer>
 
             <!-- SECTION 3: ACTIVE CONNECTIONS (PORTS) -->
-            <Border x:Name="SectionPorts" Style="{StaticResource ModernCardStyle}" Padding="20" Visibility="Collapsed">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+            <Grid x:Name="SectionPorts" Visibility="Collapsed">
+                <Border Style="{StaticResource ModernCardStyle}" Padding="20" Margin="0,0,12,0">
+                    <Grid RowSpacing="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-                    <!-- Top Filter bar -->
-                    <Grid Grid.Row="0" ColumnSpacing="12" Margin="0,0,0,8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox PlaceholderText="Search connections (e.g. chrome, ESTABLISHED, 80)..." Text="{x:Bind ViewModel.ConnectionSearchQuery, Mode=TwoWay}" CornerRadius="6" VerticalAlignment="Center" />
-                        <Button Grid.Column="1" Style="{StaticResource DefaultButtonStyle}" Click="OnRefreshConnectionsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="16,8">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xE72C;" FontSize="13" />
-                                <TextBlock Text="Refresh Connections" />
-                            </StackPanel>
-                        </Button>
+                        <!-- Top Filter bar -->
+                        <Grid Grid.Row="0" ColumnSpacing="12" Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox PlaceholderText="Search connections (e.g. chrome, ESTABLISHED, 80)..." Text="{x:Bind ViewModel.ConnectionSearchQuery, Mode=TwoWay}" CornerRadius="6" VerticalAlignment="Center" />
+                            <Button Grid.Column="1" Style="{StaticResource DefaultButtonStyle}" Click="OnRefreshConnectionsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="16,8">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE72C;" FontSize="13" />
+                                    <TextBlock Text="Refresh Connections" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Badge Summaries Row -->
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,0,16">
+                            <Border Background="#157F56D9" CornerRadius="6" Padding="8,4">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="Total Ports:" FontSize="11" Foreground="#FF7F56D9" />
+                                    <TextBlock Text="{x:Bind ViewModel.Connections.Count, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="#FF7F56D9" />
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#153CB371" CornerRadius="6" Padding="8,4">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="Established:" FontSize="11" Foreground="MediumSeaGreen" />
+                                    <TextBlock Text="{x:Bind GetEstablishedCount(ViewModel.Connections), Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="MediumSeaGreen" />
+                                </StackPanel>
+                            </Border>
+                            <Border Background="#151E90FF" CornerRadius="6" Padding="8,4">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="Listening:" FontSize="11" Foreground="DodgerBlue" />
+                                    <TextBlock Text="{x:Bind GetListeningCount(ViewModel.Connections), Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="DodgerBlue" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Table Header -->
+                        <Grid Grid.Row="2" Margin="8,0,8,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="2.5*" />
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="1.5*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Protocol" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Column="1" Text="Process / PID" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Column="2" Text="Local Address" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Column="3" Text="Foreign Address" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Column="4" Text="State" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        </Grid>
+
+                        <!-- Connections list (virtualized) -->
+                        <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.Connections, Mode=OneWay}" SelectionMode="None" MaxHeight="9999">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel />
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="4,8" />
+                                    <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:ActiveConnectionInfo">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*" />
+                                            <ColumnDefinition Width="2.5*" />
+                                            <ColumnDefinition Width="3*" />
+                                            <ColumnDefinition Width="3*" />
+                                            <ColumnDefinition Width="1.5*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Protocol -->
+                                        <Border Grid.Column="0" Background="#157F56D9" CornerRadius="4" Padding="6,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <TextBlock Text="{x:Bind Protocol}" FontSize="10.5" FontWeight="Bold" Foreground="#FF7F56D9" />
+                                        </Border>
+
+                                        <!-- Process name & PID -->
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                            <TextBlock Text="{x:Bind ProcessName}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{x:Bind Pid}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        </StackPanel>
+
+                                        <!-- Local IP / Port -->
+                                        <TextBlock Grid.Column="2" Text="{x:Bind LocalAddress}" FontSize="12.5" FontFamily="Consolas" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+
+                                        <!-- Foreign IP / Port -->
+                                        <TextBlock Grid.Column="3" Text="{x:Bind ForeignAddress}" FontSize="12.5" FontFamily="Consolas" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+
+                                        <!-- Connection State -->
+                                        <TextBlock Grid.Column="4" Text="{x:Bind DisplayState}" FontSize="12.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </Grid>
-
-                    <!-- Badge Summaries Row -->
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8" Margin="0,0,0,16">
-                        <Border Background="#157F56D9" CornerRadius="6" Padding="8,4">
-                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="Total Ports:" FontSize="11" Foreground="#FF7F56D9" />
-                                <TextBlock Text="{x:Bind ViewModel.Connections.Count, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="#FF7F56D9" />
-                            </StackPanel>
-                        </Border>
-                        <Border Background="#153CB371" CornerRadius="6" Padding="8,4">
-                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="Established:" FontSize="11" Foreground="MediumSeaGreen" />
-                                <TextBlock Text="{x:Bind GetEstablishedCount(ViewModel.Connections), Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="MediumSeaGreen" />
-                            </StackPanel>
-                        </Border>
-                        <Border Background="#151E90FF" CornerRadius="6" Padding="8,4">
-                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="Listening:" FontSize="11" Foreground="DodgerBlue" />
-                                <TextBlock Text="{x:Bind GetListeningCount(ViewModel.Connections), Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="DodgerBlue" />
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-
-                    <!-- Table Header -->
-                    <Grid Grid.Row="2" Margin="8,0,8,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="2.5*" />
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="1.5*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Protocol" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Grid.Column="1" Text="Process / PID" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Grid.Column="2" Text="Local Address" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Grid.Column="3" Text="Foreign Address" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Grid.Column="4" Text="State" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </Grid>
-
-                    <!-- Connections list (UI virtualized via ItemsStackPanel) -->
-                    <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.Connections, Mode=OneWay}" SelectionMode="None">
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsStackPanel />
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="Padding" Value="4,8" />
-                                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
-                                <Setter Property="BorderThickness" Value="0,0,0,1" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:ActiveConnectionInfo">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="2.5*" />
-                                        <ColumnDefinition Width="3*" />
-                                        <ColumnDefinition Width="3*" />
-                                        <ColumnDefinition Width="1.5*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Protocol -->
-                                    <Border Grid.Column="0" Background="#157F56D9" CornerRadius="4" Padding="6,2" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                        <TextBlock Text="{x:Bind Protocol}" FontSize="10.5" FontWeight="Bold" Foreground="#FF7F56D9" />
-                                    </Border>
-
-                                    <!-- Process name & PID -->
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                                        <TextBlock Text="{x:Bind ProcessName}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Text="{x:Bind Pid}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    </StackPanel>
-
-                                    <!-- Local IP / Port -->
-                                    <TextBlock Grid.Column="2" Text="{x:Bind LocalAddress}" FontSize="12.5" FontFamily="Consolas" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-
-                                    <!-- Foreign IP / Port -->
-                                    <TextBlock Grid.Column="3" Text="{x:Bind ForeignAddress}" FontSize="12.5" FontFamily="Consolas" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-
-                                    <!-- Connection State -->
-                                    <TextBlock Grid.Column="4" Text="{x:Bind State}" FontSize="12.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Grid>
-            </Border>
+                </Border>
+            </Grid>
 
             <!-- SECTION 4: DIAGNOSTICS TERMINAL & REPAIRS -->
             <ScrollViewer x:Name="SectionRepairs" VerticalScrollBarVisibility="Auto" VerticalScrollMode="Enabled" HorizontalScrollBarVisibility="Disabled" Visibility="Collapsed">
                 <Grid RowSpacing="20" ColumnSpacing="20" Padding="0,0,12,0">
                     <Grid.RowDefinitions>
-                        <RowDefinition x:Name="SecRepRow0" Height="*" />
+                        <RowDefinition x:Name="SecRepRow0" Height="Auto" />
                         <RowDefinition x:Name="SecRepRow1" Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>

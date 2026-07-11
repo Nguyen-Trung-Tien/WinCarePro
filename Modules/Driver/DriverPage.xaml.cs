@@ -16,6 +16,7 @@ public sealed partial class DriverPage : Page
 
     public DriverPage()
     {
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<DriverViewModel>();
         this.DataContext = ViewModel;

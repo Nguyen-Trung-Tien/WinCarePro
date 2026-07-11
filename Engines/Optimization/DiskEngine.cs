@@ -6,6 +6,7 @@ using System.Linq;
 using System.Management;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
@@ -76,26 +77,23 @@ public class DiskEngine
             var predictDict = new Dictionary<string, bool>();
             try
             {
-                using var searcherWmi = new ManagementObjectSearcher(@"root\wmi", "SELECT * FROM MSStorageDriver_FailurePredictStatus");
-                using var collection = searcherWmi.Get();
-                foreach (var obj in collection)
+                var predictList = WmiHelper.Query("SELECT InstanceName, PredictFailure FROM MSStorageDriver_FailurePredictStatus", obj => new
                 {
-                    string instanceName = obj["InstanceName"]?.ToString()?.ToUpper() ?? "";
-                    bool predictFailure = Convert.ToBoolean(obj["PredictFailure"]);
-                    predictDict[instanceName] = predictFailure;
+                    InstanceName = obj["InstanceName"]?.ToString()?.ToUpper() ?? "",
+                    PredictFailure = Convert.ToBoolean(obj["PredictFailure"])
+                }, @"root\wmi");
+                foreach (var p in predictList)
+                {
+                    predictDict[p.InstanceName] = p.PredictFailure;
                 }
             }
             catch { }
 
-            using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive");
-            using var collectionDrives = searcher.Get();
-
-            foreach (var drive in collectionDrives)
-            {
+            var driveList = WmiHelper.Query("SELECT DeviceID, Model, Status, MediaType, InterfaceType FROM Win32_DiskDrive", drive => {
                 string deviceId = drive["DeviceID"]?.ToString() ?? "";
                 string model = drive["Model"]?.ToString() ?? "Generic Disk";
                 string status = drive["Status"]?.ToString() ?? "OK";
-                string mediaType = drive["MediaType"]?.ToString() ?? "";
+                string interfaceType = drive["InterfaceType"]?.ToString() ?? "SATA";
 
                 // Correlate with SMART
                 string health = "Healthy";
@@ -104,34 +102,33 @@ public class DiskEngine
                     health = "Warning / Failing";
                 }
 
-                // Get Temperature from WMI MSStorageDriver_FailurePredictData or similar, fallback to standard mock or query
-                double temp = 35.0; // standard operating temperature mock if WMI fails
+                // Get Temperature from WMI MSStorageDriver_FailurePredictData or similar, fallback to standard mock
+                double temp = 35.0; 
                 try
                 {
-                    using var tempSearcher = new ManagementObjectSearcher(@"root\wmi", "SELECT * FROM MSStorageDriver_FailurePredictData");
-                    using var tempColl = tempSearcher.Get();
-                    foreach (var tobj in tempColl)
-                    {
+                    var tempValues = WmiHelper.Query("SELECT VendorSpecific FROM MSStorageDriver_FailurePredictData", tobj => {
                         var vendorSpecific = (byte[])tobj["VendorSpecific"];
                         if (vendorSpecific != null && vendorSpecific.Length > 5)
                         {
-                            // In standard SMART, temperature is often attribute 194 (0xC2) or 190
-                            // Let's use a safe mock around 32-42 for visual UI rendering
-                            temp = 30 + new Random().Next(15);
+                            return 30 + new Random().Next(15);
                         }
-                    }
+                        return 35;
+                    }, @"root\wmi");
+                    if (tempValues.Count > 0) temp = tempValues[0];
                 }
                 catch { }
 
-                list.Add(new DriveHealthInfo
+                return new DriveHealthInfo
                 {
                     Name = deviceId,
                     Model = model,
                     HealthStatus = health,
                     Temperature = temp,
-                    Interface = drive["InterfaceType"]?.ToString() ?? "SATA"
-                });
-            }
+                    Interface = interfaceType
+                };
+            });
+
+            list.AddRange(driveList);
         }
         catch (Exception ex)
         {

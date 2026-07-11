@@ -87,37 +87,43 @@ public class SystemOptimizerEngine
             for (int i = 0; i < processes.Length; i++)
             {
                 var proc = processes[i];
-                if (proc.Id <= 4) continue; // Skip Idle, System, Registry
-
-                IntPtr hProcess = IntPtr.Zero;
                 try
                 {
-                    hProcess = OpenProcess(PROCESS_SET_QUOTA | PROCESS_QUERY_INFORMATION, false, proc.Id);
-                    if (hProcess != IntPtr.Zero)
+                    if (proc.Id <= 4) continue; // Skip Idle, System, Registry
+
+                    IntPtr hProcess = IntPtr.Zero;
+                    try
                     {
-                        long wsBefore = proc.WorkingSet64;
-                        if (EmptyWorkingSet(hProcess))
+                        hProcess = OpenProcess(PROCESS_SET_QUOTA | PROCESS_QUERY_INFORMATION, false, proc.Id);
+                        if (hProcess != IntPtr.Zero)
                         {
-                            proc.Refresh();
-                            long wsAfter = proc.WorkingSet64;
-                            if (wsBefore > wsAfter)
+                            long wsBefore = proc.WorkingSet64;
+                            if (EmptyWorkingSet(hProcess))
                             {
-                                memoryReclaimed += (wsBefore - wsAfter);
+                                proc.Refresh();
+                                long wsAfter = proc.WorkingSet64;
+                                if (wsBefore > wsAfter)
+                                {
+                                    memoryReclaimed += (wsBefore - wsAfter);
+                                }
+                                count++;
                             }
-                            count++;
+                        }
+                    }
+                    catch
+                    {
+                        // Access denied for protected system processes
+                    }
+                    finally
+                    {
+                        if (hProcess != IntPtr.Zero)
+                        {
+                            CloseHandle(hProcess);
                         }
                     }
                 }
-                catch
-                {
-                    // Access denied for protected system processes
-                }
                 finally
                 {
-                    if (hProcess != IntPtr.Zero)
-                    {
-                        CloseHandle(hProcess);
-                    }
                     proc.Dispose();
                 }
             }

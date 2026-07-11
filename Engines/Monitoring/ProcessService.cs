@@ -50,6 +50,7 @@ public class ProcessService
     private static readonly Dictionary<int, ProcessMetadata> _metadataCache = new();
     private static readonly object _cacheLock = new();
     private const int CACHE_TTL_SECONDS = 60;
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Task<string>> _activeIconTasks = new();
 
     // Strict OS process protection list
     private static readonly HashSet<string> _criticalProcesses = new(StringComparer.OrdinalIgnoreCase)
@@ -144,8 +145,18 @@ public class ProcessService
                 return destPng;
             }
 
-            // Extract asynchronously in background to prevent blocking
-            _ = Task.Run(async () => await ExtractProcessIconAsync(filePath, processName));
+            // Extract asynchronously in background to prevent blocking, avoiding duplicate task writes
+            _activeIconTasks.GetOrAdd(destPng, key => Task.Run(async () =>
+            {
+                try
+                {
+                    return await ExtractProcessIconAsync(filePath, processName);
+                }
+                finally
+                {
+                    _activeIconTasks.TryRemove(key, out _);
+                }
+            }));
         }
         catch
         {
@@ -173,9 +184,9 @@ public class ProcessService
     public async Task<List<ProcessInfo>> GetRunningProcessesAsync()
     {
         await _querySemaphore.WaitAsync();
+        var rawProcesses = Process.GetProcesses();
         try
         {
-            var rawProcesses = Process.GetProcesses();
             var sampleTime = DateTime.UtcNow;
             var currentSamples = new Dictionary<int, (TimeSpan cpuTime, DateTime sampleTime)>();
 
@@ -201,18 +212,28 @@ public class ProcessService
             {
                 await Task.Delay(200);
                 var warmProcesses = Process.GetProcesses();
-                var warmSampleTime = DateTime.UtcNow;
-                foreach (var p in warmProcesses)
+                try
                 {
-                    if (p.Id == 0 || _accessDeniedPids.Contains(p.Id)) continue;
+                    var warmSampleTime = DateTime.UtcNow;
+                    foreach (var p in warmProcesses)
+                    {
+                        if (p.Id == 0 || _accessDeniedPids.Contains(p.Id)) continue;
 
-                    try
-                    {
-                        _lastCpuSamples[p.Id] = (p.TotalProcessorTime, warmSampleTime);
+                        try
+                        {
+                            _lastCpuSamples[p.Id] = (p.TotalProcessorTime, warmSampleTime);
+                        }
+                        catch
+                        {
+                            _accessDeniedPids.Add(p.Id);
+                        }
                     }
-                    catch
+                }
+                finally
+                {
+                    foreach (var p in warmProcesses)
                     {
-                        _accessDeniedPids.Add(p.Id);
+                        p.Dispose();
                     }
                 }
             }
@@ -350,6 +371,10 @@ public class ProcessService
         }
         finally
         {
+            foreach (var p in rawProcesses)
+            {
+                p.Dispose();
+            }
             _querySemaphore.Release();
         }
     }
@@ -411,32 +436,16 @@ public class ProcessService
 
     private static string GetCommandLineWmi(int pid)
     {
-        try
-        {
-            using var searcher = new ManagementObjectSearcher($"SELECT CommandLine FROM Win32_Process WHERE ProcessID = {pid}");
-            using var objects = searcher.Get();
-            foreach (var obj in objects)
-            {
-                return obj["CommandLine"]?.ToString() ?? "N/A";
-            }
-        }
-        catch { }
-        return "Access Denied";
+        var list = WinCarePro.Core.Helpers.WmiHelper.Query($"SELECT CommandLine FROM Win32_Process WHERE ProcessID = {pid}", obj => 
+            obj["CommandLine"]?.ToString() ?? "N/A");
+        return list.Count > 0 ? list[0] : "Access Denied";
     }
 
     private static int GetParentProcessId(int pid)
     {
-        try
-        {
-            using var searcher = new ManagementObjectSearcher($"SELECT ParentProcessId FROM Win32_Process WHERE ProcessID = {pid}");
-            using var objects = searcher.Get();
-            foreach (var obj in objects)
-            {
-                return Convert.ToInt32(obj["ParentProcessId"]);
-            }
-        }
-        catch { }
-        return 0;
+        var list = WinCarePro.Core.Helpers.WmiHelper.Query($"SELECT ParentProcessId FROM Win32_Process WHERE ProcessID = {pid}", obj => 
+            Convert.ToInt32(obj["ParentProcessId"]));
+        return list.Count > 0 ? list[0] : 0;
     }
 
     public bool TerminateProcess(int pid, string name)
@@ -449,7 +458,7 @@ public class ProcessService
 
         try
         {
-            var proc = Process.GetProcessById(pid);
+            using var proc = Process.GetProcessById(pid);
             proc.Kill();
             Database.DbManager.LogAction($"Terminated Process {name} (PID {pid})", "Process Manager", "Success");
             return true;
@@ -576,21 +585,17 @@ public class ProcessService
     private void KillProcessTree(int pid)
     {
         // Recursively find child processes via WMI and kill them, then kill parent
-        try
+        var children = WinCarePro.Core.Helpers.WmiHelper.Query($"Select ProcessID From Win32_Process Where ParentProcessId={pid}", obj => 
+            Convert.ToInt32(obj["ProcessID"]));
+
+        foreach (int childPid in children)
         {
-            using var searcher = new ManagementObjectSearcher($"Select * From Win32_Process Where ParentProcessId={pid}");
-            using var moc = searcher.Get();
-            foreach (var mo in moc)
-            {
-                int childPid = Convert.ToInt32(mo["ProcessID"]);
-                KillProcessTree(childPid);
-            }
+            KillProcessTree(childPid);
         }
-        catch { }
 
         try
         {
-            var proc = Process.GetProcessById(pid);
+            using var proc = Process.GetProcessById(pid);
             proc.Kill(true); // .NET 8+ support Kill(true) which kills tree directly, but recursion ensures safety
         }
         catch { }

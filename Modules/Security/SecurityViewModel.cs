@@ -8,6 +8,7 @@ using Microsoft.Win32;
 using System.Management;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Core.Helpers;
 using WinCarePro.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -203,18 +204,13 @@ public partial class SecurityViewModel : ViewModelBase
 
     private (bool ok, string status) CheckTpmStatus()
     {
-        try
+        var list = WmiHelper.Query("SELECT IsEnabled_InitialValue, SpecVersion FROM Win32_Tpm", obj =>
+            obj["SpecVersion"]?.ToString() ?? "2.0", @"root\cimv2\Security\MicrosoftTpm");
+
+        if (list.Count > 0)
         {
-            // Query TPM status using standard WMI namespace
-            using var searcher = new ManagementObjectSearcher(@"root\cimv2\Security\MicrosoftTpm", "SELECT IsEnabled_InitialValue, SpecVersion FROM Win32_Tpm");
-            using var collection = searcher.Get();
-            foreach (ManagementObject obj in collection)
-            {
-                var ver = obj["SpecVersion"]?.ToString() ?? "2.0";
-                return (true, string.Format("TPM v{0} Detected and Ready".T(), ver));
-            }
+            return (true, string.Format("TPM v{0} Detected and Ready".T(), list[0]));
         }
-        catch { }
         return (false, "TPM Security Chip Not Detected or Disabled".T());
     }
 

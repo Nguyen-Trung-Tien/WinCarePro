@@ -21,6 +21,7 @@ public sealed partial class RegistryPage : Page
 
     public RegistryPage()
     {
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<RegistryViewModel>();
         this.DataContext = ViewModel;

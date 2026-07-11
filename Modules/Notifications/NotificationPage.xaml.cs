@@ -26,6 +26,7 @@ public sealed partial class NotificationPage : Page
 {
     public NotificationPage()
     {
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         InitializeComponent();
         this.Loaded += (s, e) =>
         {

@@ -1,22 +1,24 @@
 # 🚀 WinCare Pro Suite
 
 <div align="center">
-  <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 20%; box-shadow: 0 8px 16px rgba(0,0,0,0.15); margin-bottom: 20px;" />
+  <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(127, 86, 217, 0.3); margin-bottom: 20px;" />
 
   <h3>Hệ Thống Tối Ưu Hóa, Dọn Dẹp & Sửa Lỗi Windows Toàn Diện</h3>
   <p align="center">
-    Một bộ công cụ tối ưu hóa máy tính mã nguồn mở, gọn nhẹ, hiện đại được xây dựng dựa trên giao diện <b>Fluent Design (WinUI 3 / Windows App SDK)</b> và sức mạnh của <b>.NET 10.0 & SQLite</b>.
+    Một bộ công cụ bảo trì máy tính mã nguồn mở, gọn nhẹ, hiện đại được xây dựng dựa trên giao diện <b>Fluent Design (WinUI 3 / Windows App SDK)</b> và sức mạnh của <b>.NET 10.0 & SQLite</b>.
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.2/WinCareProSetup.exe"><img src="https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=windows&logoColor=white" alt="Download WinCare Pro" /></a>
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.3/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v3.4.3-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro" />
+    </a>
   </p>
 
   <p align="center">
-    <img src="https://img.shields.io/badge/.NET-10.0-blueviolet?style=flat-square&logo=.net&logoColor=white" alt=".NET 10.0" />
+    <img src="https://img.shields.io/badge/.NET-10.0-blueviolet?style=flat-square&logo=.net&logoColor=white&color=7F56D9" alt=".NET 10.0" />
     <img src="https://img.shields.io/badge/UI_Framework-WinUI_3-0078D4?style=flat-square&logo=windows" alt="WinUI 3" />
     <img src="https://img.shields.io/badge/Database-SQLite_3-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite 3" />
-    <img src="https://img.shields.io/badge/Architecture-MVVM-008080?style=flat-square" alt="MVVM Pattern" />
+    <img src="https://img.shields.io/badge/Architecture-MVVM%20(Modular)-008080?style=flat-square" alt="MVVM Pattern" />
     <img src="https://img.shields.io/badge/OS_Support-Windows_10_%2F_11-0078D6?style=flat-square&logo=windows" alt="Windows 10/11" />
   </p>
 </div>
@@ -25,183 +27,210 @@
 
 ## 📖 Tổng quan dự án
 
-**WinCare Pro** là một bộ công cụ bảo trì hệ thống nâng cao, cung cấp bảng điều khiển (Dashboard) thông minh giúp chẩn đoán sức khỏe phần cứng, quản lý tài nguyên hệ thống, sửa lỗi phân mảnh/bảo mật và làm sạch dung lượng lưu trữ Windows. 
+**WinCare Pro** là một bộ ứng dụng chăm sóc hệ điều hành Windows thế hệ mới. Với giao diện Mica trong suốt, hiệu ứng chuyển động mượt mà và thiết kế Fluent Design nguyên bản của Windows 11, WinCare Pro cung cấp giải pháp tất-cả-trong-một giúp chẩn đoán, dọn dẹp, bảo mật, chắp vá hệ thống và giám sát tài nguyên phần cứng theo thời gian thực.
 
-Ứng dụng hướng đến việc mang lại trải nghiệm Fluent Design nguyên bản của Windows 11 — mượt mà, trực quan, hỗ trợ chế độ Dark Mode tối ưu và tích hợp các công nghệ phần mềm mới nhất của hệ sinh thái Microsoft.
+Ứng dụng được thiết kế tối giản nhưng mạnh mẽ, không chứa quảng cáo hay tiến trình chạy ngầm làm chậm máy, mang lại hiệu suất tối đa cho trải nghiệm máy tính của bạn.
 
 ---
 
-## 📐 Kiến trúc & Mô hình hoạt động
+## 📐 Kiến trúc & Mô hình hoạt động (Modular MVVM)
 
-Dự án tuân thủ nghiêm ngặt mô hình thiết kế **MVVM (Model-View-ViewModel)** giúp phân tách rõ ràng giao diện, logic xử lý và cơ sở dữ liệu.
+Mã nguồn của WinCare Pro được tổ chức theo mô hình **MVVM (Model-View-ViewModel)** chuẩn hóa và mô-đun hóa cao. Các tệp dữ liệu dùng chung (Data Models), hệ thống dịch thuật và các lớp điều khiển View/ViewModel lớn đều đã được phân rã thành các tệp phân phần chuyên biệt (partial classes) để tối ưu hóa hiệu năng biên dịch và quản lý mã nguồn.
 
 ```mermaid
 graph TD
-    %% Định nghĩa các lớp
+    %% Styling
+    classDef ui fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef vm fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef engine fill:#dfd,stroke:#333,stroke-width:2px;
+    classDef data fill:#fdd,stroke:#333,stroke-width:2px;
+
     subgraph UI [Lớp Giao Diện - View Layer]
-        MainPage[MainPage.xaml]
-        DashboardPage[DashboardPage.xaml]
-        JunkPage[JunkPage.xaml]
-        DiskPage[DiskPage.xaml]
-        RegistryBackupPage[RegistryBackupPage.xaml]
-        UpdaterPage[UpdaterPage.xaml]
-        NetworkPage[NetworkPage.xaml]
+        MainPage[MainPage.xaml]:::ui
+        DashboardPage[DashboardPage.xaml]:::ui
+        JunkPage[JunkPage.xaml]:::ui
+        DiskPage[DiskPage.xaml]:::ui
+        NetworkPage[NetworkPage.xaml]:::ui
+        AppPage[Uninstall/AppPage.xaml]:::ui
+        RepairPage[RepairPage.xaml]:::ui
+        SecurityPage[SecurityPage.xaml]:::ui
+        StartupPage[StartupPage.xaml]:::ui
+        ProcessPage[ProcessPage.xaml]:::ui
+        HardwarePage[HardwarePage.xaml]:::ui
+        RegistryPage[RegistryPage.xaml]:::ui
+        UpdaterPage[UpdaterPage.xaml]:::ui
+        DriverPage[DriverPage.xaml]:::ui
+        SettingsPage[SettingsPage.xaml]:::ui
     end
 
-    subgraph Logic [Lớp Điều Hướng & Quản Lý - ViewModel Layer]
-        DashboardVM[DashboardViewModel]
-        JunkVM[JunkCleanerViewModel]
-        DiskToolsVM[DiskToolsViewModel]
-        RegistryVM[RegistryBackupViewModel]
-        UpdaterVM[UpdaterViewModel]
-        NetworkVM[NetworkViewModel]
+    subgraph Logic [Lớp Giao Tiếp - ViewModel Layer]
+        DashboardVM[DashboardViewModel.cs<br/>.Diagnostics.cs / .Monitoring.cs]:::vm
+        JunkVM[JunkCleanerViewModel.cs]:::vm
+        DiskVM[DiskViewModel.cs]:::vm
+        NetworkVM[NetworkViewModel.cs<br/>.Adapters.cs / .DnsRepair.cs / .Tools.cs]:::vm
+        UninstallVM[UninstallViewModel.cs]:::vm
+        SecurityVM[SecurityViewModel.cs]:::vm
+        StartupVM[StartupViewModel.cs]:::vm
+        ProcessVM[ProcessViewModel.cs]:::vm
+        HardwareVM[HardwareViewModel.cs]:::vm
+        RegistryVM[RegistryViewModel.cs]:::vm
+        UpdaterVM[UpdaterViewModel.cs]:::vm
+        DriverVM[DriverViewModel.cs]:::vm
     end
 
     subgraph CoreEngine [Bộ Máy Xử Lý - Service & Engine Layer]
-        AiDiagnostics[AiDiagnosticsEngine]
-        JunkCleaner[JunkCleanerEngine]
-        DiskEngine[DiskEngine]
-        NetEngine[NetworkEngine]
-        SysOptimizer[SystemOptimizerEngine]
-        RegistryBackup[RegistryBackupEngine]
-        SoftwareUpdater[SoftwareUpdaterEngine]
+        AiDiagnostics[AiDiagnosticsEngine]:::engine
+        JunkCleaner[JunkCleanerEngine]:::engine
+        DiskEngine[DiskEngine]:::engine
+        NetEngine[NetworkEngine.cs<br/>.SpeedTest.cs / .DnsBenchmark.cs / .Repair.cs]:::engine
+        SysOptimizer[SystemOptimizerEngine]:::engine
+        RegistryBackup[RegistryBackupEngine]:::engine
+        SoftwareUpdater[SoftwareUpdaterEngine]:::engine
+        DriverEngine[HardwareDriverEngine]:::engine
+        UninstallEngine[UninstallEngine.cs<br/>.Scanning.cs / .Leftovers.cs]:::engine
     end
 
     subgraph DataOS [Dữ Liệu & Hệ Điều Hành - Data & OS Layer]
-        SqliteDB[(SQLite Database - wincaredb.db)]
-        WinAPI[Windows System APIs / WMI]
-        RegistryStore[Windows Registry]
+        SqliteDB[(SQLite DB - wincaredb.db)]:::data
+        WmiHelper[WmiHelper.cs / Windows WMI]:::data
+        RegistryStore[Windows Registry]:::data
+        WinAPI[Windows System APIs / Shell]:::data
+        TranslationMgr[TranslationManager.cs<br/>.Translations.cs / .Extensions.cs]:::data
     end
 
-    %% Luồng liên kết dữ liệu
+    %% Connections
     MainPage --> DashboardPage
     DashboardPage <--> DashboardVM
     JunkPage <--> JunkVM
-    DiskPage <--> DiskToolsVM
-    RegistryBackupPage <--> RegistryVM
-    UpdaterPage <--> UpdaterVM
+    DiskPage <--> DiskVM
     NetworkPage <--> NetworkVM
-
+    AppPage <--> UninstallVM
+    
     DashboardVM --> AiDiagnostics
     JunkVM --> JunkCleaner
-    DiskToolsVM --> DiskEngine
-    RegistryVM --> RegistryBackup
-    UpdaterVM --> SoftwareUpdater
+    DiskVM --> DiskEngine
     NetworkVM --> NetEngine
+    UninstallVM --> UninstallEngine
 
     AiDiagnostics --> SqliteDB
     JunkCleaner --> WinAPI
-    DiskEngine --> WinAPI
-    RegistryBackup --> RegistryStore
-    SoftwareUpdater --> SqliteDB
-    SysOptimizer --> WinAPI
+    DiskEngine --> WmiHelper
     NetEngine --> WinAPI
+    UninstallEngine --> WinAPI & RegistryStore
+    TranslationMgr -.-> UI
 ```
 
 ---
 
-## ✨ Phân hệ & Các tính năng nổi bật của Hệ thống
+## ✨ 14 Phân hệ chức năng cốt lõi (Core Modules)
 
-Hệ thống WinCare Pro được chia thành 14 phân hệ chức năng chuyên nghiệp, giúp bảo trì và tối ưu hệ thống một cách toàn diện:
+WinCare Pro cung cấp 14 công cụ chuyên nghiệp, truy cập trực tiếp qua thanh điều hướng (Sidebar):
 
 ### 1. 📊 Bảng điều khiển (Dashboard)
-* **Chỉ số thời gian thực:** Theo dõi biểu đồ và tỷ lệ phần trăm sử dụng CPU, dung lượng RAM khả dụng, cùng hoạt động đọc/ghi của các ổ đĩa.
-* **Điểm sức khỏe AI (Composite Health Score):** Thu thập thông số hệ thống tự động, tính toán điểm số tổng quan (0 - 100) và đưa ra các khuyến nghị tối ưu thông minh.
+* **Giám sát thời gian thực:** Theo dõi biểu đồ động đo hiệu suất CPU, RAM, dung lượng đĩa và hoạt động I/O của hệ thống.
+* **Điểm sức khỏe AI (Composite Health Score):** Sử dụng các thuật toán phân tích nhanh để đánh giá tình trạng PC theo thang điểm từ `0` đến `100` và đưa ra đề xuất xử lý tối ưu.
 
 ### 2. 🧹 Dọn rác hệ thống (Junk Cleaner)
-* **Lõi quét chuyên sâu:** Dọn dẹp an toàn tệp tin tạm (System Temp), Nhật ký hệ thống (Log files), tệp lỗi bộ nhớ (Memory Dumps), bộ nhớ đệm cập nhật và các tệp tin tạm thời của trình duyệt.
-* **Trực quan hóa:** Hiển thị biểu đồ hình tròn (Pie Chart) phân tích tỷ lệ dung lượng của từng nhóm rác.
+* **Lõi quét đa luồng:** Dọn dẹp sạch sẽ các tệp tin rác hệ thống (Temp Files), Nhật ký hoạt động (Logs), Tệp đổ bộ nhớ lỗi (Memory Dumps), và bộ nhớ đệm trình duyệt.
+* **Phân tích lưu trữ trực quan:** Hiển thị chi tiết tỷ lệ các nhóm tệp tin rác bằng biểu đồ tròn (Pie Chart) trực quan.
 
-### 3. 🔌 Quản lý Driver (Driver Updater)
-* **Quét Driver phần cứng:** Tự động nhận diện thiết bị phần cứng thiếu driver hoặc cần cập nhật firmware.
-* **Driver Wizard:** Quy trình thuật sĩ 3 bước khép kín giúp quét, tải xuống gói nhị phân và cài đặt driver an toàn.
+### 3. 🚀 Trình gỡ ứng dụng (App Uninstaller)
+* **Gỡ cài đặt hàng loạt (Batch Uninstall):** Hỗ trợ chọn nhiều ứng dụng cùng lúc để gỡ cài đặt tự động.
+* **Quét dọn tàn dư chuyên sâu:** Tự động phát hiện và xóa bỏ sạch sẽ các khóa Registry thừa, thư mục rác (Leftovers) còn sót lại của ứng dụng.
+* **Buộc gỡ ứng dụng UWP:** Gỡ bỏ các ứng dụng Microsoft Store cài sẵn cứng đầu bằng lệnh PowerShell an toàn.
 
-### 4. 💻 Thông tin phần cứng (Hardware Info)
-* **Chi tiết cấu hình:** Hiển thị thông số kỹ thuật đầy đủ của CPU (nhân/luồng, xung nhịp), card màn hình (GPU), bộ nhớ RAM, Bo mạch chủ (Mainboard), BIOS và phiên bản Windows đang chạy.
+### 4. 🌐 Giám sát mạng (Network Center)
+* **Theo dõi băng thông:** Biểu đồ đường thời gian thực đo lường chính xác tốc độ Upload và Download.
+* **Giám sát kết nối:** Thống kê chi tiết danh sách tiến trình đang kết nối mạng và chiếm dụng băng thông.
+* **Bộ công cụ mạng nâng cao:** Ping Test, Packet Loss check, Flush DNS, Renew IP, Benchmarking DNS và Speed Test (Đo tốc độ mạng).
 
-### 5. 🚀 Trình gỡ ứng dụng (App Uninstaller)
-* **Gỡ cài đặt hàng loạt (Batch Uninstall):** Chọn và gỡ bỏ đồng thời nhiều ứng dụng cùng lúc.
-* **Gỡ cài đặt cưỡng bức (Force Uninstall):** Gỡ bỏ triệt để các ứng dụng Windows Store cứng đầu thông qua lệnh PowerShell ngầm.
-* **Quét dọn tàn dư (Leftovers Purger):** Tự động truy quét Registry và các thư mục ứng dụng để xóa bỏ các tập tin/khóa rác còn sót lại.
+### 5. 🛠️ Sửa lỗi hệ thống (System Repair)
+* **Khôi phục tập tin cốt lõi:** Chạy trực tiếp công cụ chẩn đoán hệ thống SFC (`sfc /scannow`) và công cụ sửa lỗi ổ đĩa DISM (`RestoreHealth`).
+* **Trực quan hóa tiến trình:** Hiển thị chi tiết từng bước kiểm tra hệ thống và phần trăm tiến độ cụ thể.
 
-### 6. ⚙️ Sửa lỗi hệ thống (System Repair)
-* **Tích hợp công cụ gốc:** Chạy trực tiếp trình kiểm tra tệp tin hệ thống SFC (`sfc /scannow`) và công cụ sửa lỗi ảnh hệ thống DISM (`DISM /Online /Cleanup-Image /RestoreHealth`).
-* **Tiến trình trực quan:** Phân tách luồng xử lý và hiển thị phần trăm hoàn thành cụ thể cho từng giai đoạn chẩn đoán.
+### 6. 🛡️ Khiên bảo mật (Security Shield)
+* **Quản trị bảo mật:** Giám sát trạng thái hoạt động của Windows Defender, Tường lửa (Firewall) và quyền kiểm soát tài khoản người dùng UAC.
+* **Bảo vệ quyền riêng tư (Privacy Tweaks):** Cho phép bật/tắt các quyền thu thập dữ liệu ngầm, quyền truy cập Camera/Microphone/Vị trí của ứng dụng.
 
-### 7. 🛡️ Bảo mật & Quyền riêng tư (Security Center)
-* **Giám sát bảo mật:** Kiểm tra trạng thái hoạt động của Windows Defender, Tường lửa (Firewall), và cấp độ kiểm soát tài khoản người dùng UAC.
-* **Tinh chỉnh quyền riêng tư:** Cho phép bật/tắt các quyền truy cập máy ảnh, micrô, vị trí và các dịch vụ thu thập dữ liệu ngầm của Windows.
+### 7. ⚡ Tinh chỉnh hiệu năng (System Optimizer)
+* **Giải phóng RAM vật lý (RAM Booster):** Dọn dẹp Working Sets của các chương trình để giải phóng RAM trống ngay lập tức.
+* **Tối ưu hóa hệ thống:** Cấu hình tinh chỉnh Windows Explorer, tăng tốc phản hồi phản hồi ứng dụng và kích hoạt chế độ chơi game (Game Mode).
 
-### 8. 🌐 Giám sát mạng (Network Center)
-* **Đo lường lưu lượng:** Hiển thị tốc độ Tải xuống (Download) và Tải lên (Upload) tức thời qua biểu đồ đường động thời gian thực.
-* **Theo dõi tiến trình:** Thống kê danh sách các phần mềm đang chiếm dụng băng thông mạng nhiều nhất.
-* **Chẩn đoán nhanh:** Đo Ping, kiểm tra Packet Loss, giải phóng/làm mới IP và làm sạch bộ nhớ đệm DNS (Flush DNS) chỉ với một cú click chuột.
+### 8. 📂 Khởi động & Dịch vụ (Startup & Services)
+* **Quản lý khởi động:** Liệt kê các chương trình tự khởi động cùng Windows, đánh giá mức độ ảnh hưởng đến thời gian boot máy và cho phép bật/tắt.
+* **Quản trị Services:** Theo dõi và kiểm soát hoạt động của các dịch vụ hệ thống chạy ngầm.
 
 ### 9. 📊 Quản lý tiến trình (Process Manager)
-* **Giám sát tài nguyên:** Liệt kê toàn bộ tiến trình đang chạy kèm thông số CPU, RAM, số lượng Threads và Handles.
-* **Quản trị tác vụ:** Cho phép đóng băng hoặc dừng cưỡng bức (End Task) các tiến trình bị treo.
+* **Thông tin chi tiết:** Thống kê dung lượng RAM, CPU, số luồng (Threads) và Handles của từng tiến trình đang chạy.
+* **Kiểm soát tác vụ:** Hỗ trợ đóng băng (Suspend) hoặc dừng cưỡng bức (End Task) các tiến trình bị treo.
 
-### 10. 💾 Sao lưu Registry (Registry Backup)
-* **Quét Registry lỗi:** Tìm kiếm các liên kết tệp tin hỏng, lỗi đường dẫn ứng dụng hoặc registry rác.
-* **Sao lưu & Khôi phục:** Tạo nhanh các điểm khôi phục (Restore Point) an sau cho Windows Registry để sẵn sàng khôi phục khi gặp sự cố.
+### 10. 💾 Công cụ ổ đĩa (Disk Tools)
+* **Sức khỏe ổ đĩa (SMART Info):** Đọc thông số nhiệt độ, tỷ lệ lỗi và tình trạng sức khỏe thực tế của ổ đĩa cứng (SSD/HDD).
+* **Phân tích dung lượng (Storage Analyzer):** Quét thư mục bất kỳ để tìm ra các tệp tin và thư mục đang chiếm dụng dung lượng lớn nhất.
+* **Tìm tệp trùng lặp (Duplicate Finder):** Tìm kiếm và dọn dẹp các tệp tin bị trùng nội dung giúp giải phóng dung lượng đĩa.
 
-### 11. 📂 Quản lý khởi động (Startup Manager)
-* **Tăng tốc khởi động:** Liệt kê các phần mềm tự khởi động cùng hệ điều hành, đo lường mức độ tác động và hỗ trợ bật/tắt dễ dàng.
-* **Quản lý dịch vụ (Services):** Bật/tắt hoặc thay đổi trạng thái hoạt động của các Windows Services ngầm để giải phóng RAM.
+### 11. 💻 Thông tin phần cứng (Hardware Center)
+* **Đặc tả chi tiết:** Hiển thị toàn bộ thông tin phần cứng bao gồm: CPU (Xung nhịp, nhân/luồng), GPU, RAM, Bo mạch chủ, BIOS và hệ điều hành.
 
-### 12. ⚡ Tinh chỉnh hiệu năng (System Optimizer)
-* **Giải phóng RAM (RAM Booster):** Bộ dọn dẹp bộ nhớ vật lý tức thì giúp tăng dung lượng RAM trống cho hệ thống.
-* **Tăng tốc Explorer:** Áp dụng các tinh chỉnh dịch vụ để Windows Explorer hoạt động phản hồi nhanh hơn.
-* **Game Mode:** Tối ưu hóa cấu hình bộ nhớ đệm và các dịch vụ ngầm khi chơi game.
+### 12. 🔧 Quản trị Registry (Registry Center)
+* **Dọn dẹp Registry:** Quét và sửa các khóa đăng ký lỗi, đường dẫn ứng dụng hỏng hoặc registry rác.
+* **Khôi phục cấu hình:** Sao lưu Registry tự động và hỗ trợ tạo điểm khôi phục (Restore Point) hệ thống.
 
-### 13. 🔄 Cập nhật ứng dụng (Application Updater)
-* **Kiểm tra bản cập nhật:** Tự động truy vấn phiên bản mới từ máy chủ hoặc GitHub.
-* **Cập nhật tự động:** Hỗ trợ tải về và cài đặt trực tiếp bản cài đặt mới, hỗ trợ cả đường dẫn tệp tin cục bộ (`file:///`) cho phát triển thử nghiệm.
+### 13. 🔄 Cập nhật phần mềm (Software Updater)
+* **Quản lý ứng dụng bên thứ ba:** Kiểm tra phiên bản mới của các ứng dụng đã cài đặt trên máy.
+* **Cập nhật nhanh chóng:** Tải và cài đặt tự động thông qua Windows Package Manager (winget) hoặc liên kết trực tiếp.
 
-### 14. 🔔 Trung tâm thông báo (Notification Center)
-* **Lịch sử hoạt động:** Lưu trữ nhật ký dọn dẹp, tối ưu hóa hệ thống và hiển thị các cảnh báo bảo trì định kỳ cho người dùng.
+### 14. 🔌 Cập nhật Driver (Driver Updater)
+* **Quét Driver thiết bị:** Tự động phát hiện các Driver phần cứng đã lỗi thời hoặc còn thiếu.
+* **Thuật sĩ cài đặt:** Hướng dẫn quy trình 3 bước trực quan giúp tải xuống và cập nhật driver an toàn.
+
+---
+
+## 🔔 Tiện ích hệ thống bổ sung
+* **Trung tâm thông báo (Notification Center):** Nơi lưu trữ lịch sử hoạt động bảo trì, dọn dẹp và hiển thị các gợi ý bảo vệ máy tính thời gian thực.
+* **Cài đặt & Đa ngôn ngữ (Settings):** Hỗ trợ đổi giao diện Màu Sáng / Tối (Light/Dark Theme), chuyển đổi tức thì giữa **Tiếng Việt** và **Tiếng Anh**, cấu hình tự động cập nhật ngầm.
 
 ---
 
 ## 🛠️ Công nghệ & Dependencies chính
 
-WinCare Pro sử dụng các thư viện phần mềm hiện đại và ổn định nhất nhằm tối đa hóa hiệu suất hoạt động trên hệ điều hành Windows:
+Ứng dụng được tối ưu hóa sâu với các công nghệ phần mềm mới nhất của Microsoft:
 
-| Thư viện / Công nghệ | Phiên bản | Mô tả |
+| Thư viện / Công nghệ | Phiên bản | Vai trò trong hệ thống |
 | :--- | :--- | :--- |
-| **.NET SDK** | `10.0` | Nền tảng thực thi cốt lõi của ứng dụng với hiệu năng tối ưu nhất. |
-| **Windows App SDK** | `2.2.0` | Thư viện phát triển ứng dụng Windows Client sử dụng WinUI 3. |
-| **CommunityToolkit.Mvvm** | `8.2.2` | Bộ công cụ phát triển theo mô hình MVVM chuẩn hóa từ Microsoft. |
-| **Microsoft.Data.Sqlite** | `10.0.9` | Trình quản lý cơ sở dữ liệu SQLite cục bộ siêu nhẹ, hiệu năng cao. |
-| **System.Management** | `10.0.9` | Cung cấp khả năng truy vấn WMI để trích xuất thông tin phần cứng. |
-| **TaskScheduler** | `2.12.2` | Quản lý và lập lịch các tác vụ bảo trì tự động chạy ngầm. |
+| **.NET SDK** | `10.0` | Môi trường thực thi thế hệ mới, tối ưu hóa bộ nhớ và tốc độ xử lý. |
+| **Windows App SDK** | `2.2.0` | Thư viện WinUI 3 mang lại giao diện Fluent Design mượt mà trên Windows 10/11. |
+| **CommunityToolkit.Mvvm** | `8.2.2` | Bộ công cụ chuẩn hóa cấu trúc MVVM, tách biệt giao diện và logic nghiệp vụ. |
+| **Microsoft.Data.Sqlite** | `10.0.9` | Cơ sở dữ liệu SQLite cục bộ lưu trữ lịch sử hoạt động gọn nhẹ và an toàn. |
+| **System.Management** | `10.0.9` | Truy vấn WMI lấy thông số phần cứng chính xác của máy tính. |
+| **TaskScheduler** | `2.12.2` | Đăng ký tác vụ bảo trì tự động với hệ điều hành. |
 
 ---
 
-## 📥 Hướng dẫn Tải về & Cài đặt
+## 📥 Hướng dẫn Cài đặt & Sử dụng
 
-### Cách 1: Tải bộ cài đặt Setup đóng gói sẵn (Khuyên dùng cho người dùng)
-1. **Tải về trực tiếp:** Click vào nút **[Download Latest Release]** màu xanh ở đầu trang README này để tải về file **`WinCareProSetup.exe`**.
-2. Chạy file exe vừa tải về để tiến hành cài đặt chương trình (Trình cài đặt yêu cầu quyền Administrator để đăng ký dịch vụ hệ thống).
+### Cách 1: Sử dụng bộ cài đặt đóng gói sẵn (Khuyên dùng cho người dùng)
+1. Truy cập vào phần [Releases](https://github.com/Nguyen-Trung-Tien/WinCarePro/releases) hoặc nhấn nút **Download** ở đầu trang README để tải về file **`WinCareProSetup.exe`**.
+2. Mở file exe vừa tải về để bắt đầu cài đặt (Yêu cầu quyền Administrator để cài đặt các dịch vụ hệ thống bổ trợ).
 
-### Cách 2: Tự biên dịch từ mã nguồn (Dành cho Lập trình viên)
+### Cách 2: Tự biên dịch từ mã nguồn (Dành cho nhà phát triển)
 
-#### **Yêu cầu môi trường:**
-* **Hệ điều hành:** Windows 10 (bản dựng 19041 trở lên) hoặc Windows 11.
-* **IDE:** Visual Studio 2022 (cài đặt kèm gói *Development cho Máy tính cá nhân với .NET*).
+#### **Yêu cầu hệ thống:**
+* **Hệ điều hành:** Windows 10 (Build 19041 trở lên) hoặc Windows 11.
+* **IDE:** Visual Studio 2022 (được tích hợp gói *Desktop development with .NET*).
 * **SDK:** .NET 10.0 SDK trở lên.
 
-#### **Quy trình biên dịch và khởi chạy bằng CLI:**
-1. Clone mã nguồn về máy cục bộ:
+#### **Các bước biên dịch:**
+1. Tải mã nguồn về máy:
    ```bash
    git clone https://github.com/Nguyen-Trung-Tien/WinCarePro.git
    cd WinCarePro
    ```
-2. Thực hiện khôi phục các gói NuGet phụ thuộc:
+2. Khôi phục các gói NuGet dependencies:
    ```bash
    dotnet restore
    ```
-3. Chạy ứng dụng ở chế độ Debug:
+3. Khởi chạy ứng dụng dưới chế độ Debug:
    ```bash
    dotnet run
    ```
@@ -210,41 +239,33 @@ WinCare Pro sử dụng các thư viện phần mềm hiện đại và ổn đ�
 
 ## 📦 Công cụ đóng gói & Phát hành chuyên nghiệp
 
-Dự án cung cấp sẵn hai tập lệnh Batch tự động hóa quy trình đóng gói phần mềm trong thư mục gốc:
+Thư mục gốc chứa các kịch bản tự động hóa quá trình đóng gói và phát hành ứng dụng:
 
-### Tập lệnh 1: Đóng gói thành ứng dụng di động (Portable Executable)
-* Tên tập lệnh: **`publish.bat`**
-* Cách hoạt động: Làm sạch dự án -> Khôi phục NuGet cho nền tảng `win-x64` -> Xuất bản thành 1 file chạy duy nhất đã nén mã thực thi (`PublishSingleFile=true`, `PublishReadyToRun=true`).
-* Đầu ra: File đơn lẻ nằm trong thư mục `.\PublishOutput\WinCarePro.exe`. Bạn có thể sao chép tệp này sang bất kỳ máy tính Windows khác để chạy ngay mà không cần cài đặt.
-
-### Tập lệnh 2: Đóng gói thành file cài đặt Setup Installer
-* Tên tập lệnh: **`publish_installer.bat`**
-* Yêu cầu: Máy tính cần cài đặt sẵn phần mềm **Inno Setup 6**.
-* Cách hoạt động: Tự động chạy biên dịch ứng dụng ra thư mục tạm `.\PublishOutputFolder`, sau đó gọi trình biên dịch Inno Setup (`ISCC.exe`) để cấu hình file `setup.iss` và tạo ra bộ cài hoàn chỉnh.
-* Đầu ra: File cài đặt Setup chuyên nghiệp nằm tại `.\PublishOutput\WinCareProSetup.exe` (dung lượng khoảng 72 MB do chứa toàn bộ runtime .NET 10.0 tự cấp - Self-Contained).
+* **Tạo bản Portable (`publish.bat`):** Biên dịch ứng dụng thành một tệp thực thi duy nhất đã được nén và tối ưu hóa (`PublishSingleFile=true`, `PublishReadyToRun=true`). Bản này có thể chạy trực tiếp trên bất kỳ máy tính Windows nào tại đường dẫn `.\PublishOutput\WinCarePro.exe`.
+* **Tạo bộ cài Setup (`publish_installer.bat`):** Sử dụng **Inno Setup 6** kết hợp với kịch bản [setup.iss](file:///d:/WinCare/setup.iss) để đóng gói toàn bộ ứng dụng và runtime tự cấp (Self-contained) thành tệp cài đặt chuyên nghiệp `.\PublishOutput\WinCareProSetup.exe`.
 
 ---
 
 ## 📂 Cấu trúc thư mục nguồn của Dự án
 
-Cấu trúc mã nguồn được phân bổ logic như sau:
-
 ```text
 WinCare/
 │
-├── Assets/                 # Chứa các tài nguyên đồ họa, hình ảnh và icon ứng dụng
-├── Core/                   # Chứa các thành phần trợ giúp (Helpers) và mô hình dữ liệu (Models) dùng chung
-├── Engines/                # Bộ máy xử lý logic tính năng lõi phân tách theo nhóm (Diagnostics, Monitoring, Optimization, Repair)
-├── Infrastructure/         # Xử lý Caching, Database, Logging, Scheduling và Security
-├── Modules/                # Tập hợp các View và ViewModel khép kín theo từng trang chức năng độc lập (MVVM)
-├── Services/               # Các dịch vụ nghiệp vụ chính tách biệt Interface/Implementation
-├── Shared/                 # Các Component tùy biến và Converter giao diện dùng chung
+├── Assets/                 # Tài nguyên đồ họa, hình ảnh và icon Fluent của ứng dụng
+├── Core/                   # Thư mục cốt lõi chứa các Helpers và mô hình dữ liệu (Models) dùng chung
+│   ├── Helpers/            # Các tiện ích hệ thống (như WmiHelper.cs)
+│   └── Models/             # Các Data Models phân tách (như ProcessInfo.cs, DriverInfo.cs...)
+├── Engines/                # Động cơ xử lý logic cốt lõi (Diagnostics, Monitoring, Optimization, Repair)
+├── Infrastructure/         # Xử lý Caching, Database (SQLite), Logging, Scheduling và Security
+├── Modules/                # Tập hợp các View (xaml) và ViewModel (cs) phân theo trang chức năng MVVM
+├── Services/               # Các dịch vụ hệ thống bổ trợ (Dịch thuật, thông báo, dọn dẹp...)
+├── Shared/                 # Các UI Components tùy biến và Converter giao diện dùng chung
 │
-├── App.xaml / App.xaml.cs  # Điểm khởi đầu cấu hình và cấu trúc điều hướng toàn cục
-├── MainWindow.xaml / .cs   # Cửa sổ chính hiển thị giao diện ứng dụng
+├── App.xaml / App.xaml.cs  # Điểm khởi chạy cấu hình và thiết lập điều hướng toàn cục
+├── MainWindow.xaml / .cs   # Cửa sổ chính chứa khung điều hướng và thanh tiêu đề
 ├── WinCarePro.csproj       # File cấu hình cấu trúc dự án và các NuGet Dependencies
-├── app.manifest            # Định nghĩa các đặc quyền thực thi của Windows
-├── publish.bat             # Batch script để đóng gói ứng dụng di động Portable
+├── app.manifest            # Tệp cấu hình các đặc quyền bảo mật và thực thi của Windows
+├── publish.bat             # Batch script đóng gói ứng dụng di động Portable
 ├── publish_installer.bat   # Batch script tự động build bộ cài đặt Inno Setup
 └── setup.iss               # Kịch bản biên dịch bộ cài đặt Inno Setup
 ```
@@ -252,7 +273,7 @@ WinCare/
 ---
 
 ## 📝 Giấy phép (License) & Đóng góp ý kiến
-Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.4.2.
+Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.4.3.
 
 ---
 <div align="center">

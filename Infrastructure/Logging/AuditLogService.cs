@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WinCarePro.Services.Implementations;
@@ -8,6 +9,7 @@ namespace WinCarePro.Services.Implementations;
 public class AuditLogService
 {
     private readonly string _logFilePath;
+    private readonly SemaphoreSlim _logSemaphore = new(1, 1);
 
     public AuditLogService()
     {
@@ -35,10 +37,14 @@ public class AuditLogService
         {
             string entry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{category.ToUpper()}] Action: {actionName} | Target: {target} | Result: {result} | Details: {details}";
             
-            // Simple synchronous append with thread safety via locking
-            lock (this)
+            _logSemaphore.Wait();
+            try
             {
                 File.AppendAllText(_logFilePath, entry + Environment.NewLine);
+            }
+            finally
+            {
+                _logSemaphore.Release();
             }
         }
         catch
@@ -53,11 +59,18 @@ public class AuditLogService
         {
             string entry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{category.ToUpper()}] Action: {actionName} | Target: {target} | Result: {result} | Details: {details}";
             
-            // Use async file write
             byte[] encodedText = Encoding.UTF8.GetBytes(entry + Environment.NewLine);
-            using (var sourceStream = new FileStream(_logFilePath, FileMode.Append, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
+            await _logSemaphore.WaitAsync();
+            try
             {
-                await sourceStream.WriteAsync(encodedText.AsMemory(0, encodedText.Length));
+                using (var sourceStream = new FileStream(_logFilePath, FileMode.Append, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
+                {
+                    await sourceStream.WriteAsync(encodedText.AsMemory(0, encodedText.Length));
+                }
+            }
+            finally
+            {
+                _logSemaphore.Release();
             }
         }
         catch

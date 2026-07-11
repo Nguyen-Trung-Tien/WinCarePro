@@ -86,6 +86,7 @@ public partial class App : Application
         services.AddSingleton<Engines.HardwareDriverEngine>();
         services.AddSingleton<Engines.DiskEngine>();
         services.AddSingleton<Engines.ProcessService>();
+        services.AddSingleton<Engines.NetworkEngine>();
 
         // Register ViewModels
         services.AddTransient<NetworkViewModel>();

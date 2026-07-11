@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Management;
 using System.Linq;
 using WinCarePro.Models;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
@@ -14,34 +15,33 @@ public class HardwareDriverEngine
         
         // OS and Uptime
         specs.OsVersion = $"{Environment.OSVersion} ({IntPtr.Size * 8}-bit)";
-        try
+        var osList = WmiHelper.Query("SELECT Caption, Version, OSArchitecture FROM Win32_OperatingSystem", obj => 
+            $"{obj["Caption"]} {obj["Version"]} ({obj["OSArchitecture"]})");
+        if (osList.Count > 0)
         {
-            using var searcher = new ManagementObjectSearcher("SELECT Caption, Version, OSArchitecture FROM Win32_OperatingSystem");
-            foreach (var obj in searcher.Get())
-            {
-                specs.OsVersion = $"{obj["Caption"]} {obj["Version"]} ({obj["OSArchitecture"]})";
-                break;
-            }
+            specs.OsVersion = osList[0];
         }
-        catch { }
 
         var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
         specs.SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
 
         // CPU specs
-        try
+        var cpuList = WmiHelper.Query("SELECT Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed FROM Win32_Processor", obj => new
         {
-            using var searcher = new ManagementObjectSearcher("SELECT Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed FROM Win32_Processor");
-            foreach (var obj in searcher.Get())
-            {
-                specs.CpuModel = obj["Name"]?.ToString()?.Trim() ?? "Unknown CPU";
-                specs.CpuCores = Convert.ToInt32(obj["NumberOfCores"]);
-                specs.CpuThreads = Convert.ToInt32(obj["NumberOfLogicalProcessors"]);
-                specs.CpuSpeed = $"{Convert.ToDouble(obj["MaxClockSpeed"]) / 1000.0:F1} GHz";
-                break;
-            }
+            Model = obj["Name"]?.ToString()?.Trim() ?? "Unknown CPU",
+            Cores = Convert.ToInt32(obj["NumberOfCores"]),
+            Threads = Convert.ToInt32(obj["NumberOfLogicalProcessors"]),
+            Speed = $"{Convert.ToDouble(obj["MaxClockSpeed"]) / 1000.0:F1} GHz"
+        });
+
+        if (cpuList.Count > 0)
+        {
+            specs.CpuModel = cpuList[0].Model;
+            specs.CpuCores = cpuList[0].Cores;
+            specs.CpuThreads = cpuList[0].Threads;
+            specs.CpuSpeed = cpuList[0].Speed;
         }
-        catch 
+        else
         {
             specs.CpuModel = "Intel Core / AMD Ryzen Processor";
             specs.CpuCores = Environment.ProcessorCount / 2;
@@ -50,39 +50,48 @@ public class HardwareDriverEngine
         }
 
         // RAM specs
-        try
+        var ramList = WmiHelper.Query("SELECT Capacity, Speed FROM Win32_PhysicalMemory", obj => new
+        {
+            Capacity = Convert.ToDouble(obj["Capacity"]),
+            Speed = obj["Speed"]?.ToString() ?? ""
+        });
+
+        if (ramList.Count > 0)
         {
             double totalCapacity = 0;
             string speed = "";
-            using var searcher = new ManagementObjectSearcher("SELECT Capacity, Speed FROM Win32_PhysicalMemory");
-            foreach (var obj in searcher.Get())
+            foreach (var ram in ramList)
             {
-                totalCapacity += Convert.ToDouble(obj["Capacity"]);
-                speed = obj["Speed"]?.ToString() ?? "";
+                totalCapacity += ram.Capacity;
+                speed = ram.Speed;
             }
             specs.RamCapacityGb = totalCapacity / 1024.0 / 1024.0 / 1024.0;
             specs.RamSpeed = string.IsNullOrEmpty(speed) ? "" : $"{speed} MHz";
         }
-        catch 
+        else
         {
             specs.RamCapacityGb = 16.0; // safe fallback
             specs.RamSpeed = "3200 MHz";
         }
 
         // GPU specs
-        try
-        {
-            using var searcher = new ManagementObjectSearcher("SELECT Name, AdapterRAM, DriverVersion FROM Win32_VideoController");
-            foreach (var obj in searcher.Get())
+        var gpuList = WmiHelper.Query("SELECT Name, AdapterRAM, DriverVersion FROM Win32_VideoController", obj => {
+            var ramBytes = Convert.ToInt64(obj["AdapterRAM"]);
+            return new
             {
-                specs.GpuModel = obj["Name"]?.ToString() ?? "Unknown GPU";
-                var ramBytes = Convert.ToInt64(obj["AdapterRAM"]);
-                specs.GpuVram = ramBytes > 0 ? $"{ramBytes / 1024 / 1024 / 1024} GB" : "Shared Memory";
-                specs.GpuDriverVersion = obj["DriverVersion"]?.ToString() ?? "";
-                break;
-            }
+                Model = obj["Name"]?.ToString() ?? "Unknown GPU",
+                Vram = ramBytes > 0 ? $"{ramBytes / 1024 / 1024 / 1024} GB" : "Shared Memory",
+                Version = obj["DriverVersion"]?.ToString() ?? ""
+            };
+        });
+
+        if (gpuList.Count > 0)
+        {
+            specs.GpuModel = gpuList[0].Model;
+            specs.GpuVram = gpuList[0].Vram;
+            specs.GpuDriverVersion = gpuList[0].Version;
         }
-        catch 
+        else
         {
             specs.GpuModel = "Intel Iris / NVIDIA GeForce / AMD Radeon";
             specs.GpuVram = "4 GB";
@@ -90,24 +99,23 @@ public class HardwareDriverEngine
         }
 
         // Motherboard specs
-        try
+        var boardList = WmiHelper.Query("SELECT Manufacturer, Product FROM Win32_BaseBoard", obj => new
         {
-            using var searcher = new ManagementObjectSearcher("SELECT Manufacturer, Product FROM Win32_BaseBoard");
-            foreach (var obj in searcher.Get())
-            {
-                specs.MotherboardManufacturer = obj["Manufacturer"]?.ToString() ?? "";
-                specs.MotherboardModel = obj["Product"]?.ToString() ?? "";
-                break;
-            }
-            
-            using var biosSearcher = new ManagementObjectSearcher("SELECT Version FROM Win32_BIOS");
-            foreach (var obj in biosSearcher.Get())
-            {
-                specs.BiosVersion = obj["Version"]?.ToString() ?? "";
-                break;
-            }
+            Manufacturer = obj["Manufacturer"]?.ToString() ?? "",
+            Model = obj["Product"]?.ToString() ?? ""
+        });
+
+        if (boardList.Count > 0)
+        {
+            specs.MotherboardManufacturer = boardList[0].Manufacturer;
+            specs.MotherboardModel = boardList[0].Model;
         }
-        catch { }
+
+        var biosList = WmiHelper.Query("SELECT Version FROM Win32_BIOS", obj => obj["Version"]?.ToString() ?? "");
+        if (biosList.Count > 0)
+        {
+            specs.BiosVersion = biosList[0];
+        }
 
         // Storage details summary
         try
@@ -127,39 +135,33 @@ public class HardwareDriverEngine
     public List<DriverInfo> GetInstalledDrivers()
     {
         var list = new List<DriverInfo>();
-        try
-        {
-            // Query signed drivers via WMI
-            using var searcher = new ManagementObjectSearcher("SELECT DeviceName, DeviceClass, Manufacturer, DriverVersion, DriverDate, Status FROM Win32_PnPSignedDriver");
-            using var collection = searcher.Get();
-
-            int limit = 150; // WMI can return a LOT of drivers, cap it for responsiveness
-            foreach (var obj in collection)
+        var driverList = WmiHelper.Query("SELECT DeviceName, DeviceClass, Manufacturer, DriverVersion, DriverDate, Status FROM Win32_PnPSignedDriver", obj => {
+            string devName = obj["DeviceName"]?.ToString() ?? "";
+            string rawDate = obj["DriverDate"]?.ToString() ?? "";
+            string formattedDate = "";
+            if (rawDate.Length >= 8)
             {
-                string devName = obj["DeviceName"]?.ToString() ?? "";
-                if (string.IsNullOrEmpty(devName)) continue;
-
-                string rawDate = obj["DriverDate"]?.ToString() ?? "";
-                string formattedDate = "";
-                if (rawDate.Length >= 8)
-                {
-                    formattedDate = $"{rawDate.Substring(0, 4)}-{rawDate.Substring(4, 2)}-{rawDate.Substring(6, 2)}";
-                }
-
-                list.Add(new DriverInfo
-                {
-                    Name = devName,
-                    DeviceClass = obj["DeviceClass"]?.ToString() ?? "Device",
-                    Provider = obj["Manufacturer"]?.ToString() ?? "Generic",
-                    DriverVersion = obj["DriverVersion"]?.ToString() ?? "1.0.0.0",
-                    DriverDate = formattedDate,
-                    Status = obj["Status"]?.ToString() ?? "OK"
-                });
-
-                if (--limit <= 0) break;
+                formattedDate = $"{rawDate.Substring(0, 4)}-{rawDate.Substring(4, 2)}-{rawDate.Substring(6, 2)}";
             }
+
+            return new DriverInfo
+            {
+                Name = devName,
+                DeviceClass = obj["DeviceClass"]?.ToString() ?? "Device",
+                Provider = obj["Manufacturer"]?.ToString() ?? "Generic",
+                DriverVersion = obj["DriverVersion"]?.ToString() ?? "1.0.0.0",
+                DriverDate = formattedDate,
+                Status = obj["Status"]?.ToString() ?? "OK"
+            };
+        });
+
+        int limit = 150; // WMI can return a LOT of drivers, cap it for responsiveness
+        foreach (var driver in driverList)
+        {
+            if (string.IsNullOrEmpty(driver.Name)) continue;
+            list.Add(driver);
+            if (--limit <= 0) break;
         }
-        catch { }
 
         if (list.Count == 0)
         {
@@ -199,28 +201,26 @@ public class HardwareDriverEngine
 
     public double GetCpuTemperature(double cpuUsage)
     {
-        try
+        var tempInfo = WmiHelper.Query("SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature", obj =>
         {
-            using var searcher = new ManagementObjectSearcher(@"root\wmi", "SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature");
-            searcher.Options.Timeout = TimeSpan.FromMilliseconds(800);
-            foreach (var obj in searcher.Get())
+            double tempKelvin = Convert.ToDouble(obj["CurrentTemperature"]);
+            double tempCelsius;
+            if (tempKelvin > 2000) // Kelvin * 10
             {
-                double tempKelvin = Convert.ToDouble(obj["CurrentTemperature"]);
-                double tempCelsius = (tempKelvin - 273.15); // Kelvin is Kelvin * 10 or Kelvin depending on device, standard ACPI uses Kelvin * 10 or Kelvin
-                // Let's standardise kelvin conversion
-                if (tempKelvin > 2000) // Kelvin * 10
-                {
-                    tempCelsius = (tempKelvin - 2731.5) / 10.0;
-                }
-                else // Kelvin
-                {
-                    tempCelsius = tempKelvin - 273.15;
-                }
-                
-                if (tempCelsius > 10 && tempCelsius < 110) return Math.Round(tempCelsius, 1);
+                tempCelsius = (tempKelvin - 2731.5) / 10.0;
             }
+            else // Kelvin
+            {
+                tempCelsius = tempKelvin - 273.15;
+            }
+            return tempCelsius;
+        }, @"root\wmi");
+
+        if (tempInfo.Count > 0)
+        {
+            double temp = tempInfo[0];
+            if (temp > 10 && temp < 110) return Math.Round(temp, 1);
         }
-        catch { }
 
         // Simulation correlated with cpuUsage
         double baseTemp = 37.0;
@@ -249,62 +249,55 @@ public class HardwareDriverEngine
     public BatteryInfo GetBatteryInfo()
     {
         var info = new BatteryInfo();
-        try
+        var batteryList = WmiHelper.Query("SELECT EstimatedChargeRemaining, BatteryStatus, ExpectedLife FROM Win32_Battery", obj =>
         {
-            using var searcher = new ManagementObjectSearcher("SELECT EstimatedChargeRemaining, BatteryStatus, ExpectedLife FROM Win32_Battery");
-            using var collection = searcher.Get();
-            bool found = false;
-            foreach (var obj in collection)
+            var battery = new BatteryInfo();
+            battery.ChargePercent = Convert.ToInt32(obj["EstimatedChargeRemaining"]);
+            uint status = Convert.ToUInt32(obj["BatteryStatus"]);
+            battery.Status = status switch
             {
-                found = true;
-                info.ChargePercent = Convert.ToInt32(obj["EstimatedChargeRemaining"]);
-                uint status = Convert.ToUInt32(obj["BatteryStatus"]);
-                info.Status = status switch
-                {
-                    1 => "Discharging",
-                    2 => "AC Power (Charging)",
-                    3 => "Fully Charged",
-                    4 => "Low Battery",
-                    5 => "Critical Battery",
-                    6 => "Charging",
-                    7 => "Charging and High",
-                    8 => "Charging and Low",
-                    9 => "Charging and Critical",
-                    10 => "Undefined",
-                    11 => "Partially Charged",
-                    _ => "AC Power"
-                };
-                
-                try
-                {
-                    var secs = Convert.ToInt64(obj["ExpectedLife"]);
-                    if (secs > 0 && secs < 100000)
-                    {
-                        TimeSpan t = TimeSpan.FromSeconds(secs);
-                        info.EstimatedTime = $"{t.Hours}h {t.Minutes}m remaining";
-                    }
-                    else
-                    {
-                        info.EstimatedTime = info.Status == "AC Power (Charging)" || info.Status == "Fully Charged" ? "Plugged In" : "Calculating...";
-                    }
-                }
-                catch
-                {
-                    info.EstimatedTime = "Calculating...";
-                }
-                break;
-            }
-            if (!found)
+                1 => "Discharging",
+                2 => "AC Power (Charging)",
+                3 => "Fully Charged",
+                4 => "Low Battery",
+                5 => "Critical Battery",
+                6 => "Charging",
+                7 => "Charging and High",
+                8 => "Charging and Low",
+                9 => "Charging and Critical",
+                10 => "Undefined",
+                11 => "Partially Charged",
+                _ => "AC Power"
+            };
+            
+            try
             {
-                info.Status = "AC Power (No Battery)";
-                info.Health = "N/A (Desktop)";
-                info.EstimatedTime = "Unlimited";
+                var secs = Convert.ToInt64(obj["ExpectedLife"]);
+                if (secs > 0 && secs < 100000)
+                {
+                    TimeSpan t = TimeSpan.FromSeconds(secs);
+                    battery.EstimatedTime = $"{t.Hours}h {t.Minutes}m remaining";
+                }
+                else
+                {
+                    battery.EstimatedTime = battery.Status == "AC Power (Charging)" || battery.Status == "Fully Charged" ? "Plugged In" : "Calculating...";
+                }
             }
+            catch
+            {
+                battery.EstimatedTime = "Calculating...";
+            }
+            return battery;
+        });
+
+        if (batteryList.Count > 0)
+        {
+            info = batteryList[0];
         }
-        catch
+        else
         {
             info.Status = "AC Power (No Battery)";
-            info.Health = "N/A";
+            info.Health = "N/A (Desktop)";
             info.EstimatedTime = "Unlimited";
         }
         return info;

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro.Services.Implementations;
 
@@ -13,9 +14,13 @@ public class NetworkService : INetworkService
 
     public event Action<string>? OutputReceived;
 
-    public NetworkService()
+    public NetworkService() : this(App.Services?.GetService<NetworkEngine>() ?? new NetworkEngine())
     {
-        _engine = new NetworkEngine();
+    }
+
+    public NetworkService(NetworkEngine engine)
+    {
+        _engine = engine;
         _engine.OutputReceived += msg => OutputReceived?.Invoke(msg);
     }
 

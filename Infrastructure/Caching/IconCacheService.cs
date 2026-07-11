@@ -9,6 +9,7 @@ namespace WinCarePro.Services.Implementations;
 public class IconCacheService
 {
     private readonly string _cacheDirectory;
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Task<string>> _activeIconTasks = new();
 
     public IconCacheService()
     {
@@ -92,8 +93,18 @@ public class IconCacheService
                 return destPng;
             }
 
-            // Extract asynchronously in background to prevent blocking
-            _ = Task.Run(async () => await GetIconForExecutableAsync(filePath));
+            // Extract asynchronously in background to prevent blocking, avoiding duplicate task writes
+            _activeIconTasks.GetOrAdd(destPng, key => Task.Run(async () =>
+            {
+                try
+                {
+                    return await GetIconForExecutableAsync(filePath);
+                }
+                finally
+                {
+                    _activeIconTasks.TryRemove(key, out _);
+                }
+            }));
         }
         catch
         {

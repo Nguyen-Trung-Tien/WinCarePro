@@ -6,6 +6,7 @@ using System.Management;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using WinCarePro.Models;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
@@ -40,8 +41,8 @@ public class RegistryBackupEngine
             int scanned = 0;
             foreach (var subkeyName in classesKey.GetSubKeyNames())
             {
-                if (scanned++ > 500) break; // Cap search space for speed
                 if (!subkeyName.StartsWith(".")) continue;
+                if (scanned++ > 1000) break; // Cap search space for speed
 
                 using var extKey = classesKey.OpenSubKey(subkeyName);
                 var handlerName = extKey?.GetValue("")?.ToString();
@@ -115,13 +116,32 @@ public class RegistryBackupEngine
     {
         if (string.IsNullOrEmpty(cmd)) return "";
         cmd = cmd.Trim();
+        try
+        {
+            cmd = Environment.ExpandEnvironmentVariables(cmd);
+        }
+        catch { }
+
         if (cmd.StartsWith("\""))
         {
             int nextQuote = cmd.IndexOf("\"", 1);
             if (nextQuote > 1) return cmd.Substring(1, nextQuote - 1);
         }
         int space = cmd.IndexOf(" ");
-        if (space > 0) return cmd.Substring(0, space);
+        if (space > 0)
+        {
+            string[] parts = cmd.Split(' ');
+            string currentPath = "";
+            for (int i = 0; i < parts.Length; i++)
+            {
+                currentPath = string.IsNullOrEmpty(currentPath) ? parts[i] : currentPath + " " + parts[i];
+                if (currentPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && File.Exists(currentPath))
+                {
+                    return currentPath;
+                }
+            }
+            return cmd.Substring(0, space);
+        }
         return cmd;
     }
 
@@ -228,10 +248,14 @@ public class RegistryBackupEngine
                 UseShellExecute = false
             };
             using var process = Process.Start(psi);
-            process?.WaitForExit(5000);
-            
-            Database.DbManager.LogAction($"Created Registry Backup: {name}", "Registry Tools", "Success");
-            return process?.ExitCode == 0;
+            if (process != null)
+            {
+                process.WaitForExit(5000);
+                bool success = process.ExitCode == 0;
+                Database.DbManager.LogAction($"Created Registry Backup: {name}", "Registry Tools", success ? "Success" : "Failed");
+                return success;
+            }
+            return false;
         }
         catch
         {
@@ -252,10 +276,14 @@ public class RegistryBackupEngine
                 UseShellExecute = false
             };
             using var process = Process.Start(psi);
-            process?.WaitForExit(10000);
-            
-            Database.DbManager.LogAction($"Restored Registry Backup: {Path.GetFileName(filePath)}", "Registry Tools", "Success");
-            return process?.ExitCode == 0;
+            if (process != null)
+            {
+                process.WaitForExit(10000);
+                bool success = process.ExitCode == 0;
+                Database.DbManager.LogAction($"Restored Registry Backup: {Path.GetFileName(filePath)}", "Registry Tools", success ? "Success" : "Failed");
+                return success;
+            }
+            return false;
         }
         catch
         {
@@ -280,36 +308,27 @@ public class RegistryBackupEngine
         return list;
     }
 
-
-
     public List<RestorePointInfo> GetSystemRestorePoints()
     {
-        var list = new List<RestorePointInfo>();
-        try
+        var list = WmiHelper.Query("SELECT SequenceNumber, Description, CreationTime, RestorePointType FROM SystemRestore", obj =>
         {
-            using var searcher = new ManagementObjectSearcher(@"root\default", "SELECT SequenceNumber, Description, CreationTime, RestorePointType FROM SystemRestore");
-            using var collection = searcher.Get();
-            foreach (var obj in collection)
+            // Format the creation date
+            string rawTime = obj["CreationTime"]?.ToString() ?? "";
+            string formattedDate = rawTime;
+            if (rawTime.Length >= 8)
             {
-                // Format the creation date
-                string rawTime = obj["CreationTime"]?.ToString() ?? "";
-                string formattedDate = rawTime;
-                if (rawTime.Length >= 8)
-                {
-                    // WMI datetime is yyyymmddhhmmss.xxxxxx±zzz
-                    formattedDate = $"{rawTime.Substring(0, 4)}-{rawTime.Substring(4, 2)}-{rawTime.Substring(6, 2)} {rawTime.Substring(8, 2)}:{rawTime.Substring(10, 2)}";
-                }
-
-                list.Add(new RestorePointInfo
-                {
-                    SequenceNumber = Convert.ToUInt32(obj["SequenceNumber"]),
-                    Description = obj["Description"]?.ToString() ?? "Restore Point",
-                    CreatedTime = formattedDate,
-                    RestorePointType = Convert.ToUInt32(obj["RestorePointType"])
-                });
+                // WMI datetime is yyyymmddhhmmss.xxxxxx±zzz
+                formattedDate = $"{rawTime.Substring(0, 4)}-{rawTime.Substring(4, 2)}-{rawTime.Substring(6, 2)} {rawTime.Substring(8, 2)}:{rawTime.Substring(10, 2)}";
             }
-        }
-        catch { }
+
+            return new RestorePointInfo
+            {
+                SequenceNumber = Convert.ToUInt32(obj["SequenceNumber"]),
+                Description = obj["Description"]?.ToString() ?? "Restore Point",
+                CreatedTime = formattedDate,
+                RestorePointType = Convert.ToUInt32(obj["RestorePointType"])
+            };
+        }, @"root\default");
         return list;
     }
 

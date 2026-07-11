@@ -41,19 +41,39 @@ public sealed partial class NetworkPage : Page
         }
     }
 
+    private Style? GetButtonStyle(string key)
+    {
+        if (Application.Current.Resources.TryGetValue(key, out var styleObj) && styleObj is Style style)
+        {
+            return style;
+        }
+        return null;
+    }
+
     private void SetActiveTab(string tabName)
     {
+        ViewModel.ActiveTab = tabName;
+
+        var accentStyle = GetButtonStyle("AccentButtonStyle");
+        var defaultStyle = GetButtonStyle("DefaultButtonStyle");
+
         // Toggle tab button active styles
-        BtnTabQuality.Style = tabName == "quality" ? (Style)Application.Current.Resources["AccentButtonStyle"] : (Style)Application.Current.Resources["DefaultButtonStyle"];
-        BtnTabDns.Style = tabName == "dns" ? (Style)Application.Current.Resources["AccentButtonStyle"] : (Style)Application.Current.Resources["DefaultButtonStyle"];
-        BtnTabPorts.Style = tabName == "ports" ? (Style)Application.Current.Resources["AccentButtonStyle"] : (Style)Application.Current.Resources["DefaultButtonStyle"];
-        BtnTabRepairs.Style = tabName == "repairs" ? (Style)Application.Current.Resources["AccentButtonStyle"] : (Style)Application.Current.Resources["DefaultButtonStyle"];
+        BtnTabQuality.Style = tabName == "quality" ? accentStyle : defaultStyle;
+        BtnTabDns.Style = tabName == "dns" ? accentStyle : defaultStyle;
+        BtnTabPorts.Style = tabName == "ports" ? accentStyle : defaultStyle;
+        BtnTabRepairs.Style = tabName == "repairs" ? accentStyle : defaultStyle;
 
         // Toggle content section visibility
         SectionQuality.Visibility = tabName == "quality" ? Visibility.Visible : Visibility.Collapsed;
         SectionDns.Visibility = tabName == "dns" ? Visibility.Visible : Visibility.Collapsed;
         SectionPorts.Visibility = tabName == "ports" ? Visibility.Visible : Visibility.Collapsed;
         SectionRepairs.Visibility = tabName == "repairs" ? Visibility.Visible : Visibility.Collapsed;
+
+        // Immediate load when clicking ports tab
+        if (tabName == "ports")
+        {
+            _ = ViewModel.LoadActiveConnectionsAsync();
+        }
     }
 
     private async void OnRefreshClick(object sender, RoutedEventArgs e)

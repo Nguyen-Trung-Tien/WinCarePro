@@ -14,6 +14,7 @@ public sealed partial class UpdaterPage : Page
 
     public UpdaterPage()
     {
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<UpdaterViewModel>();
         this.DataContext = ViewModel;

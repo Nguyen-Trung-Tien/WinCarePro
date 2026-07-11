@@ -12,6 +12,7 @@ public sealed partial class HardwarePage : Page
 
     public HardwarePage()
     {
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<HardwareViewModel>();
         this.DataContext = ViewModel;

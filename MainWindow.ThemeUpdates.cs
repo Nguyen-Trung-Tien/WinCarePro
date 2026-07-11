@@ -1,0 +1,324 @@
+using System;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.Extensions.DependencyInjection;
+using WinCarePro.Database;
+using WinCarePro.Services;
+
+namespace WinCarePro;
+
+public sealed partial class MainWindow : Window
+{
+    private string? _downloadedSetupPath = null;
+    public double CurrentTransparencyLevel { get; private set; } = 80.0;
+
+    private void LoadThemeConfiguration()
+    {
+        try
+        {
+            string raw = DbManager.GetSettings();
+            if (!string.IsNullOrEmpty(raw))
+            {
+                using var doc = JsonDocument.Parse(raw);
+                var root = doc.RootElement;
+                if (root.TryGetProperty("Theme", out var themeProp))
+                {
+                    string theme = themeProp.GetString() ?? "Dark";
+                    ApplyAppTheme(theme == "Dark");
+                }
+                else
+                {
+                    ApplyAppTheme(true);
+                }
+
+                // Load and apply Accent Color on start
+                if (root.TryGetProperty("AccentColor", out var accentProp))
+                {
+                    App.ApplyAccentColor(accentProp.GetString() ?? "Default");
+                }
+
+                // Load and apply Transparency Level on start
+                if (root.TryGetProperty("TransparencyLevel", out var transProp))
+                {
+                    ApplyTransparency(transProp.GetDouble());
+                }
+
+                // Check for updates automatically in the background
+                if (root.TryGetProperty("AutoCheckUpdates", out var autoProp) && autoProp.GetBoolean())
+                {
+                    _ = Task.Run(async () =>
+                    {
+                        await Task.Delay(3000);
+                        await RunSilentUpdateCheckAsync();
+                    });
+                }
+            }
+            else
+            {
+                ApplyAppTheme(true); // Default to Dark
+            }
+        }
+        catch
+        {
+            ApplyAppTheme(true);
+        }
+    }
+
+    public void ApplyTransparency(double level)
+    {
+        CurrentTransparencyLevel = level;
+        if (RootGrid == null) return;
+        
+        bool isDark = RootGrid.RequestedTheme == ElementTheme.Dark;
+        byte colorAlpha = (byte)(255 * (level / 100.0));
+        
+        if (isDark)
+        {
+            RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 26, 26, 26));
+        }
+        else
+        {
+            RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 243, 243, 243));
+        }
+    }
+
+    private async Task RunSilentUpdateCheckAsync()
+    {
+        try
+        {
+            using var client = new System.Net.Http.HttpClient();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
+            
+            string response;
+            // Check for local update.json in app directory (for offline/dev testing)
+            string localUpdatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update.json");
+            if (File.Exists(localUpdatePath))
+            {
+                response = File.ReadAllText(localUpdatePath);
+            }
+            else
+            {
+                string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
+                client.Timeout = TimeSpan.FromSeconds(10);
+                response = await client.GetStringAsync(jsonUrl);
+            }
+            
+            using var doc = JsonDocument.Parse(response);
+            var root = doc.RootElement;
+            string remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
+            string downloadUrl = root.GetProperty("url").GetString() ?? "";
+            
+            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
+            var remoteVersion = new Version(remoteVerStr);
+
+            if (remoteVersion > currentVersion)
+            {
+                DbManager.LogAction($"Update available: v{remoteVerStr}", "Software Updater", "Success");
+                
+                // Read configuration to determine if we should auto install
+                bool autoInstall = false;
+                string settingsRaw = DbManager.GetSettings();
+                if (!string.IsNullOrEmpty(settingsRaw))
+                {
+                    using var setDoc = JsonDocument.Parse(settingsRaw);
+                    if (setDoc.RootElement.TryGetProperty("AutoInstallUpdates", out var autoInstallProp))
+                    {
+                        autoInstall = autoInstallProp.GetBoolean();
+                    }
+                }
+
+                if (autoInstall)
+                {
+                    _ = DownloadBackgroundUpdateAsync(downloadUrl, remoteVerStr);
+                }
+                else
+                {
+                    DbManager.AddNotification("Software Update Available".T(), string.Format("A new version v{0} of WinCare Pro is available for download.".T(), remoteVerStr), "Warning");
+                }
+            }
+        }
+        catch { }
+    }
+
+    private async Task DownloadBackgroundUpdateAsync(string downloadUrl, string remoteVerStr)
+    {
+        if (string.IsNullOrEmpty(downloadUrl)) return;
+        
+        try
+        {
+            using var client = new System.Net.Http.HttpClient();
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
+            
+            using var response = await client.GetAsync(downloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            string tempFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");
+            if (!Directory.Exists(tempFolder))
+            {
+                Directory.CreateDirectory(tempFolder);
+            }
+            string setupFilePath = Path.Combine(tempFolder, $"WinCarePro_Setup_{remoteVerStr}.exe");
+
+            using var fileStream = new FileStream(setupFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+            using var contentStream = await response.Content.ReadAsStreamAsync();
+            var buffer = new byte[8192];
+            int read;
+            while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                await fileStream.WriteAsync(buffer, 0, read);
+            }
+            fileStream.Close();
+
+            _downloadedSetupPath = setupFilePath;
+
+            this.DispatcherQueue.TryEnqueue(() =>
+            {
+                DbManager.AddNotification(
+                    "Update Ready to Install".T(),
+                    string.Format("Version {0} is successfully downloaded. Click here to restart and install now.".T(), remoteVerStr),
+                    "Success"
+                );
+            });
+        }
+        catch (Exception ex)
+        {
+            DbManager.LogAction($"Background download failed: {ex.Message}", "Software Updater", "Failed");
+        }
+    }
+
+    public void ApplyAppTheme(bool dark)
+    {
+        Services.ThemeManager.Instance.ApplyTheme(dark ? ElementTheme.Dark : ElementTheme.Light);
+    }
+
+    public void SetBackdropType(string type)
+    {
+        try
+        {
+            this.SystemBackdrop = type.ToLower() switch
+            {
+                "mica" => new Microsoft.UI.Xaml.Media.MicaBackdrop { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base },
+                "micaalt" => new Microsoft.UI.Xaml.Media.MicaBackdrop { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt },
+                "acrylic" => new Microsoft.UI.Xaml.Media.DesktopAcrylicBackdrop(),
+                _ => new Microsoft.UI.Xaml.Media.MicaBackdrop()
+            };
+        }
+        catch { }
+    }
+
+    private void ThemeButton_Click(object sender, RoutedEventArgs e)
+    {
+        bool isCurrentlyDark = RootGrid.RequestedTheme == ElementTheme.Dark;
+        bool nextIsDark = !isCurrentlyDark;
+        ApplyAppTheme(nextIsDark);
+
+        // Update stored settings
+        try
+        {
+            string raw = DbManager.GetSettings();
+            var settingsDict = new System.Collections.Generic.Dictionary<string, object>();
+            if (!string.IsNullOrEmpty(raw))
+            {
+                var parsed = JsonSerializer.Deserialize<System.Collections.Generic.Dictionary<string, object>>(raw);
+                if (parsed != null) settingsDict = parsed;
+            }
+            settingsDict["Theme"] = nextIsDark ? "Dark" : "Light";
+            string themeJson = JsonSerializer.Serialize(settingsDict);
+            Task.Run(() => DbManager.SaveSettings(themeJson));
+        }
+        catch { }
+    }
+
+    private void InstallDownloadedUpdate()
+    {
+        if (string.IsNullOrEmpty(_downloadedSetupPath) || !File.Exists(_downloadedSetupPath))
+        {
+            var service = App.Services.GetService<Services.Contracts.INotificationService>();
+            service?.ShowError("Installer Not Found".T(), "The downloaded update installer could not be found. Please check again.");
+            return;
+        }
+
+        try
+        {
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = _downloadedSetupPath,
+                UseShellExecute = true
+            };
+            System.Diagnostics.Process.Start(psi);
+            Microsoft.UI.Xaml.Application.Current.Exit();
+        }
+        catch (Exception ex)
+        {
+            var service = App.Services.GetService<Services.Contracts.INotificationService>();
+            service?.ShowError("Installation Failed".T(), string.Format("Could not start installer: {0}".T(), ex.Message));
+        }
+    }
+
+    private void CheckAndShowChangelog(Version currentVersion)
+    {
+        try
+        {
+            string raw = DbManager.GetSettings();
+            string lastVersionStr = "";
+            bool versionChanged = false;
+
+            if (!string.IsNullOrEmpty(raw))
+            {
+                using (var doc = JsonDocument.Parse(raw))
+                {
+                    if (doc.RootElement.TryGetProperty("LastVersion", out var verProp))
+                    {
+                        lastVersionStr = verProp.GetString() ?? "";
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(lastVersionStr))
+            {
+                versionChanged = true;
+            }
+            else
+            {
+                var lastVersion = new Version(lastVersionStr);
+                if (currentVersion > lastVersion)
+                {
+                    versionChanged = true;
+                }
+            }
+
+            if (versionChanged)
+            {
+                string newRaw = MergeSetting(raw, "LastVersion", currentVersion.ToString());
+                Task.Run(() => DbManager.SaveSettings(newRaw));
+
+                // Log to Activity Log
+                string logMessage = string.Format("System updated to version {0}".T(), currentVersion.ToString());
+                DbManager.LogAction(logMessage, "System", "Success");
+            }
+        }
+        catch { }
+    }
+
+    private string MergeSetting(string rawJson, string key, string value)
+    {
+        var dict = new System.Collections.Generic.Dictionary<string, object>();
+        if (!string.IsNullOrEmpty(rawJson))
+        {
+            try
+            {
+                var parsed = JsonSerializer.Deserialize<System.Collections.Generic.Dictionary<string, object>>(rawJson);
+                if (parsed != null)
+                {
+                    dict = parsed;
+                }
+            }
+            catch { }
+        }
+        dict[key] = value;
+        return JsonSerializer.Serialize(dict);
+    }
+}

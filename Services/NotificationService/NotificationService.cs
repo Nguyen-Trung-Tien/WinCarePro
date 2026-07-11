@@ -21,13 +21,13 @@ public class NotificationService : INotificationService
         public int RepeatCount { get; set; } = 1;
     }
 
-    private static readonly Queue<QueuedNotification> _queue = new();
-    private static readonly List<Components.ToastNotification> _activeToasts = new();
-    private static readonly Stack<Components.ToastNotification> _toastPool = new();
-    private static readonly object _queueLock = new();
+    private readonly Queue<QueuedNotification> _queue = new();
+    private readonly List<Components.ToastNotification> _activeToasts = new();
+    private readonly Stack<Components.ToastNotification> _toastPool = new();
+    private readonly object _queueLock = new();
     
-    private static DateTime _lastToastShownTime = DateTime.MinValue;
-    private static bool _isProcessingQueue = false;
+    private DateTime _lastToastShownTime = DateTime.MinValue;
+    private bool _isProcessingQueue = false;
 
     // For backwards compatibility and INotificationService compliance
     public void ShowToast(string title, string message, NotificationSeverity severity = NotificationSeverity.Info, List<NotificationAction>? actions = null)
@@ -159,7 +159,7 @@ public class NotificationService : INotificationService
         });
     }
 
-    private static bool ShouldShowNotification(string title, string message, string dbSeverity)
+    private bool ShouldShowNotification(string title, string message, string dbSeverity)
     {
         try
         {
@@ -191,7 +191,7 @@ public class NotificationService : INotificationService
         return true;
     }
 
-    private static void ProcessQueue()
+    private void ProcessQueue()
     {
         var dispatcher = App.MainDispatcherQueue;
         if (dispatcher == null || _isProcessingQueue) return;
@@ -247,7 +247,7 @@ public class NotificationService : INotificationService
         }
     }
 
-    private static void ShowToastUI(QueuedNotification item)
+    private void ShowToastUI(QueuedNotification item)
     {
         var win = App.MainWindowInstance;
         if (win == null || win.ToastStackContainer == null) return;
@@ -319,10 +319,10 @@ public class NotificationService : INotificationService
             {
                 App.MainDispatcherQueue?.TryEnqueue(() => DismissToast(toast));
             }
-        }, TaskScheduler.FromCurrentSynchronizationContext());
+        });
     }
 
-    private static void ResetDismissTimer(Components.ToastNotification toast)
+    private void ResetDismissTimer(Components.ToastNotification toast)
     {
         if (toast.Tag is System.Threading.CancellationTokenSource cts)
         {
@@ -338,10 +338,10 @@ public class NotificationService : INotificationService
             {
                 App.MainDispatcherQueue?.TryEnqueue(() => DismissToast(toast));
             }
-        }, TaskScheduler.FromCurrentSynchronizationContext());
+        });
     }
 
-    public static void DismissToast(Components.ToastNotification toast)
+    public void DismissToast(Components.ToastNotification toast)
     {
         if (toast == null) return;
         
@@ -375,7 +375,7 @@ public class NotificationService : INotificationService
         });
     }
 
-    private static void DismissToastImmediate(Components.ToastNotification toast)
+    private void DismissToastImmediate(Components.ToastNotification toast)
     {
         if (toast == null) return;
 

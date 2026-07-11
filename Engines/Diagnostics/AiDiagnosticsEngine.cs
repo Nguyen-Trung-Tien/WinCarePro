@@ -247,6 +247,15 @@ public class AiDiagnosticsEngine
             if (!isExplorerOptimized)
             {
                 responsivenessScore -= 15.0;
+                summary.Results.Add(new DiagnosticResult
+                {
+                    CheckName = "Windows Explorer Not Optimized",
+                    Category = "Performance",
+                    IsHealthy = false,
+                    Description = "Menu hover delay and window animations are not optimized for maximum performance.",
+                    Recommendation = "Go to System Optimizer and optimize Explorer settings."
+                });
+                summary.Recommendations.Add("Optimize Windows Explorer menu delay and animations.");
             }
 
             // 7. Network Health

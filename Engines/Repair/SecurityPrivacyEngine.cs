@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
+using System.Linq;
 using Microsoft.Win32;
 using WinCarePro.Models;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
@@ -16,11 +18,7 @@ public class SecurityPrivacyEngine
         try
         {
             // SecurityCenter2 namespace is standard for Antivirus listings in Windows Vista/7/8/10/11
-            using var searcher = new ManagementObjectSearcher(@"root\SecurityCenter2", "SELECT displayName, productState FROM AntiVirusProduct");
-            using var collection = searcher.Get();
-            var list = new List<string>();
-
-            foreach (ManagementObject obj in collection)
+            var list = WmiHelper.Query("SELECT displayName, productState FROM AntiVirusProduct", obj =>
             {
                 string name = obj["displayName"]?.ToString() ?? "Unknown Antivirus";
                 uint state = Convert.ToUInt32(obj["productState"]);
@@ -28,11 +26,11 @@ public class SecurityPrivacyEngine
                 // productState is a bitmask. The middle byte represents whether active:
                 // e.g. state & 0x00001000 = active, 0x00000000 = inactive.
                 // A simpler heuristic: if the second hex digit is 1 (e.g. 0x11000 or 0x10100), it's enabled.
-                string hexState = state.ToString("X6");
-                bool isEnabled = hexState.Substring(1, 2) == "10" || hexState.Substring(1, 2) == "11" || hexState.Substring(1, 2) == "01";
+                uint middleByte = (state >> 8) & 0xFF;
+                bool isEnabled = middleByte == 0x10 || middleByte == 0x11 || middleByte == 0x01;
 
-                list.Add($"{name} ({(isEnabled ? "Enabled" : "Disabled")})");
-            }
+                return $"{name} ({(isEnabled ? "Enabled" : "Disabled")})";
+            }, @"root\SecurityCenter2");
 
             if (list.Count > 0) return string.Join(", ", list);
         }
@@ -93,11 +91,7 @@ public class SecurityPrivacyEngine
         try
         {
             // Query BitLocker status via WMI
-            using var searcher = new ManagementObjectSearcher(@"root\cimv2\Security\MicrosoftVolumeEncryption", "SELECT DriveLetter, ProtectionStatus FROM Win32_EncryptableVolume");
-            using var collection = searcher.Get();
-            var list = new List<string>();
-
-            foreach (var obj in collection)
+            var list = WmiHelper.Query("SELECT DriveLetter, ProtectionStatus FROM Win32_EncryptableVolume", obj =>
             {
                 string letter = obj["DriveLetter"]?.ToString() ?? "";
                 uint status = Convert.ToUInt32(obj["ProtectionStatus"]);
@@ -107,11 +101,11 @@ public class SecurityPrivacyEngine
                     1 => "On",
                     _ => "Unknown"
                 };
-                if (!string.IsNullOrEmpty(letter))
-                {
-                    list.Add($"{letter} ({statusStr})");
-                }
-            }
+                return new { Letter = letter, StatusStr = statusStr };
+            }, @"root\cimv2\Security\MicrosoftVolumeEncryption")
+            .Where(x => !string.IsNullOrEmpty(x.Letter))
+            .Select(x => $"{x.Letter} ({x.StatusStr})")
+            .ToList();
 
             if (list.Count > 0) return string.Join(", ", list);
         }
@@ -258,8 +252,14 @@ public class SecurityPrivacyEngine
         {
             if (OpenClipboard(IntPtr.Zero))
             {
-                EmptyClipboard();
-                CloseClipboard();
+                try
+                {
+                    EmptyClipboard();
+                }
+                finally
+                {
+                    CloseClipboard();
+                }
                 Database.DbManager.LogAction("Cleared Clipboard History", "Privacy Center", "Success");
             }
         }

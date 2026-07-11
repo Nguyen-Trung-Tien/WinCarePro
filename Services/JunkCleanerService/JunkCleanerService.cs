@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using WinCarePro.Models;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Engines;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro.Services.Implementations;
 
@@ -14,9 +15,13 @@ public class JunkCleanerService : IJunkCleanerService
     public event Action<string>? ProgressMessage;
     public event Action<int>? ProgressChanged;
 
-    public JunkCleanerService()
+    public JunkCleanerService() : this(App.Services?.GetService<JunkCleanerEngine>() ?? new JunkCleanerEngine())
     {
-        _engine = new JunkCleanerEngine();
+    }
+
+    public JunkCleanerService(JunkCleanerEngine engine)
+    {
+        _engine = engine;
         _engine.ProgressMessage += msg => ProgressMessage?.Invoke(msg);
         _engine.ProgressChanged += pct => ProgressChanged?.Invoke(pct);
     }

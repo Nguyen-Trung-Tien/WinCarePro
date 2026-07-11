@@ -62,6 +62,7 @@ public sealed partial class ProcessPage : Page
 
     public ProcessPage()
     {
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = App.Services.GetRequiredService<ProcessViewModel>();
         InitializeComponent();
         this.DataContext = ViewModel;

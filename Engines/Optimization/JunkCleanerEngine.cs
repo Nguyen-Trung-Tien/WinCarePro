@@ -93,14 +93,11 @@ public class JunkCleanerEngine
         {
             if (!Directory.Exists(path)) return (0, 0, 0, 0, fileItems);
 
-            // Fix: EnumerateFiles() streamó từng file thay vì tải toàn bộ dậnh sách trước
-            // → Có thể cancel giữa chừng, không block thread dài
             try
             {
                 foreach (var file in Directory.EnumerateFiles(path, searchPattern))
                 {
                     token.ThrowIfCancellationRequested();
-                    if (fileItems.Count >= maxFiles) break; // giới hạn để tránh OOM
                     try
                     {
                         var info = new FileInfo(file);
@@ -108,7 +105,10 @@ public class JunkCleanerEngine
                         bytes += size;
                         cleanableBytes += size;
                         count++;
-                        fileItems.Add(new JunkFileItem { Path = file, SizeBytes = size, IsLocked = false });
+                        if (fileItems.Count < maxFiles)
+                        {
+                            fileItems.Add(new JunkFileItem { Path = file, SizeBytes = size, IsLocked = false });
+                        }
                     }
                     catch { }
                 }
@@ -116,14 +116,13 @@ public class JunkCleanerEngine
             catch (OperationCanceledException) { throw; }
             catch { }
 
-            if (recursive && fileItems.Count < maxFiles)
+            if (recursive)
             {
                 try
                 {
                     foreach (var dir in Directory.EnumerateDirectories(path))
                     {
                         token.ThrowIfCancellationRequested();
-                        if (fileItems.Count >= maxFiles) break;
                         try
                         {
                             var dirInfo = new DirectoryInfo(dir);
@@ -132,12 +131,16 @@ public class JunkCleanerEngine
                         }
                         catch { }
 
-                        var (subBytes, subCleanable, subLocked, subCount, subFiles) = GetDirectoryDetails(dir, searchPattern, recursive, token, maxFiles - fileItems.Count);
+                        int remainingMax = Math.Max(0, maxFiles - fileItems.Count);
+                        var (subBytes, subCleanable, subLocked, subCount, subFiles) = GetDirectoryDetails(dir, searchPattern, recursive, token, remainingMax);
                         bytes += subBytes;
                         cleanableBytes += subCleanable;
                         lockedBytes += subLocked;
                         count += subCount;
-                        fileItems.AddRange(subFiles);
+                        if (fileItems.Count < maxFiles)
+                        {
+                            fileItems.AddRange(subFiles);
+                        }
                     }
                 }
                 catch (OperationCanceledException) { throw; }

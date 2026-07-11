@@ -459,7 +459,7 @@ public class SystemOptimizerViewModel : ViewModelBase
         foreach (var t in Tweaks)
         {
             string translatedTarget = category.T();
-            if (category == "All" || string.Equals(t.Category, translatedTarget, StringComparison.OrdinalIgnoreCase))
+            if (category == "All" || string.Equals(t.Category, translatedTarget, StringComparison.OrdinalIgnoreCase) || string.Equals(t.Category, category, StringComparison.OrdinalIgnoreCase))
             {
                 FilteredTweaks.Add(t);
             }

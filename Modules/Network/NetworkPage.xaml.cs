@@ -11,6 +11,15 @@ public sealed partial class NetworkPage : Page
 {
     public NetworkViewModel ViewModel { get; }
 
+    public static readonly DependencyProperty ShowTerminalProperty =
+        DependencyProperty.Register(nameof(ShowTerminal), typeof(bool), typeof(NetworkPage), new PropertyMetadata(false));
+
+    public bool ShowTerminal
+    {
+        get => (bool)GetValue(ShowTerminalProperty);
+        set => SetValue(ShowTerminalProperty, value);
+    }
+
     public NetworkPage()
     {
         ViewModel = App.Services?.GetService<NetworkViewModel>() ?? new NetworkViewModel();
@@ -85,17 +94,26 @@ public sealed partial class NetworkPage : Page
 
     private async void OnPingClick(object sender, RoutedEventArgs e)
     {
+        ShowTerminal = true;
         await ViewModel.RunPingTestAsync();
     }
 
     private async void OnTraceClick(object sender, RoutedEventArgs e)
     {
+        ShowTerminal = true;
         await ViewModel.RunTracerouteAsync();
     }
 
     private async void OnDnsLookupClick(object sender, RoutedEventArgs e)
     {
+        ShowTerminal = true;
         await ViewModel.RunDnsLookupAsync();
+    }
+
+    private async void OnScanPortsClick(object sender, RoutedEventArgs e)
+    {
+        ShowTerminal = true;
+        await ViewModel.RunPortScanAsync();
     }
 
     private async void OnSpeedTestClick(object sender, RoutedEventArgs e)
@@ -107,6 +125,7 @@ public sealed partial class NetworkPage : Page
     {
         if (sender is Button btn && btn.Tag is string op)
         {
+            ShowTerminal = true;
             await ViewModel.RunRepairOperationAsync(op);
         }
     }

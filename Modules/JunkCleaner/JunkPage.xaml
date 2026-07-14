@@ -12,10 +12,10 @@
     <Grid Padding="24">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 800px -->
+                <!-- Wide Layout: Viewport Width >= 1100px -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="800" />
+                        <AdaptiveTrigger MinWindowWidth="1100" />
                     </VisualState.StateTriggers>
                 </VisualState>
                 <!-- Narrow Layout: Viewport Width < 800px -->
@@ -332,8 +332,24 @@
                     </Grid>
                 </Border>
 
-                <!-- STATE 3: Progress (Visible during scanning or cleaning) -->
-                <Grid Visibility="{x:Bind GetProgressVisibility(ViewModel.IsScanning, ViewModel.IsCleaning), Mode=OneWay}">
+                <!-- STATE 3: Progress (Visible during scanning or cleaning) — smooth fade in/out -->
+                <Grid x:Name="ProgressOverlayGrid" Visibility="Collapsed" Opacity="0">
+                    <Grid.Resources>
+                        <Storyboard x:Name="FadeInProgress">
+                            <DoubleAnimation Storyboard.TargetName="ProgressOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
+                                <DoubleAnimation.EasingFunction>
+                                    <CubicEase EasingMode="EaseOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                        <Storyboard x:Name="FadeOutProgress" Completed="FadeOutProgress_Completed">
+                            <DoubleAnimation Storyboard.TargetName="ProgressOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.3">
+                                <DoubleAnimation.EasingFunction>
+                                    <CubicEase EasingMode="EaseOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </Grid.Resources>
                     <Border Style="{StaticResource ModernCardStyle}" Padding="24" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="12,0">
                         <StackPanel Spacing="20" HorizontalAlignment="Center">
                             <TextBlock Text="Cleanup Progress" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" />

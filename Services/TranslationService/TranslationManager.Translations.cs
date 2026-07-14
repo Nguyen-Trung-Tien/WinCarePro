@@ -67,6 +67,7 @@ public partial class TranslationManager
         _translations["Status: Optimizing - Applying Speed & UI Tweaks..."] = "Trạng thái: Đang tối ưu - Áp dụng tinh chỉnh giao diện & tốc độ...";
         _translations["Optimization Complete! System is fully optimized."] = "Tối ưu hóa hoàn tất! Hệ thống đã được tối ưu hóa hoàn toàn.";
         _translations["PC Health Secured (RAM Boosted, Junk Cleaned)"] = "Sức khỏe PC An toàn (Đã tối ưu RAM, dọn tệp rác)";
+        _translations["Restart is recommended to fully apply system tweaks."] = "Khuyến nghị khởi động lại máy tính để áp dụng hoàn toàn các tinh chỉnh hệ thống.";
         _translations["Connected"] = "Đã kết nối";
         _translations["Disconnected"] = "Mất kết nối";
         _translations["Optimized"] = "Đã tối ưu";
@@ -709,7 +710,7 @@ public partial class TranslationManager
         _translations["Packet Loss"] = "Mất gói tin";
         _translations["Internet Speed Test"] = "Kiểm tra tốc độ Internet";
         _translations["Test Speed"] = "Kiểm tra tốc độ";
-        _translations["Diagnostics Terminal"] = "Bảng điều khiển chẩn đoán";
+        _translations["Diagnostics Terminal"] = "Bảng điều khiển";
         _translations["Enter Domain or IP (e.g. google.com)"] = "Nhập tên miền hoặc IP (Ví dụ: google.com)";
         _translations["Ping"] = "Ping";
         _translations["Trace"] = "Trace";
@@ -1512,7 +1513,7 @@ public partial class TranslationManager
         _translations["Diagnostics Trace Log Reader"] = "Trình đọc nhật ký theo dõi chẩn đoán";
         _translations["Real-time application framework execution events."] = "Các sự kiện thực thi framework ứng dụng theo thời gian thực.";
         _translations["System Optimizer & Security Shield"] = "Tối ưu hóa hệ thống & Khiên bảo mật";
-        _translations["Version 3.4.3 (Stable Release)"] = "Phiên bản 3.4.3 (Bản ổn định)";
+        _translations["Version 3.4.4 (Stable Release)"] = "Phiên bản 3.4.4 (Bản ổn định)";
         _translations["Check for Updates Now"] = "Kiểm tra cập nhật ngay";
         _translations["Purge SQLite Activity History Logs"] = "Xóa nhật ký hoạt động SQLite";
         _translations["Wipe Saved Diagnostic Report Files"] = "Xóa tệp báo cáo chẩn đoán đã lưu";
@@ -1578,7 +1579,7 @@ public partial class TranslationManager
         _translations["Tiếng Việt"] = "Tiếng Việt";
         _translations["v3.4.0"] = "v3.4.0";
         _translations["v3.4.1"] = "v3.4.1";
-        _translations["v3.4.3"] = "v3.4.3";
+        _translations["v3.4.4"] = "v3.4.4";
         _translations["TXT"] = "TXT";
         _translations["JSON"] = "JSON";
         _translations["CSV"] = "CSV";
@@ -1588,5 +1589,12 @@ public partial class TranslationManager
         _translations["https://github.com/Nguyen-Trung-Tien/WinCarePro"] = "https://github.com/Nguyen-Trung-Tien/WinCarePro";
         _translations["85%."] = "85%.";
         _translations["•"] = "•";
+
+        // --- Tooltips for Settings ---
+        _translations["Receive early updates with new features before public release (may contain bugs)."] = "Nhận các bản cập nhật sớm có tính năng mới trước khi phát hành chính thức (có thể chứa lỗi).";
+        _translations["Runs a background worker thread to poll CPU/GPU temperature and loading metrics."] = "Chạy một luồng xử lý ngầm để truy vấn nhiệt độ và mức tải của CPU/GPU.";
+        _translations["Saves a system restore point so you can roll back changes if optimizing causes issues."] = "Lưu điểm khôi phục hệ thống để bạn có thể quay lại nếu việc tối ưu hóa gây ra lỗi.";
+        _translations["Automatically backs up HKCU and modified HKLM keys before tweaking registry settings."] = "Tự động sao lưu nhánh HKCU và các khóa HKLM đã sửa đổi trước khi tinh chỉnh registry.";
+        _translations["Uses heuristic rules to automatically attempt fixing found system issues without user confirmation."] = "Sử dụng các quy tắc tự tìm kiếm để tự động sửa chữa các sự cố hệ thống mà không cần xác nhận.";
     }
 }

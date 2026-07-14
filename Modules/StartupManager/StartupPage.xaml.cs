@@ -48,6 +48,16 @@ public sealed partial class StartupPage : Page
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
 
+        ViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(ViewModel.IsLoading))
+            {
+                UpdateLoadingOverlayState();
+            }
+        };
+
+        this.Loaded += (s, e) => UpdateLoadingOverlayState();
+
         this.SizeChanged += (s, e) =>
         {
             bool isWide = e.NewSize.Width >= 800;
@@ -285,4 +295,27 @@ public sealed partial class StartupPage : Page
     public string FormatDateTime(DateTime? dt) => dt.HasValue ? dt.Value.ToString("yyyy-MM-dd HH:mm") : "Never".T();
 
     internal bool IsNot(bool val) => !val;
+
+    private void UpdateLoadingOverlayState()
+    {
+        if (LoadingOverlayGrid == null || FadeInLoading == null || FadeOutLoading == null) return;
+
+        if (ViewModel.IsLoading)
+        {
+            LoadingOverlayGrid.Visibility = Visibility.Visible;
+            FadeInLoading.Begin();
+        }
+        else
+        {
+            FadeOutLoading.Begin();
+        }
+    }
+
+    private void FadeOutLoading_Completed(object? sender, object e)
+    {
+        if (!ViewModel.IsLoading && LoadingOverlayGrid != null)
+        {
+            LoadingOverlayGrid.Visibility = Visibility.Collapsed;
+        }
+    }
 }

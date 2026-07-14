@@ -136,7 +136,7 @@
                             
                             <ToggleSwitch x:Name="AutoUpdateToggle" Toggled="OnSettingsChanged" Header="Check for updates automatically in the background" IsOn="True" CornerRadius="4" FontSize="12.5"/>
                             <ToggleSwitch x:Name="AutoInstallUpdatesToggle" Toggled="OnSettingsChanged" Header="Auto download &amp; install updates silently (Requires background check)" IsOn="False" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch x:Name="BetaUpdatesToggle" Toggled="OnSettingsChanged" Header="Enroll in the pre-release channel (Beta updates)" IsOn="False" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="BetaUpdatesToggle" Toggled="OnSettingsChanged" Header="Enroll in the pre-release channel (Beta updates)" IsOn="False" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Receive early updates with new features before public release (may contain bugs)."/>
 
                             <MenuFlyoutSeparator />
 
@@ -237,17 +237,35 @@
 
                             <TextBlock Text="Window Accent Colors Palette" FontSize="13" FontWeight="Bold" />
                             <StackPanel Orientation="Horizontal" Spacing="12" x:Name="AccentSelectorPanel">
-                                <Ellipse x:Name="AccentDefault" Width="28" Height="28" Fill="#FF7F56D9" PointerPressed="OnAccentClick" Tag="Default"/>
-                                <Ellipse x:Name="AccentGreen" Width="28" Height="28" Fill="#FF10B981" PointerPressed="OnAccentClick" Tag="Green"/>
-                                <Ellipse x:Name="AccentPurple" Width="28" Height="28" Fill="#FF8B5CF6" PointerPressed="OnAccentClick" Tag="Purple"/>
-                                <Ellipse x:Name="AccentPink" Width="28" Height="28" Fill="#FFEC4899" PointerPressed="OnAccentClick" Tag="Pink"/>
-                                <Ellipse x:Name="AccentAmber" Width="28" Height="28" Fill="#FFF59E0B" PointerPressed="OnAccentClick" Tag="Amber"/>
+                                <Grid Width="28" Height="28" PointerPressed="OnAccentClick" Tag="Default" Background="Transparent">
+                                    <Ellipse x:Name="AccentDefault" Width="28" Height="28" Fill="#FF7F56D9"/>
+                                    <FontIcon x:Name="CheckDefault" Glyph="&#xE73E;" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                </Grid>
+                                <Grid Width="28" Height="28" PointerPressed="OnAccentClick" Tag="Green" Background="Transparent">
+                                    <Ellipse x:Name="AccentGreen" Width="28" Height="28" Fill="#FF10B981"/>
+                                    <FontIcon x:Name="CheckGreen" Glyph="&#xE73E;" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                </Grid>
+                                <Grid Width="28" Height="28" PointerPressed="OnAccentClick" Tag="Purple" Background="Transparent">
+                                    <Ellipse x:Name="AccentPurple" Width="28" Height="28" Fill="#FF8B5CF6"/>
+                                    <FontIcon x:Name="CheckPurple" Glyph="&#xE73E;" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                </Grid>
+                                <Grid Width="28" Height="28" PointerPressed="OnAccentClick" Tag="Pink" Background="Transparent">
+                                    <Ellipse x:Name="AccentPink" Width="28" Height="28" Fill="#FFEC4899"/>
+                                    <FontIcon x:Name="CheckPink" Glyph="&#xE73E;" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                </Grid>
+                                <Grid Width="28" Height="28" PointerPressed="OnAccentClick" Tag="Amber" Background="Transparent">
+                                    <Ellipse x:Name="AccentAmber" Width="28" Height="28" Fill="#FFF59E0B"/>
+                                    <FontIcon x:Name="CheckAmber" Glyph="&#xE73E;" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                </Grid>
                             </StackPanel>
 
                             <MenuFlyoutSeparator />
 
                             <StackPanel Spacing="6">
-                                <TextBlock Text="Mica Acrylic Background Transparency Level" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <Grid Width="300" HorizontalAlignment="Left">
+                                    <TextBlock Text="Mica Acrylic Background Transparency Level" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock x:Name="TransparencyValueLabel" Text="80%" FontSize="12.5" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                </Grid>
                                 <Slider x:Name="TransparencySlider" ValueChanged="OnTransparencyChanged" Minimum="0" Maximum="100" Value="80" Width="300" HorizontalAlignment="Left"/>
                             </StackPanel>
 
@@ -331,7 +349,7 @@
                                 </ComboBox>
                             </StackPanel>
 
-                            <ToggleSwitch x:Name="EnableHardwareSensorsToggle" Toggled="OnSettingsChanged" Header="Enable continuous low-overhead hardware sensors scanning thread" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="EnableHardwareSensorsToggle" Toggled="OnSettingsChanged" Header="Enable continuous low-overhead hardware sensors scanning thread" IsOn="True" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Runs a background worker thread to poll CPU/GPU temperature and loading metrics."/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -342,8 +360,8 @@
                     
                     <Border Style="{StaticResource ModernCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
-                            <ToggleSwitch x:Name="CreateRestorePointToggle" Toggled="OnSettingsChanged" Header="Automatically create a System Restore Point before major updates" IsOn="True" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch x:Name="BackupRegistryToggle" Toggled="OnSettingsChanged" Header="Automatically backup system registry hive partitions" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="CreateRestorePointToggle" Toggled="OnSettingsChanged" Header="Automatically create a System Restore Point before major updates" IsOn="True" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Saves a system restore point so you can roll back changes if optimizing causes issues."/>
+                            <ToggleSwitch x:Name="BackupRegistryToggle" Toggled="OnSettingsChanged" Header="Automatically backup system registry hive partitions" IsOn="True" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Automatically backs up HKCU and modified HKLM keys before tweaking registry settings."/>
                             
                             <StackPanel Spacing="8">
                                 <TextBlock Text="Modification Confirmation Alerts Level" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
@@ -372,30 +390,10 @@
 
                             <MenuFlyoutSeparator />
 
-                            <ToggleSwitch x:Name="EnableExperimentalAiToggle" Toggled="OnSettingsChanged" Header="Enable experimental AI diagnostics auto-remediations (Pre-release)" CornerRadius="4" FontSize="12.5"/>
+                            <ToggleSwitch x:Name="EnableExperimentalAiToggle" Toggled="OnSettingsChanged" Header="Enable experimental AI diagnostics auto-remediations (Pre-release)" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Uses heuristic rules to automatically attempt fixing found system issues without user confirmation."/>
                         </StackPanel>
                     </Border>
                     
-                    <!-- Advanced diagnostic logs pane -->
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
-                        <StackPanel Spacing="12">
-                            <TextBlock Text="Diagnostics Trace Log Reader" FontSize="14" FontWeight="Bold" />
-                            <TextBlock Text="Real-time application framework execution events." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            <Grid ColumnSpacing="8" Margin="0,4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Button Content="All Logs" Click="OnFilterTraceAllClick" FontSize="11" Padding="12,4" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" />
-                                <Button Grid.Column="1" Content="Warnings" Click="OnFilterTraceWarnClick" FontSize="11" Padding="12,4"/>
-                                <Button Grid.Column="2" Content="Errors" Click="OnFilterTraceErrClick" FontSize="11" Padding="12,4"/>
-                                <Button Grid.Column="3" Content="Clear Console" Click="OnClearTraceClick" HorizontalAlignment="Right" FontSize="11" Padding="12,4"/>
-                            </Grid>
-                            <TextBox x:Name="TraceLogTextBox" Height="180" Style="{StaticResource DarkTerminalStyle}" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-                        </StackPanel>
-                    </Border>
                 </StackPanel>
 
                 <!-- Section 7: About & Developer Info -->
@@ -406,13 +404,13 @@
                         <StackPanel Spacing="16">
                             <!-- Logo and name -->
                             <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Border Width="64" Height="64" Background="{StaticResource PrimaryAccentGradient}" CornerRadius="16" VerticalAlignment="Center">
-                                    <FontIcon Glyph="&#xE909;" FontSize="32" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <Border Width="64" Height="64" Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="16" VerticalAlignment="Center">
+                                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
                                 </Border>
                                 <StackPanel VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="WinCare Pro" FontSize="20" FontWeight="ExtraBold" />
                                     <TextBlock Text="System Optimizer &amp; Security Shield" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="Version 3.4.3 (Stable Release)" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="Version 3.4.4 (Stable Release)" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                 </StackPanel>
                             </StackPanel>
 

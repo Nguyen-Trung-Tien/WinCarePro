@@ -73,7 +73,7 @@ public sealed partial class MainWindow : Window
         this.AppWindow.Closing += AppWindow_Closing;
         this.Closed += MainWindow_Closed;
 
-        // Translate and apply theme configurations on load
+        // Handle window resizing and start async application initialization on load
         RootGrid.Loaded += (s, e) => {
             try
             {
@@ -81,23 +81,66 @@ public sealed partial class MainWindow : Window
             }
             catch { }
 
-            LoadThemeConfiguration();
-            TranslationManager.Instance.Translate(this.Content);
-            UpdateNotificationBadge();
-
-            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
-            CheckAndShowChangelog(currentVersion);
+            InitializeAppAsync();
         };
 
-        // Navigate page frame
-        RootFrame.Navigate(typeof(MainPage));
-
-        // Start live clock ticker
-        StartClockTicker();
-
-        // Initialize Suggestion Search Registry
-        PopulateSearchRegistry();
         TranslationManager.Instance.LanguageChanged += (s, e) => PopulateSearchRegistry();
+    }
+
+    private async void InitializeAppAsync()
+    {
+        try
+        {
+            // 1. Initialize SQLite Database asynchronously to prevent blocking the UI thread
+            StartupProgressText.Text = "Initializing database...".T();
+            await Task.Run(() => Database.DbManager.InitializeDatabase());
+
+            // 2. Load theme settings and transparency levels from DB
+            StartupProgressText.Text = "Loading configuration...".T();
+            LoadThemeConfiguration();
+
+            // 3. Load language setting and apply translations to window content
+            StartupProgressText.Text = "Applying translations...".T();
+            TranslationManager.Instance.LoadLanguageFromSettings();
+            TranslationManager.Instance.Translate(this.Content);
+
+            // 4. Update notification badge indicator
+            UpdateNotificationBadge();
+
+            // 5. Index pages, actions, and settings keywords for Search bar
+            StartupProgressText.Text = "Indexing search registry...".T();
+            PopulateSearchRegistry();
+
+            // 6. Check for app changelog version bumps and trigger database optimization maintenance in background
+            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
+            CheckAndShowChangelog(currentVersion);
+            _ = Task.Run(() => Database.DbManager.RunDatabaseMaintenance());
+
+            StartupProgressText.Text = "Starting WinCare Pro...".T();
+            await Task.Delay(400); // Visual padding delay
+
+            // 7. Navigate Frame to MainPage
+            RootFrame.Navigate(typeof(MainPage));
+
+            // 8. Start Clock Ticker
+            StartClockTicker();
+
+            // 9. Play splash fade out animation
+            FadeOutStartupOverlay.Begin();
+        }
+        catch (Exception ex)
+        {
+            // Fallback: Ensure splash vanishes and app is navigable if anything throws
+            StartupOverlayGrid.Visibility = Visibility.Collapsed;
+            RootFrame.Navigate(typeof(MainPage));
+            StartClockTicker();
+            Database.DbManager.LogAction($"Startup failed: {ex.Message}", "System", "Failed");
+        }
+    }
+
+    private void FadeOutStartupOverlay_Completed(object? sender, object e)
+    {
+        StartupOverlayGrid.Visibility = Visibility.Collapsed;
     }
 
     private void StartClockTicker()

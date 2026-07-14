@@ -239,7 +239,7 @@ public class RegistryBackupEngine
 
         try
         {
-            // We export HKCU hive (user settings) which is safe and easy, and does not require exclusive locks
+            // 1. We export HKCU hive (user settings) which is safe and easy, and does not require exclusive locks
             var psi = new ProcessStartInfo
             {
                 FileName = "reg.exe",
@@ -247,15 +247,67 @@ public class RegistryBackupEngine
                 CreateNoWindow = true,
                 UseShellExecute = false
             };
-            using var process = Process.Start(psi);
-            if (process != null)
+            bool success = false;
+            using (var process = Process.Start(psi))
             {
-                process.WaitForExit(5000);
-                bool success = process.ExitCode == 0;
-                Database.DbManager.LogAction($"Created Registry Backup: {name}", "Registry Tools", success ? "Success" : "Failed");
-                return success;
+                if (process != null)
+                {
+                    process.WaitForExit(5000);
+                    success = process.ExitCode == 0;
+                }
             }
-            return false;
+
+            // 2. Export key HKLM paths we modify and append them to the backup file
+            string[] hklmPaths = new[]
+            {
+                @"HKLM\SYSTEM\CurrentControlSet\Control\FileSystem",
+                @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile",
+                @"HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers"
+            };
+
+            foreach (var path in hklmPaths)
+            {
+                string tempFile = Path.Combine(BackupFolder, $"temp_{Guid.NewGuid():N}.reg");
+                try
+                {
+                    var psiHklm = new ProcessStartInfo
+                    {
+                        FileName = "reg.exe",
+                        Arguments = $"export \"{path}\" \"{tempFile}\" /y",
+                        CreateNoWindow = true,
+                        UseShellExecute = false
+                    };
+                    using (var proc = Process.Start(psiHklm))
+                    {
+                        if (proc != null)
+                        {
+                            proc.WaitForExit(3000);
+                            if (proc.ExitCode == 0 && File.Exists(tempFile))
+                            {
+                                var lines = File.ReadAllLines(tempFile, System.Text.Encoding.Unicode);
+                                using (var sw = new StreamWriter(backupFile, true, System.Text.Encoding.Unicode))
+                                {
+                                    sw.WriteLine();
+                                    foreach (var line in lines)
+                                    {
+                                        if (line.Trim().StartsWith("Windows Registry Editor", StringComparison.OrdinalIgnoreCase))
+                                            continue;
+                                        sw.WriteLine(line);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch { }
+                finally
+                {
+                    try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
+                }
+            }
+
+            Database.DbManager.LogAction($"Created Registry Backup: {name}", "Registry Tools", success ? "Success" : "Failed");
+            return success;
         }
         catch
         {

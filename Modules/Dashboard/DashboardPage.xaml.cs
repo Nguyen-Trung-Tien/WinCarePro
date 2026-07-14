@@ -317,6 +317,40 @@ public sealed partial class DashboardPage : Page
 
         mainPanel.Children.Add(detailsGrid);
 
+        if (summary.TweaksApplied > 0)
+        {
+            var restartWarningBorder = new Border
+            {
+                Background = new SolidColorBrush(isDark ? Windows.UI.Color.FromArgb(20, 245, 158, 11) : Windows.UI.Color.FromArgb(20, 217, 119, 6)),
+                BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(50, 245, 158, 11)),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(12),
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+
+            var warningPanel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+            var warningIcon = new FontIcon
+            {
+                Glyph = "\uE7BA",
+                FontSize = 14,
+                Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var warningText = new TextBlock
+            {
+                Text = "Restart is recommended to fully apply system tweaks.".T(),
+                FontSize = 12.5,
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Center,
+                Width = 320
+            };
+            warningPanel.Children.Add(warningIcon);
+            warningPanel.Children.Add(warningText);
+            restartWarningBorder.Child = warningPanel;
+            mainPanel.Children.Add(restartWarningBorder);
+        }
+
         ContentDialog dialog = new ContentDialog
         {
             Content = mainPanel,

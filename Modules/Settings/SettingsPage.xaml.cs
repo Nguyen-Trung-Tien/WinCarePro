@@ -19,29 +19,15 @@ namespace WinCarePro.Views;
 public sealed partial class SettingsPage : Page
 {
     private bool _loadingSettings = true; // Guard initialization events from saving settings early
-    private List<string> _traceLogs = new();
+    private Microsoft.UI.Xaml.DispatcherTimer? _saveSettingsDebounceTimer;
 
     public SettingsPage()
     {
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         
-        // Initialize mock trace logs
-        _traceLogs = new List<string>
-        {
-            "[*] System diagnostics trace initialized...".T(),
-            "[*] Registered local SQLite connection...".T(),
-            "[*] Background scheduling task parsed...".T(),
-            "[*] Telemetry sensor monitoring thread spawned...".T(),
-            "[*] Safety policies integrity check: PASS".T(),
-            "[*] No CPU bottlenecks or memory leaks detected.".T(),
-            "[!] Warning: Winget update repository has outdated packages.".T(),
-            "[*] Diagnostic log purge: waiting user input...".T()
-        };
-
         LoadSettings();
         UpdateStorageSizes();
-        PopulateTraceLogs();
 
         this.Loaded += (s, e) =>
         {
@@ -188,6 +174,28 @@ public sealed partial class SettingsPage : Page
         catch { }
     }
 
+    private void QueueSaveSettings()
+    {
+        if (_loadingSettings) return;
+
+        if (_saveSettingsDebounceTimer == null)
+        {
+            _saveSettingsDebounceTimer = new Microsoft.UI.Xaml.DispatcherTimer();
+            _saveSettingsDebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
+            _saveSettingsDebounceTimer.Tick += (s, e) =>
+            {
+                _saveSettingsDebounceTimer.Stop();
+                SaveSettings();
+            };
+        }
+        else
+        {
+            _saveSettingsDebounceTimer.Stop();
+        }
+
+        _saveSettingsDebounceTimer.Start();
+    }
+
     private void ApplyRuntimeSettings(SettingsProfile profile)
     {
         // 1. Accent color
@@ -231,6 +239,12 @@ public sealed partial class SettingsPage : Page
         AccentAmber.Stroke = null;
         AccentAmber.StrokeThickness = 0;
 
+        if (CheckDefault != null) CheckDefault.Visibility = Visibility.Collapsed;
+        if (CheckGreen != null) CheckGreen.Visibility = Visibility.Collapsed;
+        if (CheckPurple != null) CheckPurple.Visibility = Visibility.Collapsed;
+        if (CheckPink != null) CheckPink.Visibility = Visibility.Collapsed;
+        if (CheckAmber != null) CheckAmber.Visibility = Visibility.Collapsed;
+
         var selectedEllipse = (tag ?? "default").ToLower() switch
         {
             "green" => AccentGreen,
@@ -238,6 +252,15 @@ public sealed partial class SettingsPage : Page
             "pink" => AccentPink,
             "amber" => AccentAmber,
             _ => AccentDefault
+        };
+
+        var selectedCheck = (tag ?? "default").ToLower() switch
+        {
+            "green" => CheckGreen,
+            "purple" => CheckPurple,
+            "pink" => CheckPink,
+            "amber" => CheckAmber,
+            _ => CheckDefault
         };
 
         if (selectedEllipse != null)
@@ -249,6 +272,11 @@ public sealed partial class SettingsPage : Page
             }
             selectedEllipse.Stroke = new Microsoft.UI.Xaml.Media.SolidColorBrush(isDark ? Microsoft.UI.Colors.White : Microsoft.UI.Colors.DimGray);
             selectedEllipse.StrokeThickness = 2.5;
+        }
+
+        if (selectedCheck != null)
+        {
+            selectedCheck.Visibility = Visibility.Visible;
         }
     }
 
@@ -294,8 +322,19 @@ public sealed partial class SettingsPage : Page
 
     private void OnTransparencyChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
+        if (TransparencyValueLabel != null)
+        {
+            TransparencyValueLabel.Text = $"{e.NewValue:F0}%";
+        }
         if (_loadingSettings) return;
-        SaveSettings();
+
+        // Apply transparency visually in real-time
+        if (App.MainWindowInstance != null)
+        {
+            App.MainWindowInstance.ApplyTransparency(e.NewValue);
+        }
+
+        QueueSaveSettings();
     }
 
     private void OnAutoCleanupSliderChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
@@ -305,7 +344,7 @@ public sealed partial class SettingsPage : Page
             CleanupSizeLabel.Text = $"{e.NewValue:F1} GB";
         }
         if (_loadingSettings) return;
-        SaveSettings();
+        QueueSaveSettings();
     }
 
     private void OnNotificationThresholdSliderChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
@@ -315,7 +354,7 @@ public sealed partial class SettingsPage : Page
             NotificationThresholdLabel.Text = $"{e.NewValue:F0}%";
         }
         if (_loadingSettings) return;
-        SaveSettings();
+        QueueSaveSettings();
     }
 
     private void OnMaintenanceFrequencyChanged(object sender, SelectionChangedEventArgs e)
@@ -570,7 +609,13 @@ public sealed partial class SettingsPage : Page
 
     private void OnAccentClick(object sender, PointerRoutedEventArgs e)
     {
-        if (sender is Microsoft.UI.Xaml.Shapes.Ellipse ellipse && ellipse.Tag is string tag)
+        string? tag = null;
+        if (sender is FrameworkElement element)
+        {
+            tag = element.Tag?.ToString();
+        }
+
+        if (!string.IsNullOrEmpty(tag))
         {
             ApplyAccentColorSelection(tag);
             SaveSettings();
@@ -578,39 +623,7 @@ public sealed partial class SettingsPage : Page
         }
     }
 
-    // Diagnostics Logs reader
-    private void PopulateTraceLogs(string filter = "All")
-    {
-        var sb = new System.Text.StringBuilder();
-        foreach (var log in _traceLogs)
-        {
-            if (filter == "Warnings" && !log.Contains("[!]") && !log.Contains("Warning")) continue;
-            if (filter == "Errors" && !log.Contains("[Error]") && !log.Contains("Failed")) continue;
-            sb.AppendLine(log);
-        }
-        TraceLogTextBox.Text = sb.ToString();
-    }
 
-    private void OnFilterTraceAllClick(object sender, RoutedEventArgs e)
-    {
-        PopulateTraceLogs("All");
-    }
-
-    private void OnFilterTraceWarnClick(object sender, RoutedEventArgs e)
-    {
-        PopulateTraceLogs("Warnings");
-    }
-
-    private void OnFilterTraceErrClick(object sender, RoutedEventArgs e)
-    {
-        PopulateTraceLogs("Errors");
-    }
-
-    private void OnClearTraceClick(object sender, RoutedEventArgs e)
-    {
-        _traceLogs.Clear();
-        TraceLogTextBox.Text = "";
-    }
 
     private async void OnCheckUpdatesClick(object sender, RoutedEventArgs e)
     {

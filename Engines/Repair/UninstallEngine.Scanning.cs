@@ -292,15 +292,24 @@ public partial class UninstallEngine
             using var process = System.Diagnostics.Process.Start(psi);
             if (process != null)
             {
-                await process.WaitForExitAsync();
-                if (process.ExitCode == 0)
+                using var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(30));
+                try
                 {
-                    Log("Successfully uninstalled Microsoft Store package via PowerShell fallback.");
-                    return true;
+                    await process.WaitForExitAsync(cts.Token);
+                    if (process.ExitCode == 0)
+                    {
+                        Log("Successfully uninstalled Microsoft Store package via PowerShell fallback.");
+                        return true;
+                    }
+                    else
+                    {
+                        Log($"PowerShell fallback exited with code: {process.ExitCode}");
+                    }
                 }
-                else
+                catch (OperationCanceledException)
                 {
-                    Log($"PowerShell fallback exited with code: {process.ExitCode}");
+                    try { process.Kill(); } catch { }
+                    Log("PowerShell fallback uninstall timed out after 30 seconds.");
                 }
             }
         }

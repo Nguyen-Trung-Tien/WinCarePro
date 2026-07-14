@@ -12,13 +12,13 @@
     <Grid Padding="24">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 1000px -->
+                <!-- Wide Layout: Viewport Width >= 1150px -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1000" />
+                        <AdaptiveTrigger MinWindowWidth="1150" />
                     </VisualState.StateTriggers>
                 </VisualState>
-                <!-- Medium Layout: Viewport Width between 650px and 1000px -->
+                <!-- Medium Layout: Viewport Width between 650px and 1150px -->
                 <VisualState x:Name="MediumState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="650" />
@@ -37,6 +37,11 @@
                         <Setter Target="RamBoosterCard.Width" Value="350" />
                         <Setter Target="Col1.Width" Value="Auto" />
                         <Setter Target="Row1.Height" Value="*" />
+                        <Setter Target="HeaderButtons.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderButtons.(Grid.Row)" Value="1" />
+                        <Setter Target="HeaderButtons.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderButtons.HorizontalAlignment" Value="Left" />
+                        <Setter Target="HeaderButtons.Margin" Value="0,10,0,0" />
                     </VisualState.Setters>
                 </VisualState>
                 <!-- Narrow Layout: Viewport Width < 650px -->

@@ -140,7 +140,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel VerticalAlignment="Center" Spacing="4" Margin="0,0,12,0">
-                        <TextBlock Text="Smart Optimizer Insights" FontSize="12.5" FontWeight="Bold" Foreground="#FF7F56D9" />
+                        <TextBlock Text="Smart Optimizer Insights" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" />
                         <TextBlock Text="{x:Bind ViewModel.OptimizationSuggestions, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" MaxHeight="64" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="8">
@@ -235,7 +235,7 @@
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <Grid Width="30" Height="30" Margin="0,0,10,0">
                                                 <Image Source="{x:Bind IconImageSource, Mode=OneWay}" Width="30" Height="30" Stretch="Uniform" Visibility="{x:Bind HasIcon, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"/>
-                                                <FontIcon Glyph="&#xE71D;" FontSize="15" Foreground="#FF7F56D9" Visibility="{x:Bind HasIcon, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"/>
+                                                <FontIcon Glyph="&#xE71D;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}" Visibility="{x:Bind HasIcon, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"/>
                                             </Grid>
                                             <StackPanel VerticalAlignment="Center">
                                                 <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5"/>
@@ -420,10 +420,27 @@
         </Pivot>
 
         <!-- 4. Loading Overlay Indicator -->
-        <Grid Grid.Row="0" Grid.RowSpan="3" Background="#80000000" Visibility="{x:Bind ViewModel.IsLoading, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" Canvas.ZIndex="100">
+        <!-- 4. Loading Overlay Indicator — smooth fade in/out -->
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="3" Background="#90000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="100">
+            <Grid.Resources>
+                <Storyboard x:Name="FadeInLoading">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+                <Storyboard x:Name="FadeOutLoading" Completed="FadeOutLoading_Completed">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </Grid.Resources>
             <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="32,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
                 <StackPanel Spacing="16" HorizontalAlignment="Center">
-                    <ProgressRing Width="48" Height="48" IsActive="True" Foreground="#FF7F56D9" />
+                    <ProgressRing Width="48" Height="48" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" />
                     <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="13.5" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap"/>
                     <TextBlock Text="{x:Bind ViewModel.LoadingStatus, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextAlignment="Center" TextWrapping="Wrap"/>
                 </StackPanel>

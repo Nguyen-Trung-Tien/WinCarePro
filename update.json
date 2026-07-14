@@ -1,5 +1,5 @@
 {
-  "version": "3.4.3",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.3/WinCareProSetup.exe",
-  "changelog": "Cập nhật v3.4.3: Tái cấu trúc toàn diện hệ thống mã nguồn; phân tách mã nguồn thành phần giao diện, các lớp logic và mô hình dữ liệu chuyên biệt; tối ưu hóa hiệu năng các tiến trình chẩn đoán hệ thống và nâng cao khả năng bản địa hóa đa ngôn ngữ."
+  "version": "3.4.4",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.4/WinCareProSetup.exe",
+  "changelog": "Cập nhật v3.4.4: Nâng cấp cơ chế sao lưu Registry tự động xuất các khóa hệ thống quan trọng; bổ sung giới hạn thời gian chờ (Timeout 30s) gỡ cài đặt Microsoft Store qua PowerShell tránh treo ứng dụng; tối ưu hóa phản hồi giao diện Network Center trên nhiều độ phân giải màn hình; đồng bộ màu sắc chủ đề hệ thống và hoàn thiện bản dịch chi tiết."
 }

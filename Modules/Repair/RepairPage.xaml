@@ -9,6 +9,32 @@
     mc:Ignorable="d">
 
     <Grid Padding="24">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 1100px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1100" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <!-- Narrow Layout: Viewport Width < 1100px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderCol1.Width" Value="0" />
+                        <Setter Target="HeaderTitlePanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderButtonsPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="HeaderButtonsPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderButtonsPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderButtonsPanel.Margin" Value="0,12,0,0" />
+                        <Setter Target="HeaderButtonsPanel.HorizontalAlignment" Value="Left" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Header Section -->
             <RowDefinition Height="Auto" /> <!-- Stats Banner Section -->
@@ -16,16 +42,26 @@
         </Grid.RowDefinitions>
 
         <!-- 1. Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid Grid.Row="0" x:Name="HeaderGrid" Margin="0,0,0,16">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="HeaderRow0" Height="Auto" />
+                <RowDefinition x:Name="HeaderRow1" Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition x:Name="HeaderCol0" Width="*" />
+                <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Spacing="4">
+            <StackPanel x:Name="HeaderTitlePanel" Grid.Column="0" Grid.Row="0" Spacing="4">
                 <TextBlock Text="System Repair Center" FontSize="26" FontWeight="ExtraBold" CharacterSpacing="-0.5" />
                 <TextBlock Text="Diagnose registry policies, check Windows components integrity, fix core services, and restore network settings." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <StackPanel x:Name="HeaderButtonsPanel" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <ToggleButton IsChecked="{x:Bind ShowConsole, Mode=TwoWay}" CornerRadius="8" Padding="16,8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE756;" FontSize="13" />
+                        <TextBlock Text="Console Logs" VerticalAlignment="Center" />
+                    </StackPanel>
+                </ToggleButton>
                 <Button Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanDiagnosticsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold">
                     <Button.ContentTemplate>
                         <DataTemplate>
@@ -125,8 +161,8 @@
         <!-- 3. Main Content Area -->
         <Grid Grid.Row="2" ColumnSpacing="20">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.2*" />
-                <ColumnDefinition Width="0.8*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <!-- Left: Diagnostics Actions -->
@@ -328,7 +364,7 @@
             </ScrollViewer>
 
             <!-- Right: Terminal Console Output -->
-            <Grid Grid.Column="1" RowSpacing="12">
+            <Grid Grid.Column="1" Width="380" RowSpacing="12" Visibility="{x:Bind ShowConsole, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />

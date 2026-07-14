@@ -2,34 +2,33 @@
 
 ---
 
-## 🚀 WinCare Pro v3.4.3 — Tái cấu trúc toàn diện & Tối ưu hóa kiến trúc mã nguồn
+## 🚀 WinCare Pro v3.4.4 — Nâng cấp hệ thống & Đồng bộ trải nghiệm người dùng
 
-> **Phát hành:** 11/07/2026 · **Loại:** Bản cập nhật kiến trúc & Tối ưu hóa hiệu năng (Refactoring & Architecture Update) · **Phiên bản trước:** v3.4.2 (Đã loại bỏ)
+> **Phát hành:** 14/07/2026 · **Loại:** Bản cập nhật tính năng & Ổn định hệ thống (Feature & Stability Update) · **Phiên bản trước:** v3.4.3 (Đã loại bỏ)
 
-Bản cập nhật **v3.4.3** tập trung vào việc tái cấu trúc cấu trúc mã nguồn toàn diện của WinCare Pro, phân tách cấu trúc tệp tin lớn thành các lớp phân phần (partial classes) và chuẩn hóa dữ liệu mô hình (Data Models) riêng biệt. Điều này giúp nâng cao đáng kể khả năng bảo trì, tốc độ phản hồi chẩn đoán hệ thống và sự ổn định của ứng dụng.
+Bản cập nhật **v3.4.4** tập trung vào việc nâng cấp trải nghiệm người dùng, cải tiến cơ chế sao lưu Registry để đảm bảo an toàn tối đa cho hệ thống, tối ưu hóa giao diện Trung tâm mạng (Network Center) linh hoạt theo kích thước hiển thị, và nâng cao độ tin cậy của quá trình gỡ cài đặt ứng dụng Microsoft Store.
 
 ---
 
-### ✨ Các cải tiến nổi bật trong phiên bản v3.4.3 (Key Features)
+### ✨ Các cải tiến nổi bật trong phiên bản v3.4.4 (Key Features)
 
-#### 1. 🏗️ Tái cấu trúc và Mô-đun hóa mã nguồn (Comprehensive Codebase Refactoring)
-* **Tách nhỏ cấu trúc dữ liệu:** Xóa bỏ tệp tin nguyên khối `DataModels.cs` lỗi thời và chuyển đổi sang các mô hình dữ liệu chuyên biệt dưới thư mục `Core/Models/` (bao gồm `ProcessInfo`, `HardwareSpecs`, `JunkModels`, `DriverInfo`, `SoftwareUpdateInfo`...).
-* **Phân rã ViewModels & Code-behind:** Phân chia các lớp giao diện lớn như `MainWindow.xaml.cs`, `DashboardViewModel.cs`, và `NetworkViewModel.cs` thành các tệp lớp phân phần (partial class) để tối ưu hóa quản lý mã nguồn.
-* **Tách hệ thống bản dịch:** Di chuyển toàn bộ dữ liệu bản dịch lớn ra khỏi lớp logic cốt lõi của `TranslationManager.cs` sang tệp cấu hình bản dịch chuyên dụng `TranslationManager.Translations.cs`.
+#### 1. 🛡️ Nâng cấp Động cơ Sao lưu Registry (Registry Backup Engine)
+* **Xuất thêm các khóa hệ thống HKLM:** Ngoài việc sao lưu nhánh HKCU an toàn, hệ thống hiện tự động xuất và bổ sung thêm các khóa Registry HKLM quan trọng liên quan đến tinh chỉnh hệ thống (như FileSystem, SystemProfile, GraphicsDrivers) vào file sao lưu chung, giúp quá trình khôi phục đầy đủ hơn.
 
-#### 2. ⚡ Tối ưu hóa & Chuyên biệt hóa các Động cơ giám sát (Engine & Performance Optimizations)
-* **Giám sát Mạng (Network Engine):** Tách biệt logic và bổ sung các mô-đun mới như đo tốc độ internet (`NetworkEngine.SpeedTest.cs`), chẩn đoán sửa lỗi DNS (`NetworkEngine.DnsRepair.cs`, `NetworkEngine.DnsBenchmark.cs`), và sửa lỗi card mạng (`NetworkEngine.Repair.cs`).
-* **Trình gỡ cài đặt ứng dụng (Uninstall Engine):** Phân mảnh mã nguồn gỡ cài đặt thành các phần quét ứng dụng nâng cao (`UninstallEngine.Scanning.cs`) và xử lý tàn dư tập tin (`UninstallEngine.Leftovers.cs`).
-* **Tiện ích hệ thống (WmiHelper):** Bổ sung tiện ích `WmiHelper.cs` giúp việc truy vấn cơ sở dữ liệu WMI của Windows diễn ra mượt mà và an toàn hơn, hạn chế tối đa rò rỉ tài nguyên hệ thống.
+#### 2. ⚡ Tối ưu hóa Trình gỡ cài đặt (Uninstall Engine)
+* **Giới hạn thời gian chờ (Timeout):** Bổ sung giới hạn thời gian chờ 30 giây cho tiến trình PowerShell khi gỡ cài đặt ứng dụng Microsoft Store, ngăn chặn hoàn toàn hiện tượng ứng dụng bị treo vô hạn nếu hệ thống phản hồi chậm hoặc tiến trình ngầm bị kẹt.
 
-#### 3. 🛡️ Tối ưu hóa bộ nhớ và độ ổn định (Stability & Memory Cleanup)
-* **Dọn dẹp tài nguyên:** Cải tiến hiệu suất truy vấn tiến trình nền và giải phóng tài nguyên CPU/RAM khi chuyển đổi giữa các tab chức năng.
-* **Cải thiện Logging & Cache:** Nâng cấp cơ chế ghi nhật ký hoạt động (`AuditLogService.cs`) và bộ nhớ đệm biểu tượng ứng dụng (`IconCacheService.cs`).
+#### 3. 🎨 Đồng bộ hóa Chủ đề & Tối ưu hóa giao diện (Theme & UI Improvements)
+* **Đồng bộ hóa màu sắc chủ đề:** Cập nhật lớp `ThemeManager` để tự động đổi màu đồng bộ các cọ vẽ màu đơn (`PrimaryAccentBrush`, `PrimaryAccentLightBrush`, `PrimaryAccentBorderBrush`) khi người dùng thay đổi chủ đề hoặc màu chủ đạo của ứng dụng.
+* **Tối ưu hóa bố cục Trung tâm Mạng:** Tinh chỉnh thiết kế của trang Network Page để tự động thay đổi cách sắp xếp các nút bấm, ô kiểm tra trên các độ phân giải màn hình khác nhau (Medium và Narrow layout), tránh bị che khuất hoặc tràn văn bản bằng thuộc tính rút gọn thông minh (`TextTrimming="CharacterEllipsis"`).
+
+#### 4. 🌐 Cải thiện Bản dịch (Localization Update)
+* **Bổ sung dịch thuật mô tả chi tiết:** Thêm các bản dịch và chú giải công cụ (Tooltip) tiếng Việt đầy đủ cho các tùy chọn cài đặt nâng cao trong trang Settings, giúp người dùng dễ dàng hiểu rõ tính năng trước khi áp dụng.
 
 ---
 
 ### 🩹 Chi tiết kỹ thuật & Thay đổi cấu hình
-* Cập nhật phiên bản toàn hệ thống lên `3.4.3` tại các tệp tin cấu hình (`WinCarePro.csproj`, `Package.appxmanifest`, `update.json`, `MainWindow.xaml`, `setup.iss`).
+* Cập nhật phiên bản toàn hệ thống lên `3.4.4` tại các tệp tin cấu hình (`WinCarePro.csproj`, `Package.appxmanifest`, `update.json`, `MainWindow.xaml`, `setup.iss`).
 
 ---
 <div align="center">

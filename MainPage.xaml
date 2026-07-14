@@ -42,7 +42,7 @@
                 <!-- Dashboard View -->
                 <NavigationViewItem Content="Dashboard" Tag="Dashboard">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE80F;" Foreground="#FF7F56D9" />
+                        <FontIcon Glyph="&#xE80F;" Foreground="{StaticResource PrimaryAccentBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 

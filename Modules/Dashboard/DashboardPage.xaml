@@ -124,7 +124,7 @@
                                 </StackPanel>
                                 
                                 <StackPanel Visibility="{x:Bind GetProgressVisibility(ViewModel.IsScanning), Mode=OneWay}" Spacing="6" Margin="0,4,0,0">
-                                    <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="6" Foreground="{ThemeResource SystemAccentColor}" CornerRadius="3" />
+                                    <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="6" Foreground="{StaticResource PrimaryAccentGradient}" CornerRadius="3" />
                                 </StackPanel>
                                 
                                 <TextBlock Text="{x:Bind ViewModel.ScanStatus, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,2,0,0"/>

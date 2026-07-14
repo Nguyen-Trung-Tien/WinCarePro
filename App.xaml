@@ -17,6 +17,10 @@
                 <GradientStop Color="#FF3B82F6" Offset="1" />
             </LinearGradientBrush>
 
+            <SolidColorBrush x:Key="PrimaryAccentBrush" Color="#FF7F56D9" />
+            <SolidColorBrush x:Key="PrimaryAccentLightBrush" Color="#157F56D9" />
+            <SolidColorBrush x:Key="PrimaryAccentBorderBrush" Color="#447F56D9" />
+
             <LinearGradientBrush x:Key="GlassBorderBrush" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#25FFFFFF" Offset="0" />
                 <GradientStop Color="#05FFFFFF" Offset="0.5" />
@@ -76,7 +80,7 @@
                 <Setter Property="Background" Value="{ThemeResource AcrylicInAppFillColorDefaultBrush}" />
                 <Setter Property="BorderBrush" Value="{StaticResource GlassBorderBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="CornerRadius" Value="16" />
             </Style>
 
             <!-- v3.0 Nova — Quick Stat Card (compact info chip) -->
@@ -119,7 +123,7 @@
                 <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                 <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
                 <Setter Property="BorderThickness" Value="2" />
-                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="CornerRadius" Value="16" />
             </Style>
 
             <Style x:Key="DarkTerminalStyle" TargetType="TextBox">

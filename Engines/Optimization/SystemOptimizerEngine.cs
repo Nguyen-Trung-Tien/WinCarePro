@@ -530,11 +530,12 @@ public class SystemOptimizerEngine
             {
                 key.SetValue(valueName, value, valueKind);
             }
+            Log($"Successfully wrote registry value: {rootKey}\\{subKeyPath} -> {valueName} = {value}");
             return true;
         }
         catch (Exception ex)
         {
-            Log($"Registry write error: {ex.Message}");
+            Log($"Registry write error for {rootKey}\\{subKeyPath}\\{valueName}: {ex.Message}");
             return false;
         }
     }

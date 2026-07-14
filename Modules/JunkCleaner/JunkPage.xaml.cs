@@ -28,6 +28,16 @@ public sealed partial class JunkPage : Page
         ViewModel = App.Services.GetRequiredService<JunkViewModel>();
         this.DataContext = ViewModel;
 
+        ViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(ViewModel.IsScanning) || e.PropertyName == nameof(ViewModel.IsCleaning))
+            {
+                UpdateProgressOverlayState();
+            }
+        };
+
+        this.Loaded += (s, e) => UpdateProgressOverlayState();
+
         this.SizeChanged += (s, e) =>
         {
             bool isWide = e.NewSize.Width >= 800;
@@ -148,5 +158,30 @@ public sealed partial class JunkPage : Page
     private async void OnCloseAppsClick(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         await ViewModel.CloseLockingAppsAsync();
+    }
+
+    private void UpdateProgressOverlayState()
+    {
+        if (ProgressOverlayGrid == null || FadeInProgress == null || FadeOutProgress == null) return;
+
+        bool active = ViewModel.IsScanning || ViewModel.IsCleaning;
+        if (active)
+        {
+            ProgressOverlayGrid.Visibility = Visibility.Visible;
+            FadeInProgress.Begin();
+        }
+        else
+        {
+            FadeOutProgress.Begin();
+        }
+    }
+
+    private void FadeOutProgress_Completed(object? sender, object e)
+    {
+        bool active = ViewModel.IsScanning || ViewModel.IsCleaning;
+        if (!active && ProgressOverlayGrid != null)
+        {
+            ProgressOverlayGrid.Visibility = Visibility.Collapsed;
+        }
     }
 }

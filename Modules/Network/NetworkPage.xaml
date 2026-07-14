@@ -38,6 +38,25 @@
                         <Setter Target="QualDiagCard6.(Grid.Row)" Value="1" />
                         <Setter Target="QualDiagCard6.(Grid.Column)" Value="4" />
                         <Setter Target="QualDiagCard6.(Grid.ColumnSpan)" Value="2" />
+
+                        <!-- Header Buttons Stacking for Medium Layout -->
+                        <Setter Target="HeaderCol0.Width" Value="*" />
+                        <Setter Target="HeaderCol1.Width" Value="0" />
+                        <Setter Target="HeaderTextPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="RefreshBtn.(Grid.Row)" Value="1" />
+                        <Setter Target="RefreshBtn.(Grid.Column)" Value="0" />
+                        <Setter Target="RefreshBtn.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="RefreshBtn.Margin" Value="0,8,0,0" />
+                        <Setter Target="RefreshBtn.HorizontalAlignment" Value="Left" />
+
+                        <!-- Toolkit Header Button Stacking for Medium Layout -->
+                        <Setter Target="KitTitleCol1.Width" Value="0" />
+                        <Setter Target="ToolkitHeaderText.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="ToolkitHeaderBtn.(Grid.Row)" Value="1" />
+                        <Setter Target="ToolkitHeaderBtn.(Grid.Column)" Value="0" />
+                        <Setter Target="ToolkitHeaderBtn.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="ToolkitHeaderBtn.Margin" Value="0,8,0,0" />
+                        <Setter Target="ToolkitHeaderBtn.HorizontalAlignment" Value="Left" />
                     </VisualState.Setters>
                 </VisualState>
                 <!-- Narrow Layout: Viewport Width < 850px -->
@@ -55,6 +74,15 @@
                         <Setter Target="RefreshBtn.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="RefreshBtn.Margin" Value="0,8,0,0" />
                         <Setter Target="RefreshBtn.HorizontalAlignment" Value="Left" />
+
+                        <!-- Toolkit Header Button Stacking for Narrow Layout -->
+                        <Setter Target="KitTitleCol1.Width" Value="0" />
+                        <Setter Target="ToolkitHeaderText.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="ToolkitHeaderBtn.(Grid.Row)" Value="1" />
+                        <Setter Target="ToolkitHeaderBtn.(Grid.Column)" Value="0" />
+                        <Setter Target="ToolkitHeaderBtn.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="ToolkitHeaderBtn.Margin" Value="0,8,0,0" />
+                        <Setter Target="ToolkitHeaderBtn.HorizontalAlignment" Value="Left" />
 
                         <!-- Segmented Navigation Tabs to 2x2 Grid -->
                         <Setter Target="BtnTabQuality.(Grid.ColumnSpan)" Value="2" />
@@ -131,11 +159,11 @@
                 <ColumnDefinition x:Name="HeaderCol0" Width="*" />
                 <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel x:Name="HeaderTextPanel">
+            <StackPanel x:Name="HeaderTextPanel" Grid.Row="0" Grid.Column="0">
                 <TextBlock Text="Network Center &amp; Diagnostics" FontSize="28" FontWeight="ExtraBold" CharacterSpacing="-10" />
                 <TextBlock Text="Monitor connection quality, query true DNS latency, view active connections, and apply advanced repairs." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
             </StackPanel>
-            <Button x:Name="RefreshBtn" Grid.Column="1" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Center" Padding="18,9" CornerRadius="8" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White">
+            <Button x:Name="RefreshBtn" Grid.Row="0" Grid.Column="1" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Center" Padding="18,9" CornerRadius="8" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Glyph="&#xE72C;" FontSize="14" Foreground="White" />
                     <TextBlock Text="Refresh Diagnostics" FontWeight="SemiBold" />
@@ -720,39 +748,63 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Text="Diagnostics Terminal Console" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
 
-                        <Grid Grid.Row="1" ColumnSpacing="12" Margin="0,0,0,16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox x:Name="HostInput" Text="{x:Bind ViewModel.TestHost, Mode=TwoWay}" PlaceholderText="Enter Domain or IP (e.g. google.com)" CornerRadius="6" VerticalAlignment="Center" />
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                <Button Click="OnPingClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,6">
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <FontIcon Glyph="&#xE724;" FontSize="12" />
-                                        <TextBlock Text="Ping" />
+                        <Grid Grid.Row="1" RowSpacing="12" Margin="0,0,0,16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox x:Name="HostInput" Grid.Row="0" Text="{x:Bind ViewModel.TestHost, Mode=TwoWay}" PlaceholderText="Enter Domain or IP (e.g. google.com)" CornerRadius="6" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+
+                            <Grid Grid.Row="1" ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Click="OnPingClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="4,6" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE724;" FontSize="11" />
+                                        <TextBlock Text="Ping" FontSize="11.5" />
                                     </StackPanel>
                                 </Button>
-                                <Button Click="OnTraceClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,6">
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <FontIcon Glyph="&#xE81D;" FontSize="12" />
-                                        <TextBlock Text="Trace" />
+                                <Button Grid.Column="1" Click="OnTraceClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="4,6" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE81D;" FontSize="11" />
+                                        <TextBlock Text="Trace" FontSize="11.5" />
                                     </StackPanel>
                                 </Button>
-                                <Button Click="OnDnsLookupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,6">
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <FontIcon Glyph="&#xE721;" FontSize="12" />
-                                        <TextBlock Text="DNS Lookup" />
+                                <Button Grid.Column="2" Click="OnDnsLookupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="4,6" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE721;" FontSize="11" />
+                                        <TextBlock Text="DNS Lookup" FontSize="11.5" />
                                     </StackPanel>
                                 </Button>
-                            </StackPanel>
+                            </Grid>
                         </Grid>
 
-                        <TextBox Grid.Row="2" Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" Style="{StaticResource DarkTerminalStyle}" Background="#FF0C0C0E" Foreground="#FF00FF66" BorderBrush="#FF00FF66" FontFamily="Consolas" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Height="400" />
+                        <TextBox Grid.Row="2" Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" Style="{StaticResource DarkTerminalStyle}" Background="#FF0C0C0E" Foreground="#FF00FF66" BorderBrush="#FF00FF66" FontFamily="Consolas" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" Height="320" />
+
+                        <!-- Port Scanner Section -->
+                        <StackPanel Grid.Row="3" Spacing="12" Margin="0,16,0,0">
+                            <MenuFlyoutSeparator Margin="0,0,0,8" />
+                            <TextBlock Text="Port Scanner" FontSize="16" FontWeight="Bold" Margin="0,0,0,4" />
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="3*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Text="{x:Bind ViewModel.PortScannerHost, Mode=TwoWay}" PlaceholderText="IP/Host (e.g. localhost)" Header="Target IP" CornerRadius="6" />
+                                <TextBox Grid.Column="1" Text="{x:Bind ViewModel.PortScannerPorts, Mode=TwoWay}" PlaceholderText="e.g. 80, 443, 3389" Header="Ports to Scan" CornerRadius="6" />
+                                <Button Grid.Column="2" Content="Scan Ports" Click="OnScanPortsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Bottom" Padding="14,6" CornerRadius="6" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" />
+                            </Grid>
+                        </StackPanel>
                     </Grid>
                 </Border>
 
@@ -764,7 +816,23 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Network Repair Toolkit" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
+                        <Grid Grid.Row="0" Margin="0,0,0,16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="KitTitleRow0" Height="Auto" />
+                                <RowDefinition x:Name="KitTitleRow1" Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="KitTitleCol0" Width="*" />
+                                <ColumnDefinition x:Name="KitTitleCol1" Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="ToolkitHeaderText" Grid.Row="0" Grid.Column="0" Text="Network Repair Toolkit" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" />
+                            <ToggleButton x:Name="ToolkitHeaderBtn" Grid.Row="0" Grid.Column="1" IsChecked="{x:Bind ShowTerminal, Mode=TwoWay}" CornerRadius="6" Padding="12,5">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE756;" FontSize="12" />
+                                    <TextBlock Text="Diagnostics Terminal" FontSize="11.5" />
+                                </StackPanel>
+                            </ToggleButton>
+                        </Grid>
 
                         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                             <StackPanel Spacing="12">
@@ -778,8 +846,12 @@
                                         <FontIcon Glyph="&#xE12B;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,12,0" VerticalAlignment="Center" Grid.Column="0" />
                                         <StackPanel Spacing="2" Grid.Column="1">
                                             <Grid>
-                                                <TextBlock Text="Flush DNS Cache" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" />
-                                                <TextBlock Text="Low Risk" FontSize="10.5" Foreground="MediumSeaGreen" FontWeight="Bold" HorizontalAlignment="Right" />
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Flush DNS Cache" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="1" Text="Low Risk" FontSize="10.5" Foreground="MediumSeaGreen" FontWeight="Bold" HorizontalAlignment="Right" Margin="8,0,0,0" />
                                             </Grid>
                                             <TextBlock Text="Clears client DNS resolver database to resolve hostname parsing errors." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                         </StackPanel>
@@ -795,8 +867,12 @@
                                         <FontIcon Glyph="&#xE167;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,12,0" VerticalAlignment="Center" Grid.Column="0" />
                                         <StackPanel Spacing="2" Grid.Column="1">
                                             <Grid>
-                                                <TextBlock Text="Reset Winsock Catalog" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" />
-                                                <TextBlock Text="Requires Restart" FontSize="10.5" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Right" />
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Reset Winsock Catalog" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="1" Text="Requires Restart" FontSize="10.5" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Right" Margin="8,0,0,0" />
                                             </Grid>
                                             <TextBlock Text="Rebuilds network sockets drivers catalog to fix corrupted socket APIs." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                         </StackPanel>
@@ -812,8 +888,12 @@
                                         <FontIcon Glyph="&#xE839;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,12,0" VerticalAlignment="Center" Grid.Column="0" />
                                         <StackPanel Spacing="2" Grid.Column="1">
                                             <Grid>
-                                                <TextBlock Text="Reset TCP/IP Stack" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" />
-                                                <TextBlock Text="Requires Admin" FontSize="10.5" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Right" />
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Reset TCP/IP Stack" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="1" Text="Requires Admin" FontSize="10.5" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Right" Margin="8,0,0,0" />
                                             </Grid>
                                             <TextBlock Text="Re-initializes TCP/IP parameters to resolve configuration discrepancies." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                         </StackPanel>
@@ -829,8 +909,12 @@
                                         <FontIcon Glyph="&#xE7AD;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,12,0" VerticalAlignment="Center" Grid.Column="0" />
                                         <StackPanel Spacing="2" Grid.Column="1">
                                             <Grid>
-                                                <TextBlock Text="Optimize Advanced TCP Settings" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" />
-                                                <TextBlock Text="Low Risk" FontSize="10.5" Foreground="MediumSeaGreen" FontWeight="Bold" HorizontalAlignment="Right" />
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Optimize Advanced TCP Settings" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="1" Text="Low Risk" FontSize="10.5" Foreground="MediumSeaGreen" FontWeight="Bold" HorizontalAlignment="Right" Margin="8,0,0,0" />
                                             </Grid>
                                             <TextBlock Text="Optimizes TCP Auto-Tuning values for throughput optimization." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                         </StackPanel>
@@ -846,8 +930,12 @@
                                         <FontIcon Glyph="&#xEC5A;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,12,0" VerticalAlignment="Center" Grid.Column="0" />
                                         <StackPanel Spacing="2" Grid.Column="1">
                                             <Grid>
-                                                <TextBlock Text="Disable Green/EEE Power Saving" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" />
-                                                <TextBlock Text="Temp Disconnect" FontSize="10.5" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Right" />
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Disable Green/EEE Power Saving" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="1" Text="Temp Disconnect" FontSize="10.5" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Right" Margin="8,0,0,0" />
                                             </Grid>
                                             <TextBlock Text="Disables Ethernet Energy Saving properties to prevent sudden latency spikes." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                         </StackPanel>
@@ -863,8 +951,12 @@
                                         <FontIcon Glyph="&#xE7C3;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,12,0" VerticalAlignment="Center" Grid.Column="0" />
                                         <StackPanel Spacing="2" Grid.Column="1">
                                             <Grid>
-                                                <TextBlock Text="Reset Hosts File" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" />
-                                                <TextBlock Text="Low Risk" FontSize="10.5" Foreground="MediumSeaGreen" FontWeight="Bold" HorizontalAlignment="Right" />
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Reset Hosts File" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="1" Text="Low Risk" FontSize="10.5" Foreground="MediumSeaGreen" FontWeight="Bold" HorizontalAlignment="Right" Margin="8,0,0,0" />
                                             </Grid>
                                             <TextBlock Text="Clears registry blocks and resets hosts file back to Microsoft defaults." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                         </StackPanel>
@@ -880,8 +972,12 @@
                                         <FontIcon Glyph="&#xE72C;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,12,0" VerticalAlignment="Center" Grid.Column="0" />
                                         <StackPanel Spacing="2" Grid.Column="1">
                                             <Grid>
-                                                <TextBlock Text="Release / Renew IP" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" />
-                                                <TextBlock Text="Temp Disconnect" FontSize="10.5" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Right" />
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Release / Renew IP" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="1" Text="Temp Disconnect" FontSize="10.5" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Right" Margin="8,0,0,0" />
                                             </Grid>
                                             <TextBlock Text="Releases current IPv4 address lease and requests a fresh allocation from DHCP." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                         </StackPanel>
@@ -897,8 +993,12 @@
                                         <FontIcon Glyph="&#xE777;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,12,0" VerticalAlignment="Center" Grid.Column="0" />
                                         <StackPanel Spacing="2" Grid.Column="1">
                                             <Grid>
-                                                <TextBlock Text="Restart Active Adapter" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" />
-                                                <TextBlock Text="Temp Disconnect" FontSize="10.5" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Right" />
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="Restart Active Adapter" FontWeight="Bold" FontSize="13.5" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Grid.Column="1" Text="Temp Disconnect" FontSize="10.5" Foreground="Orange" FontWeight="Bold" HorizontalAlignment="Right" Margin="8,0,0,0" />
                                             </Grid>
                                             <TextBlock Text="Disables and re-enables all active local network card interfaces." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                         </StackPanel>

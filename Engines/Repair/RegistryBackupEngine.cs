@@ -240,22 +240,8 @@ public class RegistryBackupEngine
         try
         {
             // 1. We export HKCU hive (user settings) which is safe and easy, and does not require exclusive locks
-            var psi = new ProcessStartInfo
-            {
-                FileName = "reg.exe",
-                Arguments = $"export HKCU \"{backupFile}\" /y",
-                CreateNoWindow = true,
-                UseShellExecute = false
-            };
-            bool success = false;
-            using (var process = Process.Start(psi))
-            {
-                if (process != null)
-                {
-                    process.WaitForExit(5000);
-                    success = process.ExitCode == 0;
-                }
-            }
+            var result = ProcessRunner.RunAsync("reg.exe", $"export HKCU \"{backupFile}\" /y", TimeSpan.FromSeconds(10)).GetAwaiter().GetResult();
+            bool success = result.ExitCode == 0;
 
             // 2. Export key HKLM paths we modify and append them to the backup file
             string[] hklmPaths = new[]
@@ -270,31 +256,18 @@ public class RegistryBackupEngine
                 string tempFile = Path.Combine(BackupFolder, $"temp_{Guid.NewGuid():N}.reg");
                 try
                 {
-                    var psiHklm = new ProcessStartInfo
+                    var resultHklm = ProcessRunner.RunAsync("reg.exe", $"export \"{path}\" \"{tempFile}\" /y", TimeSpan.FromSeconds(10)).GetAwaiter().GetResult();
+                    if (resultHklm.ExitCode == 0 && File.Exists(tempFile))
                     {
-                        FileName = "reg.exe",
-                        Arguments = $"export \"{path}\" \"{tempFile}\" /y",
-                        CreateNoWindow = true,
-                        UseShellExecute = false
-                    };
-                    using (var proc = Process.Start(psiHklm))
-                    {
-                        if (proc != null)
+                        var lines = File.ReadAllLines(tempFile, System.Text.Encoding.Unicode);
+                        using (var sw = new StreamWriter(backupFile, true, System.Text.Encoding.Unicode))
                         {
-                            proc.WaitForExit(3000);
-                            if (proc.ExitCode == 0 && File.Exists(tempFile))
+                            sw.WriteLine();
+                            foreach (var line in lines)
                             {
-                                var lines = File.ReadAllLines(tempFile, System.Text.Encoding.Unicode);
-                                using (var sw = new StreamWriter(backupFile, true, System.Text.Encoding.Unicode))
-                                {
-                                    sw.WriteLine();
-                                    foreach (var line in lines)
-                                    {
-                                        if (line.Trim().StartsWith("Windows Registry Editor", StringComparison.OrdinalIgnoreCase))
-                                            continue;
-                                        sw.WriteLine(line);
-                                    }
-                                }
+                                if (line.Trim().StartsWith("Windows Registry Editor", StringComparison.OrdinalIgnoreCase))
+                                    continue;
+                                sw.WriteLine(line);
                             }
                         }
                     }
@@ -320,22 +293,10 @@ public class RegistryBackupEngine
         if (!File.Exists(filePath)) return false;
         try
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "reg.exe",
-                Arguments = $"import \"{filePath}\"",
-                CreateNoWindow = true,
-                UseShellExecute = false
-            };
-            using var process = Process.Start(psi);
-            if (process != null)
-            {
-                process.WaitForExit(10000);
-                bool success = process.ExitCode == 0;
-                Database.DbManager.LogAction($"Restored Registry Backup: {Path.GetFileName(filePath)}", "Registry Tools", success ? "Success" : "Failed");
-                return success;
-            }
-            return false;
+            var result = ProcessRunner.RunAsync("reg.exe", $"import \"{filePath}\"", TimeSpan.FromSeconds(15)).GetAwaiter().GetResult();
+            bool success = result.ExitCode == 0;
+            Database.DbManager.LogAction($"Restored Registry Backup: {Path.GetFileName(filePath)}", "Registry Tools", success ? "Success" : "Failed");
+            return success;
         }
         catch
         {

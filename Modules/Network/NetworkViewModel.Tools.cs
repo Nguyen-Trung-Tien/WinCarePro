@@ -244,7 +244,11 @@ public partial class NetworkViewModel
             var list = await _historyService.GetSpeedTestHistoryAsync();
             _dispatcherQueue?.TryEnqueue(() =>
             {
-                SpeedTestHistory = new ObservableCollection<SpeedTestResult>(list);
+                SpeedTestHistory.Clear();
+                foreach (var item in list)
+                {
+                    SpeedTestHistory.Add(item);
+                }
             });
         }
         catch { }

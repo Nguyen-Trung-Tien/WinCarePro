@@ -203,11 +203,25 @@ public class LockingAppService : ILockingAppService
         long size = 0;
         try
         {
-            foreach (var file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+            var info = new DirectoryInfo(path);
+            if ((info.Attributes & FileAttributes.ReparsePoint) != 0) return 0;
+
+            var files = info.GetFiles();
+            foreach (var file in files)
             {
                 try
                 {
-                    size += new FileInfo(file).Length;
+                    size += file.Length;
+                }
+                catch {}
+            }
+
+            var dirs = info.GetDirectories();
+            foreach (var dir in dirs)
+            {
+                try
+                {
+                    size += GetDirectorySize(dir.FullName);
                 }
                 catch {}
             }

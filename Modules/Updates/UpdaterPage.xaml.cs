@@ -65,24 +65,7 @@ public sealed partial class UpdaterPage : Page
         ViewModel.SetAllSelection(false);
     }
 
-    private void OnToggleLogClick(object sender, RoutedEventArgs e)
-    {
-        ViewModel.ShowLogPanel = !ViewModel.ShowLogPanel;
-    }
 
-    private void OnClearLogsClick(object sender, RoutedEventArgs e)
-    {
-        ViewModel.TerminalLog = "";
-    }
-
-    private void OnTerminalLogTextChanged(object sender, TextChangedEventArgs e)
-    {
-        if (TerminalTextBox != null)
-        {
-            TerminalTextBox.SelectionStart = TerminalTextBox.Text.Length;
-            TerminalTextBox.SelectionLength = 0;
-        }
-    }
 
     public bool CanUpdateSelected(bool hasSelected, bool isBusy) => hasSelected && !isBusy;
 

@@ -12,14 +12,14 @@
 
             <!-- Brand Linear Gradients -->
             <LinearGradientBrush x:Key="PrimaryAccentGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF7F56D9" Offset="0" />
-                <GradientStop Color="#FF6366F1" Offset="0.5" />
-                <GradientStop Color="#FF3B82F6" Offset="1" />
+                <GradientStop Color="#FF8B5CF6" Offset="0" />
+                <GradientStop Color="#FF3B82F6" Offset="0.5" />
+                <GradientStop Color="#FF06B6D4" Offset="1" />
             </LinearGradientBrush>
 
-            <SolidColorBrush x:Key="PrimaryAccentBrush" Color="#FF7F56D9" />
-            <SolidColorBrush x:Key="PrimaryAccentLightBrush" Color="#157F56D9" />
-            <SolidColorBrush x:Key="PrimaryAccentBorderBrush" Color="#447F56D9" />
+            <SolidColorBrush x:Key="PrimaryAccentBrush" Color="#FF8B5CF6" />
+            <SolidColorBrush x:Key="PrimaryAccentLightBrush" Color="#158B5CF6" />
+            <SolidColorBrush x:Key="PrimaryAccentBorderBrush" Color="#448B5CF6" />
 
             <LinearGradientBrush x:Key="GlassBorderBrush" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#25FFFFFF" Offset="0" />
@@ -188,6 +188,44 @@
                                                 <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundDisabled}" />
                                             </VisualState.Setters>
                                         </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </ContentPresenter>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Transparent button wrapper style for cards -->
+            <Style x:Key="TransparentWrapperButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="VerticalAlignment" Value="Stretch" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <ContentPresenter x:Name="ContentPresenter"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Padding="{TemplateBinding Padding}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="PointerOver" />
+                                        <VisualState x:Name="Pressed" />
+                                        <VisualState x:Name="Disabled" />
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
                             </ContentPresenter>

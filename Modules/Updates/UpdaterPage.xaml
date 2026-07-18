@@ -75,11 +75,7 @@
                         <Setter Target="SelectionStack.(Grid.Column)" Value="0" />
                         <Setter Target="SelectionStack.(Grid.ColumnSpan)" Value="4" />
                         <Setter Target="SelectionStack.Margin" Value="0,8,0,0" />
-                        <Setter Target="ConsoleLogsBtn.(Grid.Row)" Value="3" />
-                        <Setter Target="ConsoleLogsBtn.(Grid.Column)" Value="0" />
-                        <Setter Target="ConsoleLogsBtn.(Grid.ColumnSpan)" Value="4" />
-                        <Setter Target="ConsoleLogsBtn.Margin" Value="0,8,0,0" />
-                        <Setter Target="ConsoleLogsBtn.HorizontalAlignment" Value="Left" />
+
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -90,7 +86,6 @@
             <RowDefinition Height="Auto" /> <!-- Stats Cards Grid -->
             <RowDefinition Height="Auto" /> <!-- Toolbar -->
             <RowDefinition Height="*" />    <!-- Main Content Area -->
-            <RowDefinition Height="Auto" /> <!-- Terminal Panel -->
         </Grid.RowDefinitions>
 
         <!-- 1. Header -->
@@ -223,16 +218,7 @@
                 <Button Content="Deselect All" Click="OnDeselectAllClick" FontSize="11" Height="32" CornerRadius="6" Padding="12,0"/>
             </StackPanel>
 
-            <Button x:Name="ConsoleLogsBtn" Grid.Column="3" Content="Console Logs" Click="OnToggleLogClick" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" CornerRadius="6">
-                <Button.ContentTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE756;" FontSize="14" />
-                            <TextBlock Text="Console Logs" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </DataTemplate>
-                </Button.ContentTemplate>
-            </Button>
+
         </Grid>
 
         <!-- 4. Main Content Area -->
@@ -333,39 +319,6 @@
             </Grid>
         </Grid>
 
-        <!-- 5. Advanced Console Logs Terminal Drawer -->
-        <Border Grid.Row="4" Style="{StaticResource ModernCardStyle}" Background="#0A0E1A" BorderBrush="#FF8B5CF6" BorderThickness="1.5" Height="180" Margin="0,16,0,0" Padding="12" Visibility="{x:Bind ViewModel.ShowLogPanel, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <!-- Terminal Header -->
-                <Grid Grid.Row="0" Margin="0,0,0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <Ellipse Width="8" Height="8" Fill="#FFEF4444"/>
-                        <Ellipse Width="8" Height="8" Fill="#FFF59E0B"/>
-                        <Ellipse Width="8" Height="8" Fill="#FF10B981"/>
-                        <TextBlock Text="Console log - Software Updater" FontSize="11" Foreground="#88FFFFFF" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <Button Grid.Column="1" Content="Clear Logs" Click="OnClearLogsClick" FontSize="10" Padding="8,4" Height="24" Background="Transparent" BorderThickness="0" Foreground="#88FFFFFF"/>
-                </Grid>
-                <!-- Terminal Body -->
-                <TextBox Grid.Row="1" 
-                          Text="{x:Bind ViewModel.TerminalLog, Mode=OneWay}" 
-                          Style="{StaticResource DarkTerminalStyle}" 
-                          IsReadOnly="True" 
-                          AcceptsReturn="True" 
-                          TextWrapping="Wrap" 
-                          VerticalAlignment="Stretch"
-                          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                          TextChanged="OnTerminalLogTextChanged"
-                          x:Name="TerminalTextBox"/>
-            </Grid>
-        </Border>
+
     </Grid>
 </Page>

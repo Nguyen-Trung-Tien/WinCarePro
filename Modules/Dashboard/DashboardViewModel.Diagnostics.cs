@@ -317,8 +317,8 @@ public partial class DashboardViewModel
                     servicesCount: servicesCount,
                     diskActiveTime: currentDiskUsage,
                     freeSpacePercent: freeSpacePercent,
-                    ssdHealthPercent: 100.0,
-                    isThrottling: false,
+                    ssdHealthPercent: _hardwareEngine.GetSsdHealthPercent(),
+                    isThrottling: _hardwareEngine.IsCpuThrottling(currentCpuUsage),
                     isExplorerOptimized: isExplorerOptimized
                 ).ConfigureAwait(false);
 

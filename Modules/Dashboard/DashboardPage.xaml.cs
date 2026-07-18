@@ -64,11 +64,35 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(CpuRamGrid, 0);
                     Grid.SetColumnSpan(CpuRamGrid, 1);
                 }
+                if (CpuCard != null)
+                {
+                    Grid.SetRow(CpuCard, 0);
+                    Grid.SetColumn(CpuCard, 0);
+                    Grid.SetColumnSpan(CpuCard, 1);
+                }
+                if (RamCard != null)
+                {
+                    Grid.SetRow(RamCard, 0);
+                    Grid.SetColumn(RamCard, 1);
+                    Grid.SetColumnSpan(RamCard, 1);
+                }
                 if (GpuDiskGrid != null)
                 {
                     Grid.SetRow(GpuDiskGrid, 2);
                     Grid.SetColumn(GpuDiskGrid, 0);
                     Grid.SetColumnSpan(GpuDiskGrid, 1);
+                }
+                if (GpuCard != null)
+                {
+                    Grid.SetRow(GpuCard, 0);
+                    Grid.SetColumn(GpuCard, 0);
+                    Grid.SetColumnSpan(GpuCard, 1);
+                }
+                if (DiskCard != null)
+                {
+                    Grid.SetRow(DiskCard, 0);
+                    Grid.SetColumn(DiskCard, 1);
+                    Grid.SetColumnSpan(DiskCard, 1);
                 }
                 if (PerformanceChartCard != null)
                 {
@@ -83,7 +107,7 @@ public sealed partial class DashboardPage : Page
                     Grid.SetRow(BottleneckCard, 0);
                     Grid.SetColumn(BottleneckCard, 1);
                     Grid.SetColumnSpan(BottleneckCard, 1);
-                    BottleneckCard.Margin = new Thickness(0, 0, 0, 0);
+                    BottleneckCard.Margin = new Thickness(8);
                 }
                 if (QuickStatsGrid != null)
                 {
@@ -117,12 +141,24 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(CpuRamGrid, 0);
                     Grid.SetColumnSpan(CpuRamGrid, 2);
                 }
+                if (CpuCard != null)
+                {
+                    Grid.SetRow(CpuCard, 0);
+                    Grid.SetColumn(CpuCard, 0);
+                    Grid.SetColumnSpan(CpuCard, 2);
+                }
+                if (RamCard != null)
+                {
+                    Grid.SetRow(RamCard, 1);
+                    Grid.SetColumn(RamCard, 0);
+                    Grid.SetColumnSpan(RamCard, 2);
+                }
                 if (BottleneckCard != null)
                 {
                     Grid.SetRow(BottleneckCard, 2);
                     Grid.SetColumn(BottleneckCard, 0);
                     Grid.SetColumnSpan(BottleneckCard, 2);
-                    BottleneckCard.Margin = new Thickness(0, 16, 0, 0);
+                    BottleneckCard.Margin = new Thickness(8);
                 }
                 if (QuickStatsGrid != null)
                 {
@@ -135,6 +171,18 @@ public sealed partial class DashboardPage : Page
                     Grid.SetRow(GpuDiskGrid, 4);
                     Grid.SetColumn(GpuDiskGrid, 0);
                     Grid.SetColumnSpan(GpuDiskGrid, 2);
+                }
+                if (GpuCard != null)
+                {
+                    Grid.SetRow(GpuCard, 0);
+                    Grid.SetColumn(GpuCard, 0);
+                    Grid.SetColumnSpan(GpuCard, 2);
+                }
+                if (DiskCard != null)
+                {
+                    Grid.SetRow(DiskCard, 1);
+                    Grid.SetColumn(DiskCard, 0);
+                    Grid.SetColumnSpan(DiskCard, 2);
                 }
                 if (PerformanceChartCard != null)
                 {
@@ -556,12 +604,12 @@ public sealed partial class DashboardPage : Page
         {
             return new SolidColorBrush(Microsoft.UI.Colors.Crimson);
         }
-        return new SolidColorBrush(Microsoft.UI.Colors.Transparent);
+        return (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"];
     }
 
     internal Thickness GetCpuCardBorderThickness(double cpu)
     {
-        return cpu > 85.0 ? new Thickness(2) : new Thickness(0);
+        return new Thickness(1);
     }
 
     internal Brush GetRamCardBackground(double ram)
@@ -579,12 +627,12 @@ public sealed partial class DashboardPage : Page
         {
             return new SolidColorBrush(Microsoft.UI.Colors.DarkOrange);
         }
-        return new SolidColorBrush(Microsoft.UI.Colors.Transparent);
+        return (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"];
     }
 
     internal Thickness GetDiskCardBorderThickness(double disk)
     {
-        return disk > 90.0 ? new Thickness(2) : new Thickness(0);
+        return new Thickness(1);
     }
 
     internal Brush GetBottleneckBadgeBg(bool hasBottleneck)

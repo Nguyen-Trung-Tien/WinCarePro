@@ -7,6 +7,8 @@ using Microsoft.UI.Dispatching;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Services.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro.ViewModels;
 
@@ -14,26 +16,30 @@ public class UninstallViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly UninstallEngine _uninstallEngine = new();
+    private readonly IDialogService _dialogService;
+
+    private bool _updatingAllAppsFlag;
+    private bool _updatingAllLeftoversFlag;
 
     private bool _isBusy;
     public bool IsBusy
     {
         get => _isBusy;
-        set => SetProperty(ref _isBusy, value);
+        set => SetPropertyOnUI(() => _isBusy, v => _isBusy = v, value);
     }
 
     private string _progressMessage = "Ready".T();
     public string ProgressMessage
     {
         get => _progressMessage;
-        set => SetProperty(ref _progressMessage, value);
+        set => SetPropertyOnUI(() => _progressMessage, v => _progressMessage = v, value);
     }
 
     private int _progressPercent;
     public int ProgressPercent
     {
         get => _progressPercent;
-        set => SetProperty(ref _progressPercent, value);
+        set => SetPropertyOnUI(() => _progressPercent, v => _progressPercent = v, value);
     }
 
     private List<InstalledAppInfo> _allApps = new();
@@ -46,10 +52,95 @@ public class UninstallViewModel : ViewModelBase
         get => _searchText;
         set
         {
-            if (SetProperty(ref _searchText, value))
+            SetPropertyOnUI(() => _searchText, v => 
             {
+                _searchText = v;
                 ApplyAppFilter();
-            }
+            }, value);
+        }
+    }
+
+    private bool _isAllAppsSelected;
+    public bool IsAllAppsSelected
+    {
+        get => _isAllAppsSelected;
+        set
+        {
+            SetPropertyOnUI(() => _isAllAppsSelected, v => 
+            {
+                _isAllAppsSelected = v;
+                if (!_updatingAllAppsFlag)
+                {
+                    _updatingAllAppsFlag = true;
+                    try
+                    {
+                        foreach (var app in FilteredApps)
+                        {
+                            app.IsSelected = v;
+                        }
+                    }
+                    finally
+                    {
+                        _updatingAllAppsFlag = false;
+                    }
+                }
+            }, value);
+        }
+    }
+
+    private bool _isAllLeftoversSelected = true;
+    public bool IsAllLeftoversSelected
+    {
+        get => _isAllLeftoversSelected;
+        set
+        {
+            SetPropertyOnUI(() => _isAllLeftoversSelected, v => 
+            {
+                _isAllLeftoversSelected = v;
+                if (!_updatingAllLeftoversFlag)
+                {
+                    _updatingAllLeftoversFlag = true;
+                    try
+                    {
+                        foreach (var item in Leftovers)
+                        {
+                            item.IsSelected = v;
+                        }
+                    }
+                    finally
+                    {
+                        _updatingAllLeftoversFlag = false;
+                    }
+                }
+            }, value);
+        }
+    }
+
+    private void UpdateIsAllAppsSelectedState()
+    {
+        if (_updatingAllAppsFlag) return;
+        _updatingAllAppsFlag = true;
+        try
+        {
+            IsAllAppsSelected = FilteredApps.Count > 0 && FilteredApps.All(x => x.IsSelected);
+        }
+        finally
+        {
+            _updatingAllAppsFlag = false;
+        }
+    }
+
+    private void UpdateIsAllLeftoversSelectedState()
+    {
+        if (_updatingAllLeftoversFlag) return;
+        _updatingAllLeftoversFlag = true;
+        try
+        {
+            IsAllLeftoversSelected = Leftovers.Count > 0 && Leftovers.All(x => x.IsSelected);
+        }
+        finally
+        {
+            _updatingAllLeftoversFlag = false;
         }
     }
 
@@ -57,14 +148,14 @@ public class UninstallViewModel : ViewModelBase
     public int UninstallStep
     {
         get => _uninstallStep;
-        set => SetProperty(ref _uninstallStep, value);
+        set => SetPropertyOnUI(() => _uninstallStep, v => _uninstallStep = v, value);
     }
 
     private string _leftoversSizeFormatted = "0 B";
     public string LeftoversSizeFormatted
     {
         get => _leftoversSizeFormatted;
-        set => SetProperty(ref _leftoversSizeFormatted, value);
+        set => SetPropertyOnUI(() => _leftoversSizeFormatted, v => _leftoversSizeFormatted = v, value);
     }
 
     // New Sorting, Filtering, Selection and Statistics properties
@@ -74,10 +165,11 @@ public class UninstallViewModel : ViewModelBase
         get => _selectedSortIndex;
         set
         {
-            if (SetProperty(ref _selectedSortIndex, value))
+            SetPropertyOnUI(() => _selectedSortIndex, v => 
             {
+                _selectedSortIndex = v;
                 ApplyAppFilter();
-            }
+            }, value);
         }
     }
 
@@ -87,10 +179,11 @@ public class UninstallViewModel : ViewModelBase
         get => _selectedFilterIndex;
         set
         {
-            if (SetProperty(ref _selectedFilterIndex, value))
+            SetPropertyOnUI(() => _selectedFilterIndex, v => 
             {
+                _selectedFilterIndex = v;
                 ApplyAppFilter();
-            }
+            }, value);
         }
     }
 
@@ -100,10 +193,11 @@ public class UninstallViewModel : ViewModelBase
         get => _selectedApp;
         set
         {
-            if (SetProperty(ref _selectedApp, value))
+            SetPropertyOnUI(() => _selectedApp, v => 
             {
-                IsSelectedAppNotNull = value != null;
-            }
+                _selectedApp = v;
+                IsSelectedAppNotNull = v != null;
+            }, value);
         }
     }
 
@@ -111,47 +205,48 @@ public class UninstallViewModel : ViewModelBase
     public bool IsSelectedAppNotNull
     {
         get => _isSelectedAppNotNull;
-        set => SetProperty(ref _isSelectedAppNotNull, value);
+        set => SetPropertyOnUI(() => _isSelectedAppNotNull, v => _isSelectedAppNotNull = v, value);
     }
 
     private int _totalAppsCount;
     public int TotalAppsCount
     {
         get => _totalAppsCount;
-        set => SetProperty(ref _totalAppsCount, value);
+        set => SetPropertyOnUI(() => _totalAppsCount, v => _totalAppsCount = v, value);
     }
 
     private string _totalAppsSizeFormatted = "0 B";
     public string TotalAppsSizeFormatted
     {
         get => _totalAppsSizeFormatted;
-        set => SetProperty(ref _totalAppsSizeFormatted, value);
+        set => SetPropertyOnUI(() => _totalAppsSizeFormatted, v => _totalAppsSizeFormatted = v, value);
     }
 
     private int _desktopAppsCount;
     public int DesktopAppsCount
     {
         get => _desktopAppsCount;
-        set => SetProperty(ref _desktopAppsCount, value);
+        set => SetPropertyOnUI(() => _desktopAppsCount, v => _desktopAppsCount = v, value);
     }
 
     private int _storeAppsCount;
     public int StoreAppsCount
     {
         get => _storeAppsCount;
-        set => SetProperty(ref _storeAppsCount, value);
+        set => SetPropertyOnUI(() => _storeAppsCount, v => _storeAppsCount = v, value);
     }
 
     private bool _hasSelectedApps;
     public bool HasSelectedApps
     {
         get => _hasSelectedApps;
-        set => SetProperty(ref _hasSelectedApps, value);
+        set => SetPropertyOnUI(() => _hasSelectedApps, v => _hasSelectedApps = v, value);
     }
 
     public UninstallViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dialogService = App.Services.GetRequiredService<IDialogService>();
 
         _uninstallEngine.OutputReceived += msg => _dispatcherQueue.TryEnqueue(() => ProgressMessage = msg.T());
         _uninstallEngine.ProgressChanged += pct => _dispatcherQueue.TryEnqueue(() => ProgressPercent = pct);
@@ -268,6 +363,8 @@ public class UninstallViewModel : ViewModelBase
         {
             SelectedApp = null;
         }
+
+        UpdateIsAllAppsSelectedState();
     }
 
     private void OnAppPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -275,6 +372,7 @@ public class UninstallViewModel : ViewModelBase
         if (e.PropertyName == nameof(InstalledAppInfo.IsSelected))
         {
             HasSelectedApps = _allApps.Any(x => x.IsSelected);
+            UpdateIsAllAppsSelectedState();
         }
     }
 
@@ -289,6 +387,26 @@ public class UninstallViewModel : ViewModelBase
             ProgressMessage = string.Format("Uninstalling {0}...".T(), app.DisplayName);
 
             bool uninstalled = await _uninstallEngine.RunStandardUninstallerAsync(app);
+            if (!uninstalled)
+            {
+                IsBusy = false;
+                UninstallStep = 0;
+                bool force = await _dialogService.ShowForceUninstallPromptAsync(app.DisplayName);
+                if (force)
+                {
+                    foreach (var a in _allApps)
+                    {
+                        a.IsSelected = false;
+                    }
+                    app.IsSelected = true;
+                    await UninstallSelectedAppsAsync(forceUninstall: true);
+                }
+                else
+                {
+                    _ = ScanAppsAsync();
+                }
+                return;
+            }
 
             ProgressPercent = 60;
             ProgressMessage = string.Format("Scanning leftovers for {0}...".T(), app.DisplayName);
@@ -307,12 +425,14 @@ public class UninstallViewModel : ViewModelBase
                         if (e.PropertyName == nameof(LeftoverItem.IsSelected))
                         {
                             UpdateLeftoversSize();
+                            UpdateIsAllLeftoversSelectedState();
                         }
                     };
                     Leftovers.Add(item);
                 }
 
                 UpdateLeftoversSize();
+                UpdateIsAllLeftoversSelectedState();
                 ProgressPercent = 100;
 
                 if (Leftovers.Count > 0)
@@ -361,7 +481,14 @@ public class UninstallViewModel : ViewModelBase
                 if (forceUninstall)
                 {
                     ProgressMessage = string.Format("Force uninstalling {0} ({1}/{2})...".T(), app.DisplayName, count, selected.Count);
-                    await Task.Delay(500); // UI delay
+                    if (app.IsStoreApp)
+                    {
+                        await _uninstallEngine.UninstallStoreAppAsync(app.UninstallString);
+                    }
+                    else
+                    {
+                        await Task.Delay(500); // UI delay
+                    }
                 }
                 else
                 {
@@ -389,12 +516,14 @@ public class UninstallViewModel : ViewModelBase
                         if (e.PropertyName == nameof(LeftoverItem.IsSelected))
                         {
                             UpdateLeftoversSize();
+                            UpdateIsAllLeftoversSelectedState();
                         }
                     };
                     Leftovers.Add(item);
                 }
 
                 UpdateLeftoversSize();
+                UpdateIsAllLeftoversSelectedState();
                 ProgressPercent = 100;
 
                 if (Leftovers.Count > 0)

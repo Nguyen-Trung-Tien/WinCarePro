@@ -20,21 +20,21 @@ public class UpdaterViewModel : ViewModelBase
     public bool IsBusy
     {
         get => _isBusy;
-        set => SetProperty(ref _isBusy, value);
+        set => SetPropertyOnUI(() => _isBusy, v => _isBusy = v, value);
     }
 
     private string _progressMessage = "Ready".T();
     public string ProgressMessage
     {
         get => _progressMessage;
-        set => SetProperty(ref _progressMessage, value);
+        set => SetPropertyOnUI(() => _progressMessage, v => _progressMessage = v, value);
     }
 
     private int _progressPercent;
     public int ProgressPercent
     {
         get => _progressPercent;
-        set => SetProperty(ref _progressPercent, value);
+        set => SetPropertyOnUI(() => _progressPercent, v => _progressPercent = v, value);
     }
 
     private string _searchText = "";
@@ -43,10 +43,11 @@ public class UpdaterViewModel : ViewModelBase
         get => _searchText;
         set
         {
-            if (SetProperty(ref _searchText, value))
+            SetPropertyOnUI(() => _searchText, v => 
             {
+                _searchText = v;
                 ApplyFilters();
-            }
+            }, value);
         }
     }
 
@@ -56,10 +57,11 @@ public class UpdaterViewModel : ViewModelBase
         get => _updateEngine;
         set
         {
-            if (SetProperty(ref _updateEngine, value))
+            SetPropertyOnUI(() => _updateEngine, v => 
             {
+                _updateEngine = v;
                 _ = ScanUpdatesAsync();
-            }
+            }, value);
         }
     }
 
@@ -67,14 +69,14 @@ public class UpdaterViewModel : ViewModelBase
     public string TerminalLog
     {
         get => _terminalLog;
-        set => SetProperty(ref _terminalLog, value);
+        set => SetPropertyOnUI(() => _terminalLog, v => _terminalLog = v, value);
     }
 
     private bool _showLogPanel = false;
     public bool ShowLogPanel
     {
         get => _showLogPanel;
-        set => SetProperty(ref _showLogPanel, value);
+        set => SetPropertyOnUI(() => _showLogPanel, v => _showLogPanel = v, value);
     }
 
     // Statistics properties
@@ -82,35 +84,35 @@ public class UpdaterViewModel : ViewModelBase
     public int UpdatesCount
     {
         get => _updatesCount;
-        set => SetProperty(ref _updatesCount, value);
+        set => SetPropertyOnUI(() => _updatesCount, v => _updatesCount = v, value);
     }
 
     private string _lastScanTime = "Never".T();
     public string LastScanTime
     {
         get => _lastScanTime;
-        set => SetProperty(ref _lastScanTime, value);
+        set => SetPropertyOnUI(() => _lastScanTime, v => _lastScanTime = v, value);
     }
 
     private string _activeEngineName = "Windows Package Manager";
     public string ActiveEngineName
     {
         get => _activeEngineName;
-        set => SetProperty(ref _activeEngineName, value);
+        set => SetPropertyOnUI(() => _activeEngineName, v => _activeEngineName = v, value);
     }
 
     private string _systemHealthStatus = "Unknown".T();
     public string SystemHealthStatus
     {
         get => _systemHealthStatus;
-        set => SetProperty(ref _systemHealthStatus, value);
+        set => SetPropertyOnUI(() => _systemHealthStatus, v => _systemHealthStatus = v, value);
     }
 
     private string _systemHealthColor = "#FF3B82F6"; // Default Blue
     public string SystemHealthColor
     {
         get => _systemHealthColor;
-        set => SetProperty(ref _systemHealthColor, value);
+        set => SetPropertyOnUI(() => _systemHealthColor, v => _systemHealthColor = v, value);
     }
 
     public bool HasSelectedUpdates => _allUpdates.Any(x => x.IsSelected);
@@ -157,7 +159,7 @@ public class UpdaterViewModel : ViewModelBase
         try
         {
             var list = await Task.Run(() => _updaterEngine.ScanUpdatesAsync(UpdateEngine));
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 foreach (var item in list)
                 {

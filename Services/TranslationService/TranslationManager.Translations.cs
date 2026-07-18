@@ -25,6 +25,7 @@ public partial class TranslationManager
         _translations["Registry Center"] = "Quản lý Registry";
         _translations["Software Updater"] = "Cập nhật phần mềm";
         _translations["Driver Updater"] = "Cập nhật Driver";
+        _translations["Context Menu"] = "Menu ngữ cảnh";
         _translations["CARE & CLEAN"] = "CHĂM SÓC & DỌN DẸP";
         _translations["SYSTEM TUNING"] = "TINH CHỈNH HỆ THỐNG";
         _translations["PC Health Secured"] = "Sức khỏe PC An toàn";
@@ -1513,7 +1514,7 @@ public partial class TranslationManager
         _translations["Diagnostics Trace Log Reader"] = "Trình đọc nhật ký theo dõi chẩn đoán";
         _translations["Real-time application framework execution events."] = "Các sự kiện thực thi framework ứng dụng theo thời gian thực.";
         _translations["System Optimizer & Security Shield"] = "Tối ưu hóa hệ thống & Khiên bảo mật";
-        _translations["Version 3.4.4 (Stable Release)"] = "Phiên bản 3.4.4 (Bản ổn định)";
+        _translations["Version 3.4.5 (Stable Release)"] = "Phiên bản 3.4.5 (Bản ổn định)";
         _translations["Check for Updates Now"] = "Kiểm tra cập nhật ngay";
         _translations["Purge SQLite Activity History Logs"] = "Xóa nhật ký hoạt động SQLite";
         _translations["Wipe Saved Diagnostic Report Files"] = "Xóa tệp báo cáo chẩn đoán đã lưu";
@@ -1579,7 +1580,7 @@ public partial class TranslationManager
         _translations["Tiếng Việt"] = "Tiếng Việt";
         _translations["v3.4.0"] = "v3.4.0";
         _translations["v3.4.1"] = "v3.4.1";
-        _translations["v3.4.4"] = "v3.4.4";
+        _translations["v3.4.5"] = "v3.4.5";
         _translations["TXT"] = "TXT";
         _translations["JSON"] = "JSON";
         _translations["CSV"] = "CSV";
@@ -1596,5 +1597,35 @@ public partial class TranslationManager
         _translations["Saves a system restore point so you can roll back changes if optimizing causes issues."] = "Lưu điểm khôi phục hệ thống để bạn có thể quay lại nếu việc tối ưu hóa gây ra lỗi.";
         _translations["Automatically backs up HKCU and modified HKLM keys before tweaking registry settings."] = "Tự động sao lưu nhánh HKCU và các khóa HKLM đã sửa đổi trước khi tinh chỉnh registry.";
         _translations["Uses heuristic rules to automatically attempt fixing found system issues without user confirmation."] = "Sử dụng các quy tắc tự tìm kiếm để tự động sửa chữa các sự cố hệ thống mà không cần xác nhận.";
+
+        // --- Context Menu Manager Page ---
+        _translations["Context Menu Manager"] = "Quản lý Menu ngữ cảnh";
+        _translations["Manage shell extensions and clean up cluttered right-click context menus safely."] = "Quản lý các phần mở rộng shell và dọn dẹp các menu chuột phải lộn xộn một cách an toàn.";
+        _translations["Scan Context Menus"] = "Quét Menu ngữ cảnh";
+        _translations["Search handlers or registry paths..."] = "Tìm kiếm trình xử lý hoặc đường dẫn registry...";
+        _translations["Search"] = "Tìm kiếm";
+        _translations["Filter by Category"] = "Lọc theo danh mục";
+        _translations["All"] = "Tất cả";
+        _translations["All Files"] = "Tất cả tệp";
+        _translations["Desktop Background"] = "Nền màn hình";
+        _translations["Folders"] = "Thư mục";
+        _translations["About Context Menus"] = "Giới thiệu về Menu ngữ cảnh";
+        _translations["When you install applications (such as WinRAR, Git, Photoshop, etc.), they register custom shell extensions to show up in the Windows right-click context menu."] = "Khi bạn cài đặt các ứng dụng (như WinRAR, Git, Photoshop, v.v.), chúng đăng ký các phần mở rộng shell tùy chỉnh để hiển thị trong menu chuột phải của Windows.";
+        _translations["If you have too many items, it can slow down file explorer or make it look cluttered."] = "Nếu bạn có quá nhiều mục, nó có thể làm chậm file explorer hoặc khiến nó trông lộn xộn.";
+        _translations["Safe Mechanism"] = "Cơ chế an toàn";
+        _translations["WinCare Pro does not delete keys. It prefixes the active keys with '-' to safely disable them. Toggle back to re-enable anytime."] = "WinCare Pro không xóa các khóa. Nó thêm tiền tố '-' vào các khóa đang hoạt động để tắt chúng một cách an toàn. Bật lại để kích hoạt lại bất kỳ lúc nào.";
+        _translations["Scanning context menu handlers..."] = "Đang quét các trình xử lý menu ngữ cảnh...";
+        _translations["Found {0} context menu handlers."] = "Tìm thấy {0} trình xử lý menu ngữ cảnh.";
+        _translations["Scan failed:"] = "Quét thất bại:";
+        _translations["Enabling {0}..."] = "Đang bật {0}...";
+        _translations["Disabling {0}..."] = "Đang tắt {0}...";
+        _translations["{0} enabled successfully."] = "Đã bật {0} thành công.";
+        _translations["{0} disabled successfully."] = "Đã tắt {0} thành công.";
+        _translations["Failed to modify setting. Administrator rights required."] = "Không thể sửa đổi cài đặt. Yêu cầu quyền quản trị viên.";
+        _translations["Error: "] = "Lỗi: ";
+        _translations["Scanning registry path: {0}"] = "Đang quét đường dẫn registry: {0}";
+        _translations["Error scanning subkey {0}: {1}"] = "Lỗi khi quét khóa con {0}: {1}";
+        _translations["Error opening parent key {0}: {1}"] = "Lỗi khi mở khóa cha {0}: {1}";
+        _translations["Error modifying registry: {0}"] = "Lỗi khi sửa đổi registry: {0}";
     }
 }

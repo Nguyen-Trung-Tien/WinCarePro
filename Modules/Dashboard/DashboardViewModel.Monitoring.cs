@@ -316,6 +316,11 @@ public partial class DashboardViewModel
 
     private double GetGpuUsageMetric()
     {
+        double realGpu = _hardwareEngine.GetActualGpuUsage();
+        if (realGpu >= 0)
+        {
+            return realGpu;
+        }
         double baseGpu = CpuUsage * 0.3 + 2.0;
         return Math.Clamp(baseGpu, 0, 100);
     }

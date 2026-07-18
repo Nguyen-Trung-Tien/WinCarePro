@@ -34,7 +34,7 @@
                 <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="20" Height="20" VerticalAlignment="Center" Stretch="Uniform"/>
                 <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                 <Border Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
-                    <TextBlock Text="v3.4.4" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="v3.4.5" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 

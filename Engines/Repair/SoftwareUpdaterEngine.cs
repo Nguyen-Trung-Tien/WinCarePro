@@ -259,15 +259,32 @@ public class SoftwareUpdaterEngine
 
     private void AddSimulatedItem(List<SoftwareUpdateInfo> list, Dictionary<string, string> updatedApps, string name, string id, string installedVersion, string availableVersion, string source)
     {
+        var app = SupportedApps.FirstOrDefault(x => x.Id == id);
+        string? actualInstalledVer = app != null ? GetInstalledVersionFromRegistry(app.RegistryNameQuery) : null;
+        
+        if (string.IsNullOrEmpty(actualInstalledVer))
+        {
+            return; // App is not installed on the system, do not list it
+        }
+
+        string realAvailableVersion = app?.LatestVersion ?? availableVersion;
+        string currentVer = actualInstalledVer;
+        
+        if (!IsVersionOlder(actualInstalledVer, realAvailableVersion))
+        {
+            return; // Already up to date or newer on the system
+        }
+
         if (updatedApps.TryGetValue(id, out string? storedVer))
         {
-            if (!IsVersionOlder(storedVer, availableVersion))
+            if (!IsVersionOlder(storedVer, realAvailableVersion))
             {
-                return; // Already updated to this or a newer version
+                return; // Already updated to this or a newer version in DB
             }
         }
-        list.Add(new SoftwareUpdateInfo { Name = name, Id = id, InstalledVersion = installedVersion, AvailableVersion = availableVersion, Source = source });
+        list.Add(new SoftwareUpdateInfo { Name = name, Id = id, InstalledVersion = currentVer, AvailableVersion = realAvailableVersion, Source = source });
     }
+
 
     private string? GetInstalledVersionFromRegistry(string displayNameQuery)
     {
@@ -594,10 +611,12 @@ public class SoftwareUpdaterEngine
         if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) return false;
         try
         {
-            using (var cert = X509CertificateLoader.LoadCertificateFromFile(filePath))
+#pragma warning disable SYSLIB0057 // Obsolete in .NET 9+ but required for Authenticode signature extraction
+            using (var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(filePath))
             {
                 return cert.Verify();
             }
+#pragma warning restore SYSLIB0057
         }
         catch (Exception ex)
         {

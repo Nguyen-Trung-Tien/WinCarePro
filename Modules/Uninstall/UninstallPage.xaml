@@ -179,7 +179,7 @@
         <Grid Grid.Row="2">
             
             <!-- Step 0: Master-Detail List View -->
-            <Grid Visibility="{x:Bind GetStepListVisibility(ViewModel.UninstallStep), Mode=OneWay}">
+            <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" /> <!-- Filters Bar -->
                     <RowDefinition Height="*" />    <!-- Master-Detail Columns -->
@@ -241,7 +241,24 @@
                     <!-- Left: Applications List -->
                     <Border x:Name="LeftListBorder" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="12">
                         <Grid>
-                            <ListView Visibility="{x:Bind GetListViewVisibility(ViewModel.IsBusy), Mode=OneWay}" ItemsSource="{x:Bind ViewModel.FilteredApps, Mode=OneWay}" SelectedItem="{Binding SelectedApp, Mode=TwoWay}" SelectionMode="Single">
+                             <ListView Visibility="{x:Bind GetListViewVisibility(ViewModel.IsBusy), Mode=OneWay}" ItemsSource="{x:Bind ViewModel.FilteredApps, Mode=OneWay}" SelectedItem="{Binding SelectedApp, Mode=TwoWay}" SelectionMode="Single">
+                                <ListView.Header>
+                                    <Grid Padding="12,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" /> <!-- Checkbox -->
+                                            <ColumnDefinition Width="Auto" /> <!-- Icon spacer -->
+                                            <ColumnDefinition Width="*" />    <!-- Name & Publisher -->
+                                            <ColumnDefinition Width="{Binding ElementName=PageRoot, Path=BadgesColumnWidth}" /> <!-- Badges -->
+                                            <ColumnDefinition Width="{Binding ElementName=PageRoot, Path=SizeColumnWidth}" /> <!-- Size -->
+                                            <ColumnDefinition Width="Auto" /> <!-- Action Button -->
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox Grid.Column="0" IsChecked="{x:Bind ViewModel.IsAllAppsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" ToolTipService.ToolTip="Select / Deselect All" />
+                                        <Border Grid.Column="1" Width="40" Margin="0,0,12,0" Background="Transparent" />
+                                        <TextBlock Grid.Column="2" Text="Application Name" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="4" Text="Size" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}"/>
+                                        <TextBlock Grid.Column="5" Text="Action" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="70"/>
+                                    </Grid>
+                                </ListView.Header>
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="models:InstalledAppInfo">
                                         <Grid Padding="4,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
@@ -452,86 +469,119 @@
                 </Border>
             </Grid>
 
-            <!-- Step 1: Progress overlay -->
-            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center" Width="420" Visibility="{x:Bind GetStepProgressVisibility(ViewModel.UninstallStep), Mode=OneWay}">
-                <StackPanel Spacing="20" HorizontalAlignment="Center">
-                    <ProgressRing IsActive="True" Width="60" Height="60" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Center"/>
-                    <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" LineHeight="20"/>
-                    <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="8" CornerRadius="4" Foreground="{StaticResource PrimaryAccentGradient}" Width="320" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Border>
+            <!-- Premium Step Transition Overlay (Acrylic Frosted Backdrop) -->
+            <Grid x:Name="StepOverlayGrid" Grid.RowSpan="3" Background="#A0000000" Visibility="{x:Bind GetOverlayVisibility(ViewModel.UninstallStep), Mode=OneWay}" Canvas.ZIndex="100">
+                <!-- Apply slide-in theme transition for smooth overlay loading -->
+                <Grid.ChildrenTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="40"/>
+                    </TransitionCollection>
+                </Grid.ChildrenTransitions>
 
-            <!-- Step 2: Leftovers review -->
-            <Grid Visibility="{x:Bind GetStepLeftoversVisibility(ViewModel.UninstallStep), Mode=OneWay}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0" Text="Leftovers Scanner Discovery" FontSize="18" FontWeight="ExtraBold" Margin="0,0,0,12" />
-
-                <!-- Leftovers quick stats -->
-                <Grid Grid.Row="1" Margin="0,0,0,12" ColumnSpacing="16">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    
-                    <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="12">
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <FontIcon Glyph="&#xE7BA;" FontSize="20" Foreground="#FFEF4444" VerticalAlignment="Center"/>
-                            <StackPanel>
-                                <TextBlock Text="Residual Items Found" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="{x:Bind ViewModel.Leftovers.Count, Mode=OneWay}" FontSize="15" FontWeight="Bold"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="12">
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <FontIcon Glyph="&#xE95A;" FontSize="20" Foreground="#FF10B981" VerticalAlignment="Center"/>
-                            <StackPanel>
-                                <TextBlock Text="Reclaimable Space" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="{x:Bind ViewModel.LeftoversSizeFormatted, Mode=OneWay}" FontSize="15" FontWeight="Bold"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </Grid>
-
-                <Border Grid.Row="2" Style="{StaticResource ModernCardStyle}" Padding="12">
-                    <ListView ItemsSource="{x:Bind ViewModel.Leftovers, Mode=OneWay}" SelectionMode="None">
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:LeftoverItem">
-                                <Grid Padding="4,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="100" />
-                                    </Grid.ColumnDefinitions>
-                                    <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" />
-                                    
-                                    <Grid Grid.Column="1" Width="28" Height="28" CornerRadius="6" Background="{x:Bind IconBackground, Mode=OneWay}" Margin="0,0,12,0" VerticalAlignment="Center">
-                                        <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}" Foreground="{x:Bind IconForeground, Mode=OneWay}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Grid>
-
-                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                                        <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="12.5"/>
-                                        <TextBlock Text="{x:Bind Path}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="3" Text="{x:Bind SizeFormatted}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                <!-- Frosted glass acrylic layer -->
+                <Border BorderThickness="0">
+                    <Border.Background>
+                        <AcrylicBrush TintColor="#0F0F14" TintOpacity="0.85" FallbackColor="#0F0F14"/>
+                    </Border.Background>
                 </Border>
 
-                <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" Margin="0,12,0,0" HorizontalAlignment="Right">
-                    <Button Content="Cancel &amp; Back" Click="OnCancelLeftoversClick"/>
-                    <Button Content="Wipe Leftovers" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDeleteLeftoversClick" FontWeight="Bold"/>
-                </StackPanel>
+                <!-- Step 1: Progress Card -->
+                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center" Width="420" Height="220" Visibility="{x:Bind GetStepProgressVisibility(ViewModel.UninstallStep), Mode=OneWay}">
+                    <StackPanel Spacing="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ProgressRing IsActive="True" Width="60" Height="60" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" LineHeight="20" MaxWidth="360"/>
+                        <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="8" CornerRadius="4" Foreground="{StaticResource PrimaryAccentGradient}" Width="320" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Step 2: Leftovers Panel (Presented as a beautiful large modal) -->
+                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="760" Height="560" Visibility="{x:Bind GetStepLeftoversVisibility(ViewModel.UninstallStep), Mode=OneWay}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Leftovers Scanner Discovery" FontSize="20" FontWeight="ExtraBold" Margin="0,0,0,12" />
+
+                        <!-- Leftovers quick stats -->
+                        <Grid Grid.Row="1" Margin="0,0,0,16" ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="12">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <FontIcon Glyph="&#xE7BA;" FontSize="20" Foreground="#FFEF4444" VerticalAlignment="Center"/>
+                                    <StackPanel>
+                                        <TextBlock Text="Residual Items Found" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.Leftovers.Count, Mode=OneWay}" FontSize="15" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="12">
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <FontIcon Glyph="&#xE95A;" FontSize="20" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                                    <StackPanel>
+                                        <TextBlock Text="Reclaimable Space" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.LeftoversSizeFormatted, Mode=OneWay}" FontSize="15" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Border Grid.Row="2" Style="{StaticResource ModernCardStyle}" Padding="4">
+                            <ListView ItemsSource="{x:Bind ViewModel.Leftovers, Mode=OneWay}" SelectionMode="None">
+                                <ListView.Header>
+                                    <Grid Padding="12,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" /> <!-- Checkbox -->
+                                            <ColumnDefinition Width="Auto" /> <!-- Icon spacer -->
+                                            <ColumnDefinition Width="*" />    <!-- Name & Path -->
+                                            <ColumnDefinition Width="100" />  <!-- Size -->
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox Grid.Column="0" IsChecked="{x:Bind ViewModel.IsAllLeftoversSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" ToolTipService.ToolTip="Select / Deselect All Leftovers" />
+                                        <Border Grid.Column="1" Width="28" Margin="0,0,12,0" Background="Transparent" />
+                                        <TextBlock Grid.Column="2" Text="Residual Item Details" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="Size" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
+                                    </Grid>
+                                </ListView.Header>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:LeftoverItem">
+                                        <Grid Padding="12,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="100" />
+                                            </Grid.ColumnDefinitions>
+                                            <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" />
+                                            
+                                            <Grid Grid.Column="1" Width="28" Height="28" CornerRadius="6" Background="{x:Bind IconBackground, Mode=OneWay}" Margin="0,0,12,0" VerticalAlignment="Center">
+                                                <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}" Foreground="{x:Bind IconForeground, Mode=OneWay}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Grid>
+
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="12.5"/>
+                                                <TextBlock Text="{x:Bind Path}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" MaxWidth="440"/>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="3" Text="{x:Bind SizeFormatted}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Border>
+
+                        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="12" Margin="0,16,0,0" HorizontalAlignment="Right">
+                            <Button Content="Cancel &amp; Back" Click="OnCancelLeftoversClick" Height="36" CornerRadius="6" Padding="20,0"/>
+                            <Button Content="Wipe Leftovers" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDeleteLeftoversClick" FontWeight="Bold" Height="36" CornerRadius="6" Padding="24,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
             </Grid>
         </Grid>
     </Grid>

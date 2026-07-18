@@ -605,6 +605,42 @@
                             </StackPanel>
                         </Border>
 
+                        <!-- Secure DNS (DNS over HTTPS) Card -->
+                        <Border Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="10" Padding="14">
+                            <StackPanel Spacing="10">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE727;" FontSize="16" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
+                                    <TextBlock Text="Secure DNS (DoH)" FontWeight="Bold" FontSize="13" VerticalAlignment="Center" />
+                                </StackPanel>
+                                
+                                <TextBlock Text="Encrypts your DNS queries over HTTPS to protect your privacy and bypass filtering." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
+                                
+                                <ToggleSwitch x:Name="DohToggle" Header="Enable DNS over HTTPS" IsOn="{x:Bind ViewModel.IsDohEnabled, Mode=TwoWay}" MinWidth="0" />
+                                
+                                <ComboBox Header="DoH Provider" 
+                                          HorizontalAlignment="Stretch" 
+                                          SelectedValue="{x:Bind ViewModel.SelectedDohProvider, Mode=TwoWay}" 
+                                          SelectedValuePath="Content"
+                                          IsEnabled="{x:Bind ViewModel.IsDohEnabled, Mode=OneWay}"
+                                          CornerRadius="6">
+                                    <ComboBoxItem Content="Cloudflare" />
+                                    <ComboBoxItem Content="Google" />
+                                    <ComboBoxItem Content="AdGuard" />
+                                    <ComboBoxItem Content="NextDNS" />
+                                </ComboBox>
+                                
+                                <Button Content="Apply Secure DNS" 
+                                        Style="{StaticResource AccentButtonStyle}" 
+                                        Background="{StaticResource PrimaryAccentGradient}" 
+                                        Foreground="White" 
+                                        Click="OnApplyDohClick" 
+                                        IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}"
+                                        HorizontalAlignment="Stretch" 
+                                        CornerRadius="6" 
+                                        Padding="0,8" />
+                            </StackPanel>
+                        </Border>
+
                         <TextBlock Text="Domain Name System (DNS) maps domain names to IP addresses. Having low DNS resolution query latencies is critical for instant web-browsing response speeds, gaming latency stability, and preventing loading delay spikes." FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="18" />
                         <TextBlock Text="* Note: The benchmark tests standard UDP DNS resolving (Port 53) directly. Applying the DNS settings will bind all active local network adapters to the selected static servers." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Opacity="0.8" TextWrapping="Wrap" />
                     </StackPanel>

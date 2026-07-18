@@ -28,7 +28,11 @@ public partial class NetworkViewModel
                     try
                     {
                         if (token.IsCancellationRequested || (_cts != null && _cts.IsCancellationRequested)) return;
-                        DnsServers = new ObservableCollection<DnsServerInfo>(result);
+                        DnsServers.Clear();
+                        foreach (var server in result)
+                        {
+                            DnsServers.Add(server);
+                        }
                         var fastest = result.FirstOrDefault(d => d.IsFastest);
                         _fastestDns = fastest;
                         if (fastest == null)
@@ -156,4 +160,107 @@ public partial class NetworkViewModel
             }
         }
     }
+
+    private bool _isDohEnabled;
+    public bool IsDohEnabled
+    {
+        get => _isDohEnabled;
+        set => SetPropertyOnUI(() => _isDohEnabled, v => _isDohEnabled = v, value);
+    }
+
+    private string _selectedDohProvider = "Cloudflare";
+    public string SelectedDohProvider
+    {
+        get => _selectedDohProvider;
+        set => SetPropertyOnUI(() => _selectedDohProvider, v => _selectedDohProvider = v, value);
+    }
+
+    public async Task InitializeDohAsync()
+    {
+        try
+        {
+            bool isEnabled = await _engine.IsDohEnabledAsync();
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                _isDohEnabled = isEnabled;
+                OnPropertyChanged(nameof(IsDohEnabled));
+            });
+        }
+        catch (Exception ex)
+        {
+            LogText($"Failed to detect DoH state: {ex.Message}");
+        }
+    }
+
+    public async Task ApplyDohSettingsAsync()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        
+        try
+        {
+            bool enable = IsDohEnabled;
+            string primaryIp = "";
+            string secondaryIp = "";
+            string template = "";
+
+            if (enable)
+            {
+                switch (SelectedDohProvider)
+                {
+                    case "Google":
+                        primaryIp = "8.8.8.8";
+                        secondaryIp = "8.8.4.4";
+                        template = "https://dns.google/dns-query";
+                        break;
+                    case "AdGuard":
+                        primaryIp = "94.140.14.14";
+                        secondaryIp = "94.140.15.15";
+                        template = "https://dns.adguard-dns.com/dns-query";
+                        break;
+                    case "NextDNS":
+                        primaryIp = "45.90.28.0";
+                        secondaryIp = "45.90.30.0";
+                        template = "https://dns.nextdns.io";
+                        break;
+                    case "Cloudflare":
+                    default:
+                        primaryIp = "1.1.1.1";
+                        secondaryIp = "1.0.0.1";
+                        template = "https://cloudflare-dns.com/dns-query";
+                        break;
+                }
+            }
+
+            bool success = await _engine.SetDohSettingsAsync(enable, primaryIp, secondaryIp, template);
+            
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (success)
+                {
+                    LogText(enable ? "DNS over HTTPS successfully enabled.".T() : "DNS over HTTPS successfully disabled.".T());
+                    _notificationService?.ShowSuccess("Secure DNS Updated".T(), enable ? "DNS over HTTPS configured successfully." : "DNS config reset to automatic.");
+                }
+                else
+                {
+                    LogText("Failed to update DNS over HTTPS configuration. Admin rights required.".T());
+                    _notificationService?.ShowError("Secure DNS Failed".T(), "Administrative privileges required.");
+                    // Revert state
+                    _isDohEnabled = !enable;
+                    OnPropertyChanged(nameof(IsDohEnabled));
+                }
+            });
+
+            await RunDiagnosticsAsync();
+        }
+        catch (Exception ex)
+        {
+            LogText($"Error updating DoH: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 }
+

@@ -188,4 +188,34 @@ public class DialogService : IDialogService
             _dialogSemaphore.Release();
         }
     }
+
+    public async Task<bool> ShowForceUninstallPromptAsync(string appName)
+    {
+        if (_xamlRoot == null) return false;
+
+        await _dialogSemaphore.WaitAsync();
+        try
+        {
+            // Allow time for previous dialog's closing transition to complete
+            await Task.Delay(300);
+
+            var dialog = new ContentDialog
+            {
+                Title = "Uninstaller Failed or Cancelled".T(),
+                Content = string.Format("The standard uninstaller for {0} could not be completed. Would you like to perform a Force Uninstall (wipe its residual files and registry entries)?".T(), appName),
+                PrimaryButtonText = "Force Uninstall".T(),
+                CloseButtonText = "Cancel".T(),
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = _xamlRoot,
+                RequestedTheme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme
+            };
+
+            var result = await dialog.ShowAsync();
+            return result == ContentDialogResult.Primary;
+        }
+        finally
+        {
+            _dialogSemaphore.Release();
+        }
+    }
 }

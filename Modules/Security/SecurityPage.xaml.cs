@@ -1,5 +1,5 @@
 using System;
-using Microsoft.UI;
+using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -19,17 +19,30 @@ public sealed partial class SecurityPage : Page
         this.Loaded += (s, e) => DataContext = ViewModel;
     }
 
-    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    // --- Security Center Tab: Shortcut buttons to Windows built-in tools ---
+
+    private void OnOpenWindowsSecurityClick(object sender, RoutedEventArgs e)
     {
-        base.OnNavigatedFrom(e);
-        // No active background thread in SecurityViewModel; scan is fire-and-forget
-        // NavigationCacheMode.Required ensures ViewModel is not re-created on back-navigation
+        try { Process.Start(new ProcessStartInfo("windowsdefender:") { UseShellExecute = true }); }
+        catch { Process.Start(new ProcessStartInfo("ms-settings:windowsdefender") { UseShellExecute = true }); }
     }
 
-    private async void OnScanClick(object sender, RoutedEventArgs e)
+    private void OnOpenMsinfoClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ScanSecurityAsync();
+        Process.Start(new ProcessStartInfo("msinfo32.exe") { UseShellExecute = true });
     }
+
+    private void OnOpenWindowsUpdateClick(object sender, RoutedEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo("ms-settings:windowsupdate") { UseShellExecute = true });
+    }
+
+    private void OnOpenTaskManagerClick(object sender, RoutedEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true });
+    }
+
+    // --- Privacy Tuning Tab handlers ---
 
     private async void OnAdvertisingIdToggled(object sender, RoutedEventArgs e)
     {
@@ -74,66 +87,4 @@ public sealed partial class SecurityPage : Page
     }
 
     internal bool IsNot(bool val) => !val;
-
-    internal Visibility GetVisibility(int count)
-    {
-        return count == 0 ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    internal Brush GetScoreBrush(int score)
-    {
-        if (score >= 90) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)); // Emerald Green
-        if (score >= 70) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)); // Amber Orange
-        return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Crimson Red
-    }
-
-    internal Brush GetScoreBadgeBackground(int score)
-    {
-        if (score >= 90) return new SolidColorBrush(Windows.UI.Color.FromArgb(30, 16, 185, 129));
-        if (score >= 70) return new SolidColorBrush(Windows.UI.Color.FromArgb(30, 245, 158, 11));
-        return new SolidColorBrush(Windows.UI.Color.FromArgb(30, 239, 68, 68));
-    }
-
-    internal string GetStatusText(int score)
-    {
-        if (score >= 90) return "PROTECTED - PC defense levels are high.";
-        if (score >= 75) return "MODERATE - Consider enabling all features for peak defense.";
-        return "RISK DETECTED - Crucial features disabled. Check alerts.";
-    }
-
-    internal Brush GetAvBadgeBg(string status)
-    {
-        bool ok = status.Contains("Enabled") || status.Contains("Running");
-        var color = ok ? Windows.UI.Color.FromArgb(30, 16, 185, 129) : Windows.UI.Color.FromArgb(30, 239, 68, 68);
-        return new SolidColorBrush(color);
-    }
-
-    internal Brush GetAvColor(string status)
-    {
-        bool ok = status.Contains("Enabled") || status.Contains("Running");
-        var color = ok ? Windows.UI.Color.FromArgb(255, 16, 185, 129) : Windows.UI.Color.FromArgb(255, 239, 68, 68);
-        return new SolidColorBrush(color);
-    }
-
-    internal string GetAvLabel(string status)
-    {
-        return (status.Contains("Enabled") || status.Contains("Running")) ? "Secure" : "Action Needed";
-    }
-
-    internal Brush GetFirewallBadgeBg(bool active)
-    {
-        var color = active ? Windows.UI.Color.FromArgb(30, 16, 185, 129) : Windows.UI.Color.FromArgb(30, 239, 68, 68);
-        return new SolidColorBrush(color);
-    }
-
-    internal Brush GetFirewallColor(bool active)
-    {
-        var color = active ? Windows.UI.Color.FromArgb(255, 16, 185, 129) : Windows.UI.Color.FromArgb(255, 239, 68, 68);
-        return new SolidColorBrush(color);
-    }
-
-    internal string GetFirewallLabel(bool active)
-    {
-        return active ? "Enabled" : "Disabled";
-    }
 }

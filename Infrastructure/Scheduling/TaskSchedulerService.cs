@@ -6,8 +6,8 @@ namespace WinCarePro.Services.Implementations;
 
 public class TaskSchedulerService
 {
-    private static TaskSchedulerService? _instance;
-    public static TaskSchedulerService Instance => _instance ??= new TaskSchedulerService();
+    private static readonly TaskSchedulerService _instance = new();
+    public static TaskSchedulerService Instance => _instance;
 
     private readonly SemaphoreSlim _diskSemaphore = new(2, 2);      // Disk Scan: max 2 threads
     private readonly SemaphoreSlim _junkSemaphore = new(4, 4);      // Junk Scan: max 4 threads

@@ -9,8 +9,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.4/WinCareProSetup.exe">
-      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v3.4.4-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro" />
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.5/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v3.4.5-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro" />
     </a>
   </p>
 
@@ -51,15 +51,14 @@ graph TD
         JunkPage[JunkPage.xaml]:::ui
         DiskPage[DiskPage.xaml]:::ui
         NetworkPage[NetworkPage.xaml]:::ui
-        AppPage[Uninstall/AppPage.xaml]:::ui
+        UninstallPage[Uninstall/UninstallPage.xaml]:::ui
         RepairPage[RepairPage.xaml]:::ui
         SecurityPage[SecurityPage.xaml]:::ui
+        OptimizerPage[SystemOptimizerPage.xaml]:::ui
+        ContextMenuPage[ContextMenuPage.xaml]:::ui
         StartupPage[StartupPage.xaml]:::ui
-        ProcessPage[ProcessPage.xaml]:::ui
-        HardwarePage[HardwarePage.xaml]:::ui
         RegistryPage[RegistryPage.xaml]:::ui
         UpdaterPage[UpdaterPage.xaml]:::ui
-        DriverPage[DriverPage.xaml]:::ui
         SettingsPage[SettingsPage.xaml]:::ui
     end
 
@@ -70,12 +69,11 @@ graph TD
         NetworkVM[NetworkViewModel.cs<br/>.Adapters.cs / .DnsRepair.cs / .Tools.cs]:::vm
         UninstallVM[UninstallViewModel.cs]:::vm
         SecurityVM[SecurityViewModel.cs]:::vm
+        OptimizerVM[SystemOptimizerViewModel.cs]:::vm
+        ContextMenuVM[ContextMenuViewModel.cs]:::vm
         StartupVM[StartupViewModel.cs]:::vm
-        ProcessVM[ProcessViewModel.cs]:::vm
-        HardwareVM[HardwareViewModel.cs]:::vm
         RegistryVM[RegistryViewModel.cs]:::vm
         UpdaterVM[UpdaterViewModel.cs]:::vm
-        DriverVM[DriverViewModel.cs]:::vm
     end
 
     subgraph CoreEngine [Bộ Máy Xử Lý - Service & Engine Layer]
@@ -84,6 +82,7 @@ graph TD
         DiskEngine[DiskEngine]:::engine
         NetEngine[NetworkEngine.cs<br/>.SpeedTest.cs / .DnsBenchmark.cs / .Repair.cs]:::engine
         SysOptimizer[SystemOptimizerEngine]:::engine
+        ContextMenuEngine[ContextMenuEngine]:::engine
         RegistryBackup[RegistryBackupEngine]:::engine
         SoftwareUpdater[SoftwareUpdaterEngine]:::engine
         DriverEngine[HardwareDriverEngine]:::engine
@@ -104,31 +103,36 @@ graph TD
     JunkPage <--> JunkVM
     DiskPage <--> DiskVM
     NetworkPage <--> NetworkVM
-    AppPage <--> UninstallVM
+    UninstallPage <--> UninstallVM
+    OptimizerPage <--> OptimizerVM
+    ContextMenuPage <--> ContextMenuVM
     
     DashboardVM --> AiDiagnostics
     JunkVM --> JunkCleaner
     DiskVM --> DiskEngine
     NetworkVM --> NetEngine
     UninstallVM --> UninstallEngine
+    OptimizerVM --> SysOptimizer
+    ContextMenuVM --> ContextMenuEngine
 
     AiDiagnostics --> SqliteDB
     JunkCleaner --> WinAPI
     DiskEngine --> WmiHelper
     NetEngine --> WinAPI
     UninstallEngine --> WinAPI & RegistryStore
+    ContextMenuEngine --> RegistryStore
     TranslationMgr -.-> UI
 ```
 
 ---
 
-## ✨ 14 Phân hệ chức năng cốt lõi (Core Modules)
+## ✨ 12 Phân hệ chức năng cốt lõi (Core Modules)
 
-WinCare Pro cung cấp 14 công cụ chuyên nghiệp, truy cập trực tiếp qua thanh điều hướng (Sidebar):
+WinCare Pro cung cấp 12 công cụ chuyên nghiệp và tiện ích hệ thống được tối ưu hóa cao:
 
 ### 1. 📊 Bảng điều khiển (Dashboard)
-* **Giám sát thời gian thực:** Theo dõi biểu đồ động đo hiệu suất CPU, RAM, dung lượng đĩa và hoạt động I/O của hệ thống.
-* **Điểm sức khỏe AI (Composite Health Score):** Sử dụng các thuật toán phân tích nhanh để đánh giá tình trạng PC theo thang điểm từ `0` đến `100` và đưa ra đề xuất xử lý tối ưu.
+* **Giám sát thời gian thực:** Theo dõi biểu đồ động đo hiệu suất CPU, RAM, dung lượng đĩa, hoạt động I/O và hiệu năng sử dụng GPU thực tế thời gian thực (qua Performance Counter).
+* **Điểm sức khỏe AI (Composite Health Score):** Sử dụng các thuật toán phân tích nhanh để đánh giá tình trạng PC theo thang điểm từ `0` đến `100`, kiểm tra thắt cổ chai CPU (CPU Throttling), đo lường sức khỏe ổ cứng (SSD/HDD Health %) và đề xuất tối ưu.
 
 ### 2. 🧹 Dọn rác hệ thống (Junk Cleaner)
 * **Lõi quét đa luồng:** Dọn dẹp sạch sẽ các tệp tin rác hệ thống (Temp Files), Nhật ký hoạt động (Logs), Tệp đổ bộ nhớ lỗi (Memory Dumps), và bộ nhớ đệm trình duyệt.
@@ -136,55 +140,49 @@ WinCare Pro cung cấp 14 công cụ chuyên nghiệp, truy cập trực tiếp 
 
 ### 3. 🚀 Trình gỡ ứng dụng (App Uninstaller)
 * **Gỡ cài đặt hàng loạt (Batch Uninstall):** Hỗ trợ chọn nhiều ứng dụng cùng lúc để gỡ cài đặt tự động.
-* **Quét dọn tàn dư chuyên sâu:** Tự động phát hiện và xóa bỏ sạch sẽ các khóa Registry thừa, thư mục rác (Leftovers) còn sót lại của ứng dụng.
-* **Buộc gỡ ứng dụng UWP:** Gỡ bỏ các ứng dụng Microsoft Store cài sẵn cứng đầu bằng lệnh PowerShell an toàn.
+* **Gỡ cài đặt cưỡng bức (Force Uninstall):** Tự động phát hiện và hiển thị hộp thoại nhắc nhở Force Uninstall khi trình gỡ thông thường bị lỗi, hỗ trợ dọn dẹp triệt để ứng dụng (kể cả Microsoft Store) và tệp rác thừa.
+* **Quét dọn tàn dư chuyên sâu:** Tự động phát hiện và xóa bỏ sạch sẽ các khóa Registry thừa, thư mục rác (Leftovers) còn sót lại của ứng dụng với tùy chọn chọn tất cả thông minh.
+* **Buộc gỡ ứng dụng UWP:** Gỡ bỏ các ứng dụng Microsoft Store cài sẵn cứng đầu bằng lệnh PowerShell an toàn kèm theo giới hạn thời gian chờ (timeout 30 giây).
 
 ### 4. 🌐 Giám sát mạng (Network Center)
 * **Theo dõi băng thông:** Biểu đồ đường thời gian thực đo lường chính xác tốc độ Upload và Download.
-* **Giám sát kết nối:** Thống kê chi tiết danh sách tiến trình đang kết nối mạng và chiếm dụng băng thông.
-* **Bộ công cụ mạng nâng cao:** Ping Test, Packet Loss check, Flush DNS, Renew IP, Benchmarking DNS và Speed Test (Đo tốc độ mạng).
+* **Bảo mật DNS qua HTTPS (DoH):** Tích hợp cấu hình Secure DNS (DoH) trực tiếp từ giao diện hỗ trợ các nhà cung cấp phổ biến (Cloudflare, Google, AdGuard, NextDNS) giúp bảo mật và mã hóa các truy vấn tên miền.
+* **Bộ công cụ mạng nâng cao:** Ping Test, Packet Loss check, Flush DNS, Renew IP, Benchmarking DNS và Speed Test. Giao diện co giãn thông minh linh hoạt theo độ phân giải màn hình.
 
 ### 5. 🛠️ Sửa lỗi hệ thống (System Repair)
 * **Khôi phục tập tin cốt lõi:** Chạy trực tiếp công cụ chẩn đoán hệ thống SFC (`sfc /scannow`) và công cụ sửa lỗi ổ đĩa DISM (`RestoreHealth`).
-* **Trực quan hóa tiến trình:** Hiển thị chi tiết từng bước kiểm tra hệ thống và phần trăm tiến độ cụ thể.
+* **Trực quan hóa & Hoạt động bất đồng bộ:** Hiển thị chi tiết từng bước kiểm tra hệ thống và tiến độ cụ thể. Toàn bộ các tiến trình hệ thống được chạy bất đồng bộ thông qua `ProcessRunner` tránh gây đơ, treo giao diện người dùng.
 
 ### 6. 🛡️ Khiên bảo mật (Security Shield)
 * **Quản trị bảo mật:** Giám sát trạng thái hoạt động của Windows Defender, Tường lửa (Firewall) và quyền kiểm soát tài khoản người dùng UAC.
 * **Bảo vệ quyền riêng tư (Privacy Tweaks):** Cho phép bật/tắt các quyền thu thập dữ liệu ngầm, quyền truy cập Camera/Microphone/Vị trí của ứng dụng.
+* **Phím tắt tiện ích hệ thống:** Tích hợp các nút mở nhanh các công cụ quản trị hệ thống Windows chính thức và an toàn bao gồm **Windows Security** (Trình diệt virus), **System Information** (Xem chi tiết phần cứng chuyên sâu qua `msinfo32.exe`), **Windows Update** (Cập nhật driver/hệ thống đã kiểm chứng bởi Microsoft) và **Task Manager** (Quản lý tiến trình nâng cao qua `taskmgr.exe`).
 
 ### 7. ⚡ Tinh chỉnh hiệu năng (System Optimizer)
 * **Giải phóng RAM vật lý (RAM Booster):** Dọn dẹp Working Sets của các chương trình để giải phóng RAM trống ngay lập tức.
 * **Tối ưu hóa hệ thống:** Cấu hình tinh chỉnh Windows Explorer, tăng tốc phản hồi phản hồi ứng dụng và kích hoạt chế độ chơi game (Game Mode).
 
-### 8. 📂 Khởi động & Dịch vụ (Startup & Services)
+### 8. 🖱️ Menu chuột phải (Context Menu)
+* **Bật/Tắt Menu chuột phải:** Quản lý các mục menu chuột phải hệ thống (ContextMenu) cho các loại All Files, Desktop Background và Folders trực tiếp qua Registry.
+* **Nhận diện nâng cao:** Tự động tra cứu và hiển thị tên đầy đủ của các khóa Class ID (CLSID) trong Registry để người dùng dễ kiểm soát.
+
+### 9. 📂 Khởi động & Dịch vụ (Startup & Services)
 * **Quản lý khởi động:** Liệt kê các chương trình tự khởi động cùng Windows, đánh giá mức độ ảnh hưởng đến thời gian boot máy và cho phép bật/tắt.
 * **Quản trị Services:** Theo dõi và kiểm soát hoạt động của các dịch vụ hệ thống chạy ngầm.
-
-### 9. 📊 Quản lý tiến trình (Process Manager)
-* **Thông tin chi tiết:** Thống kê dung lượng RAM, CPU, số luồng (Threads) và Handles của từng tiến trình đang chạy.
-* **Kiểm soát tác vụ:** Hỗ trợ đóng băng (Suspend) hoặc dừng cưỡng bức (End Task) các tiến trình bị treo.
 
 ### 10. 💾 Công cụ ổ đĩa (Disk Tools)
 * **Sức khỏe ổ đĩa (SMART Info):** Đọc thông số nhiệt độ, tỷ lệ lỗi và tình trạng sức khỏe thực tế của ổ đĩa cứng (SSD/HDD).
 * **Phân tích dung lượng (Storage Analyzer):** Quét thư mục bất kỳ để tìm ra các tệp tin và thư mục đang chiếm dụng dung lượng lớn nhất.
 * **Tìm tệp trùng lặp (Duplicate Finder):** Tìm kiếm và dọn dẹp các tệp tin bị trùng nội dung giúp giải phóng dung lượng đĩa.
 
-### 11. 💻 Thông tin phần cứng (Hardware Center)
-* **Đặc tả chi tiết:** Hiển thị toàn bộ thông tin phần cứng bao gồm: CPU (Xung nhịp, nhân/luồng), GPU, RAM, Bo mạch chủ, BIOS và hệ điều hành.
+### 11. 🔧 Quản trị Registry (Registry Center)
+* **Bảo vệ tính ổn định hệ thống:** Thay vì quét tự động tiềm ẩn nhiều rủi ro lỗi hệ điều hành (tuân theo khuyến cáo của Microsoft), giao diện cung cấp các chỉ dẫn an toàn và hỗ trợ sao lưu Registry tự động cũng như tạo điểm khôi phục nhanh (System Restore Point).
+* **Phím tắt công cụ:** Cho phép truy cập trực tiếp vào trình soạn thảo **Registry Editor** (`regedit`) để tự sửa thủ công và **System Restore** (`rstrui`) để khôi phục nhanh khi xảy ra lỗi.
 
-### 12. 🔧 Quản trị Registry (Registry Center)
-* **Dọn dẹp Registry:** Quét và sửa các khóa đăng ký lỗi, đường dẫn ứng dụng hỏng hoặc registry rác.
-* **Khôi phục cấu hình:** Sao lưu Registry tự động và hỗ trợ tạo điểm khôi phục (Restore Point) hệ thống.
-
-### 13. 🔄 Cập nhật phần mềm (Software Updater)
+### 12. 🔄 Cập nhật phần mềm (Software Updater)
 * **Quản lý ứng dụng bên thứ ba:** Kiểm tra phiên bản mới của các ứng dụng đã cài đặt trên máy.
 * **Cập nhật nhanh chóng:** Tải và cài đặt tự động thông qua Windows Package Manager (winget) hoặc liên kết trực tiếp.
 
-### 14. 🔌 Cập nhật Driver (Driver Updater)
-* **Quét Driver thiết bị:** Tự động phát hiện các Driver phần cứng đã lỗi thời hoặc còn thiếu.
-* **Thuật sĩ cài đặt:** Hướng dẫn quy trình 3 bước trực quan giúp tải xuống và cập nhật driver an toàn.
-
----
 
 ## 🔔 Tiện ích hệ thống bổ sung
 * **Trung tâm thông báo (Notification Center):** Nơi lưu trữ lịch sử hoạt động bảo trì, dọn dẹp và hiển thị các gợi ý bảo vệ máy tính thời gian thực.
@@ -241,8 +239,8 @@ WinCare Pro cung cấp 14 công cụ chuyên nghiệp, truy cập trực tiếp 
 
 Thư mục gốc chứa các kịch bản tự động hóa quá trình đóng gói và phát hành ứng dụng:
 
-* **Tạo bản Portable (`publish.bat`):** Biên dịch ứng dụng thành một tệp thực thi duy nhất đã được nén và tối ưu hóa (`PublishSingleFile=true`, `PublishReadyToRun=true`). Bản này có thể chạy trực tiếp trên bất kỳ máy tính Windows nào tại đường dẫn `.\PublishOutput\WinCarePro.exe`.
-* **Tạo bộ cài Setup (`publish_installer.bat`):** Sử dụng **Inno Setup 6** kết hợp với kịch bản [setup.iss](file:///d:/WinCare/setup.iss) để đóng gói toàn bộ ứng dụng và runtime tự cấp (Self-contained) thành tệp cài đặt chuyên nghiệp `.\PublishOutput\WinCareProSetup.exe`.
+* **Tạo bản Portable (`publish.bat`):** Biên dịch ứng dụng thành một tệp thực thi duy nhất đã được nén và tối ưu hóa (`PublishSingleFile=true`, `PublishReadyToRun=true`). Bản này có thể chạy trực tiếp tại đường dẫn `.\PublishOutput\WinCarePro.exe` (lưu ý: cần sao chép và phân phối cả thư mục `Assets` đi kèm nằm cùng thư mục với file exe để hiển thị đầy đủ biểu tượng và tài nguyên đồ họa).
+* **Tạo bộ cài Setup (`publish_installer.bat`):** Sử dụng **Inno Setup 6** kết hợp với kịch bản [setup.iss](file:///d:/WinCare/setup.iss) để đóng gói toàn bộ ứng dụng và runtime tự cấp (Self-contained) thành tệp cài đặt chuyên nghiệp `.\PublishOutput\WinCareProSetup.exe`. Bộ cài hỗ trợ dọn dẹp các tệp tạm thời và thư mục cấu hình trong AppData của ứng dụng khi gỡ cài đặt.
 
 ---
 
@@ -253,7 +251,7 @@ WinCare/
 │
 ├── Assets/                 # Tài nguyên đồ họa, hình ảnh và icon Fluent của ứng dụng
 ├── Core/                   # Thư mục cốt lõi chứa các Helpers và mô hình dữ liệu (Models) dùng chung
-│   ├── Helpers/            # Các tiện ích hệ thống (như WmiHelper.cs)
+│   ├── Helpers/            # Các tiện ích hệ thống (như WmiHelper.cs, ProcessRunner.cs, AnimationHelper.cs, ViewModelBase.cs)
 │   └── Models/             # Các Data Models phân tách (như ProcessInfo.cs, DriverInfo.cs...)
 ├── Engines/                # Động cơ xử lý logic cốt lõi (Diagnostics, Monitoring, Optimization, Repair)
 ├── Infrastructure/         # Xử lý Caching, Database (SQLite), Logging, Scheduling và Security
@@ -273,7 +271,7 @@ WinCare/
 ---
 
 ## 📝 Giấy phép (License) & Đóng góp ý kiến
-Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.4.4.
+Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.4.5.
 
 ---
 <div align="center">

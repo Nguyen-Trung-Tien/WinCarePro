@@ -92,17 +92,18 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
+                <NavigationViewItem Content="Context Menu" Tag="ContextMenu">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE71D;" Foreground="Thistle" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
                 <NavigationViewItem Content="Startup &amp; Services" Tag="Startup">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7B5;" Foreground="Gold" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Process Manager" Tag="Process">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE9D9;" Foreground="DeepSkyBlue" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
 
                 <NavigationViewItem Content="Disk Tools" Tag="Disk">
                     <NavigationViewItem.Icon>
@@ -110,11 +111,6 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Hardware Center" Tag="Hardware">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE950;" Foreground="MediumAquamarine" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
 
                 <NavigationViewItem Content="Registry Center" Tag="Registry">
                     <NavigationViewItem.Icon>
@@ -128,11 +124,6 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Driver Updater" Tag="Driver">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEDA0;" Foreground="Gold" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
 
             </NavigationView.MenuItems>
 
@@ -141,7 +132,7 @@
                 <Frame.ContentTransitions>
                     <TransitionCollection>
                         <NavigationThemeTransition>
-                            <SlideNavigationTransitionInfo Effect="FromRight"/>
+                            <EntranceNavigationTransitionInfo />
                         </NavigationThemeTransition>
                     </TransitionCollection>
                 </Frame.ContentTransitions>

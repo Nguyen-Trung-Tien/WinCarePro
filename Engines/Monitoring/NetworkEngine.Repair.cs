@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
@@ -84,30 +85,23 @@ public partial class NetworkEngine
         try
         {
             // We run a powershell command to restart enabled network adapters
-            var psi = new ProcessStartInfo
+            var result = await ProcessRunner.RunAsync(
+                "powershell.exe",
+                "-NoProfile -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Restart-NetAdapter -Confirm:$false\"",
+                TimeSpan.FromSeconds(45),
+                onOutput: Log,
+                onError: Log
+            );
+            if (result.ExitCode == 0)
             {
-                FileName = "powershell.exe",
-                Arguments = "-NoProfile -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Restart-NetAdapter -Confirm:$false\"",
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
-            using var proc = Process.Start(psi);
-            if (proc != null)
+                Log("Restart adapter command triggered via PowerShell.");
+                Database.DbManager.LogAction("Restart Adapter", "Network Repair", "Success");
+                return true;
+            }
+            else
             {
-                await proc.WaitForExitAsync();
-                if (proc.ExitCode == 0)
-                {
-                    Log("Restart adapter command triggered via PowerShell.");
-                    Database.DbManager.LogAction("Restart Adapter", "Network Repair", "Success");
-                    return true;
-                }
-                else
-                {
-                    Log($"Failed to restart adapter. PowerShell exited with code {proc.ExitCode}.");
-                    Database.DbManager.LogAction("Restart Adapter", "Network Repair", "Failed");
-                }
+                Log($"Failed to restart adapter. PowerShell exited with code {result.ExitCode}.");
+                Database.DbManager.LogAction("Restart Adapter", "Network Repair", "Failed");
             }
         }
         catch (Exception ex)
@@ -121,21 +115,14 @@ public partial class NetworkEngine
     {
         try
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = filename,
-                Arguments = arguments,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
-            using var proc = new Process { StartInfo = psi };
-            proc.OutputDataReceived += (s, e) => { if (e.Data != null) Log(e.Data); };
-            proc.Start();
-            proc.BeginOutputReadLine();
-            await proc.WaitForExitAsync();
-            return proc.ExitCode == 0;
+            var result = await ProcessRunner.RunAsync(
+                filename,
+                arguments,
+                TimeSpan.FromSeconds(30),
+                onOutput: Log,
+                onError: Log
+            );
+            return result.ExitCode == 0;
         }
         catch (Exception ex)
         {
@@ -188,29 +175,22 @@ public partial class NetworkEngine
         {
             string script = "Get-NetAdapterAdvancedProperty | Where-Object { $_.DisplayName -like '*Energy*' -or $_.DisplayName -like '*Green*' -or $_.DisplayName -like '*Power Saving*' } | " +
                             "foreach { Set-NetAdapterAdvancedProperty -Name $_.InterfaceAlias -RegistryKeyword $_.RegistryKeyword -RegistryValue '0' -NoRestart; }";
-            var psi = new ProcessStartInfo
+            var result = await ProcessRunner.RunAsync(
+                "powershell.exe",
+                $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"",
+                TimeSpan.FromSeconds(45),
+                onOutput: Log,
+                onError: Log
+            );
+            if (result.ExitCode == 0)
             {
-                FileName = "powershell.exe",
-                Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"",
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
-            using var proc = Process.Start(psi);
-            if (proc != null)
+                Log("Energy saving Ethernet properties set to Disabled via PowerShell.");
+                Database.DbManager.LogAction("Disable Green Ethernet", "Network Repair", "Success");
+                return true;
+            }
+            else
             {
-                await proc.WaitForExitAsync();
-                if (proc.ExitCode == 0)
-                {
-                    Log("Energy saving Ethernet properties set to Disabled via PowerShell.");
-                    Database.DbManager.LogAction("Disable Green Ethernet", "Network Repair", "Success");
-                    return true;
-                }
-                else
-                {
-                    Log($"Failed to disable energy saving features. PowerShell exited with code {proc.ExitCode}.");
-                }
+                Log($"Failed to disable energy saving features. PowerShell exited with code {result.ExitCode}.");
             }
         }
         catch (Exception ex)
@@ -220,4 +200,68 @@ public partial class NetworkEngine
         Database.DbManager.LogAction("Disable Green Ethernet", "Network Repair", "Failed");
         return false;
     }
+
+    public async Task<bool> IsDohEnabledAsync()
+    {
+        Log("Checking DNS over HTTPS (DoH) status...");
+        try
+        {
+            var result = await ProcessRunner.RunAsync(
+                "powershell.exe",
+                "-NoProfile -ExecutionPolicy Bypass -Command \"if (Get-Command Get-DnsClientDohServerAddress -ErrorAction SilentlyContinue) { Get-DnsClientDohServerAddress | Where-Object { $_.DohState -eq 'Enabled' -or $_.DohState -eq 'Required' } | ConvertTo-Json } else { write-output '' }\"",
+                TimeSpan.FromSeconds(15)
+            );
+            return !string.IsNullOrWhiteSpace(result.Output) && result.Output.Contains("Enabled");
+        }
+        catch (Exception ex)
+        {
+            Log($"Failed to check DoH status: {ex.Message}");
+            return false;
+        }
+    }
+
+    public async Task<bool> SetDohSettingsAsync(bool enable, string primaryDns, string secondaryDns, string dohTemplate)
+    {
+        string actionName = enable ? "Enable DoH" : "Disable DoH";
+        Log(enable ? $"Enabling DNS over HTTPS with primary: {primaryDns}, template: {dohTemplate}..." : "Disabling DNS over HTTPS and resetting DNS to automatic (DHCP)...");
+        
+        try
+        {
+            string script;
+            if (enable)
+            {
+                script = "$adapters = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }; " +
+                         $"foreach ($adapter in $adapters) {{ Set-DnsClientServerAddress -InterfaceIndex $adapter.InterfaceIndex -ServerAddresses ('{primaryDns}', '{secondaryDns}') }}; " +
+                         "if (Get-Command Set-DnsClientDohServerAddress -ErrorAction SilentlyContinue) { " +
+                         $"  Set-DnsClientDohServerAddress -ServerAddress '{primaryDns}' -DohTemplate '{dohTemplate}' -AllowFallbackToUdp $true -AutoUpgrade $true; " +
+                         $"  Set-DnsClientDohServerAddress -ServerAddress '{secondaryDns}' -DohTemplate '{dohTemplate}' -AllowFallbackToUdp $true -AutoUpgrade $true; " +
+                         "}";
+            }
+            else
+            {
+                script = "$adapters = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }; " +
+                         "foreach ($adapter in $adapters) { Set-DnsClientServerAddress -InterfaceIndex $adapter.InterfaceIndex -ResetServerAddresses }; " +
+                         "if (Get-Command Clear-DnsClientDohServerAddress -ErrorAction SilentlyContinue) { Clear-DnsClientDohServerAddress }";
+            }
+
+            var result = await ProcessRunner.RunAsync(
+                "powershell.exe",
+                $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"",
+                TimeSpan.FromSeconds(30),
+                onOutput: Log,
+                onError: Log
+            );
+
+            bool ok = result.ExitCode == 0;
+            Database.DbManager.LogAction(actionName, "Network Center", ok ? "Success" : "Failed");
+            return ok;
+        }
+        catch (Exception ex)
+        {
+            Log($"Failed to set DoH settings: {ex.Message}");
+            Database.DbManager.LogAction(actionName, "Network Center", "Failed");
+            return false;
+        }
+    }
 }
+

@@ -34,4 +34,6 @@ public interface INetworkService
     Task<List<DnsServerInfo>> RunDnsBenchmarkAsync(System.Threading.CancellationToken cancellationToken = default);
     Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp);
     List<ActiveConnectionInfo> GetActiveConnections();
+    Task<bool> IsDohEnabledAsync();
+    Task<bool> SetDohSettingsAsync(bool enable, string primaryDns, string secondaryDns, string dohTemplate);
 }

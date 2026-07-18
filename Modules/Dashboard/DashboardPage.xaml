@@ -8,6 +8,7 @@
     xmlns:vm="using:WinCarePro.ViewModels"
     xmlns:local="using:WinCarePro.Views"
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d"
     NavigationCacheMode="Required">
 
@@ -57,7 +58,7 @@
             <StackPanel Spacing="16">
                 
                 <!-- Main Content Grid combining Core and Extended layers -->
-                <Grid x:Name="MainContentGrid" ColumnSpacing="16" RowSpacing="0">
+                <Grid x:Name="MainContentGrid" ColumnSpacing="0" RowSpacing="0" Padding="8">
                     <Grid.RowDefinitions>
                         <!-- Wide Layout Rows -->
                         <RowDefinition x:Name="Row0" Height="Auto" />
@@ -77,7 +78,9 @@
                     <!-- Left Side Column 0 -->
                     
                     <!-- 1. Health Gauge Card (Neon Glow Border) -->
-                    <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource NeonGlowBorderStyle}" Padding="20">
+                    <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource NeonGlowBorderStyle}" Margin="8" Padding="20"
+                            helpers:AnimationHelper.HoverScale="1.015"
+                            helpers:AnimationHelper.PressedScale="0.985">
                         <Grid x:Name="HealthGaugeGrid">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="HealthGaugeRow0" Height="Auto" />
@@ -109,6 +112,24 @@
                                     
                                     <!-- Split Button for Tiered Optimization -->
                                     <SplitButton x:Name="OptimizeSplitBtn" Content="Optimize (Recommended)" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}">
+                                        <SplitButton.Resources>
+                                            <SolidColorBrush x:Key="SplitButtonButtonBackground" Color="#FF8B5CF6" />
+                                            <SolidColorBrush x:Key="SplitButtonButtonBackgroundPointerOver" Color="#FF7C3AED" />
+                                            <SolidColorBrush x:Key="SplitButtonButtonBackgroundPressed" Color="#FF6D28D9" />
+                                            <SolidColorBrush x:Key="SplitButtonButtonBackgroundDisabled" Color="#FFE0E0E0" />
+                                            
+                                            <SolidColorBrush x:Key="SplitButtonButtonForeground" Color="White" />
+                                            <SolidColorBrush x:Key="SplitButtonButtonForegroundPointerOver" Color="White" />
+                                            <SolidColorBrush x:Key="SplitButtonButtonForegroundPressed" Color="#FFE0E7FF" />
+                                            <SolidColorBrush x:Key="SplitButtonButtonForegroundDisabled" Color="#FF9E9E9E" />
+
+                                            <SolidColorBrush x:Key="SplitButtonBorderBrush" Color="Transparent" />
+                                            <SolidColorBrush x:Key="SplitButtonBorderBrushPointerOver" Color="Transparent" />
+                                            <SolidColorBrush x:Key="SplitButtonBorderBrushPressed" Color="Transparent" />
+
+                                            <SolidColorBrush x:Key="SplitButtonSeparatorBrush" Color="#30FFFFFF" />
+                                            <SolidColorBrush x:Key="SplitButtonSeparatorBrushPointerOver" Color="#50FFFFFF" />
+                                        </SplitButton.Resources>
                                         <SplitButton.Flyout>
                                             <MenuFlyout Placement="Bottom">
                                                 <MenuFlyoutItem Text="Safe Mode (Temp &amp; DNS)" Click="OnSafeOptimizeClick" />
@@ -133,7 +154,7 @@
                     </Border>
 
                     <!-- 2. CPU & RAM Mini cards -->
-                    <Grid x:Name="CpuRamGrid" Grid.Row="1" Grid.Column="0" ColumnSpacing="12" RowSpacing="12" Margin="0,16,0,0">
+                    <Grid x:Name="CpuRamGrid" Grid.Row="1" Grid.Column="0" ColumnSpacing="0" RowSpacing="0">
                         <Grid.RowDefinitions>
                             <RowDefinition x:Name="CpuRamRow0" Height="Auto" />
                             <RowDefinition x:Name="CpuRamRow1" Height="Auto" />
@@ -144,9 +165,10 @@
                         </Grid.ColumnDefinitions>
                         
                         <!-- CPU Card with overload indicator border glow -->
-                        <Border x:Name="CpuCard" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="16"
+                        <Border x:Name="CpuCard" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
                                 BorderBrush="{x:Bind GetCpuCardBorderBrush(ViewModel.CpuUsage), Mode=OneWay}"
-                                BorderThickness="{x:Bind GetCpuCardBorderThickness(ViewModel.CpuUsage), Mode=OneWay}">
+                                helpers:AnimationHelper.HoverScale="1.015"
+                                helpers:AnimationHelper.PressedScale="0.985">
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -176,8 +198,10 @@
                         </Border>
 
                         <!-- RAM Card with overload indicator background glow/pulse -->
-                        <Border x:Name="RamCard" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="16"
-                                Background="{x:Bind GetRamCardBackground(ViewModel.RamUsage), Mode=OneWay}">
+                        <Border x:Name="RamCard" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                                Background="{x:Bind GetRamCardBackground(ViewModel.RamUsage), Mode=OneWay}"
+                                helpers:AnimationHelper.HoverScale="1.015"
+                                helpers:AnimationHelper.PressedScale="0.985">
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -211,7 +235,9 @@
                     <!-- Right Side Column 1 -->
                     
                     <!-- 1. Bottleneck Advisor widget -->
-                    <Border x:Name="BottleneckCard" Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="16">
+                    <Border x:Name="BottleneckCard" Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                            helpers:AnimationHelper.HoverScale="1.015"
+                            helpers:AnimationHelper.PressedScale="0.985">
                         <StackPanel Spacing="8">
                             <TextBlock Text="Bottleneck Detection" FontSize="16" FontWeight="Bold"/>
                             <Border Background="{x:Bind GetBottleneckBadgeBg(ViewModel.HasBottleneck), Mode=OneWay}" CornerRadius="6" Padding="10,6" HorizontalAlignment="Left">
@@ -222,7 +248,7 @@
                     </Border>
 
                     <!-- 2. Quick Stats Grid (Clickable navigation cards) -->
-                    <Grid x:Name="QuickStatsGrid" Grid.Row="1" Grid.Column="1" RowSpacing="8" ColumnSpacing="8" Margin="0,16,0,0">
+                    <Grid x:Name="QuickStatsGrid" Grid.Row="1" Grid.Column="1" RowSpacing="0" ColumnSpacing="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -232,8 +258,10 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0" Background="Transparent" BorderThickness="0" Click="OnQuickStatUptimeClick">
-                            <Border Style="{StaticResource QuickStatCardStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="12,10">
+                          <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatUptimeClick">
+                            <Border Style="{StaticResource QuickStatCardStyle}" Margin="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="12,10"
+                                    helpers:AnimationHelper.HoverScale="1.03"
+                                    helpers:AnimationHelper.PressedScale="0.97">
                                 <StackPanel Spacing="4" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <FontIcon Glyph="&#xE916;" FontSize="12" Foreground="{StaticResource GpuAccentBrush}"/>
@@ -244,8 +272,10 @@
                             </Border>
                         </Button>
 
-                        <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0" Background="Transparent" BorderThickness="0" Click="OnQuickStatNetworkClick">
-                            <Border Style="{StaticResource QuickStatCardStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="12,10">
+                        <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatNetworkClick">
+                            <Border Style="{StaticResource QuickStatCardStyle}" Margin="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="12,10"
+                                    helpers:AnimationHelper.HoverScale="1.03"
+                                    helpers:AnimationHelper.PressedScale="0.97">
                                 <StackPanel Spacing="4" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <FontIcon Glyph="&#xE774;" FontSize="12" Foreground="DodgerBlue"/>
@@ -256,8 +286,10 @@
                             </Border>
                         </Button>
 
-                        <Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0" Background="Transparent" BorderThickness="0" Click="OnQuickStatJunkClick">
-                            <Border Style="{StaticResource QuickStatCardStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="12,10">
+                        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatJunkClick">
+                            <Border Style="{StaticResource QuickStatCardStyle}" Margin="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="12,10"
+                                    helpers:AnimationHelper.HoverScale="1.03"
+                                    helpers:AnimationHelper.PressedScale="0.97">
                                 <StackPanel Spacing="4" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <FontIcon Glyph="&#xEA99;" FontSize="12" Foreground="Orange"/>
@@ -268,8 +300,10 @@
                             </Border>
                         </Button>
 
-                        <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Padding="0" Background="Transparent" BorderThickness="0" Click="OnQuickStatAppsClick">
-                            <Border Style="{StaticResource QuickStatCardStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="12,10">
+                        <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatAppsClick">
+                            <Border Style="{StaticResource QuickStatCardStyle}" Margin="8" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="12,10"
+                                    helpers:AnimationHelper.HoverScale="1.03"
+                                    helpers:AnimationHelper.PressedScale="0.97">
                                 <StackPanel Spacing="4" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <FontIcon Glyph="&#xE71D;" FontSize="12" Foreground="MediumPurple"/>
@@ -282,7 +316,7 @@
                     </Grid>
 
                     <!-- Row 2: GPU and Disk Cards (Lazy Loaded) -->
-                    <Grid x:Name="GpuDiskGrid" Grid.Row="2" Grid.Column="0" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" ColumnSpacing="12" RowSpacing="12" Margin="0,16,0,0">
+                    <Grid x:Name="GpuDiskGrid" Grid.Row="2" Grid.Column="0" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" ColumnSpacing="0" RowSpacing="0">
                         <Grid.RowDefinitions>
                             <RowDefinition x:Name="GpuDiskRow0" Height="Auto" />
                             <RowDefinition x:Name="GpuDiskRow1" Height="Auto" />
@@ -293,7 +327,9 @@
                         </Grid.ColumnDefinitions>
                         
                         <!-- GPU Card -->
-                        <Border x:Name="GpuCard" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="16">
+                        <Border x:Name="GpuCard" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                                helpers:AnimationHelper.HoverScale="1.015"
+                                helpers:AnimationHelper.PressedScale="0.985">
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -323,9 +359,10 @@
                         </Border>
 
                         <!-- Storage Card with warning state glow -->
-                        <Border x:Name="DiskCard" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="16"
+                        <Border x:Name="DiskCard" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
                                 BorderBrush="{x:Bind GetDiskCardBorderBrush(ViewModel.DiskUsage), Mode=OneWay}"
-                                BorderThickness="{x:Bind GetDiskCardBorderThickness(ViewModel.DiskUsage), Mode=OneWay}">
+                                helpers:AnimationHelper.HoverScale="1.015"
+                                helpers:AnimationHelper.PressedScale="0.985">
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -357,7 +394,9 @@
                     </Grid>
 
                     <!-- Row 3: Performance Trend Chart Card with Series Toggles (Lazy Loaded) -->
-                    <Border x:Name="PerformanceChartCard" Grid.Row="3" Grid.Column="0" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource ModernCardStyle}" Padding="16" Margin="0,16,0,0">
+                    <Border x:Name="PerformanceChartCard" Grid.Row="3" Grid.Column="0" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                            helpers:AnimationHelper.HoverScale="1.01"
+                            helpers:AnimationHelper.PressedScale="0.99">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -388,7 +427,9 @@
                     </Border>
 
                     <!-- Row 2-3 (Span 2): Smart AI Advice Card (Actionable layout) (Lazy Loaded) -->
-                    <Border x:Name="RecommendationsCard" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource ModernCardStyle}" Padding="16" Margin="0,16,0,0">
+                    <Border x:Name="RecommendationsCard" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                            helpers:AnimationHelper.HoverScale="1.015"
+                            helpers:AnimationHelper.PressedScale="0.985">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />

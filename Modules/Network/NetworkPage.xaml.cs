@@ -12,7 +12,19 @@ public sealed partial class NetworkPage : Page
     public NetworkViewModel ViewModel { get; }
 
     public static readonly DependencyProperty ShowTerminalProperty =
-        DependencyProperty.Register(nameof(ShowTerminal), typeof(bool), typeof(NetworkPage), new PropertyMetadata(false));
+        DependencyProperty.Register(
+            nameof(ShowTerminal),
+            typeof(bool),
+            typeof(NetworkPage),
+            new PropertyMetadata(false, OnShowTerminalChanged));
+
+    private static void OnShowTerminalChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is NetworkPage page)
+        {
+            page.UpdateTerminalLayout();
+        }
+    }
 
     public bool ShowTerminal
     {
@@ -25,7 +37,14 @@ public sealed partial class NetworkPage : Page
         ViewModel = App.Services?.GetService<NetworkViewModel>() ?? new NetworkViewModel();
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        this.Loaded += (s, e) => DataContext = ViewModel;
+        
+        this.Loaded += (s, e) => 
+        {
+            DataContext = ViewModel;
+            UpdateTerminalLayout();
+        };
+
+        this.SizeChanged += (s, e) => UpdateTerminalLayout();
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -143,6 +162,11 @@ public sealed partial class NetworkPage : Page
         }
     }
 
+    private async void OnApplyDohClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ApplyDohSettingsAsync();
+    }
+
     private async void OnRefreshConnectionsClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.LoadActiveConnectionsAsync();
@@ -164,5 +188,72 @@ public sealed partial class NetworkPage : Page
     {
         if (connections == null) return "0";
         return connections.Count(c => c.State != null && (c.State.ToUpper() == "LISTENING" || c.State.ToUpper() == "LISTEN")).ToString();
+    }
+
+    private void UpdateTerminalLayout()
+    {
+        if (RepTerminalBorder == null || SecRepCol0 == null || SecRepCol1 == null || RepToolkitBorder == null)
+            return;
+
+        bool isNarrow = this.ActualWidth < 850;
+
+        if (ShowTerminal)
+        {
+            RepTerminalBorder.Visibility = Visibility.Visible;
+            
+            if (isNarrow)
+            {
+                SecRepCol0.Width = new GridLength(1, GridUnitType.Star);
+                SecRepCol1.Width = new GridLength(0);
+                
+                Grid.SetColumn(RepTerminalBorder, 0);
+                Grid.SetColumnSpan(RepTerminalBorder, 2);
+                Grid.SetRow(RepTerminalBorder, 0);
+                
+                Grid.SetColumn(RepToolkitBorder, 0);
+                Grid.SetColumnSpan(RepToolkitBorder, 2);
+                Grid.SetRow(RepToolkitBorder, 1);
+                RepToolkitBorder.Margin = new Thickness(0, 16, 0, 0);
+            }
+            else
+            {
+                SecRepCol0.Width = new GridLength(1.2, GridUnitType.Star);
+                SecRepCol1.Width = new GridLength(0.8, GridUnitType.Star);
+                
+                Grid.SetColumn(RepTerminalBorder, 0);
+                Grid.SetColumnSpan(RepTerminalBorder, 1);
+                Grid.SetRow(RepTerminalBorder, 0);
+                
+                Grid.SetColumn(RepToolkitBorder, 1);
+                Grid.SetColumnSpan(RepToolkitBorder, 1);
+                Grid.SetRow(RepToolkitBorder, 0);
+                RepToolkitBorder.Margin = new Thickness(0);
+            }
+        }
+        else
+        {
+            RepTerminalBorder.Visibility = Visibility.Collapsed;
+            
+            if (isNarrow)
+            {
+                SecRepCol0.Width = new GridLength(1, GridUnitType.Star);
+                SecRepCol1.Width = new GridLength(0);
+                
+                Grid.SetColumn(RepToolkitBorder, 0);
+                Grid.SetColumnSpan(RepToolkitBorder, 2);
+                Grid.SetRow(RepToolkitBorder, 0);
+                RepToolkitBorder.Margin = new Thickness(0);
+            }
+            else
+            {
+                SecRepCol0.Width = new GridLength(0);
+                SecRepCol1.Width = new GridLength(1, GridUnitType.Star);
+                
+                Grid.SetColumn(RepToolkitBorder, 0);
+                Grid.SetColumnSpan(RepToolkitBorder, 2);
+                Grid.SetRow(RepToolkitBorder, 0);
+                RepToolkitBorder.Margin = new Thickness(0);
+            }
+        }
     }
 }

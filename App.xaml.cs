@@ -87,6 +87,7 @@ public partial class App : Application
         services.AddSingleton<Engines.DiskEngine>();
         services.AddSingleton<Engines.ProcessService>();
         services.AddSingleton<Engines.NetworkEngine>();
+        services.AddSingleton<Engines.ContextMenuEngine>();
 
         // Register ViewModels
         services.AddTransient<NetworkViewModel>();
@@ -95,12 +96,10 @@ public partial class App : Application
         services.AddTransient<RepairViewModel>();
         services.AddTransient<SystemOptimizerViewModel>();
         services.AddTransient<StartupViewModel>();
-        services.AddTransient<ProcessViewModel>();
         services.AddTransient<DiskViewModel>();
-        services.AddTransient<HardwareViewModel>();
         services.AddTransient<RegistryViewModel>();
         services.AddTransient<UpdaterViewModel>();
-        services.AddTransient<DriverViewModel>();
+        services.AddTransient<ContextMenuViewModel>();
 
         Services = services.BuildServiceProvider();
     }

@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
+using WinCarePro.Services.Contracts;
 
 namespace WinCarePro.Views;
 
@@ -75,6 +76,12 @@ public sealed partial class UninstallPage : Page
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
+
+        this.Loaded += (s, e) =>
+        {
+            var dialogService = App.Services.GetRequiredService<IDialogService>();
+            dialogService.SetXamlRoot(this.XamlRoot);
+        };
 
         ViewModel.PropertyChanged += (s, e) =>
         {
@@ -190,6 +197,10 @@ public sealed partial class UninstallPage : Page
     }
 
     // UI Helpers
+    internal bool IsStep0Active(int step) => step == 0;
+    
+    internal Visibility GetOverlayVisibility(int step) => step != 0 ? Visibility.Visible : Visibility.Collapsed;
+
     internal bool IsNot(bool val) => !val;
 
     internal Visibility GetListViewVisibility(bool isBusy)

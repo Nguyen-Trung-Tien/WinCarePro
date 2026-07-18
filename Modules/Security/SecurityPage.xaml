@@ -24,29 +24,6 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <!-- Security Center Tab Stacking -->
-                        <Setter Target="SecLeftPanel.(Grid.Row)" Value="0" />
-                        <Setter Target="SecLeftPanel.(Grid.Column)" Value="0" />
-                        <Setter Target="SecLeftPanel.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="SecLeftPanel.(Grid.RowSpan)" Value="1" />
-                        <Setter Target="SecRightPanel.(Grid.Row)" Value="1" />
-                        <Setter Target="SecRightPanel.(Grid.Column)" Value="0" />
-                        <Setter Target="SecRightPanel.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="SecRightPanel.(Grid.RowSpan)" Value="1" />
-
-                        <!-- Security Gauge Stacking -->
-                        <Setter Target="SecGaugeRingGrid.(Grid.Row)" Value="0" />
-                        <Setter Target="SecGaugeRingGrid.(Grid.Column)" Value="0" />
-                        <Setter Target="SecGaugeRingGrid.(Grid.RowSpan)" Value="1" />
-                        <Setter Target="SecGaugeRingGrid.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="SecGaugeRingGrid.HorizontalAlignment" Value="Center" />
-                        <Setter Target="SecGaugeRingGrid.Margin" Value="0,0,0,16" />
-                        <Setter Target="SecGaugeDescPanel.(Grid.Row)" Value="1" />
-                        <Setter Target="SecGaugeDescPanel.(Grid.Column)" Value="0" />
-                        <Setter Target="SecGaugeDescPanel.(Grid.RowSpan)" Value="1" />
-                        <Setter Target="SecGaugeDescPanel.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="SecGaugeDescPanel.HorizontalAlignment" Value="Center" />
-
                         <!-- Privacy Tuning Tab Stacking -->
                         <Setter Target="PrivLeftPanel.(Grid.Row)" Value="0" />
                         <Setter Target="PrivLeftPanel.(Grid.Column)" Value="0" />
@@ -81,216 +58,106 @@
 
         <!-- Main Body Pivots -->
         <Pivot Grid.Row="1">
-            <!-- Security Center Tab -->
+            <!-- Security Center Tab — Redirects to built-in Windows Security -->
             <PivotItem Header="Security Center">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,16,16,16" Padding="20">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <Grid ColumnSpacing="24" RowSpacing="24" x:Name="SecurityCenterGrid">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*" x:Name="SecCol0" />
-                                <ColumnDefinition Width="2*" x:Name="SecCol1" />
-                            </Grid.ColumnDefinitions>
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,16,16,16" Padding="24">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="20" MaxWidth="680" HorizontalAlignment="Left">
 
-                            <!-- Left: Status Indicators -->
-                            <StackPanel x:Name="SecLeftPanel" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Spacing="24">
-                                <!-- Security Score Gauge -->
-                                <Border Style="{StaticResource GradientBorderCardStyle}" Padding="24">
-                                    <Grid x:Name="SecGaugeGrid">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" x:Name="SecGaugeCol0" />
-                                            <ColumnDefinition Width="*" x:Name="SecGaugeCol1" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" x:Name="SecGaugeRow0" />
-                                            <RowDefinition Height="Auto" x:Name="SecGaugeRow1" />
-                                        </Grid.RowDefinitions>
-
-                                        <Grid x:Name="SecGaugeRingGrid" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Width="140" Height="140" Margin="0,0,24,0">
-                                            <Ellipse Width="124" Height="124" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="6" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
-                                            <ProgressRing Value="{x:Bind ViewModel.SecurityScore, Mode=OneWay}" Width="130" Height="130" Foreground="{x:Bind GetScoreBrush(ViewModel.SecurityScore), Mode=OneWay}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="{x:Bind ViewModel.SecurityScore, Mode=OneWay}" FontSize="32" FontWeight="ExtraBold" HorizontalAlignment="Center" Foreground="{x:Bind GetScoreBrush(ViewModel.SecurityScore), Mode=OneWay}" CharacterSpacing="-20"/>
-                                                <TextBlock Text="Security Score" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
-                                            </StackPanel>
-                                        </Grid>
-
-                                        <StackPanel x:Name="SecGaugeDescPanel" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center" Spacing="8">
-                                            <TextBlock Text="System Protection Level" FontSize="18" FontWeight="Bold" />
-                                            <Border Background="{x:Bind GetScoreBadgeBackground(ViewModel.SecurityScore), Mode=OneWay}" HorizontalAlignment="Left" Padding="10,5" CornerRadius="6">
-                                                <TextBlock Text="{x:Bind GetStatusText(ViewModel.SecurityScore), Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{x:Bind GetScoreBrush(ViewModel.SecurityScore), Mode=OneWay}" />
-                                            </Border>
-                                            <TextBlock Text="Ensures active antivirus defenses, firewall protection, platform integrity policies, and prevents unauthorized startup exposures." TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="16" />
-
-                                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
-                                                <Button Content="Re-Scan Security" Style="{StaticResource DefaultButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" CornerRadius="6" FontSize="11.5" Padding="12,6" />
-                                                <ProgressRing IsActive="{x:Bind ViewModel.IsScanning, Mode=OneWay}" Width="20" Height="20" VerticalAlignment="Center" />
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-
-                                <!-- Hardware & Service Security Checklists -->
-                                <StackPanel Spacing="12">
-                                    <TextBlock Text="Defense Status Checklists" FontSize="16" FontWeight="Bold" />
-
-                                    <!-- Antivirus -->
-                                    <Border Style="{StaticResource ModernCardStyle}" Padding="16">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Width="36" Height="36" Background="#1510B981" CornerRadius="8" Margin="0,0,12,0">
-                                                <FontIcon Glyph="&#xE73A;" Foreground="#FF10B981" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="Antivirus Protection" FontWeight="Bold" FontSize="13" />
-                                                <TextBlock Text="{x:Bind ViewModel.AntivirusStatus, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            </StackPanel>
-                                            <Border Grid.Column="2" Background="{x:Bind GetAvBadgeBg(ViewModel.AntivirusStatus), Mode=OneWay}" Padding="10,5" CornerRadius="6" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind GetAvLabel(ViewModel.AntivirusStatus), Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{x:Bind GetAvColor(ViewModel.AntivirusStatus), Mode=OneWay}" />
-                                            </Border>
-                                        </Grid>
+                            <!-- Info banner -->
+                            <Border Background="#1007C3EE" BorderBrush="#3007C3EE" BorderThickness="1" CornerRadius="12" Padding="20">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="48" Height="48" CornerRadius="24" Background="#2007C3EE" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE727;" FontSize="22" Foreground="#FF07C3EE"/>
                                     </Border>
-
-                                    <!-- Firewall -->
-                                    <Border Style="{StaticResource ModernCardStyle}" Padding="16">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Width="36" Height="36" Background="#153B82F6" CornerRadius="8" Margin="0,0,12,0">
-                                                <FontIcon Glyph="&#xE814;" Foreground="#FF3B82F6" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="Windows Defender Firewall" FontWeight="Bold" FontSize="13" />
-                                                <TextBlock Text="{x:Bind ViewModel.FirewallStatusText, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            </StackPanel>
-                                            <Border Grid.Column="2" Background="{x:Bind GetFirewallBadgeBg(ViewModel.IsFirewallActive), Mode=OneWay}" Padding="10,5" CornerRadius="6" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind GetFirewallLabel(ViewModel.IsFirewallActive), Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{x:Bind GetFirewallColor(ViewModel.IsFirewallActive), Mode=OneWay}" />
-                                            </Border>
-                                        </Grid>
-                                    </Border>
-
-                                    <!-- Secure Boot -->
-                                    <Border Style="{StaticResource ModernCardStyle}" Padding="16">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Width="36" Height="36" Background="#158B5CF6" CornerRadius="8" Margin="0,0,12,0">
-                                                <FontIcon Glyph="&#xE7F5;" Foreground="#FF8B5CF6" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="UEFI Secure Boot" FontWeight="Bold" FontSize="13" />
-                                                <TextBlock Text="{x:Bind ViewModel.SecureBootStatusText, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            </StackPanel>
-                                            <Border Grid.Column="2" Background="{x:Bind GetFirewallBadgeBg(ViewModel.IsSecureBootEnabled), Mode=OneWay}" Padding="10,5" CornerRadius="6" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind GetFirewallLabel(ViewModel.IsSecureBootEnabled), Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{x:Bind GetFirewallColor(ViewModel.IsSecureBootEnabled), Mode=OneWay}" />
-                                            </Border>
-                                        </Grid>
-                                    </Border>
-
-                                    <!-- TPM -->
-                                    <Border Style="{StaticResource ModernCardStyle}" Padding="16">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Width="36" Height="36" Background="#1506B6D4" CornerRadius="8" Margin="0,0,12,0">
-                                                <FontIcon Glyph="&#xE950;" Foreground="#FF06B6D4" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="TPM (Trusted Platform Module)" FontWeight="Bold" FontSize="13" />
-                                                <TextBlock Text="{x:Bind ViewModel.TpmStatusText, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            </StackPanel>
-                                            <Border Grid.Column="2" Background="{x:Bind GetFirewallBadgeBg(ViewModel.IsTpmEnabled), Mode=OneWay}" Padding="10,5" CornerRadius="6" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind GetFirewallLabel(ViewModel.IsTpmEnabled), Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{x:Bind GetFirewallColor(ViewModel.IsTpmEnabled), Mode=OneWay}" />
-                                            </Border>
-                                        </Grid>
-                                    </Border>
-
-                                    <!-- BitLocker -->
-                                    <Border Style="{StaticResource ModernCardStyle}" Padding="16">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Width="36" Height="36" Background="#15EC7299" CornerRadius="8" Margin="0,0,12,0">
-                                                <FontIcon Glyph="&#xE785;" Foreground="#FFEC7299" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="BitLocker Volume Encryption" FontWeight="Bold" FontSize="13" />
-                                                <TextBlock Text="{x:Bind ViewModel.BitLockerStatus, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            </StackPanel>
-                                        </Grid>
-                                    </Border>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <!-- Right: Warnings & Alerts -->
-                            <Grid x:Name="SecRightPanel" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" RowSpacing="24">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-
-                                <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="24">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
-
-                                        <TextBlock Grid.Row="0" Text="Discovered Security Alerts" FontSize="18" FontWeight="Bold" Margin="0,0,0,16" />
-
-                                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                                            <StackPanel Spacing="10">
-                                                <TextBlock Text="No security risks or vulnerabilities detected. Your PC is secure." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Visibility="{x:Bind GetVisibility(ViewModel.SecurityAlerts.Count), Mode=OneWay}" Margin="0,16,0,0" TextAlignment="Center" />
-
-                                                <ItemsControl ItemsSource="{x:Bind ViewModel.SecurityAlerts, Mode=OneWay}">
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate x:DataType="x:String">
-                                                            <Border BorderBrush="#20EF4444" BorderThickness="1.5" Background="#10EF4444" CornerRadius="10" Margin="0,0,0,8" Padding="14">
-                                                                <Grid>
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="Auto" />
-                                                                        <ColumnDefinition Width="*" />
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <FontIcon Glyph="&#xE7BA;" FontSize="14" Foreground="#FFEF4444" Margin="0,0,12,0" VerticalAlignment="Center" />
-                                                                    <TextBlock Grid.Column="1" Text="{x:Bind}" TextWrapping="Wrap" FontSize="12" LineHeight="16" VerticalAlignment="Center" Foreground="#FFEF4444" FontWeight="SemiBold" />
-                                                                </Grid>
-                                                            </Border>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                            </StackPanel>
-                                        </ScrollViewer>
-                                    </Grid>
-                                </Border>
-
-                                <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="24">
-                                    <StackPanel Spacing="12">
-                                        <TextBlock Text="Security Guidance" FontSize="18" FontWeight="Bold" Margin="0,0,0,4" />
-                                        <TextBlock Text="• Windows Antivirus and Firewall block active malware processes and unsolicited remote port access." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
-                                        <TextBlock Text="• TPM chips securely store passwords and keys, which is a prerequisite for Windows 11 hardware trust." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
-                                        <TextBlock Text="• Secure Boot prevents malicious rootkits from loading during early BIOS handoff cycles." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                        <TextBlock Text="Windows Security is the best tool for this" FontSize="15" FontWeight="Bold"/>
+                                        <TextBlock Text="Windows Security (built-in) provides real-time antivirus, firewall, BitLocker, Secure Boot and TPM status monitoring — more accurate and always up-to-date than any third-party dashboard." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
                                     </StackPanel>
-                                </Border>
-                            </Grid>
-                        </Grid>
+                                </Grid>
+                            </Border>
+
+                            <!-- Open Windows Security -->
+                            <Border Style="{StaticResource GradientBorderCardStyle}" Padding="20">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="44" Height="44" CornerRadius="10" Background="#1510B981">
+                                        <FontIcon Glyph="&#xE73A;" FontSize="20" Foreground="#FF10B981"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="Windows Security" FontWeight="Bold" FontSize="14"/>
+                                        <TextBlock Text="Real-time antivirus, firewall, virus &amp; threat protection, account protection." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Content="Open →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" Click="OnOpenWindowsSecurityClick" CornerRadius="8" Padding="16,8"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Open Device Manager -->
+                            <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="44" Height="44" CornerRadius="10" Background="#153B82F6">
+                                        <FontIcon Glyph="&#xE7EF;" FontSize="20" Foreground="#FF3B82F6"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="System Information (msinfo32)" FontWeight="Bold" FontSize="14"/>
+                                        <TextBlock Text="Complete hardware inventory: CPU, GPU, RAM, BIOS, drivers, system summary." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenMsinfoClick" CornerRadius="8" Padding="16,8"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Open Windows Update for Drivers -->
+                            <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="44" Height="44" CornerRadius="10" Background="#158B5CF6">
+                                        <FontIcon Glyph="&#xE895;" FontSize="20" Foreground="#FF8B5CF6"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="Windows Update (Driver Updates)" FontWeight="Bold" FontSize="14"/>
+                                        <TextBlock Text="Microsoft-verified driver updates, Windows security patches and feature updates." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenWindowsUpdateClick" CornerRadius="8" Padding="16,8"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Open Task Manager -->
+                            <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="44" Height="44" CornerRadius="10" Background="#15F59E0B">
+                                        <FontIcon Glyph="&#xE9D9;" FontSize="20" Foreground="#FFF59E0B"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="Task Manager" FontWeight="Bold" FontSize="14"/>
+                                        <TextBlock Text="Monitor CPU, RAM, Disk, Network per-process. End tasks, change priority, manage startup apps." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenTaskManagerClick" CornerRadius="8" Padding="16,8"/>
+                                </Grid>
+                            </Border>
+
+                        </StackPanel>
                     </ScrollViewer>
                 </Border>
             </PivotItem>

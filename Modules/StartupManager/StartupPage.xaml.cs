@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -91,6 +92,16 @@ public sealed partial class StartupPage : Page
     private async void OnReloadStartupClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.LoadAllDataAsync();
+    }
+
+    private void OnOpenServicesMscClick(object sender, RoutedEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo("services.msc") { UseShellExecute = true });
+    }
+
+    private void OnOpenTaskMgrServicesClick(object sender, RoutedEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true });
     }
 
     private async void OnQuickOptimizeClick(object sender, RoutedEventArgs e)

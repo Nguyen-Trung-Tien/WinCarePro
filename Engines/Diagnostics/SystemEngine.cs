@@ -4,6 +4,7 @@ using System.IO;
 using System.ServiceProcess; // Note: System.ServiceProcess requires referencing System.ServiceProcess.ServiceController.
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
@@ -22,31 +23,19 @@ public class SystemEngine
 
         try
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sfc.exe",
-                Arguments = arguments,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
-
-            using var process = new Process { StartInfo = psi };
-            process.OutputDataReceived += (s, e) => { if (e.Data != null) Log(e.Data); };
-            process.ErrorDataReceived += (s, e) => { if (e.Data != null) Log($"ERROR: {e.Data}"); };
-
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
             ProgressChanged?.Invoke(50);
-            await process.WaitForExitAsync();
+            var result = await ProcessRunner.RunAsync(
+                "sfc.exe",
+                arguments,
+                TimeSpan.FromMinutes(20),
+                onOutput: Log,
+                onError: err => Log($"ERROR: {err}")
+            );
             ProgressChanged?.Invoke(100);
 
-            Log($"SFC finished with exit code {process.ExitCode}");
-            Database.DbManager.LogAction($"SFC {arguments}", "System Repair", process.ExitCode == 0 ? "Success" : "Issues Found");
-            return process.ExitCode == 0;
+            Log($"SFC finished with exit code {result.ExitCode}");
+            Database.DbManager.LogAction($"SFC {arguments}", "System Repair", result.ExitCode == 0 ? "Success" : "Issues Found");
+            return result.ExitCode == 0;
         }
         catch (Exception ex)
         {
@@ -72,31 +61,19 @@ public class SystemEngine
 
         try
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "dism.exe",
-                Arguments = arguments,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
-
-            using var process = new Process { StartInfo = psi };
-            process.OutputDataReceived += (s, e) => { if (e.Data != null) Log(e.Data); };
-            process.ErrorDataReceived += (s, e) => { if (e.Data != null) Log($"ERROR: {e.Data}"); };
-
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
             ProgressChanged?.Invoke(60);
-            await process.WaitForExitAsync();
+            var result = await ProcessRunner.RunAsync(
+                "dism.exe",
+                arguments,
+                TimeSpan.FromMinutes(30),
+                onOutput: Log,
+                onError: err => Log($"ERROR: {err}")
+            );
             ProgressChanged?.Invoke(100);
 
-            Log($"DISM finished with exit code {process.ExitCode}");
-            Database.DbManager.LogAction($"DISM {mode}", "System Repair", process.ExitCode == 0 ? "Success" : "Failed");
-            return process.ExitCode == 0;
+            Log($"DISM finished with exit code {result.ExitCode}");
+            Database.DbManager.LogAction($"DISM {mode}", "System Repair", result.ExitCode == 0 ? "Success" : "Failed");
+            return result.ExitCode == 0;
         }
         catch (Exception ex)
         {
@@ -119,7 +96,7 @@ public class SystemEngine
                 foreach (var svc in services)
                 {
                     Log($"Stopping service: {svc}...");
-                    RunCmd($"net stop {svc} /y");
+                    await RunCmdAsync($"net stop {svc} /y");
                     await Task.Delay(1000);
                 }
                 ProgressChanged?.Invoke(40);
@@ -174,7 +151,7 @@ public class SystemEngine
                 foreach (var svc in services)
                 {
                     Log($"Starting service: {svc}...");
-                    RunCmd($"net start {svc}");
+                    await RunCmdAsync($"net start {svc}");
                     await Task.Delay(1000);
                 }
                 ProgressChanged?.Invoke(100);
@@ -212,8 +189,8 @@ public class SystemEngine
                 foreach (var svc in serviceList)
                 {
                     Log($"Setting service {svc} startup type to Automatic...");
-                    RunCmd($"sc config {svc} start= auto");
-                    RunCmd($"sc start {svc}");
+                    await RunCmdAsync($"sc config {svc} start= auto");
+                    await RunCmdAsync($"sc start {svc}");
                     count++;
                     ProgressChanged?.Invoke(20 + (80 * count / serviceList.Count));
                     await Task.Delay(500);
@@ -241,34 +218,22 @@ public class SystemEngine
             try
             {
                 Log("Enabling System Restore on drive C:...");
-                RunCmd("powershell -Command \"Enable-ComputerRestore -Drive 'C:'\"");
+                await RunCmdAsync("powershell -Command \"Enable-ComputerRestore -Drive 'C:'\"");
                 ProgressChanged?.Invoke(30);
                 await Task.Delay(500);
 
                 Log("Executing Restore Point checkpoint (PowerShell)...");
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "powershell.exe",
-                    Arguments = "-ExecutionPolicy Bypass -Command \"Checkpoint-Computer -Description 'WinCarePro Pre-Repair Restore Point' -RestorePointType 'MODIFY_SETTINGS' -Confirm:$false\"",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-
-                using var process = new Process { StartInfo = psi };
-                process.OutputDataReceived += (s, e) => { if (e.Data != null) Log(e.Data); };
-                process.ErrorDataReceived += (s, e) => { if (e.Data != null) Log($"ERROR: {e.Data}"); };
-
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-
                 ProgressChanged?.Invoke(60);
-                await process.WaitForExitAsync();
+                var result = await ProcessRunner.RunAsync(
+                    "powershell.exe",
+                    "-ExecutionPolicy Bypass -Command \"Checkpoint-Computer -Description 'WinCarePro Pre-Repair Restore Point' -RestorePointType 'MODIFY_SETTINGS' -Confirm:$false\"",
+                    TimeSpan.FromMinutes(10),
+                    onOutput: Log,
+                    onError: err => Log($"ERROR: {err}")
+                );
                 ProgressChanged?.Invoke(100);
 
-                if (process.ExitCode == 0)
+                if (result.ExitCode == 0)
                 {
                     Log("System Restore Point created successfully.");
                     Database.DbManager.LogAction("Create Restore Point", "System Repair", "Success");
@@ -276,7 +241,7 @@ public class SystemEngine
                 }
                 else
                 {
-                    Log($"Restore point finished with code {process.ExitCode}. If failed, verify System Protection is enabled on C: drive.");
+                    Log($"Restore point finished with code {result.ExitCode}. If failed, verify System Protection is enabled on C: drive.");
                     Database.DbManager.LogAction("Create Restore Point", "System Repair", "Failed");
                     return false;
                 }
@@ -403,28 +368,28 @@ public class SystemEngine
             try
             {
                 Log("1/5 Flushing DNS Cache...");
-                RunCmd("ipconfig /flushdns");
+                await RunCmdAsync("ipconfig /flushdns");
                 ProgressChanged?.Invoke(30);
                 await Task.Delay(300);
 
                 Log("2/5 Registering DNS...");
-                RunCmd("ipconfig /registerdns");
+                await RunCmdAsync("ipconfig /registerdns");
                 ProgressChanged?.Invoke(50);
                 await Task.Delay(300);
 
                 Log("3/5 Releasing current DHCP lease...");
-                RunCmd("ipconfig /release");
+                await RunCmdAsync("ipconfig /release");
                 ProgressChanged?.Invoke(70);
                 await Task.Delay(300);
 
                 Log("4/5 Renewing DHCP network interface configs...");
-                RunCmd("ipconfig /renew");
+                await RunCmdAsync("ipconfig /renew");
                 ProgressChanged?.Invoke(85);
                 await Task.Delay(300);
 
                 Log("5/5 Resetting Winsock catalog and IP routes...");
-                RunCmd("netsh winsock reset");
-                RunCmd("netsh int ip reset");
+                await RunCmdAsync("netsh winsock reset");
+                await RunCmdAsync("netsh int ip reset");
                 ProgressChanged?.Invoke(100);
 
                 Log("Network Stack and local DNS resolvers successfully repaired.");
@@ -439,19 +404,15 @@ public class SystemEngine
         });
     }
 
-    private void RunCmd(string command)
+    private async Task RunCmdAsync(string command)
     {
         try
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "cmd.exe",
-                Arguments = $"/c {command}",
-                CreateNoWindow = true,
-                UseShellExecute = false
-            };
-            using var proc = Process.Start(psi);
-            proc?.WaitForExit(5000);
+            await ProcessRunner.RunAsync(
+                "cmd.exe",
+                $"/c {command}",
+                TimeSpan.FromSeconds(15)
+            );
         }
         catch
         {

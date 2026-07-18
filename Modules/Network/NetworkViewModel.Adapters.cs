@@ -71,7 +71,11 @@ public partial class NetworkViewModel
 
     private void SyncAdapters(List<NetworkAdapterInfo> newList)
     {
-        Adapters = new ObservableCollection<NetworkAdapterInfo>(newList);
+        Adapters.Clear();
+        foreach (var item in newList)
+        {
+            Adapters.Add(item);
+        }
     }
 
     public async Task LoadActiveConnectionsAsync()
@@ -125,7 +129,11 @@ public partial class NetworkViewModel
                         ).ToList();
                     }
 
-                    Connections = new ObservableCollection<ActiveConnectionInfo>(filtered);
+                    Connections.Clear();
+                    foreach (var item in filtered)
+                    {
+                        Connections.Add(item);
+                    }
                 }
                 catch { }
             });

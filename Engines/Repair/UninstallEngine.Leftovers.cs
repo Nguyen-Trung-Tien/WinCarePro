@@ -527,13 +527,31 @@ public partial class UninstallEngine
 
     private long GetDirectorySize(string path)
     {
+        if (!Directory.Exists(path)) return 0;
         long size = 0;
         try
         {
             var info = new DirectoryInfo(path);
-            foreach (var file in info.GetFiles("*", SearchOption.AllDirectories))
+            if ((info.Attributes & FileAttributes.ReparsePoint) != 0) return 0;
+
+            var files = info.GetFiles();
+            foreach (var file in files)
             {
-                size += file.Length;
+                try
+                {
+                    size += file.Length;
+                }
+                catch {}
+            }
+
+            var dirs = info.GetDirectories();
+            foreach (var dir in dirs)
+            {
+                try
+                {
+                    size += GetDirectorySize(dir.FullName);
+                }
+                catch {}
             }
         }
         catch {}

@@ -36,15 +36,7 @@
                         <Setter Target="SpaceAnalyzerBtn.Margin" Value="0,8,0,0" />
                         <Setter Target="SpaceAnalyzerBtn.HorizontalAlignment" Value="Left" />
 
-                        <!-- Space Analyzer Grid Stacking -->
-                        <Setter Target="SpaceAnalyzerSplitCol0.Width" Value="*" />
-                        <Setter Target="SpaceAnalyzerSplitCol1.Width" Value="0" />
-                        <Setter Target="SpaceAnalyzerListBorder.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="SpaceAnalyzerLogBorder.(Grid.Row)" Value="1" />
-                        <Setter Target="SpaceAnalyzerLogBorder.(Grid.Column)" Value="0" />
-                        <Setter Target="SpaceAnalyzerLogBorder.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="SpaceAnalyzerLogBorder.Height" Value="250" />
-                        <Setter Target="SpaceAnalyzerLogBorder.Margin" Value="0,16,0,0" />
+
 
                         <!-- Duplicate Finder Header Stacking -->
                         <Setter Target="DuplicateFinderHeaderCol0.Width" Value="*" />
@@ -134,17 +126,8 @@
                         </Grid>
                     </Border>
 
-                    <Grid x:Name="SpaceAnalyzerSplitGrid" Grid.Row="1" ColumnSpacing="20" RowSpacing="20">
-                        <Grid.RowDefinitions>
-                            <RowDefinition x:Name="SpaceAnalyzerSplitRow0" Height="*" />
-                            <RowDefinition x:Name="SpaceAnalyzerSplitRow1" Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition x:Name="SpaceAnalyzerSplitCol0" Width="*" />
-                            <ColumnDefinition x:Name="SpaceAnalyzerSplitCol1" Width="320" />
-                        </Grid.ColumnDefinitions>
-
-                        <Border x:Name="SpaceAnalyzerListBorder" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="16">
+                    <Grid x:Name="SpaceAnalyzerSplitGrid" Grid.Row="1">
+                        <Border x:Name="SpaceAnalyzerListBorder" Style="{StaticResource ModernCardStyle}" Padding="16">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -174,16 +157,6 @@
                             </Grid>
                         </Border>
 
-                        <Border x:Name="SpaceAnalyzerLogBorder" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="16">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="Operations log" FontSize="15" FontWeight="Bold" Margin="0,0,0,12" />
-                                <TextBox Grid.Row="1" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" FontFamily="Consolas" FontSize="11.5" Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" Background="#0A0E1A" Foreground="#00F2FE" BorderThickness="0" CornerRadius="6" Padding="8" />
-                            </Grid>
-                        </Border>
                     </Grid>
                 </Grid>
             </PivotItem>

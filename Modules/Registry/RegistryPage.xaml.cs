@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,16 +48,19 @@ public sealed partial class RegistryPage : Page
         };
     }
 
-    private async void OnScanClick(object sender, RoutedEventArgs e)
+    // Registry Editor shortcut — safe alternative to registry cleaner
+    private void OnOpenRegeditClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ScanRegistryAsync();
+        Process.Start(new ProcessStartInfo("regedit.exe") { UseShellExecute = true });
     }
 
-    private async void OnFixClick(object sender, RoutedEventArgs e)
+    // System Restore shortcut
+    private void OnOpenSystemRestoreClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.RepairSelectedAsync();
+        Process.Start(new ProcessStartInfo("rstrui.exe") { UseShellExecute = true });
     }
 
+    // Registry Backup — still valuable, kept
     private async void OnCreateBackupClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.BackupRegistryAsync();

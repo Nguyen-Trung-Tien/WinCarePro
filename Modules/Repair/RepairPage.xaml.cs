@@ -10,32 +10,12 @@ public sealed partial class RepairPage : Page
 {
     public RepairViewModel ViewModel { get; }
 
-    public static readonly DependencyProperty ShowConsoleProperty =
-        DependencyProperty.Register(nameof(ShowConsole), typeof(bool), typeof(RepairPage), new PropertyMetadata(false));
-
-    public bool ShowConsole
-    {
-        get => (bool)GetValue(ShowConsoleProperty);
-        set => SetValue(ShowConsoleProperty, value);
-    }
-
     public RepairPage()
     {
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<RepairViewModel>();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
-
-        // Auto-scroll terminal console to the bottom and auto-show when logs are written
-        ConsoleLogTextBox.TextChanged += (s, e) =>
-        {
-            ConsoleLogTextBox.Select(ConsoleLogTextBox.Text.Length, 0);
-
-            if (!string.IsNullOrEmpty(ConsoleLogTextBox.Text) && !ShowConsole)
-            {
-                ShowConsole = true;
-            }
-        };
     }
 
     private async void OnScanDiagnosticsClick(object sender, RoutedEventArgs e)

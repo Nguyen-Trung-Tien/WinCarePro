@@ -56,12 +56,7 @@
                 <TextBlock Text="Diagnose registry policies, check Windows components integrity, fix core services, and restore network settings." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
             </StackPanel>
             <StackPanel x:Name="HeaderButtonsPanel" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <ToggleButton IsChecked="{x:Bind ShowConsole, Mode=TwoWay}" CornerRadius="8" Padding="16,8">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon Glyph="&#xE756;" FontSize="13" />
-                        <TextBlock Text="Console Logs" VerticalAlignment="Center" />
-                    </StackPanel>
-                </ToggleButton>
+
                 <Button Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanDiagnosticsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold">
                     <Button.ContentTemplate>
                         <DataTemplate>
@@ -159,15 +154,20 @@
         </Grid>
 
         <!-- 3. Main Content Area -->
-        <Grid Grid.Row="2" ColumnSpacing="20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
+        <Grid Grid.Row="2">
             <!-- Left: Diagnostics Actions -->
-            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
                 <StackPanel Spacing="16">
+                    <!-- Active Operation Progress -->
+                    <Border Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource ModernCardStyle}" Padding="16" Margin="0,0,0,8">
+                        <StackPanel Spacing="6">
+                            <Grid>
+                                <TextBlock Text="System Verification Progress" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Left" />
+                                <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
+                        </StackPanel>
+                    </Border>
 
                     <!-- Diagnostic Scans Prompt -->
                     <Border Visibility="{x:Bind ViewModel.HasDiagnosticsRun, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource ModernCardStyle}" Padding="24" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
@@ -363,41 +363,6 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <!-- Right: Terminal Console Output -->
-            <Grid Grid.Column="1" Width="380" RowSpacing="12" Visibility="{x:Bind ShowConsole, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <Border Style="{StaticResource ModernCardStyle}" Padding="12">
-                    <StackPanel Spacing="6">
-                        <Grid>
-                            <TextBlock Text="Operation Progress" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Left" />
-                            <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right"/>
-                        </Grid>
-                        <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
-                    </StackPanel>
-                </Border>
-
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Border Grid.Row="0" Background="#1E293B" CornerRadius="8,8,0,0" Padding="12,8" BorderBrush="#447F56D9" BorderThickness="1,1,1,0">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Ellipse Width="8" Height="8" Fill="#FFEF4444" />
-                            <Ellipse Width="8" Height="8" Fill="#FFF59E0B" />
-                            <Ellipse Width="8" Height="8" Fill="#FF10B981" />
-                            <TextBlock Text="ANSI Syntax Log Console" FontSize="11.5" FontWeight="Bold" Foreground="#94A3B8" Margin="8,0,0,0"/>
-                        </StackPanel>
-                    </Border>
-
-                    <TextBox x:Name="ConsoleLogTextBox" Grid.Row="1" Text="{x:Bind ViewModel.ConsoleLog, Mode=OneWay}" Style="{StaticResource DarkTerminalStyle}" CornerRadius="0,0,8,8" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" />
-                </Grid>
-            </Grid>
         </Grid>
     </Grid>
 </Page>

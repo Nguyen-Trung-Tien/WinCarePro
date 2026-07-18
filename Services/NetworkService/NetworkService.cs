@@ -99,4 +99,11 @@ public class NetworkService : INetworkService
     }
 
     public List<ActiveConnectionInfo> GetActiveConnections() => _engine.GetActiveConnections();
+
+    public Task<bool> IsDohEnabledAsync() => _engine.IsDohEnabledAsync();
+
+    public Task<bool> SetDohSettingsAsync(bool enable, string primaryDns, string secondaryDns, string dohTemplate)
+    {
+        return _engine.SetDohSettingsAsync(enable, primaryDns, secondaryDns, dohTemplate);
+    }
 }

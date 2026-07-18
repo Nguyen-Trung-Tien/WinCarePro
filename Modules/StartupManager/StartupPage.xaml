@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="WinCarePro.Views.StartupPage"
     x:Name="PageRoot"
@@ -266,85 +266,73 @@
                 </Border>
             </PivotItem>
 
-            <!-- Tab 2: Background Services -->
+            <!-- Tab 2: Background Services — redirects to built-in services.msc -->
             <PivotItem Header="Background Services">
-                <Border Style="{StaticResource ModernCardStyle}" Padding="12" Margin="0,10,0,0">
-                    <Grid>
-                        <ListView ItemsSource="{x:Bind ViewModel.Services, Mode=OneWay}" SelectionMode="None">
-                            <ListView.HeaderTemplate>
-                                <DataTemplate>
-                                    <Grid Padding="12,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="3.2*" />
-                                            <ColumnDefinition Width="1.8*" />
-                                            <ColumnDefinition Width="1.4*" />
-                                            <ColumnDefinition Width="1.4*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Service Display Name" FontWeight="Bold" FontSize="11"/>
-                                        <TextBlock Grid.Column="1" Text="Company" FontWeight="Bold" FontSize="11"/>
-                                        <TextBlock Grid.Column="2" Text="Status / Category" FontWeight="Bold" FontSize="11"/>
-                                        <TextBlock Grid.Column="3" Text="Startup Type" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center"/>
-                                        <TextBlock Grid.Column="4" Text="Service Control Commands" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right" Margin="0,0,24,0"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.HeaderTemplate>
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="models:ServiceEntry">
-                                    <Grid Padding="8,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="3.2*" />
-                                            <ColumnDefinition Width="1.8*" />
-                                            <ColumnDefinition Width="1.4*" />
-                                            <ColumnDefinition Width="1.4*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
+                <Border Style="{StaticResource ModernCardStyle}" Padding="24" Margin="0,10,0,0">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="20" MaxWidth="680" HorizontalAlignment="Left">
 
-                                        <!-- Service Name & Description -->
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Grid Width="30" Height="30" Margin="0,0,10,0">
-                                                <Image Source="{x:Bind IconImageSource, Mode=OneWay}" Width="30" Height="30" Stretch="Uniform" Visibility="{x:Bind HasIcon, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"/>
-                                                <FontIcon Glyph="&#xE713;" FontSize="15" Foreground="#FF3B82F6" Visibility="{x:Bind HasIcon, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"/>
-                                            </Grid>
-                                            <StackPanel VerticalAlignment="Center" Width="280">
-                                                <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="12.5" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind Name}"/>
-                                                <TextBlock Text="{x:Bind ServiceDescription}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Height="14" ToolTipService.ToolTip="{x:Bind ServiceDescription}" />
-                                            </StackPanel>
-                                        </StackPanel>
+                            <!-- Info banner -->
+                            <Border Background="#153B82F6" BorderBrush="#303B82F6" BorderThickness="1" CornerRadius="12" Padding="20">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="48" Height="48" CornerRadius="24" Background="#253B82F6" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE713;" FontSize="22" Foreground="#FF3B82F6"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                        <TextBlock Text="Windows Services Manager provides full control" FontSize="15" FontWeight="Bold"/>
+                                        <TextBlock Text="Windows Services Manager (services.msc) is the official tool for managing all system services — start, stop, restart, and configure startup types safely." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
 
-                                        <!-- Company -->
-                                        <TextBlock Grid.Column="1" Text="{x:Bind CompanyName}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                            <!-- Open Services Manager -->
+                            <Border Style="{StaticResource GradientBorderCardStyle}" Padding="20">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="44" Height="44" CornerRadius="10" Background="#153B82F6">
+                                        <FontIcon Glyph="&#xE713;" FontSize="20" Foreground="#FF3B82F6"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="Services Manager (services.msc)" FontWeight="Bold" FontSize="14"/>
+                                        <TextBlock Text="View all 200+ Windows services, start/stop/restart them, configure automatic or manual startup types." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Content="Open →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" Click="OnOpenServicesMscClick" CornerRadius="8" Padding="16,8"/>
+                                </Grid>
+                            </Border>
 
-                                        <!-- Status & Classification Badges -->
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                                            <Border Background="{x:Bind StatusBgBrush, Mode=OneWay}" CornerRadius="6" Padding="6,2">
-                                                <TextBlock Text="{x:Bind Status}" FontSize="9.5" FontWeight="Bold" Foreground="{x:Bind StatusFgBrush, Mode=OneWay}" />
-                                            </Border>
-                                            <Border Background="{x:Bind CategoryBgBrush, Mode=OneWay}" CornerRadius="6" Padding="6,2">
-                                                <TextBlock Text="{x:Bind CategoryText, Mode=OneWay}" FontSize="9.5" FontWeight="Bold" Foreground="{x:Bind CategoryFgBrush, Mode=OneWay}" />
-                                            </Border>
-                                        </StackPanel>
+                            <!-- Open Task Manager Services tab -->
+                            <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="44" Height="44" CornerRadius="10" Background="#15F59E0B">
+                                        <FontIcon Glyph="&#xE9D9;" FontSize="20" Foreground="#FFF59E0B"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="Task Manager → Services" FontWeight="Bold" FontSize="14"/>
+                                        <TextBlock Text="Quick-access the Services tab in Task Manager to start/stop services alongside active processes." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenTaskMgrServicesClick" CornerRadius="8" Padding="16,8"/>
+                                </Grid>
+                            </Border>
 
-                                        <!-- Startup Type Combobox -->
-                                        <ComboBox Grid.Column="3" SelectedValue="{x:Bind StartupType, Mode=OneWay}" SelectedValuePath="Tag" SelectionChanged="OnServiceStartupTypeChanged" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="110" Height="28" FontSize="11" CornerRadius="6">
-                                            <ComboBoxItem Content="Automatic" Tag="Automatic"/>
-                                            <ComboBoxItem Content="Manual" Tag="Manual"/>
-                                            <ComboBoxItem Content="Disabled" Tag="Disabled"/>
-                                        </ComboBox>
-
-                                        <!-- Service Control Actions -->
-                                        <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0">
-                                            <Button Content="Start" FontSize="10" Padding="8,2" Click="OnServiceControlClick" Tag="Start" IsEnabled="{x:Bind IsNotRunning, Mode=OneWay}" Height="26"/>
-                                            <Button Content="Stop" FontSize="10" Padding="8,2" Click="OnServiceControlClick" Tag="Stop" IsEnabled="{x:Bind CanStop, Mode=OneWay}" Height="26"/>
-                                            <Button Content="Restart" FontSize="10" Padding="8,2" Click="OnServiceControlClick" Tag="Restart" IsEnabled="{x:Bind IsRunning, Mode=OneWay}" Height="26"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
                 </Border>
             </PivotItem>
+
+
 
             <!-- Tab 3: Scheduled Tasks -->
             <PivotItem Header="Scheduled Tasks">

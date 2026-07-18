@@ -11,4 +11,5 @@ public interface IDialogService
     Task<CleaningAction> ShowLockingAppsDialogAsync(List<LockingAppInfo> apps);
     Task<bool> ShowForceClosePromptAsync(string appName);
     Task ShowMessageAsync(string title, string content);
+    Task<bool> ShowForceUninstallPromptAsync(string appName);
 }

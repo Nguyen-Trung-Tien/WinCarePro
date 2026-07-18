@@ -47,37 +47,19 @@ public partial class NetworkViewModel : ViewModelBase
     private double _downloadSpeed;
     private double _uploadSpeed;
 
-    private ObservableCollection<NetworkAdapterInfo> _adapters = new();
-    private ObservableCollection<DnsServerInfo> _dnsServers = new();
-    private ObservableCollection<ActiveConnectionInfo> _connections = new();
     private List<ActiveConnectionInfo> _rawConnections = new();
     private string _connectionSearchQuery = "";
     private DnsServerInfo? _fastestDns;
     private string _fastestDnsText = "Not Tested";
     private double _speedProgress = 0;
-    private ObservableCollection<SpeedTestResult> _speedTestHistory = new();
 
     public ObservableCollection<double> DownloadSpeedHistory { get; } = new();
     public ObservableCollection<double> UploadSpeedHistory { get; } = new();
     public ObservableCollection<double> PingHistory { get; } = new();
 
-    public ObservableCollection<NetworkAdapterInfo> Adapters
-    {
-        get => _adapters;
-        set => SetPropertyOnUI(() => _adapters, v => _adapters = v, value);
-    }
-
-    public ObservableCollection<DnsServerInfo> DnsServers
-    {
-        get => _dnsServers;
-        set => SetPropertyOnUI(() => _dnsServers, v => _dnsServers = v, value);
-    }
-
-    public ObservableCollection<ActiveConnectionInfo> Connections
-    {
-        get => _connections;
-        set => SetPropertyOnUI(() => _connections, v => _connections = v, value);
-    }
+    public ObservableCollection<NetworkAdapterInfo> Adapters { get; } = new();
+    public ObservableCollection<DnsServerInfo> DnsServers { get; } = new();
+    public ObservableCollection<ActiveConnectionInfo> Connections { get; } = new();
 
     public string ConnectionSearchQuery
     {
@@ -245,11 +227,7 @@ public partial class NetworkViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _uploadSpeed, v => _uploadSpeed = v, value);
     }
 
-    public ObservableCollection<SpeedTestResult> SpeedTestHistory
-    {
-        get => _speedTestHistory;
-        set => SetPropertyOnUI(() => _speedTestHistory, v => _speedTestHistory = v, value);
-    }
+    public ObservableCollection<SpeedTestResult> SpeedTestHistory { get; } = new();
 
     public NetworkViewModel(INetworkService engine, INetworkHistoryService historyService, INotificationService notificationService)
     {
@@ -291,6 +269,7 @@ public partial class NetworkViewModel : ViewModelBase
         _ = LoadActiveConnectionsAsync();
         _ = RunDiagnosticsAsync();
         _ = LoadHistoryAsync();
+        _ = InitializeDohAsync();
         
         StartMonitoringLoops(_cts.Token);
     }

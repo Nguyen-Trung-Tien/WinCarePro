@@ -96,6 +96,13 @@ public sealed partial class MainWindow : Window
     [DllImport("user32.dll")]
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+    private const uint WM_SETICON = 0x0080;
+    private const IntPtr ICON_SMALL = (IntPtr)0;
+    private const IntPtr ICON_BIG = (IntPtr)1;
+
     private const int NIM_ADD = 0;
     private const int NIM_MODIFY = 1;
     private const int NIM_DELETE = 2;
@@ -210,5 +217,17 @@ public sealed partial class MainWindow : Window
             ShowWindow(_hwnd, 9); // SW_RESTORE
             SetForegroundWindow(_hwnd);
         }
+    }
+
+    /// <summary>
+    /// Forces the taskbar and Alt+Tab icons to update via WM_SETICON.
+    /// AppWindow.SetIcon only sets the title bar icon for unpackaged WinUI 3 apps;
+    /// this ensures the taskbar icon is also refreshed.
+    /// </summary>
+    private void SetTaskbarIcon(IntPtr hIcon)
+    {
+        if (_hwnd == IntPtr.Zero || hIcon == IntPtr.Zero) return;
+        SendMessage(_hwnd, WM_SETICON, ICON_BIG, hIcon);
+        SendMessage(_hwnd, WM_SETICON, ICON_SMALL, hIcon);
     }
 }

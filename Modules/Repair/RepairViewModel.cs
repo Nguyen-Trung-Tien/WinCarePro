@@ -74,7 +74,7 @@ public class DiagnosticIssueItem : ViewModelBase
 
 public class RepairViewModel : ViewModelBase
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly DispatcherQueue? _dispatcherQueue;
     private readonly SystemEngine _repairEngine = new();
 
     private bool _isBusy;
@@ -152,19 +152,24 @@ public class RepairViewModel : ViewModelBase
 
     public RepairViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
 
         _repairEngine.OutputReceived += LogText;
-        _repairEngine.ProgressChanged += Pct => _dispatcherQueue.TryEnqueue(() => RepairProgressPercent = Pct);
+        if (_dispatcherQueue != null)
+        {
+            _repairEngine.ProgressChanged += Pct => _dispatcherQueue.TryEnqueue(() => RepairProgressPercent = Pct);
+        }
 
         LoadServices();
     }
 
     public void LoadServices()
     {
-        _dispatcherQueue.TryEnqueue(() =>
+        var dispatcher = _dispatcherQueue ?? App.MainDispatcherQueue;
+        if (dispatcher == null) return;
+
+        Task.Run(() =>
         {
-            Services.Clear();
             var targetServices = new[]
             {
                 new { Name = "wuauserv", Display = "Windows Update (wuauserv)" },
@@ -174,6 +179,7 @@ public class RepairViewModel : ViewModelBase
                 new { Name = "mpssvc", Display = "Windows Defender Firewall (mpssvc)" }
             };
 
+            var tempServices = new List<RepairServiceItem>();
             int runningCount = 0;
             foreach (var ts in targetServices)
             {
@@ -191,7 +197,7 @@ public class RepairViewModel : ViewModelBase
 
                 if (isRunning) runningCount++;
 
-                Services.Add(new RepairServiceItem
+                tempServices.Add(new RepairServiceItem
                 {
                     Name = ts.Name,
                     DisplayName = ts.Display,
@@ -200,13 +206,22 @@ public class RepairViewModel : ViewModelBase
                     IsSelected = false
                 });
             }
-            ServicesHealthyCount = runningCount;
+
+            dispatcher.TryEnqueue(() =>
+            {
+                Services.Clear();
+                foreach (var item in tempServices)
+                {
+                    Services.Add(item);
+                }
+                ServicesHealthyCount = runningCount;
+            });
         });
     }
 
     private void LogText(string msg)
     {
-        _dispatcherQueue.TryEnqueue(() =>
+        _dispatcherQueue?.TryEnqueue(() =>
         {
             ConsoleLog += msg + "\n";
         });

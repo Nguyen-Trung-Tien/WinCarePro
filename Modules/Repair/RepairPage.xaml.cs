@@ -15,7 +15,18 @@ public sealed partial class RepairPage : Page
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<RepairViewModel>();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        this.DataContext = ViewModel;
+
+        this.Loaded += (s, e) =>
+        {
+            this.DataContext = ViewModel;
+            this.Bindings.Update();
+        };
+
+        this.Unloaded += (s, e) =>
+        {
+            this.Bindings.StopTracking();
+            this.DataContext = null;
+        };
     }
 
     private async void OnScanDiagnosticsClick(object sender, RoutedEventArgs e)

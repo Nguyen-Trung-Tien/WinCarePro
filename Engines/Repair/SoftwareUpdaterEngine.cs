@@ -176,6 +176,7 @@ public class SoftwareUpdaterEngine
                 Log($"Registry software scan failed: {ex.Message}");
             }
 
+#if DEBUG
             if (list.Count == 0)
             {
                 Log("No installed outdated applications found in registry. Listing simulated updates for testing...");
@@ -186,6 +187,7 @@ public class SoftwareUpdaterEngine
                 AddSimulatedItem(list, updatedApps, "Mozilla Firefox", "Mozilla.Firefox", "120.0", "126.0.1", "direct");
                 AddSimulatedItem(list, updatedApps, "Google Chrome", "Google.Chrome", "121.0.6167.85", "125.0.6422.142", "direct");
             }
+#endif
         }
         else
         {
@@ -240,6 +242,7 @@ public class SoftwareUpdaterEngine
                 Log($"Winget query failed: {ex.Message}. Using secondary application updater...");
             }
 
+#if DEBUG
             if (list.Count == 0)
             {
                 Log("Performing system registries software scan...");
@@ -251,6 +254,7 @@ public class SoftwareUpdaterEngine
                 AddSimulatedItem(list, updatedApps, "Mozilla Firefox", "Mozilla.Firefox", "120.0", "126.0.1", "winget");
                 AddSimulatedItem(list, updatedApps, "Google Chrome", "Google.Chrome", "121.0.6167.85", "125.0.6422.142", "winget");
             }
+#endif
         }
 
         Log($"Found {list.Count} software updates available.");

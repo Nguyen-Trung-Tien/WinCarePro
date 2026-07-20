@@ -66,26 +66,6 @@ public sealed partial class StartupPage : Page
             ImpactColWidth = isWide ? new GridLength(1.2, GridUnitType.Star) : new GridLength(0);
             WideLayoutVisibility = isWide ? Visibility.Visible : Visibility.Collapsed;
 
-            // Adjust top panel layout
-            if (TopGrid != null && Card1 != null && Card2 != null && Card3 != null)
-            {
-                if (isWide)
-                {
-                    TopCol2.Width = new GridLength(2.2, GridUnitType.Star);
-                    Grid.SetColumn(Card1, 0); Grid.SetRow(Card1, 0);
-                    Grid.SetColumn(Card2, 1); Grid.SetRow(Card2, 0);
-                    Grid.SetColumn(Card3, 2); Grid.SetRow(Card3, 0);
-                    Grid.SetColumnSpan(Card3, 1);
-                }
-                else
-                {
-                    TopCol2.Width = new GridLength(0, GridUnitType.Pixel);
-                    Grid.SetColumn(Card1, 0); Grid.SetRow(Card1, 0);
-                    Grid.SetColumn(Card2, 1); Grid.SetRow(Card2, 0);
-                    Grid.SetColumn(Card3, 0); Grid.SetRow(Card3, 1);
-                    Grid.SetColumnSpan(Card3, 2);
-                }
-            }
         };
     }
 

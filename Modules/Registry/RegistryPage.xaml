@@ -52,7 +52,7 @@
                     </Border>
 
                     <!-- Open Registry Editor -->
-                    <Border Style="{StaticResource GradientBorderCardStyle}" Padding="20">
+                    <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="20">
                         <Grid ColumnSpacing="16">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -71,7 +71,7 @@
                     </Border>
 
                     <!-- Open System Restore -->
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <Grid ColumnSpacing="16">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -94,7 +94,7 @@
 
 
             <!-- Right: Backup & Restore -->
-            <Border x:Name="RightPanel" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}">
+            <Border x:Name="RightPanel" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="20" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -137,3 +137,5 @@
         </Grid>
     </Grid>
 </Page>
+
+

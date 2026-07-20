@@ -160,8 +160,9 @@ public sealed partial class ToastNotification : UserControl
         this.Opacity = 0;
 
         var sb = new Storyboard();
-        var animX = new DoubleAnimation { From = 360, To = 0, Duration = TimeSpan.FromMilliseconds(200) };
-        var animOpacity = new DoubleAnimation { From = 0, To = 1, Duration = TimeSpan.FromMilliseconds(200) };
+        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+        var animX = new DoubleAnimation { From = 360, To = 0, Duration = TimeSpan.FromMilliseconds(350), EasingFunction = ease };
+        var animOpacity = new DoubleAnimation { From = 0, To = 1, Duration = TimeSpan.FromMilliseconds(250), EasingFunction = ease };
 
         Storyboard.SetTarget(animX, this);
         Storyboard.SetTargetProperty(animX, "(UIElement.RenderTransform).(TranslateTransform.X)");
@@ -183,12 +184,18 @@ public sealed partial class ToastNotification : UserControl
     public void AnimateOut(Action? onCompleted = null)
     {
         var sb = new Storyboard();
-        var animOpacity = new DoubleAnimation { To = 0, Duration = TimeSpan.FromMilliseconds(150) };
+        var ease = new CubicEase { EasingMode = EasingMode.EaseIn };
+        var animOpacity = new DoubleAnimation { To = 0, Duration = TimeSpan.FromMilliseconds(200), EasingFunction = ease };
+        var animX = new DoubleAnimation { To = 120, Duration = TimeSpan.FromMilliseconds(200), EasingFunction = ease };
 
         Storyboard.SetTarget(animOpacity, this);
         Storyboard.SetTargetProperty(animOpacity, "Opacity");
 
+        Storyboard.SetTarget(animX, this);
+        Storyboard.SetTargetProperty(animX, "(UIElement.RenderTransform).(TranslateTransform.X)");
+
         sb.Children.Add(animOpacity);
+        sb.Children.Add(animX);
         
         sb.Completed += (s, e) =>
         {

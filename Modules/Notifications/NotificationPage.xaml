@@ -39,7 +39,7 @@
                     </Grid.RowDefinitions>
 
                     <!-- Alert Controls -->
-                    <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="16">
+                    <Border Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                         <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -61,7 +61,7 @@
                     </Border>
 
                     <!-- System Notifications List -->
-                    <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="12">
+                    <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                         <Grid>
                             <ListView x:Name="NotificationsListView" ItemsSource="{x:Bind GroupedNotificationsCVS.View, Mode=OneWay}" SelectionMode="None">
                                 <ListView.GroupStyle>
@@ -139,7 +139,7 @@
                     </Grid.RowDefinitions>
 
                     <!-- Filters -->
-                    <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="16">
+                    <Border Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                         <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -170,7 +170,7 @@
                     </Border>
 
                     <!-- Logs List -->
-                    <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="12">
+                    <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -231,3 +231,5 @@
         </Pivot>
     </Grid>
 </Page>
+
+

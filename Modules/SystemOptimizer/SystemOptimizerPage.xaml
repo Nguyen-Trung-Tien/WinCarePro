@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WinCarePro.Models"
     xmlns:viewmodels="using:WinCarePro.ViewModels"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
     <Grid Padding="24">
@@ -124,7 +125,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Left Pane: Tweaks Pivot List -->
-            <Border x:Name="TweaksCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="16">
+            <Border x:Name="TweaksCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -222,7 +223,7 @@
                 <StackPanel x:Name="RightPanel" Spacing="16" Margin="0,0,12,0">
                     
                     <!-- Game Boost Card -->
-                    <Border x:Name="GameBoostCard" Style="{StaticResource GradientBorderCardStyle}" Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <Border x:Name="GameBoostCard" Style="{StaticResource NeonGlowBorderStyle}" Padding="20">
                         <StackPanel Spacing="14">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -270,7 +271,7 @@
                     </Border>
 
                     <!-- RAM Booster Card -->
-                    <Border x:Name="RamBoosterCard" Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border x:Name="RamBoosterCard" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -298,10 +299,20 @@
 
                             <!-- Circular RAM Usage Gauge -->
                             <Grid Width="120" Height="120" HorizontalAlignment="Center" Margin="0,8">
-                                <ProgressRing Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" IsIndeterminate="{x:Bind ViewModel.IsBoosting, Mode=OneWay}" Width="120" Height="120" Foreground="{StaticResource PrimaryAccentGradient}" />
+                                <!-- Glowing background circle -->
+                                <Ellipse Width="110" Height="110" Opacity="0.08" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Ellipse.Fill>
+                                        <RadialGradientBrush>
+                                            <GradientStop Color="#FF3B82F6" Offset="0" />
+                                            <GradientStop Color="Transparent" Offset="1" />
+                                        </RadialGradientBrush>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <Ellipse Width="96" Height="96" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="4" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.3"/>
+                                <ProgressRing Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" IsIndeterminate="{x:Bind ViewModel.IsBoosting, Mode=OneWay}" Width="102" Height="102" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" />
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" />
-                                    <TextBlock Text="Physical usage" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" CharacterSpacing="-10" />
+                                    <TextBlock Text="Physical usage" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
                                 </StackPanel>
                             </Grid>
 
@@ -351,3 +362,5 @@
         <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,10,0,0" />
     </Grid>
 </Page>
+
+

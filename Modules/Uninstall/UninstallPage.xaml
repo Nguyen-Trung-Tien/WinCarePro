@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WinCarePro.Models"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
     <Grid Padding="24">
@@ -186,46 +187,43 @@
                     <RowDefinition Height="Auto" /> <!-- Batch Actions Bar -->
                 </Grid.RowDefinitions>
 
-                <!-- Filters Bar -->
-                <Grid x:Name="FiltersGrid" Grid.Row="0" Margin="0,0,0,12" RowSpacing="8">
-                    <Grid.RowDefinitions>
-                        <RowDefinition x:Name="FiltersRow0" Height="Auto" />
-                        <RowDefinition x:Name="FiltersRow1" Height="Auto" />
-                        <RowDefinition x:Name="FiltersRow2" Height="Auto" />
-                        <RowDefinition x:Name="FiltersRow3" Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition x:Name="FiltersCol0" Width="280" />
-                        <ColumnDefinition x:Name="FiltersCol1" Width="Auto" />
-                        <ColumnDefinition x:Name="FiltersCol2" Width="Auto" />
-                        <ColumnDefinition x:Name="FiltersCol3" Width="*" />
-                    </Grid.ColumnDefinitions>
-                    
-                    <TextBox Grid.Column="0" x:Name="AppSearch" PlaceholderText="Search installed applications..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" CornerRadius="6" Height="32" VerticalAlignment="Center"/>
-                    
-                    <StackPanel x:Name="FilterStack" Grid.Column="1" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedFilterIndex, Mode=TwoWay}" Width="160" Height="32" CornerRadius="6">
-                            <ComboBoxItem Content="All Types"/>
-                            <ComboBoxItem Content="Desktop Apps"/>
-                            <ComboBoxItem Content="Store Apps"/>
-                        </ComboBox>
-                    </StackPanel>
+                <!-- Filters Bar (Capsule Toolbar Layout) -->
+                <Border Grid.Row="0" Margin="0,0,0,14" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,8">
+                    <Grid x:Name="FiltersGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBox Grid.Column="0" x:Name="AppSearch" PlaceholderText="Search installed applications..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" CornerRadius="8" Height="32" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        
+                        <StackPanel Grid.Column="1" x:Name="FilterStack" Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center">
+                            <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedFilterIndex, Mode=TwoWay}" Width="140" Height="32" CornerRadius="6">
+                                <ComboBoxItem Content="All Types"/>
+                                <ComboBoxItem Content="Desktop Apps"/>
+                                <ComboBoxItem Content="Store Apps"/>
+                            </ComboBox>
+                        </StackPanel>
 
-                    <StackPanel x:Name="SortStack" Grid.Column="2" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="Sort by:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedSortIndex, Mode=TwoWay}" Width="200" Height="32" CornerRadius="6">
-                            <ComboBoxItem Content="Sort by Name (A-Z)"/>
-                            <ComboBoxItem Content="Sort by Name (Z-A)"/>
-                            <ComboBoxItem Content="Sort by Size (Large-Small)"/>
-                            <ComboBoxItem Content="Sort by Size (Small-Large)"/>
-                            <ComboBoxItem Content="Sort by Install Date (Newest)"/>
-                            <ComboBoxItem Content="Sort by Install Date (Oldest)"/>
-                        </ComboBox>
-                    </StackPanel>
+                        <StackPanel Grid.Column="2" x:Name="SortStack" Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center">
+                            <TextBlock Text="Sort:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedSortIndex, Mode=TwoWay}" Width="160" Height="32" CornerRadius="6">
+                                <ComboBoxItem Content="Name (A-Z)"/>
+                                <ComboBoxItem Content="Name (Z-A)"/>
+                                <ComboBoxItem Content="Size (Max)"/>
+                                <ComboBoxItem Content="Size (Min)"/>
+                                <ComboBoxItem Content="Date (New)"/>
+                                <ComboBoxItem Content="Date (Old)"/>
+                            </ComboBox>
+                        </StackPanel>
 
-                    <Button x:Name="ReloadBtn" Grid.Column="3" Content="Scan Registry Apps" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" Height="32" CornerRadius="6"/>
-                </Grid>
+                        <Button Grid.Column="3" x:Name="ReloadBtn" Content="Scan Registry Apps" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Center" Height="32" CornerRadius="6"
+                                helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"/>
+                    </Grid>
+                </Border>
 
                 <!-- Master-Detail Columns -->
                 <Grid x:Name="MasterDetailGrid" Grid.Row="1" RowSpacing="16">
@@ -239,7 +237,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Left: Applications List -->
-                    <Border x:Name="LeftListBorder" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="12">
+                    <Border x:Name="LeftListBorder" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                         <Grid>
                              <ListView Visibility="{x:Bind GetListViewVisibility(ViewModel.IsBusy), Mode=OneWay}" ItemsSource="{x:Bind ViewModel.FilteredApps, Mode=OneWay}" SelectedItem="{Binding SelectedApp, Mode=TwoWay}" SelectionMode="Single">
                                 <ListView.Header>
@@ -352,7 +350,7 @@
                     </Border>
 
                     <!-- Right: Selected Application Details Panel -->
-                    <Border x:Name="DetailPanelBorder" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="16,0,0,0" Padding="20" Visibility="{Binding ElementName=PageRoot, Path=DetailsPaneVisibility}">
+                    <Border x:Name="DetailPanelBorder" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="16,0,0,0" Padding="20" Visibility="{Binding ElementName=PageRoot, Path=DetailsPaneVisibility}">
                         <Grid DataContext="{Binding SelectedApp}">
                             <!-- Visible when SelectedApp is not null -->
                             <Grid Visibility="{x:Bind ViewModel.IsSelectedAppNotNull, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
@@ -448,7 +446,7 @@
                 </Grid>
 
                 <!-- Bottom Floating Batch Action Bar -->
-                <Border Grid.Row="2" Style="{StaticResource ModernCardStyle}" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" BorderBrush="{StaticResource PrimaryAccentGradient}" BorderThickness="1.5" Margin="0,12,0,0" Padding="16,10" Visibility="{x:Bind GetBatchBarVisibility(ViewModel.HasSelectedApps), Mode=OneWay}">
+                <Border Grid.Row="2" Style="{StaticResource GlassmorphismCardStyle}" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" BorderBrush="{StaticResource PrimaryAccentGradient}" BorderThickness="1.5" Margin="0,12,0,0" Padding="16,10" Visibility="{x:Bind GetBatchBarVisibility(ViewModel.HasSelectedApps), Mode=OneWay}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -534,7 +532,7 @@
                             </Border>
                         </Grid>
 
-                        <Border Grid.Row="2" Style="{StaticResource ModernCardStyle}" Padding="4">
+                        <Border Grid.Row="2" Style="{StaticResource GlassmorphismCardStyle}" Padding="4">
                             <ListView ItemsSource="{x:Bind ViewModel.Leftovers, Mode=OneWay}" SelectionMode="None">
                                 <ListView.Header>
                                     <Grid Padding="12,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="0,0,0,4">
@@ -586,3 +584,5 @@
         </Grid>
     </Grid>
 </Page>
+
+

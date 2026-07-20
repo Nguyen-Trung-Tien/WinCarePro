@@ -499,10 +499,32 @@ public class DbManager
             using var cmd = new SqliteCommand("VACUUM; ANALYZE;", connection);
             cmd.ExecuteNonQuery();
 
-            // Auto clean logs older than 30 days during weekly maintenance
+            int retentionDays = 30; // Default fallback
+            try
+            {
+                string raw = GetSettings();
+                if (!string.IsNullOrEmpty(raw))
+                {
+                    using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                    if (doc.RootElement.TryGetProperty("PerformanceHistoryDurationIndex", out var durationProp))
+                    {
+                        int index = durationProp.GetInt32();
+                        retentionDays = index switch
+                        {
+                            0 => 7,   // 7 Days
+                            1 => 30,  // 30 Days
+                            2 => 90,  // 90 Days
+                            _ => 30
+                        };
+                    }
+                }
+            }
+            catch { }
+
+            // Auto clean logs older than retentionDays days during weekly maintenance
             using var cleanCmd = connection.CreateCommand();
             cleanCmd.CommandText = "DELETE FROM Logs WHERE CreatedAt < @cutoff";
-            cleanCmd.Parameters.AddWithValue("@cutoff", DateTime.Now.AddDays(-30).ToString("o"));
+            cleanCmd.Parameters.AddWithValue("@cutoff", DateTime.Now.AddDays(-retentionDays).ToString("o"));
             cleanCmd.ExecuteNonQuery();
         });
 

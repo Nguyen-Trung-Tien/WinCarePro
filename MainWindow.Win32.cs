@@ -230,4 +230,24 @@ public sealed partial class MainWindow : Window
         SendMessage(_hwnd, WM_SETICON, ICON_BIG, hIcon);
         SendMessage(_hwnd, WM_SETICON, ICON_SMALL, hIcon);
     }
+
+    public void ShowTrayNotification(string title, string message, int dwInfoFlags = 1)
+    {
+        if (!_trayIconRegistered) return;
+        try
+        {
+            var nid = new NOTIFYICONDATA
+            {
+                cbSize = Marshal.SizeOf(typeof(NOTIFYICONDATA)),
+                hWnd = _hwnd,
+                uID = 1,
+                uFlags = NIF_INFO,
+                szInfo = message.Length >= 256 ? message.Substring(0, 252) + "..." : message,
+                szInfoTitle = title.Length >= 64 ? title.Substring(0, 60) + "..." : title,
+                dwInfoFlags = dwInfoFlags
+            };
+            Shell_NotifyIcon(NIM_MODIFY, ref nid);
+        }
+        catch { }
+    }
 }

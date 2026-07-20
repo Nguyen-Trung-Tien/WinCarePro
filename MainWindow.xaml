@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:WinCarePro"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="WinCarePro"
     mc:Ignorable="d">
@@ -34,7 +35,7 @@
                 <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="20" Height="20" VerticalAlignment="Center" Stretch="Uniform"/>
                 <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                 <Border Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
-                    <TextBlock Text="v3.4.5" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="v3.4.6" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
@@ -79,13 +80,15 @@
                 <!-- Separator -->
                 <Border Width="1" Height="20" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="4,0" VerticalAlignment="Center" Opacity="0.5"/>
 
-                <!-- Theme Switcher -->
-                <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ThemeButton_Click">
+                 <!-- Theme Switcher -->
+                <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ThemeButton_Click"
+                        helpers:AnimationHelper.HoverScale="1.15" helpers:AnimationHelper.PressedScale="0.85">
                     <FontIcon x:Name="ThemeIcon" Glyph="&#xE706;" FontSize="15" />
                 </Button>
                 
                 <!-- Notification Bell -->
-                <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="NotificationButton_Click">
+                <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="NotificationButton_Click"
+                        helpers:AnimationHelper.HoverScale="1.15" helpers:AnimationHelper.PressedScale="0.85">
                     <Grid>
                         <FontIcon Glyph="&#xEA8F;" FontSize="15" />
                         <!-- Red dot badge -->
@@ -94,7 +97,8 @@
                 </Button>
 
                 <!-- Exit App Button (Off Button) -->
-                <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ExitAppButton_Click">
+                <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ExitAppButton_Click"
+                        helpers:AnimationHelper.HoverScale="1.15" helpers:AnimationHelper.PressedScale="0.85">
                     <FontIcon Glyph="&#xE7E8;" FontSize="15" Foreground="#FFEF4444" />
                 </Button>
             </StackPanel>
@@ -242,3 +246,4 @@
         </Grid>
     </Grid>
 </Window>
+

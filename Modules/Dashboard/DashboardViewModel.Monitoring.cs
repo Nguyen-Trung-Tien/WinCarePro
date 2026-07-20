@@ -144,6 +144,22 @@ public partial class DashboardViewModel
                 {
                     tickCount++;
                     
+                    // Check if sensors are enabled
+                    bool sensorsEnabled = true;
+                    try
+                    {
+                        string raw = Database.DbManager.GetSettings();
+                        if (!string.IsNullOrEmpty(raw))
+                        {
+                            using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                            if (doc.RootElement.TryGetProperty("EnableSensorsThread", out var sensorsProp))
+                            {
+                                sensorsEnabled = sensorsProp.GetBoolean();
+                            }
+                        }
+                    }
+                    catch { }
+                    
                     // CPU and RAM are queried every tick (1000ms)
                     var (cpu, ram) = GetSystemResourceUsage();
 
@@ -152,7 +168,14 @@ public partial class DashboardViewModel
                     // GPU is queried every 3 ticks (~3000ms)
                     if (tickCount % 3 == 0 || tickCount == 1)
                     {
-                        if (!_isGpuQueryRunning)
+                        if (!sensorsEnabled)
+                        {
+                            _dispatcherQueue?.TryEnqueue(() =>
+                            {
+                                GpuUsage = 0;
+                            });
+                        }
+                        else if (!_isGpuQueryRunning)
                         {
                             _isGpuQueryRunning = true;
                             _ = Task.Run(() =>
@@ -175,7 +198,14 @@ public partial class DashboardViewModel
                     // Disk is queried every 10 ticks (~10000ms)
                     if (tickCount % 10 == 0 || tickCount == 1)
                     {
-                        if (!_isDiskQueryRunning)
+                        if (!sensorsEnabled)
+                        {
+                            _dispatcherQueue?.TryEnqueue(() =>
+                            {
+                                DiskUsage = 0;
+                            });
+                        }
+                        else if (!_isDiskQueryRunning)
                         {
                             _isDiskQueryRunning = true;
                             _ = Task.Run(() =>
@@ -198,7 +228,15 @@ public partial class DashboardViewModel
                     // CPU Temperature is queried every 5 ticks (~5000ms)
                     if (tickCount % 5 == 0 || tickCount == 1)
                     {
-                        if (!_isTempQueryRunning)
+                        if (!sensorsEnabled)
+                        {
+                            _dispatcherQueue?.TryEnqueue(() =>
+                            {
+                                CpuTemperature = 0;
+                                CpuTempFormatted = "Disabled".T();
+                            });
+                        }
+                        else if (!_isTempQueryRunning)
                         {
                             _isTempQueryRunning = true;
                             _ = Task.Run(() =>
@@ -263,21 +301,62 @@ public partial class DashboardViewModel
                     // Trigger Smart Boost if RAM exceeds 90%
                     if (ram > 90.0 && (DateTime.Now - _lastSmartBoostTime).TotalMinutes >= 2.0)
                     {
-                        _lastSmartBoostTime = DateTime.Now;
-                        _ = Task.Run(async () =>
+                        bool smartBoostEnabled = true;
+                        try
                         {
-                            try
+                            string raw = Database.DbManager.GetSettings();
+                            if (!string.IsNullOrEmpty(raw))
                             {
-                                await _optimizerEngine.OptimizeRamAsync();
-                                Database.DbManager.LogAction("Automated Smart Boost optimization triggered (RAM > 90%)", "Smart Boost", "Success");
+                                using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                                if (doc.RootElement.TryGetProperty("TriggerSmartBoost", out var sbProp))
+                                {
+                                    smartBoostEnabled = sbProp.GetBoolean();
+                                }
                             }
-                            catch { }
-                        });
+                        }
+                        catch { }
+
+                        if (smartBoostEnabled)
+                        {
+                            _lastSmartBoostTime = DateTime.Now;
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await _optimizerEngine.OptimizeRamAsync();
+                                    Database.DbManager.LogAction("Automated Smart Boost optimization triggered (RAM > 90%)", "Smart Boost", "Success");
+                                }
+                                catch { }
+                            });
+                        }
                     }
+
+                    int delayMs = 1000;
+                    try
+                    {
+                        string raw = Database.DbManager.GetSettings();
+                        if (!string.IsNullOrEmpty(raw))
+                        {
+                            using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                            if (doc.RootElement.TryGetProperty("TelemetryIntervalIndex", out var intervalProp))
+                            {
+                                int index = intervalProp.GetInt32();
+                                delayMs = index switch
+                                {
+                                    0 => 500,   // 0.5s
+                                    1 => 1000,  // 1.0s
+                                    2 => 2000,  // 2.0s
+                                    3 => 5000,  // 5.0s
+                                    _ => 1000
+                                };
+                            }
+                        }
+                    }
+                    catch { }
 
                     try
                     {
-                        await Task.Delay(1000, token); // Base telemetry frequency is 1000ms
+                        await Task.Delay(delayMs, token);
                     }
                     catch (TaskCanceledException) { break; }
                 }

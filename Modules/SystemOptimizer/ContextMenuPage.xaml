@@ -50,7 +50,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Left: Handlers List -->
-            <Border Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="16">
+            <Border Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -126,7 +126,7 @@
             </Border>
 
             <!-- Right: Instructions / Detail Panel -->
-            <Border Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="16">
+            <Border Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                 <StackPanel Spacing="16">
                     <TextBlock Text="About Context Menus" FontSize="15" FontWeight="Bold" />
                     
@@ -151,7 +151,7 @@
         </Grid>
 
         <!-- Log / Terminal Output -->
-        <Border Grid.Row="2" Margin="0,18,0,0" Style="{StaticResource ModernCardStyle}" Padding="12">
+        <Border Grid.Row="2" Margin="0,18,0,0" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -165,3 +165,5 @@
         </Border>
     </Grid>
 </Page>
+
+

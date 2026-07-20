@@ -25,6 +25,13 @@ public sealed partial class DashboardPage : Page
             ViewModel.DispatcherQueue = this.DispatcherQueue;
             DataContext = ViewModel;
             
+            // Start glowing sweep animation
+            try
+            {
+                PulsingRadarGlow.Begin();
+            }
+            catch { }
+
             // Lazy load the extended layer after initial UI renders to prevent lag
             await Task.Delay(200);
             ViewModel.IsExtendedLayerLoaded = true;

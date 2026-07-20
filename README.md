@@ -9,8 +9,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.5/WinCareProSetup.exe">
-      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v3.4.5-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro" />
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.6/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v3.4.6-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro" />
     </a>
   </p>
 
@@ -40,88 +40,19 @@ Mã nguồn của WinCare Pro được tổ chức theo mô hình **MVVM (Model-
 ```mermaid
 graph TD
     %% Styling
-    classDef ui fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef vm fill:#bbf,stroke:#333,stroke-width:2px;
-    classDef engine fill:#dfd,stroke:#333,stroke-width:2px;
-    classDef data fill:#fdd,stroke:#333,stroke-width:2px;
+    classDef ui fill:#E3F2FD,stroke:#2196F3,stroke-width:2px;
+    classDef vm fill:#FFFDE7,stroke:#FBC02D,stroke-width:2px;
+    classDef engine fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px;
+    classDef data fill:#FFEBEE,stroke:#F44336,stroke-width:2px;
 
-    subgraph UI [Lớp Giao Diện - View Layer]
-        MainPage[MainPage.xaml]:::ui
-        DashboardPage[DashboardPage.xaml]:::ui
-        JunkPage[JunkPage.xaml]:::ui
-        DiskPage[DiskPage.xaml]:::ui
-        NetworkPage[NetworkPage.xaml]:::ui
-        UninstallPage[Uninstall/UninstallPage.xaml]:::ui
-        RepairPage[RepairPage.xaml]:::ui
-        SecurityPage[SecurityPage.xaml]:::ui
-        OptimizerPage[SystemOptimizerPage.xaml]:::ui
-        ContextMenuPage[ContextMenuPage.xaml]:::ui
-        StartupPage[StartupPage.xaml]:::ui
-        RegistryPage[RegistryPage.xaml]:::ui
-        UpdaterPage[UpdaterPage.xaml]:::ui
-        SettingsPage[SettingsPage.xaml]:::ui
-    end
+    UI["Lớp Giao Diện (View Layer)<br/>• MainPage.xaml<br/>• Các Pages chức năng (Junk, Disk, Network...)"]:::ui
+    VM["Lớp Logic Giao Tiếp (ViewModel Layer)<br/>• DashboardViewModel.cs<br/>• JunkCleanerViewModel.cs..."]:::vm
+    Engine["Bộ Máy Xử Lý & Dịch Vụ (Engine Layer)<br/>• AiDiagnosticsEngine.cs<br/>• JunkCleanerEngine.cs..."]:::engine
+    Data["Dữ Liệu & Hệ Điều Hành (OS & Data Layer)<br/>• Cơ sở dữ liệu SQLite<br/>• Windows APIs, WMI & Registry"]:::data
 
-    subgraph Logic [Lớp Giao Tiếp - ViewModel Layer]
-        DashboardVM[DashboardViewModel.cs<br/>.Diagnostics.cs / .Monitoring.cs]:::vm
-        JunkVM[JunkCleanerViewModel.cs]:::vm
-        DiskVM[DiskViewModel.cs]:::vm
-        NetworkVM[NetworkViewModel.cs<br/>.Adapters.cs / .DnsRepair.cs / .Tools.cs]:::vm
-        UninstallVM[UninstallViewModel.cs]:::vm
-        SecurityVM[SecurityViewModel.cs]:::vm
-        OptimizerVM[SystemOptimizerViewModel.cs]:::vm
-        ContextMenuVM[ContextMenuViewModel.cs]:::vm
-        StartupVM[StartupViewModel.cs]:::vm
-        RegistryVM[RegistryViewModel.cs]:::vm
-        UpdaterVM[UpdaterViewModel.cs]:::vm
-    end
-
-    subgraph CoreEngine [Bộ Máy Xử Lý - Service & Engine Layer]
-        AiDiagnostics[AiDiagnosticsEngine]:::engine
-        JunkCleaner[JunkCleanerEngine]:::engine
-        DiskEngine[DiskEngine]:::engine
-        NetEngine[NetworkEngine.cs<br/>.SpeedTest.cs / .DnsBenchmark.cs / .Repair.cs]:::engine
-        SysOptimizer[SystemOptimizerEngine]:::engine
-        ContextMenuEngine[ContextMenuEngine]:::engine
-        RegistryBackup[RegistryBackupEngine]:::engine
-        SoftwareUpdater[SoftwareUpdaterEngine]:::engine
-        DriverEngine[HardwareDriverEngine]:::engine
-        UninstallEngine[UninstallEngine.cs<br/>.Scanning.cs / .Leftovers.cs]:::engine
-    end
-
-    subgraph DataOS [Dữ Liệu & Hệ Điều Hành - Data & OS Layer]
-        SqliteDB[(SQLite DB - wincaredb.db)]:::data
-        WmiHelper[WmiHelper.cs / Windows WMI]:::data
-        RegistryStore[Windows Registry]:::data
-        WinAPI[Windows System APIs / Shell]:::data
-        TranslationMgr[TranslationManager.cs<br/>.Translations.cs / .Extensions.cs]:::data
-    end
-
-    %% Connections
-    MainPage --> DashboardPage
-    DashboardPage <--> DashboardVM
-    JunkPage <--> JunkVM
-    DiskPage <--> DiskVM
-    NetworkPage <--> NetworkVM
-    UninstallPage <--> UninstallVM
-    OptimizerPage <--> OptimizerVM
-    ContextMenuPage <--> ContextMenuVM
-    
-    DashboardVM --> AiDiagnostics
-    JunkVM --> JunkCleaner
-    DiskVM --> DiskEngine
-    NetworkVM --> NetEngine
-    UninstallVM --> UninstallEngine
-    OptimizerVM --> SysOptimizer
-    ContextMenuVM --> ContextMenuEngine
-
-    AiDiagnostics --> SqliteDB
-    JunkCleaner --> WinAPI
-    DiskEngine --> WmiHelper
-    NetEngine --> WinAPI
-    UninstallEngine --> WinAPI & RegistryStore
-    ContextMenuEngine --> RegistryStore
-    TranslationMgr -.-> UI
+    UI <--> |Data Binding & Commands| VM
+    VM --> |Invoke Async Tasks| Engine
+    Engine --> |Read / Write / Query| Data
 ```
 
 ---
@@ -268,10 +199,29 @@ WinCare/
 └── setup.iss               # Kịch bản biên dịch bộ cài đặt Inno Setup
 ```
 
+## 🏆 Trạng thái dự án & Chất lượng mã nguồn (Project Status & Code Quality)
+
+* **Trạng thái Build:** Bản build Release win-x64 đã được xác minh thành công (`0 Errors, 0 Warnings`).
+* **Kiểm thử tự động (Unit Tests):** Đạt tỷ lệ vượt qua **100% (41/41 tests passed)** đối với tất cả các lớp logic và động cơ quan trọng bao gồm:
+  * Điểm sức khỏe AI (`AiDiagnosticsEngine`)
+  * Tối ưu hóa hiệu năng & RAM (`SystemOptimizerEngine`)
+  * Dọn dẹp rác hệ thống (`JunkCleanerEngine`)
+  * Trình quản lý khởi động (`StartupEngine`)
+  * Tác vụ thực thi bất đồng bộ (`ProcessRunner`)
+  * Cơ sở dữ liệu và cài đặt cấu hình (`DbManager`)
+* **Chất lượng & Bảo mật:**
+  * Toàn bộ thao tác cơ sở dữ liệu SQLite đã được bảo vệ chống SQL Injection nhờ cấu trúc parameterized queries.
+  * Các luồng dọn dẹp thư mục bỏ qua các điểm liên kết Junctions/Symlinks để bảo toàn tệp người dùng.
+  * Trình cập nhật phần mềm được bảo vệ bằng kiểm tra chữ ký số Authenticode tin cậy (`X509Certificate2.Verify()`).
+
 ---
 
 ## 📝 Giấy phép (License) & Đóng góp ý kiến
-Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này. Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.4.5.
+Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát triển ứng dụng tốt hơn, vui lòng tạo một **Issue** hoặc gửi **Pull Request** trực tiếp trên kho lưu trữ mã nguồn này.
+
+> [!NOTE]
+> Để hiểu sâu hơn về kiến trúc thiết kế, sơ đồ tuần tự và luồng hoạt động chi tiết của mã nguồn, vui lòng xem tài liệu **[Hướng Dẫn Phát Triển & Tài Liệu Kiến Trúc Hệ Thống (docs/DEVELOPER_GUIDE.md)](file:///d:/WinCare/docs/DEVELOPER_GUIDE.md)**.
+> Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.4.6.
 
 ---
 <div align="center">

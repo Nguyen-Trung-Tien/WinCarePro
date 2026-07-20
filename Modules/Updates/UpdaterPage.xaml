@@ -224,7 +224,7 @@
         <!-- 4. Main Content Area -->
         <Grid Grid.Row="3">
             <!-- Progress Overlay -->
-            <Border Style="{StaticResource ModernCardStyle}" Padding="24" Height="100" VerticalAlignment="Center" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="24" Height="100" VerticalAlignment="Center" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel Spacing="12" VerticalAlignment="Center">
                     <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                     <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
@@ -232,7 +232,7 @@
             </Border>
 
             <!-- Updates List -->
-            <Border Style="{StaticResource ModernCardStyle}" Padding="12" Visibility="{x:Bind IsListNotEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}">
+            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="12" Visibility="{x:Bind IsListNotEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}">
                 <ListView ItemsSource="{x:Bind ViewModel.Updates, Mode=OneWay}" SelectionMode="None">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
@@ -322,3 +322,5 @@
 
     </Grid>
 </Page>
+
+

@@ -82,7 +82,7 @@
                             </Border>
 
                             <!-- Open Windows Security -->
-                            <Border Style="{StaticResource GradientBorderCardStyle}" Padding="20">
+                            <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="20">
                                 <Grid ColumnSpacing="16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -101,7 +101,7 @@
                             </Border>
 
                             <!-- Open Device Manager -->
-                            <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                                 <Grid ColumnSpacing="16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -120,7 +120,7 @@
                             </Border>
 
                             <!-- Open Windows Update for Drivers -->
-                            <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                                 <Grid ColumnSpacing="16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -139,7 +139,7 @@
                             </Border>
 
                             <!-- Open Task Manager -->
-                            <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                                 <Grid ColumnSpacing="16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -181,7 +181,7 @@
                                 <TextBlock Text="Windows Privacy Toggles" FontSize="18" FontWeight="Bold" Margin="0,0,0,8" />
 
                                 <!-- Advertising ID -->
-                                <Border Style="{StaticResource ModernCardStyle}" Padding="16">
+                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
@@ -196,7 +196,7 @@
                                 </Border>
 
                                 <!-- Telemetry -->
-                                <Border Style="{StaticResource ModernCardStyle}" Padding="16">
+                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
@@ -211,7 +211,7 @@
                                 </Border>
 
                                 <!-- Clipboard History -->
-                                <Border Style="{StaticResource ModernCardStyle}" Padding="16">
+                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
@@ -226,7 +226,7 @@
                                 </Border>
 
                                 <!-- Input Tracking / RestrictImplicitConsent -->
-                                <Border Style="{StaticResource ModernCardStyle}" Padding="16">
+                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
@@ -248,7 +248,7 @@
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
 
-                                <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="24">
+                                <Border Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="24">
                                     <StackPanel Spacing="16">
                                         <TextBlock Text="Clear Activity Traces" FontSize="18" FontWeight="Bold" />
                                         <TextBlock Text="Manually erase cached system activity logs and clipboard files:" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
@@ -258,7 +258,7 @@
                                     </StackPanel>
                                 </Border>
 
-                                <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="24">
+                                <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="24">
                                     <StackPanel Spacing="12">
                                         <TextBlock Text="Privacy Guard Summary" FontSize="18" FontWeight="Bold" Margin="0,0,0,4" />
                                         <TextBlock Text="• WinCare Pro privacy settings configure official Windows Registry parameters. These apply instantly and do not run third party agent daemons." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
@@ -274,3 +274,5 @@
         </Pivot>
     </Grid>
 </Page>
+
+

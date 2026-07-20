@@ -22,11 +22,11 @@
     </UserControl.Resources>
 
     <Border x:Name="ContainerBorder"
-            Background="{ThemeResource SystemControlTransientBackgroundBrush}"
+            Background="{ThemeResource SystemControlAcrylicElementBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="1"
             CornerRadius="12"
-            Translation="0,2,8">
+            Translation="0,4,16">
         <Grid>
             <!-- Columns: Accent Bar, Content Area -->
             <Grid.ColumnDefinitions>
@@ -111,3 +111,5 @@
         </Grid>
     </Border>
 </UserControl>
+
+

@@ -164,6 +164,7 @@ public class HardwareDriverEngine
             if (--limit <= 0) break;
         }
 
+#if DEBUG
         if (list.Count == 0)
         {
             // Fallback mock drivers if WMI fails or returns empty
@@ -186,6 +187,7 @@ public class HardwareDriverEngine
                 list.Insert(3, new DriverInfo { Name = "Realtek PCIe GbE Family Controller", DeviceClass = "NET", Provider = "Realtek", DriverVersion = "11.10.720.2023", DriverDate = "2023-07-20", Status = "OK" });
             }
         }
+#endif
 
         // Check updates based on realistic heuristics (third-party vendor, critical class, and release date)
         var referenceDate = new DateTime(2026, 7, 14);

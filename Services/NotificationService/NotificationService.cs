@@ -250,7 +250,24 @@ public class NotificationService : INotificationService
     private void ShowToastUI(QueuedNotification item)
     {
         var win = App.MainWindowInstance;
-        if (win == null || win.ToastStackContainer == null) return;
+        if (win == null) return;
+
+        // Redirect to system tray if app is minimized/running in background
+        if (win.AppWindow == null || !win.AppWindow.IsVisible)
+        {
+            int flags = item.Severity switch
+            {
+                NotificationSeverity.Warning => 2, // NIIF_WARNING
+                NotificationSeverity.Error => 3,   // NIIF_ERROR
+                NotificationSeverity.Critical => 3,// NIIF_ERROR
+                NotificationSeverity.Success => 1, // NIIF_INFO
+                _ => 1                             // NIIF_INFO
+            };
+            win.ShowTrayNotification(item.Title, item.Message, flags);
+            return;
+        }
+
+        if (win.ToastStackContainer == null) return;
 
         // Check if sound settings are enabled
         bool playSound = true;

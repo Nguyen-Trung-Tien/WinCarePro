@@ -464,6 +464,9 @@ public sealed partial class SettingsPage : Page
 
     private async void OnPurgeDatabaseClick(object sender, RoutedEventArgs e)
     {
+        var purgeBtn = sender as Button;
+        if (purgeBtn != null) purgeBtn.IsEnabled = false;
+
         PurgeProgressRing.IsActive = true;
         await Task.Delay(1200); // Visual feedback
         try
@@ -528,6 +531,7 @@ public sealed partial class SettingsPage : Page
         finally
         {
             PurgeProgressRing.IsActive = false;
+            if (purgeBtn != null) purgeBtn.IsEnabled = true;
         }
     }
 
@@ -669,11 +673,40 @@ public sealed partial class SettingsPage : Page
             response = await client.GetStringAsync(jsonUrl);
         }
         
+        bool betaEnabled = false;
+        try
+        {
+            string raw = DbManager.GetSettings();
+            if (!string.IsNullOrEmpty(raw))
+            {
+                using var docSettings = JsonDocument.Parse(raw);
+                if (docSettings.RootElement.TryGetProperty("BetaUpdates", out var betaProp))
+                {
+                    betaEnabled = betaProp.GetBoolean();
+                }
+            }
+        }
+        catch { }
+
         using var doc = JsonDocument.Parse(response);
         var root = doc.RootElement;
-        string remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
-        string downloadUrl = root.GetProperty("url").GetString() ?? "";
-        string changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
+        
+        string remoteVerStr;
+        string downloadUrl;
+        string changelog;
+
+        if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
+        {
+            remoteVerStr = betaVerProp.GetString() ?? "2.0.0";
+            downloadUrl = root.TryGetProperty("beta_url", out var betaUrlProp) ? betaUrlProp.GetString() ?? "" : "";
+            changelog = root.TryGetProperty("beta_changelog", out var betaClProp) ? betaClProp.GetString() ?? "" : "";
+        }
+        else
+        {
+            remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
+            downloadUrl = root.GetProperty("url").GetString() ?? "";
+            changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
+        }
 
         var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
         var remoteVersion = new Version(remoteVerStr);
@@ -816,6 +849,23 @@ public sealed partial class SettingsPage : Page
             UpdateStatusLabel.Text = string.Format("Download failed: {0}".T(), ex.Message);
             UpdateProgressBar.Visibility = Visibility.Collapsed;
             CheckUpdatesBtn.IsEnabled = true;
+        }
+    }
+
+    private void OnBrowsePluginsClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/Nguyen-Trung-Tien/WinCarePro/wiki/Plugins",
+                UseShellExecute = true
+            });
+            DbManager.LogAction("Launched verified plugins browser URL", "Settings", "Success");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Error".T(), ex.Message, "Critical");
         }
     }
 

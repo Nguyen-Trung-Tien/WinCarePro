@@ -224,7 +224,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Realtime Download -->
-                    <Border x:Name="QualDiagCard1" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="12">
+                    <Border x:Name="QualDiagCard1" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -241,7 +241,7 @@
                     </Border>
 
                     <!-- Realtime Upload -->
-                    <Border x:Name="QualDiagCard2" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="12">
+                    <Border x:Name="QualDiagCard2" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -258,7 +258,7 @@
                     </Border>
 
                     <!-- Latency -->
-                    <Border x:Name="QualDiagCard3" Grid.Column="2" Style="{StaticResource ModernCardStyle}" Padding="12">
+                    <Border x:Name="QualDiagCard3" Grid.Column="2" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -275,7 +275,7 @@
                     </Border>
 
                     <!-- Jitter -->
-                    <Border x:Name="QualDiagCard4" Grid.Column="3" Style="{StaticResource ModernCardStyle}" Padding="12">
+                    <Border x:Name="QualDiagCard4" Grid.Column="3" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -292,7 +292,7 @@
                     </Border>
 
                     <!-- Public IP -->
-                    <Border x:Name="QualDiagCard5" Grid.Column="4" Style="{StaticResource ModernCardStyle}" Padding="12">
+                    <Border x:Name="QualDiagCard5" Grid.Column="4" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -309,7 +309,7 @@
                     </Border>
 
                     <!-- Active DNS -->
-                    <Border x:Name="QualDiagCard6" Grid.Column="5" Style="{StaticResource ModernCardStyle}" Padding="12">
+                    <Border x:Name="QualDiagCard6" Grid.Column="5" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -334,7 +334,7 @@
                     </Grid.RowDefinitions>
 
                     <!-- Speed Test Tool Card -->
-                    <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="20" MinHeight="320">
+                    <Border Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="20" MinHeight="320">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -387,7 +387,7 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Latency Quality Gauge -->
-                        <Border Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="12">
+                        <Border Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
                                 <TextBlock Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}" FontSize="22" FontWeight="ExtraBold" Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center" />
                                 <TextBlock Text="Avg Ping Latency" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
@@ -395,7 +395,7 @@
                         </Border>
 
                         <!-- Packet Loss Gauge -->
-                        <Border Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="12">
+                        <Border Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
                                 <TextBlock Text="{x:Bind FormatPercent(ViewModel.PacketLossPercent), Mode=OneWay}" FontSize="22" FontWeight="ExtraBold" Foreground="Tomato" HorizontalAlignment="Center" />
                                 <TextBlock Text="Packet Loss Rate" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
@@ -403,7 +403,7 @@
                         </Border>
 
                         <!-- Connection Quality Badge -->
-                        <Border Grid.Column="2" Style="{StaticResource ModernCardStyle}" Padding="12">
+                        <Border Grid.Column="2" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
                             <StackPanel HorizontalAlignment="Center" Spacing="4">
                                 <TextBlock Text="{x:Bind ViewModel.ConnectionQuality, Mode=OneWay}" FontSize="22" FontWeight="ExtraBold" Foreground="MediumSeaGreen" HorizontalAlignment="Center" />
                                 <TextBlock Text="Link Quality Score" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
@@ -413,7 +413,7 @@
                 </Grid>
 
                 <!-- Right Column: Active Adapters List -->
-                <Border x:Name="AdaptersBorder" Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="16">
+                <Border x:Name="AdaptersBorder" Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -508,7 +508,7 @@
                 </Border>
 
                 <!-- DNS Benchmarks Table -->
-                <Border x:Name="DnsTableBorder" Grid.Row="1" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="16">
+                <Border x:Name="DnsTableBorder" Grid.Row="1" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -594,7 +594,7 @@
                 </Border>
 
                 <!-- Sidebar Recommendation -->
-                <Border x:Name="DnsRecBorder" Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
+                <Border x:Name="DnsRecBorder" Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                     <StackPanel Spacing="16">
                         <TextBlock Text="DNS Query Diagnostics" FontSize="16" FontWeight="Bold" />
                         
@@ -650,7 +650,7 @@
 
             <!-- SECTION 3: ACTIVE CONNECTIONS (PORTS) -->
             <Grid x:Name="SectionPorts" Visibility="Collapsed">
-                <Border Style="{StaticResource ModernCardStyle}" Padding="20" Margin="0,0,12,0">
+                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20" Margin="0,0,12,0">
                     <Grid RowSpacing="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -778,7 +778,7 @@
                     </Grid.ColumnDefinitions>
 
                 <!-- Left Column: Diagnostic Terminal Simulator -->
-                <Border x:Name="RepTerminalBorder" Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Padding="20">
+                <Border x:Name="RepTerminalBorder" Grid.Row="0" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -845,7 +845,7 @@
                 </Border>
 
                 <!-- Right Column: Network Repair Toolkit list -->
-                <Border x:Name="RepToolkitBorder" Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Padding="20">
+                <Border x:Name="RepToolkitBorder" Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -1050,3 +1050,5 @@
         </Grid>
     </Grid>
 </Page>
+
+

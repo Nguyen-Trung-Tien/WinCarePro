@@ -106,10 +106,33 @@ public sealed partial class MainWindow : Window
                 response = await client.GetStringAsync(jsonUrl);
             }
             
+            bool betaEnabled = false;
+            string settingsRaw = DbManager.GetSettings();
+            if (!string.IsNullOrEmpty(settingsRaw))
+            {
+                using var setDoc = JsonDocument.Parse(settingsRaw);
+                if (setDoc.RootElement.TryGetProperty("BetaUpdates", out var betaProp))
+                {
+                    betaEnabled = betaProp.GetBoolean();
+                }
+            }
+
             using var doc = JsonDocument.Parse(response);
             var root = doc.RootElement;
-            string remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
-            string downloadUrl = root.GetProperty("url").GetString() ?? "";
+            
+            string remoteVerStr;
+            string downloadUrl;
+
+            if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
+            {
+                remoteVerStr = betaVerProp.GetString() ?? "2.0.0";
+                downloadUrl = root.TryGetProperty("beta_url", out var betaUrlProp) ? betaUrlProp.GetString() ?? "" : "";
+            }
+            else
+            {
+                remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
+                downloadUrl = root.GetProperty("url").GetString() ?? "";
+            }
             
             var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
             var remoteVersion = new Version(remoteVerStr);
@@ -120,7 +143,6 @@ public sealed partial class MainWindow : Window
                 
                 // Read configuration to determine if we should auto install
                 bool autoInstall = false;
-                string settingsRaw = DbManager.GetSettings();
                 if (!string.IsNullOrEmpty(settingsRaw))
                 {
                     using var setDoc = JsonDocument.Parse(settingsRaw);

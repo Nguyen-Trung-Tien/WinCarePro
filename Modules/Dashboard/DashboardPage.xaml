@@ -12,6 +12,16 @@
     mc:Ignorable="d"
     NavigationCacheMode="Required">
 
+    <Page.Resources>
+        <Storyboard x:Name="PulsingRadarGlow" AutoReverse="True" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="GlowEllipse" Storyboard.TargetProperty="Opacity" From="0.04" To="0.28" Duration="0:0:2.2">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </Page.Resources>
+
     <Grid Padding="24" MaxWidth="1200" HorizontalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
@@ -91,8 +101,17 @@
                                 <ColumnDefinition x:Name="HealthGaugeCol1" Width="*" />
                             </Grid.ColumnDefinitions>
                             
-                            <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="140" Height="140" Margin="0,0,20,0">
-                                <Ellipse Width="114" Height="114" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="6" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
+                             <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="140" Height="140" Margin="0,0,20,0">
+                                <!-- Glowing background circle -->
+                                <Ellipse x:Name="GlowEllipse" Width="130" Height="130" Opacity="0.08" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Ellipse.Fill>
+                                        <RadialGradientBrush>
+                                            <GradientStop Color="#FF8B5CF6" Offset="0" />
+                                            <GradientStop Color="Transparent" Offset="1" />
+                                        </RadialGradientBrush>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <Ellipse Width="114" Height="114" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="5" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.3"/>
                                 <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}" Width="120" Height="120" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
                                     <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="32" FontWeight="ExtraBold" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" CharacterSpacing="-20"/>
@@ -165,7 +184,7 @@
                         </Grid.ColumnDefinitions>
                         
                         <!-- CPU Card with overload indicator border glow -->
-                        <Border x:Name="CpuCard" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                        <Border x:Name="CpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="8" Padding="16"
                                 BorderBrush="{x:Bind GetCpuCardBorderBrush(ViewModel.CpuUsage), Mode=OneWay}"
                                 helpers:AnimationHelper.HoverScale="1.015"
                                 helpers:AnimationHelper.PressedScale="0.985">
@@ -198,7 +217,7 @@
                         </Border>
 
                         <!-- RAM Card with overload indicator background glow/pulse -->
-                        <Border x:Name="RamCard" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                        <Border x:Name="RamCard" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="8" Padding="16"
                                 Background="{x:Bind GetRamCardBackground(ViewModel.RamUsage), Mode=OneWay}"
                                 helpers:AnimationHelper.HoverScale="1.015"
                                 helpers:AnimationHelper.PressedScale="0.985">
@@ -235,7 +254,7 @@
                     <!-- Right Side Column 1 -->
                     
                     <!-- 1. Bottleneck Advisor widget -->
-                    <Border x:Name="BottleneckCard" Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                    <Border x:Name="BottleneckCard" Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="8" Padding="16"
                             helpers:AnimationHelper.HoverScale="1.015"
                             helpers:AnimationHelper.PressedScale="0.985">
                         <StackPanel Spacing="8">
@@ -327,7 +346,7 @@
                         </Grid.ColumnDefinitions>
                         
                         <!-- GPU Card -->
-                        <Border x:Name="GpuCard" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                        <Border x:Name="GpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="8" Padding="16"
                                 helpers:AnimationHelper.HoverScale="1.015"
                                 helpers:AnimationHelper.PressedScale="0.985">
                             <StackPanel>
@@ -359,7 +378,7 @@
                         </Border>
 
                         <!-- Storage Card with warning state glow -->
-                        <Border x:Name="DiskCard" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                        <Border x:Name="DiskCard" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="8" Padding="16"
                                 BorderBrush="{x:Bind GetDiskCardBorderBrush(ViewModel.DiskUsage), Mode=OneWay}"
                                 helpers:AnimationHelper.HoverScale="1.015"
                                 helpers:AnimationHelper.PressedScale="0.985">
@@ -394,7 +413,7 @@
                     </Grid>
 
                     <!-- Row 3: Performance Trend Chart Card with Series Toggles (Lazy Loaded) -->
-                    <Border x:Name="PerformanceChartCard" Grid.Row="3" Grid.Column="0" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                    <Border x:Name="PerformanceChartCard" Grid.Row="3" Grid.Column="0" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource GlassmorphismCardStyle}" Margin="8" Padding="16"
                             helpers:AnimationHelper.HoverScale="1.01"
                             helpers:AnimationHelper.PressedScale="0.99">
                         <Grid>
@@ -427,7 +446,7 @@
                     </Border>
 
                     <!-- Row 2-3 (Span 2): Smart AI Advice Card (Actionable layout) (Lazy Loaded) -->
-                    <Border x:Name="RecommendationsCard" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource ModernCardStyle}" Margin="8" Padding="16"
+                    <Border x:Name="RecommendationsCard" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource GlassmorphismCardStyle}" Margin="8" Padding="16"
                             helpers:AnimationHelper.HoverScale="1.015"
                             helpers:AnimationHelper.PressedScale="0.985">
                         <Grid>
@@ -480,7 +499,7 @@
                 <StackPanel x:Name="DeepLayerPanel" x:Load="False" Spacing="16">
                     
                     <!-- Row 1: Detailed Audits Table -->
-                    <Border x:Name="AuditsCard" Style="{StaticResource ModernCardStyle}" Padding="16">
+                    <Border x:Name="AuditsCard" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -561,7 +580,7 @@
                     </Border>
 
                     <!-- Operations Timeline -->
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="16">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -607,5 +626,7 @@
         </ScrollViewer>
     </Grid>
 </Page>
+
+
 
 

@@ -113,7 +113,7 @@
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 0), Mode=OneWay}">
                     <TextBlock Text="General Configurations" FontSize="18" FontWeight="Bold" />
                     
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Language Selection" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
@@ -129,7 +129,7 @@
                     </Border>
 
                     <!-- Update policy -->
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <TextBlock Text="Software Update Policies" FontSize="14" FontWeight="Bold" />
                             <TextBlock Text="Configure version checking and background installation options." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
@@ -151,7 +151,7 @@
                     </Border>
 
                     <!-- Storage footprint manager -->
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <TextBlock Text="Database &amp; Storage Footprint" FontSize="14" FontWeight="Bold" />
                             <TextBlock Text="Clean log files, diagnostic assessment reports, and temporary installation caches." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
@@ -201,7 +201,7 @@
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 1), Mode=OneWay}">
                     <TextBlock Text="Appearance &amp; Theme Customization" FontSize="18" FontWeight="Bold" />
                     
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <TextBlock Text="Application Color Theme Mode" FontSize="13" FontWeight="Bold" />
                             
@@ -278,7 +278,7 @@
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 2), Mode=OneWay}">
                     <TextBlock Text="Auto Maintenance Task Schedulers" FontSize="18" FontWeight="Bold" />
                     
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <StackPanel Spacing="6">
                                 <Grid Width="300" HorizontalAlignment="Left">
@@ -307,7 +307,7 @@
                     <TextBlock Text="Telemetry &amp; Notifications Configuration" FontSize="18" FontWeight="Bold" />
                     
                     <!-- Notification manager policies -->
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <TextBlock Text="Notification Center Policy" FontSize="14" FontWeight="Bold" />
                             <ToggleSwitch x:Name="ShowNotificationsToggle" Toggled="OnSettingsChanged" Header="Show dynamic in-app Toast Notifications" IsOn="True" CornerRadius="4" FontSize="12.5"/>
@@ -327,7 +327,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <TextBlock Text="Sensors Telemetry" FontSize="14" FontWeight="Bold" />
                             <StackPanel Spacing="6">
@@ -358,7 +358,7 @@
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 4), Mode=OneWay}">
                     <TextBlock Text="Rollback &amp; Safety Registries" FontSize="18" FontWeight="Bold" />
                     
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <ToggleSwitch x:Name="CreateRestorePointToggle" Toggled="OnSettingsChanged" Header="Automatically create a System Restore Point before major updates" IsOn="True" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Saves a system restore point so you can roll back changes if optimizing causes issues."/>
                             <ToggleSwitch x:Name="BackupRegistryToggle" Toggled="OnSettingsChanged" Header="Automatically backup system registry hive partitions" IsOn="True" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Automatically backs up HKCU and modified HKLM keys before tweaking registry settings."/>
@@ -378,14 +378,14 @@
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 5), Mode=OneWay}">
                     <TextBlock Text="Advanced &amp; Sandbox Options" FontSize="18" FontWeight="Bold" />
                     
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <ToggleSwitch x:Name="EnableVerboseLogsToggle" Toggled="OnSettingsChanged" Header="Enable verbose debug logs trace files" CornerRadius="4" FontSize="12.5"/>
                             
                             <StackPanel Spacing="8">
                                 <TextBlock Text="Plugin &amp; Sandbox Modules Manager" FontSize="13" FontWeight="Bold" />
                                 <TextBlock Text="No custom plugins are currently loaded." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <Button Content="Browse Verified plugins" CornerRadius="4"/>
+                                <Button Content="Browse Verified plugins" CornerRadius="4" Click="OnBrowsePluginsClick"/>
                             </StackPanel>
 
                             <MenuFlyoutSeparator />
@@ -400,7 +400,7 @@
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 6), Mode=OneWay}">
                     <TextBlock Text="About WinCare Pro" FontSize="18" FontWeight="Bold" />
                     
-                    <Border Style="{StaticResource ModernCardStyle}" Padding="24">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="24">
                         <StackPanel Spacing="16">
                             <!-- Logo and name -->
                             <StackPanel Orientation="Horizontal" Spacing="16">
@@ -410,7 +410,7 @@
                                 <StackPanel VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="WinCare Pro" FontSize="20" FontWeight="ExtraBold" />
                                     <TextBlock Text="System Optimizer &amp; Security Shield" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="Version 3.4.5 (Stable Release)" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="Version 3.4.6 (Stable Release)" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                 </StackPanel>
                             </StackPanel>
 
@@ -451,3 +451,5 @@
         </ScrollViewer>
     </Grid>
 </Page>
+
+

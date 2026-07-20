@@ -18,12 +18,29 @@ public sealed partial class MainPage : Page
         // Populate user chip with system info
         NavUserName.Text = Environment.UserName;
         NavMachineName.Text = Environment.MachineName;
+
+        // Register to theme changes to force update RequestedTheme for this page, children, and navigated content
+        ThemeManager.Instance.ThemeChanged += (s, e) =>
+        {
+            var theme = ThemeManager.Instance.CurrentTheme;
+            this.RequestedTheme = theme;
+            NavView.RequestedTheme = theme;
+            if (ContentFrame.Content is Page page)
+            {
+                page.RequestedTheme = theme;
+            }
+        };
+        // Apply initial theme
+        var initialTheme = ThemeManager.Instance.CurrentTheme;
+        this.RequestedTheme = initialTheme;
+        NavView.RequestedTheme = initialTheme;
         
-        // Auto-translate navigated pages
+        // Auto-translate and synchronize theme for navigated pages
         ContentFrame.Navigated += (s, e) =>
         {
             if (e.Content is Page page)
             {
+                page.RequestedTheme = ThemeManager.Instance.CurrentTheme;
                 if (page.IsLoaded)
                 {
                     TranslationManager.Instance.Translate(page);

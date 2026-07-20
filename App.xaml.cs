@@ -143,14 +143,48 @@ public partial class App : Application
             var cleaner = new Engines.JunkCleanerEngine();
             // Scan for all categories
             var categories = cleaner.ScanJunkAsync().GetAwaiter().GetResult();
-            // Perform clean
-            long cleanedBytes = cleaner.CleanJunkAsync(categories).GetAwaiter().GetResult();
+            
+            // Calculate total size of junk
+            long totalJunkBytes = 0;
+            foreach (var category in categories)
+            {
+                totalJunkBytes += category.SizeBytes;
+            }
 
-            Database.DbManager.LogAction(
-                $"Silent background clean completed. Freed {(cleanedBytes / 1024.0 / 1024.0):F2} MB.", 
-                "Background Scheduler", 
-                "Success"
-            );
+            double triggerSizeGB = 5.0; // Default threshold
+            try
+            {
+                string raw = Database.DbManager.GetSettings();
+                if (!string.IsNullOrEmpty(raw))
+                {
+                    using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                    if (doc.RootElement.TryGetProperty("AutoCleanupTriggerSizeGB", out var sizeProp))
+                    {
+                        triggerSizeGB = sizeProp.GetDouble();
+                    }
+                }
+            }
+            catch { }
+
+            double totalJunkGB = totalJunkBytes / 1024.0 / 1024.0 / 1024.0;
+            if (totalJunkGB >= triggerSizeGB)
+            {
+                // Perform clean
+                long cleanedBytes = cleaner.CleanJunkAsync(categories).GetAwaiter().GetResult();
+                Database.DbManager.LogAction(
+                    $"Silent background clean completed. Freed {(cleanedBytes / 1024.0 / 1024.0):F2} MB.", 
+                    "Background Scheduler", 
+                    "Success"
+                );
+            }
+            else
+            {
+                Database.DbManager.LogAction(
+                    $"Silent background clean skipped. Junk size ({totalJunkGB:F2} GB) is below trigger threshold ({triggerSizeGB:F1} GB).", 
+                    "Background Scheduler", 
+                    "Success"
+                );
+            }
         }
         catch (Exception ex)
         {

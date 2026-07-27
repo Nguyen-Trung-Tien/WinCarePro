@@ -153,4 +153,4 @@ Script [publish_installer.bat](file:///d:/WinCare/publish_installer.bat) tự đ
 3. Đóng gói toàn bộ runtime .NET 10 (Self-contained) và Assets thành bộ cài `PublishOutput\WinCareProSetup.exe` duy nhất.
 
 ---
-*Tài liệu được cập nhật tự động theo phiên bản mã nguồn mới nhất v3.4.6.*
+*Tài liệu được cập nhật tự động theo phiên bản mã nguồn mới nhất v3.4.7.*

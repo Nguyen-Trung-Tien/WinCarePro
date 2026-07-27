@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
+using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
@@ -12,7 +13,7 @@ namespace WinCarePro.ViewModels;
 public class ContextMenuViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly ContextMenuEngine _engine = new();
+    private readonly ContextMenuEngine _engine = App.Services?.GetService<ContextMenuEngine>() ?? new();
 
     private bool _isBusy;
     public bool IsBusy

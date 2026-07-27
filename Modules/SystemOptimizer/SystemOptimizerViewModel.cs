@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
+using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
@@ -54,7 +56,7 @@ public class ServiceStatusItem : System.ComponentModel.INotifyPropertyChanged
 public class SystemOptimizerViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly SystemOptimizerEngine _optimizerEngine = new();
+    private readonly SystemOptimizerEngine _optimizerEngine = App.Services?.GetService<SystemOptimizerEngine>() ?? new();
 
     private bool _isLoading;
     public bool IsLoading
@@ -470,11 +472,12 @@ public class SystemOptimizerViewModel : ViewModelBase
     private async Task ToggleGameBoostAsync(bool active)
     {
         IsLoading = true;
-        string[] targetServices = { "wuauserv", "SysMain", "DiagTrack", "WSearch" };
+        // Non-critical background telemetry & search indexer services (wuauserv excluded for security safety)
+        string[] targetServices = { "SysMain", "DiagTrack", "WSearch" };
 
         if (active)
         {
-            GameBoostStatus = "Activating Game Boost... Halting services and freeing RAM cache lines.".T();
+            GameBoostStatus = "Activating Game Boost... Halting non-essential services and freeing RAM cache lines.".T();
             Log("Game Boost: Activating gaming focus engine.".T());
             await Task.Delay(500);
 
@@ -490,7 +493,7 @@ public class SystemOptimizerViewModel : ViewModelBase
                         {
                             Log(string.Format("Game Boost: Terminating background daemon: {0}".T(), sName));
                             sc.Stop();
-                            sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(3));
+                            sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(5));
                             Log(string.Format("Game Boost: Daemon {0} stopped successfully.".T(), sName));
                         }
                     }

@@ -510,13 +510,14 @@ public partial class NetworkViewModel : ViewModelBase
         return total;
     }
 
+    // Shared HttpClient singleton to prevent socket exhaustion
+    private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromSeconds(5) };
+
     private async Task<string> FetchPublicIpAddressAsync()
     {
         try
         {
-            using var client = new HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(3);
-            return (await client.GetStringAsync("https://api.ipify.org")).Trim();
+            return (await _httpClient.GetStringAsync("https://api.ipify.org")).Trim();
         }
         catch
         {

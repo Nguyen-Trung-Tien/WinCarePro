@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
+using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Services;
 using WinCarePro.Services.Implementations;
@@ -13,7 +14,7 @@ namespace WinCarePro.ViewModels;
 public class DiskViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly DiskEngine _engine = new();
+    private readonly DiskEngine _engine = App.Services?.GetService<DiskEngine>() ?? new();
     private System.Threading.CancellationTokenSource? _diskCts;
 
     public void Cleanup()
@@ -244,7 +245,11 @@ public class DiskViewModel : ViewModelBase
             });
 
             LogText(string.Format("Cleaned {0} duplicate files, reclaiming {1} MB.".T(), count, (bytesSaved / 1024.0 / 1024.0).ToString("F2")));
-            _ = FindDuplicatesAsync();
+            await FindDuplicatesAsync();
+        }
+        catch (Exception ex)
+        {
+            LogText("Cleanup error: ".T() + ex.Message);
         }
         finally
         {

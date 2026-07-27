@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Services;
 
@@ -51,9 +52,10 @@ public class DiagnosticIssueItem : ViewModelBase
         get
         {
             if (string.IsNullOrEmpty(Severity)) return new SolidColorBrush(Microsoft.UI.Colors.Gray);
-            string s = Severity.ToLower();
-            if (s.Contains("critical") || s.Contains("nguy cấp")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Red
-            if (s.Contains("warning") || s.Contains("cảnh báo")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)); // Amber
+            string s = Severity.ToLowerInvariant();
+            // Compare against English keys only (engine output is always English)
+            if (s.Contains("critical")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Red
+            if (s.Contains("warning")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)); // Amber
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246)); // Blue
         }
     }
@@ -63,10 +65,11 @@ public class DiagnosticIssueItem : ViewModelBase
         get
         {
             if (string.IsNullOrEmpty(Status)) return new SolidColorBrush(Microsoft.UI.Colors.Gray);
-            string s = Status.ToLower();
-            if (s.Contains("fixed") || s.Contains("success") || s.Contains("đã sửa")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)); // Green
-            if (s.Contains("fixing") || s.Contains("đang sửa")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246)); // Purple
-            if (s.Contains("fail") || s.Contains("lỗi")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Red
+            string s = Status.ToLowerInvariant();
+            // Compare against English keys only (engine output is always English)
+            if (s.Contains("fixed") || s.Contains("success")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)); // Green
+            if (s.Contains("fixing")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246)); // Purple
+            if (s.Contains("fail")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Red
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 107, 114, 128)); // Gray (Pending)
         }
     }
@@ -75,7 +78,7 @@ public class DiagnosticIssueItem : ViewModelBase
 public class RepairViewModel : ViewModelBase
 {
     private readonly DispatcherQueue? _dispatcherQueue;
-    private readonly SystemEngine _repairEngine = new();
+    private readonly SystemEngine _repairEngine = App.Services?.GetService<SystemEngine>() ?? new();
 
     private bool _isBusy;
     public bool IsBusy

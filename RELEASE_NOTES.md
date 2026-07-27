@@ -2,27 +2,28 @@
 
 ---
 
-## 🚀 WinCare Pro v3.4.6 — Nâng cấp tính năng & Quản lý nâng cao
+## 🚀 WinCare Pro v3.4.7 — Tối ưu hóa Kiến trúc & Nâng cao An toàn Hệ thống
 
-> **Phát hành:** 20/07/2026 · **Loại:** Bản cập nhật tính năng & Hiệu năng hệ thống (Feature & Performance Update)
+> **Phát hành:** 27/07/2026 · **Loại:** Bản cập nhật Kiến trúc, An toàn & Hiệu năng (Architecture & Safety Update)
 
-Bản cập nhật **v3.4.6** giới thiệu các tính năng quản lý menu chuột phải hoàn toàn mới, tích hợp cơ chế Bảo mật DNS qua HTTPS (DoH), nâng cấp hệ thống chẩn đoán phần cứng (GPU, CPU, SSD/HDD) và cải tiến toàn diện độ ổn định bằng các tác vụ bất đồng bộ.
+Bản cập nhật **v3.4.7** tập trung vào việc tái cấu trúc kiến trúc hệ thống chuẩn Dependency Injection (DI), tăng cường cơ chế bảo vệ và sao lưu registry tự động, tối ưu hóa công cụ Game Boost an toàn và nâng cao độ ổn định tổng thể của ứng dụng.
 
 ---
 
-### ✨ Các tính năng & cải tiến nổi bật trong phiên bản v3.4.6 (Key Features)
+### ✨ Các tính năng & cải tiến nổi bật trong phiên bản v3.4.7 (Key Features)
 
-* **🖱️ Quản lý Menu chuột phải (Context Menu Manager):** Cho phép dễ dàng bật/tắt các mục menu chuột phải hệ thống cho All Files, Desktop Background, Folders trực tiếp qua Registry, tự động giải mã tên hiển thị thân thiện từ Class ID (CLSID) trong Registry để người dùng dễ kiểm soát.
-* **🛡️ Bảo mật DNS qua HTTPS (DNS-over-HTTPS - DoH):** Tích hợp cấu hình Secure DNS (DoH) trực tiếp trong Network Center, cho phép mã hóa các truy vấn tên miền của hệ thống với các nhà cung cấp phổ biến như Cloudflare, Google, AdGuard, NextDNS.
-* **📊 Chẩn đoán Phần cứng & Hệ thống Nâng cao:** 
-  * Bổ sung theo dõi hiệu suất sử dụng GPU thực tế thời gian thực thông qua Performance Counters của Windows.
-  * Phát hiện thắt cổ chai CPU (Throttling) bằng cách kiểm tra xung nhịp xử lý thực tế so với xung nhịp tối đa.
-  * Phân tích dữ liệu SMART và các chỉ số sức khỏe ổ cứng (SSD/HDD Health) của Windows Storage để đưa ra phần trăm độ bền ổ đĩa chính xác.
-  * Cơ chế kiểm tra driver mới chỉ phát hiện và cảnh báo các driver phần cứng hệ thống quan trọng (Non-Generic/Non-Microsoft) cũ hơn 180 ngày.
-* **⚡ Nâng cấp hiệu năng & Trình gỡ cài đặt:** 
-  * Tối ưu hóa toàn bộ các tác vụ chạy công cụ hệ thống (DISM, SFC, Restore Point, Network Repair) sang chế độ bất đồng bộ (`ProcessRunner`) để giao diện luôn mượt mà.
-  * Hỗ trợ gỡ cài đặt cưỡng bức (Force Uninstall) để dọn dẹp triệt để ứng dụng (kể cả Microsoft Store) và các tệp rác còn sót lại khi tiến trình gỡ cài đặt tiêu chuẩn gặp lỗi.
-  * Cải tiến tính năng chọn tất cả ("Select All") cho danh sách ứng dụng và danh sách tệp rác thừa.
+* **🏗️ Tối ưu hóa & Chuẩn hóa Kiến trúc Dependency Injection (DI):** 
+  * Chuẩn hóa toàn bộ các ViewModel và Engine hệ thống thông qua DI Container, giúp quản lý tài nguyên hiệu quả và nâng cao khả năng mở rộng.
+  * Tối ưu hóa bộ đệm kết nối mạng (`HttpClient Singleton`), ngăn ngừa hiện tượng cạn kiệt tài nguyên socket khi kiểm tra cập nhật và chẩn đoán mạng.
+
+* **🛡️ An toàn Hệ thống & Tự động Sao lưu Registry:**
+  * Cơ chế tự động tạo bản sao lưu Registry an toàn trước khi sửa lỗi hệ thống, giúp người dùng dễ dàng khôi phục khi cần thiết.
+  * Bảo vệ dịch vụ cập nhật hệ thống quan trọng (Windows Update) khi kích hoạt chế độ Game Boost, tránh ảnh hưởng đến tính an ninh của hệ thống.
+
+* **⚡ Cải tiến Luồng Xử lý & Dọn dẹp Bộ nhớ:**
+  * Tối ưu hóa luồng xử lý quét và dọn dẹp tệp trùng lặp trên đĩa đĩa (`Disk Tools`), đảm bảo giao diện phản hồi chính xác và mượt mà.
+  * Tập trung hóa bộ công cụ định dạng dung lượng dữ liệu dùng chung (`FormatHelper`), giúp hiển thị thông số thống nhất trên toàn ứng dụng.
+  * Loại bỏ các mã dữ liệu giả lập, đảm bảo thông tin hiển thị chính xác theo thực tế hệ thống.
 
 ---
 

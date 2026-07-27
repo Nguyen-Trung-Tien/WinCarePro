@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
+using WinCarePro.Core.Helpers;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
@@ -296,15 +297,7 @@ public class UninstallViewModel : ViewModelBase
         StoreAppsCount = _allApps.Count(x => x.IsStoreApp);
         
         long totalBytes = _allApps.Sum(x => x.SizeBytes);
-        string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-        int i = 0;
-        double doubleBytes = totalBytes;
-        while (doubleBytes >= 1024 && i < suffix.Length - 1)
-        {
-            i++;
-            doubleBytes /= 1024;
-        }
-        TotalAppsSizeFormatted = $"{doubleBytes:F1} {suffix[i]}";
+        TotalAppsSizeFormatted = FormatHelper.FormatBytes(totalBytes);
     }
 
     private void ApplyAppFilter()
@@ -590,15 +583,7 @@ public class UninstallViewModel : ViewModelBase
     private void UpdateLeftoversSize()
     {
         long bytes = Leftovers.Where(x => x.IsSelected && x.Type != LeftoverType.RegistryKey && x.Type != LeftoverType.RegistryValue).Sum(x => x.SizeBytes);
-        string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-        int i = 0;
-        double doubleBytes = bytes;
-        while (doubleBytes >= 1024 && i < suffix.Length - 1)
-        {
-            i++;
-            doubleBytes /= 1024;
-        }
-        LeftoversSizeFormatted = $"{doubleBytes:F1} {suffix[i]}";
+        LeftoversSizeFormatted = FormatHelper.FormatBytes(bytes);
     }
 
     // UI Action Link Helpers

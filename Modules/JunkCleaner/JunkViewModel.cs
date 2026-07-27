@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
+using WinCarePro.Core.Helpers;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Services.Implementations;
 using WinCarePro.Models;
@@ -237,21 +238,16 @@ public class JunkViewModel : ViewModelBase
             
             long lockedBytes = Categories.Where(x => x.IsSelected).Sum(x => x.LockedBytes);
 
-            _dispatcherQueue.TryEnqueue(async () =>
+            // Capture values before dispatching to avoid async void lambda in TryEnqueue
+            string cleanedFormatted = FormatHelper.FormatBytes(cleanedBytes);
+            string lockedFormatted = FormatHelper.FormatBytes(lockedBytes);
+            bool hasLockedFiles = lockedBytes > 0;
+
+            _dispatcherQueue.TryEnqueue(() =>
             {
                 IsCleaning = false;
-                
-                string cleanedFormatted = FormatBytes(cleanedBytes);
-                string lockedFormatted = FormatBytes(lockedBytes);
 
-                if (lockedBytes > 0)
-                {
-                    await _dialogService.ShowMessageAsync(
-                        "Cleanup Result".T(),
-                        string.Format("Cleaning completed.\n\n✓ Cleaned: {0}\n⚠ Could not clean: {1} (files in use)".T(), cleanedFormatted, lockedFormatted)
-                    );
-                }
-                else
+                if (!hasLockedFiles)
                 {
                     ProgressMessage = string.Format("Cleanup complete. Reclaimed {0} MB.".T(), (cleanedBytes / 1024.0 / 1024.0).ToString("F2"));
                 }
@@ -264,6 +260,17 @@ public class JunkViewModel : ViewModelBase
                 LockingAppsText = "";
                 ActiveLockingApps.Clear();
             });
+
+            // Show dialog on UI thread separately to avoid async void lambda
+            if (hasLockedFiles)
+            {
+                await RunOnUIAsync(async () =>
+                    await _dialogService.ShowMessageAsync(
+                        "Cleanup Result".T(),
+                        string.Format("Cleaning completed.\n\n✓ Cleaned: {0}\n⚠ Could not clean: {1} (files in use)".T(), cleanedFormatted, lockedFormatted)
+                    )
+                );
+            }
         }
         catch (Exception ex)
         {
@@ -275,25 +282,14 @@ public class JunkViewModel : ViewModelBase
         }
     }
 
-    private static string FormatBytes(long bytes)
-    {
-        string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-        int i = 0;
-        double doubleBytes = bytes;
-        while (doubleBytes >= 1024 && i < suffix.Length - 1)
-        {
-            i++;
-            doubleBytes /= 1024;
-        }
-        return $"{doubleBytes:F1} {suffix[i]}";
-    }
+    // FormatBytes centralized to FormatHelper.FormatBytes
 
     public void UpdateTotalSize()
     {
         long cleanable = Categories.Where(x => x.IsSelected).Sum(x => x.CleanableBytes);
         long locked = Categories.Where(x => x.IsSelected).Sum(x => x.LockedBytes);
-        TotalJunkSize = FormatBytes(cleanable);
-        TotalLockedSize = FormatBytes(locked);
+        TotalJunkSize = FormatHelper.FormatBytes(cleanable);
+        TotalLockedSize = FormatHelper.FormatBytes(locked);
     }
 
     public void CheckLockingApps()

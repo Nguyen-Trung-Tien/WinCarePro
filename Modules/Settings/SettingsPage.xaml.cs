@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using WinCarePro.Core.Helpers;
 using WinCarePro.Database;
 using WinCarePro.Models;
 using WinCarePro.Services;
@@ -20,6 +21,12 @@ public sealed partial class SettingsPage : Page
 {
     private bool _loadingSettings = true; // Guard initialization events from saving settings early
     private Microsoft.UI.Xaml.DispatcherTimer? _saveSettingsDebounceTimer;
+
+    // Shared HttpClient singleton to prevent socket exhaustion from per-call instantiation
+    private static readonly HttpClient _httpClient = new()
+    {
+        DefaultRequestHeaders = { { "User-Agent", "Mozilla/5.0 (compatible; WinCareProUpdater/1.0)" } }
+    };
 
     public SettingsPage()
     {
@@ -395,7 +402,7 @@ public sealed partial class SettingsPage : Page
                     logsCount = (long)(cmd.ExecuteScalar() ?? 0L);
                 }
                 catch {}
-                string logsText = $"{logsCount} logs ({FormatSize(dbSize)})";
+                string logsText = $"{logsCount} logs ({FormatHelper.FormatBytes(dbSize)})";
 
                 // 2. Reports
                 long reportsCount = 0;
@@ -410,7 +417,7 @@ public sealed partial class SettingsPage : Page
                         reportsSize += new FileInfo(f).Length;
                     }
                 }
-                string reportsText = $"{reportsCount} files ({FormatSize(reportsSize)})";
+                string reportsText = $"{reportsCount} files ({FormatHelper.FormatBytes(reportsSize)})";
 
                 // 3. Cache
                 long cacheCount = 0;
@@ -435,7 +442,7 @@ public sealed partial class SettingsPage : Page
                         cacheSize += new FileInfo(f).Length;
                     }
                 }
-                string cacheText = $"{cacheCount} pkgs ({FormatSize(cacheSize)})";
+                string cacheText = $"{cacheCount} pkgs ({FormatHelper.FormatBytes(cacheSize)})";
 
                 DispatcherQueue.TryEnqueue(() =>
                 {
@@ -448,19 +455,7 @@ public sealed partial class SettingsPage : Page
         });
     }
 
-    private string FormatSize(long bytes)
-    {
-        if (bytes <= 0) return "0 B";
-        string[] suffix = { "B", "KB", "MB", "GB" };
-        int i = 0;
-        double doubleBytes = bytes;
-        while (doubleBytes >= 1024 && i < suffix.Length - 1)
-        {
-            i++;
-            doubleBytes /= 1024;
-        }
-        return $"{doubleBytes:F1} {suffix[i]}";
-    }
+    // FormatSize centralized to FormatHelper.FormatBytes
 
     private async void OnPurgeDatabaseClick(object sender, RoutedEventArgs e)
     {
@@ -659,19 +654,8 @@ public sealed partial class SettingsPage : Page
 
     private async Task CheckForUpdatesInternalAsync()
     {
-        using var client = new HttpClient();
-        client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
-        
         string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
-        string response;
-        if (File.Exists(@"D:\WinCare\update.json"))
-        {
-            response = File.ReadAllText(@"D:\WinCare\update.json");
-        }
-        else
-        {
-            response = await client.GetStringAsync(jsonUrl);
-        }
+        string response = await _httpClient.GetStringAsync(jsonUrl);
         
         bool betaEnabled = false;
         try
@@ -760,10 +744,7 @@ public sealed partial class SettingsPage : Page
 
             if (downloadUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || downloadUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
             {
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
-                
-                using var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+                using var response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
                 response.EnsureSuccessStatusCode();
 
                 long? totalBytes = response.Content.Headers.ContentLength;

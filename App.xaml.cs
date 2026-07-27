@@ -90,6 +90,7 @@ public partial class App : Application
         services.AddSingleton<Engines.ContextMenuEngine>();
 
         // Register ViewModels
+        services.AddTransient<DashboardViewModel>();
         services.AddTransient<NetworkViewModel>();
         services.AddTransient<JunkViewModel>();
         services.AddTransient<UninstallViewModel>();
@@ -140,7 +141,7 @@ public partial class App : Application
     {
         try
         {
-            var cleaner = new Engines.JunkCleanerEngine();
+            var cleaner = Services.GetRequiredService<Engines.JunkCleanerEngine>();
             // Scan for all categories
             var categories = cleaner.ScanJunkAsync().GetAwaiter().GetResult();
             
@@ -164,7 +165,10 @@ public partial class App : Application
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[App] Error reading AutoCleanupTriggerSizeGB: {ex.Message}");
+            }
 
             double totalJunkGB = totalJunkBytes / 1024.0 / 1024.0 / 1024.0;
             if (totalJunkGB >= triggerSizeGB)
@@ -212,7 +216,10 @@ public partial class App : Application
                 System.IO.Path.Combine(CrashLogDir, fileName),
                 $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]\n{content}");
         }
-        catch { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[App] Failed to write crash log '{fileName}': {ex.Message}");
+        }
     }
 
     public static void ApplyAccentColor(string tag)

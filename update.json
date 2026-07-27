@@ -1,8 +1,8 @@
 {
-  "version": "3.4.6",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.6/WinCareProSetup.exe",
-  "changelog": "Cập nhật v3.4.6: Bổ sung tính năng quản lý Menu chuột phải (Context Menu); tích hợp Bảo mật DNS qua HTTPS (DoH) với các nhà cung cấp phổ biến; đo lường hiệu năng GPU thực tế, thắt cổ chai CPU và kiểm tra sức khỏe ổ cứng SSD/HDD nâng cao; dọn dẹp driver cũ và hỗ trợ thông báo Force Uninstall khi gỡ ứng dụng bị lỗi; tối ưu hóa toàn bộ các lệnh chạy tiến trình bất đồng bộ tránh gây treo giao diện.",
-  "beta_version": "3.4.7",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.7-beta/WinCareProSetup_Beta.exe",
-  "beta_changelog": "Cập nhật thử nghiệm v3.4.7-beta: Cập nhật thử nghiệm các cấu hình bổ sung, sửa đổi nhỏ giao diện người dùng và nâng cấp tính năng tối ưu hóa hệ thống."
+  "version": "3.4.7",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.7/WinCareProSetup.exe",
+  "changelog": "Cập nhật v3.4.7: Chuẩn hóa kiến trúc Dependency Injection toàn diện; nâng cấp độ an toàn tự động tạo bản sao lưu Registry trước khi sửa lỗi; tối ưu hóa Game Boost bảo vệ dịch vụ hệ thống quan trọng; tái cấu trúc các module và dọn dẹp bộ nhớ tối ưu hiệu năng tổng thể.",
+  "beta_version": "3.4.8-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.8-beta/WinCareProSetup_Beta.exe",
+  "beta_changelog": "Cập nhật thử nghiệm v3.4.8-beta: Thử nghiệm nâng cấp các tính năng quản lý hệ thống nâng cao và tối ưu hóa giao diện người dùng."
 }

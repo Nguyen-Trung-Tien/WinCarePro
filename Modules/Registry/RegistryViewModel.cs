@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
+using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
@@ -12,7 +13,7 @@ namespace WinCarePro.ViewModels;
 public class RegistryViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly RegistryBackupEngine _engine = new();
+    private readonly RegistryBackupEngine _engine = App.Services?.GetService<RegistryBackupEngine>() ?? new();
 
     private bool _isBusy;
     public bool IsBusy
@@ -94,6 +95,12 @@ public class RegistryViewModel : ViewModelBase
         try
         {
             var selected = Issues.Where(x => x.IsSelected).ToList();
+            if (selected.Count == 0) return;
+
+            StatusText = "Creating safety backup before repair...".T();
+            await Task.Run(() => _engine.CreateRegistryBackup("AutoBeforeRepair"));
+
+            StatusText = "Repairing selected registry issues...".T();
             await _engine.FixRegistryIssuesAsync(selected);
             StatusText = string.Format("Repaired {0} registry issues.".T(), selected.Count);
             await ScanRegistryAsync();

@@ -9,8 +9,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.6/WinCareProSetup.exe">
-      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v3.4.6-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro" />
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.7/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v3.4.7-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro" />
     </a>
   </p>
 
@@ -221,7 +221,7 @@ Nếu bạn phát hiện lỗi hoặc có bất kỳ ý kiến đóng góp phát
 
 > [!NOTE]
 > Để hiểu sâu hơn về kiến trúc thiết kế, sơ đồ tuần tự và luồng hoạt động chi tiết của mã nguồn, vui lòng xem tài liệu **[Hướng Dẫn Phát Triển & Tài Liệu Kiến Trúc Hệ Thống (docs/DEVELOPER_GUIDE.md)](file:///d:/WinCare/docs/DEVELOPER_GUIDE.md)**.
-> Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.4.6.
+> Xem thêm [Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md) để biết chi tiết các thay đổi trong phiên bản mới nhất v3.4.7.
 
 ---
 <div align="center">

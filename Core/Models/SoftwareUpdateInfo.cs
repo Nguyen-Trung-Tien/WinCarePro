@@ -3,11 +3,18 @@ using System.ComponentModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
+using WinCarePro.Services;
 
 namespace WinCarePro.Models;
 
 public class SoftwareUpdateInfo : INotifyPropertyChanged
 {
+    // Status constants — always use these for logic comparison, never translated strings
+    public const string StatusAvailable = "Available";
+    public const string StatusUpdating = "Updating";
+    public const string StatusCompleted = "Completed";
+    public const string StatusFailed = "Failed";
+
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
@@ -31,8 +38,8 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
         }
     }
 
-    private string _updateStatus = "Available";
-    public string UpdateStatus // Available, Updating, Completed, Failed
+    private string _updateStatus = StatusAvailable;
+    public string UpdateStatus // Always store English constants: Available, Updating, Completed, Failed
     {
         get => _updateStatus;
         set
@@ -41,6 +48,7 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
             {
                 _updateStatus = value;
                 OnPropertyChanged(nameof(UpdateStatus));
+                OnPropertyChanged(nameof(UpdateStatusDisplay));
                 OnPropertyChanged(nameof(IsUpdating));
                 OnPropertyChanged(nameof(IsNotUpdating));
                 OnPropertyChanged(nameof(CanUpdate));
@@ -53,34 +61,38 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
         }
     }
 
-    public bool IsUpdating => UpdateStatus == "Updating...";
-    public bool IsNotUpdating => UpdateStatus != "Updating...";
-    public bool CanUpdate => UpdateStatus != "Completed" && UpdateStatus != "Updating...";
+    /// <summary>Translated display string for UI binding</summary>
+    public string UpdateStatusDisplay => UpdateStatus.T();
+
+    public bool IsUpdating => UpdateStatus == StatusUpdating;
+    public bool IsNotUpdating => UpdateStatus != StatusUpdating;
+    public bool CanUpdate => UpdateStatus != StatusCompleted && UpdateStatus != StatusUpdating;
 
     public Visibility IsUpdatingVisibility => IsUpdating ? Visibility.Visible : Visibility.Collapsed;
     public Visibility IsNotUpdatingVisibility => IsNotUpdating ? Visibility.Visible : Visibility.Collapsed;
 
     public Brush StatusBgColor => UpdateStatus switch
     {
-        "Completed" => new SolidColorBrush(Color.FromArgb(30, 16, 185, 129)),  // #1E10B981
-        "Failed" => new SolidColorBrush(Color.FromArgb(30, 239, 68, 68)),    // #1EEF4444
-        "Updating..." => new SolidColorBrush(Color.FromArgb(30, 245, 158, 11)), // #1EF59E0B
+        StatusCompleted => new SolidColorBrush(Color.FromArgb(30, 16, 185, 129)),  // #1E10B981
+        StatusFailed => new SolidColorBrush(Color.FromArgb(30, 239, 68, 68)),    // #1EEF4444
+        StatusUpdating => new SolidColorBrush(Color.FromArgb(30, 245, 158, 11)), // #1EF59E0B
         _ => new SolidColorBrush(Color.FromArgb(20, 59, 130, 246))           // #143B82F6
     };
 
     public Brush StatusBorderColor => UpdateStatus switch
     {
-        "Completed" => new SolidColorBrush(Color.FromArgb(48, 16, 185, 129)),
-        "Failed" => new SolidColorBrush(Color.FromArgb(48, 239, 68, 68)),
-        "Updating..." => new SolidColorBrush(Color.FromArgb(48, 245, 158, 11)),
+        StatusCompleted => new SolidColorBrush(Color.FromArgb(48, 16, 185, 129)),
+        StatusFailed => new SolidColorBrush(Color.FromArgb(48, 239, 68, 68)),
+        StatusUpdating => new SolidColorBrush(Color.FromArgb(48, 245, 158, 11)),
         _ => new SolidColorBrush(Color.FromArgb(32, 59, 130, 246))
     };
 
     public Brush StatusForegroundColor => UpdateStatus switch
     {
-        "Completed" => new SolidColorBrush(Color.FromArgb(255, 16, 185, 129)),
-        "Failed" => new SolidColorBrush(Color.FromArgb(255, 239, 68, 68)),
-        "Updating..." => new SolidColorBrush(Color.FromArgb(255, 245, 158, 11)),
+        StatusCompleted => new SolidColorBrush(Color.FromArgb(255, 16, 185, 129)),
+        StatusFailed => new SolidColorBrush(Color.FromArgb(255, 239, 68, 68)),
+        StatusUpdating => new SolidColorBrush(Color.FromArgb(255, 245, 158, 11)),
         _ => new SolidColorBrush(Color.FromArgb(255, 59, 130, 246))
     };
 }
+

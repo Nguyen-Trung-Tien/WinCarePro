@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
+using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
@@ -13,7 +14,7 @@ namespace WinCarePro.ViewModels;
 public class UpdaterViewModel : ViewModelBase
 {
     private readonly DispatcherQueue _dispatcherQueue;
-    private readonly SoftwareUpdaterEngine _updaterEngine = new();
+    private readonly SoftwareUpdaterEngine _updaterEngine = App.Services?.GetService<SoftwareUpdaterEngine>() ?? new();
     private readonly List<SoftwareUpdateInfo> _allUpdates = new();
 
     private bool _isBusy;
@@ -212,7 +213,7 @@ public class UpdaterViewModel : ViewModelBase
     private void UpdateStatistics()
     {
         UpdatesCount = _allUpdates.Count;
-        int completedCount = _allUpdates.Count(x => x.UpdateStatus == "Completed");
+        int completedCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusCompleted);
         int remainingUpdatesCount = UpdatesCount - completedCount;
 
         if (remainingUpdatesCount == 0)
@@ -241,7 +242,7 @@ public class UpdaterViewModel : ViewModelBase
 
     public async Task UpdateSelectedAppsAsync()
     {
-        var selected = Updates.Where(x => x.IsSelected && x.UpdateStatus != "Completed").ToList();
+        var selected = Updates.Where(x => x.IsSelected && x.UpdateStatus != SoftwareUpdateInfo.StatusCompleted).ToList();
         if (selected.Count == 0 || IsBusy) return;
 
         IsBusy = true;
@@ -256,11 +257,11 @@ public class UpdaterViewModel : ViewModelBase
             for (int i = 0; i < selected.Count; i++)
             {
                 var app = selected[i];
-                app.UpdateStatus = "Updating...".T();
+                app.UpdateStatus = SoftwareUpdateInfo.StatusUpdating;
                 ProgressMessage = string.Format("Silent updating {0} ({1}/{2})...".T(), app.Name, i + 1, selected.Count);
 
                 bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
-                _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? "Completed".T() : "Failed".T(); });
+                _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; });
 
                 current += step;
                 ProgressPercent = (int)current;
@@ -284,17 +285,17 @@ public class UpdaterViewModel : ViewModelBase
 
     public async Task UpdateSingleAppAsync(SoftwareUpdateInfo app)
     {
-        if (IsBusy || app == null || app.UpdateStatus == "Completed" || app.UpdateStatus == "Updating...") return;
+        if (IsBusy || app == null || app.UpdateStatus == SoftwareUpdateInfo.StatusCompleted || app.UpdateStatus == SoftwareUpdateInfo.StatusUpdating) return;
 
         IsBusy = true;
-        app.UpdateStatus = "Updating...".T();
+        app.UpdateStatus = SoftwareUpdateInfo.StatusUpdating;
         ProgressMessage = string.Format("Silent updating {0}...".T(), app.Name);
         TerminalLog += string.Format("[WinCare] Starting single update for {0}...\n".T(), app.Name);
 
         try
         {
             bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
-            _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? "Completed".T() : "Failed".T(); });
+            _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; });
             
             ProgressMessage = ok ? string.Format("Successfully updated {0}".T(), app.Name) : string.Format("Failed to update {0}".T(), app.Name);
             TerminalLog += string.Format("[WinCare] Single update finished. Status: {0}\n".T(), ok ? "Success" : "Failed");
@@ -326,11 +327,11 @@ public class UpdaterViewModel : ViewModelBase
             for (int i = 0; i < Updates.Count; i++)
             {
                 var app = Updates[i];
-                app.UpdateStatus = "Updating...".T();
+                app.UpdateStatus = SoftwareUpdateInfo.StatusUpdating;
                 ProgressMessage = string.Format("Silent updating {0} ({1}/{2})...".T(), app.Name, i + 1, Updates.Count);
 
                 bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
-                _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? "Completed".T() : "Failed".T(); });
+                _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; });
 
                 current += step;
                 ProgressPercent = (int)current;

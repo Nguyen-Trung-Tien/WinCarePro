@@ -58,6 +58,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     private readonly RegistryBackupEngine _registryEngine = App.Services.GetService<RegistryBackupEngine>() ?? new();
     private readonly AiDiagnosticsEngine _aiEngine = App.Services.GetService<AiDiagnosticsEngine>() ?? new();
     private readonly SystemOptimizerEngine _optimizerEngine = App.Services.GetService<SystemOptimizerEngine>() ?? new();
+    private readonly NetworkEngine _networkEngine = App.Services.GetService<NetworkEngine>() ?? new();
 
     // Service dependencies
     private readonly ISystemSnapshotService _snapshotService = App.Services.GetService<ISystemSnapshotService>() ?? new SystemSnapshotService();
@@ -322,8 +323,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
             });
             
             // Check Network connection
-            var netEngine = new NetworkEngine();
-            bool isConnected = await Task.Run(() => netEngine.CheckInternetConnection());
+            bool isConnected = await Task.Run(() => _networkEngine.CheckInternetConnection());
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 NetworkStatus = isConnected ? "Connected" : "Disconnected";
@@ -336,7 +336,10 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
                 InstalledAppsCount = appCount;
             });
         }
-        catch { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[DashboardViewModel] RefreshSpecsAsync error: {ex.Message}");
+        }
     }
 
     private static int CountInstalledApplications()
@@ -374,7 +377,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
             }
         }
 
-        return appNames.Count > 0 ? appNames.Count : 42; // Fallback if registry query fails
+        return appNames.Count; // Accurate installed app count (or 0 if registry query fails)
     }
 
     public void Dispose()

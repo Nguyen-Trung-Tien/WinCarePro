@@ -25,42 +25,16 @@ public class StorageItem
     public string Path { get; set; } = "";
     public string Name { get; set; } = "";
     public long SizeBytes { get; set; }
-    public string SizeFormatted => FormatSize(SizeBytes);
+    public string SizeFormatted => WinCarePro.Core.Helpers.FormatHelper.FormatBytes(SizeBytes);
     public bool IsDirectory { get; set; }
     public string IconGlyph => IsDirectory ? "\uE8B7" : "\uE7C3";
-    
-    private static string FormatSize(long bytes)
-    {
-        string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-        int i = 0;
-        double doubleBytes = bytes;
-        while (doubleBytes >= 1024 && i < suffix.Length - 1)
-        {
-            i++;
-            doubleBytes /= 1024;
-        }
-        return $"{doubleBytes:F1} {suffix[i]}";
-    }
 }
 
 public class DuplicateFileGroup
 {
     public long FileSize { get; set; }
-    public string SizeFormatted => FormatSize(FileSize);
+    public string SizeFormatted => WinCarePro.Core.Helpers.FormatHelper.FormatBytes(FileSize);
     public List<string> FilePaths { get; set; } = new();
-
-    private static string FormatSize(long bytes)
-    {
-        string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-        int i = 0;
-        double doubleBytes = bytes;
-        while (doubleBytes >= 1024 && i < suffix.Length - 1)
-        {
-            i++;
-            doubleBytes /= 1024;
-        }
-        return $"{doubleBytes:F1} {suffix[i]}";
-    }
 }
 
 public class DiskEngine

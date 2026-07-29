@@ -87,6 +87,21 @@ public sealed partial class StartupPage : Page
     private async void OnQuickOptimizeClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.OptimizeStartupAppsAsync();
+
+        var dialog = new ContentDialog
+        {
+            Title = "Startup & Services Optimization".T(),
+            Content = ViewModel.StatusText,
+            CloseButtonText = "OK".T(),
+            DefaultButton = ContentDialogButton.Close,
+            XamlRoot = this.XamlRoot,
+            RequestedTheme = ThemeManager.Instance.CurrentTheme
+        };
+        try
+        {
+            await dialog.ShowAsync();
+        }
+        catch { }
     }
 
     private async void OnUndoClick(object sender, RoutedEventArgs e)

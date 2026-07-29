@@ -185,7 +185,7 @@
                     <ColumnDefinition x:Name="NavTabsCol3" Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button x:Name="BtnTabQuality" Grid.Column="0" Content="Connection Quality" Click="OnTabClick" Tag="quality" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Stretch" CornerRadius="6" FontWeight="SemiBold" Padding="0,10" />
-                <Button x:Name="BtnTabDns" Grid.Column="1" Content="DNS Optimizer" Click="OnTabClick" Tag="dns" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="6" FontWeight="SemiBold" Padding="0,10" />
+                <Button x:Name="BtnTabDns" Grid.Column="1" Content="DNS Manager" Click="OnTabClick" Tag="dns" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="6" FontWeight="SemiBold" Padding="0,10" />
                 <Button x:Name="BtnTabPorts" Grid.Column="2" Content="Active Connections" Click="OnTabClick" Tag="ports" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="6" FontWeight="SemiBold" Padding="0,10" />
                 <Button x:Name="BtnTabRepairs" Grid.Column="3" Content="Diagnostics &amp; Repairs" Click="OnTabClick" Tag="repairs" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="6" FontWeight="SemiBold" Padding="0,10" />
             </Grid>

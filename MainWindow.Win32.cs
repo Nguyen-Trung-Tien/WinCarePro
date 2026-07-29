@@ -168,7 +168,8 @@ public sealed partial class MainWindow : Window
                 iconPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AppIcon.ico");
             }
             
-            _hIcon = LoadImage(IntPtr.Zero, iconPath, 1, 0, 0, 0x00000010 | 0x00000020); // IMAGE_ICON | LR_LOADFROMFILE
+            // Load 32x32 crisp icon frame for system tray notification area
+            _hIcon = LoadImage(IntPtr.Zero, iconPath, 1, 32, 32, 0x00000010); // IMAGE_ICON | LR_LOADFROMFILE
 
             var nid = new NOTIFYICONDATA
             {
@@ -220,15 +221,13 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>
-    /// Forces the taskbar and Alt+Tab icons to update via WM_SETICON.
-    /// AppWindow.SetIcon only sets the title bar icon for unpackaged WinUI 3 apps;
-    /// this ensures the taskbar icon is also refreshed.
+    /// Forces the taskbar and Alt+Tab icons to update via WM_SETICON with high-res icon frames.
     /// </summary>
-    private void SetTaskbarIcon(IntPtr hIcon)
+    private void SetTaskbarIcon(IntPtr hIconBig, IntPtr hIconSmall)
     {
-        if (_hwnd == IntPtr.Zero || hIcon == IntPtr.Zero) return;
-        SendMessage(_hwnd, WM_SETICON, ICON_BIG, hIcon);
-        SendMessage(_hwnd, WM_SETICON, ICON_SMALL, hIcon);
+        if (_hwnd == IntPtr.Zero) return;
+        if (hIconBig != IntPtr.Zero) SendMessage(_hwnd, WM_SETICON, ICON_BIG, hIconBig);
+        if (hIconSmall != IntPtr.Zero) SendMessage(_hwnd, WM_SETICON, ICON_SMALL, hIconSmall);
     }
 
     public void ShowTrayNotification(string title, string message, int dwInfoFlags = 1)

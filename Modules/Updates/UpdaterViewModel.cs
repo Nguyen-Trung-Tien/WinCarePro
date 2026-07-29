@@ -134,11 +134,29 @@ public class UpdaterViewModel : ViewModelBase
         });
     }
 
+    private void OnItemProgressChanged(string appId, int percent, string statusText)
+    {
+        _dispatcherQueue?.TryEnqueue(() =>
+        {
+            var app = Updates.FirstOrDefault(x => x.Id.Equals(appId, StringComparison.OrdinalIgnoreCase));
+            if (app != null)
+            {
+                app.DownloadProgress = percent;
+                app.IsIndeterminate = (percent <= 0);
+                app.ProgressText = statusText;
+            }
+            ProgressPercent = percent;
+            ProgressMessage = statusText;
+        });
+    }
+
     public void Initialize()
     {
         // Unsubscribe first to avoid double registration
         _updaterEngine.OutputReceived -= OnOutputReceived;
         _updaterEngine.OutputReceived += OnOutputReceived;
+        _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
+        _updaterEngine.ItemProgressChanged += OnItemProgressChanged;
 
         _ = ScanUpdatesAsync();
     }
@@ -146,6 +164,7 @@ public class UpdaterViewModel : ViewModelBase
     public void Cleanup()
     {
         _updaterEngine.OutputReceived -= OnOutputReceived;
+        _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
     }
 
     public async Task ScanUpdatesAsync()
@@ -258,6 +277,10 @@ public class UpdaterViewModel : ViewModelBase
             {
                 var app = selected[i];
                 app.UpdateStatus = SoftwareUpdateInfo.StatusUpdating;
+                app.DownloadProgress = 0;
+                app.IsIndeterminate = true;
+                app.ProgressText = "Preparing...".T();
+
                 ProgressMessage = string.Format("Silent updating {0} ({1}/{2})...".T(), app.Name, i + 1, selected.Count);
 
                 bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
@@ -289,6 +312,10 @@ public class UpdaterViewModel : ViewModelBase
 
         IsBusy = true;
         app.UpdateStatus = SoftwareUpdateInfo.StatusUpdating;
+        app.DownloadProgress = 0;
+        app.IsIndeterminate = true;
+        app.ProgressText = "Preparing...".T();
+
         ProgressMessage = string.Format("Silent updating {0}...".T(), app.Name);
         TerminalLog += string.Format("[WinCare] Starting single update for {0}...\n".T(), app.Name);
 
@@ -328,6 +355,10 @@ public class UpdaterViewModel : ViewModelBase
             {
                 var app = Updates[i];
                 app.UpdateStatus = SoftwareUpdateInfo.StatusUpdating;
+                app.DownloadProgress = 0;
+                app.IsIndeterminate = true;
+                app.ProgressText = "Preparing...".T();
+
                 ProgressMessage = string.Format("Silent updating {0} ({1}/{2})...".T(), app.Name, i + 1, Updates.Count);
 
                 bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);

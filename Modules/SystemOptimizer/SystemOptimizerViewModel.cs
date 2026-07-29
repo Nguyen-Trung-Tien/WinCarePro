@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Services.Contracts;
 
 namespace WinCarePro.ViewModels;
 
@@ -331,9 +332,9 @@ public class SystemOptimizerViewModel : ViewModelBase
         FilterTweaks(CurrentCategory);
     }
 
-    public async Task ApplySelectedAsync()
+    public async Task<int> ApplySelectedAsync()
     {
-        if (IsLoading) return;
+        if (IsLoading) return 0;
         IsLoading = true;
         StatusText = "Applying selected tweaks...".T();
         Log("Registry Sweep: Initiating application of selected adjustments.".T());
@@ -341,15 +342,19 @@ public class SystemOptimizerViewModel : ViewModelBase
         int applied = 0;
         try
         {
-            foreach (var t in Tweaks)
+            // Target all available tweaks that are not yet optimized
+            var targetTweaks = Tweaks.Where(t => !t.IsOptimized || t.IsSelected).ToList();
+
+            foreach (var t in targetTweaks)
             {
-                if (t.IsSelected && !t.IsOptimized)
+                if (!t.IsOptimized)
                 {
                     Log(string.Format("Registry Sweep: Applying tweak: {0} (Path: {1})".T(), t.Id, t.RegistryPath));
                     bool ok = await _optimizerEngine.ApplyTweakAsync(t);
                     if (ok)
                     {
                         applied++;
+                        t.IsOptimized = true;
                         Log(string.Format("Registry Sweep: Successfully applied: {0}".T(), t.Id));
                     }
                     else
@@ -358,14 +363,28 @@ public class SystemOptimizerViewModel : ViewModelBase
                     }
                 }
             }
+
+            // Also purge RAM cache for instant boost
+            await BoostRamAsync(silent: true);
+
             StatusText = string.Format("Applied {0} tweaks successfully.".T(), applied);
             Log(string.Format("Registry Sweep completed. Successfully adjusted {0} settings.".T(), applied));
+            
+            var notificationService = App.Services.GetService<INotificationService>();
+            notificationService?.ShowToast(
+                "System Optimizer".T(), 
+                string.Format("Successfully applied {0} performance tweaks and purged RAM cache.".T(), applied),
+                NotificationSeverity.Success
+            );
+
             LoadTweaks();
+            return applied;
         }
         catch (Exception ex)
         {
             StatusText = string.Format("Failed: {0}".T(), ex.Message);
             Log(string.Format("Registry Sweep Error: {0}".T(), ex.Message));
+            return 0;
         }
         finally
         {

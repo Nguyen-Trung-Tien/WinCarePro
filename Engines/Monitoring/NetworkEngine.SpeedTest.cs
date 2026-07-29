@@ -11,7 +11,7 @@ public partial class NetworkEngine
     public async Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null)
     {
         Log("Starting multi-threaded download speed test...");
-        string testUrl = "http://speedtest.tele2.net/10MB.zip";
+        string testUrl = "https://speedtest.tele2.net/10MB.zip";
         int numThreads = 4;
         long totalBytes = 0;
         var stopwatch = Stopwatch.StartNew();
@@ -87,7 +87,7 @@ public partial class NetworkEngine
     public async Task<double> RunUploadSpeedTestAsync(Action<double, double>? progressCallback = null)
     {
         Log("Starting multi-threaded upload speed test...");
-        string uploadUrl = "http://httpbin.org/post";
+        string uploadUrl = "https://httpbin.org/post";
         int numThreads = 3;
         long totalUploadedBytes = 0;
         var stopwatch = Stopwatch.StartNew();

@@ -18,7 +18,7 @@ public class LockingAppInfo
     public string Name { get; set; } = "";
     public int ProcessCount { get; set; }
     public long LockedSizeBytes { get; set; }
-    public string LockedSizeFormatted => FormatSize(LockedSizeBytes);
+    public string LockedSizeFormatted => WinCarePro.Core.Helpers.FormatHelper.FormatBytes(LockedSizeBytes);
     public List<int> ProcessIds { get; set; } = new();
     
     public string IconPath { get; set; } = "";
@@ -37,18 +37,5 @@ public class LockingAppInfo
                 return null;
             }
         }
-    }
-
-    private static string FormatSize(long bytes)
-    {
-        string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-        int i = 0;
-        double doubleBytes = bytes;
-        while (doubleBytes >= 1024 && i < suffix.Length - 1)
-        {
-            i++;
-            doubleBytes /= 1024;
-        }
-        return $"{doubleBytes:F1} {suffix[i]}";
     }
 }

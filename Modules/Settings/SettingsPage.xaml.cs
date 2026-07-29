@@ -790,6 +790,19 @@ public sealed partial class SettingsPage : Page
                 }
             }
 
+            // Verify digital signature of the downloaded update installer
+            UpdateStatusLabel.Text = "Verifying digital signature...".T();
+            bool isSignatureValid = await Task.Run(() => VerifyDigitalSignature(setupFilePath));
+            if (!isSignatureValid)
+            {
+#if DEBUG
+                DbManager.LogAction("Update package lacks digital signature (Bypassed in DEBUG mode)", "Settings", "Warning");
+#else
+                try { if (File.Exists(setupFilePath)) File.Delete(setupFilePath); } catch {}
+                throw new System.Security.SecurityException("The downloaded update package does not have a valid or trusted digital signature. Update aborted for safety.".T());
+#endif
+            }
+
             // System restore point policy check
             try
             {
@@ -830,6 +843,24 @@ public sealed partial class SettingsPage : Page
             UpdateStatusLabel.Text = string.Format("Download failed: {0}".T(), ex.Message);
             UpdateProgressBar.Visibility = Visibility.Collapsed;
             CheckUpdatesBtn.IsEnabled = true;
+        }
+    }
+
+    private bool VerifyDigitalSignature(string filePath)
+    {
+        if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) return false;
+        try
+        {
+#pragma warning disable SYSLIB0057
+            using (var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(filePath))
+            {
+                return cert.Verify();
+            }
+#pragma warning restore SYSLIB0057
+        }
+        catch
+        {
+            return false;
         }
     }
 

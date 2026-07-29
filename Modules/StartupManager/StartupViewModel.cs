@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Services.Contracts;
 using WinCarePro.Services.Implementations;
 
 namespace WinCarePro.ViewModels;
@@ -607,18 +608,24 @@ public class StartupViewModel : ViewModelBase
         IsLoading = false;
     }
 
-    // One-Click Smart Optimization (Disables High/Critical third party items)
+    // One-Click Smart Optimization (Disables non-essential third party startup items & services)
     public async Task OptimizeStartupAppsAsync()
     {
-        var targetApps = _allStartupApps.Where(x => x.IsEnabled && !x.IsMicrosoft && (x.StartupImpact == "High" || x.StartupImpact == "Critical")).ToList();
-        if (targetApps.Count == 0)
+        var targetApps = _allStartupApps.Where(x => x.IsEnabled && !x.IsMicrosoft).ToList();
+        var targetServices = _allServices.Where(x => !x.IsMicrosoftService && !x.IsCriticalService && x.StartupType == "Automatic").ToList();
+
+        if (targetApps.Count == 0 && targetServices.Count == 0)
         {
-            StatusText = "Startup is already optimized! No high-impact third party apps found.".T();
+            StatusText = "Startup and background services are already fully optimized!".T();
+            var notificationService = App.Services.GetService<INotificationService>();
+            notificationService?.ShowToast("Startup Fully Optimized".T(), "No non-essential third-party startup items or services found.".T(), NotificationSeverity.Success);
             return;
         }
 
         IsLoading = true;
-        int count = 0;
+        int disabledApps = 0;
+        int disabledServices = 0;
+
         foreach (var app in targetApps)
         {
             StatusText = string.Format("Optimizing startup: Disabling {0}...".T(), app.Name);
@@ -627,15 +634,36 @@ public class StartupViewModel : ViewModelBase
             {
                 _audit.LogAction("Startup", "OptimizeDisable", app.Name, "Success");
                 app.IsEnabled = false;
-                count++;
+                disabledApps++;
             }
         }
 
-        StatusText = string.Format("Successfully disabled {0} startup impact programs.".T(), count);
+        foreach (var svc in targetServices)
+        {
+            StatusText = string.Format("Optimizing background service: Setting {0} to Manual...".T(), svc.DisplayName);
+            bool ok = await Task.Run(() => _startupEngine.SetServiceStartupType(svc.Name, ServiceStartMode.Manual));
+            if (ok)
+            {
+                _audit.LogAction("Service", "OptimizeManual", svc.Name, "Success");
+                svc.StartupType = "Manual";
+                disabledServices++;
+            }
+        }
+
         TotalStartupApps = _allStartupApps.Count(x => x.IsEnabled);
+        TotalRunningServices = _allServices.Count(x => x.Status == "Running");
         CalculateOptimizationScore();
         ApplyFilters();
         IsLoading = false;
+
+        StatusText = string.Format("Successfully optimized startup! Disabled {0} startup programs and set {1} services to Manual.".T(), disabledApps, disabledServices);
+
+        var notifier = App.Services.GetService<INotificationService>();
+        notifier?.ShowToast(
+            "Startup & Services Optimized".T(), 
+            string.Format("Disabled {0} third-party startup apps and optimized {1} background services.".T(), disabledApps, disabledServices),
+            NotificationSeverity.Success
+        );
     }
 
     // Revert Last User Configuration Action

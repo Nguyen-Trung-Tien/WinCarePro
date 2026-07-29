@@ -13,6 +13,7 @@ namespace WinCarePro.Engines;
 public class SoftwareUpdaterEngine
 {
     public event Action<string>? OutputReceived;
+    public event Action<string, int, string>? ItemProgressChanged; // (appId, percent, statusText)
     private void Log(string msg) => OutputReceived?.Invoke($"[{DateTime.Now:HH:mm:ss}] {msg}");
 
     private class AppDefinition
@@ -198,10 +199,12 @@ public class SoftwareUpdaterEngine
                 var psi = new ProcessStartInfo
                 {
                     FileName = "winget.exe",
-                    Arguments = "upgrade",
+                    Arguments = "upgrade --accept-source-agreements --disable-interactivity",
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
+                    StandardOutputEncoding = System.Text.Encoding.UTF8,
+                    StandardErrorEncoding = System.Text.Encoding.UTF8,
                     CreateNoWindow = true
                 };
 
@@ -210,13 +213,13 @@ public class SoftwareUpdaterEngine
 
                 var readTask = process.StandardOutput.ReadToEndAsync();
                 
-                // Fix: lưu task vào biến để so sánh cùng instance, tránh race condition
+                // Fix: tăng timeout lên 45s để winget kịp đồng bộ source repository
                 var exitTask = process.WaitForExitAsync();
-                var completedTask = await Task.WhenAny(exitTask, Task.Delay(15000));
+                var completedTask = await Task.WhenAny(exitTask, Task.Delay(45000));
                 if (completedTask != exitTask)
                 {
                     try { process.Kill(); } catch {}
-                    throw new TimeoutException("Winget scan timed out.");
+                    throw new TimeoutException("Winget scan timed out (45s limit reached).");
                 }
 
                 string output = await readTask;
@@ -365,33 +368,111 @@ public class SoftwareUpdaterEngine
     private List<SoftwareUpdateInfo> ParseWingetUpgradeOutput(string output)
     {
         var list = new List<SoftwareUpdateInfo>();
-        var lines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-        
-        bool startParsing = false;
-        foreach (var line in lines)
+        if (string.IsNullOrWhiteSpace(output)) return list;
+
+        // Clean ANSI control sequences (spinners, colors)
+        string cleanOutput = Regex.Replace(output, @"\x1B\[[^@-~]*[@-~]", "");
+        var lines = cleanOutput.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+        int nameStart = -1, idStart = -1, verStart = -1, availStart = -1, srcStart = -1;
+
+        foreach (var rawLine in lines)
         {
-            if (line.Contains("------"))
+            var line = rawLine.TrimEnd();
+            if (string.IsNullOrWhiteSpace(line)) continue;
+
+            if (line.Contains("------") || line.StartsWith("---"))
             {
-                startParsing = true;
                 continue;
             }
 
-            if (startParsing)
+            // Check if this is the Header line
+            if (line.Contains("Name") && line.Contains("Id") && line.Contains("Version") && line.Contains("Available"))
             {
-                var parts = Regex.Split(line.Trim(), @"\s{2,}");
-                if (parts.Length >= 4)
+                nameStart = line.IndexOf("Name");
+                idStart = line.IndexOf("Id");
+                verStart = line.IndexOf("Version");
+                availStart = line.IndexOf("Available");
+                srcStart = line.IndexOf("Source");
+                continue;
+            }
+
+            bool slicedSuccess = false;
+
+            // Strategy 1: Fixed Column slicing based on Header indices
+            if (nameStart >= 0 && idStart > nameStart && verStart > idStart && availStart > verStart && line.Length >= availStart)
+            {
+                try
                 {
-                    list.Add(new SoftwareUpdateInfo
+                    string name = line.Substring(nameStart, Math.Min(idStart - nameStart, line.Length - nameStart)).Trim();
+                    string id = line.Substring(idStart, Math.Min(verStart - idStart, line.Length - idStart)).Trim();
+                    string installedVer = line.Substring(verStart, Math.Min(availStart - verStart, line.Length - verStart)).Trim();
+                    string availableVer = (srcStart > availStart && line.Length > availStart) 
+                        ? line.Substring(availStart, Math.Min(srcStart - availStart, line.Length - availStart)).Trim()
+                        : (line.Length > availStart ? line.Substring(availStart).Trim() : "");
+                    
+                    string source = (srcStart > 0 && line.Length > srcStart) ? line.Substring(srcStart).Trim() : "winget";
+
+                    if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(installedVer) && !string.IsNullOrEmpty(availableVer))
                     {
-                        Name = parts[0],
-                        Id = parts[1],
-                        InstalledVersion = parts[2],
-                        AvailableVersion = parts[3],
-                        Source = parts.Length > 4 ? parts[4] : "winget"
-                    });
+                        if (id.Contains(".") && !id.Equals("Id", StringComparison.OrdinalIgnoreCase))
+                        {
+                            list.Add(new SoftwareUpdateInfo
+                            {
+                                Name = name,
+                                Id = id,
+                                InstalledVersion = installedVer,
+                                AvailableVersion = availableVer,
+                                Source = string.IsNullOrEmpty(source) ? "winget" : source
+                            });
+                            slicedSuccess = true;
+                        }
+                    }
+                }
+                catch
+                {
+                    slicedSuccess = false;
+                }
+            }
+
+            if (slicedSuccess) continue;
+
+            // Strategy 2: Token pattern matching fallback
+            var tokens = line.Trim().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+            if (tokens.Length >= 4)
+            {
+                for (int i = 1; i <= tokens.Length - 3; i++)
+                {
+                    string candId = tokens[i];
+                    string candVer = tokens[i + 1];
+                    string candAvail = tokens[i + 2];
+
+                    if (candId.Contains(".") && 
+                        !Regex.IsMatch(candId, @"^\d+(\.\d+)+$") &&
+                        Regex.IsMatch(candVer, @"^\d") &&
+                        Regex.IsMatch(candAvail, @"^\d"))
+                    {
+                        string name = string.Join(" ", tokens.Take(i));
+                        string source = (i + 3 < tokens.Length) ? tokens[i + 3] : "winget";
+
+                        // Avoid duplicates if added by Strategy 1
+                        if (!list.Any(x => x.Id.Equals(candId, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            list.Add(new SoftwareUpdateInfo
+                            {
+                                Name = name,
+                                Id = candId,
+                                InstalledVersion = candVer,
+                                AvailableVersion = candAvail,
+                                Source = source
+                            });
+                        }
+                        break;
+                    }
                 }
             }
         }
+
         return list;
     }
 
@@ -409,12 +490,13 @@ public class SoftwareUpdaterEngine
         }
 
         Log($"Upgrading application: {appId} (requires Administrator permission)...");
+        ItemProgressChanged?.Invoke(appId, 15, "Connecting to Winget...");
         try
         {
             var psi = new ProcessStartInfo
             {
                 FileName = "winget.exe",
-                Arguments = $"upgrade --id {appId} --silent --accept-package-agreements --accept-source-agreements",
+                Arguments = $"upgrade --id \"{appId}\" --exact --silent --accept-package-agreements --accept-source-agreements --disable-interactivity",
                 UseShellExecute = true,
                 Verb = "runas",
                 WindowStyle = ProcessWindowStyle.Hidden
@@ -422,6 +504,8 @@ public class SoftwareUpdaterEngine
 
             using var process = new Process { StartInfo = psi };
             process.Start();
+
+            ItemProgressChanged?.Invoke(appId, 50, "Downloading & Installing...");
 
             // Fix: lưu task vào biến để so sánh cùng instance, tránh race condition
             var exitTask = process.WaitForExitAsync();
@@ -444,12 +528,15 @@ public class SoftwareUpdaterEngine
                 Log($"Successfully updated {appId} (Simulated).");
                 Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
                 Database.DbManager.SaveUpdatedApp(appId, version);
+                ItemProgressChanged?.Invoke(appId, 100, "Completed");
                 return true;
 #else
+                ItemProgressChanged?.Invoke(appId, 0, "Failed");
                 return false;
 #endif
             }
 
+            ItemProgressChanged?.Invoke(appId, 100, "Completed");
             Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
         }
@@ -462,8 +549,10 @@ public class SoftwareUpdaterEngine
             Log($"Successfully updated {appId} (Simulated).");
             Database.DbManager.LogAction($"Update Software {appId} (Simulated)", "Software Updater", "Success");
             Database.DbManager.SaveUpdatedApp(appId, version);
+            ItemProgressChanged?.Invoke(appId, 100, "Completed");
             return true;
 #else
+            ItemProgressChanged?.Invoke(appId, 0, "Failed");
             return false;
 #endif
         }
@@ -472,6 +561,7 @@ public class SoftwareUpdaterEngine
     public async Task<bool> UpdateApplicationDirectAsync(string appId, string version = "")
     {
         Log($"Upgrading application {appId} via WinCare Custom Downloader...");
+        ItemProgressChanged?.Invoke(appId, 0, "Connecting...");
         var app = SupportedApps.FirstOrDefault(x => x.Id == appId);
         if (app == null)
         {
@@ -509,7 +599,7 @@ public class SoftwareUpdaterEngine
                 var buffer = new byte[8192];
                 long totalRead = 0;
                 int read;
-                int lastReportedPercent = 0;
+                int lastReportedPercent = -1;
 
                 while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                 {
@@ -519,9 +609,15 @@ public class SoftwareUpdaterEngine
                     if (totalBytes.HasValue && totalBytes.Value > 0)
                     {
                         int percent = (int)((double)totalRead / totalBytes.Value * 100);
-                        if (percent - lastReportedPercent >= 10 || percent == 100)
+                        if (percent - lastReportedPercent >= 1 || percent == 100)
                         {
-                            Log($"Downloading: {percent}% ({totalRead / 1024 / 1024} MB / {totalBytes.Value / 1024 / 1024} MB)");
+                            string detail = $"{totalRead / 1024 / 1024} MB / {totalBytes.Value / 1024 / 1024} MB";
+                            string statusText = $"Downloading {percent}% ({detail})";
+                            ItemProgressChanged?.Invoke(appId, percent, statusText);
+                            if (percent - lastReportedPercent >= 10 || percent == 100)
+                            {
+                                Log($"Downloading: {percent}% ({detail})");
+                            }
                             lastReportedPercent = percent;
                         }
                     }
@@ -529,6 +625,7 @@ public class SoftwareUpdaterEngine
             }
 
             Log($"Download completed. Saved to: {filePath}");
+            ItemProgressChanged?.Invoke(appId, 100, "Verifying Signature...");
 
             Log("Verifying digital signature of the downloaded installer...");
             if (!VerifyDigitalSignature(filePath))
@@ -539,6 +636,7 @@ public class SoftwareUpdaterEngine
             Log("Digital signature verification successful. The installer is verified.");
 
             Log($"Launching installer silently: {app.Name}");
+            ItemProgressChanged?.Invoke(appId, 100, "Installing...");
 
             var psi = new ProcessStartInfo
             {

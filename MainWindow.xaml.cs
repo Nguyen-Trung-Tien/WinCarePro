@@ -46,14 +46,13 @@ public sealed partial class MainWindow : Window
                 // Set titlebar icon (WinUI 3 API)
                 this.AppWindow.SetIcon(iconPath);
 
-                // Also force-update the taskbar and Alt+Tab icon via Win32 WM_SETICON.
-                // AppWindow.SetIcon alone does not reliably update the taskbar for unpackaged apps.
-                var hIcon = LoadImage(IntPtr.Zero, iconPath, 1, 0, 0, 0x00000010 | 0x00000020); // IMAGE_ICON | LR_LOADFROMFILE | LR_DEFAULTSIZE
-                if (hIcon != IntPtr.Zero)
+                // Force-update taskbar and Alt+Tab icons via Win32 WM_SETICON with high-res icon frames.
+                // 256x256 for Taskbar/Alt+Tab (ICON_BIG), 32x32 for Titlebar (ICON_SMALL)
+                var hIconBig = LoadImage(IntPtr.Zero, iconPath, 1, 256, 256, 0x00000010); // IMAGE_ICON | LR_LOADFROMFILE
+                var hIconSmall = LoadImage(IntPtr.Zero, iconPath, 1, 32, 32, 0x00000010);   // IMAGE_ICON | LR_LOADFROMFILE
+                if (hIconBig != IntPtr.Zero || hIconSmall != IntPtr.Zero)
                 {
-                    SetTaskbarIcon(hIcon);
-                    // Note: we intentionally do NOT DestroyIcon here; the OS needs the handle
-                    // to remain valid for the lifetime of the window.
+                    SetTaskbarIcon(hIconBig, hIconSmall);
                 }
             }
         }

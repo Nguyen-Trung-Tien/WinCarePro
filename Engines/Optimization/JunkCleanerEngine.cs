@@ -39,18 +39,7 @@ public class JunkCleanerEngine
 
     private const uint MOVEFILE_DELAY_UNTIL_REBOOT = 0x00000004;
 
-    private static string FormatSize(long bytes)
-    {
-        string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-        int i = 0;
-        double doubleBytes = bytes;
-        while (doubleBytes >= 1024 && i < suffix.Length - 1)
-        {
-            i++;
-            doubleBytes /= 1024;
-        }
-        return $"{doubleBytes:F1} {suffix[i]}";
-    }
+    private static string FormatSize(long bytes) => WinCarePro.Core.Helpers.FormatHelper.FormatBytes(bytes);
 
     private static bool IsFileLocked(string filePath)
     {

@@ -53,7 +53,7 @@ public class ProcessInfo : System.ComponentModel.INotifyPropertyChanged
             }
         }
     }
-    public string RamUsageFormatted => FormatSize(RamUsageBytes);
+    public string RamUsageFormatted => WinCarePro.Core.Helpers.FormatHelper.FormatBytes(RamUsageBytes);
 
     private double _diskUsageMb;
     public double DiskUsageMb
@@ -178,18 +178,5 @@ public class ProcessInfo : System.ComponentModel.INotifyPropertyChanged
     {
         get => _status;
         set => SetProperty(ref _status, value);
-    }
-
-    private static string FormatSize(long bytes)
-    {
-        string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-        int i = 0;
-        double doubleBytes = bytes;
-        while (doubleBytes >= 1024 && i < suffix.Length - 1)
-        {
-            i++;
-            doubleBytes /= 1024;
-        }
-        return $"{doubleBytes:F1} {suffix[i]}";
     }
 }

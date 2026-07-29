@@ -1,8 +1,8 @@
 {
-  "version": "3.4.7",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.7/WinCareProSetup.exe",
-  "changelog": "Cập nhật v3.4.7: Chuẩn hóa kiến trúc Dependency Injection toàn diện; nâng cấp độ an toàn tự động tạo bản sao lưu Registry trước khi sửa lỗi; tối ưu hóa Game Boost bảo vệ dịch vụ hệ thống quan trọng; tái cấu trúc các module và dọn dẹp bộ nhớ tối ưu hiệu năng tổng thể.",
-  "beta_version": "3.4.8-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.8-beta/WinCareProSetup_Beta.exe",
-  "beta_changelog": "Cập nhật thử nghiệm v3.4.8-beta: Thử nghiệm nâng cấp các tính năng quản lý hệ thống nâng cao và tối ưu hóa giao diện người dùng."
+  "version": "3.4.8",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.8/WinCareProSetup.exe",
+  "changelog": "Cập nhật v3.4.8: Tối ưu hóa giao diện RAM Booster & System Tweaks Summary gọn gàng, trực quan; nâng cấp độ tương phản cao sắc nét cho chế độ Light Mode; tăng cường bảo mật chữ ký số Authenticode và mã hóa HTTPS; tối ưu hiệu năng toàn bộ hệ thống.",
+  "beta_version": "3.4.9-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.9-beta/WinCareProSetup_Beta.exe",
+  "beta_changelog": "Not Found Error"
 }

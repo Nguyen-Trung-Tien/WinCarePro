@@ -56,7 +56,27 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnApplyTweaksClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ApplySelectedAsync();
+        int applied = await ViewModel.ApplySelectedAsync();
+
+        string msg = applied > 0 
+            ? string.Format("Successfully applied {0} Windows system tweaks and purged memory cache for maximum responsiveness.".T(), applied)
+            : "Your system tweaks and memory resources are already fully optimized!".T();
+
+        ContentDialog dialog = new ContentDialog
+        {
+            Title = "System Optimization Complete".T(),
+            Content = msg,
+            CloseButtonText = "OK".T(),
+            DefaultButton = ContentDialogButton.Close,
+            XamlRoot = this.XamlRoot,
+            RequestedTheme = ThemeManager.Instance.CurrentTheme
+        };
+
+        try
+        {
+            await dialog.ShowAsync();
+        }
+        catch { }
     }
 
     private void OnReloadTweaksClick(object sender, RoutedEventArgs e)

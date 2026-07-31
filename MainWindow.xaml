@@ -71,6 +71,27 @@
             <!-- Controls (Right) — Clock + Notification Bell + Theme -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" Padding="0,0,142,0" Spacing="4" VerticalAlignment="Center" Canvas.ZIndex="10">
 
+                <!-- Live System Telemetry HUD Chips -->
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,6,0">
+                    <Button x:Name="CpuChipButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Click="OnCpuChipClick" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance" helpers:AnimationHelper.HoverScale="1.1" helpers:AnimationHelper.PressedScale="0.9">
+                        <Border Background="#15F59E0B" BorderBrush="#40F59E0B" BorderThickness="1" CornerRadius="12" Padding="8,3">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="#FFF59E0B" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="CpuChipText" Text="CPU" FontSize="10" FontWeight="Bold" Foreground="#FFF59E0B" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Button>
+
+                    <Button x:Name="RamChipButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Click="OnRamChipClick" ToolTipService.ToolTip="RAM Memory Booster — Click for 1-Click RAM Purge" helpers:AnimationHelper.HoverScale="1.1" helpers:AnimationHelper.PressedScale="0.9">
+                        <Border Background="#153B82F6" BorderBrush="#403B82F6" BorderThickness="1" CornerRadius="12" Padding="8,3">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon Glyph="&#xE7F1;" FontSize="11" Foreground="#FF3B82F6" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="RamChipText" Text="RAM" FontSize="10" FontWeight="Bold" Foreground="#FF3B82F6" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Button>
+                </StackPanel>
+
                 <!-- Live Clock -->
                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,8,0">
                     <FontIcon Glyph="&#xE787;" FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>

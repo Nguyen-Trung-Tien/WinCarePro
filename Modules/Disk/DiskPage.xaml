@@ -9,7 +9,8 @@
     xmlns:vm="using:WinCarePro.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
+        <Grid Padding="24,20" HorizontalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 800px -->
@@ -52,7 +53,20 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Pivot x:Name="DiskPivot" SelectionChanged="OnPivotSelectionChanged">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Page Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Disk &amp; Storage Center" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="Monitor drive health S.M.A.R.T attributes, analyze disk space utilization, and locate duplicate files." Style="{StaticResource PageHeaderSubtitleStyle}" />
+            </StackPanel>
+        </Grid>
+
+        <Pivot x:Name="DiskPivot" Grid.Row="1" SelectionChanged="OnPivotSelectionChanged">
             <!-- Tab 1: Disk Overview -->
             <PivotItem Header="Disk Overview">
                 <Grid Margin="0,16,0,0">
@@ -220,7 +234,8 @@
                 </Grid>
             </PivotItem>
         </Pivot>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </Page>
 
 

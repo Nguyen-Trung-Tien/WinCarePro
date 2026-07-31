@@ -10,7 +10,7 @@
     xmlns:vm="using:WinCarePro.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
+    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -18,9 +18,9 @@
 
         <!-- Header -->
         <Grid Grid.Row="0" Margin="0,0,0,24">
-            <StackPanel Spacing="4">
-                <TextBlock Text="Registry Center" FontSize="26" FontWeight="ExtraBold" CharacterSpacing="-0.5" />
-                <TextBlock Text="Safely backup, restore registry hives, and access the official Windows Registry Editor." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            <StackPanel>
+                <TextBlock Text="Registry Center" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="Safely backup, restore registry hives, and access the official Windows Registry Editor." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 
@@ -133,6 +133,32 @@
                         </ListView>
                     </Grid>
                 </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Loading Overlay Indicator — smooth fade in/out -->
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="2" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.Resources>
+                <Storyboard x:Name="FadeInLoading">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+                <Storyboard x:Name="FadeOutLoading" Completed="FadeOutLoading_Completed">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </Grid.Resources>
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
+                <StackPanel Spacing="16" HorizontalAlignment="Center">
+                    <ProgressRing Width="48" Height="48" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" />
+                    <TextBlock Text="Processing Registry Operation..." FontSize="14" FontWeight="Bold" TextAlignment="Center" />
+                </StackPanel>
             </Border>
         </Grid>
     </Grid>

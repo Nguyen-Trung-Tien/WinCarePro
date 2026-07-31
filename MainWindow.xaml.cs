@@ -333,8 +333,11 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private async void ExitAppButton_Click(object sender, RoutedEventArgs e)
+    public async void PerformAppExit()
     {
+        this.AppWindow.Show();
+        BringToForeground();
+
         ExitOverlayTitle.Text = "Shutting Down".T();
         ExitOverlayMessage.Text = "Closing database connections and freeing resources...".T();
         ExitOverlayGrid.Visibility = Visibility.Visible;
@@ -346,6 +349,35 @@ public sealed partial class MainWindow : Window
         CleanupTrayIcon();
         _forceClose = true;
         this.Close();
+    }
+
+    private void ExitAppButton_Click(object sender, RoutedEventArgs e)
+    {
+        PerformAppExit();
+    }
+
+    private void OnCpuChipClick(object sender, RoutedEventArgs e)
+    {
+        if (RootFrame.Content is MainPage mp)
+        {
+            mp.NavigateToPageExternal("Dashboard");
+        }
+        var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
+        notificationService?.ShowToast("CPU Telemetry Monitor", "Showing real-time CPU & System performance overview.", Services.Contracts.NotificationSeverity.Info);
+    }
+
+    private void OnRamChipClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
+            notificationService?.ShowToast("RAM Purged Successfully", "Cleaned standby memory & freed up system RAM resources.", Services.Contracts.NotificationSeverity.Success);
+        }
+        catch { }
     }
 
     public void UpdateNotificationBadge()

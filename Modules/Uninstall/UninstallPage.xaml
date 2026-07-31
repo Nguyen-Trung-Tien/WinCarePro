@@ -10,7 +10,7 @@
     xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
+    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1000px -->
@@ -95,8 +95,8 @@
         <!-- Page Header -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <StackPanel>
-                <TextBlock Text="App Uninstaller" FontSize="26" FontWeight="ExtraBold" CharacterSpacing="-10" />
-                <TextBlock Text="Manage installed programs, remove residual registry keys, delete leftover files, and force uninstall store applications." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
+                <TextBlock Text="App Uninstaller" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="Manage installed programs, remove residual registry keys, delete leftover files, and force uninstall store applications." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 

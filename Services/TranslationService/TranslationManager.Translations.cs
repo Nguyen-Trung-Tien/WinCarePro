@@ -32,6 +32,25 @@ public partial class TranslationManager
         _translations["Search tools, settings, apps... (Ctrl + F)"] = "Tìm kiếm công cụ, cài đặt, ứng dụng... (Ctrl + F)";
         _translations["Settings & Personalization"] = "Cài đặt & Cá nhân hóa";
         _translations["Settings"] = "Cài đặt";
+        _translations["Open WinCare Pro"] = "Mở WinCare Pro";
+        _translations["Scan System Diagnostics"] = "Quét chẩn đoán hệ thống";
+        _translations["Optimize Memory (RAM)"] = "Giải phóng bộ nhớ RAM";
+        _translations["Clean Junk Files"] = "Dọn dẹp tệp rác";
+        _translations["Toggle Dark/Light Theme"] = "Đổi giao diện Sáng/Tối";
+        _translations["Theme: Dark (Switch to Light)"] = "Giao diện: Tối (Bấm để chuyển sang Sáng)";
+        _translations["Theme: Light (Switch to Dark)"] = "Giao diện: Sáng (Bấm để chuyển sang Tối)";
+        _translations["🚀 Open WinCare Pro"] = "🚀 Mở WinCare Pro";
+        _translations["🔍 Scan System Diagnostics"] = "🔍 Quét chẩn đoán hệ thống";
+        _translations["⚡ Optimize Memory (RAM)"] = "⚡ Giải phóng bộ nhớ RAM";
+        _translations["🧹 Clean Junk Files"] = "🧹 Dọn dẹp tệp rác";
+        _translations["🌙 Theme: Dark (Switch to Light)"] = "🌙 Giao diện: Tối (Bấm chuyển Sáng)";
+        _translations["☀️ Theme: Light (Switch to Dark)"] = "☀️ Giao diện: Sáng (Bấm chuyển Tối)";
+        _translations["⚙️ Settings"] = "⚙️ Cài đặt";
+        _translations["🚪 Exit"] = "🚪 Thoát";
+        _translations["Theme Updated"] = "Đã cập nhật giao diện";
+        _translations["Switched to Dark Mode."] = "Đã chuyển sang Chế độ Tối.";
+        _translations["Switched to Light Mode."] = "Đã chuyển sang Chế độ Sáng.";
+        _translations["Exit"] = "Thoát";
 
         // --- System Dashboard Page ---
         _translations["System Dashboard"] = "Bảng điều khiển hệ thống";

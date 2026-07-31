@@ -9,38 +9,25 @@
     xmlns:viewmodels="using:WinCarePro.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
+    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="160" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Top Header Panel (Glassmorphism Card) -->
-        <Border Grid.Row="0" Margin="0,0,0,18" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <!-- Left Info Section -->
-                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                    <Border Width="48" Height="48" CornerRadius="24" Background="#207F56D9" Margin="0,0,16,0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE71D;" Foreground="#FF7F56D9" FontSize="20" />
-                    </Border>
-                    <StackPanel Spacing="2" VerticalAlignment="Center">
-                        <TextBlock Text="Context Menu Manager" FontSize="16" FontWeight="Bold" />
-                        <TextBlock Text="Manage shell extensions and clean up cluttered right-click context menus safely." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
-                </StackPanel>
-
-                <!-- Right Action Buttons -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Button Content="Scan Context Menus" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="12,8" FontSize="12.5" />
-                </StackPanel>
-            </Grid>
-        </Border>
+        <!-- Page Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Context Menu Manager" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="Manage shell extensions and clean up cluttered right-click context menus safely." Style="{StaticResource PageHeaderSubtitleStyle}" />
+            </StackPanel>
+            <Button Grid.Column="1" Content="Scan Context Menus" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" CornerRadius="8" Padding="16,8" FontWeight="SemiBold" />
+        </Grid>
 
         <!-- Main Content Area -->
         <Grid Grid.Row="1" ColumnSpacing="18">
@@ -158,11 +145,37 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Text="Activity Log" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="4,0,0,6" />
-                <ScrollViewer Grid.Row="1" Background="#0C000000" CornerRadius="4" Padding="8" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Grid.Row="1" Height="130" Background="#0C000000" CornerRadius="6" Padding="12,8" VerticalScrollBarVisibility="Auto">
                     <TextBlock Text="{x:Bind ViewModel.LogText, Mode=OneWay}" FontFamily="Consolas" FontSize="11" Foreground="#FF10B981" TextWrapping="Wrap" />
                 </ScrollViewer>
             </Grid>
         </Border>
+
+        <!-- Loading Overlay Indicator — smooth fade in/out -->
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="3" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.Resources>
+                <Storyboard x:Name="FadeInLoading">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+                <Storyboard x:Name="FadeOutLoading" Completed="FadeOutLoading_Completed">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </Grid.Resources>
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
+                <StackPanel Spacing="16" HorizontalAlignment="Center">
+                    <ProgressRing Width="48" Height="48" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" />
+                    <TextBlock Text="Scanning Context Menus..." FontSize="14" FontWeight="Bold" TextAlignment="Center" />
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Page>
 

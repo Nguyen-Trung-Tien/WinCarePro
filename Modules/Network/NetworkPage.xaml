@@ -8,7 +8,7 @@
     xmlns:models="using:WinCarePro.Models"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
+    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1150px -->
@@ -1046,9 +1046,9 @@
                     </Grid>
                 </Border>
             </Grid>
-            </ScrollViewer>
-        </Grid>
+        </ScrollViewer>
     </Grid>
+</Grid>
 </Page>
 
 

@@ -8,7 +8,7 @@
     xmlns:vm="using:WinCarePro.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
+    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1100px -->
@@ -51,9 +51,9 @@
                 <ColumnDefinition x:Name="HeaderCol0" Width="*" />
                 <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel x:Name="HeaderTitlePanel" Grid.Column="0" Grid.Row="0" Spacing="4">
-                <TextBlock Text="System Repair Center" FontSize="26" FontWeight="ExtraBold" CharacterSpacing="-0.5" />
-                <TextBlock Text="Diagnose registry policies, check Windows components integrity, fix core services, and restore network settings." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            <StackPanel x:Name="HeaderTitlePanel" Grid.Column="0" Grid.Row="0">
+                <TextBlock Text="System Repair Center" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="Diagnose registry policies, check Windows components integrity, fix core services, and restore network settings." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
             <StackPanel x:Name="HeaderButtonsPanel" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
 
@@ -227,10 +227,10 @@
                                             </StackPanel>
 
                                             <Border Grid.Column="2" Margin="12,0" VerticalAlignment="Center" CornerRadius="4" Padding="6,2" Background="{x:Bind SeverityBrush, Mode=OneWay}">
-                                                <TextBlock Text="{x:Bind Severity}" FontSize="9.5" FontWeight="Bold" Foreground="White" />
+                                                <TextBlock Text="{x:Bind SeverityText, Mode=OneWay}" FontSize="9.5" FontWeight="Bold" Foreground="White" />
                                             </Border>
 
-                                            <TextBlock Grid.Column="3" Text="{x:Bind Status}" FontSize="11" FontWeight="Bold" Foreground="{x:Bind StatusBrush, Mode=OneWay}" VerticalAlignment="Center" Margin="8,0,4,0" Width="60" TextAlignment="Right"/>
+                                            <TextBlock Grid.Column="3" Text="{x:Bind StatusText, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{x:Bind StatusBrush, Mode=OneWay}" VerticalAlignment="Center" Margin="8,0,4,0" Width="60" TextAlignment="Right"/>
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
@@ -363,6 +363,34 @@
                 </StackPanel>
             </ScrollViewer>
 
+        </Grid>
+
+        <!-- Loading Overlay Indicator — smooth fade in/out -->
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="3" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.Resources>
+                <Storyboard x:Name="FadeInLoading">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+                <Storyboard x:Name="FadeOutLoading" Completed="FadeOutLoading_Completed">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </Grid.Resources>
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="380">
+                <StackPanel Spacing="16" HorizontalAlignment="Center">
+                    <ProgressRing Width="52" Height="52" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" />
+                    <TextBlock Text="System Diagnostics &amp; Repair" FontSize="15" FontWeight="Bold" TextAlignment="Center" />
+                    <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="20" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center"/>
+                    <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 </Page>

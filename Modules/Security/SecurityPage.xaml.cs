@@ -16,7 +16,19 @@ public sealed partial class SecurityPage : Page
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = new SecurityViewModel();
-        this.Loaded += (s, e) => DataContext = ViewModel;
+        ViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(ViewModel.IsBusy))
+            {
+                UpdateLoadingOverlayState();
+            }
+        };
+
+        this.Loaded += (s, e) =>
+        {
+            DataContext = ViewModel;
+            UpdateLoadingOverlayState();
+        };
     }
 
     // --- Security Center Tab: Shortcut buttons to Windows built-in tools ---
@@ -87,4 +99,27 @@ public sealed partial class SecurityPage : Page
     }
 
     internal bool IsNot(bool val) => !val;
+
+    private void UpdateLoadingOverlayState()
+    {
+        if (LoadingOverlayGrid == null || FadeInLoading == null || FadeOutLoading == null) return;
+
+        if (ViewModel.IsBusy)
+        {
+            LoadingOverlayGrid.Visibility = Visibility.Visible;
+            FadeInLoading.Begin();
+        }
+        else
+        {
+            FadeOutLoading.Begin();
+        }
+    }
+
+    private void FadeOutLoading_Completed(object? sender, object e)
+    {
+        if (!ViewModel.IsBusy && LoadingOverlayGrid != null)
+        {
+            LoadingOverlayGrid.Visibility = Visibility.Collapsed;
+        }
+    }
 }

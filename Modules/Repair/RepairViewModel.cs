@@ -25,10 +25,22 @@ public class DiagnosticIssueItem : ViewModelBase
     private string _category = "";
     public string Category { get => _category; set => SetProperty(ref _category, value); }
 
-    private string _severity = ""; // "Critical", "Warning", "Info"
-    public string Severity { get => _severity; set => SetProperty(ref _severity, value); }
+    private string _severity = "Warning"; // Always canonical: "Critical", "Warning", "Info"
+    public string Severity
+    {
+        get => _severity;
+        set
+        {
+            if (SetProperty(ref _severity, value))
+            {
+                OnPropertyChanged(nameof(SeverityText));
+                OnPropertyChanged(nameof(SeverityBrush));
+            }
+        }
+    }
+    public string SeverityText => Severity.T();
 
-    private string _status = "Pending"; // "Pending", "Fixing", "Fixed", "Failed"
+    private string _status = "Pending"; // Always canonical: "Pending", "Fixing", "Fixed", "Failed"
     public string Status
     {
         get => _status;
@@ -36,16 +48,18 @@ public class DiagnosticIssueItem : ViewModelBase
         {
             if (SetProperty(ref _status, value))
             {
+                OnPropertyChanged(nameof(StatusText));
                 OnPropertyChanged(nameof(IsNotFixed));
                 OnPropertyChanged(nameof(StatusBrush));
             }
         }
     }
+    public string StatusText => Status.T();
 
     private bool _isSelected = true;
     public bool IsSelected { get => _isSelected; set => SetProperty(ref _isSelected, value); }
 
-    public bool IsNotFixed => Status != "Fixed" && Status != "Fixed".T();
+    public bool IsNotFixed => Status != "Fixed";
 
     public Brush SeverityBrush
     {
@@ -53,9 +67,8 @@ public class DiagnosticIssueItem : ViewModelBase
         {
             if (string.IsNullOrEmpty(Severity)) return new SolidColorBrush(Microsoft.UI.Colors.Gray);
             string s = Severity.ToLowerInvariant();
-            // Compare against English keys only (engine output is always English)
-            if (s.Contains("critical")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Red
-            if (s.Contains("warning")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)); // Amber
+            if (s.Contains("critical") || s.Contains("nguy hiểm") || s.Contains("nghiêm trọng")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Red
+            if (s.Contains("warning") || s.Contains("cảnh báo")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)); // Amber
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246)); // Blue
         }
     }
@@ -66,10 +79,9 @@ public class DiagnosticIssueItem : ViewModelBase
         {
             if (string.IsNullOrEmpty(Status)) return new SolidColorBrush(Microsoft.UI.Colors.Gray);
             string s = Status.ToLowerInvariant();
-            // Compare against English keys only (engine output is always English)
-            if (s.Contains("fixed") || s.Contains("success")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)); // Green
-            if (s.Contains("fixing")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246)); // Purple
-            if (s.Contains("fail")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Red
+            if (s.Contains("fixed") || s.Contains("đã sửa") || s.Contains("success") || s.Contains("thành công")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)); // Green
+            if (s.Contains("fixing") || s.Contains("đang sửa")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246)); // Purple
+            if (s.Contains("fail") || s.Contains("thất bại") || s.Contains("lỗi")) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Red
             return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 107, 114, 128)); // Gray (Pending)
         }
     }
@@ -289,8 +301,8 @@ public class RepairViewModel : ViewModelBase
                     Title = string.Format("Service '{0}' is stopped".T(), svc.Display),
                     Description = string.Format("Service configured as '{0}' but is currently '{1}'.".T(), svc.StartType.T(), svc.Status.T()),
                     Category = "Core Services".T(),
-                    Severity = svc.Critical ? "Critical".T() : "Warning".T(),
-                    Status = "Pending".T(),
+                    Severity = svc.Critical ? "Critical" : "Warning",
+                    Status = "Pending",
                     IsSelected = true
                 });
             }
@@ -363,8 +375,8 @@ public class RepairViewModel : ViewModelBase
                     Title = restriction.Title,
                     Description = restriction.Description,
                     Category = "System Policies".T(),
-                    Severity = "Critical".T(),
-                    Status = "Pending".T(),
+                    Severity = "Critical",
+                    Status = "Pending",
                     IsSelected = true
                 });
             }
@@ -389,8 +401,8 @@ public class RepairViewModel : ViewModelBase
                         Title = "High DNS Latency".T(),
                         Description = string.Format("DNS query resolved in {0} ms. Clean DNS resolver configurations to optimize latency.".T(), ping),
                         Category = "Network Health".T(),
-                        Severity = "Warning".T(),
-                        Status = "Pending".T(),
+                        Severity = "Warning",
+                        Status = "Pending",
                         IsSelected = true
                     });
                 }
@@ -404,8 +416,8 @@ public class RepairViewModel : ViewModelBase
                     Title = "DNS Resolution Failed / Offline".T(),
                     Description = "Failed to resolve standard host names. DNS client configuration reset is recommended.".T(),
                     Category = "Network Health".T(),
-                    Severity = "Critical".T(),
-                    Status = "Pending".T(),
+                    Severity = "Critical",
+                    Status = "Pending",
                     IsSelected = true
                 });
             }
@@ -417,8 +429,8 @@ public class RepairViewModel : ViewModelBase
                 Title = "System Integrity Check Recommendation".T(),
                 Description = "Run a system file integrity check (SFC/DISM) regularly to protect against unexpected corrupted DLLs.".T(),
                 Category = "System Integrity".T(),
-                Severity = "Info".T(),
-                Status = "Pending".T(),
+                Severity = "Info",
+                Status = "Pending",
                 IsSelected = false
             });
 
@@ -430,8 +442,8 @@ public class RepairViewModel : ViewModelBase
             int penalty = 0;
             foreach (var issue in DiscoveredIssues)
             {
-                if (issue.Severity == "Critical".T()) penalty += 20;
-                else if (issue.Severity == "Warning".T()) penalty += 10;
+                if (issue.Severity == "Critical") penalty += 20;
+                else if (issue.Severity == "Warning") penalty += 10;
             }
             HealthScore = Math.Max(100 - penalty, 0);
             DiscoveredIssuesCount = DiscoveredIssues.Count;
@@ -459,7 +471,7 @@ public class RepairViewModel : ViewModelBase
             var selectedIssues = new List<DiagnosticIssueItem>();
             foreach (var issue in DiscoveredIssues)
             {
-                if (issue.IsSelected && issue.Status != "Fixed".T())
+                if (issue.IsSelected && issue.Status != "Fixed")
                 {
                     selectedIssues.Add(issue);
                 }
@@ -477,7 +489,7 @@ public class RepairViewModel : ViewModelBase
             for (int i = 0; i < total; i++)
             {
                 var issue = selectedIssues[i];
-                issue.Status = "Fixing".T();
+                issue.Status = "Fixing";
                 LogText(string.Format("Fixing: {0}...".T(), issue.Title));
 
                 bool success = false;
@@ -501,13 +513,13 @@ public class RepairViewModel : ViewModelBase
 
                 if (success)
                 {
-                    issue.Status = "Fixed".T();
+                    issue.Status = "Fixed";
                     LogText(string.Format("Successfully resolved: {0}".T(), issue.Title));
                     fixedCount++;
                 }
                 else
                 {
-                    issue.Status = "Failed".T();
+                    issue.Status = "Failed";
                     LogText(string.Format("Failed to resolve: {0}".T(), issue.Title));
                 }
 
@@ -521,10 +533,10 @@ public class RepairViewModel : ViewModelBase
             int penalty = 0;
             foreach (var issue in DiscoveredIssues)
             {
-                if (issue.Status != "Fixed".T())
+                if (issue.Status != "Fixed")
                 {
-                    if (issue.Severity == "Critical".T()) penalty += 20;
-                    else if (issue.Severity == "Warning".T()) penalty += 10;
+                    if (issue.Severity == "Critical") penalty += 20;
+                    else if (issue.Severity == "Warning") penalty += 10;
                 }
             }
             HealthScore = Math.Max(100 - penalty, 0);

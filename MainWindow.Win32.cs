@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using WinCarePro.Services;
 
 namespace WinCarePro;
 
@@ -99,6 +100,21 @@ public sealed partial class MainWindow : Window
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
     private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
+    [DllImport("user32.dll")]
+    private static extern IntPtr CreatePopupMenu();
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    private static extern bool AppendMenu(IntPtr hMenu, uint uFlags, uint uIDNewItem, string lpNewItem);
+
+    [DllImport("user32.dll")]
+    private static extern bool DestroyMenu(IntPtr hMenu);
+
+    [DllImport("user32.dll")]
+    private static extern bool GetCursorPos(out POINT lpPoint);
+
+    [DllImport("user32.dll")]
+    private static extern uint TrackPopupMenuEx(IntPtr hMenu, uint fuFlags, int x, int y, IntPtr hwnd, IntPtr lptpm);
+
     private const uint WM_SETICON = 0x0080;
     private const IntPtr ICON_SMALL = (IntPtr)0;
     private const IntPtr ICON_BIG = (IntPtr)1;
@@ -114,6 +130,21 @@ public sealed partial class MainWindow : Window
     private const int WM_TRAYICON = WM_USER + 1024;
     private const int WM_LBUTTONDBLCLK = 0x0203;
     private const int WM_RBUTTONUP = 0x0205;
+    private const int WM_CONTEXTMENU = 0x007B;
+
+    private const uint MF_STRING = 0x00000000;
+    private const uint MF_SEPARATOR = 0x00000800;
+
+    private const uint TPM_RIGHTBUTTON = 0x0002;
+    private const uint TPM_RETURNCMD = 0x0100;
+
+    private const uint ID_TRAY_OPEN = 1001;
+    private const uint ID_TRAY_SETTINGS = 1002;
+    private const uint ID_TRAY_EXIT = 1003;
+    private const uint ID_TRAY_SCAN = 1004;
+    private const uint ID_TRAY_RAM = 1005;
+    private const uint ID_TRAY_JUNK = 1006;
+    private const uint ID_TRAY_THEME = 1007;
 
     private bool _trayIconRegistered = false;
     private IntPtr _hIcon = IntPtr.Zero;
@@ -142,7 +173,7 @@ public sealed partial class MainWindow : Window
         else if (msg == WM_TRAYICON)
         {
             int eventId = (int)lParam;
-            if (eventId == WM_LBUTTONDBLCLK || eventId == WM_RBUTTONUP)
+            if (eventId == WM_LBUTTONDBLCLK)
             {
                 this.DispatcherQueue.TryEnqueue(() =>
                 {
@@ -150,10 +181,127 @@ public sealed partial class MainWindow : Window
                     BringToForeground();
                 });
             }
+            else if (eventId == WM_RBUTTONUP || eventId == WM_CONTEXTMENU)
+            {
+                this.DispatcherQueue.TryEnqueue(() =>
+                {
+                    ShowTrayContextMenu();
+                });
+            }
             return IntPtr.Zero;
         }
 
         return CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
+    }
+
+    private void ShowTrayContextMenu()
+    {
+        IntPtr hMenu = CreatePopupMenu();
+        if (hMenu == IntPtr.Zero) return;
+
+        try
+        {
+            string openText = "🚀 Open WinCare Pro".T();
+            string scanText = "🔍 Scan System Diagnostics".T();
+            string ramText = "⚡ Optimize Memory (RAM)".T();
+            string junkText = "🧹 Clean Junk Files".T();
+
+            bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
+            string themeText = isDark ? "🌙 Theme: Dark (Switch to Light)".T() : "☀️ Theme: Light (Switch to Dark)".T();
+            string settingsText = "⚙️ Settings".T();
+            string exitText = "🚪 Exit".T();
+
+            AppendMenu(hMenu, MF_STRING, ID_TRAY_OPEN, openText);
+            AppendMenu(hMenu, MF_STRING, ID_TRAY_SCAN, scanText);
+            AppendMenu(hMenu, MF_SEPARATOR, 0, string.Empty);
+            AppendMenu(hMenu, MF_STRING, ID_TRAY_RAM, ramText);
+            AppendMenu(hMenu, MF_STRING, ID_TRAY_JUNK, junkText);
+            AppendMenu(hMenu, MF_SEPARATOR, 0, string.Empty);
+            AppendMenu(hMenu, MF_STRING, ID_TRAY_THEME, themeText);
+            AppendMenu(hMenu, MF_STRING, ID_TRAY_SETTINGS, settingsText);
+            AppendMenu(hMenu, MF_SEPARATOR, 0, string.Empty);
+            AppendMenu(hMenu, MF_STRING, ID_TRAY_EXIT, exitText);
+
+            GetCursorPos(out POINT pt);
+
+            // Set foreground window to ensure popup menu closes when clicking outside
+            SetForegroundWindow(_hwnd);
+
+            uint cmd = TrackPopupMenuEx(hMenu, TPM_RETURNCMD | TPM_RIGHTBUTTON, pt.x, pt.y, _hwnd, IntPtr.Zero);
+            DestroyMenu(hMenu);
+
+            if (cmd == ID_TRAY_OPEN)
+            {
+                this.AppWindow.Show();
+                BringToForeground();
+            }
+            else if (cmd == ID_TRAY_SCAN)
+            {
+                this.AppWindow.Show();
+                BringToForeground();
+                if (RootFrame.Content is MainPage mp)
+                {
+                    mp.NavigateToPageExternal("Dashboard");
+                    if (mp.NavigationFrame.Content is WinCarePro.Views.DashboardPage dbPage)
+                    {
+                        _ = dbPage.ViewModel?.RunFullDiagnosticsAsync();
+                    }
+                }
+            }
+            else if (cmd == ID_TRAY_RAM)
+            {
+                System.Threading.Tasks.Task.Run(async () =>
+                {
+                    try
+                    {
+                        var optEngine = new Engines.SystemOptimizerEngine();
+                        await optEngine.OptimizeRamAsync();
+                        
+                        App.MainDispatcherQueue?.TryEnqueue(() =>
+                        {
+                            Database.DbManager.LogAction("RAM optimization triggered from System Tray", "Smart Boost", "Success");
+                            ShowTrayNotification("RAM Cleaned".T(), "Memory has been successfully optimized.".T());
+                        });
+                    }
+                    catch { }
+                });
+            }
+            else if (cmd == ID_TRAY_JUNK)
+            {
+                this.AppWindow.Show();
+                BringToForeground();
+                if (RootFrame.Content is MainPage mp)
+                {
+                    mp.NavigateToPageExternal("Junk");
+                }
+            }
+            else if (cmd == ID_TRAY_THEME)
+            {
+                var newTheme = (ThemeManager.Instance.CurrentTheme == ElementTheme.Dark) ? ElementTheme.Light : ElementTheme.Dark;
+                ThemeManager.Instance.ApplyTheme(newTheme);
+
+                string title = "Theme Updated".T();
+                string msg = (newTheme == ElementTheme.Dark) ? "Switched to Dark Mode.".T() : "Switched to Light Mode.".T();
+                ShowTrayNotification(title, msg);
+            }
+            else if (cmd == ID_TRAY_SETTINGS)
+            {
+                this.AppWindow.Show();
+                BringToForeground();
+                if (RootFrame.Content is MainPage mp)
+                {
+                    mp.NavigateToPageExternal("Settings");
+                }
+            }
+            else if (cmd == ID_TRAY_EXIT)
+            {
+                PerformAppExit();
+            }
+        }
+        catch
+        {
+            if (hMenu != IntPtr.Zero) DestroyMenu(hMenu);
+        }
     }
 
     private void InitializeTrayIcon()

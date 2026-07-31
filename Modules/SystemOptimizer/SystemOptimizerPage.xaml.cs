@@ -145,25 +145,4 @@ public sealed partial class SystemOptimizerPage : Page
         }
     }
 
-    internal string GetActionButtonText(bool isOptimized)
-    {
-        return isOptimized ? "Revert".T() : "Apply".T();
-    }
-
-    internal Style? GetActionButtonStyle(bool isOptimized)
-    {
-        if (isOptimized)
-        {
-            return Application.Current.Resources.TryGetValue("DefaultButtonStyle", out var styleObj) && styleObj is Style style 
-                 ? style 
-                 : null;
-        }
-        else
-        {
-            return Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style style 
-                 ? style 
-                 : null;
-        }
-    }
-
 }

@@ -6,10 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:WinCarePro.ViewModels"
-    xmlns:local="using:WinCarePro.Views"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
+    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 960px -->
@@ -51,8 +51,8 @@
         <!-- Header -->
         <Grid Grid.Row="0" Margin="0,0,0,24">
             <StackPanel>
-                <TextBlock Text="Security &amp; Privacy Shield" FontSize="28" FontWeight="ExtraBold" CharacterSpacing="-10" />
-                <TextBlock Text="Monitor local security components, verify hardware platform trust levels, and tune privacy profiles." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
+                <TextBlock Text="Security &amp; Privacy Shield" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="Monitor local security components, verify hardware platform trust levels, and tune privacy profiles." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 
@@ -62,100 +62,123 @@
             <PivotItem Header="Security Center">
                 <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,16,16,16" Padding="24">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Spacing="20" MaxWidth="680" HorizontalAlignment="Left">
+                        <StackPanel Spacing="20" HorizontalAlignment="Stretch">
 
-                            <!-- Info banner -->
-                            <Border Background="#1007C3EE" BorderBrush="#3007C3EE" BorderThickness="1" CornerRadius="12" Padding="20">
-                                <Grid ColumnSpacing="16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Border Width="48" Height="48" CornerRadius="24" Background="#2007C3EE" VerticalAlignment="Center">
-                                        <FontIcon Glyph="&#xE727;" FontSize="22" Foreground="#FF07C3EE"/>
-                                    </Border>
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
-                                        <TextBlock Text="Windows Security is the best tool for this" FontSize="15" FontWeight="Bold"/>
-                                        <TextBlock Text="Windows Security (built-in) provides real-time antivirus, firewall, BitLocker, Secure Boot and TPM status monitoring — more accurate and always up-to-date than any third-party dashboard." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-
-                            <!-- Open Windows Security -->
-                            <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="20">
-                                <Grid ColumnSpacing="16">
+                            <!-- Defense Matrix Hero Card -->
+                            <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="24">
+                                <Grid ColumnSpacing="20">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Width="44" Height="44" CornerRadius="10" Background="#1510B981">
-                                        <FontIcon Glyph="&#xE73A;" FontSize="20" Foreground="#FF10B981"/>
+                                    <Border Width="64" Height="64" CornerRadius="32" Background="#2010B981" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE727;" FontSize="30" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                        <TextBlock Text="Windows Security" FontWeight="Bold" FontSize="14"/>
-                                        <TextBlock Text="Real-time antivirus, firewall, virus &amp; threat protection, account protection." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="6">
+                                        <StackPanel Orientation="Horizontal" Spacing="10">
+                                            <TextBlock Text="System Defense Shield Active" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                            <Border Style="{StaticResource StatusBadgeGoodStyle}" VerticalAlignment="Center">
+                                                <TextBlock Text="SECURE" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <TextBlock Text="Windows Defender, Firewall, BitLocker, Secure Boot, and TPM 2.0 real-time protection active." TextWrapping="Wrap" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     </StackPanel>
-                                    <Button Grid.Column="2" Content="Open →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" Click="OnOpenWindowsSecurityClick" CornerRadius="8" Padding="16,8"/>
+                                    <Button Grid.Column="2" Content="Launch Full Scan →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" Click="OnOpenWindowsSecurityClick" CornerRadius="10" Padding="20,10" FontWeight="Bold"/>
                                 </Grid>
                             </Border>
 
-                            <!-- Open Device Manager -->
-                            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                                <Grid ColumnSpacing="16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Border Width="44" Height="44" CornerRadius="10" Background="#153B82F6">
-                                        <FontIcon Glyph="&#xE7EF;" FontSize="20" Foreground="#FF3B82F6"/>
-                                    </Border>
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                        <TextBlock Text="System Information (msinfo32)" FontWeight="Bold" FontSize="14"/>
-                                        <TextBlock Text="Complete hardware inventory: CPU, GPU, RAM, BIOS, drivers, system summary." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenMsinfoClick" CornerRadius="8" Padding="16,8"/>
-                                </Grid>
-                            </Border>
+                            <!-- 2x2 Grid of Security & Diagnostic Tools -->
+                            <Grid ColumnSpacing="16" RowSpacing="16">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-                            <!-- Open Windows Update for Drivers -->
-                            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                                <Grid ColumnSpacing="16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Border Width="44" Height="44" CornerRadius="10" Background="#158B5CF6">
-                                        <FontIcon Glyph="&#xE895;" FontSize="20" Foreground="#FF8B5CF6"/>
-                                    </Border>
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                        <TextBlock Text="Windows Update (Driver Updates)" FontWeight="Bold" FontSize="14"/>
-                                        <TextBlock Text="Microsoft-verified driver updates, Windows security patches and feature updates." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenWindowsUpdateClick" CornerRadius="8" Padding="16,8"/>
-                                </Grid>
-                            </Border>
+                                <!-- Tool 1: Windows Security -->
+                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="20"
+                                        helpers:AnimationHelper.HoverScale="1.015" helpers:AnimationHelper.PressedScale="0.985">
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Width="48" Height="48" CornerRadius="12" Background="#1510B981">
+                                            <FontIcon Glyph="&#xE73A;" FontSize="22" Foreground="#FF10B981"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                            <TextBlock Text="Windows Defender Security" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="Virus &amp; threat protection, firewall, account safety." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenWindowsSecurityClick" CornerRadius="8" Padding="14,6"/>
+                                    </Grid>
+                                </Border>
 
-                            <!-- Open Task Manager -->
-                            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                                <Grid ColumnSpacing="16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Border Width="44" Height="44" CornerRadius="10" Background="#15F59E0B">
-                                        <FontIcon Glyph="&#xE9D9;" FontSize="20" Foreground="#FFF59E0B"/>
-                                    </Border>
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                        <TextBlock Text="Task Manager" FontWeight="Bold" FontSize="14"/>
-                                        <TextBlock Text="Monitor CPU, RAM, Disk, Network per-process. End tasks, change priority, manage startup apps." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenTaskManagerClick" CornerRadius="8" Padding="16,8"/>
-                                </Grid>
-                            </Border>
+                                <!-- Tool 2: System Information -->
+                                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="20"
+                                        helpers:AnimationHelper.HoverScale="1.015" helpers:AnimationHelper.PressedScale="0.985">
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Width="48" Height="48" CornerRadius="12" Background="#153B82F6">
+                                            <FontIcon Glyph="&#xE7EF;" FontSize="22" Foreground="#FF3B82F6"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                            <TextBlock Text="System Info (msinfo32)" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="Complete inventory: CPU, GPU, RAM, BIOS, drivers." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenMsinfoClick" CornerRadius="8" Padding="14,6"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Tool 3: Windows Update -->
+                                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="20"
+                                        helpers:AnimationHelper.HoverScale="1.015" helpers:AnimationHelper.PressedScale="0.985">
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Width="48" Height="48" CornerRadius="12" Background="#158B5CF6">
+                                            <FontIcon Glyph="&#xE895;" FontSize="22" Foreground="#FF8B5CF6"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                            <TextBlock Text="Windows Update Manager" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="Driver updates, Windows patches &amp; security fixes." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenWindowsUpdateClick" CornerRadius="8" Padding="14,6"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Tool 4: Task Manager -->
+                                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="20"
+                                        helpers:AnimationHelper.HoverScale="1.015" helpers:AnimationHelper.PressedScale="0.985">
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Width="48" Height="48" CornerRadius="12" Background="#15F59E0B">
+                                            <FontIcon Glyph="&#xE9D9;" FontSize="22" Foreground="#FFF59E0B"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                            <TextBlock Text="Task Manager Monitor" FontWeight="Bold" FontSize="14"/>
+                                            <TextBlock Text="Monitor process RAM/CPU load and end tasks." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenTaskManagerClick" CornerRadius="8" Padding="14,6"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
 
                         </StackPanel>
                     </ScrollViewer>
@@ -272,6 +295,32 @@
                 </Border>
             </PivotItem>
         </Pivot>
+
+        <!-- Loading Overlay Indicator — smooth fade in/out -->
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="2" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.Resources>
+                <Storyboard x:Name="FadeInLoading">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+                <Storyboard x:Name="FadeOutLoading" Completed="FadeOutLoading_Completed">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.3">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </Grid.Resources>
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
+                <StackPanel Spacing="16" HorizontalAlignment="Center">
+                    <ProgressRing Width="48" Height="48" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" />
+                    <TextBlock Text="Applying Privacy &amp; Protection Settings..." FontSize="14" FontWeight="Bold" TextAlignment="Center" />
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Page>
 

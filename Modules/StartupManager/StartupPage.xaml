@@ -10,7 +10,7 @@
     xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
+    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1000px -->
@@ -70,14 +70,23 @@
         </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <!-- Page Header -->
             <RowDefinition Height="Auto" /> <!-- Top Dashboard -->
             <RowDefinition Height="Auto" /> <!-- Filter bar -->
             <RowDefinition Height="*" />    <!-- Content Area -->
         </Grid.RowDefinitions>
 
+        <!-- Page Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Startup &amp; Services" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="Manage startup applications, analyze boot impact, and optimize background system loading time." Style="{StaticResource PageHeaderSubtitleStyle}" />
+            </StackPanel>
+        </Grid>
+
         <!-- 1. High-End Dashboard Section -->
         <!-- 1. High-End Dashboard Section (Unified Stat Ribbon Layout) -->
-        <Border Grid.Row="0" Margin="0,0,0,18" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,12">
+        <Border Grid.Row="1" Margin="0,0,0,18" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,12">
             <Grid x:Name="TopGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
@@ -146,7 +155,7 @@
         </Border>
 
         <!-- 2. Search & Filters Bar -->
-        <Border Grid.Row="1" Margin="0,0,0,16" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10">
+        <Border Grid.Row="2" Margin="0,0,0,16" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10">
             <Grid x:Name="FiltersBarGrid" RowSpacing="8">
                 <Grid.RowDefinitions>
                     <RowDefinition x:Name="FiltersBarRow0" Height="Auto" />
@@ -181,7 +190,7 @@
         </Border>
 
         <!-- 3. Content Tabs Area (Pivot) -->
-        <Pivot x:Name="ContentPivot" Grid.Row="2" SelectionChanged="OnPivotSelectionChanged">
+        <Pivot x:Name="ContentPivot" Grid.Row="3" SelectionChanged="OnPivotSelectionChanged">
             <!-- Tab 1: Startup Applications -->
             <PivotItem Header="Startup Applications">
                 <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="12" Margin="0,10,0,0">
@@ -392,9 +401,8 @@
             </PivotItem>
         </Pivot>
 
-        <!-- 4. Loading Overlay Indicator -->
         <!-- 4. Loading Overlay Indicator — smooth fade in/out -->
-        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="3" Background="#90000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="100">
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.Resources>
                 <Storyboard x:Name="FadeInLoading">
                     <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
@@ -411,7 +419,7 @@
                     </DoubleAnimation>
                 </Storyboard>
             </Grid.Resources>
-            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="32,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="380">
                 <StackPanel Spacing="16" HorizontalAlignment="Center">
                     <ProgressRing Width="48" Height="48" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" />
                     <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="13.5" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap"/>
@@ -419,7 +427,7 @@
                 </StackPanel>
             </Border>
         </Grid>
-    </Grid>
+        </Grid>
 </Page>
 
 

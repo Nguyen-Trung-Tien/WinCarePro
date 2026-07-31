@@ -14,7 +14,8 @@
         <CollectionViewSource x:Name="GroupedNotificationsCVS" IsSourceGrouped="True" />
     </Page.Resources>
 
-    <Grid Padding="24">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
+        <Grid Padding="24,20" HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -22,9 +23,9 @@
 
         <!-- Header -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
-            <StackPanel Spacing="4">
-                <TextBlock Text="Notifications &amp; Activity Log" FontSize="26" FontWeight="ExtraBold" CharacterSpacing="-0.5" />
-                <TextBlock Text="Review system notifications, update alerts, and detailed operation history logs." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            <StackPanel>
+                <TextBlock Text="Notifications &amp; Activity Log" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="Review system notifications, update alerts, and detailed operation history logs." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 
@@ -229,7 +230,8 @@
                 </Grid>
             </PivotItem>
         </Pivot>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </Page>
 
 

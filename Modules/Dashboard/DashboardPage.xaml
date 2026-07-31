@@ -22,7 +22,7 @@
         </Storyboard>
     </Page.Resources>
 
-    <Grid Padding="24" MaxWidth="1200" HorizontalAlignment="Stretch">
+    <Grid Padding="24,20" HorizontalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1000px -->
@@ -58,8 +58,8 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <TextBlock Text="System Dashboard" FontSize="28" FontWeight="ExtraBold" CharacterSpacing="-10" />
-                <TextBlock Text="Real-time performance monitors, AI diagnostics, and tiered optimization." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
+                <TextBlock Text="System Dashboard" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="Real-time performance monitors, AI diagnostics, and tiered optimization." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 

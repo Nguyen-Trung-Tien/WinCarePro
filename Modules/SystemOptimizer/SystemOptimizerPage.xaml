@@ -10,7 +10,7 @@
     xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
+    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1150px -->
@@ -81,39 +81,24 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Top Header Action & Status Banner (Frosted Glassmorphism Card) -->
-        <Border Grid.Row="0" Margin="0,0,0,18" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-            <Grid x:Name="HeaderActionGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+        <!-- Page Header (Row 0) -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="System Optimizer Panel" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="Optimize system responsiveness, release memory resources, and boost game performance safely." Style="{StaticResource PageHeaderSubtitleStyle}" />
+            </StackPanel>
+            <StackPanel x:Name="HeaderButtons" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Content="Check Registry" Click="OnReloadTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" CornerRadius="6" Padding="12,8" FontSize="12.5" />
+                <Button Content="Restore Windows Defaults" Click="OnRestoreDefaultsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" CornerRadius="6" Padding="12,8" FontSize="12.5" />
+                <Button Content="Apply System Tweaks" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="SemiBold" CornerRadius="6" Padding="16,8" FontSize="12.5" />
+            </StackPanel>
+        </Grid>
 
-                <!-- Left Info Section -->
-                <StackPanel Grid.Column="0" Grid.Row="0" Spacing="6" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Width="48" Height="48" CornerRadius="24" Background="#207F56D9" Margin="0,0,16,0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE945;" Foreground="#FF7F56D9" FontSize="20" />
-                    </Border>
-                    <StackPanel Spacing="2" VerticalAlignment="Center">
-                        <TextBlock Text="System Optimization Panel" FontSize="16" FontWeight="Bold" />
-                        <TextBlock Text="Optimize system responsiveness, release memory resources, and boost game performance safely." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
-                </StackPanel>
-
-                <!-- Right Action Buttons -->
-                <StackPanel x:Name="HeaderButtons" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Button Content="Check Registry" Click="OnReloadTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" CornerRadius="6" Padding="12,8" FontSize="12.5" />
-                    <Button Content="Restore Windows Defaults" Click="OnRestoreDefaultsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" CornerRadius="6" Padding="12,8" FontSize="12.5" />
-                    <Button Content="Apply System Tweaks" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="SemiBold" CornerRadius="6" Padding="16,8" FontSize="12.5" />
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- Main Workspace Grid -->
+        <!-- Main Workspace Grid (Row 1) -->
         <Grid Grid.Row="1" ColumnSpacing="18" RowSpacing="18">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" x:Name="Row0" />
@@ -382,8 +367,8 @@
             </ScrollViewer>
         </Grid>
 
-        <!-- Status Message Footer -->
-        <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,10,0,0" />
+        <!-- Status Message Footer (Row 3) -->
+        <TextBlock Grid.Row="3" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,10,0,0" />
     </Grid>
 </Page>
 

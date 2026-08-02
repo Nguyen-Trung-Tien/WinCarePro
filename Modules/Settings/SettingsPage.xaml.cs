@@ -692,8 +692,12 @@ public sealed partial class SettingsPage : Page
             changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
         }
 
-        var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
-        var remoteVersion = new Version(remoteVerStr);
+        var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(3, 4, 8, 0);
+        string cleanRemoteVer = System.Text.RegularExpressions.Regex.Replace(remoteVerStr, @"[^\d\.]", "").TrimEnd('.');
+        if (!Version.TryParse(cleanRemoteVer, out var remoteVersion))
+        {
+            remoteVersion = new Version(3, 4, 9, 0);
+        }
 
         UpdateProgressRing.IsActive = false;
 

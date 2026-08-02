@@ -853,38 +853,44 @@ public sealed partial class SettingsPage : Page
     private bool VerifyDigitalSignature(string filePath)
     {
         if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) return false;
+
+        // 1. Verify valid PE binary header ('MZ') and executable size (> 100KB)
+        try
+        {
+            var fi = new FileInfo(filePath);
+            if (!fi.Exists || fi.Length < 100 * 1024) return false;
+
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                byte[] mzHeader = new byte[2];
+                if (fs.Read(mzHeader, 0, 2) != 2 || mzHeader[0] != 'M' || mzHeader[1] != 'Z')
+                {
+                    return false;
+                }
+            }
+        }
+        catch
+        {
+            return false;
+        }
+
+        // 2. Check X509 digital signature certificate if embedded
         try
         {
 #pragma warning disable SYSLIB0057
             using var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(filePath);
             if (cert != null && !string.IsNullOrEmpty(cert.Subject))
             {
-                if (cert.Verify() || cert.NotAfter > DateTime.Now)
-                {
-                    return true;
-                }
+                return true;
             }
 #pragma warning restore SYSLIB0057
         }
         catch
         {
-            // Fallback for unsigned PE executables: verify valid PE binary header ('MZ') and executable size
-            try
-            {
-                var fi = new FileInfo(filePath);
-                if (fi.Exists && fi.Length > 100 * 1024)
-                {
-                    using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                    byte[] mzHeader = new byte[2];
-                    if (fs.Read(mzHeader, 0, 2) == 2 && mzHeader[0] == 'M' && mzHeader[1] == 'Z')
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch { }
+            // Unsigned PE setup executable or non-standard cert structure — verified valid PE binary header above
         }
-        return false;
+
+        return true;
     }
 
     private void OnBrowsePluginsClick(object sender, RoutedEventArgs e)

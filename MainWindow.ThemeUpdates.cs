@@ -134,8 +134,12 @@ public sealed partial class MainWindow : Window
                 downloadUrl = root.GetProperty("url").GetString() ?? "";
             }
             
-            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
-            var remoteVersion = new Version(remoteVerStr);
+            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(3, 4, 9, 0);
+            string cleanRemoteVer = System.Text.RegularExpressions.Regex.Replace(remoteVerStr, @"[^\d\.]", "").TrimEnd('.');
+            if (!Version.TryParse(cleanRemoteVer, out var remoteVersion))
+            {
+                remoteVersion = new Version(3, 4, 9, 0);
+            }
 
             if (remoteVersion > currentVersion)
             {

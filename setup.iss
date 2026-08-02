@@ -17,7 +17,6 @@ PrivilegesRequired=admin
 CloseApplications=force
 CloseApplicationsFilter=*.exe
 RestartApplications=yes
-SuppressMsgBoxes=yes
 DirExistsWarning=no
 DisableWelcomePage=yes
 DisableFinishedPage=yes

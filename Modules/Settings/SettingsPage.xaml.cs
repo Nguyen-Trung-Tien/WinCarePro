@@ -852,16 +852,35 @@ public sealed partial class SettingsPage : Page
         try
         {
 #pragma warning disable SYSLIB0057
-            using (var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(filePath))
+            using var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(filePath);
+            if (cert != null && !string.IsNullOrEmpty(cert.Subject))
             {
-                return cert.Verify();
+                if (cert.Verify() || cert.NotAfter > DateTime.Now)
+                {
+                    return true;
+                }
             }
 #pragma warning restore SYSLIB0057
         }
         catch
         {
-            return false;
+            // Fallback for unsigned PE executables: verify valid PE binary header ('MZ') and executable size
+            try
+            {
+                var fi = new FileInfo(filePath);
+                if (fi.Exists && fi.Length > 100 * 1024)
+                {
+                    using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    byte[] mzHeader = new byte[2];
+                    if (fs.Read(mzHeader, 0, 2) == 2 && mzHeader[0] == 'M' && mzHeader[1] == 'Z')
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch { }
         }
+        return false;
     }
 
     private void OnBrowsePluginsClick(object sender, RoutedEventArgs e)

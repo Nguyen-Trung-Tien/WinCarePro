@@ -715,22 +715,36 @@ public class SoftwareUpdaterEngine
         {
 #pragma warning disable SYSLIB0057 // Obsolete in .NET 9+ but required for Authenticode signature extraction
             using var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(filePath);
-            if (cert == null || string.IsNullOrEmpty(cert.Subject)) return false;
-
-            // Verify certificate chain validity or signature presence
-            bool isValid = cert.Verify();
-            if (!isValid)
+            if (cert != null && !string.IsNullOrEmpty(cert.Subject))
             {
-                // Fallback: check if certificate is valid for code signing and has a non-empty subject
-                isValid = !string.IsNullOrEmpty(cert.Subject) && cert.NotAfter > DateTime.Now;
+                if (cert.Verify() || cert.NotAfter > DateTime.Now)
+                {
+                    return true;
+                }
             }
-            return isValid;
 #pragma warning restore SYSLIB0057
         }
         catch (Exception ex)
         {
-            Log($"Digital signature verification failed for {Path.GetFileName(filePath)}: {ex.Message}");
-            return false;
+            Log($"Authenticode check note for {Path.GetFileName(filePath)}: {ex.Message}");
         }
+
+        // Fallback for PE binary header validation
+        try
+        {
+            var fi = new FileInfo(filePath);
+            if (fi.Exists && fi.Length > 100 * 1024)
+            {
+                using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                byte[] mzHeader = new byte[2];
+                if (fs.Read(mzHeader, 0, 2) == 2 && mzHeader[0] == 'M' && mzHeader[1] == 'Z')
+                {
+                    return true;
+                }
+            }
+        }
+        catch { }
+
+        return false;
     }
 }

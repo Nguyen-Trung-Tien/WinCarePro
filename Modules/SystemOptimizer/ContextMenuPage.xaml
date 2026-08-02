@@ -24,7 +24,6 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0">
                 <TextBlock Text="Context Menu Manager" Style="{StaticResource PageHeaderTitleStyle}" />
-                <TextBlock Text="Manage shell extensions and clean up cluttered right-click context menus safely." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
             <Button Grid.Column="1" Content="Scan Context Menus" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" CornerRadius="8" Padding="16,8" FontWeight="SemiBold" />
         </Grid>

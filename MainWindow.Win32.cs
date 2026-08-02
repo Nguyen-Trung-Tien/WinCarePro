@@ -85,6 +85,9 @@ public sealed partial class MainWindow : Window
     [DllImport("shell32.dll", EntryPoint = "Shell_NotifyIconW", CharSet = CharSet.Unicode)]
     private static extern bool Shell_NotifyIcon(int dwMessage, ref NOTIFYICONDATA lpData);
 
+    [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+    private static extern IntPtr ExtractIcon(IntPtr hInst, string lpszExeFileName, int nIconIndex);
+
     [DllImport("user32.dll")]
     private static extern IntPtr LoadImage(IntPtr hInst, string name, uint type, int cx, int cy, uint fuLoad);
 
@@ -316,8 +319,19 @@ public sealed partial class MainWindow : Window
                 iconPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AppIcon.ico");
             }
             
-            // Load 32x32 crisp icon frame for system tray notification area
-            _hIcon = LoadImage(IntPtr.Zero, iconPath, 1, 32, 32, 0x00000010); // IMAGE_ICON | LR_LOADFROMFILE
+            if (File.Exists(iconPath))
+            {
+                // Load 32x32 crisp icon frame for system tray notification area
+                _hIcon = LoadImage(IntPtr.Zero, iconPath, 1, 32, 32, 0x00000010); // IMAGE_ICON | LR_LOADFROMFILE
+            }
+            else
+            {
+                string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? "";
+                if (!string.IsNullOrEmpty(exePath) && File.Exists(exePath))
+                {
+                    _hIcon = ExtractIcon(IntPtr.Zero, exePath, 0);
+                }
+            }
 
             var nid = new NOTIFYICONDATA
             {

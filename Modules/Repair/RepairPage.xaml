@@ -53,7 +53,6 @@
             </Grid.ColumnDefinitions>
             <StackPanel x:Name="HeaderTitlePanel" Grid.Column="0" Grid.Row="0">
                 <TextBlock Text="System Repair Center" Style="{StaticResource PageHeaderTitleStyle}" />
-                <TextBlock Text="Diagnose registry policies, check Windows components integrity, fix core services, and restore network settings." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
             <StackPanel x:Name="HeaderButtonsPanel" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
 
@@ -243,14 +242,13 @@
 
                     <TextBlock Text="Manual Troubleshooting Tools" FontSize="16" FontWeight="ExtraBold" Margin="0,8,0,0"/>
 
-                    <!-- SFC & DISM integrity Scans -->
+                    <!-- SFC & DISM Component Fixer -->
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
-                        <StackPanel Spacing="8">
+                        <StackPanel Spacing="10">
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xF16A;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE9F5;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" />
                                 <TextBlock Text="SFC Component Verification" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
                             </StackPanel>
-                            <TextBlock Text="Scans and restores system file indices against the local Windows components store." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                             <Grid ColumnSpacing="8" Margin="0,4,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -280,7 +278,6 @@
                                     <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="Tomato" VerticalAlignment="Center"/>
                                     <TextBlock Text="Registry &amp; Policies" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
                                 </StackPanel>
-                                <TextBlock Text="Restore standard policies allowing Task Manager, Command Prompt, Registry Editor and fix file links." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                 <Button Content="Repair Registry Policies" Click="OnRepairRegistryPoliciesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,6" HorizontalAlignment="Stretch" />
                             </StackPanel>
 
@@ -290,7 +287,6 @@
                                     <FontIcon Glyph="&#xEC7A;" FontSize="18" Foreground="MediumAquamarine" VerticalAlignment="Center"/>
                                     <TextBlock Text="System Protection" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
                                 </StackPanel>
-                                <TextBlock Text="Create a system restore point checkpoint immediately. Safely undo any system modifications." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                 <Button Content="Create Restore Point" Click="OnCreateRestorePointClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,6" HorizontalAlignment="Stretch" />
                             </StackPanel>
                         </Grid>
@@ -310,7 +306,6 @@
                                     <FontIcon Glyph="&#xE736;" FontSize="18" Foreground="Crimson" VerticalAlignment="Center"/>
                                     <TextBlock Text="Windows Update Fixer" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
                                 </StackPanel>
-                                <TextBlock Text="Resets update databases, stops loops, flushes temporary system download cache files, and restarts services." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                 <Button Content="Reset Update Components" Click="OnResetUpdateClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,6" HorizontalAlignment="Stretch" />
                             </StackPanel>
 
@@ -320,7 +315,6 @@
                                     <FontIcon Glyph="&#xE774;" FontSize="18" Foreground="DodgerBlue" VerticalAlignment="Center"/>
                                     <TextBlock Text="Network Stack Reset" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
                                 </StackPanel>
-                                <TextBlock Text="Flushes DNS resolver logs, registers DNS names, releases/renews network adapter IP leases and resets Winsock catalog." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                 <Button Content="Flush DNS &amp; Winsock Reset" Click="OnRepairNetworkStackClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,6" HorizontalAlignment="Stretch" />
                             </StackPanel>
                         </Grid>

@@ -72,7 +72,7 @@ public class DbManager
         }
     }
 
-    private static string? _cachedSettings;
+    private static volatile string? _cachedSettings;
 
     public static void InitializeDatabase()
     {
@@ -243,7 +243,7 @@ public class DbManager
                     Action = reader.GetString(1),
                     Module = reader.GetString(2),
                     Status = reader.GetString(3),
-                    CreatedAt = reader.GetDateTime(4)
+                    CreatedAt = DateTime.TryParse(reader.GetValue(4)?.ToString(), out var dt) ? dt : DateTime.Now
                 });
             }
             return logs;
@@ -413,7 +413,7 @@ public class DbManager
                     Message = reader.GetString(2),
                     Level = reader.GetString(3),
                     IsRead = reader.GetInt32(4) != 0,
-                    CreatedAt = DateTime.TryParse(reader.GetString(5), out var dt) ? dt : DateTime.Now
+                    CreatedAt = DateTime.TryParse(reader.GetValue(5)?.ToString(), out var dt) ? dt : DateTime.Now
                 });
             }
             return list;

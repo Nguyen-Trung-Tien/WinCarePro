@@ -25,7 +25,6 @@
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <StackPanel>
                 <TextBlock Text="Notifications &amp; Activity Log" Style="{StaticResource PageHeaderTitleStyle}" />
-                <TextBlock Text="Review system notifications, update alerts, and detailed operation history logs." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 

@@ -96,7 +96,6 @@
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <StackPanel>
                 <TextBlock Text="App Uninstaller" Style="{StaticResource PageHeaderTitleStyle}" />
-                <TextBlock Text="Manage installed programs, remove residual registry keys, delete leftover files, and force uninstall store applications." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 

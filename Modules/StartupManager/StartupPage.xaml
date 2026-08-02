@@ -80,7 +80,6 @@
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <StackPanel>
                 <TextBlock Text="Startup &amp; Services" Style="{StaticResource PageHeaderTitleStyle}" />
-                <TextBlock Text="Manage startup applications, analyze boot impact, and optimize background system loading time." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 
@@ -265,24 +264,6 @@
                 <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="24" Margin="0,10,0,0">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel Spacing="20" MaxWidth="680" HorizontalAlignment="Left">
-
-                            <!-- Info banner -->
-                            <Border Background="#153B82F6" BorderBrush="#303B82F6" BorderThickness="1" CornerRadius="12" Padding="20">
-                                <Grid ColumnSpacing="16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Border Width="48" Height="48" CornerRadius="24" Background="#253B82F6" VerticalAlignment="Center">
-                                        <FontIcon Glyph="&#xE713;" FontSize="22" Foreground="#FF3B82F6"/>
-                                    </Border>
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
-                                        <TextBlock Text="Windows Services Manager provides full control" FontSize="15" FontWeight="Bold"/>
-                                        <TextBlock Text="Windows Services Manager (services.msc) is the official tool for managing all system services — start, stop, restart, and configure startup types safely." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-
                             <!-- Open Services Manager -->
                             <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="20">
                                 <Grid ColumnSpacing="16">
@@ -296,7 +277,6 @@
                                     </Border>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                         <TextBlock Text="Services Manager (services.msc)" FontWeight="Bold" FontSize="14"/>
-                                        <TextBlock Text="View all 200+ Windows services, start/stop/restart them, configure automatic or manual startup types." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                     <Button Grid.Column="2" Content="Open →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" Click="OnOpenServicesMscClick" CornerRadius="8" Padding="16,8"/>
                                 </Grid>
@@ -315,7 +295,6 @@
                                     </Border>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                         <TextBlock Text="Task Manager → Services" FontWeight="Bold" FontSize="14"/>
-                                        <TextBlock Text="Quick-access the Services tab in Task Manager to start/stop services alongside active processes." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                     <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenTaskMgrServicesClick" CornerRadius="8" Padding="16,8"/>
                                 </Grid>

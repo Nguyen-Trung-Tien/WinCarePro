@@ -161,7 +161,6 @@
             </Grid.ColumnDefinitions>
             <StackPanel x:Name="HeaderTextPanel" Grid.Row="0" Grid.Column="0">
                 <TextBlock Text="Network Center &amp; Diagnostics" FontSize="28" FontWeight="ExtraBold" CharacterSpacing="-10" />
-                <TextBlock Text="Monitor connection quality, query true DNS latency, view active connections, and apply advanced repairs." Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0" />
             </StackPanel>
             <Button x:Name="RefreshBtn" Grid.Row="0" Grid.Column="1" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Center" Padding="18,9" CornerRadius="8" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White">
                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -641,8 +640,7 @@
                             </StackPanel>
                         </Border>
 
-                        <TextBlock Text="Domain Name System (DNS) maps domain names to IP addresses. Having low DNS resolution query latencies is critical for instant web-browsing response speeds, gaming latency stability, and preventing loading delay spikes." FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="18" />
-                        <TextBlock Text="* Note: The benchmark tests standard UDP DNS resolving (Port 53) directly. Applying the DNS settings will bind all active local network adapters to the selected static servers." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Opacity="0.8" TextWrapping="Wrap" />
+
                     </StackPanel>
                 </Border>
             </Grid>

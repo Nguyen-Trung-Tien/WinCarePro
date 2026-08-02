@@ -154,7 +154,7 @@ public sealed partial class MainWindow : Window
 
                 if (autoInstall)
                 {
-                    _ = DownloadBackgroundUpdateAsync(downloadUrl, remoteVerStr);
+                    _ = DownloadBackgroundUpdateAsync(downloadUrl, remoteVerStr, autoInstall: true);
                 }
                 else
                 {
@@ -165,7 +165,7 @@ public sealed partial class MainWindow : Window
         catch { }
     }
 
-    private async Task DownloadBackgroundUpdateAsync(string downloadUrl, string remoteVerStr)
+    private async Task DownloadBackgroundUpdateAsync(string downloadUrl, string remoteVerStr, bool autoInstall = false)
     {
         if (string.IsNullOrEmpty(downloadUrl)) return;
         
@@ -196,14 +196,32 @@ public sealed partial class MainWindow : Window
 
             _downloadedSetupPath = setupFilePath;
 
-            this.DispatcherQueue.TryEnqueue(() =>
+            if (autoInstall)
             {
-                DbManager.AddNotification(
-                    "Update Ready to Install".T(),
-                    string.Format("Version {0} is successfully downloaded. Click here to restart and install now.".T(), remoteVerStr),
-                    "Success"
-                );
-            });
+                DbManager.LogAction($"Update v{remoteVerStr} downloaded. Initiating silent background update installation...", "Software Updater", "Success");
+                this.DispatcherQueue.TryEnqueue(() =>
+                {
+                    var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
+                    notificationService?.ShowToast("Installing Update".T(), string.Format("Version v{0} downloaded. Restarting application to apply update...", remoteVerStr), Services.Contracts.NotificationSeverity.Success);
+                });
+
+                await Task.Delay(2000);
+                this.DispatcherQueue.TryEnqueue(() =>
+                {
+                    InstallDownloadedUpdate(silent: true);
+                });
+            }
+            else
+            {
+                this.DispatcherQueue.TryEnqueue(() =>
+                {
+                    DbManager.AddNotification(
+                        "Update Ready to Install".T(),
+                        string.Format("Version {0} is successfully downloaded. Click here to restart and install now.".T(), remoteVerStr),
+                        "Success"
+                    );
+                });
+            }
         }
         catch (Exception ex)
         {
@@ -254,7 +272,7 @@ public sealed partial class MainWindow : Window
         catch { }
     }
 
-    private void InstallDownloadedUpdate()
+    public void InstallDownloadedUpdate(bool silent = false)
     {
         if (string.IsNullOrEmpty(_downloadedSetupPath) || !File.Exists(_downloadedSetupPath))
         {
@@ -265,13 +283,25 @@ public sealed partial class MainWindow : Window
 
         try
         {
+            string args = silent 
+                ? "/VERYSILENT /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS" 
+                : "/CLOSEAPPLICATIONS /RESTARTAPPLICATIONS";
+
             var psi = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = _downloadedSetupPath,
+                Arguments = args,
                 UseShellExecute = true
             };
+
+            DbManager.LogAction($"Launching update installer {(silent ? "(Silent Auto-Install)" : "")}...", "Software Updater", "Success");
+            
+            CleanupTrayIcon();
+
             System.Diagnostics.Process.Start(psi);
-            Microsoft.UI.Xaml.Application.Current.Exit();
+            
+            // Terminate running process immediately to free file locks for installer overwrite
+            Environment.Exit(0);
         }
         catch (Exception ex)
         {

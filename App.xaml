@@ -12,43 +12,74 @@
 
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
-                    <!-- Dark Theme Tokens -->
-                    <SolidColorBrush x:Key="AppCardBackground" Color="#221E1E2E" />
-                    <SolidColorBrush x:Key="AppCardBorder" Color="#357F56D9" />
-                    <SolidColorBrush x:Key="AppCardSubtleBorder" Color="#1FFFFFFF" />
-                    <SolidColorBrush x:Key="AppSecondaryCardBackground" Color="#18182432" />
-                    <SolidColorBrush x:Key="AppStatChipBackground" Color="#152A2A3E" />
-                    <SolidColorBrush x:Key="AppStatChipBorder" Color="#257F56D9" />
-                    <SolidColorBrush x:Key="AppTerminalBackground" Color="#080810" />
-                    <SolidColorBrush x:Key="AppTerminalForeground" Color="#00F2FE" />
-                    <SolidColorBrush x:Key="AppBadgeGoodBg" Color="#1E10B981" />
-                    <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#4010B981" />
-                    <SolidColorBrush x:Key="AppBadgeWarningBg" Color="#1EF59E0B" />
-                    <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#40F59E0B" />
-                    <SolidColorBrush x:Key="AppBadgeCriticalBg" Color="#1EEF4444" />
-                    <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#40EF4444" />
+                    <!-- Dark Theme Tokens (Deep Space Glass, High Contrast & Cyber Neon) -->
+                    <SolidColorBrush x:Key="AppCardBackground" Color="#E514141F" />
+                    <SolidColorBrush x:Key="AppCardBorder" Color="#408B5CF6" />
+                    <SolidColorBrush x:Key="AppCardSubtleBorder" Color="#25FFFFFF" />
+                    <SolidColorBrush x:Key="AppSecondaryCardBackground" Color="#F01C1C2B" />
+                    <SolidColorBrush x:Key="AppStatChipBackground" Color="#E0222138" />
+                    <SolidColorBrush x:Key="AppStatChipBorder" Color="#508B5CF6" />
+                    <SolidColorBrush x:Key="AppTerminalBackground" Color="#FF0B0B14" />
+                    <SolidColorBrush x:Key="AppTerminalForeground" Color="#FF00F2FE" />
+                    <SolidColorBrush x:Key="AppBadgeGoodBg" Color="#2510B981" />
+                    <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#6010B981" />
+                    <SolidColorBrush x:Key="AppBadgeWarningBg" Color="#25F59E0B" />
+                    <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#60F59E0B" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalBg" Color="#25EF4444" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#60EF4444" />
+                    <SolidColorBrush x:Key="AppCpuChipBg" Color="#25F59E0B" />
+                    <SolidColorBrush x:Key="AppCpuChipBorder" Color="#60F59E0B" />
+                    <SolidColorBrush x:Key="AppCpuChipFg" Color="#FFFBF59E" />
+                    <SolidColorBrush x:Key="AppRamChipBg" Color="#253B82F6" />
+                    <SolidColorBrush x:Key="AppRamChipBorder" Color="#603B82F6" />
+                    <SolidColorBrush x:Key="AppRamChipFg" Color="#FF60A5FA" />
+                    
+                    <!-- System Text & Control Overrides for 100% Seamless Dark Mode Readability & Layout Consistency -->
+                    <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#FF94A3B8" />
+                    <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#94A3B8" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#E514141F" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#F01C1C2B" />
+                    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#D5141424" />
+                    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="#FF0F0E17" />
+                    <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="#308B5CF6" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
-                    <!-- Light Theme Tokens (Ultra High-Contrast, Bold Borders & Vivid Icons) -->
+                    <!-- Light Theme Tokens (Ultra Premium Structural Precision, Crisp Slate-Ice & Vivid Accents) -->
                     <SolidColorBrush x:Key="AppCardBackground" Color="#FFFFFFFF" />
-                    <SolidColorBrush x:Key="AppCardBorder" Color="#456366F1" />
-                    <SolidColorBrush x:Key="AppCardSubtleBorder" Color="#30000000" />
-                    <SolidColorBrush x:Key="AppSecondaryCardBackground" Color="#F1F5F9" />
-                    <SolidColorBrush x:Key="AppStatChipBackground" Color="#EEF2FF" />
-                    <SolidColorBrush x:Key="AppStatChipBorder" Color="#506366F1" />
+                    <SolidColorBrush x:Key="AppCardBorder" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="AppCardSubtleBorder" Color="#E2E8F0" />
+                    <SolidColorBrush x:Key="AppSecondaryCardBackground" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="AppStatChipBackground" Color="#F0F4FF" />
+                    <SolidColorBrush x:Key="AppStatChipBorder" Color="#A5B4FC" />
                     <SolidColorBrush x:Key="AppTerminalBackground" Color="#F8FAFC" />
                     <SolidColorBrush x:Key="AppTerminalForeground" Color="#0F172A" />
-                    <SolidColorBrush x:Key="AppBadgeGoodBg" Color="#2210B981" />
-                    <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#8010B981" />
-                    <SolidColorBrush x:Key="AppBadgeWarningBg" Color="#22F59E0B" />
-                    <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#80F59E0B" />
-                    <SolidColorBrush x:Key="AppBadgeCriticalBg" Color="#22EF4444" />
-                    <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#80EF4444" />
+                    <SolidColorBrush x:Key="AppBadgeGoodBg" Color="#ECFDF5" />
+                    <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#6EE7B7" />
+                    <SolidColorBrush x:Key="AppBadgeWarningBg" Color="#FFFBEB" />
+                    <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#FDE68A" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalBg" Color="#FEF2F2" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#FCA5A5" />
+                    <SolidColorBrush x:Key="AppCpuChipBg" Color="#FFFBEB" />
+                    <SolidColorBrush x:Key="AppCpuChipBorder" Color="#FDE68A" />
+                    <SolidColorBrush x:Key="AppCpuChipFg" Color="#B45309" />
+                    <SolidColorBrush x:Key="AppRamChipBg" Color="#EFF6FF" />
+                    <SolidColorBrush x:Key="AppRamChipBorder" Color="#BFDBFE" />
+                    <SolidColorBrush x:Key="AppRamChipFg" Color="#1D4ED8" />
                     
-                    <!-- System Text & Control Overrides for Crisp Light Mode Readability -->
-                    <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#334155" /> <!-- Rich Dark Slate for labels/subtext -->
-                    <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#F1F5F9" />
-                    <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="#CBD5E1" /> <!-- Crisp border stroke -->
+                    <!-- System Text & Control Overrides for 100% Seamless Premium Light Mode Layout -->
+                    <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#334155" />
+                    <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#0F172A" />
+                    <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#475569" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#FFFFFFFF" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#F1F5F9" />
+                    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="#F5F7FA" />
+                    <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="#E2E8F0" />
+                    <SolidColorBrush x:Key="SubtleFillColorSecondaryBrush" Color="#F1F5F9" />
+                    <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="#EEF2FF" />
+                    <SolidColorBrush x:Key="SystemControlHighlightListMediumBrush" Color="#E0E7FF" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
@@ -309,6 +340,14 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+            </Style>
+
+            <!-- Modern ListViewItem Container Style (Clean rounded card container) -->
+            <Style x:Key="ModernCardListViewItemStyle" TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Margin" Value="0,0,0,8" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
 
             <!-- Value Converters -->

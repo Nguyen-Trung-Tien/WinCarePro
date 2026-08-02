@@ -52,7 +52,6 @@
         <Grid Grid.Row="0" Margin="0,0,0,24">
             <StackPanel>
                 <TextBlock Text="Security &amp; Privacy Shield" Style="{StaticResource PageHeaderTitleStyle}" />
-                <TextBlock Text="Monitor local security components, verify hardware platform trust levels, and tune privacy profiles." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 
@@ -278,15 +277,6 @@
 
                                         <Button Content="Wipe Clipboard Cache" Click="OnClearClipboardClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" HorizontalAlignment="Stretch" Padding="14,8" />
                                         <Button Content="Clear Recent Files &amp; Run History" Click="OnClearRecentClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" HorizontalAlignment="Stretch" Padding="14,8" />
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="24">
-                                    <StackPanel Spacing="12">
-                                        <TextBlock Text="Privacy Guard Summary" FontSize="18" FontWeight="Bold" Margin="0,0,0,4" />
-                                        <TextBlock Text="• WinCare Pro privacy settings configure official Windows Registry parameters. These apply instantly and do not run third party agent daemons." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
-                                        <TextBlock Text="• Disabling telemetry restricts Windows updates from monitoring usage diagnostics, which may reduce background data usage." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
-                                        <TextBlock Text="• Traces clearing deletes temporary shortcuts inside Explorer Recent files history." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
                                     </StackPanel>
                                 </Border>
                             </Grid>

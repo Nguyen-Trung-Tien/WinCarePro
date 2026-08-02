@@ -46,7 +46,7 @@ public class ProcessService
 
     private readonly SemaphoreSlim _querySemaphore = new(1, 1);
     private readonly HashSet<int> _accessDeniedPids = new();
-    private Dictionary<int, (TimeSpan cpuTime, DateTime sampleTime)> _lastCpuSamples = new();
+    private System.Collections.Concurrent.ConcurrentDictionary<int, (TimeSpan cpuTime, DateTime sampleTime)> _lastCpuSamples = new();
     private static readonly Dictionary<int, ProcessMetadata> _metadataCache = new();
     private static readonly object _cacheLock = new();
     private const int CACHE_TTL_SECONDS = 60;
@@ -188,7 +188,7 @@ public class ProcessService
         try
         {
             var sampleTime = DateTime.UtcNow;
-            var currentSamples = new Dictionary<int, (TimeSpan cpuTime, DateTime sampleTime)>();
+            var currentSamples = new System.Collections.Concurrent.ConcurrentDictionary<int, (TimeSpan cpuTime, DateTime sampleTime)>();
 
             var activePids = new HashSet<int>(rawProcesses.Select(p => p.Id));
             _accessDeniedPids.IntersectWith(activePids);

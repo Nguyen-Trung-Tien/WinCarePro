@@ -1,7 +1,7 @@
 {
-  "version": "3.4.8",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.8/WinCareProSetup.exe",
-  "changelog": "Cập nhật v3.4.8: Tối ưu hóa giao diện RAM Booster & System Tweaks Summary gọn gàng, trực quan; nâng cấp độ tương phản cao sắc nét cho chế độ Light Mode; tăng cường bảo mật chữ ký số Authenticode và mã hóa HTTPS; tối ưu hiệu năng toàn bộ hệ thống.",
+  "version": "3.4.9",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.9/WinCareProSetup.exe",
+  "changelog": "Cập nhật v3.4.9: Tái cấu trúc kiến trúc UI mô-đun hóa, nâng cấp toàn diện giao diện Fluent UI 3D & hiệu ứng kính mờ (Mica/Acrylic); tối ưu hóa công cụ đo tốc độ mạng Network SpeedTest; tăng cường độ ổn định SQLite DBManager & hiệu năng quét rác Junk Cleaner.",
   "beta_version": "3.4.9-beta",
   "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.9-beta/WinCareProSetup_Beta.exe",
   "beta_changelog": "Not Found Error"

@@ -8,6 +8,11 @@ namespace WinCarePro.Engines;
 
 public partial class NetworkEngine
 {
+    private static readonly HttpClient SpeedTestHttpClient = new HttpClient
+    {
+        Timeout = TimeSpan.FromSeconds(15)
+    };
+
     public async Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null)
     {
         Log("Starting multi-threaded download speed test...");
@@ -16,7 +21,7 @@ public partial class NetworkEngine
         long totalBytes = 0;
         var stopwatch = Stopwatch.StartNew();
         
-        var cts = new System.Threading.CancellationTokenSource();
+        using var cts = new System.Threading.CancellationTokenSource();
         var tasks = new List<Task>();
         
         for (int i = 0; i < numThreads; i++)
@@ -25,9 +30,7 @@ public partial class NetworkEngine
             {
                 try
                 {
-                    using var client = new HttpClient();
-                    client.Timeout = TimeSpan.FromSeconds(15);
-                    using var response = await client.GetAsync(testUrl, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+                    using var response = await SpeedTestHttpClient.GetAsync(testUrl, HttpCompletionOption.ResponseHeadersRead, cts.Token);
                     if (response.IsSuccessStatusCode)
                     {
                         using var stream = await response.Content.ReadAsStreamAsync(cts.Token);
@@ -92,7 +95,7 @@ public partial class NetworkEngine
         long totalUploadedBytes = 0;
         var stopwatch = Stopwatch.StartNew();
         
-        var cts = new System.Threading.CancellationTokenSource();
+        using var cts = new System.Threading.CancellationTokenSource();
         var tasks = new List<Task>();
         
         byte[] dummyData = new byte[1024 * 512]; // 512 KB chunks
@@ -104,13 +107,10 @@ public partial class NetworkEngine
             {
                 try
                 {
-                    using var client = new HttpClient();
-                    client.Timeout = TimeSpan.FromSeconds(15);
-                    
                     while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 8.0)
                     {
                         var content = new ByteArrayContent(dummyData);
-                        var response = await client.PostAsync(uploadUrl, content, cts.Token);
+                        var response = await SpeedTestHttpClient.PostAsync(uploadUrl, content, cts.Token);
                         if (response.IsSuccessStatusCode)
                         {
                             System.Threading.Interlocked.Add(ref totalUploadedBytes, dummyData.Length);

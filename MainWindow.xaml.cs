@@ -55,6 +55,18 @@ public sealed partial class MainWindow : Window
                     SetTaskbarIcon(hIconBig, hIconSmall);
                 }
             }
+            else
+            {
+                string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName ?? "";
+                if (!string.IsNullOrEmpty(exePath) && File.Exists(exePath))
+                {
+                    var hIconExtracted = ExtractIcon(IntPtr.Zero, exePath, 0);
+                    if (hIconExtracted != IntPtr.Zero)
+                    {
+                        SetTaskbarIcon(hIconExtracted, hIconExtracted);
+                    }
+                }
+            }
         }
         catch { }
 

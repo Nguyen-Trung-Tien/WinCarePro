@@ -20,7 +20,6 @@
         <Grid Grid.Row="0" Margin="0,0,0,24">
             <StackPanel>
                 <TextBlock Text="Registry Center" Style="{StaticResource PageHeaderTitleStyle}" />
-                <TextBlock Text="Safely backup, restore registry hives, and access the official Windows Registry Editor." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 
@@ -33,23 +32,6 @@
             <!-- Left: Registry Editor Redirect (replaces Registry Cleaner) -->
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
                 <StackPanel Spacing="16">
-
-                    <!-- Warning/Info Banner -->
-                    <Border Background="#15F59E0B" BorderBrush="#30F59E0B" BorderThickness="1" CornerRadius="12" Padding="20">
-                        <Grid ColumnSpacing="16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Width="44" Height="44" CornerRadius="22" Background="#25F59E0B" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE7BA;" FontSize="20" Foreground="#FFF59E0B"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
-                                <TextBlock Text="Registry Cleaner tools are not recommended" FontSize="14" FontWeight="Bold"/>
-                                <TextBlock Text="Microsoft advises against using third-party registry cleaners. Incorrect registry changes can cause system instability. Use the official Registry Editor (regedit) for manual edits, or create a backup first." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
 
                     <!-- Open Registry Editor -->
                     <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="20">
@@ -64,7 +46,6 @@
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                 <TextBlock Text="Registry Editor (regedit)" FontWeight="Bold" FontSize="14"/>
-                                <TextBlock Text="Official Windows tool to browse, search, edit, and export registry keys. Always create a backup before making changes." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                             </StackPanel>
                             <Button Grid.Column="2" Content="Open →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" Click="OnOpenRegeditClick" CornerRadius="8" Padding="16,8"/>
                         </Grid>
@@ -83,7 +64,6 @@
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                 <TextBlock Text="System Restore (rstrui)" FontWeight="Bold" FontSize="14"/>
-                                <TextBlock Text="Roll back Windows to a previous restore point if a registry or system change causes problems." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                             </StackPanel>
                             <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenSystemRestoreClick" CornerRadius="8" Padding="16,8"/>
                         </Grid>

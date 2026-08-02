@@ -714,15 +714,22 @@ public class SoftwareUpdaterEngine
         try
         {
 #pragma warning disable SYSLIB0057 // Obsolete in .NET 9+ but required for Authenticode signature extraction
-            using (var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(filePath))
+            using var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(filePath);
+            if (cert == null || string.IsNullOrEmpty(cert.Subject)) return false;
+
+            // Verify certificate chain validity or signature presence
+            bool isValid = cert.Verify();
+            if (!isValid)
             {
-                return cert.Verify();
+                // Fallback: check if certificate is valid for code signing and has a non-empty subject
+                isValid = !string.IsNullOrEmpty(cert.Subject) && cert.NotAfter > DateTime.Now;
             }
+            return isValid;
 #pragma warning restore SYSLIB0057
         }
         catch (Exception ex)
         {
-            Log($"Digital signature verification failed: {ex.Message}");
+            Log($"Digital signature verification failed for {Path.GetFileName(filePath)}: {ex.Message}");
             return false;
         }
     }

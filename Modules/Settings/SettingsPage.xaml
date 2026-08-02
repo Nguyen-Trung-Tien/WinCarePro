@@ -410,7 +410,7 @@
                                 <StackPanel VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="WinCare Pro" FontSize="20" FontWeight="ExtraBold" />
                                     <TextBlock Text="System Optimizer &amp; Security Shield" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="Version 3.4.8 (Stable Release)" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="Version 3.4.9 (Stable Release)" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                 </StackPanel>
                             </StackPanel>
 

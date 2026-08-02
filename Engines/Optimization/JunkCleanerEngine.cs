@@ -99,6 +99,7 @@ public class JunkCleanerEngine
                             fileItems.Add(new JunkFileItem { Path = file, SizeBytes = size, IsLocked = false });
                         }
                     }
+                    catch (OperationCanceledException) { throw; }
                     catch { }
                 }
             }
@@ -118,6 +119,7 @@ public class JunkCleanerEngine
                             if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
                                 continue;
                         }
+                        catch (OperationCanceledException) { throw; }
                         catch { }
 
                         int remainingMax = Math.Max(0, maxFiles - fileItems.Count);

@@ -125,6 +125,19 @@
             </StackPanel>
         </Grid>
 
+        <!-- v4.0.0 Aura Glass 2.0 — Aurora Gradient Line under Title Bar -->
+        <Border Grid.Row="0" Height="1.5" VerticalAlignment="Bottom" Opacity="0.6" Canvas.ZIndex="5">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="#008B5CF6" Offset="0" />
+                    <GradientStop Color="#FF8B5CF6" Offset="0.2" />
+                    <GradientStop Color="#FF06B6D4" Offset="0.5" />
+                    <GradientStop Color="#FFF59E0B" Offset="0.8" />
+                    <GradientStop Color="#008B5CF6" Offset="1" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
+
         <!-- Main Frame -->
         <Frame x:Name="RootFrame" Grid.Row="1" />
 

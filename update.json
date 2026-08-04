@@ -1,8 +1,8 @@
 {
-  "version": "3.4.9",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.9/WinCareProSetup.exe",
-  "changelog": "Cập nhật v3.4.9: Tái cấu trúc kiến trúc UI mô-đun hóa, nâng cấp toàn diện giao diện Fluent UI 3D & hiệu ứng kính mờ (Mica/Acrylic); tối ưu hóa công cụ đo tốc độ mạng Network SpeedTest; tăng cường độ ổn định SQLite DBManager & hiệu năng quét rác Junk Cleaner.",
-  "beta_version": "3.5.0-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v3.4.9-beta/WinCareProSetup_Beta.exe",
-  "beta_changelog": "Not Found Error"
+  "version": "4.0.0",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.0.0/WinCareProSetup.exe",
+  "changelog": "Cập nhật v4.0.0: Đột phá toàn diện giao diện Aura Glassmorphic 2.0, hệ thống chuyển động 120 FPS GPU-accelerated Composition Animations, tích hợp AI Health Copilot Engine trực tiếp trên Dashboard, hợp nhất Gaming Turbo 2.0 Suite vào System Optimizer, và nâng cấp linh hoạt trải nghiệm mượt mà không lỗi.",
+  "beta_version": "4.0.1-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.0.0-beta/WinCareProSetup_Beta.exe",
+  "beta_changelog": "WinCare Pro v4.0.0 Evolution Release"
 }

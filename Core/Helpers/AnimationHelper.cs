@@ -86,6 +86,172 @@ public static class AnimationHelper
     }
 
     // ==========================================
+    // 3. Attached Property: EntranceDelay (NEW v4.0.0)
+    //    Auto-triggers spring entrance animation with specified delay when element loads.
+    // ==========================================
+    public static readonly DependencyProperty EntranceDelayProperty =
+        DependencyProperty.RegisterAttached(
+            "EntranceDelay",
+            typeof(double),
+            typeof(AnimationHelper),
+            new PropertyMetadata(-1.0, OnEntranceDelayChanged));
+
+    public static double GetEntranceDelay(DependencyObject obj) => (double)obj.GetValue(EntranceDelayProperty);
+    public static void SetEntranceDelay(DependencyObject obj, double value) => obj.SetValue(EntranceDelayProperty, value);
+
+    private static void OnEntranceDelayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement element && e.NewValue is double delayMs && delayMs >= 0)
+        {
+            element.Loaded -= Element_EntranceLoaded;
+            element.Loaded += Element_EntranceLoaded;
+        }
+    }
+
+    private static void Element_EntranceLoaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement element)
+        {
+            double delayMs = GetEntranceDelay(element);
+            ElementCompositionPreview.SetIsTranslationEnabled(element, true);
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            var compositor = visual.Compositor;
+
+            // Set initial state via Translation (does not corrupt XAML layout Offset)
+            visual.Properties.InsertVector3("Translation", new Vector3(0, 20, 0));
+            visual.Opacity = 0.0f;
+
+            // Spring translation animation
+            var springTranslation = compositor.CreateSpringVector3Animation();
+            springTranslation.Target = "Translation";
+            springTranslation.FinalValue = new Vector3(0, 0, 0);
+            springTranslation.DampingRatio = 0.78f;
+            springTranslation.Period = TimeSpan.FromMilliseconds(320);
+
+            // Opacity fade-in
+            var opacityAnim = compositor.CreateScalarKeyFrameAnimation();
+            opacityAnim.InsertKeyFrame(0.0f, 0.0f);
+            opacityAnim.InsertKeyFrame(1.0f, 1.0f, compositor.CreateCubicBezierEasingFunction(
+                new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+            opacityAnim.Duration = TimeSpan.FromMilliseconds(350);
+
+            if (delayMs > 0)
+            {
+                springTranslation.DelayTime = TimeSpan.FromMilliseconds(delayMs);
+                springTranslation.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                opacityAnim.DelayTime = TimeSpan.FromMilliseconds(delayMs);
+                opacityAnim.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            }
+
+            visual.StartAnimation("Translation", springTranslation);
+            visual.StartAnimation("Opacity", opacityAnim);
+
+            // Unsubscribe after first load to prevent re-animation
+            element.Loaded -= Element_EntranceLoaded;
+        }
+    }
+
+    // ==========================================
+    // 4. Attached Property: GlowOnFocus (NEW v4.0.0)
+    //    Adds a pulsing opacity glow when element receives keyboard focus.
+    // ==========================================
+    public static readonly DependencyProperty GlowOnFocusProperty =
+        DependencyProperty.RegisterAttached(
+            "GlowOnFocus",
+            typeof(bool),
+            typeof(AnimationHelper),
+            new PropertyMetadata(false, OnGlowOnFocusChanged));
+
+    public static bool GetGlowOnFocus(DependencyObject obj) => (bool)obj.GetValue(GlowOnFocusProperty);
+    public static void SetGlowOnFocus(DependencyObject obj, bool value) => obj.SetValue(GlowOnFocusProperty, value);
+
+    private static void OnGlowOnFocusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement element)
+        {
+            element.GotFocus -= Element_GotFocus_Glow;
+            element.LostFocus -= Element_LostFocus_Glow;
+
+            if (e.NewValue is bool enabled && enabled)
+            {
+                element.GotFocus += Element_GotFocus_Glow;
+                element.LostFocus += Element_LostFocus_Glow;
+            }
+        }
+    }
+
+    private static void Element_GotFocus_Glow(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement element)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            var compositor = visual.Compositor;
+
+            // Subtle scale-up on focus
+            UpdateCenterPoint(element);
+            var scaleAnim = compositor.CreateVector3KeyFrameAnimation();
+            scaleAnim.Duration = TimeSpan.FromMilliseconds(200);
+            scaleAnim.InsertKeyFrame(1.0f, new Vector3(1.02f, 1.02f, 1.0f),
+                compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+            visual.StartAnimation("Scale", scaleAnim);
+        }
+    }
+
+    private static void Element_LostFocus_Glow(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement element)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            var compositor = visual.Compositor;
+
+            var scaleAnim = compositor.CreateVector3KeyFrameAnimation();
+            scaleAnim.Duration = TimeSpan.FromMilliseconds(200);
+            scaleAnim.InsertKeyFrame(1.0f, new Vector3(1.0f, 1.0f, 1.0f),
+                compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+            visual.StartAnimation("Scale", scaleAnim);
+        }
+    }
+
+    // ==========================================
+    // 5. Attached Property: ShakeOnError (NEW v4.0.0)
+    //    Set to true to trigger a horizontal shake animation (for validation errors).
+    //    Reset to false then true again to re-trigger.
+    // ==========================================
+    public static readonly DependencyProperty ShakeOnErrorProperty =
+        DependencyProperty.RegisterAttached(
+            "ShakeOnError",
+            typeof(bool),
+            typeof(AnimationHelper),
+            new PropertyMetadata(false, OnShakeOnErrorChanged));
+
+    public static bool GetShakeOnError(DependencyObject obj) => (bool)obj.GetValue(ShakeOnErrorProperty);
+    public static void SetShakeOnError(DependencyObject obj, bool value) => obj.SetValue(ShakeOnErrorProperty, value);
+
+    private static void OnShakeOnErrorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement element && e.NewValue is bool shake && shake)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            var compositor = visual.Compositor;
+
+            // Horizontal shake keyframes: 0 → -8 → 8 → -5 → 5 → -2 → 0
+            var shakeAnim = compositor.CreateVector3KeyFrameAnimation();
+            shakeAnim.Duration = TimeSpan.FromMilliseconds(400);
+            var linear = compositor.CreateLinearEasingFunction();
+
+            shakeAnim.InsertKeyFrame(0.0f, new Vector3(0, 0, 0), linear);
+            shakeAnim.InsertKeyFrame(0.15f, new Vector3(-8, 0, 0), linear);
+            shakeAnim.InsertKeyFrame(0.30f, new Vector3(8, 0, 0), linear);
+            shakeAnim.InsertKeyFrame(0.45f, new Vector3(-5, 0, 0), linear);
+            shakeAnim.InsertKeyFrame(0.60f, new Vector3(5, 0, 0), linear);
+            shakeAnim.InsertKeyFrame(0.80f, new Vector3(-2, 0, 0), linear);
+            shakeAnim.InsertKeyFrame(1.0f, new Vector3(0, 0, 0), linear);
+
+            visual.StartAnimation("Offset", shakeAnim);
+        }
+    }
+
+    // ==========================================
     // Event Handlers
     // ==========================================
     private static void Element_SizeChanged(object sender, SizeChangedEventArgs e)

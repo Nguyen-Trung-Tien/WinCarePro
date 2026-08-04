@@ -81,6 +81,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -96,7 +97,7 @@
                 <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0">
-                <TextBlock Text="System Optimizer Panel" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock Text="⚡ Optimizer &amp; Gaming Suite" Style="{StaticResource PageHeaderTitleStyle}" />
             </StackPanel>
             <StackPanel x:Name="HeaderButtons" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <Button Content="Scan Registry" Click="OnReloadTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" CornerRadius="6" Padding="12,8" FontSize="12.5" />
@@ -105,8 +106,65 @@
             </StackPanel>
         </Grid>
 
-        <!-- Main Workspace Grid (Row 1) -->
-        <Grid Grid.Row="1" ColumnSpacing="18" RowSpacing="18">
+        <!-- v4.0.0 — GAMING TURBO 2.0 EMBEDDED SECTION (Row 1) -->
+        <Border x:Name="GamingTurboSection" Grid.Row="1" Style="{StaticResource GamingTurboCardStyle}" Margin="0,0,0,16" Padding="20"
+                helpers:AnimationHelper.EntranceDelay="60"
+                helpers:AnimationHelper.HoverScale="1.008">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Border Background="{StaticResource GamingTurboGradient}" CornerRadius="8" Padding="6">
+                            <FontIcon Glyph="&#xE7FC;" FontSize="16" Foreground="White"/>
+                        </Border>
+                        <TextBlock Text="Gaming Turbo 2.0" FontSize="17" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                        <Border Background="#25F59E0B" BorderBrush="#60F59E0B" BorderThickness="1" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                            <TextBlock Text="Ultra Low-Latency" FontSize="9" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                        </Border>
+                    </StackPanel>
+                    <TextBlock x:Name="TurboStatusText" Text="Sẵn sàng. Bật Turbo để giải phóng RAM &amp; tối ưu CPU cho Game." 
+                               FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                    
+                    <!-- Quick stats row -->
+                    <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
+                        <Border Style="{StaticResource QuickStatCardStyle}" Padding="10,6" MinHeight="0">
+                            <StackPanel Spacing="1">
+                                <TextBlock Text="RAM Freed" FontSize="9" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Name="TurboRamFreedText" Text="{x:Bind ViewModel.GamingRamFreedText, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="{ThemeResource AppRamChipFg}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource QuickStatCardStyle}" Padding="10,6" MinHeight="0">
+                            <StackPanel Spacing="1">
+                                <TextBlock Text="Processes" FontSize="9" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock x:Name="TurboProcCountText" Text="{x:Bind ViewModel.GamingOptimizedProcessesCount, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource QuickStatCardStyle}" Padding="10,6" MinHeight="0">
+                            <StackPanel Spacing="1">
+                                <TextBlock Text="Power Plan" FontSize="9" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock Text="Ultimate" FontSize="14" FontWeight="Bold" Foreground="#FF10B981"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Turbo Toggle -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="8" Margin="16,0,0,0">
+                    <ToggleSwitch x:Name="TurboToggle" Toggled="OnTurboToggled" 
+                                  OnContent="ON" OffContent="OFF"
+                                  helpers:AnimationHelper.HoverScale="1.05"/>
+                    <TextBlock Text="Turbo Mode" FontSize="10" FontWeight="Bold" 
+                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Main Workspace Grid (Row 2) -->
+        <Grid Grid.Row="2" ColumnSpacing="18" RowSpacing="18">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" x:Name="Row0" />
                 <RowDefinition Height="Auto" x:Name="Row1" />

@@ -42,16 +42,10 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <!-- v4.0.0 Breakthrough Evolution Items -->
-                <NavigationViewItem Content="🤖 AI Health Copilot" Tag="AiCopilot">
+                <!-- AI Health Assistant -->
+                <NavigationViewItem Content="AI Health Copilot" Tag="AiCopilot">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE945;" Foreground="#FF06B6D4" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
-                <NavigationViewItem Content="⚡ Gaming Turbo 2.0" Tag="GamingTurbo">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7FC;" Foreground="#FFF59E0B" />
+                        <FontIcon Glyph="&#xE99A;" Foreground="#FF10B981" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
@@ -95,9 +89,9 @@
                 <!-- SYSTEM TUNING -->
                 <NavigationViewItemHeader Content="SYSTEM TUNING" />
 
-                <NavigationViewItem Content="System Optimizer" Tag="Optimizer">
+                <NavigationViewItem Content="Optimizer &amp; Gaming Suite" Tag="Optimizer">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE945;" Foreground="MediumPurple" />
+                        <FontIcon Glyph="&#xE7FC;" Foreground="#FFF59E0B" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
@@ -141,7 +135,7 @@
                 <Frame.ContentTransitions>
                     <TransitionCollection>
                         <NavigationThemeTransition>
-                            <EntranceNavigationTransitionInfo />
+                            <DrillInNavigationTransitionInfo />
                         </NavigationThemeTransition>
                     </TransitionCollection>
                 </Frame.ContentTransitions>

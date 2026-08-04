@@ -77,6 +77,99 @@ public class SystemOptimizerViewModel : ViewModelBase
     public ObservableCollection<SystemTweak> FilteredTweaks { get; } = new();
     public ObservableCollection<ServiceStatusItem> BackgroundServices { get; } = new();
 
+    // ============================================================
+    // v4.0.0 — Gaming Turbo 2.0 Properties (merged from GamingTurboViewModel)
+    // ============================================================
+
+    private bool _isTurboActive;
+    public bool IsTurboActive
+    {
+        get => _isTurboActive;
+        set => SetProperty(ref _isTurboActive, value);
+    }
+
+    private string _gamingRamFreedText = "0 MB";
+    public string GamingRamFreedText
+    {
+        get => _gamingRamFreedText;
+        set => SetProperty(ref _gamingRamFreedText, value);
+    }
+
+    private int _gamingOptimizedProcessesCount;
+    public int GamingOptimizedProcessesCount
+    {
+        get => _gamingOptimizedProcessesCount;
+        set => SetProperty(ref _gamingOptimizedProcessesCount, value);
+    }
+
+    private string _gamingStatusMessage = "Sẵn sàng. Bật Turbo để giải phóng RAM & tối ưu CPU cho Game.".T();
+    public string GamingStatusMessage
+    {
+        get => _gamingStatusMessage;
+        set => SetProperty(ref _gamingStatusMessage, value);
+    }
+
+    [System.Runtime.InteropServices.DllImport("psapi.dll")]
+    private static extern bool EmptyWorkingSet(IntPtr hProcess);
+
+    /// <summary>
+    /// Toggles Gaming Turbo 2.0 mode on/off. Trims Working Sets of all non-critical processes
+    /// and forces GC to free managed memory. Originally from GamingTurboViewModel.
+    /// </summary>
+    public async Task ToggleGamingTurboAsync()
+    {
+        if (!IsTurboActive)
+        {
+            IsTurboActive = true;
+            GamingStatusMessage = "⚡ Gaming Turbo ON! Đang dọn dẹp bộ nhớ & tối ưu CPU...".T();
+            StatusText = "Gaming Turbo: Optimizing...".T();
+
+            var freedBytes = await Task.Run(() =>
+            {
+                long totalFreed = 0;
+                int count = 0;
+                var processes = System.Diagnostics.Process.GetProcesses();
+
+                foreach (var proc in processes)
+                {
+                    try
+                    {
+                        if (proc.Id <= 4 || proc.ProcessName.Equals("explorer", StringComparison.OrdinalIgnoreCase))
+                            continue;
+
+                        long before = proc.WorkingSet64;
+                        EmptyWorkingSet(proc.Handle);
+                        long after = proc.WorkingSet64;
+
+                        if (before > after)
+                        {
+                            totalFreed += (before - after);
+                            count++;
+                        }
+                    }
+                    catch { }
+                }
+
+                return (totalFreed, count);
+            });
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            double freedMB = freedBytes.totalFreed / (1024.0 * 1024.0);
+            GamingRamFreedText = $"{freedMB:N0} MB";
+            GamingOptimizedProcessesCount = freedBytes.count;
+            GamingStatusMessage = $"🚀 Turbo ACTIVE! Đã giải phóng {freedMB:N0} MB RAM trên {freedBytes.count} tiến trình.".T();
+            StatusText = $"Gaming Turbo: Freed {freedMB:N0} MB RAM".T();
+        }
+        else
+        {
+            IsTurboActive = false;
+            GamingStatusMessage = "Chế độ Gaming Turbo đã TẮT. Hệ thống trở về chuẩn.".T();
+            StatusText = "Gaming Turbo: Deactivated".T();
+        }
+    }
+
     private string _currentCategory = "All";
     public string CurrentCategory
     {

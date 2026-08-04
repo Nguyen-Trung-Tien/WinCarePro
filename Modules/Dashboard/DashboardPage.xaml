@@ -209,6 +209,110 @@
                         </Grid>
                     </Border>
 
+                    <!-- Right Side Row 0 Column 1: AI Health Copilot (SIDE-BY-SIDE WITH HEALTH OVERVIEW) -->
+                    <Border x:Name="AiCopilotEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource AiCopilotCardStyle}" Margin="8" Padding="18,16"
+                            helpers:AnimationHelper.HoverScale="1.008">
+                        <StackPanel Spacing="10">
+                            <!-- AI Header Row -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0" Spacing="4">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Border Background="{StaticResource AiCopilotGradient}" CornerRadius="6" Padding="6,3">
+                                            <FontIcon Glyph="&#xE99A;" FontSize="12" Foreground="White"/>
+                                        </Border>
+                                        <TextBlock Text="AI Health Copilot" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                                        <Border Background="#2510B981" BorderBrush="#6010B981" BorderThickness="1" CornerRadius="6" Padding="5,1" VerticalAlignment="Center">
+                                            <TextBlock Text="Active" FontSize="9" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                                        </Border>
+                                    </StackPanel>
+                                    <TextBlock x:Name="AiSummaryText" Text="{x:Bind ViewModel.AiSummaryText, Mode=OneWay}" FontSize="11.5" 
+                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxLines="2" TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <!-- AI Score Mini Ring -->
+                                <Grid Grid.Column="1" Width="54" Height="54" Margin="10,0,0,0" VerticalAlignment="Center">
+                                    <Ellipse Stroke="{StaticResource PrimaryAccentGradient}" StrokeThickness="3.5" Opacity="0.25"/>
+                                    <ProgressRing Value="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" Width="50" Height="50" 
+                                                  Foreground="{StaticResource AiCopilotGradient}" Background="Transparent" IsIndeterminate="False"/>
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock x:Name="AiScoreText" Text="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" 
+                                                   FontSize="16" FontWeight="ExtraBold" HorizontalAlignment="Center" 
+                                                   Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                        <TextBlock Text="AI Score" FontSize="7" FontWeight="Bold" 
+                                                   Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+
+                            <!-- Predictive Insights Chips (inline) -->
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="10,8" MinHeight="0">
+                                    <StackPanel Spacing="1">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <FontIcon Glyph="&#xE7F1;" FontSize="10" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                            <TextBlock Text="Storage Outlook" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        </StackPanel>
+                                        <TextBlock Text="{x:Bind ViewModel.AiPredictiveStorageText, Mode=OneWay}" FontSize="13" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="10,8" MinHeight="0">
+                                    <StackPanel Spacing="1">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <FontIcon Glyph="&#xE7B5;" FontSize="10" Foreground="#FFF59E0B"/>
+                                            <TextBlock Text="Boot Speed" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        </StackPanel>
+                                        <TextBlock Text="{x:Bind ViewModel.AiPredictiveBootText, Mode=OneWay}" FontSize="13" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- AI Scan Button -->
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                    <Button Click="OnEmbeddedAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6"
+                                            helpers:AnimationHelper.HoverScale="1.05" helpers:AnimationHelper.PressedScale="0.95">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <FontIcon Glyph="&#xE721;" FontSize="11"/>
+                                            <TextBlock Text="AI Scan" FontSize="11" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Top AI Recommendation Card (compact) -->
+                            <Border x:Name="TopAiRecommendationCard" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10" 
+                                    Visibility="{x:Bind GetBoolVisibility(ViewModel.HasAiScanned), Mode=OneWay}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Width="30" Height="30" CornerRadius="6" Background="{ThemeResource AppStatChipBackground}" Margin="0,0,10,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE99A;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                        <TextBlock x:Name="TopRecommendationTitle" Text="Run AI Scan for insights" FontWeight="Bold" FontSize="11.5" 
+                                                   Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock x:Name="TopRecommendationDesc" Text="Click 'AI Scan' to analyze system health." FontSize="10.5" 
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxLines="2" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
                     <!-- 2. CPU & RAM Mini cards -->
                     <Grid x:Name="CpuRamGrid" Grid.Row="1" Grid.Column="0" ColumnSpacing="0" RowSpacing="0">
                         <Grid.RowDefinitions>

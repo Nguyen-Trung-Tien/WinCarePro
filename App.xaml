@@ -350,11 +350,68 @@
                 <Setter Property="CornerRadius" Value="10" />
             </Style>
 
-            <!-- v4.0.0 Breakthrough Evolution Styles -->
+            <!-- v4.0.0 Aura Glass 2.0 — Breakthrough Evolution Design System -->
+            
+            <!-- Aurora Multi-Color Glow Border (4-point color sweep) -->
+            <LinearGradientBrush x:Key="AuroraGlowBorderBrush" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#608B5CF6" Offset="0" />
+                <GradientStop Color="#4006B6D4" Offset="0.33" />
+                <GradientStop Color="#30F59E0B" Offset="0.66" />
+                <GradientStop Color="#508B5CF6" Offset="1" />
+            </LinearGradientBrush>
+
+            <!-- Navigation Active Indicator Gradient -->
+            <LinearGradientBrush x:Key="NavActiveIndicatorBrush" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#FF8B5CF6" Offset="0" />
+                <GradientStop Color="#FF3B82F6" Offset="1" />
+            </LinearGradientBrush>
+
+            <!-- Gaming Turbo Neon Gradient -->
+            <LinearGradientBrush x:Key="GamingTurboGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FFF59E0B" Offset="0" />
+                <GradientStop Color="#FFEF4444" Offset="0.5" />
+                <GradientStop Color="#FFF97316" Offset="1" />
+            </LinearGradientBrush>
+
+            <!-- AI Copilot Gradient -->
+            <LinearGradientBrush x:Key="AiCopilotGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FF06B6D4" Offset="0" />
+                <GradientStop Color="#FF8B5CF6" Offset="0.5" />
+                <GradientStop Color="#FFC084FC" Offset="1" />
+            </LinearGradientBrush>
+
+            <!-- Aura Glass Card Style (Premium v4.0.0 — thicker border, larger radius) -->
             <Style x:Key="AuraGlassCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
-                <Setter Property="BorderThickness" Value="1.2" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="CornerRadius" Value="18" />
+                <Setter Property="Padding" Value="22" />
+            </Style>
+
+            <!-- Elevated Glass Card Style (Deepest depth, premium hero card) -->
+            <Style x:Key="ElevatedGlassCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource AuroraGlowBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1.8" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="Padding" Value="24" />
+            </Style>
+
+            <!-- Gaming Turbo Card Style (Neon amber glow) -->
+            <Style x:Key="GamingTurboCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource GamingTurboGradient}" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="Padding" Value="20" />
+            </Style>
+
+            <!-- AI Copilot Card Style (Cyan-purple glow) -->
+            <Style x:Key="AiCopilotCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource AiCopilotGradient}" />
+                <Setter Property="BorderThickness" Value="1.5" />
                 <Setter Property="CornerRadius" Value="16" />
                 <Setter Property="Padding" Value="20" />
             </Style>
@@ -368,10 +425,12 @@
                 <Setter Property="BorderThickness" Value="0" />
             </Style>
 
+            <!-- Shimmer Skeleton Loading Style -->
             <Style x:Key="ShimmerSkeletonStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Opacity" Value="0.6" />
             </Style>
 
             <!-- Value Converters -->

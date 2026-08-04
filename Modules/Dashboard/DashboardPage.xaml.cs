@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Shared.Animations;
 
 namespace WinCarePro.Views;
 
@@ -39,6 +40,21 @@ public sealed partial class DashboardPage : Page
             // Force responsive update after extended layer is fully initialized
             UpdateResponsiveLayout(this.ActualWidth);
 
+            // v4.0.0 — Auto-trigger embedded AI Health Copilot scan
+            _ = ViewModel.RunEmbeddedAiScanAsync().ContinueWith(_ =>
+            {
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    // Animate the AI score count-up after scan completes
+                    if (ViewModel.HasAiScanned && ViewModel.AiRecommendations.Count > 0)
+                    {
+                        var topRec = ViewModel.AiRecommendations[0];
+                        TopRecommendationTitle.Text = topRec.Title;
+                        TopRecommendationDesc.Text = topRec.Description;
+                    }
+                });
+            }, TaskScheduler.Default);
+
             // Translate page content
             TranslationManager.Instance.Translate(this);
         };
@@ -67,15 +83,35 @@ public sealed partial class DashboardPage : Page
     {
         try
         {
+            // v4.0.0 — Gaming Turbo now merged into Optimizer & Gaming Suite
             if (App.MainWindowInstance is MainWindow mw)
             {
                 if (mw.MainFrame.Content is MainPage mp)
                 {
-                    mp.NavigateToPageExternal("gamingturbo");
+                    mp.NavigateToPageExternal("optimizer");
                 }
             }
         }
         catch { }
+    }
+
+    /// <summary>
+    /// v4.0.0 — Handles the embedded AI Copilot scan button click on Dashboard.
+    /// </summary>
+    private async void OnEmbeddedAiScanClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RunEmbeddedAiScanAsync();
+
+        // Update top recommendation card after scan
+        if (ViewModel.HasAiScanned && ViewModel.AiRecommendations.Count > 0)
+        {
+            var topRec = ViewModel.AiRecommendations[0];
+            TopRecommendationTitle.Text = topRec.Title;
+            TopRecommendationDesc.Text = topRec.Description;
+
+            // Animate the recommendation card entrance
+            FluidAnimationHelper.ApplySpringEntranceAnimation(TopAiRecommendationCard, 100);
+        }
     }
 
     private void UpdateResponsiveLayout(double width)
@@ -86,20 +122,36 @@ public sealed partial class DashboardPage : Page
         {
             if (isWide)
             {
-                // Wide layout: 2 columns
-                LeftCol.Width = new GridLength(3, GridUnitType.Star);
-                RightCol.Width = new GridLength(2, GridUnitType.Star);
+                // Wide layout: 2 equal 50/50 columns
+                LeftCol.Width = new GridLength(1, GridUnitType.Star);
+                RightCol.Width = new GridLength(1, GridUnitType.Star);
                 
-                // Alignments for Column 0 (Left side)
+                // Row 0: System Health Overview (Left) & AI Health Copilot (Right) — SIDE-BY-SIDE
                 if (HealthGaugeCard != null)
                 {
                     Grid.SetRow(HealthGaugeCard, 0);
                     Grid.SetColumn(HealthGaugeCard, 0);
                     Grid.SetColumnSpan(HealthGaugeCard, 1);
                 }
+                if (AiCopilotEmbeddedPanel != null)
+                {
+                    Grid.SetRow(AiCopilotEmbeddedPanel, 0);
+                    Grid.SetColumn(AiCopilotEmbeddedPanel, 1);
+                    Grid.SetColumnSpan(AiCopilotEmbeddedPanel, 1);
+                }
+
+                // Row 1: Quick Stats bar (Uptime, Network, Apps, Junk) across both columns
+                if (QuickStatsGrid != null)
+                {
+                    Grid.SetRow(QuickStatsGrid, 1);
+                    Grid.SetColumn(QuickStatsGrid, 0);
+                    Grid.SetColumnSpan(QuickStatsGrid, 2);
+                }
+
+                // Row 2: CPU/RAM (Left Col 0) & GPU/Disk (Right Col 1) — SIDE-BY-SIDE
                 if (CpuRamGrid != null)
                 {
-                    Grid.SetRow(CpuRamGrid, 1);
+                    Grid.SetRow(CpuRamGrid, 2);
                     Grid.SetColumn(CpuRamGrid, 0);
                     Grid.SetColumnSpan(CpuRamGrid, 1);
                 }
@@ -118,7 +170,7 @@ public sealed partial class DashboardPage : Page
                 if (GpuDiskGrid != null)
                 {
                     Grid.SetRow(GpuDiskGrid, 2);
-                    Grid.SetColumn(GpuDiskGrid, 0);
+                    Grid.SetColumn(GpuDiskGrid, 1);
                     Grid.SetColumnSpan(GpuDiskGrid, 1);
                 }
                 if (GpuCard != null)
@@ -133,33 +185,21 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(DiskCard, 1);
                     Grid.SetColumnSpan(DiskCard, 1);
                 }
+
+                // Row 3: Smart AI Advice (Left Col 0) & Performance Trend Chart (Right Col 1)
+                if (RecommendationsCard != null)
+                {
+                    Grid.SetRow(RecommendationsCard, 3);
+                    Grid.SetColumn(RecommendationsCard, 0);
+                    Grid.SetColumnSpan(RecommendationsCard, 1);
+                    Grid.SetRowSpan(RecommendationsCard, 1);
+                }
+
                 if (PerformanceChartCard != null)
                 {
                     Grid.SetRow(PerformanceChartCard, 3);
-                    Grid.SetColumn(PerformanceChartCard, 0);
+                    Grid.SetColumn(PerformanceChartCard, 1);
                     Grid.SetColumnSpan(PerformanceChartCard, 1);
-                }
-                
-                // Alignments for Column 1 (Right side)
-                if (BottleneckCard != null)
-                {
-                    Grid.SetRow(BottleneckCard, 0);
-                    Grid.SetColumn(BottleneckCard, 1);
-                    Grid.SetColumnSpan(BottleneckCard, 1);
-                    BottleneckCard.Margin = new Thickness(8);
-                }
-                if (QuickStatsGrid != null)
-                {
-                    Grid.SetRow(QuickStatsGrid, 1);
-                    Grid.SetColumn(QuickStatsGrid, 1);
-                    Grid.SetColumnSpan(QuickStatsGrid, 1);
-                }
-                if (RecommendationsCard != null)
-                {
-                    Grid.SetRow(RecommendationsCard, 2);
-                    Grid.SetColumn(RecommendationsCard, 1);
-                    Grid.SetColumnSpan(RecommendationsCard, 1);
-                    Grid.SetRowSpan(RecommendationsCard, 2);
                 }
             }
             else
@@ -174,9 +214,21 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(HealthGaugeCard, 0);
                     Grid.SetColumnSpan(HealthGaugeCard, 2);
                 }
+                if (AiCopilotEmbeddedPanel != null)
+                {
+                    Grid.SetRow(AiCopilotEmbeddedPanel, 1);
+                    Grid.SetColumn(AiCopilotEmbeddedPanel, 0);
+                    Grid.SetColumnSpan(AiCopilotEmbeddedPanel, 2);
+                }
+                if (QuickStatsGrid != null)
+                {
+                    Grid.SetRow(QuickStatsGrid, 2);
+                    Grid.SetColumn(QuickStatsGrid, 0);
+                    Grid.SetColumnSpan(QuickStatsGrid, 2);
+                }
                 if (CpuRamGrid != null)
                 {
-                    Grid.SetRow(CpuRamGrid, 1);
+                    Grid.SetRow(CpuRamGrid, 3);
                     Grid.SetColumn(CpuRamGrid, 0);
                     Grid.SetColumnSpan(CpuRamGrid, 2);
                 }
@@ -192,16 +244,9 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(RamCard, 0);
                     Grid.SetColumnSpan(RamCard, 2);
                 }
-                if (BottleneckCard != null)
-                {
-                    Grid.SetRow(BottleneckCard, 2);
-                    Grid.SetColumn(BottleneckCard, 0);
-                    Grid.SetColumnSpan(BottleneckCard, 2);
-                    BottleneckCard.Margin = new Thickness(8);
-                }
                 if (QuickStatsGrid != null)
                 {
-                    Grid.SetRow(QuickStatsGrid, 3);
+                    Grid.SetRow(QuickStatsGrid, 2);
                     Grid.SetColumn(QuickStatsGrid, 0);
                     Grid.SetColumnSpan(QuickStatsGrid, 2);
                 }
@@ -685,4 +730,6 @@ public sealed partial class DashboardPage : Page
         var color = hasBottleneck ? Microsoft.UI.Colors.Crimson : Microsoft.UI.Colors.MediumSeaGreen;
         return new SolidColorBrush(color);
     }
+
+    internal Visibility GetBoolVisibility(bool val) => val ? Visibility.Visible : Visibility.Collapsed;
 }

@@ -78,33 +78,43 @@ public sealed partial class MainWindow : Window
         SetTitleBar(AppTitleDragArea);
 
         // Manual preview key handler for Ctrl + F to focus search, avoiding WinUI 3 KeyboardAccelerator tooltip bugs and accidental triggers
-        this.Content.PreviewKeyDown += (s, e) =>
+        if (this.Content is FrameworkElement rootElem)
         {
-            if (e.Key == Windows.System.VirtualKey.F)
+            rootElem.PreviewKeyDown += (s, e) =>
             {
-                var ctrlState = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control);
-                bool isCtrlDown = (ctrlState & Windows.UI.Core.CoreVirtualKeyStates.Down) == Windows.UI.Core.CoreVirtualKeyStates.Down;
-                if (isCtrlDown)
+                if (e.Key == Windows.System.VirtualKey.F)
                 {
-                    SearchBox.Focus(FocusState.Programmatic);
-                    e.Handled = true;
+                    var ctrlState = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control);
+                    bool isCtrlDown = (ctrlState & Windows.UI.Core.CoreVirtualKeyStates.Down) == Windows.UI.Core.CoreVirtualKeyStates.Down;
+                    if (isCtrlDown)
+                    {
+                        SearchBox?.Focus(FocusState.Programmatic);
+                        e.Handled = true;
+                    }
                 }
-            }
-        };
+            };
+        }
 
         this.AppWindow.Closing += AppWindow_Closing;
         this.Closed += MainWindow_Closed;
 
         // Handle window resizing and start async application initialization on load
-        RootGrid.Loaded += (s, e) => {
-            try
-            {
-                this.AppWindow.Resize(new Windows.Graphics.SizeInt32(1400, 900));
-            }
-            catch { }
+        if (RootGrid != null)
+        {
+            RootGrid.Loaded += (s, e) => {
+                try
+                {
+                    this.AppWindow.Resize(new Windows.Graphics.SizeInt32(1400, 900));
+                }
+                catch { }
 
+                InitializeAppAsync();
+            };
+        }
+        else
+        {
             InitializeAppAsync();
-        };
+        }
 
         TranslationManager.Instance.LanguageChanged += (s, e) => PopulateSearchRegistry();
     }

@@ -145,4 +145,18 @@ public sealed partial class SystemOptimizerPage : Page
         }
     }
 
+    private async void OnTurboToggled(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleSwitch ts)
+        {
+            if (ts.IsOn != ViewModel.IsTurboActive)
+            {
+                await ViewModel.ToggleGamingTurboAsync();
+                if (TurboStatusText != null)
+                {
+                    TurboStatusText.Text = ViewModel.GamingStatusMessage;
+                }
+            }
+        }
+    }
 }

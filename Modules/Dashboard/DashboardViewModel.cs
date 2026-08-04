@@ -162,6 +162,78 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     public ObservableCollection<DiagnosticResult> DiagnosticItems { get; } = new();
     public ObservableCollection<LogEntry> ActionLogs { get; } = new();
 
+    // ============================================================
+    // v4.0.0 — Embedded AI Health Copilot Properties
+    // ============================================================
+
+    [ObservableProperty]
+    private int _aiHealthScore;
+
+    [ObservableProperty]
+    private string _aiStatusText = "Analyzing...".T();
+
+    [ObservableProperty]
+    private string _aiSummaryText = "AI Copilot is ready to analyze your system.".T();
+
+    [ObservableProperty]
+    private string _aiPredictiveStorageText = "--";
+
+    [ObservableProperty]
+    private string _aiPredictiveBootText = "--";
+
+    [ObservableProperty]
+    private bool _isAiExpanded;
+
+    [ObservableProperty]
+    private bool _isAiScanning;
+
+    [ObservableProperty]
+    private bool _hasAiScanned;
+
+    public ObservableCollection<Modules.AiAssistant.AiHealthRecommendation> AiRecommendations { get; } = new();
+
+    /// <summary>
+    /// Runs the embedded AI Health Copilot diagnostic scan.
+    /// Automatically triggered on Dashboard load; also callable via button.
+    /// </summary>
+    public async Task RunEmbeddedAiScanAsync()
+    {
+        if (IsAiScanning) return;
+        IsAiScanning = true;
+        AiStatusText = "Analyzing system health...".T();
+
+        try
+        {
+            var report = await Modules.AiAssistant.AiHealthEngine.AnalyzeSystemHealthAsync();
+
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                AiHealthScore = report.OverallScore;
+                AiStatusText = report.HealthStatus;
+                AiSummaryText = report.SummaryText;
+                AiPredictiveStorageText = report.PredictiveStorageDaysText;
+                AiPredictiveBootText = report.PredictiveBootTimeSavingsText;
+
+                AiRecommendations.Clear();
+                foreach (var rec in report.Recommendations)
+                {
+                    AiRecommendations.Add(rec);
+                }
+
+                HasAiScanned = true;
+                IsAiScanning = false;
+            });
+        }
+        catch
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                AiStatusText = "Analysis failed".T();
+                IsAiScanning = false;
+            });
+        }
+    }
+
     public void RefreshActionLogs()
     {
         Task.Run(() =>

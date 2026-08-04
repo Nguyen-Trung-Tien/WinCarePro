@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="WinCarePro.Shared.Components.SkeletonLoader"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="OnLoaded">
+
+    <!-- Skeleton Loader — v4.0.0 Aura Glass 2.0
+         A shimmer-animated placeholder displayed while data is loading.
+         Shows 3 skeleton bars that pulse with a smooth shimmer effect. -->
+    <StackPanel x:Name="SkeletonContainer" Spacing="10" HorizontalAlignment="Stretch">
+        <!-- Skeleton Line 1 (wide) -->
+        <Border x:Name="SkeletonLine1" Style="{StaticResource ShimmerSkeletonStyle}" Height="16" HorizontalAlignment="Stretch" />
+        <!-- Skeleton Line 2 (medium) -->
+        <Border x:Name="SkeletonLine2" Style="{StaticResource ShimmerSkeletonStyle}" Height="12" HorizontalAlignment="Left" Width="220" />
+        <!-- Skeleton Line 3 (narrow) -->
+        <Border x:Name="SkeletonLine3" Style="{StaticResource ShimmerSkeletonStyle}" Height="12" HorizontalAlignment="Left" Width="160" />
+    </StackPanel>
+</UserControl>

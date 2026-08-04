@@ -35,6 +35,16 @@ public sealed partial class MainPage : Page
         this.RequestedTheme = initialTheme;
         NavView.RequestedTheme = initialTheme;
         
+        // Register to language changes to force translation for this page and current navigated page
+        TranslationManager.Instance.LanguageChanged += (s, e) =>
+        {
+            TranslationManager.Instance.Translate(this);
+            if (ContentFrame.Content is Page currentPage)
+            {
+                TranslationManager.Instance.Translate(currentPage);
+            }
+        };
+        
         // Auto-translate and synchronize theme for navigated pages
         ContentFrame.Navigated += (s, e) =>
         {

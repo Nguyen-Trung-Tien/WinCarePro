@@ -38,6 +38,14 @@ public sealed partial class DashboardPage : Page
             
             // Force responsive update after extended layer is fully initialized
             UpdateResponsiveLayout(this.ActualWidth);
+
+            // Translate page content
+            TranslationManager.Instance.Translate(this);
+        };
+
+        TranslationManager.Instance.LanguageChanged += (s, e) =>
+        {
+            TranslationManager.Instance.Translate(this);
         };
 
         this.SizeChanged += (s, e) =>
@@ -50,8 +58,7 @@ public sealed partial class DashboardPage : Page
     {
         try
         {
-            var widgetWindow = new WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow();
-            widgetWindow.Activate();
+            WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.ShowWindow();
         }
         catch { }
     }

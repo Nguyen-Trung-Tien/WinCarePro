@@ -26,13 +26,13 @@
                         <TextBlock Text="v4.0.0 Neural Engine" FontSize="11" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Chẩn đoán hệ thống thông minh &amp; đề xuất tối ưu PC tự động." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Intelligent system diagnostics and automatic PC optimization recommendations." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
             <Button Click="OnRunAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="16,0" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Glyph="&#xE721;" FontSize="13"/>
-                    <TextBlock Text="Quét Chẩn Đoán AI" FontSize="12.5" FontWeight="SemiBold"/>
+                    <TextBlock Text="Run AI Diagnostics" FontSize="12.5" FontWeight="SemiBold"/>
                 </StackPanel>
             </Button>
         </Grid>
@@ -54,27 +54,55 @@
                             <Ellipse Stroke="{StaticResource PrimaryAccentGradient}" StrokeThickness="6"/>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <TextBlock x:Name="ScoreText" Text="95" FontSize="42" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center"/>
-                                <TextBlock Text="Điểm AI" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock Text="AI Score" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Grid>
 
                         <!-- Score Details -->
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="8">
                             <StackPanel Orientation="Horizontal" Spacing="10">
-                                <TextBlock x:Name="StatusTitleText" Text="Trạng Thái: Tối Ưu Xuất Sắc" FontSize="20" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Name="StatusTitleText" Text="Status: Optimal Health" FontSize="20" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                 <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3">
                                     <TextBlock Text="Active" FontSize="11" FontWeight="Bold" Foreground="#FF10B981"/>
                                 </Border>
                             </StackPanel>
 
-                            <TextBlock x:Name="SummaryMessageText" Text="Hệ thống Windows đang vận hành ở trạng thái ổn định nhất. Không phát hiện xung đột hay tràn RAM nghiêm trọng." 
+                            <TextBlock x:Name="SummaryMessageText" Text="AI Copilot predicts maximum system stability with 0 critical bottlenecks detected." 
                                        FontSize="13.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Grid>
                 </Border>
 
+                <!-- Predictive AI Insights Chips -->
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+                        <StackPanel Spacing="4">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE7F1;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="Predictive Drive C: Free Outlook" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <TextBlock x:Name="PredictiveStorageText" Text="30+ Days Free" FontSize="20" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+                        <StackPanel Spacing="4">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE7B5;" FontSize="14" Foreground="#FFF59E0B"/>
+                                <TextBlock Text="Predictive Boot Speed Gain" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <TextBlock x:Name="PredictiveBootText" Text="-1.5s Boot Time" FontSize="20" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
                 <!-- AI Recommendations Header -->
-                <TextBlock Text="Danh Sách Đề Xuất Tối Ưu AI (Smart Recommendations)" Style="{StaticResource SectionHeaderTitleStyle}"/>
+                <TextBlock Text="AI Recommended Optimizations" Style="{StaticResource SectionHeaderTitleStyle}"/>
 
                 <!-- Recommendations ListView -->
                 <ListView x:Name="RecommendationsListView" SelectionMode="None">

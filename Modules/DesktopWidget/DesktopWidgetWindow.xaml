@@ -3,58 +3,90 @@
     x:Class="WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="WinCare Desktop Widget">
+    Title="WinCare Desktop HUD">
     
     <Window.SystemBackdrop>
         <DesktopAcrylicBackdrop />
     </Window.SystemBackdrop>
 
-    <Border Background="#D50F0E17" BorderBrush="{StaticResource PrimaryAccentGradient}" BorderThickness="1.5" CornerRadius="16" Padding="14">
+    <Border Background="#EB0B0B14" BorderBrush="{StaticResource PrimaryAccentGradient}" BorderThickness="1.5" CornerRadius="16" Padding="14,10">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Widget Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,8">
-                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                    <FontIcon Glyph="&#xE9D9;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}"/>
+            <!-- Widget Header Drag Bar -->
+            <Grid x:Name="WidgetDragArea" Grid.Row="0" Background="Transparent" Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <FontIcon Glyph="&#xE9D9;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
                     <TextBlock Text="WinCare HUD v4.0" FontSize="11" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                    <Border Background="#2510B981" BorderBrush="#6010B981" BorderThickness="1" CornerRadius="4" Padding="4,1">
+                        <TextBlock Text="TOPMOST" FontSize="9" FontWeight="Bold" Foreground="#FF10B981"/>
+                    </Border>
                 </StackPanel>
 
-                <Button x:Name="CloseWidgetButton" Click="OnCloseWidgetClick" HorizontalAlignment="Right" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" ToolTipService.ToolTip="Đóng Widget">
-                    <FontIcon Glyph="&#xE711;" FontSize="10"/>
-                </Button>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                    <Button x:Name="PinButton" Click="OnTogglePinClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" ToolTipService.ToolTip="Ghim Trên Cùng (Always On Top)">
+                        <FontIcon x:Name="PinIcon" Glyph="&#xE718;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                    </Button>
+                </StackPanel>
             </Grid>
 
-            <!-- Widget Telemetry Stats -->
+            <!-- Widget Telemetry Grid -->
             <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- CPU Stat -->
-                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <TextBlock Text="CPU" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
-                    <TextBlock x:Name="CpuText" Text="-- %" FontSize="16" FontWeight="ExtraBold" Foreground="{ThemeResource AppCpuChipFg}"/>
+                <!-- CPU Telemetry -->
+                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,6" VerticalAlignment="Center">
+                    <Grid Margin="0,0,0,2">
+                        <TextBlock Text="CPU" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="CpuText" Text="-- %" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppCpuChipFg}" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <ProgressBar x:Name="CpuProgressBar" Value="20" Maximum="100" Height="4" Foreground="{ThemeResource AppCpuChipFg}" CornerRadius="2"/>
                 </StackPanel>
 
-                <!-- RAM Stat -->
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="RAM" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
-                    <TextBlock x:Name="RamText" Text="-- %" FontSize="16" FontWeight="ExtraBold" Foreground="{ThemeResource AppRamChipFg}"/>
+                <!-- RAM Telemetry -->
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,10,6" VerticalAlignment="Center">
+                    <Grid Margin="0,0,0,2">
+                        <TextBlock Text="RAM" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="RamText" Text="-- MB" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppRamChipFg}" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <ProgressBar x:Name="RamProgressBar" Value="45" Maximum="100" Height="4" Foreground="{ThemeResource AppRamChipFg}" CornerRadius="2"/>
                 </StackPanel>
 
-                <!-- Fast Clean Button -->
-                <Button Grid.Column="2" Click="OnFastCleanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Padding="10,6" VerticalAlignment="Center" ToolTipService.ToolTip="Dọn RAM nhanh 1-Click">
-                    <StackPanel Orientation="Horizontal" Spacing="4">
+                <!-- 1-Click Fast Boost Button -->
+                <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Click="OnFastCleanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="42" Padding="12,0" VerticalAlignment="Center" ToolTipService.ToolTip="Dọn RAM nhanh 1-Click">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
                         <FontIcon Glyph="&#xE74C;" FontSize="12"/>
-                        <TextBlock Text="Boost" FontSize="11"/>
+                        <TextBlock Text="Boost" FontSize="11.5" FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
+
+                <!-- Bottom Telemetry Row: Network Traffic -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center" Margin="0,2,0,0">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <FontIcon Glyph="&#xE556;" FontSize="10" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="NetDownText" Text="↓ 0 KB/s" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <FontIcon Glyph="&#xE557;" FontSize="10" Foreground="#FF3B82F6" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="NetUpText" Text="↑ 0 KB/s" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                    </StackPanel>
+                </StackPanel>
             </Grid>
         </Grid>
     </Border>

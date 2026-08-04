@@ -46,6 +46,31 @@ public sealed partial class DashboardPage : Page
         };
     }
 
+    private void OnLaunchDesktopWidgetClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var widgetWindow = new WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow();
+            widgetWindow.Activate();
+        }
+        catch { }
+    }
+
+    private void OnLaunchGamingTurboClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (App.MainWindowInstance is MainWindow mw)
+            {
+                if (mw.MainFrame.Content is MainPage mp)
+                {
+                    mp.NavigateToPageExternal("gamingturbo");
+                }
+            }
+        }
+        catch { }
+    }
+
     private void UpdateResponsiveLayout(double width)
     {
         bool isWide = width >= 800;

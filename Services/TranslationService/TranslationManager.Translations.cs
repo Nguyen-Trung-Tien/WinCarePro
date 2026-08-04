@@ -12,6 +12,14 @@ public partial class TranslationManager
     {
         // --- Sidebar Navigation Menu Items & App Header ---
         _translations["Dashboard"] = "Trang chủ";
+        _translations["🤖 AI Health Copilot"] = "🤖 AI Copilot Chẩn Đoán";
+        _translations["⚡ Gaming Turbo 2.0"] = "⚡ Gaming Turbo 2.0";
+        _translations["AI Health Copilot Advisor"] = "Trợ Lý AI Copilot Chẩn Đoán";
+        _translations["Gaming Turbo 2.0 Suite"] = "Bộ Công Cụ Gaming Turbo 2.0";
+        _translations["Widget HUD"] = "Widget HUD Nổi";
+        _translations["BẬT TURBO NOW"] = "BẬT TURBO NGAY";
+        _translations["TẮT TURBO"] = "TẮT TURBO";
+        _translations["Quét Chẩn Đoán AI"] = "Quét Chẩn Đoán AI";
         _translations["Junk Cleaner"] = "Dọn tệp rác";
         _translations["App Uninstaller"] = "Gỡ ứng dụng";
         _translations["Network Center"] = "Trung tâm mạng";

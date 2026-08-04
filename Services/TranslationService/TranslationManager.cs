@@ -65,47 +65,48 @@ public partial class TranslationManager
         catch { }
     }
 
+    private static string PreserveWhitespace(string original, string newText)
+    {
+        if (!string.IsNullOrEmpty(original) && (original.StartsWith(" ") || original.EndsWith(" ")))
+        {
+            int leading = original.Length - original.TrimStart().Length;
+            int trailing = original.Length - original.TrimEnd().Length;
+            return new string(' ', leading) + newText + new string(' ', trailing);
+        }
+        return newText;
+    }
+
     public string T(string? text)
     {
         if (string.IsNullOrEmpty(text)) return string.Empty;
-        if (CurrentLanguage == AppLanguage.English) return text;
-
-        string trimmed = text.Trim();
-        if (_translations.TryGetValue(trimmed, out string? translated))
-        {
-            // Preserve leading/trailing whitespace if present in original
-            string result = text;
-            if (text.StartsWith(" ") || text.EndsWith(" "))
-            {
-                int leading = text.Length - text.TrimStart().Length;
-                int trailing = text.Length - text.TrimEnd().Length;
-                result = new string(' ', leading) + translated + new string(' ', trailing);
-            }
-            else
-            {
-                result = translated;
-            }
-            return result;
-        }
-
-        return text;
+        return GetTranslationForLanguage(text, CurrentLanguage);
     }
 
     public string GetTranslationForLanguage(string key, AppLanguage language)
     {
-        if (language == AppLanguage.English) return key;
+        if (string.IsNullOrEmpty(key)) return string.Empty;
         string trimmed = key.Trim();
-        if (_translations.TryGetValue(trimmed, out string? translated))
+
+        if (language == AppLanguage.English)
         {
-            if (key.StartsWith(" ") || key.EndsWith(" "))
+            if (_translations.ContainsKey(trimmed)) return key;
+            foreach (var kvp in _translations)
             {
-                int leading = key.Length - key.TrimStart().Length;
-                int trailing = key.Length - key.TrimEnd().Length;
-                return new string(' ', leading) + translated + new string(' ', trailing);
+                if (string.Equals(kvp.Value, trimmed, StringComparison.OrdinalIgnoreCase))
+                {
+                    return PreserveWhitespace(key, kvp.Key);
+                }
             }
-            return translated;
+            return key;
         }
-        return key;
+        else // Vietnamese
+        {
+            if (_translations.TryGetValue(trimmed, out string? translated))
+            {
+                return PreserveWhitespace(key, translated);
+            }
+            return key;
+        }
     }
 
     private static string GetOriginalValue(DependencyObject obj, string propertyName, string currentValue)

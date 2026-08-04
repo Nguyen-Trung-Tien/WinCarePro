@@ -100,6 +100,8 @@ public sealed partial class MainPage : Page
         Type? pageType = tag.ToLower() switch
         {
             "dashboard" => typeof(DashboardPage),
+            "aicopilot" => typeof(WinCarePro.Modules.AiAssistant.AiCopilotPage),
+            "gamingturbo" => typeof(WinCarePro.Modules.GamingTurbo.GamingTurboPage),
             "junk" => typeof(JunkPage),
             "uninstall" => typeof(UninstallPage),
             "network" => typeof(NetworkPage),

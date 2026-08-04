@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="WinCare Desktop Widget">
+    
+    <Window.SystemBackdrop>
+        <DesktopAcrylicBackdrop />
+    </Window.SystemBackdrop>
+
+    <Border Background="#D50F0E17" BorderBrush="{StaticResource PrimaryAccentGradient}" BorderThickness="1.5" CornerRadius="16" Padding="14">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Widget Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,8">
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <FontIcon Glyph="&#xE9D9;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                    <TextBlock Text="WinCare HUD v4.0" FontSize="11" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                </StackPanel>
+
+                <Button x:Name="CloseWidgetButton" Click="OnCloseWidgetClick" HorizontalAlignment="Right" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" ToolTipService.ToolTip="Đóng Widget">
+                    <FontIcon Glyph="&#xE711;" FontSize="10"/>
+                </Button>
+            </Grid>
+
+            <!-- Widget Telemetry Stats -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- CPU Stat -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="CPU" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="CpuText" Text="-- %" FontSize="16" FontWeight="ExtraBold" Foreground="{ThemeResource AppCpuChipFg}"/>
+                </StackPanel>
+
+                <!-- RAM Stat -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="RAM" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="RamText" Text="-- %" FontSize="16" FontWeight="ExtraBold" Foreground="{ThemeResource AppRamChipFg}"/>
+                </StackPanel>
+
+                <!-- Fast Clean Button -->
+                <Button Grid.Column="2" Click="OnFastCleanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Padding="10,6" VerticalAlignment="Center" ToolTipService.ToolTip="Dọn RAM nhanh 1-Click">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <FontIcon Glyph="&#xE74C;" FontSize="12"/>
+                        <TextBlock Text="Boost" FontSize="11"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

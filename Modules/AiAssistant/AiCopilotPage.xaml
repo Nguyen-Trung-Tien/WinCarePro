@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinCarePro.Modules.AiAssistant.AiCopilotPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ai="using:WinCarePro.Modules.AiAssistant"
+    mc:Ignorable="d">
+
+    <Grid Padding="28,24" HorizontalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <StackPanel Spacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Border Background="{StaticResource CyberAccentGradient}" CornerRadius="10" Padding="8">
+                        <FontIcon Glyph="&#xE945;" FontSize="20" Foreground="White"/>
+                    </Border>
+                    <TextBlock Text="AI Health Copilot Advisor" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <Border Background="#258B5CF6" BorderBrush="#608B5CF6" BorderThickness="1" CornerRadius="8" Padding="8,4" VerticalAlignment="Center">
+                        <TextBlock Text="v4.0.0 Neural Engine" FontSize="11" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                    </Border>
+                </StackPanel>
+                <TextBlock Text="Chẩn đoán hệ thống thông minh &amp; đề xuất tối ưu PC tự động." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+            </StackPanel>
+
+            <Button Click="OnRunAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="16,0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon Glyph="&#xE721;" FontSize="13"/>
+                    <TextBlock Text="Quét Chẩn Đoán AI" FontSize="12.5" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <!-- Main Body -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="20">
+                
+                <!-- AI Overall Score Card -->
+                <Border Style="{StaticResource AuraGlassCardStyle}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Score Badge -->
+                        <Grid Grid.Column="0" Width="130" Height="130" Margin="0,0,24,0">
+                            <Ellipse Stroke="{StaticResource PrimaryAccentGradient}" StrokeThickness="6"/>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock x:Name="ScoreText" Text="95" FontSize="42" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Điểm AI" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Score Details -->
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="8">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock x:Name="StatusTitleText" Text="Trạng Thái: Tối Ưu Xuất Sắc" FontSize="20" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3">
+                                    <TextBlock Text="Active" FontSize="11" FontWeight="Bold" Foreground="#FF10B981"/>
+                                </Border>
+                            </StackPanel>
+
+                            <TextBlock x:Name="SummaryMessageText" Text="Hệ thống Windows đang vận hành ở trạng thái ổn định nhất. Không phát hiện xung đột hay tràn RAM nghiêm trọng." 
+                                       FontSize="13.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- AI Recommendations Header -->
+                <TextBlock Text="Danh Sách Đề Xuất Tối Ưu AI (Smart Recommendations)" Style="{StaticResource SectionHeaderTitleStyle}"/>
+
+                <!-- Recommendations ListView -->
+                <ListView x:Name="RecommendationsListView" SelectionMode="None">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource GlassmorphismCardStyle}" Margin="0,0,0,10" Padding="16">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Width="42" Height="42" CornerRadius="10" Background="{ThemeResource AppStatChipBackground}" Margin="0,0,16,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE9D9;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                            <Border Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" CornerRadius="4" Padding="6,2">
+                                                <TextBlock Text="{Binding ImpactLevel}" FontSize="10" FontWeight="Bold" Foreground="#FFF59E0B"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding Description}" FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -41,6 +41,19 @@
                         <FontIcon Glyph="&#xE80F;" Foreground="{StaticResource PrimaryAccentBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+
+                <!-- v4.0.0 Breakthrough Evolution Items -->
+                <NavigationViewItem Content="🤖 AI Health Copilot" Tag="AiCopilot">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE945;" Foreground="#FF06B6D4" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Content="⚡ Gaming Turbo 2.0" Tag="GamingTurbo">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7FC;" Foreground="#FFF59E0B" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 
                 <NavigationViewItemSeparator />
 

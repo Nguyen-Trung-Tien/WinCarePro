@@ -350,6 +350,30 @@
                 <Setter Property="CornerRadius" Value="10" />
             </Style>
 
+            <!-- v4.0.0 Breakthrough Evolution Styles -->
+            <Style x:Key="AuraGlassCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="BorderThickness" Value="1.2" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="Padding" Value="20" />
+            </Style>
+
+            <Style x:Key="VibrantPrimaryButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="20,10" />
+                <Setter Property="BorderThickness" Value="0" />
+            </Style>
+
+            <Style x:Key="ShimmerSkeletonStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="BorderThickness" Value="0" />
+            </Style>
+
             <!-- Value Converters -->
             <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />

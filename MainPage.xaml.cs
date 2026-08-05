@@ -111,7 +111,7 @@ public sealed partial class MainPage : Page
         {
             "dashboard" => typeof(DashboardPage),
             "aicopilot" => typeof(WinCarePro.Modules.AiAssistant.AiCopilotPage),
-            "gamingturbo" => typeof(SystemOptimizerPage),
+            "gamingturbo" => typeof(WinCarePro.Modules.GamingTurbo.GamingTurboPage),
             "junk" => typeof(JunkPage),
             "uninstall" => typeof(UninstallPage),
             "network" => typeof(NetworkPage),

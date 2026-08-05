@@ -78,7 +78,84 @@ public class SystemOptimizerViewModel : ViewModelBase
     public ObservableCollection<ServiceStatusItem> BackgroundServices { get; } = new();
 
     // ============================================================
-    // v4.0.0 — Gaming Turbo 2.0 Properties (merged from GamingTurboViewModel)
+    // v4.0.0 — Embedded AI Health Copilot Properties & Engine
+    // ============================================================
+
+    private int _aiHealthScore = 95;
+    public int AiHealthScore
+    {
+        get => _aiHealthScore;
+        set => SetProperty(ref _aiHealthScore, value);
+    }
+
+    private string _aiStatusText = "Optimal";
+    public string AiStatusText
+    {
+        get => _aiStatusText;
+        set => SetProperty(ref _aiStatusText, value);
+    }
+
+    private string _aiSummaryText = "WinCare AI Assistant predicts optimal system performance.";
+    public string AiSummaryText
+    {
+        get => _aiSummaryText;
+        set => SetProperty(ref _aiSummaryText, value);
+    }
+
+    private bool _isAiScanning;
+    public bool IsAiScanning
+    {
+        get => _isAiScanning;
+        set => SetProperty(ref _isAiScanning, value);
+    }
+
+    private bool _hasAiScanned;
+    public bool HasAiScanned
+    {
+        get => _hasAiScanned;
+        set => SetProperty(ref _hasAiScanned, value);
+    }
+
+    public ObservableCollection<Modules.AiAssistant.AiHealthRecommendation> AiRecommendations { get; } = new();
+
+    public async Task RunAiScanAsync()
+    {
+        if (IsAiScanning) return;
+        IsAiScanning = true;
+        AiStatusText = "Analyzing system health...".T();
+
+        try
+        {
+            var report = await Modules.AiAssistant.AiHealthEngine.AnalyzeSystemHealthAsync();
+            
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                AiHealthScore = report.OverallScore;
+                AiStatusText = report.HealthStatus;
+                AiSummaryText = report.SummaryText;
+
+                AiRecommendations.Clear();
+                foreach (var rec in report.Recommendations)
+                {
+                    AiRecommendations.Add(rec);
+                }
+
+                HasAiScanned = true;
+                IsAiScanning = false;
+            });
+        }
+        catch
+        {
+            _dispatcherQueue.TryEnqueue(() =>
+            {
+                AiStatusText = "Scan failed".T();
+                IsAiScanning = false;
+            });
+        }
+    }
+
+    // ============================================================
+    // v4.0.0 — System Turbo Mode Properties (Performance Boost)
     // ============================================================
 
     private bool _isTurboActive;
@@ -102,7 +179,7 @@ public class SystemOptimizerViewModel : ViewModelBase
         set => SetProperty(ref _gamingOptimizedProcessesCount, value);
     }
 
-    private string _gamingStatusMessage = "Sẵn sàng. Bật Turbo để giải phóng RAM & tối ưu CPU cho Game.".T();
+    private string _gamingStatusMessage = "Sẵn sàng. Bật Turbo Mode để giải phóng bộ nhớ RAM & tối ưu CPU tức thì.".T();
     public string GamingStatusMessage
     {
         get => _gamingStatusMessage;

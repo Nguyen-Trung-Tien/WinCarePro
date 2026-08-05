@@ -172,19 +172,19 @@ public sealed partial class NetworkPage : Page
         await ViewModel.LoadActiveConnectionsAsync();
     }
 
-    internal bool IsNot(bool val) => !val;
+    public bool IsNot(bool val) => !val;
 
-    internal string FormatMs(double val) => $"{val:F0} ms";
-    internal string FormatPercent(double val) => $"{val:F1}%";
-    internal string FormatMbps(double val) => $"{val:F1} Mbps";
+    public string FormatMs(double val) => $"{val:F0} ms";
+    public string FormatPercent(double val) => $"{val:F1}%";
+    public string FormatMbps(double val) => $"{val:F1} Mbps";
 
-    internal string GetEstablishedCount(System.Collections.ObjectModel.ObservableCollection<ActiveConnectionInfo> connections)
+    public string GetEstablishedCount(System.Collections.ObjectModel.ObservableCollection<ActiveConnectionInfo> connections)
     {
         if (connections == null) return "0";
         return connections.Count(c => c.State != null && c.State.ToUpper() == "ESTABLISHED").ToString();
     }
 
-    internal string GetListeningCount(System.Collections.ObjectModel.ObservableCollection<ActiveConnectionInfo> connections)
+    public string GetListeningCount(System.Collections.ObjectModel.ObservableCollection<ActiveConnectionInfo> connections)
     {
         if (connections == null) return "0";
         return connections.Count(c => c.State != null && (c.State.ToUpper() == "LISTENING" || c.State.ToUpper() == "LISTEN")).ToString();

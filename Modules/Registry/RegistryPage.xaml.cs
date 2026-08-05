@@ -58,6 +58,16 @@ public sealed partial class RegistryPage : Page
         };
     }
 
+    private async void OnScanClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ScanRegistryAsync();
+    }
+
+    private async void OnRepairClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RepairSelectedAsync();
+    }
+
     // Registry Editor shortcut — safe alternative to registry cleaner
     private void OnOpenRegeditClick(object sender, RoutedEventArgs e)
     {
@@ -76,7 +86,7 @@ public sealed partial class RegistryPage : Page
         await ViewModel.BackupRegistryAsync();
     }
 
-    internal bool IsNot(bool b) => !b;
+    public bool IsNot(bool b) => !b;
 
     private void UpdateLoadingOverlayState()
     {

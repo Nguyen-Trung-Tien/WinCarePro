@@ -139,7 +139,7 @@ namespace WinCarePro.Modules.AiAssistant
                 if (report.OverallScore >= 90)
                 {
                     report.HealthStatus = "Optimal Health".T();
-                    report.SummaryText = "AI Copilot predicts maximum system stability with 0 critical bottlenecks detected.".T();
+                    report.SummaryText = "WinCare AI Assistant predicts maximum system stability with 0 critical bottlenecks detected.".T();
                 }
                 else if (report.OverallScore >= 70)
                 {

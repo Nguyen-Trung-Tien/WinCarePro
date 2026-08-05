@@ -98,7 +98,7 @@ public sealed partial class SecurityPage : Page
         await ViewModel.ClearRecentFilesAsync();
     }
 
-    internal bool IsNot(bool val) => !val;
+    public bool IsNot(bool val) => !val;
 
     private void UpdateLoadingOverlayState()
     {

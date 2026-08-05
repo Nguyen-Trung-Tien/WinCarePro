@@ -14,9 +14,9 @@
             <!-- v3.0 Nova — User Chip in Pane Footer -->
             <NavigationView.PaneFooter>
                 <StackPanel Padding="0,0,0,12">
-                    <!-- User Profile Chip at the bottom -->
-                    <Border Margin="8,4,8,4" Padding="6" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97">
+                    <!-- User Profile Chip at the bottom — Soft rounded pill -->
+                    <Border Margin="8,4,8,4" Padding="8,6" CornerRadius="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                            helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -42,10 +42,9 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <!-- AI Health Assistant -->
-                <NavigationViewItem Content="AI Health Copilot" Tag="AiCopilot">
+                <NavigationViewItem Content="AI Assistant" Tag="AiCopilot">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE99A;" Foreground="#FF10B981" />
+                        <FontIcon Glyph="&#xE99A;" Foreground="{StaticResource PrimaryAccentBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
@@ -89,7 +88,7 @@
                 <!-- SYSTEM TUNING -->
                 <NavigationViewItemHeader Content="SYSTEM TUNING" />
 
-                <NavigationViewItem Content="Optimizer &amp; Gaming Suite" Tag="Optimizer">
+                <NavigationViewItem Content="System Optimizer" Tag="Optimizer">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7FC;" Foreground="#FFF59E0B" />
                     </NavigationViewItem.Icon>
@@ -135,7 +134,7 @@
                 <Frame.ContentTransitions>
                     <TransitionCollection>
                         <NavigationThemeTransition>
-                            <DrillInNavigationTransitionInfo />
+                            <SlideNavigationTransitionInfo Effect="FromRight" />
                         </NavigationThemeTransition>
                     </TransitionCollection>
                 </Frame.ContentTransitions>

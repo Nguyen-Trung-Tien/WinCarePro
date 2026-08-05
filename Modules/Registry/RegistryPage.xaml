@@ -17,9 +17,27 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,24">
-            <StackPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
                 <TextBlock Text="Registry Center" Style="{StaticResource PageHeaderTitleStyle}" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="14,8">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE721;" FontSize="13" />
+                        <TextBlock Text="Scan Registry" VerticalAlignment="Center" FontSize="12.5" />
+                    </StackPanel>
+                </Button>
+                <Button Click="OnRepairClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="SemiBold">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE74D;" FontSize="13" Foreground="White" />
+                        <TextBlock Text="Clean Selected" VerticalAlignment="Center" FontSize="12.5" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
 
@@ -29,43 +47,83 @@
                 <ColumnDefinition x:Name="RightCol" Width="380" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left: Registry Editor Redirect (replaces Registry Cleaner) -->
+            <!-- Left: Registry Cleaner & Tools -->
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
                 <StackPanel Spacing="16">
 
+                    <!-- Registry Cleaner Scan Card -->
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
+                        <StackPanel Spacing="12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xEDA2;" FontSize="16" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
+                                    <TextBlock Text="Registry Issues" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
+
+                            <!-- Issues List -->
+                            <ListView ItemsSource="{x:Bind ViewModel.Issues, Mode=OneWay}" SelectionMode="None" MaxHeight="280">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:RegistryIssue">
+                                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" Padding="6,8">
+                                            <Grid ColumnSpacing="10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" MinWidth="0" />
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                                    <TextBlock Text="{x:Bind Title}" FontWeight="Bold" FontSize="12" />
+                                                    <TextBlock Text="{x:Bind KeyPath}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+
                     <!-- Open Registry Editor -->
-                    <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="20">
+                    <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="16,14">
                         <Grid ColumnSpacing="16">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Border Width="44" Height="44" CornerRadius="10" Background="#15EDA20E">
-                                <FontIcon Glyph="&#xEDA2;" FontSize="20" Foreground="#FFEDA20E"/>
+                            <Border Width="36" Height="36" CornerRadius="10" Background="#15EDA20E">
+                                <FontIcon Glyph="&#xEDA2;" FontSize="16" Foreground="#FFEDA20E"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                <TextBlock Text="Registry Editor (regedit)" FontWeight="Bold" FontSize="14"/>
+                                <TextBlock Text="Registry Editor (regedit)" FontWeight="Bold" FontSize="13.5"/>
                             </StackPanel>
-                            <Button Grid.Column="2" Content="Open →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" Click="OnOpenRegeditClick" CornerRadius="8" Padding="16,8"/>
+                            <Button Grid.Column="2" Content="Open →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" Click="OnOpenRegeditClick" CornerRadius="6" Padding="14,6" FontSize="12"/>
                         </Grid>
                     </Border>
 
                     <!-- Open System Restore -->
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
                         <Grid ColumnSpacing="16">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Border Width="44" Height="44" CornerRadius="10" Background="#158B5CF6">
-                                <FontIcon Glyph="&#xE7A7;" FontSize="20" Foreground="#FF8B5CF6"/>
+                            <Border Width="36" Height="36" CornerRadius="10" Background="#158B5CF6">
+                                <FontIcon Glyph="&#xE7A7;" FontSize="16" Foreground="#FF8B5CF6"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                <TextBlock Text="System Restore (rstrui)" FontWeight="Bold" FontSize="14"/>
+                                <TextBlock Text="System Restore (rstrui)" FontWeight="Bold" FontSize="13.5"/>
                             </StackPanel>
-                            <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenSystemRestoreClick" CornerRadius="8" Padding="16,8"/>
+                            <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenSystemRestoreClick" CornerRadius="6" Padding="14,6" FontSize="12"/>
                         </Grid>
                     </Border>
 

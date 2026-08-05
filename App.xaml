@@ -138,26 +138,26 @@
             <SolidColorBrush x:Key="GpuTrackBrush" Color="#208B5CF6" />
             <SolidColorBrush x:Key="DiskTrackBrush" Color="#2010B981" />
 
-            <!-- Card Containers Styling -->
+            <!-- Card Containers Styling — Soft, Balanced & Modern -->
             <Style x:Key="ModernCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="CornerRadius" Value="14" />
             </Style>
 
             <Style x:Key="GradientBorderCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="BorderThickness" Value="1.2" />
+                <Setter Property="CornerRadius" Value="14" />
             </Style>
 
             <Style x:Key="GlowCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="BorderThickness" Value="1.2" />
+                <Setter Property="CornerRadius" Value="14" />
             </Style>
 
             <!-- v3.0 Nova — Glassmorphism Card (frosted glass effect) -->
@@ -165,7 +165,7 @@
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
                 <Setter Property="BorderThickness" Value="1.2" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="CornerRadius" Value="16" />
             </Style>
 
             <!-- v3.0 Nova — Quick Stat Card (compact info chip) -->
@@ -173,7 +173,7 @@
                 <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="12" />
                 <Setter Property="Padding" Value="16,14" />
                 <Setter Property="MinHeight" Value="68" />
             </Style>
@@ -183,24 +183,24 @@
                 <Setter Property="Background" Value="{ThemeResource AppBadgeGoodBg}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeGoodBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Padding" Value="12,6" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="12,5" />
             </Style>
 
             <Style x:Key="StatusBadgeWarningStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppBadgeWarningBg}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeWarningBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Padding" Value="12,6" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="12,5" />
             </Style>
 
             <Style x:Key="StatusBadgeCriticalStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppBadgeCriticalBg}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeCriticalBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Padding" Value="12,6" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="12,5" />
             </Style>
 
             <!-- v3.0 Nova — Accent Neon Glow Border -->
@@ -208,15 +208,15 @@
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{StaticResource CyberAccentGradient}" />
                 <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="CornerRadius" Value="16" />
             </Style>
 
             <Style x:Key="DarkTerminalStyle" TargetType="TextBox">
                 <Setter Property="Background" Value="{ThemeResource AppTerminalBackground}" />
                 <Setter Property="Foreground" Value="{ThemeResource AppTerminalForeground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="BorderThickness" Value="1.2" />
+                <Setter Property="CornerRadius" Value="12" />
                 <Setter Property="FontFamily" Value="Consolas" />
                 <Setter Property="FontSize" Value="12.5" />
                 <Setter Property="Padding" Value="16" />
@@ -225,8 +225,8 @@
             <!-- Global typography & header standards -->
             <Style x:Key="PageHeaderTitleStyle" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
-                <Setter Property="FontSize" Value="26" />
-                <Setter Property="FontWeight" Value="ExtraBold" />
+                <Setter Property="FontSize" Value="25" />
+                <Setter Property="FontWeight" Value="Bold" />
                 <Setter Property="CharacterSpacing" Value="-10" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
             </Style>
@@ -240,14 +240,14 @@
 
             <Style x:Key="SectionHeaderTitleStyle" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
-                <Setter Property="FontSize" Value="17" />
+                <Setter Property="FontSize" Value="16.5" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
             </Style>
 
             <!-- Global default style for standard buttons -->
             <Style TargetType="Button">
-                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
 
             <!-- Custom transparent button style for title bars and round icon buttons -->

@@ -30,12 +30,13 @@ public sealed partial class RepairPage : Page
             this.Bindings.Update();
             UpdateLoadingOverlayState();
         };
+    }
 
-        this.Unloaded += (s, e) =>
-        {
-            this.Bindings.StopTracking();
-            this.DataContext = null;
-        };
+    protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        this.DataContext = ViewModel;
+        this.Bindings.Update();
     }
 
     private void UpdateLoadingOverlayState()
@@ -118,26 +119,26 @@ public sealed partial class RepairPage : Page
         await ViewModel.RepairServicesConfigAsync();
     }
 
-    internal bool IsNot(bool val) => !val;
+    public bool IsNot(bool val) => !val;
 
-    internal bool CanFixSelected(int count, bool isBusy) => count > 0 && !isBusy;
+    public bool CanFixSelected(int count, bool isBusy) => count > 0 && !isBusy;
 
-    internal string GetProgressText(int percent) => $"{percent}%";
+    public string GetProgressText(int percent) => $"{percent}%";
 
-    internal Microsoft.UI.Xaml.Media.Brush GetRestrictionColor(int count)
+    public Microsoft.UI.Xaml.Media.Brush GetRestrictionColor(int count)
     {
         return count > 0 
             ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)) // Red
             : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)); // Green
     }
 
-    internal Microsoft.UI.Xaml.Media.Brush GetScoreColor(int score)
+    public Microsoft.UI.Xaml.Media.Brush GetScoreColor(int score)
     {
         if (score >= 90) return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)); // Green
         if (score >= 70) return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)); // Amber
         return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Red
     }
 
-    internal string GetScoreText(int score) => $"{score} / 100";
+    public string GetScoreText(int score) => $"{score} / 100";
 
 }

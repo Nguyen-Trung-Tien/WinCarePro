@@ -117,5 +117,5 @@ public sealed partial class UpdaterPage : Page
         return $"{Math.Max(100 - count * 15, 20)}";
     }
 
-    internal bool IsNot(bool val) => !val;
+    public bool IsNot(bool val) => !val;
 }

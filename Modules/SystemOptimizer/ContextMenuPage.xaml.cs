@@ -73,5 +73,5 @@ public sealed partial class ContextMenuPage : Page
         }
     }
 
-    internal bool IsNot(bool b) => !b;
+    public bool IsNot(bool b) => !b;
 }

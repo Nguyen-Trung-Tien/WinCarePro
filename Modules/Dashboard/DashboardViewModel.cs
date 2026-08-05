@@ -173,7 +173,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     private string _aiStatusText = "Analyzing...".T();
 
     [ObservableProperty]
-    private string _aiSummaryText = "AI Copilot is ready to analyze your system.".T();
+    private string _aiSummaryText = "WinCare AI Assistant is ready to analyze your system.".T();
 
     [ObservableProperty]
     private string _aiPredictiveStorageText = "--";

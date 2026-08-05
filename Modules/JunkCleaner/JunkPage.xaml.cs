@@ -118,39 +118,39 @@ public sealed partial class JunkPage : Page
         ViewModel.OpenSelectedFolder();
     }
 
-    internal bool IsNot(bool val) => !val;
+    public bool IsNot(bool val) => !val;
 
-    internal bool CanClean(bool isCleaning, int count)
+    public bool CanClean(bool isCleaning, int count)
     {
         return !isCleaning && count > 0;
     }
 
-    internal bool GetProgressRingActive(bool scanning, bool cleaning)
+    public bool GetProgressRingActive(bool scanning, bool cleaning)
     {
         return scanning || cleaning;
     }
 
-    internal Visibility GetDetailVisibility(JunkCategory? selectedItem, bool scanning, bool cleaning)
+    public Visibility GetDetailVisibility(JunkCategory? selectedItem, bool scanning, bool cleaning)
     {
         return (selectedItem != null && !scanning && !cleaning) ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    internal Visibility GetProgressVisibility(bool scanning, bool cleaning)
+    public Visibility GetProgressVisibility(bool scanning, bool cleaning)
     {
         return (scanning || cleaning) ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    internal Visibility GetEmptyVisibility(JunkCategory? selectedItem, bool scanning, bool cleaning)
+    public Visibility GetEmptyVisibility(JunkCategory? selectedItem, bool scanning, bool cleaning)
     {
         return (selectedItem == null && !scanning && !cleaning) ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    internal Visibility GetWarningVisibility(bool hasLockingApps)
+    public Visibility GetWarningVisibility(bool hasLockingApps)
     {
         return hasLockingApps ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    internal Visibility GetLockedSizeVisibility(long lockedBytes)
+    public Visibility GetLockedSizeVisibility(long lockedBytes)
     {
         return lockedBytes > 0 ? Visibility.Visible : Visibility.Collapsed;
     }

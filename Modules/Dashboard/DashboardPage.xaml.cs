@@ -70,6 +70,18 @@ public sealed partial class DashboardPage : Page
         };
     }
 
+    private void OnLaunchAiCopilotClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (App.MainWindowInstance is MainWindow mw && mw.MainFrame.Content is MainPage mp)
+            {
+                mp.NavigateToPageExternal("aicopilot");
+            }
+        }
+        catch { }
+    }
+
     private void OnLaunchDesktopWidgetClick(object sender, RoutedEventArgs e)
     {
         try
@@ -140,18 +152,10 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumnSpan(AiCopilotEmbeddedPanel, 1);
                 }
 
-                // Row 1: Quick Stats bar (Uptime, Network, Apps, Junk) across both columns
-                if (QuickStatsGrid != null)
-                {
-                    Grid.SetRow(QuickStatsGrid, 1);
-                    Grid.SetColumn(QuickStatsGrid, 0);
-                    Grid.SetColumnSpan(QuickStatsGrid, 2);
-                }
-
-                // Row 2: CPU/RAM (Left Col 0) & GPU/Disk (Right Col 1) — SIDE-BY-SIDE
+                // Row 1: CPU/RAM (Left Col 0) & Bottleneck Advisor (Right Col 1) — SIDE-BY-SIDE
                 if (CpuRamGrid != null)
                 {
-                    Grid.SetRow(CpuRamGrid, 2);
+                    Grid.SetRow(CpuRamGrid, 1);
                     Grid.SetColumn(CpuRamGrid, 0);
                     Grid.SetColumnSpan(CpuRamGrid, 1);
                 }
@@ -167,10 +171,18 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(RamCard, 1);
                     Grid.SetColumnSpan(RamCard, 1);
                 }
+                if (BottleneckCard != null)
+                {
+                    Grid.SetRow(BottleneckCard, 1);
+                    Grid.SetColumn(BottleneckCard, 1);
+                    Grid.SetColumnSpan(BottleneckCard, 1);
+                }
+
+                // Row 2: GPU/Disk (Left Col 0) & Quick Stats (Right Col 1) — SIDE-BY-SIDE
                 if (GpuDiskGrid != null)
                 {
                     Grid.SetRow(GpuDiskGrid, 2);
-                    Grid.SetColumn(GpuDiskGrid, 1);
+                    Grid.SetColumn(GpuDiskGrid, 0);
                     Grid.SetColumnSpan(GpuDiskGrid, 1);
                 }
                 if (GpuCard != null)
@@ -184,6 +196,12 @@ public sealed partial class DashboardPage : Page
                     Grid.SetRow(DiskCard, 0);
                     Grid.SetColumn(DiskCard, 1);
                     Grid.SetColumnSpan(DiskCard, 1);
+                }
+                if (QuickStatsGrid != null)
+                {
+                    Grid.SetRow(QuickStatsGrid, 2);
+                    Grid.SetColumn(QuickStatsGrid, 1);
+                    Grid.SetColumnSpan(QuickStatsGrid, 1);
                 }
 
                 // Row 3: Smart AI Advice (Left Col 0) & Performance Trend Chart (Right Col 1)
@@ -220,11 +238,11 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(AiCopilotEmbeddedPanel, 0);
                     Grid.SetColumnSpan(AiCopilotEmbeddedPanel, 2);
                 }
-                if (QuickStatsGrid != null)
+                if (BottleneckCard != null)
                 {
-                    Grid.SetRow(QuickStatsGrid, 2);
-                    Grid.SetColumn(QuickStatsGrid, 0);
-                    Grid.SetColumnSpan(QuickStatsGrid, 2);
+                    Grid.SetRow(BottleneckCard, 2);
+                    Grid.SetColumn(BottleneckCard, 0);
+                    Grid.SetColumnSpan(BottleneckCard, 2);
                 }
                 if (CpuRamGrid != null)
                 {
@@ -244,12 +262,6 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(RamCard, 0);
                     Grid.SetColumnSpan(RamCard, 2);
                 }
-                if (QuickStatsGrid != null)
-                {
-                    Grid.SetRow(QuickStatsGrid, 2);
-                    Grid.SetColumn(QuickStatsGrid, 0);
-                    Grid.SetColumnSpan(QuickStatsGrid, 2);
-                }
                 if (GpuDiskGrid != null)
                 {
                     Grid.SetRow(GpuDiskGrid, 4);
@@ -268,15 +280,21 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(DiskCard, 0);
                     Grid.SetColumnSpan(DiskCard, 2);
                 }
+                if (QuickStatsGrid != null)
+                {
+                    Grid.SetRow(QuickStatsGrid, 5);
+                    Grid.SetColumn(QuickStatsGrid, 0);
+                    Grid.SetColumnSpan(QuickStatsGrid, 2);
+                }
                 if (PerformanceChartCard != null)
                 {
-                    Grid.SetRow(PerformanceChartCard, 5);
+                    Grid.SetRow(PerformanceChartCard, 6);
                     Grid.SetColumn(PerformanceChartCard, 0);
                     Grid.SetColumnSpan(PerformanceChartCard, 2);
                 }
                 if (RecommendationsCard != null)
                 {
-                    Grid.SetRow(RecommendationsCard, 6);
+                    Grid.SetRow(RecommendationsCard, 7);
                     Grid.SetColumn(RecommendationsCard, 0);
                     Grid.SetColumnSpan(RecommendationsCard, 2);
                     Grid.SetRowSpan(RecommendationsCard, 1);
@@ -499,31 +517,31 @@ public sealed partial class DashboardPage : Page
         catch { }
     }
 
-    internal string GetStatusText(int score)
+    public string GetStatusText(int score)
     {
         if (score >= 90) return "EXCELLENT - Your system is highly optimized and clean.".T();
         if (score >= 70) return "GOOD - Some areas can be optimized to reclaim storage.".T();
         return "NEEDS OPTIMIZATION - Heavy junk logs or updates required.".T();
     }
 
-    internal Brush GetHealthScoreBrush(int score)
+    public Brush GetHealthScoreBrush(int score)
     {
         if (score >= 90) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)); 
         if (score >= 70) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)); 
         return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); 
     }
 
-    internal Brush GetHealthScoreBadgeBackground(int score)
+    public Brush GetHealthScoreBadgeBackground(int score)
     {
         if (score >= 90) return new SolidColorBrush(Windows.UI.Color.FromArgb(30, 16, 185, 129)); 
         if (score >= 70) return new SolidColorBrush(Windows.UI.Color.FromArgb(30, 245, 158, 11));
         return new SolidColorBrush(Windows.UI.Color.FromArgb(30, 239, 68, 68));
     }
 
-    internal bool IsNot(bool val) => !val;
-    internal string FormatPercent(double val) => $"{val:F1}%";
+    public bool IsNot(bool val) => !val;
+    public string FormatPercent(double val) => $"{val:F1}%";
 
-    internal Visibility GetVisibility(int count)
+    public Visibility GetVisibility(int count)
     {
         return count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }

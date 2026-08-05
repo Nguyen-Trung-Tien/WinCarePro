@@ -65,37 +65,37 @@ public sealed partial class DiskPage : Page
         }
     }
 
-    internal bool IsNot(bool val) => !val;
+    public bool IsNot(bool val) => !val;
 
-    internal static Brush GetHealthColor(string status)
+    public static Brush GetHealthColor(string status)
     {
         var color = status == "Healthy" ? Windows.UI.Color.FromArgb(255, 16, 185, 129) : Windows.UI.Color.FromArgb(255, 245, 158, 11);
         return new SolidColorBrush(color);
     }
 
-    internal static Brush GetHealthBadgeBg(string status)
+    public static Brush GetHealthBadgeBg(string status)
     {
         var color = status == "Healthy" ? Windows.UI.Color.FromArgb(30, 16, 185, 129) : Windows.UI.Color.FromArgb(30, 245, 158, 11);
         return new SolidColorBrush(color);
     }
 
-    internal static Brush GetTempColor(double temp)
+    public static Brush GetTempColor(double temp)
     {
         var color = temp > 45.0 ? Windows.UI.Color.FromArgb(255, 245, 158, 11) : Windows.UI.Color.FromArgb(255, 16, 185, 129);
         return new SolidColorBrush(color);
     }
 
-    internal static Brush GetTempBadgeBg(double temp)
+    public static Brush GetTempBadgeBg(double temp)
     {
         var color = temp > 45.0 ? Windows.UI.Color.FromArgb(30, 245, 158, 11) : Windows.UI.Color.FromArgb(30, 16, 185, 129);
         return new SolidColorBrush(color);
     }
 
-    internal static string GetTypeIcon(bool isDirectory)
+    public static string GetTypeIcon(bool isDirectory)
     {
         return isDirectory ? "\uE8B7" : "\uE7C3"; // Folder or File glyph
     }
 
-    internal static string FormatTemp(double temp) => $"{temp:F0}°C";
-    internal static string FormatDuplicateGroupSize(string size) => $"Duplicate Group - Size: {size}";
+    public static string FormatTemp(double temp) => $"{temp:F0}°C";
+    public static string FormatDuplicateGroupSize(string size) => $"Duplicate Group - Size: {size}";
 }

@@ -31,6 +31,9 @@ public sealed partial class SystemOptimizerPage : Page
         ViewModel.UpdateRamAndServices();
         ViewModel.LoadTweaks();
 
+        // Auto-run AI Diagnostics scan for optimizer recommendations
+        _ = ViewModel.RunAiScanAsync();
+
         // Setup periodic RAM update timer (1.5 seconds)
         if (_ramTimer == null)
         {
@@ -39,6 +42,34 @@ public sealed partial class SystemOptimizerPage : Page
             _ramTimer.Tick += RamTimer_Tick;
         }
         _ramTimer.Start();
+    }
+
+    private async void OnRunAiScanClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn)
+        {
+            btn.IsEnabled = false;
+            try
+            {
+                await System.Threading.Tasks.Task.Delay(350);
+                await ViewModel.RunAiScanAsync();
+
+                if (App.MainWindowInstance is MainWindow mw)
+                {
+                    mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
+                        $"AI Health Score: {ViewModel.AiHealthScore}/100. {ViewModel.AiSummaryText}", "Success");
+                }
+            }
+            catch { }
+            finally
+            {
+                btn.IsEnabled = true;
+            }
+        }
+        else
+        {
+            await ViewModel.RunAiScanAsync();
+        }
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -125,11 +156,11 @@ public sealed partial class SystemOptimizerPage : Page
         await ViewModel.BoostRamAsync();
     }
 
-    internal bool IsNot(bool val) => !val;
+    public bool IsNot(bool val) => !val;
 
-    internal string GetPercentageText(double val) => $"{val:F0}%";
+    public string GetPercentageText(double val) => $"{val:F0}%";
 
-    internal Style? GetStatusBadgeStyle(bool isOptimized)
+    public Style? GetStatusBadgeStyle(bool isOptimized)
     {
         if (isOptimized)
         {

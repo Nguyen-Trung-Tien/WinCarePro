@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using WinCarePro.Core.Helpers;
+using WinCarePro.Services;
 
 namespace WinCarePro.Modules.GamingTurbo
 {
@@ -13,7 +15,7 @@ namespace WinCarePro.Modules.GamingTurbo
         private bool _isTurboActive;
 
         [ObservableProperty]
-        private string _gameStatusMessage = "Chế độ Gaming Turbo đang TẮT. Sẵn sàng tăng tốc!";
+        private string _gameStatusMessage = "Gaming Turbo mode is OFF. Ready to boost!".T();
 
         [ObservableProperty]
         private string _ramFreedText = "0 MB";
@@ -28,7 +30,7 @@ namespace WinCarePro.Modules.GamingTurbo
             {
                 // Activate Gaming Turbo
                 IsTurboActive = true;
-                GameStatusMessage = "⚡ Gaming Turbo đã BẬT! Đang dọn dẹp bộ nhớ & tối ưu ưu tiên CPU...";
+                GameStatusMessage = "⚡ Gaming Turbo ENABLED! Cleaning memory & optimizing CPU priority...".T();
 
                 var freedBytes = await Task.Run(() =>
                 {
@@ -68,13 +70,14 @@ namespace WinCarePro.Modules.GamingTurbo
 
                 double freedMB = freedBytes / (1024.0 * 1024.0);
                 RamFreedText = $"{freedMB:N0} MB";
-                GameStatusMessage = $"🚀 Gaming Turbo HOẠT ĐỘNG! Đã giải phóng {freedMB:N0} MB RAM trên {OptimizedProcessesCount} tiến trình.";
+                string statusFormat = "🚀 Gaming Turbo ACTIVE! Freed {0:N0} MB RAM across {1} processes.".T();
+                GameStatusMessage = string.Format(statusFormat, freedMB, OptimizedProcessesCount);
             }
             else
             {
                 // Deactivate Gaming Turbo
                 IsTurboActive = false;
-                GameStatusMessage = "Chế độ Gaming Turbo đã TẮT. Hệ thống trở về trạng thái chuẩn.";
+                GameStatusMessage = "Gaming Turbo mode is OFF. System restored to standard state.".T();
             }
         }
 

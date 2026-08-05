@@ -10,6 +10,13 @@ public class RegistryIssue
     public string ValueData { get; set; } = "";
     public string Description { get; set; } = "";
     public bool IsSelected { get; set; } = true;
+
+    private string _title = "";
+    public string Title
+    {
+        get => !string.IsNullOrEmpty(_title) ? _title : (!string.IsNullOrEmpty(Section) ? Section : Description);
+        set => _title = value;
+    }
 }
 
 public class RegistryBackupItem

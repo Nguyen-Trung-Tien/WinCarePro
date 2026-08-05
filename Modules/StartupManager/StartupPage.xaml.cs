@@ -300,7 +300,7 @@ public sealed partial class StartupPage : Page
 
     public string FormatDateTime(DateTime? dt) => dt.HasValue ? dt.Value.ToString("yyyy-MM-dd HH:mm") : "Never".T();
 
-    internal bool IsNot(bool val) => !val;
+    public bool IsNot(bool val) => !val;
 
     private void UpdateLoadingOverlayState()
     {

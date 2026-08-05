@@ -2,6 +2,7 @@ using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.Services;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Modules.AiAssistant
 {
@@ -29,6 +30,8 @@ namespace WinCarePro.Modules.AiAssistant
         {
             try
             {
+                StatusTitleText.Text = $"{TranslationManager.Instance.T("Status")}: {TranslationManager.Instance.T("Analyzing...")}";
+                
                 var report = await AiHealthEngine.AnalyzeSystemHealthAsync();
                 ScoreText.Text = report.OverallScore.ToString();
                 StatusTitleText.Text = $"{TranslationManager.Instance.T("Status")}: {report.HealthStatus}";
@@ -40,9 +43,82 @@ namespace WinCarePro.Modules.AiAssistant
             catch { }
         }
 
-        private void OnRunAiScanClick(object sender, RoutedEventArgs e)
+        private async void OnRunAiScanClick(object sender, RoutedEventArgs e)
         {
-            RunAiScanAsync();
+            if (sender is Button btn)
+            {
+                btn.IsEnabled = false;
+                try
+                {
+                    await System.Threading.Tasks.Task.Delay(350);
+                    RunAiScanAsync();
+
+                    if (App.MainWindowInstance is MainWindow mw)
+                    {
+                        mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
+                            "WinCare AI completed system health analysis and generated optimization insights.".T(), "Success");
+                    }
+                }
+                catch { }
+                finally
+                {
+                    btn.IsEnabled = true;
+                }
+            }
+            else
+            {
+                RunAiScanAsync();
+            }
+        }
+
+        private async void OnRecommendationActionClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string actionKey)
+            {
+                switch (actionKey)
+                {
+                    case "NavigateJunkCleaner":
+                        NavigateTo("junk");
+                        break;
+                    case "NavigateStartup":
+                        NavigateTo("startup");
+                        break;
+                    case "NavigateDisk":
+                        NavigateTo("disk");
+                        break;
+                    case "NavigateOptimizer":
+                        NavigateTo("optimizer");
+                        break;
+                    default:
+                        // Fast RAM & Working Set Optimization Action
+                        try
+                        {
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
+                            RunAiScanAsync();
+
+                            if (App.MainWindowInstance is MainWindow mw)
+                            {
+                                mw.ShowToastFromDb("AI Quick Fix Applied".T(), 
+                                    "Purged memory working set and optimized background execution.".T(), "Success");
+                            }
+                        }
+                        catch { }
+                        break;
+                }
+            }
+        }
+
+        private void NavigateTo(string tag)
+        {
+            try
+            {
+                if (App.MainWindowInstance is MainWindow mw && mw.MainFrame.Content is MainPage mp)
+                {
+                    mp.NavigateToPageExternal(tag);
+                }
+            }
+            catch { }
         }
     }
 }

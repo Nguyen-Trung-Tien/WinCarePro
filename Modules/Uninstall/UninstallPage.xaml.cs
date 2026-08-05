@@ -197,48 +197,48 @@ public sealed partial class UninstallPage : Page
     }
 
     // UI Helpers
-    internal bool IsStep0Active(int step) => step == 0;
+    public bool IsStep0Active(int step) => step == 0;
     
-    internal Visibility GetOverlayVisibility(int step) => step != 0 ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility GetOverlayVisibility(int step) => step != 0 ? Visibility.Visible : Visibility.Collapsed;
 
-    internal bool IsNot(bool val) => !val;
+    public bool IsNot(bool val) => !val;
 
-    internal Visibility GetListViewVisibility(bool isBusy)
+    public Visibility GetListViewVisibility(bool isBusy)
     {
         return isBusy ? Visibility.Collapsed : Visibility.Visible;
     }
 
-    internal Visibility GetSkeletonVisibility(bool isBusy)
+    public Visibility GetSkeletonVisibility(bool isBusy)
     {
         return isBusy ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    internal Visibility GetDetailsVisibility(InstalledAppInfo? app)
+    public Visibility GetDetailsVisibility(InstalledAppInfo? app)
     {
         return app != null ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    internal Visibility GetNoDetailsVisibility(InstalledAppInfo? app)
+    public Visibility GetNoDetailsVisibility(InstalledAppInfo? app)
     {
         return app == null ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    internal Visibility GetBatchBarVisibility(bool hasSelected)
+    public Visibility GetBatchBarVisibility(bool hasSelected)
     {
         return hasSelected ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    internal Visibility GetStepListVisibility(int step)
+    public Visibility GetStepListVisibility(int step)
     {
         return step == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    internal Visibility GetStepProgressVisibility(int step)
+    public Visibility GetStepProgressVisibility(int step)
     {
         return step == 1 ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    internal Visibility GetStepLeftoversVisibility(int step)
+    public Visibility GetStepLeftoversVisibility(int step)
     {
         return step == 2 ? Visibility.Visible : Visibility.Collapsed;
     }

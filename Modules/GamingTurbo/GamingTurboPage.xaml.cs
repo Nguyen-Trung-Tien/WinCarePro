@@ -1,6 +1,7 @@
 using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using WinCarePro.Services;
 
 namespace WinCarePro.Modules.GamingTurbo
 {
@@ -15,8 +16,9 @@ namespace WinCarePro.Modules.GamingTurbo
             {
                 StatusMessageText.Text = _viewModel.GameStatusMessage;
                 FreedRamText.Text = _viewModel.RamFreedText;
-                ProcCountText.Text = $"{_viewModel.OptimizedProcessesCount} Tiến Trình";
-                ButtonText.Text = _viewModel.IsTurboActive ? "TẮT TURBO" : "BẬT TURBO NOW";
+                string processLabel = TranslationManager.Instance.T("Processes");
+                ProcCountText.Text = $"{_viewModel.OptimizedProcessesCount} {processLabel}";
+                ButtonText.Text = _viewModel.IsTurboActive ? TranslationManager.Instance.T("DISABLE TURBO") : TranslationManager.Instance.T("ENABLE TURBO NOW");
             };
         }
 

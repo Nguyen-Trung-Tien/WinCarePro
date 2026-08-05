@@ -12,13 +12,28 @@ public partial class TranslationManager
     {
         // --- Sidebar Navigation Menu Items & App Header ---
         _translations["Dashboard"] = "Trang chủ";
-        _translations["🤖 AI Health Copilot"] = "🤖 AI Copilot Chẩn Đoán";
-        _translations["⚡ Gaming Turbo 2.0"] = "⚡ Gaming Turbo 2.0";
-        _translations["AI Health Copilot Advisor"] = "Trợ Lý AI Copilot Chẩn Đoán";
-        _translations["Gaming Turbo 2.0 Suite"] = "Bộ Công Cụ Gaming Turbo 2.0";
+        _translations["🤖 WinCare AI Assistant"] = "🤖 Trợ Lý WinCare AI";
+        _translations["⚡ System Turbo Mode"] = "⚡ System Turbo Mode";
+        _translations["WinCare AI Assistant"] = "Trợ Lý WinCare AI Chẩn Đoán";
+        _translations["System Optimizer"] = "Tối Ưu Hệ Thống";
         _translations["Widget HUD"] = "Widget HUD Nổi";
+        _translations["ENABLE TURBO NOW"] = "BẬT TURBO NGAY";
+        _translations["DISABLE TURBO"] = "TẮT TURBO";
         _translations["BẬT TURBO NOW"] = "BẬT TURBO NGAY";
         _translations["TẮT TURBO"] = "TẮT TURBO";
+        _translations["Gaming Turbo 2.0 Mode"] = "Chế độ Gaming Turbo 2.0";
+        _translations["Optimize physical RAM Working Set & release CPU resources during gaming."] = "Tối ưu RAM vật lý Working Set & giải phóng tài nguyên CPU khi chơi Game.";
+        _translations["Ready to boost! Click the button to release system resources."] = "Sẵn sàng tăng tốc! Nhấn nút để giải phóng tài nguyên hệ thống.";
+        _translations["Freed RAM"] = "RAM Đã Giải Phóng";
+        _translations["Optimized Processes"] = "Tiến Trình Tối Ưu";
+        _translations["0 Processes"] = "0 Tiến Trình";
+        _translations["Processes"] = "Tiến Trình";
+        _translations["Power Mode"] = "Chế Độ Năng Lượng";
+        _translations["Gaming Turbo mode is OFF. Ready to boost!"] = "Chế độ Gaming Turbo đang TẮT. Sẵn sàng tăng tốc!";
+        _translations["⚡ Gaming Turbo ENABLED! Cleaning memory & optimizing CPU priority..."] = "⚡ Gaming Turbo đã BẬT! Đang dọn dẹp bộ nhớ & tối ưu ưu tiên CPU...";
+        _translations["🚀 Gaming Turbo ACTIVE! Freed {0:N0} MB RAM across {1} processes."] = "🚀 Gaming Turbo HOẠT ĐỘNG! Đã giải phóng {0:N0} MB RAM trên {1} tiến trình.";
+        _translations["Gaming Turbo mode is OFF. System restored to standard state."] = "Chế độ Gaming Turbo đã TẮT. Hệ thống trở về trạng thái chuẩn.";
+        _translations["Automated diagnostics via WinCare AI Assistant & System Turbo mode."] = "Chẩn đoán tự động bằng WinCare AI Assistant & Chế độ System Turbo.";
         _translations["Quét Chẩn Đoán AI"] = "Quét Chẩn Đoán AI";
         _translations["Junk Cleaner"] = "Dọn tệp rác";
         _translations["App Uninstaller"] = "Gỡ ứng dụng";

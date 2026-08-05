@@ -77,24 +77,34 @@
                         <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
-                                    <TextBlock Text="v4.0.0" FontSize="10" FontWeight="ExtraBold" Foreground="White"/>
+                                    <TextBlock Text="PRO" FontSize="10" FontWeight="ExtraBold" Foreground="White"/>
                                 </Border>
                                 <TextBlock Text="WinCare Pro Evolution Suite" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Chẩn đoán tự động bằng AI Copilot &amp; Chế độ Gaming Turbo 2.0." 
+                            <TextBlock Text="Automated diagnostics via WinCare AI Assistant &amp; System Turbo mode." 
                                        FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
 
                         <!-- Fast Action Buttons -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="12,0,0,0">
-                            <Button Click="OnLaunchGamingTurboClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="14,0" VerticalAlignment="Center">
+                            <Button Click="OnLaunchAiCopilotClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="14,0" VerticalAlignment="Center"
+                                    helpers:AnimationHelper.HoverScale="1.05" helpers:AnimationHelper.PressedScale="0.95">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE7FC;" FontSize="13"/>
-                                    <TextBlock Text="Gaming Turbo 2.0" FontSize="12" FontWeight="SemiBold"/>
+                                    <FontIcon Glyph="&#xE99A;" FontSize="13"/>
+                                    <TextBlock Text="AI Assistant" FontSize="12" FontWeight="SemiBold"/>
                                 </StackPanel>
                             </Button>
 
-                            <Button Click="OnLaunchDesktopWidgetClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="14,0" VerticalAlignment="Center">
+                            <Button Click="OnLaunchGamingTurboClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="14,0" VerticalAlignment="Center"
+                                    helpers:AnimationHelper.HoverScale="1.05" helpers:AnimationHelper.PressedScale="0.95">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE7FC;" FontSize="13"/>
+                                    <TextBlock Text="System Turbo" FontSize="12" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Click="OnLaunchDesktopWidgetClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="14,0" VerticalAlignment="Center"
+                                    helpers:AnimationHelper.HoverScale="1.05" helpers:AnimationHelper.PressedScale="0.95">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <FontIcon Glyph="&#xE8A7;" FontSize="13"/>
                                     <TextBlock Text="Widget HUD" FontSize="12" FontWeight="SemiBold"/>
@@ -209,7 +219,7 @@
                         </Grid>
                     </Border>
 
-                    <!-- Right Side Row 0 Column 1: AI Health Copilot (SIDE-BY-SIDE WITH HEALTH OVERVIEW) -->
+                    <!-- Right Side Row 0 Column 1: WinCare AI Assistant (SIDE-BY-SIDE WITH HEALTH OVERVIEW) -->
                     <Border x:Name="AiCopilotEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource AiCopilotCardStyle}" Margin="8" Padding="18,16"
                             helpers:AnimationHelper.HoverScale="1.008">
                         <StackPanel Spacing="10">
@@ -225,7 +235,7 @@
                                         <Border Background="{StaticResource AiCopilotGradient}" CornerRadius="6" Padding="6,3">
                                             <FontIcon Glyph="&#xE99A;" FontSize="12" Foreground="White"/>
                                         </Border>
-                                        <TextBlock Text="AI Health Copilot" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="WinCare AI Assistant" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
                                         <Border Background="#2510B981" BorderBrush="#6010B981" BorderThickness="1" CornerRadius="6" Padding="5,1" VerticalAlignment="Center">
                                             <TextBlock Text="Active" FontSize="9" FontWeight="ExtraBold" Foreground="#FF10B981"/>
                                         </Border>
@@ -394,8 +404,8 @@
 
                     <!-- Right Side Column 1 -->
                     
-                    <!-- 1. Bottleneck Advisor widget -->
-                    <Border x:Name="BottleneckCard" Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="8" Padding="16"
+                    <!-- 1. Bottleneck Advisor widget (Placed on Row 1 Column 1) -->
+                    <Border x:Name="BottleneckCard" Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="8" Padding="16"
                             helpers:AnimationHelper.HoverScale="1.015"
                             helpers:AnimationHelper.PressedScale="0.985">
                         <StackPanel Spacing="8">

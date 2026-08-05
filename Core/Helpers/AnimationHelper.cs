@@ -252,6 +252,48 @@ public static class AnimationHelper
     }
 
     // ==========================================
+    // 6. Attached Property: IsShimmering (NEW v4.1.0)
+    //    Enables a continuous smooth opacity pulse shimmer loading animation.
+    // ==========================================
+    public static readonly DependencyProperty IsShimmeringProperty =
+        DependencyProperty.RegisterAttached(
+            "IsShimmering",
+            typeof(bool),
+            typeof(AnimationHelper),
+            new PropertyMetadata(false, OnIsShimmeringChanged));
+
+    public static bool GetIsShimmering(DependencyObject obj) => (bool)obj.GetValue(IsShimmeringProperty);
+    public static void SetIsShimmering(DependencyObject obj, bool value) => obj.SetValue(IsShimmeringProperty, value);
+
+    private static void OnIsShimmeringChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement element && e.NewValue is bool isShimmering)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            var compositor = visual.Compositor;
+
+            if (isShimmering)
+            {
+                var shimmerAnim = compositor.CreateScalarKeyFrameAnimation();
+                shimmerAnim.Duration = TimeSpan.FromMilliseconds(1000);
+                shimmerAnim.IterationBehavior = AnimationIterationBehavior.Forever;
+                shimmerAnim.Direction = AnimationDirection.Alternate;
+                shimmerAnim.InsertKeyFrame(0.0f, 0.4f);
+                shimmerAnim.InsertKeyFrame(1.0f, 0.95f, compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0.0f), new Vector2(0.6f, 1.0f)));
+                visual.StartAnimation("Opacity", shimmerAnim);
+            }
+            else
+            {
+                visual.StopAnimation("Opacity");
+                var resetAnim = compositor.CreateScalarKeyFrameAnimation();
+                resetAnim.Duration = TimeSpan.FromMilliseconds(200);
+                resetAnim.InsertKeyFrame(1.0f, 1.0f);
+                visual.StartAnimation("Opacity", resetAnim);
+            }
+        }
+    }
+
+    // ==========================================
     // Event Handlers
     // ==========================================
     private static void Element_SizeChanged(object sender, SizeChangedEventArgs e)

@@ -21,9 +21,9 @@
                     <Border Background="{StaticResource CyberAccentGradient}" CornerRadius="10" Padding="8">
                         <FontIcon Glyph="&#xE945;" FontSize="20" Foreground="White"/>
                     </Border>
-                    <TextBlock Text="AI Health Copilot Advisor" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="WinCare AI Assistant" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
                     <Border Background="#258B5CF6" BorderBrush="#608B5CF6" BorderThickness="1" CornerRadius="8" Padding="8,4" VerticalAlignment="Center">
-                        <TextBlock Text="v4.0.0 Neural Engine" FontSize="11" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                        <TextBlock Text="Neural Engine" FontSize="11" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                     </Border>
                 </StackPanel>
                 <TextBlock Text="Intelligent system diagnostics and automatic PC optimization recommendations." Style="{StaticResource PageHeaderSubtitleStyle}"/>
@@ -67,7 +67,7 @@
                                 </Border>
                             </StackPanel>
 
-                            <TextBlock x:Name="SummaryMessageText" Text="AI Copilot predicts maximum system stability with 0 critical bottlenecks detected." 
+                            <TextBlock x:Name="SummaryMessageText" Text="WinCare AI Assistant predicts maximum system stability with 0 critical bottlenecks detected." 
                                        FontSize="13.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                         </StackPanel>
                     </Grid>
@@ -113,6 +113,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
                                     <Border Grid.Column="0" Width="42" Height="42" CornerRadius="10" Background="{ThemeResource AppStatChipBackground}" Margin="0,0,16,0" VerticalAlignment="Center">
@@ -128,6 +129,14 @@
                                         </StackPanel>
                                         <TextBlock Text="{Binding Description}" FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
+
+                                    <Button Grid.Column="2" Click="OnRecommendationActionClick" Tag="{Binding ActionKey}" 
+                                            Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="14,0" VerticalAlignment="Center" Margin="12,0,0,0">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon Glyph="&#xE721;" FontSize="11" Foreground="White"/>
+                                            <TextBlock Text="Apply Fix" FontSize="11.5" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </Button>
                                 </Grid>
                             </Border>
                         </DataTemplate>

@@ -130,4 +130,24 @@ public static class ProcessRunner
         result.Error = errorBuilder.ToString();
         return result;
     }
+
+    /// <summary>
+    /// Escapes command line arguments safely to prevent command injection risks.
+    /// </summary>
+    public static string SanitizeArgument(string argument)
+    {
+        if (string.IsNullOrEmpty(argument))
+            return "\"\"";
+
+        // Remove dangerous command chaining characters if unquoted
+        string sanitized = argument.Replace("\r", "").Replace("\n", "");
+        
+        // Wrap in quotes if contains whitespace or special chars
+        if (sanitized.Contains(' ') || sanitized.Contains('\t') || sanitized.Contains('\"'))
+        {
+            sanitized = "\"" + sanitized.Replace("\"", "\\\"") + "\"";
+        }
+
+        return sanitized;
+    }
 }

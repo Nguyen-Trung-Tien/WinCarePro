@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 
 namespace WinCarePro.Services;
@@ -36,6 +37,7 @@ public partial class TranslationManager
     public event EventHandler? LanguageChanged;
 
     private readonly Dictionary<string, string> _translations = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, string> _reverseTranslations = new(StringComparer.OrdinalIgnoreCase);
     private static readonly ConditionalWeakTable<DependencyObject, Dictionary<string, string>> OriginalValues = new();
     private static readonly ConditionalWeakTable<DependencyObject, object> RegisteredControlsMap = new();
     private static readonly object DummyValue = new();
@@ -90,12 +92,9 @@ public partial class TranslationManager
         if (language == AppLanguage.English)
         {
             if (_translations.ContainsKey(trimmed)) return key;
-            foreach (var kvp in _translations)
+            if (_reverseTranslations.TryGetValue(trimmed, out var englishKey))
             {
-                if (string.Equals(kvp.Value, trimmed, StringComparison.OrdinalIgnoreCase))
-                {
-                    return PreserveWhitespace(key, kvp.Key);
-                }
+                return PreserveWhitespace(key, englishKey);
             }
             return key;
         }
@@ -105,6 +104,51 @@ public partial class TranslationManager
             {
                 return PreserveWhitespace(key, translated);
             }
+
+            // Dynamic Regex translation for storage sustainability
+            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Drive ([A-Z]): usage is at (\d+)%\. Estimated storage sustainability is over (\d+) days\.$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            {
+                string res = System.Text.RegularExpressions.Regex.Replace(trimmed, @"^Drive ([A-Z]): usage is at (\d+)%\. Estimated storage sustainability is over (\d+) days\.$", "Ổ $1: đang sử dụng $2%. Ước tính dung lượng bền vững hơn $3 ngày.", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                return PreserveWhitespace(key, res);
+            }
+
+            // Dynamic Regex translation for RAM Boosted logs
+            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^RAM Boosted: Optimized (\d+) processes, freed (\d+) bytes$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            {
+                string res = System.Text.RegularExpressions.Regex.Replace(trimmed, @"^RAM Boosted: Optimized (\d+) processes, freed (\d+) bytes$", "Giải phóng RAM: Đã tối ưu $1 tiến trình, giải phóng $2 bytes", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                return PreserveWhitespace(key, res);
+            }
+
+            // Dynamic Regex translation for Cleaned bytes logs
+            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Cleaned (\d+) bytes$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            {
+                string res = System.Text.RegularExpressions.Regex.Replace(trimmed, @"^Cleaned (\d+) bytes$", "Đã dọn dẹp $1 bytes", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                return PreserveWhitespace(key, res);
+            }
+
+            // Dynamic Regex translation for System updated version logs
+            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^System updated to version (.+)$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            {
+                string res = System.Text.RegularExpressions.Regex.Replace(trimmed, @"^System updated to version (.+)$", "Hệ thống đã cập nhật lên phiên bản $1", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                return PreserveWhitespace(key, res);
+            }
+
+            // Dynamic Regex translation for Trạng thái: ... Condition
+            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Trạng thái:\s*Fair Condition$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                return PreserveWhitespace(key, "Trạng thái: Khá");
+            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Trạng thái:\s*Good Condition$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                return PreserveWhitespace(key, "Trạng thái: Tốt");
+            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Trạng thái:\s*Excellent Condition$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                return PreserveWhitespace(key, "Trạng thái: Tuyệt vời");
+            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Trạng thái:\s*Critical Condition$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                return PreserveWhitespace(key, "Trạng thái: Cảnh báo");
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^AI detected (\d+) active background processes\. Disabling unnecessary startup items can shave up to ([\d\.,]+) seconds off boot time\.$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            {
+                string res = System.Text.RegularExpressions.Regex.Replace(trimmed, @"^AI detected (\d+) active background processes\. Disabling unnecessary startup items can shave up to ([\d\.,]+) seconds off boot time\.$", "AI phát hiện $1 tiến trình ngầm đang hoạt động. Tắt các mục khởi động không cần thiết có thể rút ngắn tới $2 giây boot.", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                return PreserveWhitespace(key, res);
+            }
+
             return key;
         }
     }
@@ -122,9 +166,6 @@ public partial class TranslationManager
         // Check if we already have a recorded original value
         if (dict.TryGetValue(propertyName, out var original))
         {
-            // Verify if the current value is just a translation of the recorded original.
-            // If the currentValue matches the original (English) or its Vietnamese translation,
-            // then it has NOT changed dynamically.
             string translationVi = Instance.GetTranslationForLanguage(original, AppLanguage.Vietnamese);
             
             bool isSame = string.Equals(trimmedCandidate, original, StringComparison.OrdinalIgnoreCase) ||
@@ -136,16 +177,10 @@ public partial class TranslationManager
             }
         }
 
-        // If it's a new control or the text changed dynamically, determine the English key.
-        // We look up trimmedCandidate in our translation values to find the English key.
         string originalCandidate = trimmedCandidate;
-        foreach (var kvp in Instance._translations)
+        if (Instance._reverseTranslations.TryGetValue(trimmedCandidate, out var revKey))
         {
-            if (string.Equals(kvp.Value, trimmedCandidate, StringComparison.OrdinalIgnoreCase))
-            {
-                originalCandidate = kvp.Key;
-                break;
-            }
+            originalCandidate = revKey;
         }
 
         if (!string.IsNullOrEmpty(currentValue) && (currentValue.StartsWith(" ") || currentValue.EndsWith(" ")))
@@ -164,15 +199,7 @@ public partial class TranslationManager
         if (string.IsNullOrEmpty(text)) return false;
         string trimmed = text.Trim();
         
-        if (_translations.ContainsKey(trimmed)) return true;
-        
-        foreach (var val in _translations.Values)
-        {
-            if (string.Equals(val, trimmed, StringComparison.OrdinalIgnoreCase))
-                return true;
-        }
-        
-        return false;
+        return _translations.ContainsKey(trimmed) || _reverseTranslations.ContainsKey(trimmed);
     }
 
     private readonly List<WeakReference<DependencyObject>> _registeredControls = new();
@@ -225,6 +252,23 @@ public partial class TranslationManager
 
         if (parent is TextBlock tb)
         {
+            try
+            {
+                if (tb.Inlines != null && tb.Inlines.Count > 0)
+                {
+                    foreach (var inline in tb.Inlines)
+                    {
+                        if (inline is Run r && ShouldTranslate(r.Text))
+                        {
+                            string originalR = GetOriginalValue(r, "Text", r.Text);
+                            r.Text = T(originalR);
+                            translated = true;
+                        }
+                    }
+                }
+            }
+            catch { }
+
             if (ShouldTranslate(tb.Text))
             {
                 string original = GetOriginalValue(tb, "Text", tb.Text);
@@ -232,12 +276,21 @@ public partial class TranslationManager
                 translated = true;
             }
         }
-        else if (parent is Button btn && btn.Content is string btnContent)
+        else if (parent is Run run)
         {
-            if (ShouldTranslate(btnContent))
+            if (ShouldTranslate(run.Text))
             {
-                string original = GetOriginalValue(btn, "Content", btnContent);
-                btn.Content = T(original);
+                string original = GetOriginalValue(run, "Text", run.Text);
+                run.Text = T(original);
+                translated = true;
+            }
+        }
+        else if (parent is ContentControl cc && cc.Content is string ccContent)
+        {
+            if (ShouldTranslate(ccContent))
+            {
+                string original = GetOriginalValue(cc, "Content", ccContent);
+                cc.Content = T(original);
                 translated = true;
             }
         }
@@ -491,6 +544,46 @@ public partial class TranslationManager
                 translated = true;
             }
         }
+        else if (parent is InfoBar ib)
+        {
+            if (!string.IsNullOrEmpty(ib.Title) && ShouldTranslate(ib.Title))
+            {
+                string originalTitle = GetOriginalValue(ib, "Title", ib.Title);
+                ib.Title = T(originalTitle);
+                translated = true;
+            }
+            if (!string.IsNullOrEmpty(ib.Message) && ShouldTranslate(ib.Message))
+            {
+                string originalMsg = GetOriginalValue(ib, "Message", ib.Message);
+                ib.Message = T(originalMsg);
+                translated = true;
+            }
+        }
+        else if (parent is Pivot pivot)
+        {
+            if (!RegisteredControlsMap.TryGetValue(pivot, out _))
+            {
+                pivot.SelectionChanged += (s, e) =>
+                {
+                    pivot.DispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                    {
+                        if (pivot.SelectedItem is DependencyObject selectedDep)
+                        {
+                            Translate(selectedDep);
+                        }
+                    });
+                };
+            }
+        }
+        else if (parent is Expander exp)
+        {
+            if (exp.Header is string expHeader && ShouldTranslate(expHeader))
+            {
+                string originalHeader = GetOriginalValue(exp, "Header", expHeader);
+                exp.Header = T(originalHeader);
+                translated = true;
+            }
+        }
 
         // Support ToolTip
         if (parent is DependencyObject dobj)
@@ -513,16 +606,21 @@ public partial class TranslationManager
     public void Translate(DependencyObject? parent)
     {
         if (parent == null) return;
+        TranslateInternal(parent, new HashSet<DependencyObject>());
+    }
+
+    private void TranslateInternal(DependencyObject? parent, HashSet<DependencyObject> visited)
+    {
+        if (parent == null || !visited.Add(parent)) return;
 
         TranslateSingleControl(parent);
 
         // Translate ContextFlyout if present
         if (parent is UIElement ui && ui.ContextFlyout != null)
         {
-            Translate(ui.ContextFlyout);
+            TranslateInternal(ui.ContextFlyout, visited);
         }
 
-        // Recurse down visual tree children
         int count = 0;
         try
         {
@@ -530,14 +628,62 @@ public partial class TranslationManager
         }
         catch { }
 
-        for (int i = 0; i < count; i++)
+        if (count > 0)
         {
+            for (int i = 0; i < count; i++)
+            {
+                try
+                {
+                    var child = VisualTreeHelper.GetChild(parent, i);
+                    if (child != null)
+                    {
+                        TranslateInternal(child, visited);
+                    }
+                }
+                catch { }
+            }
+        }
+        else
+        {
+            // Logical Tree Traversal fallback for WinUI 3 elements not yet realized in Visual Tree
             try
             {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                if (child != null)
+                if (parent is ContentControl cc && cc.Content is DependencyObject ccDep)
                 {
-                    Translate(child);
+                    TranslateInternal(ccDep, visited);
+                }
+                else if (parent is Border border && border.Child != null)
+                {
+                    TranslateInternal(border.Child, visited);
+                }
+                else if (parent is Panel panel && panel.Children != null)
+                {
+                    foreach (var child in panel.Children)
+                    {
+                        TranslateInternal(child, visited);
+                    }
+                }
+                else if (parent is Pivot pivot && pivot.Items != null)
+                {
+                    foreach (var item in pivot.Items)
+                    {
+                        if (item is DependencyObject depItem)
+                        {
+                            TranslateInternal(depItem, visited);
+                        }
+                    }
+                }
+                else if (parent is PivotItem pi && pi.Content is DependencyObject piDep)
+                {
+                    TranslateInternal(piDep, visited);
+                }
+                else if (parent is UserControl uc && uc.Content is DependencyObject ucDep)
+                {
+                    TranslateInternal(ucDep, visited);
+                }
+                else if (parent is Viewbox vb && vb.Child != null)
+                {
+                    TranslateInternal(vb.Child, visited);
                 }
             }
             catch { }

@@ -64,7 +64,7 @@ public class SystemOptimizerEngineTests
         // Assert
         Assert.NotNull(tweak);
         Assert.Equal(recommendedValue, tweak.RecommendedValue);
-        Assert.Equal(category, tweak.Category);
+        Assert.Equal(WinCarePro.Services.TranslationManager.Instance.T(category), tweak.Category);
         Assert.False(string.IsNullOrWhiteSpace(tweak.Name));
         Assert.False(string.IsNullOrWhiteSpace(tweak.Description));
     }

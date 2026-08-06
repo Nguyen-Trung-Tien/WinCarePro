@@ -263,5 +263,31 @@ public partial class NetworkEngine
             return false;
         }
     }
+
+    public async Task<bool> TestDohLatencyAndFallbackAsync(string primaryDns, int timeoutMs = 2000)
+    {
+        Log($"Testing DoH Server latency for {primaryDns}...");
+        try
+        {
+            using var ping = new System.Net.NetworkInformation.Ping();
+            var reply = await ping.SendPingAsync(primaryDns, timeoutMs);
+            if (reply.Status == System.Net.NetworkInformation.IPStatus.Success)
+            {
+                Log($"DoH Server ({primaryDns}) latency is {reply.RoundtripTime} ms.");
+                return true;
+            }
+            
+            Log($"Warning: DoH Server ({primaryDns}) ping failed or timed out ({reply.Status}). Triggering DNS fallback...");
+            await SetDohSettingsAsync(enable: false, "", "", "");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Log($"DoH Latency Check Error: {ex.Message}. Falling back to default DNS.");
+            await SetDohSettingsAsync(enable: false, "", "", "");
+            return false;
+        }
+    }
 }
+
 

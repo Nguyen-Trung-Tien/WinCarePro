@@ -162,6 +162,21 @@ public class DbManager
                 command.ExecuteNonQuery();
             }
 
+            // Create StateSnapshots table for Undo Rollback
+            var createSnapshotsTable = @"
+                CREATE TABLE IF NOT EXISTS StateSnapshots (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Category TEXT NOT NULL,
+                    KeyName TEXT NOT NULL,
+                    OriginalValue TEXT,
+                    NewValue TEXT,
+                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                );";
+            using (var command = new SqliteCommand(createSnapshotsTable, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
             // Create index on Notifications (IsRead, CreatedAt)
             var createNotificationsIndex = "CREATE INDEX IF NOT EXISTS idx_notifications_isread_createdat ON Notifications (IsRead, CreatedAt DESC);";
             using (var command = new SqliteCommand(createNotificationsIndex, connection))
@@ -531,6 +546,101 @@ public class DbManager
         // Log the completion of database maintenance to schedule the next run in 7 days
         LogAction("Database maintenance completed.", "Database", "Success");
     }
+
+    #region DPAPI Security & Snapshot Methods
+
+    public static string EncryptProtectedData(string plainText)
+    {
+        if (string.IsNullOrEmpty(plainText)) return string.Empty;
+        try
+        {
+            byte[] plainBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            byte[] cipherBytes = System.Security.Cryptography.ProtectedData.Protect(
+                plainBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
+            return Convert.ToBase64String(cipherBytes);
+        }
+        catch
+        {
+            return plainText; // Safe fallback
+        }
+    }
+
+    public static string DecryptProtectedData(string cipherText)
+    {
+        if (string.IsNullOrEmpty(cipherText)) return string.Empty;
+        try
+        {
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            byte[] plainBytes = System.Security.Cryptography.ProtectedData.Unprotect(
+                cipherBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
+            return System.Text.Encoding.UTF8.GetString(plainBytes);
+        }
+        catch
+        {
+            return cipherText; // Safe fallback
+        }
+    }
+
+    public static void SaveSnapshot(string category, string keyName, string? originalValue, string? newValue)
+    {
+        ExecuteWithConnection(connection =>
+        {
+            var sql = "INSERT INTO StateSnapshots (Category, KeyName, OriginalValue, NewValue) VALUES ($cat, $key, $orig, $new)";
+            using var cmd = new SqliteCommand(sql, connection);
+            cmd.Parameters.AddWithValue("$cat", category);
+            cmd.Parameters.AddWithValue("$key", keyName);
+            cmd.Parameters.AddWithValue("$orig", (object?)originalValue ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("$new", (object?)newValue ?? DBNull.Value);
+            cmd.ExecuteNonQuery();
+        });
+    }
+
+    public static List<StateSnapshotEntry> GetSnapshots(string? category = null)
+    {
+        return ExecuteWithConnection(connection =>
+        {
+            var list = new List<StateSnapshotEntry>();
+            var sql = "SELECT Id, Category, KeyName, OriginalValue, NewValue, CreatedAt FROM StateSnapshots";
+            if (!string.IsNullOrEmpty(category))
+            {
+                sql += " WHERE Category = $cat";
+            }
+            sql += " ORDER BY CreatedAt DESC LIMIT 100";
+
+            using var cmd = new SqliteCommand(sql, connection);
+            if (!string.IsNullOrEmpty(category))
+            {
+                cmd.Parameters.AddWithValue("$cat", category);
+            }
+
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(new StateSnapshotEntry
+                {
+                    Id = reader.GetInt32(0),
+                    Category = reader.GetString(1),
+                    KeyName = reader.GetString(2),
+                    OriginalValue = reader.IsDBNull(3) ? null : reader.GetString(3),
+                    NewValue = reader.IsDBNull(4) ? null : reader.GetString(4),
+                    CreatedAt = reader.IsDBNull(5) ? DateTime.Now : reader.GetDateTime(5)
+                });
+            }
+            return list;
+        }, new List<StateSnapshotEntry>());
+    }
+
+    #endregion
+}
+
+public class StateSnapshotEntry
+{
+    public int Id { get; set; }
+    public string Category { get; set; } = "";
+    public string KeyName { get; set; } = "";
+    public string? OriginalValue { get; set; }
+    public string? NewValue { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 public class LogEntry

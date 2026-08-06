@@ -76,11 +76,11 @@ public class JunkCleanerEngine
         long cleanableBytes = 0;
         long lockedBytes = 0;
         int count = 0;
-        var fileItems = new List<JunkFileItem>();
+        var fileItems = new System.Collections.Concurrent.ConcurrentBag<JunkFileItem>();
 
         try
         {
-            if (!Directory.Exists(path)) return (0, 0, 0, 0, fileItems);
+            if (!Directory.Exists(path)) return (0, 0, 0, 0, new List<JunkFileItem>());
 
             try
             {
@@ -91,9 +91,9 @@ public class JunkCleanerEngine
                     {
                         var info = new FileInfo(file);
                         long size = info.Length;
-                        bytes += size;
-                        cleanableBytes += size;
-                        count++;
+                        System.Threading.Interlocked.Add(ref bytes, size);
+                        System.Threading.Interlocked.Add(ref cleanableBytes, size);
+                        System.Threading.Interlocked.Increment(ref count);
                         if (fileItems.Count < maxFiles)
                         {
                             fileItems.Add(new JunkFileItem { Path = file, SizeBytes = size, IsLocked = false });
@@ -110,29 +110,32 @@ public class JunkCleanerEngine
             {
                 try
                 {
-                    foreach (var dir in Directory.EnumerateDirectories(path))
+                    var subDirs = Directory.EnumerateDirectories(path);
+                    Parallel.ForEach(subDirs, new ParallelOptions { CancellationToken = token, MaxDegreeOfParallelism = Environment.ProcessorCount }, dir =>
                     {
-                        token.ThrowIfCancellationRequested();
                         try
                         {
                             var dirInfo = new DirectoryInfo(dir);
                             if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
-                                continue;
+                                return;
+
+                            int remainingMax = Math.Max(0, maxFiles - fileItems.Count);
+                            var (subBytes, subCleanable, subLocked, subCount, subFiles) = GetDirectoryDetails(dir, searchPattern, recursive, token, remainingMax);
+
+                            System.Threading.Interlocked.Add(ref bytes, subBytes);
+                            System.Threading.Interlocked.Add(ref cleanableBytes, subCleanable);
+                            System.Threading.Interlocked.Add(ref lockedBytes, subLocked);
+                            System.Threading.Interlocked.Add(ref count, subCount);
+
+                            foreach (var f in subFiles)
+                            {
+                                if (fileItems.Count >= maxFiles) break;
+                                fileItems.Add(f);
+                            }
                         }
                         catch (OperationCanceledException) { throw; }
                         catch { }
-
-                        int remainingMax = Math.Max(0, maxFiles - fileItems.Count);
-                        var (subBytes, subCleanable, subLocked, subCount, subFiles) = GetDirectoryDetails(dir, searchPattern, recursive, token, remainingMax);
-                        bytes += subBytes;
-                        cleanableBytes += subCleanable;
-                        lockedBytes += subLocked;
-                        count += subCount;
-                        if (fileItems.Count < maxFiles)
-                        {
-                            fileItems.AddRange(subFiles);
-                        }
-                    }
+                    });
                 }
                 catch (OperationCanceledException) { throw; }
                 catch { }
@@ -141,7 +144,7 @@ public class JunkCleanerEngine
         catch (OperationCanceledException) { throw; }
         catch { }
 
-        return (bytes, cleanableBytes, lockedBytes, count, fileItems);
+        return (bytes, cleanableBytes, lockedBytes, count, fileItems.ToList());
     }
 
     private void UpdateCategoryLockStatus(JunkCategory cat, CancellationToken token = default)

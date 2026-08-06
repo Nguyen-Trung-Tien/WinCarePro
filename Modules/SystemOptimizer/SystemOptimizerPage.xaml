@@ -13,16 +13,16 @@
     <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-            <!-- Wide Layout: Viewport Width >= 1200px -->
+            <!-- Wide Layout: Viewport Width >= 880px -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1200" />
+                        <AdaptiveTrigger MinWindowWidth="880" />
                     </VisualState.StateTriggers>
                 </VisualState>
-                <!-- Medium Layout: Viewport Width between 650px and 1200px -->
+                <!-- Medium Layout: Viewport Width between 550px and 880px -->
                 <VisualState x:Name="MediumState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="650" />
+                        <AdaptiveTrigger MinWindowWidth="550" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="TweaksCard.(Grid.Row)" Value="0" />
@@ -47,7 +47,7 @@
                         <Setter Target="HeaderButtons.Margin" Value="0,10,0,0" />
                     </VisualState.Setters>
                 </VisualState>
-                <!-- Narrow Layout: Viewport Width < 650px -->
+                <!-- Narrow Layout: Viewport Width < 550px -->
                 <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
@@ -109,8 +109,8 @@
         <!-- v4.0.0 — AI HEALTH OPTIMIZER & TURBO MODE (Row 1) -->
         <Grid Grid.Row="1" Margin="0,0,0,16" ColumnSpacing="16">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.2*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
             <!-- 1. AI Health Copilot Diagnostic Card -->
@@ -285,6 +285,11 @@
                     </Border>
 
                     <Pivot Grid.Row="1" SelectionChanged="OnPivotSelectionChanged" Margin="0,0,0,10">
+                        <Pivot.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" FontSize="14.5" FontWeight="SemiBold" Margin="0,0,8,0" />
+                            </DataTemplate>
+                        </Pivot.HeaderTemplate>
                         <PivotItem Header="All" Tag="All" />
                         <PivotItem Header="Performance" Tag="Performance" />
                         <PivotItem Header="Gaming" Tag="Gaming &amp; GPU" />
@@ -337,18 +342,12 @@
                 </Grid>
             </Border>
 
-            <!-- Right Pane: Boost Engine Cards (Wrapped in ScrollViewer to prevent cut-off on lower resolution screens) -->
-            <ScrollViewer x:Name="RightPanelScrollViewer"
-                          Grid.Column="1"
-                          Grid.Row="0"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
-                <StackPanel x:Name="RightPanel" Spacing="14" Margin="0,0,12,0">
-                    
-                    <!-- RAM Booster Card (Positioned FIRST for immediate visibility in default view) -->
-                    <Border x:Name="RamBoosterCard" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10">
-                        <StackPanel Spacing="8">
-                            <!-- Card Header with Icon, Title, and Auto-Boost Toggle -->
+            <!-- Right Pane: Turbo / RAM / Game Boost Widgets -->
+            <ScrollViewer x:Name="RightPanelScrollViewer" Grid.Column="1" Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel x:Name="RightPanel" Spacing="16">
+                    <!-- RAM Booster Card -->
+                    <Border x:Name="RamBoosterCard" Style="{StaticResource NeonGlowBorderStyle}" Padding="14,12">
+                        <StackPanel Spacing="10">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -356,7 +355,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <Border Width="32" Height="32" Background="#253B82F6" CornerRadius="16" Grid.Column="0">
-                                    <FontIcon Glyph="&#xE9D9;" FontSize="14" Foreground="#FF2563EB" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    <FontIcon Glyph="&#xE968;" FontSize="14" Foreground="#FF3B82F6" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                 </Border>
                                 <StackPanel Grid.Column="1" Margin="8,0,8,0" VerticalAlignment="Center">
                                     <TextBlock Text="Auto-Boost RAM" FontWeight="Bold" FontSize="13" />
@@ -364,25 +363,30 @@
                                 <ToggleSwitch Grid.Column="2" IsOn="{x:Bind ViewModel.AutoBoostEnabled, Mode=TwoWay}" VerticalAlignment="Center" OffContent="" OnContent="" MinWidth="0" HorizontalAlignment="Right" />
                             </Grid>
 
-                            <!-- Compact RAM Gauge & Detailed Metrics Grid -->
-                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="10,6">
+                            <!-- RAM Gauge & Details -->
+                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="10" Padding="12,10">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- Compact Progress Ring Gauge -->
-                                    <Grid Grid.Column="0" Width="54" Height="54" VerticalAlignment="Center">
-                                        <ProgressRing Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" IsIndeterminate="{x:Bind ViewModel.IsBoosting, Mode=OneWay}" Width="54" Height="54" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" />
-                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="0">
-                                            <TextBlock Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" CharacterSpacing="-5" />
+                                    <!-- Gauge Ring -->
+                                    <Grid Width="52" Height="52" Grid.Column="0" VerticalAlignment="Center">
+                                        <ProgressRing Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" 
+                                                      Minimum="0" Maximum="100" 
+                                                      Width="50" Height="50" 
+                                                      Background="{ThemeResource ControlStrokeColorDefaultBrush}" 
+                                                      Foreground="{ThemeResource SystemAccentColor}"
+                                                      IsIndeterminate="False"/>
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" />
                                             <TextBlock Text="RAM" FontSize="8" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
                                         </StackPanel>
                                     </Grid>
 
                                     <!-- Detailed RAM metrics column -->
-                                    <Grid Grid.Column="1" RowSpacing="2" VerticalAlignment="Center">
+                                    <Grid Grid.Column="1" RowSpacing="3" VerticalAlignment="Center">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
@@ -407,15 +411,11 @@
 
                             <TextBlock Text="{x:Bind ViewModel.RamOptimizedText, Mode=OneWay}" FontSize="10" Foreground="{ThemeResource SystemAccentColor}" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" Visibility="{x:Bind ViewModel.RamOptimizedText, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}" />
 
-                            <Button Click="OnBoostRamClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBoosting), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Stretch" CornerRadius="6" Height="34" Padding="10,4" FontWeight="SemiBold">
-                                <Button.ContentTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                            <FontIcon Glyph="&#xF0AF;" FontSize="12" Foreground="White" />
-                                            <TextBlock Text="Boost RAM Now" FontSize="12" VerticalAlignment="Center" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </Button.ContentTemplate>
+                            <Button Click="OnBoostRamClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBoosting), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Stretch" CornerRadius="8" Padding="12,8" FontWeight="Bold" Margin="0,4,0,0">
+                                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                    <FontIcon Glyph="&#xF0AF;" FontSize="12" Foreground="White" />
+                                    <TextBlock Text="Boost RAM Now" FontSize="12.5" VerticalAlignment="Center" FontWeight="Bold" />
+                                </StackPanel>
                             </Button>
                         </StackPanel>
                     </Border>

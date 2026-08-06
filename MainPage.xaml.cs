@@ -51,14 +51,13 @@ public sealed partial class MainPage : Page
             if (e.Content is Page page)
             {
                 page.RequestedTheme = ThemeManager.Instance.CurrentTheme;
-                if (page.IsLoaded)
+                TranslationManager.Instance.Translate(page);
+                page.Loaded += (sender, args) => TranslationManager.Instance.Translate(page);
+
+                page.DispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                 {
                     TranslationManager.Instance.Translate(page);
-                }
-                else
-                {
-                    page.Loaded += (sender, args) => TranslationManager.Instance.Translate(page);
-                }
+                });
             }
         };
 

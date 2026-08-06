@@ -2,60 +2,52 @@
 
 ---
 
-## 🚀 WinCare Pro v4.0.0 — Đột Phá Giao Diện Aura Glass, AI Health Copilot Engine & Single-Instance HUD Widget
+## 🚀 WinCare Pro v4.0.0 — Đột Phá Giao Diện Aura Glass, AI Health Copilot Engine, Single-Instance HUD Widget & Registry Undo System
 
-> **Phát hành:** 04/08/2026 · **Loại:** Bản nâng cấp Toàn diện Giao diện, Trải nghiệm Chuyển động & Tính năng Đột phá (Major Evolution Release)
+> **Phát hành:** 06/08/2026 · **Loại:** Bản nâng cấp Đại thế hệ (Major Generation Evolution Release)
 
-Bản cập nhật **v4.0.0** đánh dấu bước chuyển mình toàn diện của WinCare Pro với thiết kế giao diện **Aura Glassmorphic Fluent 2.0**, hệ thống chuyển động **Visual Composition 120 FPS**, Trợ lý **AI Health Copilot Engine** dự đoán rủi ro hệ thống, Chế độ **Gaming Turbo 2.0 Mode** tối ưu bộ nhớ RAM tức thì và cửa sổ **Single-Instance Desktop HUD Widget** ghim trên cùng màn hình.
+Bản cập nhật **v4.0.0** đánh dấu bước chuyển mình toàn diện nhất của WinCare Pro kể từ trước đến nay. Phiên bản mới mang đến ngôn ngữ thiết kế **Aura Glassmorphic Fluent 2.0**, hệ thống chuyển động **Visual Composition 120 FPS**, Trợ lý **AI Health Copilot Engine** chẩn đoán và dự đoán rủi ro hệ thống, cửa sổ nổi **Desktop HUD Widget** đơn thể (Single-Instance), cơ chế **Hoàn tác Registry (Undo/Rollback System)** an toàn tuyệt đối, cùng hàng loạt cải tiến về hiệu năng và giao diện phản hồi linh hoạt (Responsive UI).
 
 ---
 
-### ✨ Các tính năng & cải tiến nổi bật trong phiên bản v4.0.0 (Key Features)
+### ✨ Các tính năng & cải tiến đột phá trong phiên bản v4.0.0 (Key Features)
 
 * **🤖 Trợ lý AI Health Copilot Engine (Predictive AI Analytics):**
-  * Tích hợp thuật toán AI chẩn đoán sức khỏe PC, dự đoán chính xác số ngày còn lại trước khi ổ C: bị cạn kiệt dung lượng và ước tính số giây khởi động giảm bớt được.
-  * Tự động đưa ra các khuyến nghị tối ưu thông minh theo từng cấp độ rủi ro (Critical, High, Medium).
-
-* **⚡ Chế độ Gaming Turbo 2.0 Suite:**
-  * Giải phóng bộ nhớ RAM vật lý (Working Set) và nâng ưu tiên tài nguyên CPU cho các ứng dụng / game chỉ với 1-Click.
-  * Kích hoạt chế độ năng lượng *Ultimate Performance* tự động.
+  * Tích hợp thuật toán AI chẩn đoán sức khỏe PC nâng cao (`AiDiagnosticsEngine`), phân tích dữ liệu phần cứng và tự động chấm điểm **Composite Health Score (0 - 100)**.
+  * **Dự đoán thông minh:** Dự đoán chính xác số ngày còn lại trước khi ổ C: bị cạn kiệt dung lượng và ước tính số giây khởi động hệ thống có thể tối ưu thêm.
+  * Tự động phân loại khuyến nghị bảo trì theo các cấp độ rủi ro trực quan (**Critical**, **High**, **Medium**).
 
 * **🪟 Cửa sổ Desktop HUD Widget Đơn Thể (Single-Instance TopMost HUD):**
-  * Thiết kế cửa sổ Widget mờ kính nhỏ gọn ghim nổi trên màn hình (`IsAlwaysOnTop = true`) hiển thị live CPU, RAM và lưu lượng Mạng (Download/Upload speed).
-  * Chuẩn hóa nút bấm ghim và xử lý mở duy nhất 1 cửa sổ đơn thể (Single-Instance Focus) giúp chống trùng lặp màn hình.
+  * Cửa sổ Widget mini mờ kính sang trọng ghim nổi trên màn hình (`IsAlwaysOnTop = true`), cho phép theo dõi thời gian thực chỉ số CPU, RAM và tốc độ Mạng (Download/Upload speed).
+  * Kích hoạt cơ chế kiểm soát đơn thể **Single-Instance Focus**: ngăn ngừa tạo trùng lặp cửa sổ khi mở từ Dashboard hoặc khay hệ thống (System Tray).
 
-* **🌐 Tối Ưu Đa Ngôn Ngữ 100% (Bidirectional Multi-Language Engine):**
-  * Nâng cấp cơ chế dịch thuật hai chiều **(English ↔ Vietnamese)** trên toàn bộ 13 phân hệ trang. Dịch chuyển mượt mà 100% theo thời gian thực không cần khởi động lại.
+* **🛡️ Quản trị Registry & Hệ thống Hoàn tác An toàn (Registry Rollback System):**
+  * Tích hợp cơ chế **Undo / Rollback System** cho phép sao lưu và khôi phục trạng thái Registry tức thì trước khi áp dụng bất kỳ tinh chỉnh nào.
+  * Cung cấp các nút truy cập nhanh an toàn tới **Registry Editor** (`regedit`) và **System Restore** (`rstrui`) để tạo điểm khôi phục hệ thống chỉ với 1-Click.
 
----
+* **⚡ Chế độ Gaming Turbo 2.0 Suite & Giải phóng RAM Tức thì:**
+  * Công cụ **RAM Booster** dọn dẹp vùng nhớ làm việc (Working Set) của các tiến trình, giải phóng dung lượng RAM vật lý ngay lập tức mà không gây gián đoạn ứng dụng.
+  * Kích hoạt chế độ năng lượng **Ultimate Performance** và ưu tiên tài nguyên CPU cho các ứng dụng / game mượt mà hơn.
 
-## 🚀 WinCare Pro v3.4.9 — Tái cấu trúc Architecture, Nâng cấp Fluent UI & Hiệu năng Hệ thống
+* **🌐 Giám sát Mạng Responsive & Secure DNS (DoH Engine):**
+  * Giao diện **Network Page** được tái cấu trúc hoàn toàn với khả năng tự động co giãn linh hoạt (Adaptive Responsive Layout) phù hợp với mọi kích thước màn hình.
+  * Nâng cấp bộ đo tốc độ mạng **SpeedTest** kép (Dual-endpoint benchmarking) đo lường chính xác Ping, Download và Upload.
+  * Tích hợp cấu hình **Secure DNS over HTTPS (DoH)** trực tiếp từ UI hỗ trợ các nhà cung cấp uy tín (Cloudflare, Google, AdGuard, NextDNS).
 
-> **Phát hành:** 02/08/2026 · **Loại:** Bản nâng cấp Kiến trúc, Giao diện & Tối ưu Hiệu năng (Major Architecture & UI/UX Update)
+* **📂 Quản lý Khởi động (Startup) & Dịch vụ Hệ thống (Services):**
+  * Tích hợp trang quản lý khởi động chuyên biệt với đánh giá mức độ ảnh hưởng (Impact Rating) đến thời gian boot máy.
+  * Phân hệ quản lý Services cho phép kiểm soát, bật/tắt các dịch vụ ngầm an toàn kèm khả năng tìm kiếm và lọc dữ liệu thông minh.
 
-Bản cập nhật **v3.4.9** mang đến bước tiến lớn về kiến trúc ứng dụng với thiết kế UI mô-đun hóa hoàn chỉnh, nâng cấp trải nghiệm thị giác Fluent UI 3D với hiệu ứng kính mờ (Mica/Acrylic), tối ưu hóa bộ đo tốc độ mạng Network SpeedTest, cải tiến công cụ SQLite DBManager và tăng cường tính ổn định toàn bộ hệ thống.
+* **🔄 Cập nhật Phần mềm Bên Thứ Ba (Software Updater Engine):**
+  * Tích hợp động cơ quét ứng dụng cũ `SoftwareUpdaterEngine` hỗ trợ kiểm tra phiên bản mới thông qua **Windows Package Manager (winget)** hoặc trình tải trực tiếp.
+  * Lưu trữ cấu hình tự động cập nhật ngầm với cơ chế lưu đệm chống ghi trùng lặp (Debouncing persistence).
 
----
+* **🌐 Tối Ưu Đa Ngôn Ngữ 100% (Bi-directional Multi-Language Engine):**
+  * Nâng cấp cơ chế dịch thuật hai chiều **English ↔ Tiếng Việt** mượt mà 100% trên toàn bộ 13 phân hệ trang. Chuyển đổi giao diện ngay lập tức mà không cần khởi động lại ứng dụng.
 
-### ✨ Các tính năng & cải tiến nổi bật trong phiên bản v3.4.9 (Key Features)
-
-* **🖥️ Kiến trúc UI Mô-đun hóa & Giao diện Fluent UI 3D Hiện đại:**
-  * Tái cấu trúc toàn bộ ứng dụng theo mô hình trang chuyên biệt (`Dashboard`, `Junk Cleaner`, `App Uninstall`, `Disk Tools`, `System Optimizer`, `Registry`, `Security`, `Startup`, `Repair`, `Network`, `Updater`, `Settings`).
-  * Tích hợp cơ chế chuyển đổi chủ đề (Dark / Light Theme Tokens) mượt mà, phản hồi tức thì và không bị nháy giao diện.
-  * Tối ưu hóa hiệu ứng kính mờ Win32 Backdrop (Mica / Acrylic) cùng đường nét thiết kế chuẩn Windows 11.
-
-* **🚀 Công cụ Đo tốc độ Mạng (Network SpeedTest) & Tiến trình Hệ thống:**
-  * Nâng cấp `NetworkEngine.SpeedTest` với cơ chế thử nghiệm băng thông kép (Dual-endpoint), xử lý phản hồi chính xác tốc độ Ping, Download và Upload.
-  * Tích hợp cơ chế tự động chuyển đổi máy chủ (Fallback mechanism) giúp đo đạc ổn định ngay cả khi mất kết nối máy chủ chính.
-  * Tối ưu hóa `ProcessService` theo dõi mức sử dụng tài nguyên tiến trình nền nhẹ nhàng, tiết kiệm CPU và RAM.
-
-* **💾 Tăng cường Độ tin cậy Cơ sở Dữ liệu SQLite (DbManager):**
-  * Kích hoạt chế độ WAL (Write-Ahead Logging) nâng cao hiệu năng đọc/ghi nhật ký lịch sử ứng dụng.
-  * Tích hợp bộ kiểm thử tự động `DbManagerRegressionTests` phòng ngừa lỗi xung đột dữ liệu đa luồng.
-
-* **🛡️ Bộ cài đặt & Đóng gói Cập nhật Tự động (Installer & Auto-Deploy):**
-  * Tối ưu hóa kịch bản Inno Setup (`setup.iss`) & bộ biên dịch tự động (`publish_installer.bat`).
-  * Tự động phát hiện và đóng các tiến trình `WinCarePro.exe` đang chạy trước khi cập nhật, đảm bảo quá trình nâng cấp mượt mà không gây đè tệp.
+* **🧪 Đảm bảo Chất lượng & Kiểm thử Tự động (100% Unit Test Pass):**
+  * Xây dựng bộ kiểm thử tự động toàn diện (`WinCarePro.Tests`) phủ kín các engine cốt lõi: AI Diagnostics, System Optimizer, Junk Cleaner, Startup Engine, Network Engine, Settings Persistence và SQLite DbManager.
+  * Kết quả kiểm thử đạt **100% Pass (67/67 unit tests)**, bảo đảm độ tin cậy tối đa cho hệ thống.
 
 ---
 

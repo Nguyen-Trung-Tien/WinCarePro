@@ -174,9 +174,21 @@ public sealed partial class NetworkPage : Page
 
     public bool IsNot(bool val) => !val;
 
-    public string FormatMs(double val) => $"{val:F0} ms";
+    public string FormatMs(double val) => val >= 1000 ? $"{val / 1000.0:F2} s" : $"{val:F0} ms";
     public string FormatPercent(double val) => $"{val:F1}%";
-    public string FormatMbps(double val) => $"{val:F1} Mbps";
+    public string FormatMbps(double val) => val >= 1000 ? $"{val / 1000.0:F2} Gbps" : $"{val:F1} Mbps";
+
+    public string FormatSpeedValue(double val)
+    {
+        if (val >= 1000) return (val / 1000.0).ToString("F2");
+        return val.ToString("F1");
+    }
+
+    public string FormatSpeedUnit(double val)
+    {
+        if (val >= 1000) return "Gbps";
+        return "Mbps";
+    }
 
     public string GetEstablishedCount(System.Collections.ObjectModel.ObservableCollection<ActiveConnectionInfo> connections)
     {

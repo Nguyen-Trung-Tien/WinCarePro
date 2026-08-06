@@ -344,21 +344,29 @@
                             <TextBlock Grid.Row="0" Text="Internet Speed Test (Multi-threaded)" FontSize="16" FontWeight="Bold" />
 
                             <!-- Premium Circular Speedometer Dial -->
-                            <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,16">
+                            <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,12">
                                 <!-- Background ring -->
-                                <ProgressRing Value="100" IsIndeterminate="False" Width="180" Height="180" Foreground="{ThemeResource SystemControlBackgroundBaseLowBrush}" IsActive="True" Opacity="0.5" />
+                                <ProgressRing Value="100" IsIndeterminate="False" Width="210" Height="210" Foreground="{ThemeResource SystemControlBackgroundBaseLowBrush}" IsActive="True" Opacity="0.4" />
                                 <!-- Active progress ring -->
-                                <ProgressRing Value="{x:Bind ViewModel.SpeedProgress, Mode=OneWay}" IsIndeterminate="False" Width="180" Height="180" Foreground="{StaticResource PrimaryAccentGradient}" IsActive="True" />
+                                <ProgressRing Value="{x:Bind ViewModel.SpeedProgress, Mode=OneWay}" IsIndeterminate="False" Width="210" Height="210" Foreground="{StaticResource PrimaryAccentGradient}" IsActive="True" />
                                 
                                 <!-- Speed display in center -->
-                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
-                                    <TextBlock Text="DOWNLOAD" FontSize="9" FontWeight="ExtraBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
-                                    <TextBlock Text="{x:Bind FormatMbps(ViewModel.DownloadSpeedMbps), Mode=OneWay}" FontSize="32" FontWeight="ExtraBold" Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center" />
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="1">
+                                    <TextBlock Text="DOWNLOAD" FontSize="9" CharacterSpacing="50" FontWeight="ExtraBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
                                     
-                                    <Border Width="80" Height="1" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="0,4" />
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4">
+                                        <TextBlock Text="{x:Bind FormatSpeedValue(ViewModel.DownloadSpeedMbps), Mode=OneWay}" FontSize="26" FontWeight="ExtraBold" Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Text="{x:Bind FormatSpeedUnit(ViewModel.DownloadSpeedMbps), Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,3" />
+                                    </StackPanel>
                                     
-                                    <TextBlock Text="UPLOAD" FontSize="9" FontWeight="ExtraBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
-                                    <TextBlock Text="{x:Bind FormatMbps(ViewModel.UploadSpeedMbps), Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="MediumSeaGreen" HorizontalAlignment="Center" />
+                                    <Border Width="90" Height="1" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="0,6" Opacity="0.6" />
+                                    
+                                    <TextBlock Text="UPLOAD" FontSize="9" CharacterSpacing="50" FontWeight="ExtraBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
+                                    
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4">
+                                        <TextBlock Text="{x:Bind FormatSpeedValue(ViewModel.UploadSpeedMbps), Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="MediumSeaGreen" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <TextBlock Text="{x:Bind FormatSpeedUnit(ViewModel.UploadSpeedMbps), Mode=OneWay}" FontSize="11" FontWeight="SemiBold" Foreground="MediumSeaGreen" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,2" />
+                                    </StackPanel>
                                 </StackPanel>
                             </Grid>
 

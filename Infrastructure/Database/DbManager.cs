@@ -630,6 +630,33 @@ public class DbManager
         }, new List<StateSnapshotEntry>());
     }
 
+    #region Database Lifecycle & Graceful Shutdown
+
+    public static void ShutdownDatabase()
+    {
+        lock (DbLock)
+        {
+            try
+            {
+                using var connection = new SqliteConnection(ConnectionString);
+                connection.Open();
+                using var cmd = new SqliteCommand("PRAGMA wal_checkpoint(TRUNCATE);", connection);
+                cmd.ExecuteNonQuery();
+            }
+            catch { }
+            finally
+            {
+                try
+                {
+                    SqliteConnection.ClearAllPools();
+                }
+                catch { }
+            }
+        }
+    }
+
+    #endregion
+
     #endregion
 }
 

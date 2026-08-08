@@ -329,5 +329,19 @@ namespace WinCarePro.Modules.DesktopWidget
             _timer.Stop();
             this.Close();
         }
+
+        public static void CloseWindow()
+        {
+            if (_currentInstance != null)
+            {
+                try
+                {
+                    _currentInstance._timer.Stop();
+                    _currentInstance.Close();
+                }
+                catch { }
+                _currentInstance = null;
+            }
+        }
     }
 }

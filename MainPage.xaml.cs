@@ -190,4 +190,33 @@ public sealed partial class MainPage : Page
     {
         NavView.Header = null;
     }
+
+    public void CleanupActivePage()
+    {
+        try
+        {
+            if (ContentFrame.Content is Views.DashboardPage dbPage)
+            {
+                dbPage.ViewModel?.Dispose();
+            }
+            else if (ContentFrame.Content is Views.NetworkPage netPage)
+            {
+                netPage.ViewModel?.Cleanup();
+            }
+            else if (ContentFrame.Content is Views.DiskPage diskPage)
+            {
+                diskPage.ViewModel?.Cleanup();
+            }
+            else if (ContentFrame.Content is Views.JunkPage junkPage)
+            {
+                junkPage.ViewModel?.Cleanup();
+            }
+
+            if (ContentFrame.Content is Page page && page.DataContext is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+        }
+        catch { }
+    }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.Services;
@@ -7,6 +8,8 @@ namespace WinCarePro.Shared.Components;
 
 public sealed partial class LoadingToggleSwitch : UserControl
 {
+    private long _loadingStartTimeTicks;
+
     public static readonly DependencyProperty IsOnProperty =
         DependencyProperty.Register(nameof(IsOn), typeof(bool), typeof(LoadingToggleSwitch),
             new PropertyMetadata(false, OnIsOnPropertyChanged));
@@ -14,6 +17,10 @@ public sealed partial class LoadingToggleSwitch : UserControl
     public static readonly DependencyProperty IsLoadingProperty =
         DependencyProperty.Register(nameof(IsLoading), typeof(bool), typeof(LoadingToggleSwitch),
             new PropertyMetadata(false, OnIsLoadingPropertyChanged));
+
+    public static readonly DependencyProperty MinLoadingDurationMsProperty =
+        DependencyProperty.Register(nameof(MinLoadingDurationMs), typeof(int), typeof(LoadingToggleSwitch),
+            new PropertyMetadata(450));
 
     public static readonly DependencyProperty HeaderTextProperty =
         DependencyProperty.Register(nameof(HeaderText), typeof(string), typeof(LoadingToggleSwitch),
@@ -45,6 +52,12 @@ public sealed partial class LoadingToggleSwitch : UserControl
     {
         get => (bool)GetValue(IsLoadingProperty);
         set => SetValue(IsLoadingProperty, value);
+    }
+
+    public int MinLoadingDurationMs
+    {
+        get => (int)GetValue(MinLoadingDurationMsProperty);
+        set => SetValue(MinLoadingDurationMsProperty, value);
     }
 
     public string HeaderText
@@ -130,9 +143,50 @@ public sealed partial class LoadingToggleSwitch : UserControl
         }
     }
 
-    private static void OnIsLoadingPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static async void OnIsLoadingPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        // Visual state update if needed
+        if (d is LoadingToggleSwitch control)
+        {
+            bool isLoading = (bool)e.NewValue;
+            if (isLoading)
+            {
+                control._loadingStartTimeTicks = Environment.TickCount64;
+                control.LoadingPanel.Visibility = Visibility.Visible;
+                control.InnerToggle.IsEnabled = false;
+            }
+            else
+            {
+                long elapsed = Environment.TickCount64 - control._loadingStartTimeTicks;
+                int minDuration = Math.Max(100, control.MinLoadingDurationMs);
+                if (elapsed < minDuration)
+                {
+                    int remaining = (int)(minDuration - elapsed);
+                    await Task.Delay(remaining);
+                }
+                control.LoadingPanel.Visibility = Visibility.Collapsed;
+                control.InnerToggle.IsEnabled = control.UserControlIsEnabled;
+            }
+        }
+    }
+
+    public async Task ExecuteWithLoadingAsync(Func<Task> action)
+    {
+        _loadingStartTimeTicks = Environment.TickCount64;
+        IsLoading = true;
+        try
+        {
+            await action();
+        }
+        finally
+        {
+            long elapsed = Environment.TickCount64 - _loadingStartTimeTicks;
+            int minDuration = Math.Max(100, MinLoadingDurationMs);
+            if (elapsed < minDuration)
+            {
+                await Task.Delay((int)(minDuration - elapsed));
+            }
+            IsLoading = false;
+        }
     }
 
     private void InnerToggle_Toggled(object sender, RoutedEventArgs e)

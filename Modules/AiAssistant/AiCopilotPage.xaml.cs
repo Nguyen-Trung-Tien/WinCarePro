@@ -65,37 +65,58 @@ namespace WinCarePro.Modules.AiAssistant
         {
             if (sender is Button btn && btn.Tag is string actionKey)
             {
-                switch (actionKey)
-                {
-                    case "NavigateJunkCleaner":
-                        NavigateTo("junk");
-                        break;
-                    case "NavigateStartup":
-                        NavigateTo("startup");
-                        break;
-                    case "NavigateDisk":
-                        NavigateTo("disk");
-                        break;
-                    case "NavigateOptimizer":
-                        NavigateTo("optimizer");
-                        break;
-                    default:
-                        // Fast RAM & Working Set Optimization Action
-                        try
-                        {
-                            GC.Collect();
-                            GC.WaitForPendingFinalizers();
-                            await RunAiScanAsync();
+                var stack = btn.Content as StackPanel;
+                TextBlock? textBlock = null;
+                FontIcon? icon = null;
 
-                            if (App.MainWindowInstance is MainWindow mw)
-                            {
-                                mw.ShowToastFromDb("AI Quick Fix Applied".T(), 
-                                    "Purged memory working set and optimized background execution.".T(), "Success");
-                            }
-                        }
-                        catch { }
-                        break;
+                if (stack != null)
+                {
+                    foreach (var child in stack.Children)
+                    {
+                        if (child is TextBlock tb) textBlock = tb;
+                        else if (child is FontIcon fi) icon = fi;
+                    }
                 }
+
+                string originalText = textBlock?.Text ?? "Apply Fix";
+
+                await UiLoadingHelper.ExecuteWithLoadingAsync(
+                    btn, null, textBlock, icon,
+                    "Applying Fix...", originalText,
+                    async () =>
+                    {
+                        switch (actionKey)
+                        {
+                            case "NavigateJunkCleaner":
+                                NavigateTo("junk");
+                                break;
+                            case "NavigateStartup":
+                                NavigateTo("startup");
+                                break;
+                            case "NavigateDisk":
+                                NavigateTo("disk");
+                                break;
+                            case "NavigateOptimizer":
+                                NavigateTo("optimizer");
+                                break;
+                            default:
+                                try
+                                {
+                                    GC.Collect();
+                                    GC.WaitForPendingFinalizers();
+                                    await RunAiScanAsync();
+
+                                    if (App.MainWindowInstance is MainWindow mw)
+                                    {
+                                        mw.ShowToastFromDb("AI Quick Fix Applied".T(), 
+                                            "Purged memory working set and optimized background execution.".T(), "Success");
+                                    }
+                                }
+                                catch { }
+                                break;
+                        }
+                    },
+                    minDurationMs: 650);
             }
         }
 

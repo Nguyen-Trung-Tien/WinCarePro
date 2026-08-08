@@ -25,23 +25,33 @@
     <Grid Padding="24,20" HorizontalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 1000px -->
+                <!-- Wide Layout: Viewport Width >= 1200px -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1000" />
+                        <AdaptiveTrigger MinWindowWidth="1200" />
                     </VisualState.StateTriggers>
                 </VisualState>
-                <!-- Medium Layout: Viewport Width >= 720px and < 1000px -->
+                <!-- Medium Layout: Viewport Width >= 768px and < 1200px (Default Windowed Mode) -->
                 <VisualState x:Name="MediumState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720" />
+                        <AdaptiveTrigger MinWindowWidth="768" />
                     </VisualState.StateTriggers>
                 </VisualState>
-                <!-- Narrow Layout: Viewport Width < 720px -->
+                <!-- Narrow Layout: Viewport Width < 768px -->
                 <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="GaugeRingGrid.(Grid.Row)" Value="0" />
+                        <Setter Target="GaugeRingGrid.(Grid.Column)" Value="0" />
+                        <Setter Target="GaugeRingGrid.HorizontalAlignment" Value="Center" />
+                        <Setter Target="GaugeRingGrid.Margin" Value="0,0,0,16" />
+
+                        <Setter Target="GaugeDescPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="GaugeDescPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="GaugeDescPanel.HorizontalAlignment" Value="Center" />
+                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
@@ -173,11 +183,21 @@
                                 </Border>
                                 <TextBlock Text="{x:Bind ViewModel.HealthBreakdownText, Mode=OneWay}" TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18" />
                                 
-                                <StackPanel Orientation="Horizontal" Margin="0,8,0,0" Spacing="12">
-                                    <Button Content="Scan System" Style="{StaticResource DefaultButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="20,10" CornerRadius="8" FontWeight="SemiBold" />
+                                <Grid x:Name="GaugeActionButtonsGrid" Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <Button x:Name="ScanSystemBtn" Grid.Row="0" Grid.Column="0" Content="Scan System" Style="{StaticResource DefaultButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="18,9" CornerRadius="8" FontWeight="SemiBold" Margin="0,0,10,6" />
                                     
                                     <!-- Split Button for Tiered Optimization -->
-                                    <SplitButton x:Name="OptimizeSplitBtn" Content="Optimize System" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}">
+                                    <SplitButton x:Name="OptimizeSplitBtn" Grid.Row="0" Grid.Column="1" Content="Optimize System" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Margin="0,0,10,6">
                                         <SplitButton.Resources>
                                             <SolidColorBrush x:Key="SplitButtonButtonBackground" Color="#FF8B5CF6" />
                                             <SolidColorBrush x:Key="SplitButtonButtonBackgroundPointerOver" Color="#FF7C3AED" />
@@ -207,8 +227,8 @@
                                         </SplitButton.Flyout>
                                     </SplitButton>
                                     
-                                    <ProgressRing IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="24" Height="24" Margin="8,0,0,0" />
-                                </StackPanel>
+                                    <ProgressRing x:Name="GaugeActionProgressRing" Grid.Row="0" Grid.Column="2" IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="22" Height="22" VerticalAlignment="Center" Margin="0,0,0,6" />
+                                </Grid>
                                 
                                 <StackPanel Visibility="{x:Bind GetProgressVisibility(ViewModel.IsScanning), Mode=OneWay}" Spacing="6" Margin="0,4,0,0">
                                     <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="6" Foreground="{StaticResource PrimaryAccentGradient}" CornerRadius="3" />

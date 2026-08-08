@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Shared.Components;
 
 namespace WinCarePro.Views;
 
@@ -68,15 +69,33 @@ public sealed partial class ContextMenuPage : Page
 
     private async void OnItemToggled(object sender, RoutedEventArgs e)
     {
-        if (sender is ToggleSwitch toggle && toggle.DataContext is ContextMenuItem item)
+        if (sender is LoadingToggleSwitch loadingToggle && loadingToggle.DataContext is ContextMenuItem item)
         {
-            if (item.IsEnabled != toggle.IsOn)
+            if (item.IsEnabled != loadingToggle.IsOn)
             {
-                bool success = await ViewModel.ToggleItemAsync(item, toggle.IsOn);
+                loadingToggle.IsLoading = true;
+                try
+                {
+                    bool success = await ViewModel.ToggleItemAsync(item, loadingToggle.IsOn);
+                    if (!success)
+                    {
+                        loadingToggle.IsOn = item.IsEnabled;
+                    }
+                }
+                finally
+                {
+                    loadingToggle.IsLoading = false;
+                }
+            }
+        }
+        else if (sender is ToggleSwitch toggle && toggle.DataContext is ContextMenuItem legacyItem)
+        {
+            if (legacyItem.IsEnabled != toggle.IsOn)
+            {
+                bool success = await ViewModel.ToggleItemAsync(legacyItem, toggle.IsOn);
                 if (!success)
                 {
-                    // Revert toggle switch state on UI if modification failed
-                    toggle.IsOn = item.IsEnabled;
+                    toggle.IsOn = legacyItem.IsEnabled;
                 }
             }
         }

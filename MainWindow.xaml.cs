@@ -73,6 +73,9 @@ public sealed partial class MainWindow : Window
         // Subclass window to enforce minimum bounds (1280 x 800)
         SubclassWindow();
 
+        // Center window on active monitor screen with standard dimensions (1560x920)
+        CenterOnScreen(1560, 920);
+
         // Extends page content into the top caption bar
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleDragArea);
@@ -102,21 +105,56 @@ public sealed partial class MainWindow : Window
         if (RootGrid != null)
         {
             RootGrid.Loaded += (s, e) => {
-                try
-                {
-                    this.AppWindow.Resize(new Windows.Graphics.SizeInt32(1560, 920));
-                }
-                catch { }
-
+                CenterOnScreen(1560, 920);
                 InitializeAppAsync();
             };
         }
         else
         {
+            CenterOnScreen(1560, 920);
             InitializeAppAsync();
         }
 
         TranslationManager.Instance.LanguageChanged += (s, e) => PopulateSearchRegistry();
+    }
+
+    private void CenterOnScreen(int width = 1560, int height = 920)
+    {
+        try
+        {
+            var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(_hwnd);
+            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+
+            if (appWindow != null)
+            {
+                var displayArea = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(windowId, Microsoft.UI.Windowing.DisplayAreaFallback.Nearest);
+                if (displayArea != null)
+                {
+                    int screenWidth = displayArea.WorkArea.Width;
+                    int screenHeight = displayArea.WorkArea.Height;
+
+                    int targetWidth = Math.Min(width, screenWidth);
+                    int targetHeight = Math.Min(height, screenHeight);
+
+                    int x = displayArea.WorkArea.X + (screenWidth - targetWidth) / 2;
+                    int y = displayArea.WorkArea.Y + (screenHeight - targetHeight) / 2;
+
+                    appWindow.MoveAndResize(new Windows.Graphics.RectInt32(x, y, targetWidth, targetHeight));
+                }
+                else
+                {
+                    appWindow.Resize(new Windows.Graphics.SizeInt32(width, height));
+                }
+            }
+        }
+        catch
+        {
+            try
+            {
+                this.AppWindow.Resize(new Windows.Graphics.SizeInt32(width, height));
+            }
+            catch { }
+        }
     }
 
     private async void InitializeAppAsync()
@@ -238,10 +276,26 @@ public sealed partial class MainWindow : Window
         CleanupTrayIcon();
         try
         {
-            if (RootFrame.Content is WinCarePro.Views.NetworkPage netPage)
+            if (RootFrame.Content is MainPage mainPage)
+            {
+                mainPage.CleanupActivePage();
+            }
+            else if (RootFrame.Content is WinCarePro.Views.NetworkPage netPage)
             {
                 netPage.ViewModel?.Cleanup();
             }
+        }
+        catch { }
+
+        try
+        {
+            WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.CloseWindow();
+        }
+        catch { }
+
+        try
+        {
+            DbManager.ShutdownDatabase();
         }
         catch { }
     }
@@ -365,8 +419,32 @@ public sealed partial class MainWindow : Window
         ExitOverlayGrid.Visibility = Visibility.Visible;
         FadeInExitOverlay.Begin();
 
-        // Let user experience the fade animation and show database cleanup context
-        await Task.Delay(1500);
+        // Perform active page & database cleanup asynchronously during exit animation
+        await Task.Run(() =>
+        {
+            this.DispatcherQueue?.TryEnqueue(() =>
+            {
+                try
+                {
+                    if (RootFrame.Content is MainPage mainPage)
+                    {
+                        mainPage.CleanupActivePage();
+                    }
+                    else if (RootFrame.Content is WinCarePro.Views.NetworkPage netPage)
+                    {
+                        netPage.ViewModel?.Cleanup();
+                    }
+
+                    WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.CloseWindow();
+                }
+                catch { }
+            });
+
+            // Safe database WAL checkpoint & connection pool clear
+            DbManager.ShutdownDatabase();
+        });
+
+        await Task.Delay(1000); // Smooth visual feedback padding
 
         CleanupTrayIcon();
         _forceClose = true;

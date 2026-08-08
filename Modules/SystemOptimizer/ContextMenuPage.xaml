@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WinCarePro.Models"
     xmlns:viewmodels="using:WinCarePro.ViewModels"
+    xmlns:components="using:WinCarePro.Shared.Components"
     mc:Ignorable="d">
 
     <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -99,11 +100,12 @@
 
                                             <TextBlock Grid.Column="2" Text="{x:Bind Type}" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
 
-                                            <ToggleSwitch Grid.Column="3" 
-                                                          IsOn="{x:Bind IsEnabled, Mode=OneWay}" 
-                                                          Toggled="OnItemToggled" 
-                                                          MinWidth="0"
-                                                          VerticalAlignment="Center" />
+                                            <components:LoadingToggleSwitch Grid.Column="3" 
+                                                                         IsOn="{x:Bind IsEnabled, Mode=OneWay}" 
+                                                                         MinLoadingDurationMs="450"
+                                                                         Toggled="OnItemToggled" 
+                                                                         MinWidth="0"
+                                                                         VerticalAlignment="Center" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

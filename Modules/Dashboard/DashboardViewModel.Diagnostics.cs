@@ -335,11 +335,11 @@ public partial class DashboardViewModel
                         DiagnosticItems.Add(res);
                     }
                     ScanProgress = 100;
-                    ScanStatus = string.Format("Evaluation Complete. System Health is {0}/100".T(), HealthScore);
                     IsScanning = false;
                     HasScanned = true;
 
                     UpdateHealthScoreBreakdown();
+                    ScanStatus = string.Format("Evaluation Complete. System Health is {0}/100".T(), HealthScore);
                 });
             }, scanToken);
         }

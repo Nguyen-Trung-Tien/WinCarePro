@@ -104,7 +104,7 @@ public sealed partial class MainWindow : Window
             RootGrid.Loaded += (s, e) => {
                 try
                 {
-                    this.AppWindow.Resize(new Windows.Graphics.SizeInt32(1400, 900));
+                    this.AppWindow.Resize(new Windows.Graphics.SizeInt32(1560, 920));
                 }
                 catch { }
 

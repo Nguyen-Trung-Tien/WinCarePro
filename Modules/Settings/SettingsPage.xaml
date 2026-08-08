@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="using:WinCarePro.Views"
     mc:Ignorable="d">
 
     <Grid Padding="24,20" HorizontalAlignment="Stretch" x:Name="SettingsRootGrid">
@@ -101,6 +102,12 @@
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <FontIcon Glyph="&#xE946;" FontSize="16" Width="20" Foreground="{ThemeResource SystemAccentColor}" />
                         <TextBlock Text="About &amp; Developer" VerticalAlignment="Center" FontSize="13"/>
+                    </StackPanel>
+                </ListViewItem>
+                <ListViewItem Height="40" Padding="8,0" CornerRadius="4">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <FontIcon Glyph="&#xE897;" FontSize="16" Width="20" Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="Feature Guide &amp; Manual" VerticalAlignment="Center" FontSize="13"/>
                     </StackPanel>
                 </ListViewItem>
             </ListView>
@@ -455,6 +462,9 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
+
+                <!-- Section 7: Feature Guide & System Manual -->
+                <local:UserGuideView Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 7), Mode=OneWay}" />
             </Grid>
         </ScrollViewer>
     </Grid>

@@ -1853,6 +1853,38 @@ public partial class TranslationManager
         _translations["System Services Safety Guard"] = "Khiên Bảo vệ Dịch vụ Hệ thống";
         _translations["14 Core Services Protected"] = "14 Dịch vụ Cốt lõi được Bảo vệ";
 
+        // --- Feature Guide & System Manual ---
+        _translations["Feature Guide & Manual"] = "Hướng Dẫn Sử Dụng & Mô Tả Chức Năng";
+        _translations["Feature Guide & System Manual"] = "Hướng Dẫn Sử Dụng & Mô Tả Chức Năng";
+        _translations["Concise documentation explaining the purpose, safety, and operation of each WinCare Pro module."] = "Tài liệu ngắn gọn mô tả mục đích, độ an toàn và cách hoạt động của từng phân hệ WinCare Pro.";
+
+        _translations["1. AI Assistant & Diagnostics"] = "1. Trợ lý AI & Chẩn đoán hệ thống";
+        _translations["AI-powered Windows health analysis detecting junk files, memory conflicts, lagging apps, and security risks with 1-click safe recommendations."] = "Phân tích sức khỏe hệ thống Windows bằng AI, phát hiện tệp rác, xung đột bộ nhớ, ứng dụng gây giật lag và nguy cơ bảo mật. Đưa ra điểm số sức khỏe và đề xuất tối ưu 1-click an toàn.";
+
+        _translations["2. Junk Cleaner & Debris"] = "2. Dọn dẹp tệp rác & Tệp tạm";
+        _translations["Deeply scans and cleans Windows temporary files (Temp, Prefetch, Log), browser caches (Chrome, Edge, Firefox), and leftover setup cache to safely free disk space."] = "Quét chuyên sâu và dọn dẹp các tệp tạm Windows (Temp, Prefetch, Log), bộ nhớ đệm trình duyệt (Chrome, Edge, Firefox), tệp rác cài đặt thừa để giải phóng dung lượng đĩa cứng an toàn.";
+
+        _translations["3. System Optimizer & RAM Booster"] = "3. Tối ưu hệ thống & Tăng tốc RAM";
+        _translations["Applies Microsoft-standard Registry tweaks to optimize CPU scheduling, disable unused services, activate Gaming Turbo 2.0, and flush physical RAM working set memory for instant responsiveness."] = "Tinh chỉnh Registry chuẩn Microsoft để tối ưu lập lịch CPU, tắt dịch vụ thừa, kích hoạt Gaming Turbo 2.0 và giải phóng vùng nhớ RAM vật lý (working set) giúp máy phản hồi tức thì.";
+
+        _translations["4. Startup & Services Manager"] = "4. Quản lý khởi động & Dịch vụ";
+        _translations["Controls auto-start software with impact ratings (High/Medium/Low Impact) and manages Windows services to significantly speed up boot time."] = "Kiểm soát danh sách phần mềm tự khởi động cùng Windows, phân loại mức độ ảnh hưởng (High/Medium/Low Impact) và quản lý dịch vụ hệ thống giúp tăng tốc thời gian bật máy đáng kể.";
+
+        _translations["5. System Repair Center"] = "5. Trung tâm sửa lỗi Windows";
+        _translations["Integrates advanced troubleshooting tools: SFC corrupted system file scan, DISM Windows component store repair, Windows Update fix, and network stack reset."] = "Tích hợp các công cụ khắc phục sự cố cao cấp: Quét tệp hệ thống bị hỏng (SFC /scannow), sửa chữa kho linh kiện linh hồn Windows (DISM), khắc phục lỗi Windows Update và reset cạc mạng.";
+
+        _translations["6. App Uninstaller & Leftovers"] = "6. Gỡ ứng dụng & Dọn tàn dư";
+        _translations["Batch uninstalls installed applications and default Windows Bloatware. Automatically wipes leftover junk folders and Registry keys after uninstallation."] = "Gỡ bỏ hàng loạt ứng dụng đã cài đặt và phần mềm mặc định Windows (Bloatware). Tự động quét dọn tận gốc các thư mục rác và Registry key thừa còn sót lại sau khi gỡ app.";
+
+        _translations["7. Network Center"] = "7. Trung tâm mạng & Kết nối";
+        _translations["Tests internet bandwidth speed (Ping, Download, Upload), flushes DNS cache, and resets Winsock / TCP IP stack to fix connectivity issues."] = "Kiểm tra tốc độ băng thông Internet (Ping, Download, Upload), xóa bộ nhớ đệm DNS (Flush DNS), khôi phục cài đặt Winsock / TCP IP stack giúp sửa lỗi mất mạng hoặc mạng chập chờn.";
+
+        _translations["8. Security Shield & Privacy"] = "8. Bảo mật & Quyền riêng tư";
+        _translations["Clears sensitive data from Clipboard cache, wipes recent file opening history, and protects privacy by disabling Windows Telemetry & tracking."] = "Xóa sạch dữ liệu nhạy cảm trong bộ nhớ đệm Clipboard, xóa lịch sử mở tệp gần đây (Recent Files & Run History), bảo vệ quyền riêng tư bằng cách tắt Telemetry & tracking của Windows.";
+
+        _translations["9. Disk Tools & Context Menu"] = "9. Công cụ đĩa & Menu ngữ cảnh";
+        _translations["Analyzes and optimizes hard drives, cleans Registry errors, and manages right-click Context Menu items to keep Windows Explorer fast and responsive."] = "Phân tích & tối ưu đĩa cứng, dọn dẹp lỗi Registry và quản lý bật/tắt các mục hiển thị trong Menu ngữ cảnh chuột phải giúp Windows Explorer mở nhanh và không bị đơ giật.";
+
         _reverseTranslations.Clear();
         foreach (var kvp in _translations)
         {

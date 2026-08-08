@@ -45,6 +45,7 @@ public partial class TranslationManager
     private TranslationManager()
     {
         InitializeTranslations();
+        InitializeUserGuideTranslations();
         LoadLanguageFromSettings();
     }
 

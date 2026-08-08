@@ -184,6 +184,14 @@ public partial class NetworkViewModel
         LogText("Starting speed test...".T());
         try
         {
+            LogText("Measuring network latency & ping quality...".T());
+            var pingQuality = await _engine.AnalyzePingQualityAsync("1.1.1.1", 4);
+            if (pingQuality.avgLatencyMs > 0)
+            {
+                LatencyMs = Math.Round(pingQuality.avgLatencyMs, 1);
+                JitterMs = Math.Round(pingQuality.jitterMs, 1);
+            }
+
             LogText("Running download speed benchmark...".T());
             double dl = await _engine.RunSpeedTestAsync((speed, progress) =>
             {
@@ -209,8 +217,8 @@ public partial class NetworkViewModel
                 UploadMbps = UploadSpeedMbps,
                 PingMs = LatencyMs,
                 JitterMs = JitterMs,
-                ServerName = "Tele2 & Httpbin CDN",
-                TestDuration = 16.0,
+                ServerName = "Cloudflare Edge CDN (Low Latency)",
+                TestDuration = 14.0,
                 Timestamp = DateTime.Now
             };
 

@@ -287,16 +287,37 @@ public sealed partial class SettingsPage : Page
         }
     }
 
-    private void OnAutoScanToggled(object sender, RoutedEventArgs e)
+    private async void OnAutoScanToggled(object sender, RoutedEventArgs e)
     {
         if (_loadingSettings) return;
         SaveSettings();
-        try
+        
+        if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
         {
-            var engine = new WinCarePro.Engines.StartupEngine();
-            engine.RegisterScheduledMaintenanceTask(AutoScanToggle.IsOn);
+            lts.IsLoading = true;
+            try
+            {
+                await System.Threading.Tasks.Task.Run(() =>
+                {
+                    var engine = new WinCarePro.Engines.StartupEngine();
+                    engine.RegisterScheduledMaintenanceTask(AutoScanToggle.IsOn);
+                });
+            }
+            catch { }
+            finally
+            {
+                lts.IsLoading = false;
+            }
         }
-        catch { }
+        else
+        {
+            try
+            {
+                var engine = new WinCarePro.Engines.StartupEngine();
+                engine.RegisterScheduledMaintenanceTask(AutoScanToggle.IsOn);
+            }
+            catch { }
+        }
     }
 
     private void OnSettingsChanged(object sender, RoutedEventArgs e)

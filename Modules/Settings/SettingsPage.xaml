@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:WinCarePro.Views"
+    xmlns:components="using:WinCarePro.Shared.Components"
     mc:Ignorable="d">
 
     <Grid Padding="24,20" HorizontalAlignment="Stretch" x:Name="SettingsRootGrid">
@@ -130,7 +131,7 @@
                                 </ComboBox>
                             </StackPanel>
 
-                            <ToggleSwitch x:Name="AutoScanToggle" Toggled="OnAutoScanToggled" Header="Launch WinCare Pro automatically upon OS startup" CornerRadius="4" FontSize="12.5"/>
+                            <components:LoadingToggleSwitch x:Name="AutoScanToggle" Toggled="OnAutoScanToggled" HeaderText="Launch WinCare Pro automatically upon OS startup" />
                             <ToggleSwitch x:Name="MinimizeToTrayToggle" Toggled="OnSettingsChanged" Header="Minimize application to System Tray instead of closing" IsOn="True" CornerRadius="4" FontSize="12.5"/>
                         </StackPanel>
                     </Border>

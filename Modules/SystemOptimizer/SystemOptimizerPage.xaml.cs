@@ -206,5 +206,24 @@ public sealed partial class SystemOptimizerPage : Page
                 }
             }
         }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        {
+            if (lts.IsOn != ViewModel.IsTurboActive)
+            {
+                lts.IsLoading = true;
+                try
+                {
+                    await ViewModel.ToggleGamingTurboAsync();
+                    if (TurboStatusText != null)
+                    {
+                        TurboStatusText.Text = ViewModel.GamingStatusMessage;
+                    }
+                }
+                finally
+                {
+                    lts.IsLoading = false;
+                }
+            }
+        }
     }
 }

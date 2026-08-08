@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:WinCarePro.ViewModels"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:components="using:WinCarePro.Shared.Components"
     mc:Ignorable="d">
 
     <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -213,7 +214,7 @@
                                             <TextBlock Text="Personalized Ads (Advertising ID)" FontWeight="Bold" FontSize="13.5" />
                                             <TextBlock Text="Disable to block applications from tracking your app usage for targeted ads." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="14" />
                                         </StackPanel>
-                                        <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.AdvertisingIdEnabled, Mode=TwoWay}" Toggled="OnAdvertisingIdToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
+                                        <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.AdvertisingIdEnabled, Mode=TwoWay}" Toggled="OnAdvertisingIdToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
                                     </Grid>
                                 </Border>
 
@@ -228,7 +229,7 @@
                                             <TextBlock Text="System Diagnostic Telemetry" FontWeight="Bold" FontSize="13.5" />
                                             <TextBlock Text="Restrict telemetry reports sent to Microsoft to Security-only levels." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="14" />
                                         </StackPanel>
-                                        <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.TelemetryEnabled, Mode=TwoWay}" Toggled="OnTelemetryToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
+                                        <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.TelemetryEnabled, Mode=TwoWay}" Toggled="OnTelemetryToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
                                     </Grid>
                                 </Border>
 
@@ -243,7 +244,7 @@
                                             <TextBlock Text="Windows Clipboard History" FontWeight="Bold" FontSize="13.5" />
                                             <TextBlock Text="Saves multiple copied items to clipboard for later use. Disable to prevent caching copied credentials." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="14" />
                                         </StackPanel>
-                                        <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.ClipboardHistoryEnabled, Mode=TwoWay}" Toggled="OnClipboardToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
+                                        <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.ClipboardHistoryEnabled, Mode=TwoWay}" Toggled="OnClipboardToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
                                     </Grid>
                                 </Border>
 
@@ -258,7 +259,7 @@
                                             <TextBlock Text="Personalization &amp; Typing Input Tracking" FontWeight="Bold" FontSize="13.5" />
                                             <TextBlock Text="Restrict Windows from logging typing history and personalization telemetry." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="14" />
                                         </StackPanel>
-                                        <ToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.InputTrackingEnabled, Mode=TwoWay}" Toggled="OnInputTrackingToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
+                                        <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.InputTrackingEnabled, Mode=TwoWay}" Toggled="OnInputTrackingToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
                                     </Grid>
                                 </Border>
                             </StackPanel>

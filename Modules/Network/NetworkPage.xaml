@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WinCarePro.Models"
+    xmlns:components="using:WinCarePro.Shared.Components"
     mc:Ignorable="d">
 
     <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -622,7 +623,7 @@
                                 
                                 <TextBlock Text="Encrypts your DNS queries over HTTPS to protect your privacy and bypass filtering." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" />
                                 
-                                <ToggleSwitch x:Name="DohToggle" Header="Enable DNS over HTTPS" IsOn="{x:Bind ViewModel.IsDohEnabled, Mode=TwoWay}" MinWidth="0" />
+                                <components:LoadingToggleSwitch x:Name="DohToggle" HeaderText="Enable DNS over HTTPS" IsOn="{x:Bind ViewModel.IsDohEnabled, Mode=TwoWay}" />
                                 
                                 <ComboBox Header="DoH Provider" 
                                           HorizontalAlignment="Stretch" 

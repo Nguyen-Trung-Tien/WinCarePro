@@ -8,6 +8,7 @@
     xmlns:models="using:WinCarePro.Models"
     xmlns:viewmodels="using:WinCarePro.ViewModels"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:components="using:WinCarePro.Shared.Components"
     mc:Ignorable="d">
 
     <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -215,9 +216,8 @@
 
                     <!-- Turbo Toggle -->
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4" Margin="12,0,0,0">
-                        <ToggleSwitch x:Name="TurboToggle" IsOn="{x:Bind ViewModel.IsTurboActive, Mode=TwoWay}" Toggled="OnTurboToggled" 
-                                      OnContent="ON" OffContent="OFF"
-                                      helpers:AnimationHelper.HoverScale="1.05"/>
+                        <components:LoadingToggleSwitch x:Name="TurboToggle" IsOn="{x:Bind ViewModel.IsTurboActive, Mode=TwoWay}" Toggled="OnTurboToggled" 
+                                      OnContent="ON" OffContent="OFF" />
                         <TextBlock Text="Turbo" FontSize="9.5" FontWeight="Bold" 
                                    Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
                     </StackPanel>

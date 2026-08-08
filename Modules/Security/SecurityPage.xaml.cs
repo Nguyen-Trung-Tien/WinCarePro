@@ -63,6 +63,18 @@ public sealed partial class SecurityPage : Page
         {
             await ViewModel.TogglePrivacySettingAsync("advertisingid", ts.IsOn);
         }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        {
+            lts.IsLoading = true;
+            try
+            {
+                await ViewModel.TogglePrivacySettingAsync("advertisingid", lts.IsOn);
+            }
+            finally
+            {
+                lts.IsLoading = false;
+            }
+        }
     }
 
     private async void OnTelemetryToggled(object sender, RoutedEventArgs e)
@@ -70,6 +82,18 @@ public sealed partial class SecurityPage : Page
         if (sender is ToggleSwitch ts)
         {
             await ViewModel.TogglePrivacySettingAsync("telemetry", ts.IsOn);
+        }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        {
+            lts.IsLoading = true;
+            try
+            {
+                await ViewModel.TogglePrivacySettingAsync("telemetry", lts.IsOn);
+            }
+            finally
+            {
+                lts.IsLoading = false;
+            }
         }
     }
 
@@ -79,6 +103,18 @@ public sealed partial class SecurityPage : Page
         {
             await ViewModel.TogglePrivacySettingAsync("clipboardhistory", ts.IsOn);
         }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        {
+            lts.IsLoading = true;
+            try
+            {
+                await ViewModel.TogglePrivacySettingAsync("clipboardhistory", lts.IsOn);
+            }
+            finally
+            {
+                lts.IsLoading = false;
+            }
+        }
     }
 
     private async void OnInputTrackingToggled(object sender, RoutedEventArgs e)
@@ -86,6 +122,18 @@ public sealed partial class SecurityPage : Page
         if (sender is ToggleSwitch ts)
         {
             await ViewModel.TogglePrivacySettingAsync("tracking", ts.IsOn);
+        }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        {
+            lts.IsLoading = true;
+            try
+            {
+                await ViewModel.TogglePrivacySettingAsync("tracking", lts.IsOn);
+            }
+            finally
+            {
+                lts.IsLoading = false;
+            }
         }
     }
 

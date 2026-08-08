@@ -139,6 +139,21 @@ public sealed partial class StartupPage : Page
                 await ViewModel.ToggleStartupAppAsync(entry, ts.IsOn);
             }
         }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts && lts.DataContext is StartupEntry entryLts)
+        {
+            if (entryLts.IsEnabled != lts.IsOn)
+            {
+                lts.IsLoading = true;
+                try
+                {
+                    await ViewModel.ToggleStartupAppAsync(entryLts, lts.IsOn);
+                }
+                finally
+                {
+                    lts.IsLoading = false;
+                }
+            }
+        }
     }
 
     private async void OnDeleteStartupClick(object sender, RoutedEventArgs e)
@@ -220,6 +235,21 @@ public sealed partial class StartupPage : Page
             if (entry.IsEnabled != ts.IsOn)
             {
                 await ViewModel.ToggleScheduledTaskAsync(entry, ts.IsOn);
+            }
+        }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts && lts.DataContext is ScheduledTaskEntry entryLts)
+        {
+            if (entryLts.IsEnabled != lts.IsOn)
+            {
+                lts.IsLoading = true;
+                try
+                {
+                    await ViewModel.ToggleScheduledTaskAsync(entryLts, lts.IsOn);
+                }
+                finally
+                {
+                    lts.IsLoading = false;
+                }
             }
         }
     }

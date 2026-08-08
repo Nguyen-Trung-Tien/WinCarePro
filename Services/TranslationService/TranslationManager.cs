@@ -46,6 +46,7 @@ public partial class TranslationManager
     {
         InitializeTranslations();
         InitializeUserGuideTranslations();
+        BuildReverseTranslations();
         LoadLanguageFromSettings();
     }
 
@@ -195,12 +196,37 @@ public partial class TranslationManager
         return originalCandidate;
     }
 
-    private bool ShouldTranslate(string? text)
+    public void BuildReverseTranslations()
+    {
+        lock (_translations)
+        {
+            _reverseTranslations.Clear();
+            foreach (var kvp in _translations)
+            {
+                if (!string.IsNullOrEmpty(kvp.Value))
+                {
+                    _reverseTranslations[kvp.Value] = kvp.Key;
+                }
+            }
+        }
+    }
+
+    private bool ShouldTranslate(DependencyObject? obj, string? text)
     {
         if (string.IsNullOrEmpty(text)) return false;
+
+        if (obj != null && OriginalValues.TryGetValue(obj, out var dict) && dict.Count > 0)
+        {
+            return true;
+        }
+
         string trimmed = text.Trim();
-        
         return _translations.ContainsKey(trimmed) || _reverseTranslations.ContainsKey(trimmed);
+    }
+
+    private bool ShouldTranslate(string? text)
+    {
+        return ShouldTranslate(null, text);
     }
 
     private readonly List<WeakReference<DependencyObject>> _registeredControls = new();
@@ -259,7 +285,7 @@ public partial class TranslationManager
                 {
                     foreach (var inline in tb.Inlines)
                     {
-                        if (inline is Run r && ShouldTranslate(r.Text))
+                        if (inline is Run r && ShouldTranslate(r, r.Text))
                         {
                             string originalR = GetOriginalValue(r, "Text", r.Text);
                             r.Text = T(originalR);
@@ -270,7 +296,7 @@ public partial class TranslationManager
             }
             catch { }
 
-            if (ShouldTranslate(tb.Text))
+            if (ShouldTranslate(tb, tb.Text))
             {
                 string original = GetOriginalValue(tb, "Text", tb.Text);
                 tb.Text = T(original);
@@ -340,6 +366,33 @@ public partial class TranslationManager
             {
                 string originalOff = GetOriginalValue(ts, "OffContent", offStr);
                 ts.OffContent = T(originalOff);
+                translated = true;
+            }
+        }
+        else if (parent is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        {
+            if (!string.IsNullOrEmpty(lts.HeaderText) && ShouldTranslate(lts.HeaderText))
+            {
+                string originalHeader = GetOriginalValue(lts, "HeaderText", lts.HeaderText);
+                lts.HeaderText = T(originalHeader);
+                translated = true;
+            }
+            if (!string.IsNullOrEmpty(lts.OnContent) && ShouldTranslate(lts.OnContent))
+            {
+                string originalOn = GetOriginalValue(lts, "OnContent", lts.OnContent);
+                lts.OnContent = T(originalOn);
+                translated = true;
+            }
+            if (!string.IsNullOrEmpty(lts.OffContent) && ShouldTranslate(lts.OffContent))
+            {
+                string originalOff = GetOriginalValue(lts, "OffContent", lts.OffContent);
+                lts.OffContent = T(originalOff);
+                translated = true;
+            }
+            if (!string.IsNullOrEmpty(lts.LoadingText) && ShouldTranslate(lts.LoadingText))
+            {
+                string originalLoading = GetOriginalValue(lts, "LoadingText", lts.LoadingText);
+                lts.LoadingText = T(originalLoading);
                 translated = true;
             }
         }

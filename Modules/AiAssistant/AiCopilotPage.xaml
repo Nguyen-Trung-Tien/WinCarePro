@@ -29,10 +29,11 @@
                 <TextBlock Text="Intelligent system diagnostics and automatic PC optimization recommendations." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
-            <Button Click="OnRunAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="16,0" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Button x:Name="RunAiDiagnosticsBtn" Click="OnRunAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="16,0" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <FontIcon Glyph="&#xE721;" FontSize="13"/>
-                    <TextBlock Text="Run AI Diagnostics" FontSize="12.5" FontWeight="SemiBold"/>
+                    <ProgressRing x:Name="RunAiProgressRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                    <FontIcon x:Name="RunAiIcon" Glyph="&#xE721;" FontSize="13"/>
+                    <TextBlock x:Name="RunAiText" Text="Run AI Diagnostics" FontSize="12.5" FontWeight="SemiBold"/>
                 </StackPanel>
             </Button>
         </Grid>

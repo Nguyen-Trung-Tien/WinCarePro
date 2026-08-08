@@ -25,7 +25,12 @@
             <StackPanel Grid.Column="0">
                 <TextBlock Text="Context Menu Manager" Style="{StaticResource PageHeaderTitleStyle}" />
             </StackPanel>
-            <Button Grid.Column="1" Content="Scan Context Menus" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" CornerRadius="8" Padding="16,8" FontWeight="SemiBold" />
+            <Button x:Name="ScanBtn" Grid.Column="1" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" CornerRadius="8" Padding="16,8" FontWeight="SemiBold">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <ProgressRing x:Name="ScanRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="ScanText" Text="Scan Context Menus" FontWeight="SemiBold"/>
+                </StackPanel>
+            </Button>
         </Grid>
 
         <!-- Main Content Area -->

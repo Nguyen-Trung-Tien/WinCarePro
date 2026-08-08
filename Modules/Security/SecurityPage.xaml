@@ -275,8 +275,18 @@
                                         <TextBlock Text="Clear Activity Traces" FontSize="18" FontWeight="Bold" />
                                         <TextBlock Text="Manually erase cached system activity logs and clipboard files:" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
 
-                                        <Button Content="Wipe Clipboard Cache" Click="OnClearClipboardClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" HorizontalAlignment="Stretch" Padding="14,8" />
-                                        <Button Content="Clear Recent Files &amp; Run History" Click="OnClearRecentClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" HorizontalAlignment="Stretch" Padding="14,8" />
+                                        <Button x:Name="WipeClipboardBtn" Click="OnClearClipboardClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" HorizontalAlignment="Stretch" Padding="14,8">
+                                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                                <ProgressRing x:Name="WipeClipboardRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
+                                                <TextBlock x:Name="WipeClipboardText" Text="Wipe Clipboard Cache"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button x:Name="ClearRecentBtn" Click="OnClearRecentClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" HorizontalAlignment="Stretch" Padding="14,8">
+                                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                                <ProgressRing x:Name="ClearRecentRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
+                                                <TextBlock x:Name="ClearRecentText" Text="Clear Recent Files &amp; Run History"/>
+                                            </StackPanel>
+                                        </Button>
                                     </StackPanel>
                                 </Border>
                             </Grid>

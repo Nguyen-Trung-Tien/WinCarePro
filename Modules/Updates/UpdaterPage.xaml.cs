@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Views;
 
@@ -34,17 +35,41 @@ public sealed partial class UpdaterPage : Page
 
     private async void OnScanUpdatesClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ScanUpdatesAsync();
+        var btn = ScanUpdatesBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, ScanUpdatesRing, ScanUpdatesText, null,
+            "Scanning Updates...", "Scan Updates",
+            async () =>
+            {
+                await ViewModel.ScanUpdatesAsync();
+            },
+            minDurationMs: 1200);
     }
 
     private async void OnUpdateAllClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.UpdateAllAppsAsync();
+        var btn = UpdateAllBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, UpdateAllRing, UpdateAllText, null,
+            "Updating All...", "Update All",
+            async () =>
+            {
+                await ViewModel.UpdateAllAppsAsync();
+            },
+            minDurationMs: 1200);
     }
 
     private async void OnUpdateSelectedClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.UpdateSelectedAppsAsync();
+        var btn = UpdateSelectedBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, UpdateSelectedRing, UpdateSelectedText, null,
+            "Updating Selected...", "Update Selected",
+            async () =>
+            {
+                await ViewModel.UpdateSelectedAppsAsync();
+            },
+            minDurationMs: 1200);
     }
 
     private async void OnUpdateSingleClick(object sender, RoutedEventArgs e)

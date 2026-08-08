@@ -55,26 +55,19 @@
                 <TextBlock Text="System Repair Center" Style="{StaticResource PageHeaderTitleStyle}" />
             </StackPanel>
             <StackPanel x:Name="HeaderButtonsPanel" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-
-                <Button Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanDiagnosticsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold">
-                    <Button.ContentTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xE721;" FontSize="14" />
-                                <TextBlock Text="Scan Diagnostics" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </Button.ContentTemplate>
+                <Button x:Name="ScanDiagnosticsBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanDiagnosticsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <ProgressRing x:Name="ScanDiagRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                        <FontIcon x:Name="ScanDiagIcon" Glyph="&#xE721;" FontSize="14" />
+                        <TextBlock x:Name="ScanDiagText" Text="Scan Diagnostics" VerticalAlignment="Center" />
+                    </StackPanel>
                 </Button>
-                <Button Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8">
-                    <Button.ContentTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xE77F;" FontSize="14" />
-                                <TextBlock Text="Fix Selected" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </Button.ContentTemplate>
+                <Button x:Name="FixSelectedBtn" Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <ProgressRing x:Name="FixSelectedRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" VerticalAlignment="Center"/>
+                        <FontIcon x:Name="FixSelectedIcon" Glyph="&#xE77F;" FontSize="14" />
+                        <TextBlock x:Name="FixSelectedText" Text="Fix Selected" VerticalAlignment="Center" />
+                    </StackPanel>
                 </Button>
             </StackPanel>
         </Grid>
@@ -236,7 +229,12 @@
                             </ItemsControl>
 
                             <!-- Repair Actions -->
-                            <Button Content="Auto-Repair Selected Issues" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold" HorizontalAlignment="Right" />
+                            <Button x:Name="AutoRepairBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold" HorizontalAlignment="Right">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <ProgressRing x:Name="AutoRepairRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="AutoRepairText" Text="Auto-Repair Selected Issues" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
                     </Border>
 
@@ -256,10 +254,30 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Content="SFC Scan" Click="OnSfcScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" HorizontalAlignment="Stretch" />
-                                <Button Grid.Column="1" Content="SFC Repair" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnSfcRepairClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" FontWeight="Bold" HorizontalAlignment="Stretch" />
-                                <Button Grid.Column="2" Content="DISM Check" Click="OnDismCheckClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" HorizontalAlignment="Stretch" />
-                                <Button Grid.Column="3" Content="DISM Restore" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDismRestoreClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" FontWeight="Bold" HorizontalAlignment="Stretch" />
+                                <Button x:Name="SfcScanBtn" Grid.Column="0" Click="OnSfcScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                        <ProgressRing x:Name="SfcScanRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="SfcScanText" Text="SFC Scan"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="SfcRepairBtn" Grid.Column="1" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnSfcRepairClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" FontWeight="Bold" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                        <ProgressRing x:Name="SfcRepairRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="White" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="SfcRepairText" Text="SFC Repair" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="DismCheckBtn" Grid.Column="2" Click="OnDismCheckClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                        <ProgressRing x:Name="DismCheckRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="DismCheckText" Text="DISM Check"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="DismRestoreBtn" Grid.Column="3" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDismRestoreClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" FontWeight="Bold" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                        <ProgressRing x:Name="DismRestoreRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="White" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="DismRestoreText" Text="DISM Restore" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Button>
                             </Grid>
                         </StackPanel>
                     </Border>

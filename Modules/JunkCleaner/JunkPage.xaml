@@ -78,16 +78,18 @@
 
                 <!-- Right: Scan & Clean Actions -->
                 <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Button Style="{StaticResource DefaultButtonStyle}" Click="OnScanJunkClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="14,8" CornerRadius="6">
+                    <Button x:Name="ScanJunkBtn" Style="{StaticResource DefaultButtonStyle}" Click="OnScanJunkClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="14,8" CornerRadius="6">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE721;" FontSize="13" />
-                            <TextBlock Text="Scan Directories" VerticalAlignment="Center" FontSize="12.5" />
+                            <ProgressRing x:Name="ScanJunkRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
+                            <FontIcon x:Name="ScanJunkIcon" Glyph="&#xE721;" FontSize="13" />
+                            <TextBlock x:Name="ScanJunkText" Text="Scan Directories" VerticalAlignment="Center" FontSize="12.5" />
                         </StackPanel>
                     </Button>
-                    <Button Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnCleanJunkClick" IsEnabled="{x:Bind CanClean(ViewModel.IsCleaning, ViewModel.Categories.Count), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold">
+                    <Button x:Name="CleanJunkBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnCleanJunkClick" IsEnabled="{x:Bind CanClean(ViewModel.IsCleaning, ViewModel.Categories.Count), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE74D;" FontSize="13" Foreground="White" />
-                            <TextBlock Text="Clean Now" VerticalAlignment="Center" FontSize="12.5" />
+                            <ProgressRing x:Name="CleanJunkRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                            <FontIcon x:Name="CleanJunkIcon" Glyph="&#xE74D;" FontSize="13" Foreground="White" />
+                            <TextBlock x:Name="CleanJunkText" Text="Clean Now" VerticalAlignment="Center" FontSize="12.5" />
                         </StackPanel>
                     </Button>
                 </StackPanel>

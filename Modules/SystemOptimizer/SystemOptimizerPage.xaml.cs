@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Views;
 
@@ -46,30 +47,20 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnRunAiScanClick(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn)
-        {
-            btn.IsEnabled = false;
-            try
+        var btn = RunAiScanBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, AiScanRing, AiScanText, AiScanIcon,
+            "Scanning AI Diagnostics...", "Run AI Diagnostics",
+            async () =>
             {
-                await System.Threading.Tasks.Task.Delay(350);
                 await ViewModel.RunAiScanAsync();
-
                 if (App.MainWindowInstance is MainWindow mw)
                 {
                     mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
                         $"AI Health Score: {ViewModel.AiHealthScore}/100. {ViewModel.AiSummaryText}", "Success");
                 }
-            }
-            catch { }
-            finally
-            {
-                btn.IsEnabled = true;
-            }
-        }
-        else
-        {
-            await ViewModel.RunAiScanAsync();
-        }
+            },
+            minDurationMs: 1200);
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -87,7 +78,16 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnApplyTweaksClick(object sender, RoutedEventArgs e)
     {
-        int applied = await ViewModel.ApplySelectedAsync();
+        var btn = ApplyTweaksBtn ?? (sender as Button);
+        int applied = 0;
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, ApplyTweaksRing, ApplyTweaksText, null,
+            "Applying Tweaks...", "Apply Tweaks",
+            async () =>
+            {
+                applied = await ViewModel.ApplySelectedAsync();
+            },
+            minDurationMs: 1200);
 
         string msg = applied > 0 
             ? string.Format("Successfully applied {0} Windows system tweaks and purged memory cache for maximum responsiveness.".T(), applied)
@@ -110,9 +110,18 @@ public sealed partial class SystemOptimizerPage : Page
         catch { }
     }
 
-    private void OnReloadTweaksClick(object sender, RoutedEventArgs e)
+    private async void OnReloadTweaksClick(object sender, RoutedEventArgs e)
     {
-        ViewModel.LoadTweaks();
+        var btn = ScanRegistryBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, ScanRegistryRing, ScanRegistryText, null,
+            "Scanning Registry...", "Scan Registry",
+            () =>
+            {
+                ViewModel.LoadTweaks();
+                return Task.CompletedTask;
+            },
+            minDurationMs: 1000);
     }
 
     private async void OnRestoreDefaultsClick(object sender, RoutedEventArgs e)
@@ -153,7 +162,15 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnBoostRamClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.BoostRamAsync();
+        var btn = BoostRamBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, BoostRamRing, BoostRamText, BoostRamIcon,
+            "Boosting RAM...", "Boost RAM Now",
+            async () =>
+            {
+                await ViewModel.BoostRamAsync();
+            },
+            minDurationMs: 1200);
     }
 
     public bool IsNot(bool val) => !val;

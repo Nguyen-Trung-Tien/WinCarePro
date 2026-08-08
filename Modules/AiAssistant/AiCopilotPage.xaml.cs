@@ -20,13 +20,13 @@ namespace WinCarePro.Modules.AiAssistant
             TranslationManager.Instance.LanguageChanged += (s, e) =>
             {
                 TranslationManager.Instance.Translate(this);
-                RunAiScanAsync();
+                _ = RunAiScanAsync();
             };
 
-            RunAiScanAsync();
+            _ = RunAiScanAsync();
         }
 
-        private async void RunAiScanAsync()
+        private async System.Threading.Tasks.Task RunAiScanAsync()
         {
             try
             {
@@ -45,30 +45,20 @@ namespace WinCarePro.Modules.AiAssistant
 
         private async void OnRunAiScanClick(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn)
-            {
-                btn.IsEnabled = false;
-                try
+            var btn = RunAiDiagnosticsBtn ?? (sender as Button);
+            await UiLoadingHelper.ExecuteWithLoadingAsync(
+                btn, RunAiProgressRing, RunAiText, RunAiIcon,
+                "Scanning AI Diagnostics...", "Run AI Diagnostics",
+                async () =>
                 {
-                    await System.Threading.Tasks.Task.Delay(350);
-                    RunAiScanAsync();
-
+                    await RunAiScanAsync();
                     if (App.MainWindowInstance is MainWindow mw)
                     {
                         mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
                             "WinCare AI completed system health analysis and generated optimization insights.".T(), "Success");
                     }
-                }
-                catch { }
-                finally
-                {
-                    btn.IsEnabled = true;
-                }
-            }
-            else
-            {
-                RunAiScanAsync();
-            }
+                },
+                minDurationMs: 1200);
         }
 
         private async void OnRecommendationActionClick(object sender, RoutedEventArgs e)
@@ -95,7 +85,7 @@ namespace WinCarePro.Modules.AiAssistant
                         {
                             GC.Collect();
                             GC.WaitForPendingFinalizers();
-                            RunAiScanAsync();
+                            await RunAiScanAsync();
 
                             if (App.MainWindowInstance is MainWindow mw)
                             {

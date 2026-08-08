@@ -141,8 +141,12 @@
                             <MenuFlyoutSeparator />
 
                             <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
-                                <Button x:Name="CheckUpdatesBtn" Content="Check for Updates Now" Click="OnCheckUpdatesClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="6" Padding="12,6" FontWeight="Bold" />
-                                <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Width="20" Height="20" VerticalAlignment="Center" />
+                                <Button x:Name="CheckUpdatesBtn" Click="OnCheckUpdatesClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="6" Padding="12,6" FontWeight="Bold">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="CheckUpdatesText" Text="Check for Updates Now" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Button>
                                 <TextBlock x:Name="UpdateStatusLabel" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
                             </StackPanel>
                             
@@ -190,8 +194,12 @@
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
-                                <Button Content="Purge Selected Storage" Click="OnPurgeDatabaseClick" Foreground="#FFE81123" CornerRadius="6" Padding="14,6" FontWeight="Bold"/>
-                                <ProgressRing x:Name="PurgeProgressRing" IsActive="False" Width="20" Height="20" VerticalAlignment="Center" />
+                                <Button x:Name="PurgeStorageBtn" Click="OnPurgeDatabaseClick" Foreground="#FFE81123" CornerRadius="6" Padding="14,6" FontWeight="Bold">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <ProgressRing x:Name="PurgeProgressRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="PurgeStorageText" Text="Purge Selected Storage" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Button>
                             </StackPanel>
                         </StackPanel>
                     </Border>

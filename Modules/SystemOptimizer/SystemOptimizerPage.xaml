@@ -100,9 +100,19 @@
                 <TextBlock Text="⚡ System Optimizer" Style="{StaticResource PageHeaderTitleStyle}" />
             </StackPanel>
             <StackPanel x:Name="HeaderButtons" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button Content="Scan Registry" Click="OnReloadTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" CornerRadius="6" Padding="12,8" FontSize="12.5" />
+                <Button x:Name="ScanRegistryBtn" Click="OnReloadTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" CornerRadius="6" Padding="12,8" FontSize="12.5">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <ProgressRing x:Name="ScanRegistryRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ScanRegistryText" Text="Scan Registry"/>
+                    </StackPanel>
+                </Button>
                 <Button Content="Defaults" Click="OnRestoreDefaultsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" CornerRadius="6" Padding="12,8" FontSize="12.5" />
-                <Button Content="Apply Tweaks" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="SemiBold" CornerRadius="6" Padding="16,8" FontSize="12.5" />
+                <Button x:Name="ApplyTweaksBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="SemiBold" CornerRadius="6" Padding="16,8" FontSize="12.5">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <ProgressRing x:Name="ApplyTweaksRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ApplyTweaksText" Text="Apply Tweaks" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
 
@@ -137,11 +147,12 @@
                                    Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxLines="2" TextWrapping="Wrap"/>
 
                         <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
-                            <Button Click="OnRunAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="30" Padding="12,0" CornerRadius="6"
+                            <Button x:Name="RunAiScanBtn" Click="OnRunAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="30" Padding="12,0" CornerRadius="6"
                                     helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <FontIcon Glyph="&#xE721;" FontSize="11"/>
-                                    <TextBlock Text="Run AI Diagnostics" FontSize="11" FontWeight="SemiBold"/>
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <ProgressRing x:Name="AiScanRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="White" VerticalAlignment="Center"/>
+                                    <FontIcon x:Name="AiScanIcon" Glyph="&#xE721;" FontSize="11"/>
+                                    <TextBlock x:Name="AiScanText" Text="Run AI Diagnostics" FontSize="11" FontWeight="SemiBold"/>
                                 </StackPanel>
                             </Button>
                         </StackPanel>
@@ -411,10 +422,11 @@
 
                             <TextBlock Text="{x:Bind ViewModel.RamOptimizedText, Mode=OneWay}" FontSize="10" Foreground="{ThemeResource SystemAccentColor}" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" Visibility="{x:Bind ViewModel.RamOptimizedText, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}" />
 
-                            <Button Click="OnBoostRamClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBoosting), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Stretch" CornerRadius="8" Padding="12,8" FontWeight="Bold" Margin="0,4,0,0">
+                            <Button x:Name="BoostRamBtn" Click="OnBoostRamClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBoosting), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Stretch" CornerRadius="8" Padding="12,8" FontWeight="Bold" Margin="0,4,0,0">
                                 <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                    <FontIcon Glyph="&#xF0AF;" FontSize="12" Foreground="White" />
-                                    <TextBlock Text="Boost RAM Now" FontSize="12.5" VerticalAlignment="Center" FontWeight="Bold" />
+                                    <ProgressRing x:Name="BoostRamRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                                    <FontIcon x:Name="BoostRamIcon" Glyph="&#xF0AF;" FontSize="12" Foreground="White" />
+                                    <TextBlock x:Name="BoostRamText" Text="Boost RAM Now" FontSize="12.5" VerticalAlignment="Center" FontWeight="Bold" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>

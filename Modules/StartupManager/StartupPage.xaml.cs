@@ -8,6 +8,7 @@ using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Services.Contracts;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Views;
 
@@ -71,7 +72,15 @@ public sealed partial class StartupPage : Page
 
     private async void OnReloadStartupClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.LoadAllDataAsync();
+        var btn = ScanButton ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, ScanSystemRing, ScanSystemText, ScanSystemIcon,
+            "Scanning System...", "Scan System",
+            async () =>
+            {
+                await ViewModel.LoadAllDataAsync();
+            },
+            minDurationMs: 1000);
     }
 
     private void OnOpenServicesMscClick(object sender, RoutedEventArgs e)
@@ -86,7 +95,15 @@ public sealed partial class StartupPage : Page
 
     private async void OnQuickOptimizeClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.OptimizeStartupAppsAsync();
+        var btn = QuickOptimizeBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, BoostSpeedRing, BoostSpeedText, null,
+            "Boosting Boot Speed...", "Boost Boot Speed",
+            async () =>
+            {
+                await ViewModel.OptimizeStartupAppsAsync();
+            },
+            minDurationMs: 1200);
 
         var dialog = new ContentDialog
         {

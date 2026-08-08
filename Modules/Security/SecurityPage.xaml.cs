@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using WinCarePro.ViewModels;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Views;
 
@@ -90,12 +91,28 @@ public sealed partial class SecurityPage : Page
 
     private async void OnClearClipboardClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ClearClipboardAsync();
+        var btn = WipeClipboardBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, WipeClipboardRing, WipeClipboardText, null,
+            "Wiping Clipboard...", "Wipe Clipboard Cache",
+            async () =>
+            {
+                await ViewModel.ClearClipboardAsync();
+            },
+            minDurationMs: 1000);
     }
 
     private async void OnClearRecentClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ClearRecentFilesAsync();
+        var btn = ClearRecentBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, ClearRecentRing, ClearRecentText, null,
+            "Clearing Recent Files...", "Clear Recent Files & Run History",
+            async () =>
+            {
+                await ViewModel.ClearRecentFilesAsync();
+            },
+            minDurationMs: 1000);
     }
 
     public bool IsNot(bool val) => !val;

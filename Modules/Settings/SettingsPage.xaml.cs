@@ -459,75 +459,73 @@ public sealed partial class SettingsPage : Page
 
     private async void OnPurgeDatabaseClick(object sender, RoutedEventArgs e)
     {
-        var purgeBtn = sender as Button;
-        if (purgeBtn != null) purgeBtn.IsEnabled = false;
-
-        PurgeProgressRing.IsActive = true;
-        await Task.Delay(1200); // Visual feedback
-        try
-        {
-            string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "WinCarePro");
-            string dbPath = Path.Combine(appData, "wincaredb.db");
-
-            if (PurgeLogsCheckbox.IsChecked == true)
+        var purgeBtn = PurgeStorageBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            purgeBtn, PurgeProgressRing, PurgeStorageText, null,
+            "Purging Storage...", "Purge Selected Storage",
+            async () =>
             {
-                using var connection = new SqliteConnection($"Data Source={dbPath}");
-                connection.Open();
-                using var cmd = new SqliteCommand("DELETE FROM Logs", connection);
-                cmd.ExecuteNonQuery();
-            }
-            if (PurgeReportsCheckbox.IsChecked == true)
-            {
-                using var connection = new SqliteConnection($"Data Source={dbPath}");
-                connection.Open();
-                using (var cmd = new SqliteCommand("DELETE FROM Reports", connection))
+                try
                 {
-                    cmd.ExecuteNonQuery();
-                }
+                    string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "WinCarePro");
+                    string dbPath = Path.Combine(appData, "wincaredb.db");
 
-                string reportsFolder = Path.Combine(appData, "Reports");
-                if (Directory.Exists(reportsFolder))
-                {
-                    foreach (var file in Directory.GetFiles(reportsFolder))
+                    if (PurgeLogsCheckbox.IsChecked == true)
                     {
-                        try { File.Delete(file); } catch { }
+                        using var connection = new SqliteConnection($"Data Source={dbPath}");
+                        connection.Open();
+                        using var cmd = new SqliteCommand("DELETE FROM Logs", connection);
+                        cmd.ExecuteNonQuery();
                     }
-                }
-            }
-            if (PurgeCacheCheckbox.IsChecked == true)
-            {
-                string cacheFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");
-                if (Directory.Exists(cacheFolder))
-                {
-                    foreach (var file in Directory.GetFiles(cacheFolder))
+                    if (PurgeReportsCheckbox.IsChecked == true)
                     {
-                        try { File.Delete(file); } catch { }
-                    }
-                }
-                string directCacheFolder = Path.Combine(Path.GetTempPath(), "WinCareUpdates");
-                if (Directory.Exists(directCacheFolder))
-                {
-                    foreach (var file in Directory.GetFiles(directCacheFolder))
-                    {
-                        try { File.Delete(file); } catch { }
-                    }
-                }
-            }
+                        using var connection = new SqliteConnection($"Data Source={dbPath}");
+                        connection.Open();
+                        using (var cmd = new SqliteCommand("DELETE FROM Reports", connection))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
 
-            DbManager.LogAction("Purged selected database rows and cache", "Settings", "Success");
-            UpdateStorageSizes();
-            
-            App.MainWindowInstance?.ShowToastNotification("Purge Completed".T(), "Selected caches and database rows cleared successfully.".T(), "Success");
-        }
-        catch (Exception ex)
-        {
-            App.MainWindowInstance?.ShowToastNotification("Purge Failed".T(), ex.Message, "Critical");
-        }
-        finally
-        {
-            PurgeProgressRing.IsActive = false;
-            if (purgeBtn != null) purgeBtn.IsEnabled = true;
-        }
+                        string reportsFolder = Path.Combine(appData, "Reports");
+                        if (Directory.Exists(reportsFolder))
+                        {
+                            foreach (var file in Directory.GetFiles(reportsFolder))
+                            {
+                                try { File.Delete(file); } catch { }
+                            }
+                        }
+                    }
+                    if (PurgeCacheCheckbox.IsChecked == true)
+                    {
+                        string cacheFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");
+                        if (Directory.Exists(cacheFolder))
+                        {
+                            foreach (var file in Directory.GetFiles(cacheFolder))
+                            {
+                                try { File.Delete(file); } catch { }
+                            }
+                        }
+                        string directCacheFolder = Path.Combine(Path.GetTempPath(), "WinCareUpdates");
+                        if (Directory.Exists(directCacheFolder))
+                        {
+                            foreach (var file in Directory.GetFiles(directCacheFolder))
+                            {
+                                try { File.Delete(file); } catch { }
+                            }
+                        }
+                    }
+
+                    DbManager.LogAction("Purged selected database rows and cache", "Settings", "Success");
+                    UpdateStorageSizes();
+                    
+                    App.MainWindowInstance?.ShowToastNotification("Purge Completed".T(), "Selected caches and database rows cleared successfully.".T(), "Success");
+                }
+                catch (Exception ex)
+                {
+                    App.MainWindowInstance?.ShowToastNotification("Purge Failed".T(), ex.Message, "Critical");
+                }
+            },
+            minDurationMs: 1200);
     }
 
     // Theme Segmented Cards click handlers
@@ -626,30 +624,27 @@ public sealed partial class SettingsPage : Page
 
     private async void OnCheckUpdatesClick(object sender, RoutedEventArgs e)
     {
-        CheckUpdatesBtn.IsEnabled = false;
-        UpdateProgressRing.IsActive = true;
-        UpdateStatusLabel.Text = "Checking for updates...".T();
+        var btn = CheckUpdatesBtn ?? (sender as Button);
         UpdateProgressBar.Visibility = Visibility.Collapsed;
-
-        try
-        {
-            await CheckForUpdatesInternalAsync();
-        }
-        catch (System.IO.FileNotFoundException fnfEx)
-        {
-            // System.Net.Http assembly not found — deployment/packaging issue
-            UpdateProgressRing.IsActive = false;
-            UpdateStatusLabel.Text = string.Format("Network library unavailable: {0}".T(), fnfEx.FileName ?? fnfEx.Message);
-        }
-        catch (Exception ex)
-        {
-            UpdateProgressRing.IsActive = false;
-            UpdateStatusLabel.Text = string.Format("Failed to check for updates: {0}".T(), ex.Message);
-        }
-        finally
-        {
-            CheckUpdatesBtn.IsEnabled = true;
-        }
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, UpdateProgressRing, CheckUpdatesText, null,
+            "Checking for Updates...", "Check for Updates Now",
+            async () =>
+            {
+                try
+                {
+                    await CheckForUpdatesInternalAsync();
+                }
+                catch (System.IO.FileNotFoundException fnfEx)
+                {
+                    UpdateStatusLabel.Text = string.Format("Network library unavailable: {0}".T(), fnfEx.FileName ?? fnfEx.Message);
+                }
+                catch (Exception ex)
+                {
+                    UpdateStatusLabel.Text = string.Format("Failed to check for updates: {0}".T(), ex.Message);
+                }
+            },
+            minDurationMs: 1200);
     }
 
     private async Task CheckForUpdatesInternalAsync()

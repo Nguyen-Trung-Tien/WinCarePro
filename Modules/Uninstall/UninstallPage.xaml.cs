@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Services.Contracts;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Views;
 
@@ -126,7 +127,15 @@ public sealed partial class UninstallPage : Page
 
     private async void OnReloadAppsClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ScanAppsAsync();
+        var btn = ReloadBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, ScanAppsRing, ScanAppsText, null,
+            "Scanning Applications...", "Scan Registry Apps",
+            async () =>
+            {
+                await ViewModel.ScanAppsAsync();
+            },
+            minDurationMs: 1200);
     }
 
     private async void OnSingleUninstallClick(object sender, RoutedEventArgs e)
@@ -144,7 +153,15 @@ public sealed partial class UninstallPage : Page
 
     private async void OnDeleteLeftoversClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.DeleteLeftoversAsync();
+        var btn = WipeLeftoversBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, WipeLeftoversRing, WipeLeftoversText, null,
+            "Wiping Leftovers...", "Wipe Leftovers",
+            async () =>
+            {
+                await ViewModel.DeleteLeftoversAsync();
+            },
+            minDurationMs: 1200);
     }
 
     // Detail Panel Actions

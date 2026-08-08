@@ -105,9 +105,24 @@
                 <TextBlock Text="Software Updater" Style="{StaticResource PageHeaderTitleStyle}" />
             </StackPanel>
             <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button Content="Scan Updates" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold"/>
-                <Button Content="Update Selected" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateSelectedClick" IsEnabled="{x:Bind CanUpdateSelected(ViewModel.HasSelectedUpdates, ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold"/>
-                <Button Content="Update All" Click="OnUpdateAllClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold"/>
+                <Button x:Name="ScanUpdatesBtn" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <ProgressRing x:Name="ScanUpdatesRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ScanUpdatesText" Text="Scan Updates" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="UpdateSelectedBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateSelectedClick" IsEnabled="{x:Bind CanUpdateSelected(ViewModel.HasSelectedUpdates, ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <ProgressRing x:Name="UpdateSelectedRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="UpdateSelectedText" Text="Update Selected" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="UpdateAllBtn" Click="OnUpdateAllClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <ProgressRing x:Name="UpdateAllRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="UpdateAllText" Text="Update All" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
 

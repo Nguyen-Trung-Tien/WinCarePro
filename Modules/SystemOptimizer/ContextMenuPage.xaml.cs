@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Views;
 
@@ -54,7 +55,15 @@ public sealed partial class ContextMenuPage : Page
 
     private async void OnScanClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ScanAsync();
+        var btn = ScanBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, ScanRing, ScanText, null,
+            "Scanning Context Menus...", "Scan Context Menus",
+            async () =>
+            {
+                await ViewModel.ScanAsync();
+            },
+            minDurationMs: 1200);
     }
 
     private async void OnItemToggled(object sender, RoutedEventArgs e)

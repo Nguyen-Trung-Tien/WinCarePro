@@ -219,8 +219,13 @@
                             </ComboBox>
                         </StackPanel>
 
-                        <Button Grid.Column="3" x:Name="ReloadBtn" Content="Scan Registry Apps" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Center" Height="32" CornerRadius="6"
-                                helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"/>
+                        <Button Grid.Column="3" x:Name="ReloadBtn" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Center" Height="32" CornerRadius="6"
+                                helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <ProgressRing x:Name="ScanAppsRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="ScanAppsText" Text="Scan Registry Apps" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
                     </Grid>
                 </Border>
 
@@ -575,7 +580,12 @@
 
                         <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="12" Margin="0,16,0,0" HorizontalAlignment="Right">
                             <Button Content="Cancel &amp; Back" Click="OnCancelLeftoversClick" Height="36" CornerRadius="6" Padding="20,0"/>
-                            <Button Content="Wipe Leftovers" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDeleteLeftoversClick" FontWeight="Bold" Height="36" CornerRadius="6" Padding="24,0"/>
+                            <Button x:Name="WipeLeftoversBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDeleteLeftoversClick" FontWeight="Bold" Height="36" CornerRadius="6" Padding="24,0">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <ProgressRing x:Name="WipeLeftoversRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="WipeLeftoversText" Text="Wipe Leftovers" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
                     </Grid>
                 </Border>

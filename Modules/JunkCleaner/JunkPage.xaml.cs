@@ -6,6 +6,8 @@ using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Services.Contracts;
 
+using WinCarePro.Core.Helpers;
+
 namespace WinCarePro.Views;
 
 public sealed partial class JunkPage : Page
@@ -23,29 +25,16 @@ public sealed partial class JunkPage : Page
 
     public JunkPage()
     {
-        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        InitializeComponent();
         ViewModel = App.Services.GetRequiredService<JunkViewModel>();
+        InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
-
-        ViewModel.PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName == nameof(ViewModel.IsScanning) || e.PropertyName == nameof(ViewModel.IsCleaning))
-            {
-                UpdateProgressOverlayState();
-            }
-        };
-
-        this.Loaded += (s, e) => UpdateProgressOverlayState();
 
         this.SizeChanged += (s, e) =>
         {
-            bool isWide = e.NewSize.Width >= 800;
-            WideLayoutVisibility = isWide ? Visibility.Visible : Visibility.Collapsed;
-
             if (LeftColumn != null && RightColumn != null)
             {
-                if (isWide)
+                if (e.NewSize.Width >= 900)
                 {
                     LeftColumn.Width = new GridLength(1.2, GridUnitType.Star);
                     RightColumn.Width = new GridLength(0.8, GridUnitType.Star);
@@ -75,37 +64,53 @@ public sealed partial class JunkPage : Page
 
     private async void OnScanJunkClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ScanAsync();
+        var btn = ScanJunkBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, ScanJunkRing, ScanJunkText, ScanJunkIcon,
+            "Scanning Debris...", "Scan Directories",
+            async () =>
+            {
+                await ViewModel.ScanAsync();
+            },
+            minDurationMs: 1200);
     }
 
     private async void OnCleanJunkClick(object sender, RoutedEventArgs e)
     {
-        var lockingAppService = App.Services.GetService<ILockingAppService>();
-        var dialogService = App.Services.GetService<IDialogService>();
-        if (lockingAppService != null && dialogService != null)
-        {
-            var apps = await lockingAppService.GetLockingAppsAsync();
-            if (apps.Count > 0)
+        var btn = CleanJunkBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, CleanJunkRing, CleanJunkText, CleanJunkIcon,
+            "Cleaning Debris...", "Clean Now",
+            async () =>
             {
-                dialogService.SetXamlRoot(this.XamlRoot);
-                var action = await dialogService.ShowLockingAppsDialogAsync(apps);
-                if (action == CleaningAction.CloseAndClean)
+                var lockingAppService = App.Services.GetService<ILockingAppService>();
+                var dialogService = App.Services.GetService<IDialogService>();
+                if (lockingAppService != null && dialogService != null)
                 {
-                    await ViewModel.CloseAppsOnlyAsync();
-                    await ViewModel.CleanAsync();
+                    var apps = await lockingAppService.GetLockingAppsAsync();
+                    if (apps.Count > 0)
+                    {
+                        dialogService.SetXamlRoot(this.XamlRoot);
+                        var action = await dialogService.ShowLockingAppsDialogAsync(apps);
+                        if (action == CleaningAction.CloseAndClean)
+                        {
+                            await ViewModel.CloseAppsOnlyAsync();
+                            await ViewModel.CleanAsync();
+                        }
+                        else if (action == CleaningAction.CleanAnyway)
+                        {
+                            await ViewModel.CleanAsync();
+                        }
+                        else if (action == CleaningAction.ScheduleAfterRestart)
+                        {
+                            await ViewModel.ScheduleCleanupAfterRestartAsync();
+                        }
+                        return;
+                    }
                 }
-                else if (action == CleaningAction.CleanAnyway)
-                {
-                    await ViewModel.CleanAsync();
-                }
-                else if (action == CleaningAction.ScheduleAfterRestart)
-                {
-                    await ViewModel.ScheduleCleanupAfterRestartAsync();
-                }
-                return;
-            }
-        }
-        await ViewModel.CleanAsync();
+                await ViewModel.CleanAsync();
+            },
+            minDurationMs: 1200);
     }
 
     private void OnJunkSelectionChanged(object sender, RoutedEventArgs e)

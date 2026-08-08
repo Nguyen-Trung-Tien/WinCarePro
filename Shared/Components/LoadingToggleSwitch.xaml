@@ -7,21 +7,29 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid x:Name="RootGrid" VerticalAlignment="Center">
+    <Grid x:Name="RootGrid" VerticalAlignment="Center" MinHeight="36">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <!-- Header Label Column -->
-        <TextBlock x:Name="HeaderTextBlock"
-                   Grid.Column="0"
-                   Text="{x:Bind HeaderText, Mode=OneWay}"
-                   FontSize="12.5"
-                   TextWrapping="Wrap"
-                   VerticalAlignment="Center"
-                   Margin="0,0,12,0"
-                   Visibility="{x:Bind HasHeader(HeaderText), Mode=OneWay}" />
+        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0" Spacing="2">
+            <TextBlock x:Name="HeaderTextBlock"
+                       Text="{x:Bind HeaderText, Mode=OneWay}"
+                       FontSize="13"
+                       FontWeight="Medium"
+                       Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Center"
+                       Visibility="{x:Bind HasHeader(HeaderText), Mode=OneWay}" />
+            <TextBlock x:Name="DescriptionTextBlock"
+                       Text="{x:Bind DescriptionText, Mode=OneWay}"
+                       FontSize="11.5"
+                       Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
+                       TextWrapping="Wrap"
+                       Visibility="{x:Bind HasDescription(DescriptionText), Mode=OneWay}" />
+        </StackPanel>
 
         <!-- Toggle Switch & Loading Spinner Column -->
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Right">

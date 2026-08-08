@@ -17,12 +17,16 @@
         <!-- 1. Dashboard -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE80F;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                        <TextBlock Text="1. Dashboard &amp; System Health Monitor" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE80F;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="1. Dashboard &amp; System Health Monitor" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="100% Safe (No System Impact)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -47,12 +51,16 @@
         <!-- 2. AI Assistant -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE99A;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                        <TextBlock Text="2. AI Assistant &amp; Diagnostics" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE99A;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="2. AI Assistant &amp; Diagnostics" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="100% Safe (No System Impact)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -77,12 +85,16 @@
         <!-- 3. Junk Cleaner -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xEA99;" FontSize="18" Foreground="Orange"/>
-                        <TextBlock Text="3. Junk Cleaner &amp; Debris" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xEA99;" FontSize="18" Foreground="Orange" VerticalAlignment="Center"/>
+                        <TextBlock Text="3. Junk Cleaner &amp; Debris" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="100% Safe (No System Impact)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -107,12 +119,16 @@
         <!-- 4. App Uninstaller -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE74D;" FontSize="18" Foreground="Red"/>
-                        <TextBlock Text="4. App Uninstaller &amp; Leftovers" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE74D;" FontSize="18" Foreground="Red" VerticalAlignment="Center"/>
+                        <TextBlock Text="4. App Uninstaller &amp; Leftovers" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="Safe (Recommended)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -137,12 +153,16 @@
         <!-- 5. Network Center -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE774;" FontSize="18" Foreground="DodgerBlue"/>
-                        <TextBlock Text="5. Network Center" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE774;" FontSize="18" Foreground="DodgerBlue" VerticalAlignment="Center"/>
+                        <TextBlock Text="5. Network Center" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="100% Safe (No System Impact)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -167,12 +187,16 @@
         <!-- 6. System Repair -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE90F;" FontSize="18" Foreground="Teal"/>
-                        <TextBlock Text="6. System Repair Center" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE90F;" FontSize="18" Foreground="Teal" VerticalAlignment="Center"/>
+                        <TextBlock Text="6. System Repair Center" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A3B82F6" BorderBrush="#FF3B82F6" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A3B82F6" BorderBrush="#FF3B82F6" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="Requires Administrator Privileges" FontSize="11" Foreground="#FF3B82F6" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -197,12 +221,16 @@
         <!-- 7. Security Shield -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE727;" FontSize="18" Foreground="MediumSpringGreen"/>
-                        <TextBlock Text="7. Security Shield &amp; Privacy" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE727;" FontSize="18" Foreground="MediumSpringGreen" VerticalAlignment="Center"/>
+                        <TextBlock Text="7. Security Shield &amp; Privacy" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="100% Safe (No System Impact)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -227,12 +255,16 @@
         <!-- 8. System Optimizer -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE7FC;" FontSize="18" Foreground="#FFF59E0B"/>
-                        <TextBlock Text="8. System Optimizer &amp; RAM Booster" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE7FC;" FontSize="18" Foreground="#FFF59E0B" VerticalAlignment="Center"/>
+                        <TextBlock Text="8. System Optimizer &amp; RAM Booster" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="Safe (Recommended)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -257,12 +289,16 @@
         <!-- 9. Context Menu -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE71D;" FontSize="18" Foreground="Thistle"/>
-                        <TextBlock Text="9. Context Menu Manager" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE71D;" FontSize="18" Foreground="Thistle" VerticalAlignment="Center"/>
+                        <TextBlock Text="9. Context Menu Manager" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="Safe (Recommended)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -287,12 +323,16 @@
         <!-- 10. Startup & Services -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE7B5;" FontSize="18" Foreground="Gold"/>
-                        <TextBlock Text="10. Startup &amp; Services Manager" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE7B5;" FontSize="18" Foreground="Gold" VerticalAlignment="Center"/>
+                        <TextBlock Text="10. Startup &amp; Services Manager" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="Safe (Recommended)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -317,12 +357,16 @@
         <!-- 11. Disk Tools -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="SkyBlue"/>
-                        <TextBlock Text="11. Disk Tools &amp; Storage Sustainability" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="SkyBlue" VerticalAlignment="Center"/>
+                        <TextBlock Text="11. Disk Tools &amp; Storage Sustainability" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="100% Safe (No System Impact)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -347,12 +391,16 @@
         <!-- 12. Registry Center -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="Tomato"/>
-                        <TextBlock Text="12. Registry Center &amp; Registry Cleaner" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="Tomato" VerticalAlignment="Center"/>
+                        <TextBlock Text="12. Registry Center &amp; Registry Cleaner" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="Safe (Recommended)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -377,12 +425,16 @@
         <!-- 13. Software Updater -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE75C;" FontSize="18" Foreground="Crimson"/>
-                        <TextBlock Text="13. Software Updater &amp; Package Manager" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE75C;" FontSize="18" Foreground="Crimson" VerticalAlignment="Center"/>
+                        <TextBlock Text="13. Software Updater &amp; Package Manager" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="100% Safe (No System Impact)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>
@@ -407,12 +459,16 @@
         <!-- 14. Desktop Mini Widget -->
         <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
             <StackPanel Spacing="12">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE70F;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                        <TextBlock Text="14. Desktop Mini Widget &amp; System Tray Bar" FontSize="15" FontWeight="Bold"/>
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE70F;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="14. Desktop Mini Widget &amp; System Tray Bar" FontSize="15" FontWeight="Bold" TextWrapping="Wrap" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <Border Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                    <Border Grid.Column="1" Background="#1A10B981" BorderBrush="#FF10B981" BorderThickness="1" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <TextBlock Text="100% Safe (No System Impact)" FontSize="11" Foreground="#FF10B981" FontWeight="SemiBold"/>
                     </Border>
                 </Grid>

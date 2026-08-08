@@ -10,6 +10,9 @@ public class DbManager
 {
     private static readonly object DbLock = new();
 
+    public static event Action<WinCarePro.Models.NotificationItem>? OnNotificationAdded;
+    public static event Action<LogEntry>? OnLogAdded;
+
     private static readonly string AppDataPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
         "WinCarePro"
@@ -214,6 +217,18 @@ public class DbManager
             command.Parameters.AddWithValue("$status", status);
             command.ExecuteNonQuery();
         });
+
+        try
+        {
+            OnLogAdded?.Invoke(new LogEntry
+            {
+                Action = action,
+                Module = module,
+                Status = status,
+                CreatedAt = DateTime.Now
+            });
+        }
+        catch { }
     }
 
     public static List<LogEntry> GetLogs(string? module = null, string? search = null)
@@ -398,6 +413,19 @@ public class DbManager
             cmd.Parameters.AddWithValue("@level", level);
             cmd.ExecuteNonQuery();
         });
+
+        try
+        {
+            OnNotificationAdded?.Invoke(new WinCarePro.Models.NotificationItem
+            {
+                Title = title,
+                Message = message,
+                Level = level,
+                IsRead = false,
+                CreatedAt = DateTime.Now
+            });
+        }
+        catch { }
 
         var win = WinCarePro.App.MainWindowInstance;
         if (win != null)

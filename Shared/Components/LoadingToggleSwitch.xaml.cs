@@ -26,6 +26,10 @@ public sealed partial class LoadingToggleSwitch : UserControl
         DependencyProperty.Register(nameof(HeaderText), typeof(string), typeof(LoadingToggleSwitch),
             new PropertyMetadata(string.Empty));
 
+    public static readonly DependencyProperty DescriptionTextProperty =
+        DependencyProperty.Register(nameof(DescriptionText), typeof(string), typeof(LoadingToggleSwitch),
+            new PropertyMetadata(string.Empty));
+
     public static readonly DependencyProperty OnContentProperty =
         DependencyProperty.Register(nameof(OnContent), typeof(string), typeof(LoadingToggleSwitch),
             new PropertyMetadata(string.Empty));
@@ -64,6 +68,12 @@ public sealed partial class LoadingToggleSwitch : UserControl
     {
         get => (string)GetValue(HeaderTextProperty);
         set => SetValue(HeaderTextProperty, value);
+    }
+
+    public string DescriptionText
+    {
+        get => (string)GetValue(DescriptionTextProperty);
+        set => SetValue(DescriptionTextProperty, value);
     }
 
     public string OnContent
@@ -129,6 +139,7 @@ public sealed partial class LoadingToggleSwitch : UserControl
         try
         {
             TranslationManager.Instance.TranslateSingleControl(HeaderTextBlock);
+            TranslationManager.Instance.TranslateSingleControl(DescriptionTextBlock);
             TranslationManager.Instance.TranslateSingleControl(LoadingLabel);
             TranslationManager.Instance.TranslateSingleControl(InnerToggle);
         }
@@ -200,6 +211,9 @@ public sealed partial class LoadingToggleSwitch : UserControl
 
     private Visibility HasHeader(string header) =>
         string.IsNullOrWhiteSpace(header) ? Visibility.Collapsed : Visibility.Visible;
+
+    private Visibility HasDescription(string desc) =>
+        string.IsNullOrWhiteSpace(desc) ? Visibility.Collapsed : Visibility.Visible;
 
     private Visibility HasLoadingText(string text) =>
         string.IsNullOrWhiteSpace(text) ? Visibility.Collapsed : Visibility.Visible;

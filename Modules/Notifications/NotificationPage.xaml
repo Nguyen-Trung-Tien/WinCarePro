@@ -14,8 +14,7 @@
         <CollectionViewSource x:Name="GroupedNotificationsCVS" IsSourceGrouped="True" />
     </Page.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
-        <Grid Padding="24,20" HorizontalAlignment="Stretch">
+    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -24,14 +23,15 @@
         <!-- Header -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <StackPanel>
-                <TextBlock Text="Notifications &amp; Activity Log" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock x:Name="PageTitleTextBlock" Text="Notifications &amp; Activity Log" Style="{StaticResource PageHeaderTitleStyle}" />
+                <TextBlock x:Name="PageSubtitleTextBlock" Text="Review system notifications, update alerts, and detailed operation history logs." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,4,0,0"/>
             </StackPanel>
         </Grid>
 
         <!-- Main Content (Pivot tabs) -->
-        <Pivot Grid.Row="1" Margin="0,8,0,0">
+        <Pivot x:Name="MainPivot" Grid.Row="1" Margin="0,8,0,0">
             <!-- Tab 1: System Alerts -->
-            <PivotItem Header="System Alerts">
+            <PivotItem x:Name="AlertsPivotItem" Header="System Alerts">
                 <Grid Margin="0,16,0,0" RowSpacing="16">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -50,13 +50,13 @@
                             <TextBox x:Name="NotificationSearchBox" PlaceholderText="Search notifications..." TextChanged="OnNotificationSearchChanged" VerticalAlignment="Center" Height="32"/>
                             
                             <ComboBox x:Name="NotificationLevelFilter" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnNotificationFilterChanged" SelectedIndex="0" VerticalAlignment="Center" Height="32" CornerRadius="6">
-                                <ComboBoxItem Content="All Levels" Tag="All"/>
-                                <ComboBoxItem Content="Info" Tag="Info"/>
-                                <ComboBoxItem Content="Warning" Tag="Warning"/>
-                                <ComboBoxItem Content="Critical" Tag="Critical"/>
+                                <ComboBoxItem x:Name="LevelAllItem" Content="All Levels" Tag="All"/>
+                                <ComboBoxItem x:Name="LevelInfoItem" Content="Info" Tag="Info"/>
+                                <ComboBoxItem x:Name="LevelWarningItem" Content="Warning" Tag="Warning"/>
+                                <ComboBoxItem x:Name="LevelCriticalItem" Content="Critical" Tag="Critical"/>
                             </ComboBox>
                             
-                            <Button Grid.Column="2" Content="Clear Alerts" Click="OnClearNotificationsClick" Style="{ThemeResource DefaultButtonStyle}" VerticalAlignment="Center" Padding="14,5"/>
+                            <Button x:Name="ClearAlertsBtn" Grid.Column="2" Content="Clear Alerts" Click="OnClearNotificationsClick" Style="{ThemeResource DefaultButtonStyle}" VerticalAlignment="Center" Padding="14,5"/>
                         </Grid>
                     </Border>
 
@@ -123,7 +123,7 @@
                             <!-- Empty State -->
                             <StackPanel x:Name="NotificationsEmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Visibility="Collapsed">
                                 <FontIcon Glyph="&#xE930;" FontSize="36" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="All clear! No new notifications." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock x:Name="NotificationsEmptyText" Text="All clear! No new notifications." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -131,7 +131,7 @@
             </PivotItem>
 
             <!-- Tab 2: Activity Log -->
-            <PivotItem Header="Activity Log">
+            <PivotItem x:Name="LogsPivotItem" Header="Activity Log">
                 <Grid Margin="0,16,0,0" RowSpacing="16">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -149,23 +149,23 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBox x:Name="SearchBox" PlaceholderText="Search logs by action or status..." TextChanged="OnSearchChanged" VerticalAlignment="Center" Height="32"/>
-                            <ComboBox x:Name="ModuleFilter" Grid.Column="1" HorizontalAlignment="Stretch" Header="Filter by Module" SelectionChanged="OnFilterChanged" VerticalAlignment="Center" Height="32" CornerRadius="6">
-                                <ComboBoxItem Content="All Modules" IsSelected="True"/>
-                                <ComboBoxItem Content="Dashboard"/>
-                                <ComboBoxItem Content="Junk Cleaner"/>
-                                <ComboBoxItem Content="Registry Cleaner"/>
-                                <ComboBoxItem Content="Startup Manager"/>
-                                <ComboBoxItem Content="Disk Analyzer"/>
-                                <ComboBoxItem Content="Network Service"/>
-                                <ComboBoxItem Content="Security Shield"/>
-                                <ComboBoxItem Content="Uninstaller"/>
-                                <ComboBoxItem Content="Driver Manager"/>
-                                <ComboBoxItem Content="System Optimizer"/>
-                                <ComboBoxItem Content="Repair Tools"/>
+                            <ComboBox x:Name="ModuleFilter" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnFilterChanged" SelectedIndex="0" VerticalAlignment="Center" Height="32" CornerRadius="6">
+                                <ComboBoxItem x:Name="ModAllItem" Content="All Modules" Tag="All" IsSelected="True"/>
+                                <ComboBoxItem x:Name="ModDashItem" Content="Dashboard" Tag="Dashboard"/>
+                                <ComboBoxItem x:Name="ModJunkItem" Content="Junk Cleaner" Tag="Junk Cleaner"/>
+                                <ComboBoxItem x:Name="ModRegItem" Content="Registry Cleaner" Tag="Registry Cleaner"/>
+                                <ComboBoxItem x:Name="ModStartItem" Content="Startup Manager" Tag="Startup Manager"/>
+                                <ComboBoxItem x:Name="ModDiskItem" Content="Disk Analyzer" Tag="Disk Analyzer"/>
+                                <ComboBoxItem x:Name="ModNetItem" Content="Network Service" Tag="Network Service"/>
+                                <ComboBoxItem x:Name="ModSecItem" Content="Security Shield" Tag="Security Shield"/>
+                                <ComboBoxItem x:Name="ModUninstItem" Content="Uninstaller" Tag="Uninstaller"/>
+                                <ComboBoxItem x:Name="ModDrvItem" Content="Driver Manager" Tag="Driver Manager"/>
+                                <ComboBoxItem x:Name="ModOptItem" Content="System Optimizer" Tag="System Optimizer"/>
+                                <ComboBoxItem x:Name="ModRepItem" Content="Repair Tools" Tag="Repair Tools"/>
                             </ComboBox>
-                            <Button Grid.Column="2" Content="Refresh" Click="OnRefreshClick" VerticalAlignment="Bottom" Padding="14,5"/>
-                            <Button Grid.Column="3" Content="Clear Logs" Click="OnClearOldLogsClick" Style="{ThemeResource DefaultButtonStyle}" VerticalAlignment="Bottom" Padding="14,5"/>
-                            <Button Grid.Column="4" Content="Export Logs" Click="OnExportLogsClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Bottom" Padding="14,5"/>
+                            <Button x:Name="RefreshLogsBtn" Grid.Column="2" Content="Refresh" Click="OnRefreshClick" VerticalAlignment="Center" Height="32" Padding="14,5"/>
+                            <Button x:Name="ClearLogsBtn" Grid.Column="3" Content="Clear Logs" Click="OnClearOldLogsClick" Style="{ThemeResource DefaultButtonStyle}" VerticalAlignment="Center" Height="32" Padding="14,5"/>
+                            <Button x:Name="ExportLogsBtn" Grid.Column="4" Content="Export Logs" Click="OnExportLogsClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" Height="32" Padding="14,5"/>
                         </Grid>
                     </Border>
 
@@ -186,10 +186,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="180" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="1" Text="Action / Operation" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
-                                <TextBlock Grid.Column="2" Text="Module" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
-                                <TextBlock Grid.Column="3" Text="Status" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
-                                <TextBlock Grid.Column="4" Text="Time Logged" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Right" TextWrapping="Wrap" />
+                                <TextBlock x:Name="ColHeaderAction" Grid.Column="1" Text="Action / Operation" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
+                                <TextBlock x:Name="ColHeaderModule" Grid.Column="2" Text="Module" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
+                                <TextBlock x:Name="ColHeaderStatus" Grid.Column="3" Text="Status" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
+                                <TextBlock x:Name="ColHeaderTime" Grid.Column="4" Text="Time Logged" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" HorizontalAlignment="Right" TextWrapping="Wrap" />
                             </Grid>
 
                             <ListView x:Name="LogsListView" Grid.Row="1" SelectionMode="None">
@@ -224,13 +224,17 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                             </ListView>
+                            <!-- Activity Log Empty State -->
+                            <StackPanel x:Name="LogsEmptyState" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Visibility="Collapsed" Margin="0,32,0,32">
+                                <FontIcon Glyph="&#xE9D9;" FontSize="36" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock x:Name="LogsEmptyText" Text="No activity logs found." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </Grid>
             </PivotItem>
         </Pivot>
-        </Grid>
-    </ScrollViewer>
+    </Grid>
 </Page>
 
 

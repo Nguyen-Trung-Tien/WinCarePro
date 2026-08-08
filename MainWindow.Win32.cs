@@ -148,6 +148,7 @@ public sealed partial class MainWindow : Window
     private const uint ID_TRAY_RAM = 1005;
     private const uint ID_TRAY_JUNK = 1006;
     private const uint ID_TRAY_THEME = 1007;
+    private const uint ID_TRAY_HUD = 1008;
 
     private bool _trayIconRegistered = false;
     private IntPtr _hIcon = IntPtr.Zero;
@@ -210,6 +211,7 @@ public sealed partial class MainWindow : Window
             string junkText = "🧹 Clean Junk Files".T();
 
             bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
+            string hudText = "🪟 Desktop HUD Widget".T();
             string themeText = isDark ? "🌙 Theme: Dark (Switch to Light)".T() : "☀️ Theme: Light (Switch to Dark)".T();
             string settingsText = "⚙️ Settings".T();
             string exitText = "🚪 Exit".T();
@@ -217,6 +219,7 @@ public sealed partial class MainWindow : Window
             AppendMenu(hMenu, MF_STRING, ID_TRAY_OPEN, openText);
             AppendMenu(hMenu, MF_STRING, ID_TRAY_SCAN, scanText);
             AppendMenu(hMenu, MF_SEPARATOR, 0, string.Empty);
+            AppendMenu(hMenu, MF_STRING, ID_TRAY_HUD, hudText);
             AppendMenu(hMenu, MF_STRING, ID_TRAY_RAM, ramText);
             AppendMenu(hMenu, MF_STRING, ID_TRAY_JUNK, junkText);
             AppendMenu(hMenu, MF_SEPARATOR, 0, string.Empty);
@@ -237,6 +240,10 @@ public sealed partial class MainWindow : Window
             {
                 this.AppWindow.Show();
                 BringToForeground();
+            }
+            else if (cmd == ID_TRAY_HUD)
+            {
+                WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.ShowWindow();
             }
             else if (cmd == ID_TRAY_SCAN)
             {
@@ -373,7 +380,7 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void BringToForeground()
+    public void BringToForeground()
     {
         if (_hwnd != IntPtr.Zero)
         {

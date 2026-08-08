@@ -1113,6 +1113,11 @@ public partial class TranslationManager
         _translations["Module"] = "Phân hệ (Module)";
         _translations["Status"] = "Trạng thái";
         _translations["Time Logged"] = "Thời gian ghi nhận";
+        _translations["Clear All Notifications?"] = "Xóa tất cả thông báo?";
+        _translations["Are you sure you want to delete all notifications? This action cannot be undone."] = "Bạn có chắc chắn muốn xóa tất cả thông báo? Thao tác này không thể hoàn tác.";
+        _translations["Clear All Activity Logs?"] = "Xóa tất cả nhật ký hoạt động?";
+        _translations["Are you sure you want to delete all activity log entries? This action cannot be undone."] = "Bạn có chắc chắn muốn xóa tất cả các mục nhật ký hoạt động? Thao tác này không thể hoàn tác.";
+        _translations["No activity logs found."] = "Không tìm thấy nhật ký hoạt động nào.";
 
         // Telemetry & settings logs
         _translations["[*] System diagnostics trace initialized..."] = "[ * ] Tiến trình theo dõi chẩn đoán hệ thống đã được khởi tạo...";

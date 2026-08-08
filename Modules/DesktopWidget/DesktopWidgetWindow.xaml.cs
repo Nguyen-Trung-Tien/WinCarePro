@@ -1,13 +1,29 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using WinCarePro.Engines;
 using WinCarePro.Services;
 
 namespace WinCarePro.Modules.DesktopWidget
 {
+    public class HudStateConfig
+    {
+        public int X { get; set; } = -1;
+        public int Y { get; set; } = -1;
+        public int Width { get; set; } = 430;
+        public int Height { get; set; } = 210;
+        public bool IsAlwaysOnTop { get; set; } = true;
+        public bool IsCompact { get; set; } = false;
+    }
+
     public sealed partial class DesktopWidgetWindow : Window
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
@@ -49,11 +65,22 @@ namespace WinCarePro.Modules.DesktopWidget
 
         private static DesktopWidgetWindow? _currentInstance;
         private readonly DispatcherTimer _timer;
+        private readonly DispatcherTimer _badgeResetTimer;
+        private readonly EventHandler _themeHandler;
+        private readonly EventHandler _langHandler;
+
         private bool _isAlwaysOnTop = true;
+        private bool _isCompact = false;
+        private bool _isBoosting = false;
 
         private long _lastBytesReceived = 0;
         private long _lastBytesSent = 0;
         private DateTime _lastNetworkCheckTime = DateTime.Now;
+
+        private static readonly SolidColorBrush GreenBrush = new(Windows.UI.Color.FromArgb(255, 16, 185, 129));
+        private static readonly SolidColorBrush AmberBrush = new(Windows.UI.Color.FromArgb(255, 245, 158, 11));
+        private static readonly SolidColorBrush RedBrush = new(Windows.UI.Color.FromArgb(255, 239, 68, 68));
+        private static readonly SolidColorBrush BlueBrush = new(Windows.UI.Color.FromArgb(255, 59, 130, 246));
 
         public static void ShowWindow()
         {
@@ -65,6 +92,7 @@ namespace WinCarePro.Modules.DesktopWidget
             }
             else
             {
+                _currentInstance.AppWindow.Show();
                 _currentInstance.Activate();
             }
         }
@@ -73,21 +101,41 @@ namespace WinCarePro.Modules.DesktopWidget
         {
             InitializeComponent();
 
-            // Set window size & title bar drag region
-            this.AppWindow.Resize(new Windows.Graphics.SizeInt32(380, 155));
             ExtendsContentIntoTitleBar = true;
-            SetTitleBar(WidgetDragArea);
+
+            // Load position, size and view state configuration
+            var state = LoadStateConfig();
+            _isAlwaysOnTop = state.IsAlwaysOnTop;
+            _isCompact = state.IsCompact;
+
+            // Apply size & compact state
+            ApplyViewModeState(state.Width, state.Height);
+
+            // Move to saved position if valid and on screen
+            if (state.X >= 0 && state.Y >= 0)
+            {
+                EnsureWindowIsOnScreen(state.X, state.Y, state.Width, state.Height);
+            }
 
             // Apply current theme and subscribe to changes
+            _themeHandler = (s, e) => ApplyTheme(ThemeManager.Instance.CurrentTheme);
             ApplyTheme(ThemeManager.Instance.CurrentTheme);
-            ThemeManager.Instance.ThemeChanged += (s, e) =>
-            {
-                ApplyTheme(ThemeManager.Instance.CurrentTheme);
-            };
+            ThemeManager.Instance.ThemeChanged += _themeHandler;
 
-            // Configure OverlappedPresenter for TopMost Behavior
+            // Register translation listener
+            _langHandler = (s, e) =>
+            {
+                if (this.Content is FrameworkElement fe)
+                {
+                    TranslationManager.Instance.Translate(fe);
+                }
+            };
+            TranslationManager.Instance.LanguageChanged += _langHandler;
+
+            // Configure presenter TopMost and Resizable behavior
             ConfigurePresenter();
 
+            // Main telemetry timer
             _timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromSeconds(1.0)
@@ -95,16 +143,86 @@ namespace WinCarePro.Modules.DesktopWidget
             _timer.Tick += Timer_Tick;
             _timer.Start();
 
-            // Register translation listener
-            TranslationManager.Instance.LanguageChanged += (s, e) =>
+            // Badge reset timer for Boost feedback
+            _badgeResetTimer = new DispatcherTimer
             {
-                if (this.Content is FrameworkElement fe)
-                {
-                    TranslationManager.Instance.Translate(fe);
-                }
+                Interval = TimeSpan.FromSeconds(3.0)
+            };
+            _badgeResetTimer.Tick += (s, e) =>
+            {
+                _badgeResetTimer.Stop();
+                BoostText.Text = "BOOST";
+                BoostIcon.Glyph = "\uE74C";
+                BoostBadgeText.Visibility = Visibility.Collapsed;
+            };
+
+            // Window closed cleanup & state saving
+            this.Closed += (s, e) =>
+            {
+                _timer.Stop();
+                _timer.Tick -= Timer_Tick;
+                _badgeResetTimer.Stop();
+                ThemeManager.Instance.ThemeChanged -= _themeHandler;
+                TranslationManager.Instance.LanguageChanged -= _langHandler;
+                SaveStateConfig();
             };
 
             UpdateStats();
+        }
+
+        private void EnsureWindowIsOnScreen(int x, int y, int width, int height)
+        {
+            try
+            {
+                var pt = new Windows.Graphics.PointInt32(x, y);
+                var displayArea = DisplayArea.GetFromPoint(pt, DisplayAreaFallback.Nearest);
+                if (displayArea != null)
+                {
+                    int safeX = Math.Clamp(x, displayArea.WorkArea.X, displayArea.WorkArea.X + displayArea.WorkArea.Width - Math.Max(200, width));
+                    int safeY = Math.Clamp(y, displayArea.WorkArea.Y, displayArea.WorkArea.Y + displayArea.WorkArea.Height - Math.Max(50, height));
+                    this.AppWindow.Move(new Windows.Graphics.PointInt32(safeX, safeY));
+                }
+                else
+                {
+                    this.AppWindow.Move(pt);
+                }
+            }
+            catch
+            {
+                try
+                {
+                    this.AppWindow.Move(new Windows.Graphics.PointInt32(x, y));
+                }
+                catch { }
+            }
+        }
+
+        private void ApplyViewModeState(int customWidth = -1, int customHeight = -1)
+        {
+            if (_isCompact)
+            {
+                ExpandedViewGrid.Visibility = Visibility.Collapsed;
+                CompactViewGrid.Visibility = Visibility.Visible;
+                CompactToggleIcon.Glyph = "\uE73F"; // Expand icon
+                ToolTipService.SetToolTip(CompactToggleModeButton, "Mở Rộng HUD (Full Telemetry)");
+                SetTitleBar(CompactDragArea);
+
+                int w = 540; // Fixed spacious width for Compact mode to guarantee zero overlap with 138px native caption buttons
+                int h = 56;
+                this.AppWindow.Resize(new Windows.Graphics.SizeInt32(w, h));
+            }
+            else
+            {
+                ExpandedViewGrid.Visibility = Visibility.Visible;
+                CompactViewGrid.Visibility = Visibility.Collapsed;
+                CompactToggleIcon.Glyph = "\uE740"; // Collapse icon
+                ToolTipService.SetToolTip(CompactToggleModeButton, "Thu Nhỏ HUD (Compact Pill)");
+                SetTitleBar(WidgetDragArea);
+
+                int w = 450; // Fixed spacious width for Expanded mode
+                int h = 210;
+                this.AppWindow.Resize(new Windows.Graphics.SizeInt32(w, h));
+            }
         }
 
         private void ApplyTheme(ElementTheme theme)
@@ -150,10 +268,18 @@ namespace WinCarePro.Modules.DesktopWidget
                 if (this.AppWindow.Presenter is OverlappedPresenter presenter)
                 {
                     presenter.IsAlwaysOnTop = _isAlwaysOnTop;
-                    presenter.IsResizable = false;
-                    presenter.IsMinimizable = false;
+                    presenter.IsResizable = true;
+                    presenter.IsMinimizable = true;
                     presenter.IsMaximizable = false;
                 }
+
+                string pinGlyph = _isAlwaysOnTop ? "\uE718" : "\uE77A";
+                PinIcon.Glyph = pinGlyph;
+                if (PinIcon2 != null) PinIcon2.Glyph = pinGlyph;
+
+                TopmostDot.Fill = _isAlwaysOnTop ? GreenBrush : AmberBrush;
+                TopmostText.Text = _isAlwaysOnTop ? "TOPMOST" : "NORMAL";
+                TopmostText.Foreground = _isAlwaysOnTop ? GreenBrush : AmberBrush;
             }
             catch { }
         }
@@ -200,7 +326,14 @@ namespace WinCarePro.Modules.DesktopWidget
                 }
             }
             catch { }
-            return Random.Shared.Next(6, 22);
+            return 12.0;
+        }
+
+        private static SolidColorBrush GetHealthBrush(double percent)
+        {
+            if (percent >= 85.0) return RedBrush;
+            if (percent >= 70.0) return AmberBrush;
+            return GreenBrush;
         }
 
         private void UpdateStats()
@@ -208,11 +341,12 @@ namespace WinCarePro.Modules.DesktopWidget
             try
             {
                 // 1. RAM Usage & Detailed GB
+                double ramPercent = 0;
                 var memStatus = new MEMORYSTATUSEX();
                 memStatus.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
                 if (GlobalMemoryStatusEx(ref memStatus))
                 {
-                    double ramPercent = memStatus.dwMemoryLoad;
+                    ramPercent = memStatus.dwMemoryLoad;
                     double totalGB = memStatus.ullTotalPhys / (1024.0 * 1024.0 * 1024.0);
                     double availGB = memStatus.ullAvailPhys / (1024.0 * 1024.0 * 1024.0);
                     double usedGB = totalGB - availGB;
@@ -225,10 +359,18 @@ namespace WinCarePro.Modules.DesktopWidget
                 {
                     var proc = Process.GetCurrentProcess();
                     long ramMB = proc.WorkingSet64 / (1024 * 1024);
+                    ramPercent = Math.Min(100.0, (ramMB / 150.0) * 100.0);
                     RamText.Text = $"{ramMB} MB";
-                    RamProgressBar.Value = Math.Min(100.0, (ramMB / 150.0) * 100.0);
+                    RamProgressBar.Value = ramPercent;
                     RamDetailText.Text = $"{ramMB} MB App";
                 }
+
+                var ramBrush = GetHealthBrush(ramPercent);
+                RamText.Foreground = ramBrush;
+                RamProgressBar.Foreground = ramBrush;
+                RamIcon.Foreground = ramBrush;
+                CompactRamDot.Fill = ramBrush;
+                CompactRamText.Text = $"RAM {ramPercent:F0}%";
 
                 // 2. CPU Load Telemetry & Process Count
                 double cpuVal = GetCpuUsage();
@@ -237,7 +379,14 @@ namespace WinCarePro.Modules.DesktopWidget
                 int procCount = Process.GetProcesses().Length;
                 CpuDetailText.Text = $"{procCount} Processes";
 
-                // 3. Disk (C:) Telemetry
+                var cpuBrush = GetHealthBrush(cpuVal);
+                CpuText.Foreground = cpuBrush;
+                CpuProgressBar.Foreground = cpuBrush;
+                CpuIcon.Foreground = cpuBrush;
+                CompactCpuDot.Fill = cpuBrush;
+                CompactCpuText.Text = $"CPU {cpuVal:F0}%";
+
+                // 3. Disk (C:) Telemetry & Free Space
                 try
                 {
                     var drive = new System.IO.DriveInfo("C");
@@ -249,6 +398,11 @@ namespace WinCarePro.Modules.DesktopWidget
                         double diskPercent = (usedGB / totalGB) * 100.0;
                         DiskPercentText.Text = $"{diskPercent:F0}%";
                         DiskProgressBar.Value = diskPercent;
+                        DiskDetailText.Text = $"{freeGB:F0} GB Free";
+
+                        var diskBrush = GetHealthBrush(diskPercent);
+                        DiskPercentText.Foreground = diskBrush;
+                        DiskProgressBar.Foreground = diskBrush;
                     }
                 }
                 catch { }
@@ -265,6 +419,7 @@ namespace WinCarePro.Modules.DesktopWidget
             {
                 long currentReceived = 0;
                 long currentSent = 0;
+                string activeAdapter = "Ethernet/WiFi";
 
                 var interfaces = NetworkInterface.GetAllNetworkInterfaces();
                 foreach (var ni in interfaces)
@@ -275,8 +430,11 @@ namespace WinCarePro.Modules.DesktopWidget
                         var stats = ni.GetIPStatistics();
                         currentReceived += stats.BytesReceived;
                         currentSent += stats.BytesSent;
+                        activeAdapter = ni.Name;
                     }
                 }
+
+                NetInterfaceText.Text = activeAdapter;
 
                 DateTime now = DateTime.Now;
                 double seconds = (now - _lastNetworkCheckTime).TotalSeconds;
@@ -286,8 +444,12 @@ namespace WinCarePro.Modules.DesktopWidget
                     double rxBytesPerSec = (currentReceived - _lastBytesReceived) / seconds;
                     double txBytesPerSec = (currentSent - _lastBytesSent) / seconds;
 
-                    NetDownText.Text = $"↓ {FormatSpeed(rxBytesPerSec)}";
-                    NetUpText.Text = $"↑ {FormatSpeed(txBytesPerSec)}";
+                    string downStr = FormatSpeed(rxBytesPerSec);
+                    string upStr = FormatSpeed(txBytesPerSec);
+
+                    NetDownText.Text = downStr;
+                    NetUpText.Text = upStr;
+                    CompactNetText.Text = downStr;
                 }
 
                 _lastBytesReceived = currentReceived;
@@ -310,24 +472,126 @@ namespace WinCarePro.Modules.DesktopWidget
         {
             _isAlwaysOnTop = !_isAlwaysOnTop;
             ConfigurePresenter();
-            PinIcon.Glyph = _isAlwaysOnTop ? "\uE718" : "\uE77A";
+            SaveStateConfig();
         }
 
-        private void OnFastCleanClick(object sender, RoutedEventArgs e)
+        private void OnToggleCompactModeClick(object sender, RoutedEventArgs e)
+        {
+            _isCompact = !_isCompact;
+            ApplyViewModeState();
+            SaveStateConfig();
+        }
+
+        private void OnOpenMainAppClick(object sender, RoutedEventArgs e)
         {
             try
             {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                UpdateStats();
+                if (App.MainWindowInstance != null)
+                {
+                    App.MainWindowInstance.AppWindow.Show();
+                    App.MainWindowInstance.BringToForeground();
+                }
             }
             catch { }
         }
 
         private void OnCloseWidgetClick(object sender, RoutedEventArgs e)
         {
-            _timer.Stop();
-            this.Close();
+            try
+            {
+                this.Close();
+            }
+            catch { }
+        }
+
+        private async void OnFastCleanClick(object sender, RoutedEventArgs e)
+        {
+            if (_isBoosting) return;
+
+            try
+            {
+                _isBoosting = true;
+                BoostText.Text = "...";
+                BoostIcon.Glyph = "\uE895";
+
+                var optEngine = new SystemOptimizerEngine();
+                var (_, memoryReclaimedBytes) = await optEngine.OptimizeRamAsync();
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                UpdateStats();
+
+                double freedMb = memoryReclaimedBytes / (1024.0 * 1024.0);
+                if (freedMb > 0)
+                {
+                    BoostBadgeText.Text = $"+{freedMb:F0}MB";
+                    BoostBadgeText.Visibility = Visibility.Visible;
+                    BoostText.Text = "FREED!";
+                }
+                else
+                {
+                    BoostText.Text = "OPTIMAL";
+                }
+
+                _badgeResetTimer.Stop();
+                _badgeResetTimer.Start();
+            }
+            catch
+            {
+                BoostText.Text = "BOOST";
+                BoostIcon.Glyph = "\uE74C";
+            }
+            finally
+            {
+                _isBoosting = false;
+            }
+        }
+
+        private static string GetConfigFilePath()
+        {
+            string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WinCarePro");
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            return Path.Combine(folder, "hud_state.json");
+        }
+
+        private static HudStateConfig LoadStateConfig()
+        {
+            try
+            {
+                string path = GetConfigFilePath();
+                if (File.Exists(path))
+                {
+                    string json = File.ReadAllText(path);
+                    var cfg = JsonSerializer.Deserialize<HudStateConfig>(json);
+                    if (cfg != null) return cfg;
+                }
+            }
+            catch { }
+            return new HudStateConfig();
+        }
+
+        private void SaveStateConfig()
+        {
+            try
+            {
+                string path = GetConfigFilePath();
+                var cfg = new HudStateConfig
+                {
+                    X = this.AppWindow.Position.X,
+                    Y = this.AppWindow.Position.Y,
+                    Width = _isCompact ? 540 : 450,
+                    Height = _isCompact ? 56 : 210,
+                    IsAlwaysOnTop = _isAlwaysOnTop,
+                    IsCompact = _isCompact
+                };
+                string json = JsonSerializer.Serialize(cfg, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(path, json);
+            }
+            catch { }
         }
 
         public static void CloseWindow()
@@ -336,7 +600,6 @@ namespace WinCarePro.Modules.DesktopWidget
             {
                 try
                 {
-                    _currentInstance._timer.Stop();
                     _currentInstance.Close();
                 }
                 catch { }
@@ -345,3 +608,4 @@ namespace WinCarePro.Modules.DesktopWidget
         }
     }
 }
+

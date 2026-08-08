@@ -132,7 +132,7 @@
                             </StackPanel>
 
                             <components:LoadingToggleSwitch x:Name="AutoScanToggle" Toggled="OnAutoScanToggled" HeaderText="Launch WinCare Pro automatically upon OS startup" />
-                            <ToggleSwitch x:Name="MinimizeToTrayToggle" Toggled="OnSettingsChanged" Header="Minimize application to System Tray instead of closing" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <components:LoadingToggleSwitch x:Name="MinimizeToTrayToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Minimize application to System Tray instead of closing" />
                         </StackPanel>
                     </Border>
 
@@ -142,9 +142,9 @@
                             <TextBlock Text="Software Update Policies" FontSize="14" FontWeight="Bold" />
                             <TextBlock Text="Configure version checking and background installation options." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                             
-                            <ToggleSwitch x:Name="AutoUpdateToggle" Toggled="OnSettingsChanged" Header="Check for updates automatically in the background" IsOn="True" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch x:Name="AutoInstallUpdatesToggle" Toggled="OnSettingsChanged" Header="Auto download &amp; install updates silently (Requires background check)" IsOn="False" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch x:Name="BetaUpdatesToggle" Toggled="OnSettingsChanged" Header="Enroll in the pre-release channel (Beta updates)" IsOn="False" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Receive early updates with new features before public release (may contain bugs)."/>
+                            <components:LoadingToggleSwitch x:Name="AutoUpdateToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Check for updates automatically in the background" />
+                            <components:LoadingToggleSwitch x:Name="AutoInstallUpdatesToggle" Toggled="OnSettingsChanged" IsOn="False" HeaderText="Auto download &amp; install updates silently (Requires background check)" />
+                            <components:LoadingToggleSwitch x:Name="BetaUpdatesToggle" Toggled="OnSettingsChanged" IsOn="False" HeaderText="Enroll in the pre-release channel (Beta updates)" ToolTipService.ToolTip="Receive early updates with new features before public release (may contain bugs)." />
 
                             <MenuFlyoutSeparator />
 
@@ -285,7 +285,7 @@
                                 <Slider x:Name="TransparencySlider" ValueChanged="OnTransparencyChanged" Minimum="0" Maximum="100" Value="80" Width="300" HorizontalAlignment="Left"/>
                             </StackPanel>
 
-                            <ToggleSwitch x:Name="EnableAnimationsToggle" Toggled="OnSettingsChanged" Header="Enable UI fluid translation animations" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <components:LoadingToggleSwitch x:Name="EnableAnimationsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Enable UI fluid translation animations" />
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -304,7 +304,7 @@
                                 <Slider x:Name="AutoCleanupSlider" ValueChanged="OnAutoCleanupSliderChanged" Minimum="1" Maximum="50" Value="5" StepFrequency="0.5" Width="300" HorizontalAlignment="Left"/>
                             </StackPanel>
 
-                            <ToggleSwitch x:Name="TriggerSmartBoostToggle" Toggled="OnSettingsChanged" Header="Trigger Smart Boost optimization if free RAM falls below 10%" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <components:LoadingToggleSwitch x:Name="TriggerSmartBoostToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Trigger Smart Boost optimization if free RAM falls below 10%" />
                             
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Maintenance Frequency" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
@@ -326,7 +326,7 @@
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
                             <TextBlock Text="Notification Center Policy" FontSize="14" FontWeight="Bold" />
-                            <ToggleSwitch x:Name="ShowNotificationsToggle" Toggled="OnSettingsChanged" Header="Show dynamic in-app Toast Notifications" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <components:LoadingToggleSwitch x:Name="ShowNotificationsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Show dynamic in-app Toast Notifications" />
                             
                             <StackPanel Spacing="6">
                                 <Grid Width="300" HorizontalAlignment="Left">
@@ -336,10 +336,10 @@
                                 <Slider x:Name="NotificationThresholdSlider" ValueChanged="OnNotificationThresholdSliderChanged" Minimum="5" Maximum="30" Value="10" StepFrequency="1" Width="300" HorizontalAlignment="Left"/>
                             </StackPanel>
 
-                            <ToggleSwitch x:Name="NotifyOnLowHealthToggle" Toggled="OnSettingsChanged" Header="Notify when system overall health score drops below threshold" IsOn="True" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch x:Name="NotifyOnMaintenanceToggle" Toggled="OnSettingsChanged" Header="Notify when system automated cleaners finish runs" IsOn="True" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch x:Name="ShowUpdateNotificationsToggle" Toggled="OnSettingsChanged" Header="Notify when newer packages updates are available" IsOn="True" CornerRadius="4" FontSize="12.5"/>
-                            <ToggleSwitch x:Name="NotificationSoundToggle" Toggled="OnSettingsChanged" Header="Play subtle system audio alert upon notification arrival" IsOn="True" CornerRadius="4" FontSize="12.5"/>
+                            <components:LoadingToggleSwitch x:Name="NotifyOnLowHealthToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Notify when system overall health score drops below threshold" />
+                            <components:LoadingToggleSwitch x:Name="NotifyOnMaintenanceToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Notify when system automated cleaners finish runs" />
+                            <components:LoadingToggleSwitch x:Name="ShowUpdateNotificationsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Notify when newer packages updates are available" />
+                            <components:LoadingToggleSwitch x:Name="NotificationSoundToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Play subtle system audio alert upon notification arrival" />
                         </StackPanel>
                     </Border>
 
@@ -365,7 +365,7 @@
                                 </ComboBox>
                             </StackPanel>
 
-                            <ToggleSwitch x:Name="EnableHardwareSensorsToggle" Toggled="OnSettingsChanged" Header="Enable continuous low-overhead hardware sensors scanning thread" IsOn="True" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Runs a background worker thread to poll CPU/GPU temperature and loading metrics."/>
+                            <components:LoadingToggleSwitch x:Name="EnableHardwareSensorsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Enable continuous low-overhead hardware sensors scanning thread" ToolTipService.ToolTip="Runs a background worker thread to poll CPU/GPU temperature and loading metrics." />
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -376,8 +376,8 @@
                     
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
-                            <ToggleSwitch x:Name="CreateRestorePointToggle" Toggled="OnSettingsChanged" Header="Automatically create a System Restore Point before major updates" IsOn="True" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Saves a system restore point so you can roll back changes if optimizing causes issues."/>
-                            <ToggleSwitch x:Name="BackupRegistryToggle" Toggled="OnSettingsChanged" Header="Automatically backup system registry hive partitions" IsOn="True" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Automatically backs up HKCU and modified HKLM keys before tweaking registry settings."/>
+                            <components:LoadingToggleSwitch x:Name="CreateRestorePointToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Automatically create a System Restore Point before major updates" ToolTipService.ToolTip="Saves a system restore point so you can roll back changes if optimizing causes issues." />
+                            <components:LoadingToggleSwitch x:Name="BackupRegistryToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Automatically backup system registry hive partitions" ToolTipService.ToolTip="Automatically backs up HKCU and modified HKLM keys before tweaking registry settings." />
                             
                             <StackPanel Spacing="8">
                                 <TextBlock Text="Modification Confirmation Alerts Level" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
@@ -396,7 +396,7 @@
                     
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="16">
-                            <ToggleSwitch x:Name="EnableVerboseLogsToggle" Toggled="OnSettingsChanged" Header="Enable verbose debug logs trace files" CornerRadius="4" FontSize="12.5"/>
+                            <components:LoadingToggleSwitch x:Name="EnableVerboseLogsToggle" Toggled="OnSettingsChanged" HeaderText="Enable verbose debug logs trace files" />
                             
                             <StackPanel Spacing="8">
                                 <TextBlock Text="Plugin &amp; Sandbox Modules Manager" FontSize="13" FontWeight="Bold" />
@@ -406,7 +406,7 @@
 
                             <MenuFlyoutSeparator />
 
-                            <ToggleSwitch x:Name="EnableExperimentalAiToggle" Toggled="OnSettingsChanged" Header="Enable experimental AI diagnostics auto-remediations (Pre-release)" CornerRadius="4" FontSize="12.5" ToolTipService.ToolTip="Uses heuristic rules to automatically attempt fixing found system issues without user confirmation."/>
+                            <components:LoadingToggleSwitch x:Name="EnableExperimentalAiToggle" Toggled="OnSettingsChanged" HeaderText="Enable experimental AI diagnostics auto-remediations (Pre-release)" ToolTipService.ToolTip="Uses heuristic rules to automatically attempt fixing found system issues without user confirmation." />
                         </StackPanel>
                     </Border>
                     

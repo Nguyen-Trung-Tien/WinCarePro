@@ -15,6 +15,9 @@
   </p>
 
   <p align="center">
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/actions/workflows/ci.yml">
+      <img src="https://github.com/Nguyen-Trung-Tien/WinCarePro/actions/workflows/ci.yml/badge.svg" alt="Build & Test (CI)" />
+    </a>
     <img src="https://img.shields.io/badge/.NET-10.0-blueviolet?style=flat-square&logo=.net&logoColor=white&color=7F56D9" alt=".NET 10.0" />
     <img src="https://img.shields.io/badge/UI_Framework-WinUI_3-0078D4?style=flat-square&logo=windows" alt="WinUI 3" />
     <img src="https://img.shields.io/badge/Database-SQLite_3-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite 3" />

@@ -1,0 +1,60 @@
+name: Build & Release (CD)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Setup Inno Setup
+        uses: dactiv/setup-inno-setup@v1
+        with:
+          inno-version: '6.2.2'
+
+      - name: Publish portable application (win-x64)
+        run: |
+          dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=false -o ./PublishOutputFolder
+
+      - name: Copy Assets folder
+        shell: pwsh
+        run: |
+          Copy-Item -Path ./Assets -Destination ./PublishOutputFolder/Assets -Recurse -Force
+
+      - name: Ensure Output directory exists
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path ./PublishOutput
+
+      - name: Compile Inno Setup installer
+        run: |
+          iscc setup.iss
+
+      - name: Compress Portable package
+        shell: pwsh
+        run: |
+          Compress-Archive -Path ./PublishOutputFolder/* -DestinationPath ./PublishOutput/WinCarePro-Portable-x64.zip -Force
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            PublishOutput/WinCareProSetup.exe
+            PublishOutput/WinCarePro-Portable-x64.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

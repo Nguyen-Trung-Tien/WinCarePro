@@ -161,13 +161,25 @@ public class DiskViewModel : ViewModelBase
     {
         if (IsBusy || !Directory.Exists(StorageScanPath)) return;
 
+        try
+        {
+            _diskCts?.Cancel();
+            _diskCts?.Dispose();
+        }
+        catch { }
+
+        _diskCts = new System.Threading.CancellationTokenSource();
+        var token = _diskCts.Token;
+
         IsBusy = true;
         DuplicateGroups.Clear();
         LogText(string.Format("Searching duplicate files in: {0}...".T(), StorageScanPath));
 
         try
         {
-            var list = await _engine.FindDuplicateFilesAsync(StorageScanPath);
+            var list = await TaskSchedulerService.Instance.RunTaskAsync("disk_dup", t => _engine.FindDuplicateFilesAsync(StorageScanPath, t), token);
+            token.ThrowIfCancellationRequested();
+
             foreach (var group in list)
             {
                 var uiGroup = new StorageDuplicateGroup { SizeFormatted = group.SizeFormatted };
@@ -200,6 +212,10 @@ public class DiskViewModel : ViewModelBase
             }
             LogText(string.Format("Scan complete. Found {0} duplicate groups.".T(), DuplicateGroups.Count));
         }
+        catch (OperationCanceledException)
+        {
+            LogText("Duplicate file search cancelled.".T());
+        }
         catch (Exception ex)
         {
             LogText("Duplicate finder error:".T() + " " + ex.Message);
@@ -210,6 +226,52 @@ public class DiskViewModel : ViewModelBase
         }
     }
 
+    public void SelectAllDuplicates()
+    {
+        foreach (var group in DuplicateGroups)
+        {
+            foreach (var item in group.Items)
+            {
+                item.IsSelectedForDeletion = true;
+            }
+        }
+    }
+
+    public void DeselectAllDuplicates()
+    {
+        foreach (var group in DuplicateGroups)
+        {
+            foreach (var item in group.Items)
+            {
+                item.IsSelectedForDeletion = false;
+            }
+        }
+    }
+
+    public void SelectKeepNewest()
+    {
+        foreach (var group in DuplicateGroups)
+        {
+            var sorted = group.Items.OrderBy(x => x.LastModified).ToList();
+            for (int i = 0; i < sorted.Count; i++)
+            {
+                sorted[i].IsSelectedForDeletion = (i < sorted.Count - 1);
+            }
+        }
+    }
+
+    public void SelectKeepOldest()
+    {
+        foreach (var group in DuplicateGroups)
+        {
+            var sorted = group.Items.OrderByDescending(x => x.LastModified).ToList();
+            for (int i = 0; i < sorted.Count; i++)
+            {
+                sorted[i].IsSelectedForDeletion = (i < sorted.Count - 1);
+            }
+        }
+    }
+
     public async Task CleanSelectedDuplicatesAsync()
     {
         if (IsBusy || DuplicateGroups.Count == 0) return;
@@ -217,6 +279,7 @@ public class DiskViewModel : ViewModelBase
         IsBusy = true;
         LogText("Starting duplicate files cleanup...".T());
         int count = 0;
+        int failedCount = 0;
         long bytesSaved = 0;
 
         try
@@ -238,18 +301,64 @@ public class DiskViewModel : ViewModelBase
                                     bytesSaved += item.SizeBytes;
                                 }
                             }
-                            catch { }
+                            catch (Exception ex)
+                            {
+                                failedCount++;
+                                LogText(string.Format("Failed to delete {0}: {1}".T(), Path.GetFileName(item.Path), ex.Message));
+                            }
                         }
                     }
                 }
             });
 
-            LogText(string.Format("Cleaned {0} duplicate files, reclaiming {1} MB.".T(), count, (bytesSaved / 1024.0 / 1024.0).ToString("F2")));
+            LogText(string.Format("Cleaned {0} duplicate files, reclaiming {1} MB. (Failed: {2})".T(), 
+                count, (bytesSaved / 1024.0 / 1024.0).ToString("F2"), failedCount));
             await FindDuplicatesAsync();
         }
         catch (Exception ex)
         {
             LogText("Cleanup error: ".T() + ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task RunChkdskAsync(string driveName)
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        LogText(string.Format("Initiating CHKDSK check for drive {0}...".T(), driveName));
+        try
+        {
+            bool success = await _engine.RunChkdskAsync(driveName);
+            LogText(success ? string.Format("CHKDSK completed successfully for {0}.".T(), driveName)
+                            : string.Format("CHKDSK completed with warnings/errors for {0}.".T(), driveName));
+        }
+        catch (Exception ex)
+        {
+            LogText("CHKDSK error: ".T() + ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task ClearEmptyFoldersAsync()
+    {
+        if (IsBusy || !Directory.Exists(StorageScanPath)) return;
+        IsBusy = true;
+        LogText(string.Format("Scanning and removing empty directories in {0}...".T(), StorageScanPath));
+        try
+        {
+            int deletedCount = await _engine.ClearEmptyFoldersAsync(StorageScanPath);
+            LogText(string.Format("Empty directory cleanup finished. Removed {0} empty folders.".T(), deletedCount));
+        }
+        catch (Exception ex)
+        {
+            LogText("Empty directory cleanup error: ".T() + ex.Message);
         }
         finally
         {

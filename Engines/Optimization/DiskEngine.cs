@@ -25,6 +25,8 @@ public class StorageItem
     public string Path { get; set; } = "";
     public string Name { get; set; } = "";
     public long SizeBytes { get; set; }
+    public double Percentage { get; set; }
+    public string PercentageFormatted => $"{Percentage:F1}%";
     public string SizeFormatted => WinCarePro.Core.Helpers.FormatHelper.FormatBytes(SizeBytes);
     public bool IsDirectory { get; set; }
     public string IconGlyph => IsDirectory ? "\uE8B7" : "\uE7C3";
@@ -168,6 +170,12 @@ public class DiskEngine
             catch { }
         }, token);
 
+        long total = list.Sum(x => x.SizeBytes);
+        foreach (var item in list)
+        {
+            item.Percentage = total > 0 ? ((double)item.SizeBytes / total) * 100.0 : 0.0;
+        }
+
         return list.OrderByDescending(x => x.SizeBytes).ToList();
     }
 
@@ -211,7 +219,7 @@ public class DiskEngine
 
 
 
-    public async Task<List<DuplicateFileGroup>> FindDuplicateFilesAsync(string scanPath)
+    public async Task<List<DuplicateFileGroup>> FindDuplicateFilesAsync(string scanPath, System.Threading.CancellationToken token = default)
     {
         var duplicatesList = new List<DuplicateFileGroup>();
         if (!Directory.Exists(scanPath)) return duplicatesList;
@@ -222,8 +230,9 @@ public class DiskEngine
             try
             {
                 // Enumerate all files recursively safely
-                foreach (var file in EnumerateFilesSafe(scanPath))
+                foreach (var file in EnumerateFilesSafe(scanPath, token))
                 {
+                    token.ThrowIfCancellationRequested();
                     try
                     {
                         var len = new FileInfo(file).Length;
@@ -240,56 +249,108 @@ public class DiskEngine
                 }
 
                 // Filter size groups containing > 1 file
-                var candidateGroups = filesBySize.Where(g => g.Value.Count > 1).ToList();
+                var candidateSizeGroups = filesBySize.Where(g => g.Value.Count > 1).ToList();
 
-                // Group by hash for candidate groups
-                foreach (var group in candidateGroups)
+                foreach (var group in candidateSizeGroups)
                 {
-                    var filesByHash = new Dictionary<string, List<string>>();
-                    foreach (var filePath in group.Value)
+                    token.ThrowIfCancellationRequested();
+                    long fileSize = group.Key;
+                    var filePaths = group.Value;
+
+                    // Stage 1: Quick 64KB Head Hash
+                    var headHashGroups = new Dictionary<string, List<string>>();
+                    foreach (var filePath in filePaths)
                     {
+                        token.ThrowIfCancellationRequested();
                         try
                         {
-                            string hash = ComputeFileHash(filePath);
-                            if (!filesByHash.TryGetValue(hash, out var list))
+                            string headHash = ComputeQuickHeaderHash(filePath);
+                            if (!headHashGroups.TryGetValue(headHash, out var list))
                             {
                                 list = new List<string>();
-                                filesByHash[hash] = list;
+                                headHashGroups[headHash] = list;
                             }
                             list.Add(filePath);
                         }
                         catch { }
                     }
 
-                    foreach (var hashGroup in filesByHash.Where(hg => hg.Value.Count > 1))
+                    // Stage 2: For groups matching head hash, verify full hash if file > 64KB
+                    foreach (var headGroup in headHashGroups.Where(hg => hg.Value.Count > 1))
                     {
-                        duplicatesList.Add(new DuplicateFileGroup
+                        token.ThrowIfCancellationRequested();
+                        if (fileSize <= 64 * 1024)
                         {
-                            FileSize = group.Key,
-                            FilePaths = hashGroup.Value
-                        });
+                            // File size is <= 64KB, head hash IS full hash
+                            duplicatesList.Add(new DuplicateFileGroup
+                            {
+                                FileSize = fileSize,
+                                FilePaths = headGroup.Value
+                            });
+                        }
+                        else
+                        {
+                            // File size > 64KB: compute full SHA-256 to guarantee 100% accuracy
+                            var fullHashGroups = new Dictionary<string, List<string>>();
+                            foreach (var filePath in headGroup.Value)
+                            {
+                                token.ThrowIfCancellationRequested();
+                                try
+                                {
+                                    string fullHash = ComputeFullFileHash(filePath, token);
+                                    if (!fullHashGroups.TryGetValue(fullHash, out var list))
+                                    {
+                                        list = new List<string>();
+                                        fullHashGroups[fullHash] = list;
+                                    }
+                                    list.Add(filePath);
+                                }
+                                catch { }
+                            }
+
+                            foreach (var fullGroup in fullHashGroups.Where(fg => fg.Value.Count > 1))
+                            {
+                                duplicatesList.Add(new DuplicateFileGroup
+                                {
+                                    FileSize = fileSize,
+                                    FilePaths = fullGroup.Value
+                                });
+                            }
+                        }
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch { }
-        });
+        }, token);
 
         return duplicatesList.OrderByDescending(x => x.FileSize).ToList();
     }
 
-    private string ComputeFileHash(string path)
+    private string ComputeQuickHeaderHash(string path)
     {
         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         using var sha = SHA256.Create();
-        // Hash only the first 50KB to make duplicate checks fast but accurate for large files
-        byte[] buffer = new byte[50 * 1024];
+        byte[] buffer = new byte[64 * 1024];
         int bytesRead = stream.Read(buffer, 0, buffer.Length);
         byte[] hash = sha.ComputeHash(buffer, 0, bytesRead);
         return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 
-    private IEnumerable<string> EnumerateFilesSafe(string path)
+    private string ComputeFullFileHash(string path, System.Threading.CancellationToken token = default)
     {
+        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+        using var sha = SHA256.Create();
+        byte[] hash = sha.ComputeHash(stream);
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+    }
+
+    private IEnumerable<string> EnumerateFilesSafe(string path, System.Threading.CancellationToken token = default)
+    {
+        token.ThrowIfCancellationRequested();
         IEnumerable<string> files = Array.Empty<string>();
         try
         {
@@ -302,6 +363,7 @@ public class DiskEngine
 
         foreach (var file in files)
         {
+            token.ThrowIfCancellationRequested();
             yield return file;
         }
 
@@ -317,8 +379,10 @@ public class DiskEngine
 
         foreach (var dir in dirs)
         {
-            foreach (var file in EnumerateFilesSafe(dir))
+            token.ThrowIfCancellationRequested();
+            foreach (var file in EnumerateFilesSafe(dir, token))
             {
+                token.ThrowIfCancellationRequested();
                 yield return file;
             }
         }

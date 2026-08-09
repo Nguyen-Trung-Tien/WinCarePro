@@ -18,8 +18,8 @@ namespace WinCarePro.Modules.DesktopWidget
     {
         public int X { get; set; } = -1;
         public int Y { get; set; } = -1;
-        public int Width { get; set; } = 430;
-        public int Height { get; set; } = 210;
+        public int Width { get; set; } = 440;
+        public int Height { get; set; } = 185;
         public bool IsAlwaysOnTop { get; set; } = true;
         public bool IsCompact { get; set; } = false;
     }
@@ -52,6 +52,55 @@ namespace WinCarePro.Modules.DesktopWidget
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool GetSystemTimes(out FILETIME lpIdleTime, out FILETIME lpKernelTime, out FILETIME lpUserTime);
+
+        [DllImport("comctl32.dll", SetLastError = true)]
+        private static extern bool SetWindowSubclass(IntPtr hWnd, SUBCLASSPROC pfnSubclass, uint uIdSubclass, IntPtr dwRefData);
+
+        [DllImport("comctl32.dll", SetLastError = true)]
+        private static extern bool RemoveWindowSubclass(IntPtr hWnd, SUBCLASSPROC pfnSubclass, uint uIdSubclass);
+
+        [DllImport("comctl32.dll", SetLastError = true)]
+        private static extern IntPtr DefSubclassProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
+
+        private delegate IntPtr SUBCLASSPROC(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, uint uIdSubclass, IntPtr dwRefData);
+
+        private SUBCLASSPROC? _subclassProc;
+
+        private IntPtr WndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, uint uIdSubclass, IntPtr dwRefData)
+        {
+            const uint WM_SYSCOMMAND = 0x0112;
+            const uint WM_NCLBUTTONDOWN = 0x00A1;
+            const uint WM_NCLBUTTONUP = 0x00A2;
+            const uint WM_NCLDBLCLK = 0x00A3;
+            const IntPtr HTMAXBUTTON = (IntPtr)9;
+            const IntPtr HTCAPTION = (IntPtr)2;
+
+            if (uMsg == WM_SYSCOMMAND)
+            {
+                uint cmd = (uint)(wParam.ToInt64() & 0xFFF0);
+                if (cmd == 0xF030 || cmd == 0xF120) // SC_MAXIMIZE / SC_RESTORE
+                {
+                    DispatcherQueue.TryEnqueue(() => OnToggleCompactModeClick(null, null));
+                    return IntPtr.Zero; // Intercept SC_MAXIMIZE to prevent DWM full-screen animation flicker!
+                }
+            }
+            else if (uMsg == WM_NCLBUTTONDOWN && wParam == HTMAXBUTTON)
+            {
+                return IntPtr.Zero; // Suppress DWM maximize button press animation flicker
+            }
+            else if (uMsg == WM_NCLBUTTONUP && wParam == HTMAXBUTTON)
+            {
+                DispatcherQueue.TryEnqueue(() => OnToggleCompactModeClick(null, null));
+                return IntPtr.Zero;
+            }
+            else if (uMsg == WM_NCLDBLCLK && wParam == HTCAPTION)
+            {
+                DispatcherQueue.TryEnqueue(() => OnToggleCompactModeClick(null, null));
+                return IntPtr.Zero; // Prevent double-clicking titlebar from triggering DWM maximize flicker
+            }
+
+            return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+        }
 
         private FILETIME _prevIdleTime;
         private FILETIME _prevKernelTime;
@@ -87,7 +136,6 @@ namespace WinCarePro.Modules.DesktopWidget
             if (_currentInstance == null)
             {
                 _currentInstance = new DesktopWidgetWindow();
-                _currentInstance.Closed += (s, e) => { _currentInstance = null; };
                 _currentInstance.Activate();
             }
             else
@@ -102,6 +150,23 @@ namespace WinCarePro.Modules.DesktopWidget
             InitializeComponent();
 
             ExtendsContentIntoTitleBar = true;
+
+            // Subclass HWND to intercept Win32 SC_MAXIMIZE / HTMAXBUTTON and prevent DWM maximize flicker!
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            if (hwnd != IntPtr.Zero)
+            {
+                _subclassProc = new SUBCLASSPROC(WndProc);
+                SetWindowSubclass(hwnd, _subclassProc, 101, IntPtr.Zero);
+            }
+
+            this.Closed += (s, e) =>
+            {
+                if (hwnd != IntPtr.Zero && _subclassProc != null)
+                {
+                    RemoveWindowSubclass(hwnd, _subclassProc, 101);
+                }
+                _currentInstance = null;
+            };
 
             // Load position, size and view state configuration
             var state = LoadStateConfig();
@@ -197,32 +262,46 @@ namespace WinCarePro.Modules.DesktopWidget
             }
         }
 
+        private void UpdateCaptionButtonsMargin()
+        {
+            try
+            {
+                int rightInset = AppWindow.TitleBar.RightInset;
+                double rightMargin = rightInset > 0 ? Math.Max(140.0, rightInset + 8) : 140.0;
+
+                HeaderActionPanel.Margin = new Thickness(0, 0, rightMargin, 0);
+                if (CompactHeaderPanel != null)
+                {
+                    CompactHeaderPanel.Margin = new Thickness(0, 0, rightMargin, 0);
+                }
+            }
+            catch { }
+        }
+
         private void ApplyViewModeState(int customWidth = -1, int customHeight = -1)
         {
             if (_isCompact)
             {
                 ExpandedViewGrid.Visibility = Visibility.Collapsed;
                 CompactViewGrid.Visibility = Visibility.Visible;
-                CompactToggleIcon.Glyph = "\uE73F"; // Expand icon
-                ToolTipService.SetToolTip(CompactToggleModeButton, "Mở Rộng HUD (Full Telemetry)");
                 SetTitleBar(CompactDragArea);
 
-                int w = 540; // Fixed spacious width for Compact mode to guarantee zero overlap with 138px native caption buttons
-                int h = 56;
+                int w = 340; // Super compact 340px x 76px HUD Card
+                int h = 76;
                 this.AppWindow.Resize(new Windows.Graphics.SizeInt32(w, h));
             }
             else
             {
                 ExpandedViewGrid.Visibility = Visibility.Visible;
                 CompactViewGrid.Visibility = Visibility.Collapsed;
-                CompactToggleIcon.Glyph = "\uE740"; // Collapse icon
-                ToolTipService.SetToolTip(CompactToggleModeButton, "Thu Nhỏ HUD (Compact Pill)");
                 SetTitleBar(WidgetDragArea);
 
-                int w = 450; // Fixed spacious width for Expanded mode
-                int h = 210;
+                int w = 440;
+                int h = 185;
                 this.AppWindow.Resize(new Windows.Graphics.SizeInt32(w, h));
             }
+
+            UpdateCaptionButtonsMargin();
         }
 
         private void ApplyTheme(ElementTheme theme)
@@ -237,24 +316,25 @@ namespace WinCarePro.Modules.DesktopWidget
                 if (AppWindowTitleBar.IsCustomizationSupported())
                 {
                     var titleBar = this.AppWindow.TitleBar;
+                    titleBar.PreferredHeightOption = Microsoft.UI.Windowing.TitleBarHeightOption.Standard;
                     titleBar.ButtonBackgroundColor = Microsoft.UI.Colors.Transparent;
                     titleBar.ButtonInactiveBackgroundColor = Microsoft.UI.Colors.Transparent;
 
                     if (theme == ElementTheme.Light)
                     {
-                        titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(30, 0, 0, 0);
-                        titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(60, 0, 0, 0);
+                        titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(20, 0, 0, 0);
+                        titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(40, 0, 0, 0);
                         titleBar.ButtonForegroundColor = Microsoft.UI.Colors.Black;
                         titleBar.ButtonHoverForegroundColor = Microsoft.UI.Colors.Black;
-                        titleBar.ButtonInactiveForegroundColor = Windows.UI.Color.FromArgb(160, 0, 0, 0);
+                        titleBar.ButtonInactiveForegroundColor = Windows.UI.Color.FromArgb(140, 0, 0, 0);
                     }
                     else
                     {
-                        titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(40, 255, 255, 255);
-                        titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(80, 255, 255, 255);
+                        titleBar.ButtonHoverBackgroundColor = Windows.UI.Color.FromArgb(30, 255, 255, 255);
+                        titleBar.ButtonPressedBackgroundColor = Windows.UI.Color.FromArgb(60, 255, 255, 255);
                         titleBar.ButtonForegroundColor = Microsoft.UI.Colors.White;
                         titleBar.ButtonHoverForegroundColor = Microsoft.UI.Colors.White;
-                        titleBar.ButtonInactiveForegroundColor = Windows.UI.Color.FromArgb(160, 255, 255, 255);
+                        titleBar.ButtonInactiveForegroundColor = Windows.UI.Color.FromArgb(140, 255, 255, 255);
                     }
                 }
             }
@@ -268,18 +348,21 @@ namespace WinCarePro.Modules.DesktopWidget
                 if (this.AppWindow.Presenter is OverlappedPresenter presenter)
                 {
                     presenter.IsAlwaysOnTop = _isAlwaysOnTop;
-                    presenter.IsResizable = true;
-                    presenter.IsMinimizable = true;
-                    presenter.IsMaximizable = false;
+                    presenter.IsResizable = false; // Disable window resizing
+                    presenter.IsMinimizable = true; // Keep minimize button (-)
+                    presenter.IsMaximizable = true; // Native ☐ Maximize button acts as Compact/Full HUD toggle!
                 }
-
-                string pinGlyph = _isAlwaysOnTop ? "\uE718" : "\uE77A";
-                PinIcon.Glyph = pinGlyph;
-                if (PinIcon2 != null) PinIcon2.Glyph = pinGlyph;
 
                 TopmostDot.Fill = _isAlwaysOnTop ? GreenBrush : AmberBrush;
                 TopmostText.Text = _isAlwaysOnTop ? "TOPMOST" : "NORMAL";
                 TopmostText.Foreground = _isAlwaysOnTop ? GreenBrush : AmberBrush;
+
+                if (CompactTopmostDot != null) CompactTopmostDot.Fill = _isAlwaysOnTop ? GreenBrush : AmberBrush;
+                if (CompactTopmostText != null)
+                {
+                    CompactTopmostText.Text = _isAlwaysOnTop ? "TOPMOST" : "NORMAL";
+                    CompactTopmostText.Foreground = _isAlwaysOnTop ? GreenBrush : AmberBrush;
+                }
             }
             catch { }
         }
@@ -430,7 +513,19 @@ namespace WinCarePro.Modules.DesktopWidget
                         var stats = ni.GetIPStatistics();
                         currentReceived += stats.BytesReceived;
                         currentSent += stats.BytesSent;
-                        activeAdapter = ni.Name;
+                        string rawName = ni.Name;
+                        if (rawName.Contains("Wi-Fi", StringComparison.OrdinalIgnoreCase) || rawName.Contains("Wireless", StringComparison.OrdinalIgnoreCase) || rawName.Contains("WLAN", StringComparison.OrdinalIgnoreCase))
+                        {
+                            activeAdapter = "Wi-Fi";
+                        }
+                        else if (rawName.Contains("Ethernet", StringComparison.OrdinalIgnoreCase) || rawName.Contains("LAN", StringComparison.OrdinalIgnoreCase))
+                        {
+                            activeAdapter = "Ethernet";
+                        }
+                        else
+                        {
+                            activeAdapter = rawName.Length > 16 ? rawName.Substring(0, 14) + "..." : rawName;
+                        }
                     }
                 }
 
@@ -468,14 +563,14 @@ namespace WinCarePro.Modules.DesktopWidget
             return $"{bytesPerSec:F0} B/s";
         }
 
-        private void OnTogglePinClick(object sender, RoutedEventArgs e)
+        private void OnTogglePinClick(object? sender, object? e)
         {
             _isAlwaysOnTop = !_isAlwaysOnTop;
             ConfigurePresenter();
             SaveStateConfig();
         }
 
-        private void OnToggleCompactModeClick(object sender, RoutedEventArgs e)
+        private void OnToggleCompactModeClick(object? sender, object? e)
         {
             _isCompact = !_isCompact;
             ApplyViewModeState();
@@ -583,8 +678,8 @@ namespace WinCarePro.Modules.DesktopWidget
                 {
                     X = this.AppWindow.Position.X,
                     Y = this.AppWindow.Position.Y,
-                    Width = _isCompact ? 540 : 450,
-                    Height = _isCompact ? 56 : 210,
+                    Width = _isCompact ? 340 : 440,
+                    Height = _isCompact ? 76 : 185,
                     IsAlwaysOnTop = _isAlwaysOnTop,
                     IsCompact = _isCompact
                 };

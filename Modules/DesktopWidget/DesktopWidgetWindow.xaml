@@ -12,9 +12,9 @@
 
     <Grid x:Name="WidgetRootGrid" Background="{ThemeResource LayerFillColorDefaultBrush}">
         <!-- ================================================================= -->
-        <!-- 1. EXPANDED HUD VIEW (Width 430 x Height 210)                    -->
+        <!-- 1. EXPANDED HUD VIEW (Width 390 x Height 175)                    -->
         <!-- ================================================================= -->
-        <Grid x:Name="ExpandedViewGrid" Visibility="Visible" Padding="14,10,14,12" RowSpacing="10">
+        <Grid x:Name="ExpandedViewGrid" Visibility="Visible" Padding="10,6,10,8" RowSpacing="6">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -22,7 +22,7 @@
             </Grid.RowDefinitions>
 
             <!-- Expanded Header Drag Area (Row 0) -->
-            <Grid x:Name="WidgetDragArea" Grid.Row="0" Background="Transparent" Height="32">
+            <Grid x:Name="WidgetDragArea" Grid.Row="0" Background="Transparent" Height="28">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
@@ -30,17 +30,17 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Brand Logo, Title & Status Badge -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Border Width="24" Height="24" CornerRadius="7" Background="{StaticResource CyberAccentGradient}">
-                        <FontIcon Glyph="&#xE9D9;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <Border Width="22" Height="22" CornerRadius="6" Background="{StaticResource CyberAccentGradient}">
+                        <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <TextBlock Text="WinCare HUD" FontSize="13" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="WinCare HUD" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
                     
-                    <!-- TOPMOST Status Pill -->
-                    <Border x:Name="TopmostBadge" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                    <!-- TOPMOST Status Pill (Clickable Toggle) -->
+                    <Border x:Name="TopmostBadge" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="5" Padding="6,2" VerticalAlignment="Center" PointerPressed="OnTogglePinClick" ToolTipService.ToolTip="Nhấp để Bật/Tắt Ghim trên cùng (Always On Top)">
                         <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                            <Ellipse x:Name="TopmostDot" Width="6" Height="6" Fill="#FF10B981" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="TopmostText" Text="TOPMOST" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" CharacterSpacing="20"/>
+                            <Ellipse x:Name="TopmostDot" Width="5" Height="5" Fill="#FF10B981" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TopmostText" Text="TOPMOST" FontSize="8" FontWeight="Bold" Foreground="#FF10B981" CharacterSpacing="20"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -48,24 +48,12 @@
                 <!-- Drag Spacer -->
                 <Grid Grid.Column="1" Background="Transparent"/>
 
-                <!-- Custom Header Action Controls (Positioned safely 138px to the left of native Windows caption buttons) -->
-                <StackPanel x:Name="HeaderActionPanel" Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" Margin="0,0,138,0">
+                <!-- Custom Header Action Controls (Positioned safely 145px to the left of native Windows caption buttons: -, ☐, X) -->
+                <StackPanel x:Name="HeaderActionPanel" Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,145,0">
                     <!-- Open Main App -->
                     <Button x:Name="OpenAppButton" Click="OnOpenMainAppClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="26" Height="26" Padding="0" ToolTipService.ToolTip="Mở WinCare Pro Main Window"
                             helpers:AnimationHelper.HoverScale="1.1" helpers:AnimationHelper.PressedScale="0.9">
-                        <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    </Button>
-
-                    <!-- Compact / Expanded View Toggle -->
-                    <Button x:Name="CompactToggleModeButton" Click="OnToggleCompactModeClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="26" Height="26" Padding="0" ToolTipService.ToolTip="Thu Nhỏ HUD (Compact Pill)"
-                            helpers:AnimationHelper.HoverScale="1.1" helpers:AnimationHelper.PressedScale="0.9">
-                        <FontIcon x:Name="CompactToggleIcon" Glyph="&#xE740;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    </Button>
-
-                    <!-- Pin Always On Top Toggle -->
-                    <Button x:Name="PinButton" Click="OnTogglePinClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="26" Height="26" Padding="0" ToolTipService.ToolTip="Ghim Trên Cùng (Always On Top)"
-                            helpers:AnimationHelper.HoverScale="1.1" helpers:AnimationHelper.PressedScale="0.9">
-                        <FontIcon x:Name="PinIcon" Glyph="&#xE718;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                        <FontIcon Glyph="&#xE80F;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     </Button>
                 </StackPanel>
             </Grid>
@@ -83,11 +71,15 @@
                         helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
                     <StackPanel Spacing="4">
                         <Grid>
-                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <FontIcon x:Name="CpuIcon" Glyph="&#xE9D9;" FontSize="12" Foreground="#FF10B981"/>
                                 <TextBlock Text="CPU" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                             </StackPanel>
-                            <TextBlock x:Name="CpuText" Text="-- %" FontSize="12" FontWeight="ExtraBold" Foreground="#FF10B981" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Column="1" x:Name="CpuText" Text="-- %" FontSize="12" FontWeight="ExtraBold" Foreground="#FF10B981" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </Grid>
                         <ProgressBar x:Name="CpuProgressBar" Value="0" Maximum="100" Height="4" Foreground="#FF10B981" CornerRadius="2" Background="{ThemeResource ControlStrokeColorDefaultBrush}"/>
                         <TextBlock x:Name="CpuDetailText" Text="-- Processes" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis"/>
@@ -99,11 +91,15 @@
                         helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
                     <StackPanel Spacing="4">
                         <Grid>
-                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <FontIcon x:Name="RamIcon" Glyph="&#xE8C8;" FontSize="12" Foreground="#FF3B82F6"/>
                                 <TextBlock Text="RAM" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                             </StackPanel>
-                            <TextBlock x:Name="RamText" Text="-- %" FontSize="12" FontWeight="ExtraBold" Foreground="#FF3B82F6" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Column="1" x:Name="RamText" Text="-- %" FontSize="12" FontWeight="ExtraBold" Foreground="#FF3B82F6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </Grid>
                         <ProgressBar x:Name="RamProgressBar" Value="0" Maximum="100" Height="4" Foreground="#FF3B82F6" CornerRadius="2" Background="{ThemeResource ControlStrokeColorDefaultBrush}"/>
                         <TextBlock x:Name="RamDetailText" Text="-- / -- GB" FontSize="9.5" FontWeight="Medium" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis"/>
@@ -141,8 +137,12 @@
                         <FontIcon Grid.Column="0" Glyph="&#xE7F1;" FontSize="14" Foreground="#FF3B82F6" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                             <Grid>
-                                <TextBlock Text="Disk (C:)" FontSize="9.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                <TextBlock x:Name="DiskPercentText" Text="--%" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Right"/>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Disk (C:)" FontSize="9.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" x:Name="DiskPercentText" Text="--%" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
                             <ProgressBar x:Name="DiskProgressBar" Value="0" Maximum="100" Height="3.5" Foreground="#FF3B82F6" CornerRadius="2" Background="{ThemeResource ControlStrokeColorDefaultBrush}"/>
                             <TextBlock x:Name="DiskDetailText" Text="-- GB Free" FontSize="8.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis"/>
@@ -155,8 +155,12 @@
                         helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
                     <StackPanel VerticalAlignment="Center" Spacing="4">
                         <Grid>
-                            <TextBlock Text="Network Speed" FontSize="9.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            <TextBlock x:Name="NetInterfaceText" Text="Ethernet/WiFi" FontSize="8.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right" TextTrimming="CharacterEllipsis"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Network Speed" FontSize="9.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" x:Name="NetInterfaceText" Text="Ethernet/WiFi" FontSize="8.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="6,0,0,0"/>
                         </Grid>
                         <Grid VerticalAlignment="Center">
                             <Grid.ColumnDefinitions>
@@ -180,76 +184,75 @@
         </Grid>
 
         <!-- ================================================================= -->
-        <!-- 2. COMPACT SINGLE-ROW SLEEK PILL HUD BAR (Width 490 x Height 54)  -->
+        <!-- 2. COMPACT CARD HUD (Width 320 x Height 76)                       -->
         <!-- ================================================================= -->
-        <Grid x:Name="CompactViewGrid" Visibility="Collapsed" Padding="12,6" Height="54">
-            <!-- Full Row Drag Area for Compact Mode -->
+        <Grid x:Name="CompactViewGrid" Visibility="Collapsed" Padding="8,4,8,6" Height="76">
+            <!-- Full Area Drag Area for Compact Mode -->
             <Grid x:Name="CompactDragArea" Background="Transparent">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/> <!-- Logo -->
-                    <ColumnDefinition Width="Auto"/> <!-- CPU Pill -->
-                    <ColumnDefinition Width="Auto"/> <!-- RAM Pill -->
-                    <ColumnDefinition Width="Auto"/> <!-- Net Speed Pill -->
-                    <ColumnDefinition Width="Auto"/> <!-- Boost Button -->
-                    <ColumnDefinition Width="*"/>    <!-- Flex Spacer -->
-                    <ColumnDefinition Width="Auto"/> <!-- Controls Stack -->
-                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Row 0: Header -->
+                    <RowDefinition Height="*"/>    <!-- Row 1: Telemetry Cards Row -->
+                </Grid.RowDefinitions>
 
-                <!-- Col 0: Brand Logo -->
-                <Border Grid.Column="0" Width="24" Height="24" CornerRadius="7" Background="{StaticResource CyberAccentGradient}" Margin="0,0,8,0" VerticalAlignment="Center">
-                    <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
+                <!-- Row 0: Status Badge & Logo (Positioned safely left of native titlebar buttons) -->
+                <Grid x:Name="CompactHeaderPanel" Grid.Row="0" Margin="0,0,140,0">
+                    <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                        <Border Width="16" Height="16" CornerRadius="4" Background="{StaticResource CyberAccentGradient}">
+                            <FontIcon Glyph="&#xE9D9;" FontSize="8.5" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
 
-                <!-- Col 1: Compact CPU Pill -->
-                <Border Grid.Column="1" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="8" Padding="8,4" Margin="0,0,6,0" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
-                        <Ellipse x:Name="CompactCpuDot" Width="6" Height="6" Fill="#FF10B981" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="CompactCpuText" Text="CPU --%" FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                        <!-- TOPMOST Status Pill (Clickable) -->
+                        <Border x:Name="CompactTopmostBadge" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="4,1" VerticalAlignment="Center" PointerPressed="OnTogglePinClick" ToolTipService.ToolTip="Bấm để Bật/Tắt Ghim trên cùng">
+                            <StackPanel Orientation="Horizontal" Spacing="3" VerticalAlignment="Center">
+                                <Ellipse x:Name="CompactTopmostDot" Width="4" Height="4" Fill="#FF10B981" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="CompactTopmostText" Text="TOPMOST" FontSize="7" FontWeight="Bold" Foreground="#FF10B981" CharacterSpacing="15"/>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Border>
+                </Grid>
 
-                <!-- Col 2: Compact RAM Pill -->
-                <Border Grid.Column="2" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="8" Padding="8,4" Margin="0,0,6,0" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
-                        <Ellipse x:Name="CompactRamDot" Width="6" Height="6" Fill="#FF3B82F6" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="CompactRamText" Text="RAM --%" FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    </StackPanel>
-                </Border>
+                <!-- Row 1: Telemetry Cards Row (Full width 360px below titlebar buttons) -->
+                <Grid Grid.Row="1" Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <!-- Col 3: Compact Net Speed Pill -->
-                <Border Grid.Column="3" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="8" Padding="8,4" Margin="0,0,6,0" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
-                        <TextBlock Text="↓" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
-                        <TextBlock x:Name="CompactNetText" Text="0 KB/s" FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    </StackPanel>
-                </Border>
+                    <!-- CPU Pill -->
+                    <Border Grid.Column="0" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="7" Padding="4,4" Margin="0,0,4,0">
+                        <StackPanel Orientation="Horizontal" Spacing="3" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Ellipse x:Name="CompactCpuDot" Width="5" Height="5" Fill="#FF10B981" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="CompactCpuText" Text="CPU --%" FontSize="9.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                        </StackPanel>
+                    </Border>
 
-                <!-- Col 4: Compact Boost Trigger -->
-                <Button Grid.Column="4" Click="OnFastCleanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="28" Padding="8,0" CornerRadius="8" Margin="0,0,6,0" VerticalAlignment="Center" ToolTipService.ToolTip="Boost RAM Nhanh (1-Click Boost)"
-                        helpers:AnimationHelper.HoverScale="1.05" helpers:AnimationHelper.PressedScale="0.95">
-                    <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE74C;" FontSize="11" Foreground="White"/>
-                        <TextBlock Text="BOOST" FontSize="9.5" FontWeight="Bold" Foreground="White"/>
-                    </StackPanel>
-                </Button>
+                    <!-- RAM Pill -->
+                    <Border Grid.Column="1" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="7" Padding="4,4" Margin="0,0,4,0">
+                        <StackPanel Orientation="Horizontal" Spacing="3" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Ellipse x:Name="CompactRamDot" Width="5" Height="5" Fill="#FF3B82F6" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="CompactRamText" Text="RAM --%" FontSize="9.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                        </StackPanel>
+                    </Border>
 
-                <!-- Col 5: Flexible Spacer -->
-                <Grid Grid.Column="5" Background="Transparent"/>
+                    <!-- Net Speed Pill -->
+                    <Border Grid.Column="2" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="7" Padding="4,4" Margin="0,0,4,0">
+                        <StackPanel Orientation="Horizontal" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="↓" FontSize="9.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                            <TextBlock x:Name="CompactNetText" Text="0 KB/s" FontSize="9.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                        </StackPanel>
+                    </Border>
 
-                <!-- Col 6: Compact Controls Stack (Positioned safely 138px to the left of native Windows caption buttons) -->
-                <StackPanel Grid.Column="6" Orientation="Horizontal" Spacing="3" VerticalAlignment="Center" Margin="0,0,138,0">
-                    <!-- Expand Mode Toggle -->
-                    <Button Click="OnToggleCompactModeClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="26" Height="26" Padding="0" ToolTipService.ToolTip="Mở Rộng HUD (Full Telemetry)"
-                            helpers:AnimationHelper.HoverScale="1.1" helpers:AnimationHelper.PressedScale="0.9">
-                        <FontIcon Glyph="&#xE73F;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <!-- Boost Button -->
+                    <Button Grid.Column="3" Click="OnFastCleanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="28" Padding="7,0" CornerRadius="7" VerticalAlignment="Center" ToolTipService.ToolTip="Boost RAM Nhanh (1-Click Boost)"
+                            helpers:AnimationHelper.HoverScale="1.05" helpers:AnimationHelper.PressedScale="0.95">
+                        <StackPanel Orientation="Horizontal" Spacing="3" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE74C;" FontSize="10" Foreground="White"/>
+                            <TextBlock Text="BOOST" FontSize="9" FontWeight="Bold" Foreground="White"/>
+                        </StackPanel>
                     </Button>
-
-                    <!-- Pin Toggle -->
-                    <Button Click="OnTogglePinClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="26" Height="26" Padding="0" ToolTipService.ToolTip="Ghim Trên Cùng (Always On Top)"
-                            helpers:AnimationHelper.HoverScale="1.1" helpers:AnimationHelper.PressedScale="0.9">
-                        <FontIcon x:Name="PinIcon2" Glyph="&#xE718;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                    </Button>
-                </StackPanel>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

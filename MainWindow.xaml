@@ -226,9 +226,9 @@
         <Grid x:Name="StartupOverlayGrid" Grid.Row="0" Grid.RowSpan="2" Visibility="Visible" Canvas.ZIndex="1100" Opacity="1">
             <Grid.Resources>
                 <Storyboard x:Name="FadeOutStartupOverlay" Completed="FadeOutStartupOverlay_Completed">
-                    <DoubleAnimation Storyboard.TargetName="StartupOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.5">
+                    <DoubleAnimation Storyboard.TargetName="StartupOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.8">
                         <DoubleAnimation.EasingFunction>
-                            <CubicEase EasingMode="EaseOut"/>
+                            <CubicEase EasingMode="EaseInOut"/>
                         </DoubleAnimation.EasingFunction>
                     </DoubleAnimation>
                 </Storyboard>

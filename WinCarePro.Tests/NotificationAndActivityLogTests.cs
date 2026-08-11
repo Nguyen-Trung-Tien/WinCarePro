@@ -8,6 +8,7 @@ using WinCarePro.Shared;
 
 namespace WinCarePro.Tests;
 
+[Collection("Database Tests")]
 public class NotificationAndActivityLogTests
 {
     public NotificationAndActivityLogTests()

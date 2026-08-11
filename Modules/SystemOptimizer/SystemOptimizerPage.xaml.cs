@@ -54,13 +54,14 @@ public sealed partial class SystemOptimizerPage : Page
             async () =>
             {
                 await ViewModel.RunAiScanAsync();
-                if (App.MainWindowInstance is MainWindow mw)
-                {
-                    mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
-                        $"AI Health Score: {ViewModel.AiHealthScore}/100. {ViewModel.AiSummaryText}", "Success");
-                }
             },
-            minDurationMs: 1200);
+            minDurationMs: 400);
+
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
+                $"AI Health Score: {ViewModel.AiHealthScore}/100. {ViewModel.AiSummaryText}", "Success");
+        }
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)

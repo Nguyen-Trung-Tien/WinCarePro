@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.Services;
@@ -264,7 +265,7 @@ public sealed partial class MainWindow : Window
                 {
                     try
                     {
-                        var optEngine = new Engines.SystemOptimizerEngine();
+                        var optEngine = App.Services.GetRequiredService<Engines.SystemOptimizerEngine>();
                         await optEngine.OptimizeRamAsync();
                         
                         App.MainDispatcherQueue?.TryEnqueue(() =>

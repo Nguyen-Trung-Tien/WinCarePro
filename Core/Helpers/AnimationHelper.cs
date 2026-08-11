@@ -222,8 +222,8 @@ public static class AnimationHelper
             typeof(AnimationHelper),
             new PropertyMetadata(false, OnShakeOnErrorChanged));
 
-    public static bool GetShakeOnError(DependencyObject obj) => (bool)obj.GetValue(ShakeOnErrorProperty);
-    public static void SetShakeOnError(DependencyObject obj, bool value) => obj.SetValue(ShakeOnErrorProperty, value);
+    public static bool GetShakeOnError(UIElement element) => (bool)element.GetValue(ShakeOnErrorProperty);
+    public static void SetShakeOnError(UIElement element, bool value) => element.SetValue(ShakeOnErrorProperty, value);
 
     private static void OnShakeOnErrorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -260,8 +260,8 @@ public static class AnimationHelper
             typeof(AnimationHelper),
             new PropertyMetadata(false, OnIsShimmeringChanged));
 
-    public static bool GetIsShimmering(DependencyObject obj) => (bool)obj.GetValue(IsShimmeringProperty);
-    public static void SetIsShimmering(DependencyObject obj, bool value) => obj.SetValue(IsShimmeringProperty, value);
+    public static bool GetIsShimmering(UIElement element) => (bool)element.GetValue(IsShimmeringProperty);
+    public static void SetIsShimmering(UIElement element, bool value) => element.SetValue(IsShimmeringProperty, value);
 
     private static void OnIsShimmeringChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {

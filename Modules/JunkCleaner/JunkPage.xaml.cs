@@ -30,6 +30,16 @@ public sealed partial class JunkPage : Page
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
 
+        ViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(ViewModel.IsScanning) || e.PropertyName == nameof(ViewModel.IsCleaning))
+            {
+                this.DispatcherQueue?.TryEnqueue(() => UpdateProgressOverlayState());
+            }
+        };
+
+        this.Loaded += (s, e) => UpdateProgressOverlayState();
+
         this.SizeChanged += (s, e) =>
         {
             if (LeftColumn != null && RightColumn != null)
@@ -72,7 +82,9 @@ public sealed partial class JunkPage : Page
             {
                 await ViewModel.ScanAsync();
             },
-            minDurationMs: 1200);
+            minDurationMs: 400);
+
+        ViewModel.FinalizeScan();
     }
 
     private async void OnCleanJunkClick(object sender, RoutedEventArgs e)
@@ -110,7 +122,9 @@ public sealed partial class JunkPage : Page
                 }
                 await ViewModel.CleanAsync();
             },
-            minDurationMs: 1200);
+            minDurationMs: 400);
+
+        ViewModel.FinalizeClean();
     }
 
     private void OnJunkSelectionChanged(object sender, RoutedEventArgs e)

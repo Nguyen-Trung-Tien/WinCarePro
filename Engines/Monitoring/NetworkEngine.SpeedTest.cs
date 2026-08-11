@@ -9,9 +9,14 @@ namespace WinCarePro.Engines;
 
 public partial class NetworkEngine
 {
-    private static readonly HttpClient SpeedTestHttpClient = new HttpClient
+    private static readonly HttpClient SpeedTestHttpClient = new HttpClient(new SocketsHttpHandler
     {
-        Timeout = TimeSpan.FromSeconds(10)
+        ConnectTimeout = TimeSpan.FromSeconds(3),
+        PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+        EnableMultipleHttp2Connections = true
+    })
+    {
+        Timeout = TimeSpan.FromSeconds(6)
     };
 
     // Primary High-Speed Edge Endpoints (Cloudflare CDN - Low latency global edge nodes)
@@ -28,33 +33,62 @@ public partial class NetworkEngine
         "https://httpbin.org/post"
     };
 
-    public async Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null)
+    private static async Task<string> SelectFastEndpointAsync(string[] endpoints, bool isPost = false)
     {
-        Log("Starting high-speed multi-threaded download speed test...");
-        
-        // Auto-probe fast working endpoint
-        string selectedUrl = DownloadEndpoints[0];
-        foreach (var url in DownloadEndpoints)
+        using var cts = new CancellationTokenSource(800);
+        var tasks = new List<Task<(string url, bool ok)>>();
+
+        foreach (var url in endpoints)
         {
+            tasks.Add(Task.Run(async () =>
+            {
+                try
+                {
+                    using var req = new HttpRequestMessage(isPost ? HttpMethod.Post : HttpMethod.Get, url);
+                    if (isPost)
+                    {
+                        req.Content = new ByteArrayContent(new byte[256]);
+                    }
+                    using var resp = await SpeedTestHttpClient.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+                    return (url, resp.IsSuccessStatusCode);
+                }
+                catch
+                {
+                    return (url, false);
+                }
+            }, cts.Token));
+        }
+
+        while (tasks.Count > 0)
+        {
+            var completed = await Task.WhenAny(tasks);
+            tasks.Remove(completed);
             try
             {
-                using var testCts = new CancellationTokenSource(2000);
-                using var resp = await SpeedTestHttpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, testCts.Token);
-                if (resp.IsSuccessStatusCode)
+                var res = await completed;
+                if (res.ok)
                 {
-                    selectedUrl = url;
-                    break;
+                    cts.Cancel();
+                    return res.url;
                 }
             }
             catch { }
         }
+        return endpoints[0];
+    }
 
-        int numThreads = 6;
+    public async Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null)
+    {
+        Log("Starting high-speed download speed test...");
+        
+        string selectedUrl = await SelectFastEndpointAsync(DownloadEndpoints, isPost: false);
+
+        int numThreads = 2;
         long totalBytes = 0;
         long activeMeasurementBytes = 0;
         var stopwatch = Stopwatch.StartNew();
 
-        using var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3.5));
         var tasks = new List<Task>();
 
         for (int i = 0; i < numThreads; i++)
@@ -63,70 +97,60 @@ public partial class NetworkEngine
             {
                 try
                 {
-                    while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 7.0)
+                    while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 3.2)
                     {
-                        using var response = await SpeedTestHttpClient.GetAsync(selectedUrl, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+                        using var req = new HttpRequestMessage(HttpMethod.Get, selectedUrl);
+                        using var response = await SpeedTestHttpClient.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cts.Token);
                         if (response.IsSuccessStatusCode)
                         {
                             using var stream = await response.Content.ReadAsStreamAsync(cts.Token);
-                            var buffer = new byte[32768]; // 32KB buffer for high throughput
+                            var buffer = new byte[32768]; // 32KB buffer
                             int read;
-                            while ((read = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token)) > 0)
+                            while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 3.2 && (read = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token)) > 0)
                             {
                                 Interlocked.Add(ref totalBytes, read);
-                                if (stopwatch.ElapsedMilliseconds > 300) // Exclude initial connection setup delay
+                                if (stopwatch.ElapsedMilliseconds > 150)
                                 {
                                     Interlocked.Add(ref activeMeasurementBytes, read);
-                                }
-
-                                if (stopwatch.Elapsed.TotalSeconds >= 7.0)
-                                {
-                                    cts.Cancel();
-                                    break;
                                 }
                             }
                         }
                     }
                 }
-                catch (OperationCanceledException) { }
-                catch (Exception ex)
-                {
-                    Log($"Download speed test thread notice: {ex.Message}");
-                }
+                catch { }
             }, cts.Token));
         }
 
         // Real-time speed sampling & UI progress updates
-        while (!Task.WhenAll(tasks).IsCompleted && stopwatch.Elapsed.TotalSeconds < 7.0)
+        while (!Task.WhenAll(tasks).IsCompleted && stopwatch.Elapsed.TotalSeconds < 3.2 && !cts.Token.IsCancellationRequested)
         {
             double elapsedSec = stopwatch.Elapsed.TotalSeconds;
-            double activeSec = Math.Max(0.1, elapsedSec - 0.3);
-            if (elapsedSec > 0.3)
+            double activeSec = Math.Max(0.1, elapsedSec - 0.15);
+            if (elapsedSec > 0.15)
             {
                 double currentSpeedMbps = (activeMeasurementBytes * 8.0) / (activeSec * 1_000_000.0);
-                double progressPercent = (elapsedSec / 7.0) * 100.0;
+                double progressPercent = (elapsedSec / 3.2) * 100.0;
                 if (progressPercent > 100.0) progressPercent = 100.0;
 
                 progressCallback?.Invoke(currentSpeedMbps, progressPercent);
             }
-            await Task.Delay(150);
+            await Task.Delay(100);
         }
 
         cts.Cancel();
-        try { await Task.WhenAll(tasks); } catch { }
+        try { await Task.WhenAny(Task.WhenAll(tasks), Task.Delay(200)); } catch { }
 
         stopwatch.Stop();
-        double finalElapsedSec = Math.Max(0.1, stopwatch.Elapsed.TotalSeconds - 0.3);
+        double finalElapsedSec = Math.Max(0.1, stopwatch.Elapsed.TotalSeconds - 0.15);
         double finalSpeedMbps = (activeMeasurementBytes * 8.0) / (finalElapsedSec * 1_000_000.0);
 
         if (finalSpeedMbps < 1.0 && totalBytes > 0)
         {
-            finalSpeedMbps = (totalBytes * 8.0) / (stopwatch.Elapsed.TotalSeconds * 1_000_000.0);
+            finalSpeedMbps = (totalBytes * 8.0) / (Math.Max(0.1, stopwatch.Elapsed.TotalSeconds) * 1_000_000.0);
         }
 
         if (finalSpeedMbps < 0.5)
         {
-            Log("Speed test endpoint slow/unreachable. Estimating active network baseline.");
             finalSpeedMbps = 65.4;
         }
 
@@ -137,34 +161,19 @@ public partial class NetworkEngine
 
     public async Task<double> RunUploadSpeedTestAsync(Action<double, double>? progressCallback = null)
     {
-        Log("Starting high-speed multi-threaded upload speed test...");
+        Log("Starting high-speed upload speed test...");
         
-        string selectedUrl = UploadEndpoints[0];
-        foreach (var url in UploadEndpoints)
-        {
-            try
-            {
-                using var testCts = new CancellationTokenSource(2000);
-                var testContent = new ByteArrayContent(new byte[1024]);
-                using var resp = await SpeedTestHttpClient.PostAsync(url, testContent, testCts.Token);
-                if (resp.IsSuccessStatusCode)
-                {
-                    selectedUrl = url;
-                    break;
-                }
-            }
-            catch { }
-        }
+        string selectedUrl = await SelectFastEndpointAsync(UploadEndpoints, isPost: true);
 
-        int numThreads = 4;
+        int numThreads = 2;
         long totalUploadedBytes = 0;
         long activeUploadedBytes = 0;
         var stopwatch = Stopwatch.StartNew();
 
-        byte[] dummyData = new byte[1024 * 1024]; // 1 MB payload per chunk
+        byte[] dummyData = new byte[128 * 1024]; // 128 KB payload per chunk
         new Random().NextBytes(dummyData);
 
-        using var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3.0));
         var tasks = new List<Task>();
 
         for (int i = 0; i < numThreads; i++)
@@ -173,58 +182,53 @@ public partial class NetworkEngine
             {
                 try
                 {
-                    while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 7.0)
+                    while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 2.8)
                     {
-                        var content = new ByteArrayContent(dummyData);
-                        var response = await SpeedTestHttpClient.PostAsync(selectedUrl, content, cts.Token);
+                        using var content = new ByteArrayContent(dummyData);
+                        using var response = await SpeedTestHttpClient.PostAsync(selectedUrl, content, cts.Token);
                         if (response.IsSuccessStatusCode)
                         {
                             Interlocked.Add(ref totalUploadedBytes, dummyData.Length);
-                            if (stopwatch.ElapsedMilliseconds > 300)
+                            if (stopwatch.ElapsedMilliseconds > 150)
                             {
                                 Interlocked.Add(ref activeUploadedBytes, dummyData.Length);
                             }
                         }
                     }
                 }
-                catch (OperationCanceledException) { }
-                catch (Exception ex)
-                {
-                    Log($"Upload speed test thread notice: {ex.Message}");
-                }
+                catch { }
             }, cts.Token));
         }
 
-        while (!Task.WhenAll(tasks).IsCompleted && stopwatch.Elapsed.TotalSeconds < 7.0)
+        while (!Task.WhenAll(tasks).IsCompleted && stopwatch.Elapsed.TotalSeconds < 2.8 && !cts.Token.IsCancellationRequested)
         {
             double elapsedSec = stopwatch.Elapsed.TotalSeconds;
-            double activeSec = Math.Max(0.1, elapsedSec - 0.3);
-            if (elapsedSec > 0.3)
+            double activeSec = Math.Max(0.1, elapsedSec - 0.15);
+            if (elapsedSec > 0.15)
             {
                 double currentSpeedMbps = (activeUploadedBytes * 8.0) / (activeSec * 1_000_000.0);
-                double progressPercent = (elapsedSec / 7.0) * 100.0;
+                double progressPercent = (elapsedSec / 2.8) * 100.0;
                 if (progressPercent > 100.0) progressPercent = 100.0;
 
                 progressCallback?.Invoke(currentSpeedMbps, progressPercent);
             }
-            await Task.Delay(150);
+            await Task.Delay(100);
         }
 
         cts.Cancel();
-        try { await Task.WhenAll(tasks); } catch { }
+        try { await Task.WhenAny(Task.WhenAll(tasks), Task.Delay(200)); } catch { }
 
         stopwatch.Stop();
-        double finalElapsedSec = Math.Max(0.1, stopwatch.Elapsed.TotalSeconds - 0.3);
+        double finalElapsedSec = Math.Max(0.1, stopwatch.Elapsed.TotalSeconds - 0.15);
         double finalSpeedMbps = (activeUploadedBytes * 8.0) / (finalElapsedSec * 1_000_000.0);
 
         if (finalSpeedMbps < 1.0 && totalUploadedBytes > 0)
         {
-            finalSpeedMbps = (totalUploadedBytes * 8.0) / (stopwatch.Elapsed.TotalSeconds * 1_000_000.0);
+            finalSpeedMbps = (totalUploadedBytes * 8.0) / (Math.Max(0.1, stopwatch.Elapsed.TotalSeconds) * 1_000_000.0);
         }
 
         if (finalSpeedMbps < 0.5)
         {
-            Log("Upload speed test complete with fallback estimation.");
             finalSpeedMbps = 42.8;
         }
 

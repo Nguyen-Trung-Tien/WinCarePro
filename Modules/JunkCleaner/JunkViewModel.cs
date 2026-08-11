@@ -175,7 +175,7 @@ public class JunkViewModel : ViewModelBase
             
             token.ThrowIfCancellationRequested();
             
-            _dispatcherQueue.TryEnqueue(() =>
+            await RunOnUIActionAsync(() =>
             {
                 foreach (var cat in results)
                 {
@@ -183,7 +183,6 @@ public class JunkViewModel : ViewModelBase
                 }
                 UpdateTotalSize();
                 SelectedCategory = Categories.FirstOrDefault();
-                IsScanning = false;
                 
                 ActiveLockingApps.Clear();
                 foreach (var app in lockingApps)
@@ -202,13 +201,11 @@ public class JunkViewModel : ViewModelBase
                     HasLockingApps = false;
                     LockingAppsText = "";
                 }
-                
-                ProgressMessage = "Scan completed. Select items to clean.".T();
             });
         }
         catch (OperationCanceledException)
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            await RunOnUIActionAsync(() =>
             {
                 ProgressMessage = "Scan cancelled.".T();
                 IsScanning = false;
@@ -216,12 +213,24 @@ public class JunkViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            await RunOnUIActionAsync(() =>
             {
                 ProgressMessage = "Scan failed:".T() + " " + ex.Message;
                 IsScanning = false;
             });
         }
+    }
+
+    public void FinalizeScan()
+    {
+        _dispatcherQueue?.TryEnqueue(() =>
+        {
+            if (Categories.Count > 0 && IsScanning)
+            {
+                ProgressMessage = "Scan completed. Select items to clean.".T();
+            }
+            IsScanning = false;
+        });
     }
 
     public async Task CleanAsync()
@@ -243,10 +252,8 @@ public class JunkViewModel : ViewModelBase
             string lockedFormatted = FormatHelper.FormatBytes(lockedBytes);
             bool hasLockedFiles = lockedBytes > 0;
 
-            _dispatcherQueue.TryEnqueue(() =>
+            await RunOnUIActionAsync(() =>
             {
-                IsCleaning = false;
-
                 if (!hasLockedFiles)
                 {
                     ProgressMessage = string.Format("Cleanup complete. Reclaimed {0} MB.".T(), (cleanedBytes / 1024.0 / 1024.0).ToString("F2"));
@@ -259,6 +266,7 @@ public class JunkViewModel : ViewModelBase
                 HasLockingApps = false;
                 LockingAppsText = "";
                 ActiveLockingApps.Clear();
+                IsCleaning = false;
             });
 
             // Show dialog on UI thread separately to avoid async void lambda
@@ -274,12 +282,20 @@ public class JunkViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            await RunOnUIActionAsync(() =>
             {
                 ProgressMessage = "Cleanup failed:".T() + " " + ex.Message;
                 IsCleaning = false;
             });
         }
+    }
+
+    public void FinalizeClean()
+    {
+        _dispatcherQueue?.TryEnqueue(() =>
+        {
+            IsCleaning = false;
+        });
     }
 
     // FormatBytes centralized to FormatHelper.FormatBytes

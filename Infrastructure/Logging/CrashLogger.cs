@@ -34,6 +34,18 @@ public static class CrashLogger
             FileLock.Wait();
             try
             {
+                // Rotate log file if it exceeds 5 MB to prevent unbounded growth
+                const long MaxLogSize = 5 * 1024 * 1024;
+                try
+                {
+                    if (File.Exists(filePath) && new FileInfo(filePath).Length > MaxLogSize)
+                    {
+                        string oldPath = filePath + ".old";
+                        File.Move(filePath, oldPath, true);
+                    }
+                }
+                catch { }
+
                 File.AppendAllText(filePath, logEntry);
             }
             finally

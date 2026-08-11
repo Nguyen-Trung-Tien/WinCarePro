@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
@@ -10,9 +11,12 @@ namespace WinCarePro.Core.Helpers;
 
 public static class UiLoadingHelper
 {
+    private static readonly ConcurrentDictionary<Button, bool> ActiveLoadingButtons = new();
+
     /// <summary>
     /// Synchronizes button loading animation state, progress ring, icon visibility,
     /// dynamic localized text, button locking, and minimum display duration safely across UI threads.
+    /// Includes layout stability protection against width shifting and click debouncing.
     /// </summary>
     public static async Task ExecuteWithLoadingAsync(
         Button? button,
@@ -22,8 +26,17 @@ public static class UiLoadingHelper
         string loadingText,
         string originalText,
         Func<Task> action,
-        int minDurationMs = 1200)
+        int minDurationMs = 400)
     {
+        // Debounce: prevent rapid multi-clicking re-entrancy
+        if (button != null)
+        {
+            if (!ActiveLoadingButtons.TryAdd(button, true))
+            {
+                return; // Already loading, ignore duplicate rapid clicks
+            }
+        }
+
         var dispatcher = button?.DispatcherQueue ?? progressRing?.DispatcherQueue ?? textBlock?.DispatcherQueue ?? App.MainDispatcherQueue;
 
         void SafeUiUpdate(Action updateAction)
@@ -38,9 +51,19 @@ public static class UiLoadingHelper
             }
         }
 
+        double originalMinWidth = button?.MinWidth ?? 0;
+
         SafeUiUpdate(() =>
         {
-            if (button != null) button.IsEnabled = false;
+            if (button != null)
+            {
+                // Lock current width to prevent layout shift ("nhảy giao diện button")
+                if (button.ActualWidth > 0 && button.MinWidth < button.ActualWidth)
+                {
+                    button.MinWidth = button.ActualWidth;
+                }
+                button.IsEnabled = false;
+            }
             if (progressRing != null)
             {
                 progressRing.Visibility = Visibility.Visible;
@@ -73,9 +96,17 @@ public static class UiLoadingHelper
                 }
                 if (fontIcon != null) fontIcon.Visibility = Visibility.Visible;
                 if (textBlock != null) textBlock.Text = originalText.T();
-                if (button != null) button.IsEnabled = true;
+                if (button != null)
+                {
+                    button.MinWidth = originalMinWidth;
+                    button.IsEnabled = true;
+                }
             });
+
+            if (button != null)
+            {
+                ActiveLoadingButtons.TryRemove(button, out _);
+            }
         }
     }
 }
-

@@ -295,7 +295,17 @@ public class RegistryBackupEngine
         if (!File.Exists(filePath)) return false;
         try
         {
-            var result = ProcessRunner.RunAsync("reg.exe", $"import \"{filePath}\"", TimeSpan.FromSeconds(15)).GetAwaiter().GetResult();
+            // Verify header to ensure valid .reg backup file
+            string firstLine = File.ReadLines(filePath).FirstOrDefault() ?? "";
+            if (!firstLine.Trim().StartsWith("Windows Registry Editor", StringComparison.OrdinalIgnoreCase) &&
+                !firstLine.Trim().StartsWith("REGEDIT", StringComparison.OrdinalIgnoreCase))
+            {
+                Database.DbManager.LogAction($"Invalid registry backup file format: {Path.GetFileName(filePath)}", "Registry Tools", "Failed");
+                return false;
+            }
+
+            string safeFilePath = ProcessRunner.SanitizeArgument(filePath);
+            var result = ProcessRunner.RunAsync("reg.exe", $"import {safeFilePath}", TimeSpan.FromSeconds(15)).GetAwaiter().GetResult();
             bool success = result.ExitCode == 0;
             Database.DbManager.LogAction($"Restored Registry Backup: {Path.GetFileName(filePath)}", "Registry Tools", success ? "Success" : "Failed");
             return success;

@@ -85,12 +85,20 @@ public sealed partial class StartupPage : Page
 
     private void OnOpenServicesMscClick(object sender, RoutedEventArgs e)
     {
-        Process.Start(new ProcessStartInfo("services.msc") { UseShellExecute = true });
+        try
+        {
+            Process.Start(new ProcessStartInfo("services.msc") { UseShellExecute = true });
+        }
+        catch { }
     }
 
     private void OnOpenTaskMgrServicesClick(object sender, RoutedEventArgs e)
     {
-        Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true });
+        try
+        {
+            Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true });
+        }
+        catch { }
     }
 
     private async void OnQuickOptimizeClick(object sender, RoutedEventArgs e)

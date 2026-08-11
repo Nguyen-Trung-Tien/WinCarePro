@@ -46,18 +46,41 @@ namespace WinCarePro.Modules.AiAssistant
             _ = RunAiScanAsync();
         }
 
+        private Task RunOnUIAsync(Action action)
+        {
+            if (DispatcherQueue.HasThreadAccess)
+            {
+                action();
+                return Task.CompletedTask;
+            }
+            var tcs = new TaskCompletionSource<bool>();
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    action();
+                    tcs.SetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            return tcs.Task;
+        }
+
         private async Task RunAiScanAsync()
         {
             try
             {
-                DispatcherQueue.TryEnqueue(() =>
+                await RunOnUIAsync(() =>
                 {
                     StatusTitleText.Text = $"{TranslationManager.Instance.T("Status")}: {TranslationManager.Instance.T("Analyzing...")}";
                 });
                 
                 var report = await AiHealthEngine.AnalyzeSystemHealthAsync();
 
-                DispatcherQueue.TryEnqueue(() =>
+                await RunOnUIAsync(() =>
                 {
                     ScoreText.Text = report.OverallScore.ToString();
                     StatusTitleText.Text = $"{TranslationManager.Instance.T("Status")}: {report.HealthStatus}";
@@ -83,16 +106,17 @@ namespace WinCarePro.Modules.AiAssistant
                 async () =>
                 {
                     await RunAiScanAsync();
-                    DispatcherQueue.TryEnqueue(() =>
-                    {
-                        if (App.MainWindowInstance is MainWindow mw)
-                        {
-                            mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
-                                "WinCare AI completed system health analysis and generated optimization insights.".T(), "Success");
-                        }
-                    });
                 },
-                minDurationMs: 1200);
+                minDurationMs: 400);
+
+            await RunOnUIAsync(() =>
+            {
+                if (App.MainWindowInstance is MainWindow mw)
+                {
+                    mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
+                        "WinCare AI completed system health analysis and generated optimization insights.".T(), "Success");
+                }
+            });
         }
 
         private async void OnExportReportClick(object sender, RoutedEventArgs e)

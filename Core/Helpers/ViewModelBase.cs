@@ -104,4 +104,35 @@ public class ViewModelBase : ObservableObject
 
         return tcs.Task;
     }
+
+    protected Task RunOnUIActionAsync(Action action)
+    {
+        var dispatcher = DispatcherQueueInstance ?? App.MainDispatcherQueue;
+        if (dispatcher == null || dispatcher.HasThreadAccess)
+        {
+            action();
+            return Task.CompletedTask;
+        }
+
+        var tcs = new TaskCompletionSource();
+        bool queued = dispatcher.TryEnqueue(() =>
+        {
+            try
+            {
+                action();
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+
+        if (!queued)
+        {
+            tcs.SetException(new InvalidOperationException("Failed to queue operation on UI thread."));
+        }
+
+        return tcs.Task;
+    }
 }

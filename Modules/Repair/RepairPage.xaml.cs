@@ -143,17 +143,17 @@ public sealed partial class RepairPage : Page
 
     private async void OnRepairRegistryPoliciesClick(object sender, RoutedEventArgs e)
     {
-        if (ViewModel != null) await ViewModel.RepairRegistryPoliciesAsync();
+        try { if (ViewModel != null) await ViewModel.RepairRegistryPoliciesAsync(); } catch { }
     }
 
     private async void OnCreateRestorePointClick(object sender, RoutedEventArgs e)
     {
-        if (ViewModel != null) await ViewModel.CreateRestorePointAsync();
+        try { if (ViewModel != null) await ViewModel.CreateRestorePointAsync(); } catch { }
     }
 
     private async void OnRepairNetworkStackClick(object sender, RoutedEventArgs e)
     {
-        if (ViewModel != null) await ViewModel.RepairNetworkStackAsync();
+        try { if (ViewModel != null) await ViewModel.RepairNetworkStackAsync(); } catch { }
     }
 
     private async void OnSfcScanClick(object sender, RoutedEventArgs e)
@@ -214,12 +214,12 @@ public sealed partial class RepairPage : Page
 
     private async void OnResetUpdateClick(object sender, RoutedEventArgs e)
     {
-        if (ViewModel != null) await ViewModel.RepairWindowsUpdateAsync();
+        try { if (ViewModel != null) await ViewModel.RepairWindowsUpdateAsync(); } catch { }
     }
 
     private async void OnRestoreServicesClick(object sender, RoutedEventArgs e)
     {
-        if (ViewModel != null) await ViewModel.RepairServicesConfigAsync();
+        try { if (ViewModel != null) await ViewModel.RepairServicesConfigAsync(); } catch { }
     }
 
     public bool IsNot(bool val) => !val;

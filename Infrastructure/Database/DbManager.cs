@@ -47,15 +47,25 @@ public class DbManager
     {
         lock (DbLock)
         {
-            try
+            int maxRetries = 3;
+            for (int attempt = 0; attempt < maxRetries; attempt++)
             {
-                using var connection = CreateAndOpenConnection();
-                return operation(connection);
+                try
+                {
+                    using var connection = CreateAndOpenConnection();
+                    return operation(connection);
+                }
+                catch (SqliteException ex) when (ex.SqliteErrorCode == 5 || ex.Message.Contains("locked", StringComparison.OrdinalIgnoreCase) || ex.Message.Contains("busy", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (attempt == maxRetries - 1) return defaultValue;
+                    Thread.Sleep(50 * (attempt + 1));
+                }
+                catch
+                {
+                    return defaultValue;
+                }
             }
-            catch
-            {
-                return defaultValue;
-            }
+            return defaultValue;
         }
     }
 
@@ -63,14 +73,24 @@ public class DbManager
     {
         lock (DbLock)
         {
-            try
+            int maxRetries = 3;
+            for (int attempt = 0; attempt < maxRetries; attempt++)
             {
-                using var connection = CreateAndOpenConnection();
-                operation(connection);
-            }
-            catch
-            {
-                // Fail silently
+                try
+                {
+                    using var connection = CreateAndOpenConnection();
+                    operation(connection);
+                    return;
+                }
+                catch (SqliteException ex) when (ex.SqliteErrorCode == 5 || ex.Message.Contains("locked", StringComparison.OrdinalIgnoreCase) || ex.Message.Contains("busy", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (attempt == maxRetries - 1) return;
+                    Thread.Sleep(50 * (attempt + 1));
+                }
+                catch
+                {
+                    return;
+                }
             }
         }
     }
@@ -197,13 +217,16 @@ public class DbManager
 
             if (userCount == 0)
             {
-                var insertUser = "INSERT INTO Users (Username, Settings) VALUES ($username, $settings)";
+                var insertUser = "INSERT INTO Users (Id, Username, Settings) VALUES (1, $username, $settings) ON CONFLICT(Id) DO NOTHING;";
                 using var command = new SqliteCommand(insertUser, connection);
                 command.Parameters.AddWithValue("$username", Environment.UserName);
                 command.Parameters.AddWithValue("$settings", "{\"Theme\":\"Dark\",\"AutoScan\":false,\"ReportFormat\":\"PDF\"}");
                 command.ExecuteNonQuery();
             }
         });
+
+        // Warmup: Pre-populate settings cache to avoid first cold DB hit on startup
+        GetSettings();
     }
 
     public static void LogAction(string action, string module, string status)
@@ -322,7 +345,7 @@ public class DbManager
 
         return ExecuteWithConnection(connection =>
         {
-            var query = "SELECT Settings FROM Users LIMIT 1";
+            var query = "SELECT Settings FROM Users ORDER BY Id ASC LIMIT 1";
             using var command = new SqliteCommand(query, connection);
             var result = command.ExecuteScalar();
             var value = result?.ToString() ?? "";
@@ -333,10 +356,21 @@ public class DbManager
 
     public static void SaveSettings(string settings)
     {
+        // Validate JSON structure before persisting — prevents corrupt settings from crashing all callers
+        try
+        {
+            using var doc = System.Text.Json.JsonDocument.Parse(settings);
+        }
+        catch
+        {
+            System.Diagnostics.Debug.WriteLine("[DbManager] SaveSettings rejected: invalid JSON");
+            return; // Reject invalid JSON silently
+        }
+
         _cachedSettings = settings;
         ExecuteWithConnection(connection =>
         {
-            var updateSettings = "UPDATE Users SET Settings = $settings";
+            var updateSettings = "INSERT INTO Users (Id, Username, Settings) VALUES (1, 'DefaultUser', $settings) ON CONFLICT(Id) DO UPDATE SET Settings = $settings;";
             using var command = new SqliteCommand(updateSettings, connection);
             command.Parameters.AddWithValue("$settings", settings);
             command.ExecuteNonQuery();

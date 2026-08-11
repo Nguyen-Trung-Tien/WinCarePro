@@ -128,7 +128,7 @@ public class SystemOptimizerViewModel : ViewModelBase
         {
             var report = await Modules.AiAssistant.AiHealthEngine.AnalyzeSystemHealthAsync();
             
-            _dispatcherQueue.TryEnqueue(() =>
+            await RunOnUIActionAsync(() =>
             {
                 AiHealthScore = report.OverallScore;
                 AiStatusText = report.HealthStatus;
@@ -146,7 +146,7 @@ public class SystemOptimizerViewModel : ViewModelBase
         }
         catch
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            await RunOnUIActionAsync(() =>
             {
                 AiStatusText = "Scan failed".T();
                 IsAiScanning = false;

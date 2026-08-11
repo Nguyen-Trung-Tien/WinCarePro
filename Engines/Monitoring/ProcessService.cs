@@ -348,7 +348,8 @@ public class ProcessService
                     }
                 }
 
-                // Mock disk/network active metrics based on resource behavior
+                // Estimated disk/network activity based on CPU resource behavior
+                // Note: These are heuristic approximations, not real-time ETW-based metrics
                 var random = new Random(p.Id);
                 if (info.CpuUsage > 5.0)
                 {

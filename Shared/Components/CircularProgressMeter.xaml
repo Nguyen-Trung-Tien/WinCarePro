@@ -9,7 +9,7 @@
 
     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
         <!-- Background outer soft glow -->
-        <Ellipse Width="190" Height="190" Fill="#05FFFFFF" Stroke="#10FFFFFF" StrokeThickness="1"/>
+        <Ellipse Width="190" Height="190" Fill="{ThemeResource AppStatChipBackground}" Stroke="{ThemeResource AppStatChipBorder}" StrokeThickness="1"/>
 
         <!-- Custom Styled Progress Ring -->
         <ProgressRing x:Name="HealthProgressRing" 
@@ -17,7 +17,7 @@
                       Height="170" 
                       Maximum="100" 
                       IsIndeterminate="False"
-                      Background="#15FFFFFF" />
+                      Background="{ThemeResource AppStatChipBackground}" />
 
         <!-- Center content labels -->
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">

@@ -1921,6 +1921,14 @@ public partial class TranslationManager
         _translations["9. Disk Tools & Context Menu"] = "9. Công cụ đĩa & Menu ngữ cảnh";
         _translations["Analyzes and optimizes hard drives, cleans Registry errors, and manages right-click Context Menu items to keep Windows Explorer fast and responsive."] = "Phân tích & tối ưu đĩa cứng, dọn dẹp lỗi Registry và quản lý bật/tắt các mục hiển thị trong Menu ngữ cảnh chuột phải giúp Windows Explorer mở nhanh và không bị đơ giật.";
 
+        _translations["CPU Usage Monitor — Click to view Dashboard performance"] = "Giám sát CPU — Bấm để xem hiệu năng Dashboard";
+        _translations["RAM Memory Booster — Click for 1-Click RAM Purge"] = "Giải phóng RAM — Bấm để dọn dẹp RAM 1-Click";
+        _translations["CPU Usage Monitor"] = "Giám sát CPU";
+        _translations["RAM Memory Booster"] = "Giải phóng RAM";
+        _translations["1-Click RAM Purge"] = "Dọn dẹp RAM 1-Click";
+        _translations["RAM Boosted successfully!"] = "Đã dọn dẹp bộ nhớ RAM thành công!";
+        _translations["Auto-Cleanup Trigger"] = "Ngưỡng tự động dọn dẹp";
+
         _reverseTranslations.Clear();
         foreach (var kvp in _translations)
         {

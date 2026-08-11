@@ -143,18 +143,36 @@ public partial class DashboardViewModel
                 while (!token.IsCancellationRequested)
                 {
                     tickCount++;
-                    
-                    // Check if sensors are enabled
+
+                    // Cache settings ONCE per tick — avoids 3x redundant DB calls per monitoring cycle
                     bool sensorsEnabled = true;
+                    bool smartBoostEnabled = true;
+                    int delayMs = 1000;
                     try
                     {
-                        string raw = Database.DbManager.GetSettings();
-                        if (!string.IsNullOrEmpty(raw))
+                        string rawSettings = Database.DbManager.GetSettings();
+                        if (!string.IsNullOrEmpty(rawSettings))
                         {
-                            using var doc = System.Text.Json.JsonDocument.Parse(raw);
-                            if (doc.RootElement.TryGetProperty("EnableSensorsThread", out var sensorsProp))
-                            {
+                            using var settingsDoc = System.Text.Json.JsonDocument.Parse(rawSettings);
+                            var root = settingsDoc.RootElement;
+
+                            if (root.TryGetProperty("EnableSensorsThread", out var sensorsProp))
                                 sensorsEnabled = sensorsProp.GetBoolean();
+
+                            if (root.TryGetProperty("TriggerSmartBoost", out var sbProp))
+                                smartBoostEnabled = sbProp.GetBoolean();
+
+                            if (root.TryGetProperty("TelemetryIntervalIndex", out var intervalProp))
+                            {
+                                int index = intervalProp.GetInt32();
+                                delayMs = index switch
+                                {
+                                    0 => 500,   // 0.5s
+                                    1 => 1000,  // 1.0s
+                                    2 => 2000,  // 2.0s
+                                    3 => 5000,  // 5.0s
+                                    _ => 1000
+                                };
                             }
                         }
                     }
@@ -301,21 +319,6 @@ public partial class DashboardViewModel
                     // Trigger Smart Boost if RAM exceeds 90%
                     if (ram > 90.0 && (DateTime.Now - _lastSmartBoostTime).TotalMinutes >= 2.0)
                     {
-                        bool smartBoostEnabled = true;
-                        try
-                        {
-                            string raw = Database.DbManager.GetSettings();
-                            if (!string.IsNullOrEmpty(raw))
-                            {
-                                using var doc = System.Text.Json.JsonDocument.Parse(raw);
-                                if (doc.RootElement.TryGetProperty("TriggerSmartBoost", out var sbProp))
-                                {
-                                    smartBoostEnabled = sbProp.GetBoolean();
-                                }
-                            }
-                        }
-                        catch { }
-
                         if (smartBoostEnabled)
                         {
                             _lastSmartBoostTime = DateTime.Now;
@@ -330,29 +333,6 @@ public partial class DashboardViewModel
                             });
                         }
                     }
-
-                    int delayMs = 1000;
-                    try
-                    {
-                        string raw = Database.DbManager.GetSettings();
-                        if (!string.IsNullOrEmpty(raw))
-                        {
-                            using var doc = System.Text.Json.JsonDocument.Parse(raw);
-                            if (doc.RootElement.TryGetProperty("TelemetryIntervalIndex", out var intervalProp))
-                            {
-                                int index = intervalProp.GetInt32();
-                                delayMs = index switch
-                                {
-                                    0 => 500,   // 0.5s
-                                    1 => 1000,  // 1.0s
-                                    2 => 2000,  // 2.0s
-                                    3 => 5000,  // 5.0s
-                                    _ => 1000
-                                };
-                            }
-                        }
-                    }
-                    catch { }
 
                     try
                     {

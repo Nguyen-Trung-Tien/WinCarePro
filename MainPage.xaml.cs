@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using WinCarePro.Views;
@@ -10,6 +11,9 @@ namespace WinCarePro;
 public sealed partial class MainPage : Page
 {
     public Frame NavigationFrame => ContentFrame;
+
+    private Page? _lastTranslatedPage;
+    private RoutedEventHandler? _lastLoadedHandler;
 
     public MainPage()
     {
@@ -52,12 +56,17 @@ public sealed partial class MainPage : Page
             {
                 page.RequestedTheme = ThemeManager.Instance.CurrentTheme;
                 TranslationManager.Instance.Translate(page);
-                page.Loaded += (sender, args) => TranslationManager.Instance.Translate(page);
 
-                page.DispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+                // Detach previous page's Loaded handler to prevent memory leak
+                if (_lastTranslatedPage != null && _lastLoadedHandler != null)
                 {
-                    TranslationManager.Instance.Translate(page);
-                });
+                    _lastTranslatedPage.Loaded -= _lastLoadedHandler;
+                }
+
+                // Attach new handler and track references
+                _lastLoadedHandler = (sender, args) => TranslationManager.Instance.Translate(page);
+                page.Loaded += _lastLoadedHandler;
+                _lastTranslatedPage = page;
             }
         };
 

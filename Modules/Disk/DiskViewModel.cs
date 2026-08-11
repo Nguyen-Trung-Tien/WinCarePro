@@ -230,9 +230,10 @@ public class DiskViewModel : ViewModelBase
     {
         foreach (var group in DuplicateGroups)
         {
-            foreach (var item in group.Items)
+            // Safety guard: Always keep 1 original copy unselected to prevent total data loss
+            for (int i = 0; i < group.Items.Count; i++)
             {
-                item.IsSelectedForDeletion = true;
+                group.Items[i].IsSelectedForDeletion = (i > 0);
             }
         }
     }
@@ -288,6 +289,12 @@ public class DiskViewModel : ViewModelBase
             {
                 foreach (var group in DuplicateGroups)
                 {
+                    // Double safety guard: Prevent wiping all copies of a file if all were checked
+                    if (group.Items.Count > 0 && group.Items.All(x => x.IsSelectedForDeletion))
+                    {
+                        group.Items[0].IsSelectedForDeletion = false;
+                    }
+
                     foreach (var item in group.Items)
                     {
                         if (item.IsSelectedForDeletion)
@@ -365,27 +372,4 @@ public class DiskViewModel : ViewModelBase
             IsBusy = false;
         }
     }
-}
-
-// These helper classes were in StorageViewModel - kept for DiskPage
-public class StorageDuplicateItem : ViewModelBase
-{
-    public string Path { get; set; } = "";
-    public string Name => System.IO.Path.GetFileName(Path);
-    public long SizeBytes { get; set; }
-    public string SizeFormatted { get; set; } = "";
-    public DateTime LastModified { get; set; }
-
-    private bool _isSelectedForDeletion;
-    public bool IsSelectedForDeletion
-    {
-        get => _isSelectedForDeletion;
-        set => SetProperty(ref _isSelectedForDeletion, value);
-    }
-}
-
-public class StorageDuplicateGroup : ViewModelBase
-{
-    public string SizeFormatted { get; set; } = "";
-    public ObservableCollection<StorageDuplicateItem> Items { get; } = new();
 }

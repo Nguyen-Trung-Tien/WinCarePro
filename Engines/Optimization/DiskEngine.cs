@@ -10,6 +10,7 @@ using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
+[Microsoft.UI.Xaml.Data.Bindable]
 public class DriveHealthInfo
 {
     public string Name { get; set; } = "";
@@ -20,6 +21,7 @@ public class DriveHealthInfo
     public string Interface { get; set; } = "";
 }
 
+[Microsoft.UI.Xaml.Data.Bindable]
 public class StorageItem
 {
     public string Path { get; set; } = "";

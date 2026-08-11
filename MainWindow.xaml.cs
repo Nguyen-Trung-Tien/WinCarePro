@@ -161,42 +161,53 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            // 1. Initialize SQLite Database asynchronously to prevent blocking the UI thread
+            // 1. Initialize SQLite Database asynchronously
             StartupProgressText.Text = "Initializing database...".T();
             await Task.Run(() => Database.DbManager.InitializeDatabase());
+            await Task.Delay(300);
 
             // 2. Load theme settings and transparency levels from DB
             StartupProgressText.Text = "Loading configuration...".T();
             LoadThemeConfiguration();
+            await Task.Delay(300);
 
             // 3. Load language setting and apply translations to window content
             StartupProgressText.Text = "Applying translations...".T();
             TranslationManager.Instance.LoadLanguageFromSettings();
             TranslationManager.Instance.Translate(this.Content);
+            await Task.Delay(250);
 
-            // 4. Update notification badge indicator
-            UpdateNotificationBadge();
-
-            // 5. Index pages, actions, and settings keywords for Search bar
-            StartupProgressText.Text = "Indexing search registry...".T();
-            PopulateSearchRegistry();
-
-            // 6. Check for app changelog version bumps and trigger database optimization maintenance in background
-            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(2, 0, 0, 0);
-            CheckAndShowChangelog(currentVersion);
-            _ = Task.Run(() => Database.DbManager.RunDatabaseMaintenance());
-
+            // 4. Update notification badge indicator & prepare main view
             StartupProgressText.Text = "Starting WinCare Pro...".T();
-            await Task.Delay(400); // Visual padding delay
-
-            // 7. Navigate Frame to MainPage
+            UpdateNotificationBadge();
             RootFrame.Navigate(typeof(MainPage));
+            await Task.Delay(350);
 
-            // 8. Start Clock Ticker
+            // 5. Start Clock Ticker & fade out splash overlay smoothly
             StartClockTicker();
-
-            // 9. Play splash fade out animation
             FadeOutStartupOverlay.Begin();
+
+            // 7. Deferred background tasks: Index search registry & database maintenance
+            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(4, 0, 0, 0);
+            CheckAndShowChangelog(currentVersion);
+
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    Database.DbManager.RunDatabaseMaintenance();
+                }
+                catch { }
+            });
+
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    App.MainDispatcherQueue?.TryEnqueue(() => PopulateSearchRegistry());
+                }
+                catch { }
+            });
         }
         catch (Exception ex)
         {
@@ -220,7 +231,7 @@ public sealed partial class MainWindow : Window
 
         // Create a DispatcherTimer for periodic updates
         var timer = new Microsoft.UI.Xaml.DispatcherTimer();
-        timer.Interval = TimeSpan.FromSeconds(30);
+        timer.Interval = TimeSpan.FromSeconds(15);
         timer.Tick += (s, e) =>
         {
             ClockText.Text = DateTime.Now.ToString("HH:mm");
@@ -419,28 +430,25 @@ public sealed partial class MainWindow : Window
         ExitOverlayGrid.Visibility = Visibility.Visible;
         FadeInExitOverlay.Begin();
 
-        // Perform active page & database cleanup asynchronously during exit animation
+        // Step 1: Perform active page cleanup on the UI thread first (synchronous)
+        try
+        {
+            if (RootFrame.Content is MainPage mainPage)
+            {
+                mainPage.CleanupActivePage();
+            }
+            else if (RootFrame.Content is WinCarePro.Views.NetworkPage netPage)
+            {
+                netPage.ViewModel?.Cleanup();
+            }
+
+            WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.CloseWindow();
+        }
+        catch { }
+
+        // Step 2: Safe database WAL checkpoint & connection pool clear (background, after UI cleanup)
         await Task.Run(() =>
         {
-            this.DispatcherQueue?.TryEnqueue(() =>
-            {
-                try
-                {
-                    if (RootFrame.Content is MainPage mainPage)
-                    {
-                        mainPage.CleanupActivePage();
-                    }
-                    else if (RootFrame.Content is WinCarePro.Views.NetworkPage netPage)
-                    {
-                        netPage.ViewModel?.Cleanup();
-                    }
-
-                    WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.CloseWindow();
-                }
-                catch { }
-            });
-
-            // Safe database WAL checkpoint & connection pool clear
             DbManager.ShutdownDatabase();
         });
 

@@ -7,6 +7,7 @@ using Xunit;
 
 namespace WinCarePro.Tests;
 
+[Collection("Database Tests")]
 public class SettingsAndStateTests
 {
     [Fact]

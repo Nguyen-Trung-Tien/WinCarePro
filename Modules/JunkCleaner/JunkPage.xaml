@@ -78,7 +78,7 @@
 
                 <!-- Right: Scan & Clean Actions -->
                 <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Button x:Name="ScanJunkBtn" Style="{StaticResource DefaultButtonStyle}" Click="OnScanJunkClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="14,8" CornerRadius="6">
+                    <Button x:Name="ScanJunkBtn" Style="{StaticResource DefaultButtonStyle}" Click="OnScanJunkClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" MinWidth="145" Padding="14,8" CornerRadius="6">
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <ProgressRing x:Name="ScanJunkRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
                             <FontIcon x:Name="ScanJunkIcon" Glyph="&#xE721;" FontSize="13" />
@@ -106,7 +106,7 @@
                         <TextBlock Text="{x:Bind ViewModel.TotalJunkSize, Mode=OneWay}" HorizontalAlignment="Right" FontWeight="ExtraBold" FontSize="13" Foreground="#FF34D399"/>
                     </Grid>
                     <!-- Horizontal Visual Storage Bar -->
-                    <Grid Height="10" CornerRadius="5" Background="#15FFFFFF">
+                    <Grid Height="10" CornerRadius="5" Background="{ThemeResource AppStatChipBackground}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="4*"/>
                             <ColumnDefinition Width="3*"/>
@@ -167,7 +167,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate x:DataType="models:LockingAppInfo">
-                                    <StackPanel Orientation="Horizontal" Spacing="6" Background="#10FFFFFF" Padding="8,4" CornerRadius="6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" Background="{ThemeResource AppStatChipBackground}" Padding="8,4" CornerRadius="6">
                                         <!-- App Icon -->
                                         <Grid Width="20" Height="20" VerticalAlignment="Center">
                                             <Image Source="{x:Bind IconImageSource, Mode=OneTime}" Visibility="{x:Bind HasIcon, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}" Stretch="Uniform" />

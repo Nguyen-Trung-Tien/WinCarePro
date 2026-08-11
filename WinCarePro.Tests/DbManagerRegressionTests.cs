@@ -8,6 +8,7 @@ using WinCarePro.Engines;
 
 namespace WinCarePro.Tests;
 
+[Collection("Database Tests")]
 public class DbManagerRegressionTests
 {
     public DbManagerRegressionTests()

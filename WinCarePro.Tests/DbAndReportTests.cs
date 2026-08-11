@@ -8,6 +8,7 @@ using WinCarePro.Models;
 
 namespace WinCarePro.Tests;
 
+[Collection("Database Tests")]
 public class DbAndReportTests
 {
     public DbAndReportTests()

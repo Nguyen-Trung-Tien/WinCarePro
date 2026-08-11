@@ -212,9 +212,9 @@ public partial class App : Application
             {
                 System.IO.Directory.CreateDirectory(CrashLogDir);
             }
-            System.IO.File.WriteAllText(
+            System.IO.File.AppendAllText(
                 System.IO.Path.Combine(CrashLogDir, fileName),
-                $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]\n{content}");
+                $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]\n{content}\n{"".PadLeft(60, '-')}\n");
         }
         catch (Exception ex)
         {

@@ -76,3 +76,40 @@ public class StringToVisibilityConverter : IValueConverter
         return value is Visibility v && v == Visibility.Visible;
     }
 }
+
+public class HexToBrushConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is string hex && !string.IsNullOrWhiteSpace(hex))
+        {
+            try
+            {
+                hex = hex.TrimStart('#');
+                byte a = 255, r = 0, g = 0, b = 0;
+                if (hex.Length == 8)
+                {
+                    a = System.Convert.ToByte(hex.Substring(0, 2), 16);
+                    r = System.Convert.ToByte(hex.Substring(2, 2), 16);
+                    g = System.Convert.ToByte(hex.Substring(4, 2), 16);
+                    b = System.Convert.ToByte(hex.Substring(6, 2), 16);
+                }
+                else if (hex.Length == 6)
+                {
+                    r = System.Convert.ToByte(hex.Substring(0, 2), 16);
+                    g = System.Convert.ToByte(hex.Substring(2, 2), 16);
+                    b = System.Convert.ToByte(hex.Substring(4, 2), 16);
+                }
+                return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(a, r, g, b));
+            }
+            catch { }
+        }
+        return new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+

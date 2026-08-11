@@ -52,9 +52,29 @@
                 <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel x:Name="HeaderTitlePanel" Grid.Column="0" Grid.Row="0">
-                <TextBlock Text="System Repair Center" Style="{StaticResource PageHeaderTitleStyle}" />
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <TextBlock Text="System Repair Center" Style="{StaticResource PageHeaderTitleStyle}" />
+                    <Border Visibility="{x:Bind ViewModel.IsAdmin, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#2610B981" BorderBrush="#10B981" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <FontIcon Glyph="&#xE72E;" FontSize="11" Foreground="#10B981"/>
+                            <TextBlock Text="Admin Rights Active" FontSize="11" FontWeight="Bold" Foreground="#10B981"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Visibility="{x:Bind ViewModel.IsAdmin, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Background="#26F59E0B" BorderBrush="#F59E0B" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <FontIcon Glyph="&#xE7BA;" FontSize="11" Foreground="#F59E0B"/>
+                            <TextBlock Text="User Mode (SFC/DISM Recommend Admin)" FontSize="11" FontWeight="Bold" Foreground="#F59E0B"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </StackPanel>
             <StackPanel x:Name="HeaderButtonsPanel" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button x:Name="CancelHeaderBtn" Click="OnCancelOperationClick" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" CornerRadius="8" Padding="14,8" Background="#33EF4444" Foreground="#FFEF4444" FontWeight="Bold">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE711;" FontSize="14" />
+                        <TextBlock Text="Cancel Operation" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
                 <Button x:Name="ScanDiagnosticsBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanDiagnosticsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="ScanDiagRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
@@ -147,15 +167,17 @@
 
         <!-- 3. Main Content Area -->
         <Grid Grid.Row="2">
-            <!-- Left: Diagnostics Actions -->
             <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
                 <StackPanel Spacing="16">
-                    <!-- Active Operation Progress -->
+                    <!-- Active Operation Progress Banner -->
                     <Border Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource GlassmorphismCardStyle}" Padding="16" Margin="0,0,0,8">
-                        <StackPanel Spacing="6">
+                        <StackPanel Spacing="8">
                             <Grid>
-                                <TextBlock Text="System Verification Progress" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Left" />
-                                <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
+                                    <ProgressRing Width="14" Height="14" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{x:Bind ViewModel.CurrentScanStepText, Mode=OneWay}" FontSize="12.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="12.5" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
                             <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
                         </StackPanel>
@@ -178,6 +200,7 @@
                     <!-- Diagnostic Issues Cockpit -->
                     <Border Visibility="{x:Bind ViewModel.HasDiagnosticsRun, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                         <StackPanel Spacing="12">
+                            <!-- Header & Filter Bar -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -187,21 +210,38 @@
                                     <TextBlock Text="Diagnostics Findings" FontSize="15" FontWeight="Bold" />
                                     <TextBlock Text="Issues detected in system registry policies, updates and background processes." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
-                                <Border Grid.Column="1" Padding="8,4" CornerRadius="6" Background="{x:Bind GetScoreColor(ViewModel.HealthScore), Mode=OneWay}" VerticalAlignment="Center">
-                                    <TextBlock Text="{x:Bind GetScoreText(ViewModel.HealthScore), Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="White" />
-                                </Border>
+                                
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <!-- Category Filter -->
+                                    <ComboBox SelectionChanged="OnFilterCategoryChanged" SelectedIndex="0" Width="130" CornerRadius="6">
+                                        <ComboBoxItem Tag="All" Content="All Issues"/>
+                                        <ComboBoxItem Tag="Critical" Content="Critical"/>
+                                        <ComboBoxItem Tag="Warning" Content="Warning"/>
+                                        <ComboBoxItem Tag="Info" Content="Info"/>
+                                    </ComboBox>
+
+                                    <!-- Batch Select buttons -->
+                                    <Button Content="Select All" Click="OnSelectAllClick" Padding="8,4" FontSize="11" CornerRadius="6" />
+                                    <Button Content="Clear All" Click="OnDeselectAllClick" Padding="8,4" FontSize="11" CornerRadius="6" />
+
+                                    <!-- Health Score Badge -->
+                                    <Border Padding="8,4" CornerRadius="6" Background="{x:Bind GetScoreColor(ViewModel.HealthScore), Mode=OneWay}" VerticalAlignment="Center">
+                                        <TextBlock Text="{x:Bind GetScoreText(ViewModel.HealthScore), Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="White" />
+                                    </Border>
+                                </StackPanel>
                             </Grid>
 
                             <MenuFlyoutSeparator />
 
-                            <!-- Issues List -->
-                            <ItemsControl ItemsSource="{x:Bind ViewModel.DiscoveredIssues, Mode=OneWay}">
+                            <!-- Filtered Issues List -->
+                            <ItemsControl ItemsSource="{x:Bind ViewModel.FilteredDiscoveredIssues, Mode=OneWay}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="vm:DiagnosticIssueItem">
                                         <Grid Padding="0,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
@@ -223,12 +263,15 @@
                                             </Border>
 
                                             <TextBlock Grid.Column="3" Text="{x:Bind StatusText, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{x:Bind StatusBrush, Mode=OneWay}" VerticalAlignment="Center" Margin="8,0,4,0" Width="60" TextAlignment="Right"/>
+
+                                            <!-- Single-item Repair Button -->
+                                            <Button Grid.Column="4" Content="Fix" Click="OnFixSingleIssueClick" IsEnabled="{x:Bind IsNotFixed, Mode=OneWay}" CornerRadius="4" Padding="10,3" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center"/>
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <!-- Repair Actions -->
+                            <!-- Auto Repair Selected Button -->
                             <Button x:Name="AutoRepairBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold" HorizontalAlignment="Right">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <ProgressRing x:Name="AutoRepairRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
@@ -374,7 +417,6 @@
                     </Border>
                 </StackPanel>
             </ScrollViewer>
-
         </Grid>
 
         <!-- Loading Overlay Indicator — smooth fade in/out -->
@@ -395,16 +437,20 @@
                     </DoubleAnimation>
                 </Storyboard>
             </Grid.Resources>
-            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="380">
-                <StackPanel Spacing="16" HorizontalAlignment="Center">
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+                <StackPanel Spacing="14" HorizontalAlignment="Center">
                     <ProgressRing Width="52" Height="52" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" />
                     <TextBlock Text="System Diagnostics &amp; Repair" FontSize="15" FontWeight="Bold" TextAlignment="Center" />
+                    <TextBlock Text="{x:Bind ViewModel.CurrentScanStepText, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="320"/>
                     <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="20" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center"/>
                     <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Stretch"/>
+                    
+                    <Button Click="OnCancelOperationClick" Content="Cancel Operation" HorizontalAlignment="Center" CornerRadius="8" Padding="18,6" Margin="0,4,0,0" Background="#26EF4444" Foreground="#FFEF4444" FontWeight="Bold"/>
                 </StackPanel>
             </Border>
         </Grid>
     </Grid>
 </Page>
+
 
 

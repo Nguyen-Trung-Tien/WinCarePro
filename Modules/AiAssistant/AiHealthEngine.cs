@@ -15,6 +15,106 @@ namespace WinCarePro.Modules.AiAssistant
         public string Category { get; set; } = "General"; // Performance, Junk, Security, Storage, Prediction
         public string ImpactLevel { get; set; } = "Medium"; // Critical, High, Medium, Low
         public string ActionKey { get; set; } = string.Empty;
+
+        public string CategoryIconGlyph => Category switch
+        {
+            "Storage" => "\uE7F1",
+            "Performance" => "\uE9D9",
+            "Junk" => "\uE74D",
+            "Security" => "\uE8A9",
+            "Prediction" => "\uE945",
+            _ => "\uE9D9"
+        };
+
+        public string ImpactBadgeForegroundHex => ImpactLevel switch
+        {
+            "Critical" => "#EF4444",
+            "High" => "#F97316",
+            "Medium" => "#F59E0B",
+            "Low" => "#10B981",
+            _ => "#F59E0B"
+        };
+
+        public string ImpactBadgeBackgroundHex => ImpactLevel switch
+        {
+            "Critical" => "#25EF4444",
+            "High" => "#25F97316",
+            "Medium" => "#25F59E0B",
+            "Low" => "#2510B981",
+            _ => "#25F59E0B"
+        };
+
+        public string ImpactBadgeBorderHex => ImpactLevel switch
+        {
+            "Critical" => "#60EF4444",
+            "High" => "#60F97316",
+            "Medium" => "#60F59E0B",
+            "Low" => "#6010B981",
+            _ => "#60F59E0B"
+        };
+
+        private Microsoft.UI.Xaml.Media.Brush? _fgBrush;
+        public Microsoft.UI.Xaml.Media.Brush ImpactBadgeForegroundBrush
+        {
+            get
+            {
+                if (_fgBrush == null)
+                {
+                    var color = ImpactLevel switch
+                    {
+                        "Critical" => Windows.UI.Color.FromArgb(255, 239, 68, 68),
+                        "High" => Windows.UI.Color.FromArgb(255, 249, 115, 22),
+                        "Medium" => Windows.UI.Color.FromArgb(255, 245, 158, 11),
+                        "Low" => Windows.UI.Color.FromArgb(255, 16, 185, 129),
+                        _ => Windows.UI.Color.FromArgb(255, 245, 158, 11)
+                    };
+                    _fgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(color);
+                }
+                return _fgBrush;
+            }
+        }
+
+        private Microsoft.UI.Xaml.Media.Brush? _bgBrush;
+        public Microsoft.UI.Xaml.Media.Brush ImpactBadgeBackgroundBrush
+        {
+            get
+            {
+                if (_bgBrush == null)
+                {
+                    var color = ImpactLevel switch
+                    {
+                        "Critical" => Windows.UI.Color.FromArgb(0x25, 239, 68, 68),
+                        "High" => Windows.UI.Color.FromArgb(0x25, 249, 115, 22),
+                        "Medium" => Windows.UI.Color.FromArgb(0x25, 245, 158, 11),
+                        "Low" => Windows.UI.Color.FromArgb(0x25, 16, 185, 129),
+                        _ => Windows.UI.Color.FromArgb(0x25, 245, 158, 11)
+                    };
+                    _bgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(color);
+                }
+                return _bgBrush;
+            }
+        }
+
+        private Microsoft.UI.Xaml.Media.Brush? _borderBrush;
+        public Microsoft.UI.Xaml.Media.Brush ImpactBadgeBorderBrush
+        {
+            get
+            {
+                if (_borderBrush == null)
+                {
+                    var color = ImpactLevel switch
+                    {
+                        "Critical" => Windows.UI.Color.FromArgb(0x60, 239, 68, 68),
+                        "High" => Windows.UI.Color.FromArgb(0x60, 249, 115, 22),
+                        "Medium" => Windows.UI.Color.FromArgb(0x60, 245, 158, 11),
+                        "Low" => Windows.UI.Color.FromArgb(0x60, 16, 185, 129),
+                        _ => Windows.UI.Color.FromArgb(0x60, 245, 158, 11)
+                    };
+                    _borderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(color);
+                }
+                return _borderBrush;
+            }
+        }
     }
 
     public class AiHealthReport
@@ -52,19 +152,18 @@ namespace WinCarePro.Modules.AiAssistant
                         double totalGB = systemDrive.TotalSize / (1024.0 * 1024.0 * 1024.0);
                         double usedPercent = ((totalGB - freeGB) / totalGB) * 100.0;
 
-                        // Predictive heuristic model for storage accumulation rate
                         int estimatedDaysLeft = Math.Max(3, (int)(freeGB * 1.5));
                         report.PredictiveStorageDaysText = estimatedDaysLeft > 30 ? "> 30 Days Free".T() : $"{estimatedDaysLeft} Days Left".T();
 
-                        if (freeGB < 20.0)
+                        if (freeGB < 20.0 || usedPercent > 88.0)
                         {
                             penaltyScore += 25;
                             recommendations.Add(new AiHealthRecommendation
                             {
                                 Title = "Predictive Storage Warning".T(),
-                                Description = $"Drive C: has {freeGB:F1} GB free. AI predicts disk exhaustion in approximately {estimatedDaysLeft} days under regular usage.".T(),
+                                Description = $"Drive C: has {freeGB:F1} GB free ({usedPercent:F0}% used). AI predicts disk exhaustion in approximately {estimatedDaysLeft} days under regular usage.".T(),
                                 Category = "Storage",
-                                ImpactLevel = "Critical",
+                                ImpactLevel = freeGB < 10.0 ? "Critical" : "High",
                                 ActionKey = "NavigateDisk"
                             });
                         }
@@ -86,12 +185,17 @@ namespace WinCarePro.Modules.AiAssistant
                 // 2. Predictive Boot Time Overhead Profiling (Dự đoán khởi động chậm)
                 try
                 {
-                    var processes = Process.GetProcesses();
-                    int processCount = processes.Length;
+                    int processCount = 0;
+                    foreach (var p in Process.GetProcesses())
+                    {
+                        try { processCount++; }
+                        finally { try { p.Dispose(); } catch { } }
+                    }
+
                     double potentialBootTimeSavingsSeconds = Math.Round(processCount * 0.04, 1);
                     report.PredictiveBootTimeSavingsText = $"-{potentialBootTimeSavingsSeconds}s Boot Time".T();
 
-                    if (processCount > 120)
+                    if (processCount > 100)
                     {
                         penaltyScore += 15;
                         recommendations.Add(new AiHealthRecommendation
@@ -99,41 +203,70 @@ namespace WinCarePro.Modules.AiAssistant
                             Title = "Predictive Boot Delay Profiling".T(),
                             Description = $"AI detected {processCount} active background processes. Disabling unnecessary startup items can shave up to {potentialBootTimeSavingsSeconds} seconds off boot time.".T(),
                             Category = "Performance",
-                            ImpactLevel = "High",
+                            ImpactLevel = processCount > 150 ? "Critical" : "High",
                             ActionKey = "NavigateStartup"
                         });
                     }
                 }
                 catch { }
 
-                // 3. Analyze Temp Junk Accumulation
+                // 3. Analyze Temp Junk Accumulation (Safe enumeration across temp folders)
                 try
                 {
-                    string tempPath = Path.GetTempPath();
-                    if (Directory.Exists(tempPath))
-                    {
-                        var dirInfo = new DirectoryInfo(tempPath);
-                        long tempSizeBytes = dirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly)
-                                                    .Sum(f => f.Length);
+                    long totalTempBytes = 0;
+                    string[] tempPaths = new[] { Path.GetTempPath(), @"C:\Windows\Temp" };
 
-                        long tempMB = tempSizeBytes / (1024 * 1024);
-                        if (tempMB > 300)
+                    foreach (var path in tempPaths)
+                    {
+                        if (Directory.Exists(path))
                         {
-                            penaltyScore += 15;
-                            recommendations.Add(new AiHealthRecommendation
-                            {
-                                Title = "High Temp Cache Accumulation".T(),
-                                Description = $"Windows Temp directory contains {tempMB:N0} MB of uncleaned cache files.".T(),
-                                Category = "Junk",
-                                ImpactLevel = "Medium",
-                                ActionKey = "NavigateJunkCleaner"
-                            });
+                            totalTempBytes += GetDirectorySizeBytesSafely(path);
                         }
+                    }
+
+                    long tempMB = totalTempBytes / (1024 * 1024);
+                    if (tempMB > 300)
+                    {
+                        penaltyScore += 15;
+                        recommendations.Add(new AiHealthRecommendation
+                        {
+                            Title = "High Temp Cache Accumulation".T(),
+                            Description = $"System temporary directories contain approximately {tempMB:N0} MB of uncleaned cache and temporary files.".T(),
+                            Category = "Junk",
+                            ImpactLevel = tempMB > 1500 ? "High" : "Medium",
+                            ActionKey = "NavigateJunkCleaner"
+                        });
                     }
                 }
                 catch { }
 
-                // 4. Calculate final health score and status text
+                // 4. Memory Working Set Check
+                try
+                {
+                    long totalWorkingSet = 0;
+                    var processes = Process.GetProcesses();
+                    foreach (var p in processes)
+                    {
+                        try { totalWorkingSet += p.WorkingSet64; } catch { }
+                        finally { try { p.Dispose(); } catch { } }
+                    }
+                    long totalRamMB = totalWorkingSet / (1024 * 1024);
+                    if (totalRamMB > 8000) // High active process RAM usage (> 8GB)
+                    {
+                        penaltyScore += 10;
+                        recommendations.Add(new AiHealthRecommendation
+                        {
+                            Title = "High Memory Pressure".T(),
+                            Description = $"Active process working set is currently using {totalRamMB:N0} MB. Optimization can release standby cache.".T(),
+                            Category = "Performance",
+                            ImpactLevel = "Medium",
+                            ActionKey = "NavigateOptimizer"
+                        });
+                    }
+                }
+                catch { }
+
+                // 5. Calculate final health score and status text
                 report.OverallScore = Math.Max(10, 100 - penaltyScore);
 
                 if (report.OverallScore >= 90)
@@ -155,6 +288,33 @@ namespace WinCarePro.Modules.AiAssistant
                 report.Recommendations = recommendations;
                 return report;
             });
+        }
+
+        private static long GetDirectorySizeBytesSafely(string dirPath)
+        {
+            long size = 0;
+            try
+            {
+                var dirInfo = new DirectoryInfo(dirPath);
+                foreach (var file in dirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly))
+                {
+                    try { size += file.Length; } catch { }
+                }
+
+                foreach (var subDir in dirInfo.EnumerateDirectories("*", SearchOption.TopDirectoryOnly))
+                {
+                    try
+                    {
+                        foreach (var file in subDir.EnumerateFiles("*", SearchOption.TopDirectoryOnly))
+                        {
+                            try { size += file.Length; } catch { }
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+            return size;
         }
     }
 }

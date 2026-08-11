@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Dispatching;
 using WinCarePro.Services;
 
 namespace WinCarePro.Core.Helpers;
@@ -11,7 +12,7 @@ public static class UiLoadingHelper
 {
     /// <summary>
     /// Synchronizes button loading animation state, progress ring, icon visibility,
-    /// dynamic localized text, button locking, and minimum display duration.
+    /// dynamic localized text, button locking, and minimum display duration safely across UI threads.
     /// </summary>
     public static async Task ExecuteWithLoadingAsync(
         Button? button,
@@ -23,16 +24,31 @@ public static class UiLoadingHelper
         Func<Task> action,
         int minDurationMs = 1200)
     {
-        if (button != null) button.IsEnabled = false;
+        var dispatcher = button?.DispatcherQueue ?? progressRing?.DispatcherQueue ?? textBlock?.DispatcherQueue ?? App.MainDispatcherQueue;
 
-        if (progressRing != null)
+        void SafeUiUpdate(Action updateAction)
         {
-            progressRing.Visibility = Visibility.Visible;
-            progressRing.IsActive = true;
+            if (dispatcher != null && !dispatcher.HasThreadAccess)
+            {
+                dispatcher.TryEnqueue(() => updateAction());
+            }
+            else
+            {
+                updateAction();
+            }
         }
 
-        if (fontIcon != null) fontIcon.Visibility = Visibility.Collapsed;
-        if (textBlock != null) textBlock.Text = loadingText.T();
+        SafeUiUpdate(() =>
+        {
+            if (button != null) button.IsEnabled = false;
+            if (progressRing != null)
+            {
+                progressRing.Visibility = Visibility.Visible;
+                progressRing.IsActive = true;
+            }
+            if (fontIcon != null) fontIcon.Visibility = Visibility.Collapsed;
+            if (textBlock != null) textBlock.Text = loadingText.T();
+        });
 
         var stopwatch = Stopwatch.StartNew();
         try
@@ -48,15 +64,18 @@ public static class UiLoadingHelper
                 await Task.Delay(remainingMs);
             }
 
-            if (progressRing != null)
+            SafeUiUpdate(() =>
             {
-                progressRing.IsActive = false;
-                progressRing.Visibility = Visibility.Collapsed;
-            }
-
-            if (fontIcon != null) fontIcon.Visibility = Visibility.Visible;
-            if (textBlock != null) textBlock.Text = originalText.T();
-            if (button != null) button.IsEnabled = true;
+                if (progressRing != null)
+                {
+                    progressRing.IsActive = false;
+                    progressRing.Visibility = Visibility.Collapsed;
+                }
+                if (fontIcon != null) fontIcon.Visibility = Visibility.Visible;
+                if (textBlock != null) textBlock.Text = originalText.T();
+                if (button != null) button.IsEnabled = true;
+            });
         }
     }
 }
+

@@ -49,8 +49,6 @@ public static class AnimationHelper
                 element.PointerEntered += Element_PointerEntered;
                 element.PointerExited += Element_PointerExited;
                 element.SizeChanged += Element_SizeChanged;
-
-                UpdateCenterPoint(element);
             }
         }
     }
@@ -371,31 +369,46 @@ public static class AnimationHelper
     // ==========================================
     private static void UpdateCenterPoint(FrameworkElement element)
     {
-        var visual = ElementCompositionPreview.GetElementVisual(element);
-        var width = (float)element.ActualWidth;
-        var height = (float)element.ActualHeight;
-        visual.Size = new Vector2(width, height);
-        visual.CenterPoint = new Vector3(width / 2.0f, height / 2.0f, 0.0f);
+        try
+        {
+            var width = (float)element.ActualWidth;
+            var height = (float)element.ActualHeight;
+
+            if (width > 0 && height > 0 && !float.IsNaN(width) && !float.IsNaN(height) && !float.IsInfinity(width) && !float.IsInfinity(height))
+            {
+                var visual = ElementCompositionPreview.GetElementVisual(element);
+                if (visual != null)
+                {
+                    visual.Size = new Vector2(width, height);
+                    visual.CenterPoint = new Vector3(width / 2.0f, height / 2.0f, 0.0f);
+                }
+            }
+        }
+        catch { }
     }
 
     private static void AnimateScale(FrameworkElement element, float scaleTo, double durationMs)
     {
-        var visual = ElementCompositionPreview.GetElementVisual(element);
-        var compositor = visual.Compositor;
+        try
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            if (visual == null) return;
+            var compositor = visual.Compositor;
 
-        UpdateCenterPoint(element);
+            UpdateCenterPoint(element);
 
-        var scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
-        scaleAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
+            var scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
+            scaleAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
 
-        var easing = compositor.CreateCubicBezierEasingFunction(
-            new Vector2(0.1f, 0.9f),
-            new Vector2(0.2f, 1.0f)
-        );
+            var easing = compositor.CreateCubicBezierEasingFunction(
+                new Vector2(0.1f, 0.9f),
+                new Vector2(0.2f, 1.0f)
+            );
 
-        // Pass composition easing function directly into InsertKeyFrame
-        scaleAnimation.InsertKeyFrame(1.0f, new Vector3(scaleTo, scaleTo, 1.0f), easing);
+            scaleAnimation.InsertKeyFrame(1.0f, new Vector3(scaleTo, scaleTo, 1.0f), easing);
 
-        visual.StartAnimation("Scale", scaleAnimation);
+            visual.StartAnimation("Scale", scaleAnimation);
+        }
+        catch { }
     }
 }

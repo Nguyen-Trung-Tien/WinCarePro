@@ -316,14 +316,18 @@ public class DbManager
 
     public static string GetSettings()
     {
-        if (_cachedSettings != null) return _cachedSettings;
+        // Thread-safe cache read: capture volatile reference once
+        var cached = _cachedSettings;
+        if (cached != null) return cached;
+
         return ExecuteWithConnection(connection =>
         {
             var query = "SELECT Settings FROM Users LIMIT 1";
             using var command = new SqliteCommand(query, connection);
             var result = command.ExecuteScalar();
-            _cachedSettings = result?.ToString() ?? "";
-            return _cachedSettings;
+            var value = result?.ToString() ?? "";
+            _cachedSettings = value; // Atomic volatile write
+            return value;
         }, "");
     }
 
@@ -587,9 +591,11 @@ public class DbManager
                 plainBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
             return Convert.ToBase64String(cipherBytes);
         }
-        catch
+        catch (Exception ex)
         {
-            return plainText; // Safe fallback
+            // Never expose plaintext on encryption failure — log and return empty
+            Infrastructure.Logging.CrashLogger.LogException("DPAPI_ENCRYPT", ex);
+            return string.Empty;
         }
     }
 
@@ -603,9 +609,11 @@ public class DbManager
                 cipherBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
             return System.Text.Encoding.UTF8.GetString(plainBytes);
         }
-        catch
+        catch (Exception ex)
         {
-            return cipherText; // Safe fallback
+            // Never expose ciphertext as plaintext fallback — log and return empty
+            Infrastructure.Logging.CrashLogger.LogException("DPAPI_DECRYPT", ex);
+            return string.Empty;
         }
     }
 

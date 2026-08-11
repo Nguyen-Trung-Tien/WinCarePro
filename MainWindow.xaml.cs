@@ -362,7 +362,7 @@ public sealed partial class MainWindow : Window
                         {
                             try
                             {
-                                var optEngine = new Engines.SystemOptimizerEngine();
+                                var optEngine = App.Services.GetRequiredService<Engines.SystemOptimizerEngine>();
                                 await optEngine.OptimizeRamAsync();
                                 
                                 App.MainDispatcherQueue?.TryEnqueue(() =>
@@ -468,16 +468,22 @@ public sealed partial class MainWindow : Window
 
     private void OnRamChipClick(object sender, RoutedEventArgs e)
     {
-        try
+        Task.Run(async () =>
         {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
+            try
+            {
+                // Actually free system RAM via optimizer engine (EmptyWorkingSet + GC)
+                var optEngine = App.Services.GetRequiredService<Engines.SystemOptimizerEngine>();
+                await optEngine.OptimizeRamAsync();
 
-            var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
-            notificationService?.ShowToast("RAM Purged Successfully", "Cleaned standby memory & freed up system RAM resources.", Services.Contracts.NotificationSeverity.Success);
-        }
-        catch { }
+                App.MainDispatcherQueue?.TryEnqueue(() =>
+                {
+                    var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
+                    notificationService?.ShowToast("RAM Optimized".T(), "Process working sets trimmed and managed memory reclaimed.".T(), Services.Contracts.NotificationSeverity.Success);
+                });
+            }
+            catch { }
+        });
     }
 
     public void UpdateNotificationBadge()

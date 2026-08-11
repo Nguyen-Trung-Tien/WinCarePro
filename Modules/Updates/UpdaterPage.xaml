@@ -150,23 +150,23 @@
                     </Grid.ColumnDefinitions>
                     <FontIcon Grid.Column="0" Glyph="&#xE787;" FontSize="24" Foreground="#FFF59E0B" Margin="0,0,12,0" VerticalAlignment="Center" />
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Updates Available" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.UpdatesCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" />
+                        <TextBlock Text="Pending Updates" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <!-- Card 2: Last Checked -->
+            <!-- Card 2: Completed Updates -->
             <Border x:Name="StatCard2" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" Glyph="&#xEC92;" FontSize="24" Foreground="#FF3B82F6" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <FontIcon Grid.Column="0" Glyph="&#xE73E;" FontSize="24" Foreground="#FF10B981" Margin="0,0,12,0" VerticalAlignment="Center" />
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Last Checked" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.LastScanTime, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" />
+                        <TextBlock Text="Completed Updates" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.CompletedCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="#FF10B981"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -194,8 +194,8 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Column="0" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <ProgressRing Value="{x:Bind GetSecurityRating(ViewModel.UpdatesCount), Mode=OneWay}" IsActive="True" IsIndeterminate="False" Width="36" Height="36" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" />
-                        <TextBlock Text="{x:Bind GetSecurityRatingText(ViewModel.UpdatesCount), Mode=OneWay}" FontSize="9.5" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <ProgressRing Value="{x:Bind GetSecurityRating(ViewModel.PendingUpdatesCount), Mode=OneWay}" IsActive="True" IsIndeterminate="False" Width="36" Height="36" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind GetSecurityRatingText(ViewModel.PendingUpdatesCount), Mode=OneWay}" FontSize="9.5" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Grid>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Security Health" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
@@ -205,7 +205,7 @@
             </Border>
         </Grid>
 
-        <!-- 3. Toolbar Section -->
+        <!-- 3. Toolbar & Status Filter Tabs Section -->
         <Grid x:Name="ToolbarGrid" Grid.Row="2" Margin="0,0,0,12" RowSpacing="8">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="ToolbarRow0" Height="Auto" />
@@ -220,7 +220,7 @@
                 <ColumnDefinition x:Name="ToolbarCol3" Width="*" />
             </Grid.ColumnDefinitions>
             
-            <TextBox x:Name="SearchBox" Grid.Column="0" PlaceholderText="Search outdated packages..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="6" Height="32" VerticalAlignment="Center"/>
+            <TextBox x:Name="SearchBox" Grid.Column="0" PlaceholderText="Search packages..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="6" Height="32" VerticalAlignment="Center"/>
 
             <StackPanel x:Name="EngineStack" Grid.Column="1" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
                 <TextBlock Text="Engine:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
@@ -235,6 +235,34 @@
                 <Button Content="Deselect All" Click="OnDeselectAllClick" FontSize="11" Height="32" CornerRadius="6" Padding="12,0"/>
             </StackPanel>
 
+            <!-- Status Filter Tabs Row -->
+            <StackPanel x:Name="StatusFilterStack" Grid.Row="1" Grid.ColumnSpan="4" Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
+                <ToggleButton Content="All" IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'All'), Mode=OneWay}" Click="OnFilterAllClick" CornerRadius="6" Padding="12,4" FontSize="11.5" FontWeight="SemiBold"/>
+                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Pending'), Mode=OneWay}" Click="OnFilterPendingClick" CornerRadius="6" Padding="12,4" FontSize="11.5" FontWeight="SemiBold">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="Pending" />
+                        <Border Background="#35F59E0B" Padding="6,1" CornerRadius="8">
+                            <TextBlock Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="10" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                        </Border>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Updating'), Mode=OneWay}" Click="OnFilterUpdatingClick" CornerRadius="6" Padding="12,4" FontSize="11.5" FontWeight="SemiBold">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="Updating" />
+                        <Border Background="#353B82F6" Padding="6,1" CornerRadius="8">
+                            <TextBlock Text="{x:Bind ViewModel.UpdatingCount, Mode=OneWay}" FontSize="10" FontWeight="ExtraBold" Foreground="#FF3B82F6"/>
+                        </Border>
+                    </StackPanel>
+                </ToggleButton>
+                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Completed'), Mode=OneWay}" Click="OnFilterCompletedClick" CornerRadius="6" Padding="12,4" FontSize="11.5" FontWeight="SemiBold">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="Completed" />
+                        <Border Background="#3510B981" Padding="6,1" CornerRadius="8">
+                            <TextBlock Text="{x:Bind ViewModel.CompletedCount, Mode=OneWay}" FontSize="10" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                        </Border>
+                    </StackPanel>
+                </ToggleButton>
+            </StackPanel>
         </Grid>
 
         <!-- 4. Main Content Area -->
@@ -259,7 +287,7 @@
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:SoftwareUpdateInfo">
-                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16,12" Margin="0,2">
+                            <Border Background="{x:Bind CardBackgroundBrush, Mode=OneWay}" BorderBrush="{x:Bind CardBorderBrush, Mode=OneWay}" BorderThickness="1.5" CornerRadius="10" Padding="16,12" Margin="0,3">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -271,18 +299,26 @@
                                     </Grid.ColumnDefinitions>
                                     
                                     <!-- Checkbox for multi selection -->
-                                    <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" Margin="0,0,14,0" VerticalAlignment="Center"/>
+                                    <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" IsEnabled="{x:Bind CanUpdate, Mode=OneWay}" Visibility="{x:Bind IsNotUpdatingVisibility, Mode=OneWay}" Margin="0,0,12,0" VerticalAlignment="Center"/>
                                     
                                     <!-- Package Brand Icon -->
-                                    <Border Grid.Column="1" Width="40" Height="40" Background="{x:Bind BrandBgBrush, Mode=OneWay}" BorderBrush="{x:Bind BrandBorderBrush, Mode=OneWay}" BorderThickness="1" CornerRadius="10" Margin="0,0,14,0" VerticalAlignment="Center">
+                                    <Border Grid.Column="1" Width="44" Height="44" Background="{x:Bind BrandBgBrush, Mode=OneWay}" BorderBrush="{x:Bind BrandBorderBrush, Mode=OneWay}" BorderThickness="1" CornerRadius="10" Margin="0,0,14,0" VerticalAlignment="Center">
                                         <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}" FontSize="20" Foreground="{x:Bind BrandColorBrush, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
-                                    <!-- Name and ID -->
+                                    <!-- Name, ID, Source, Completed Tag -->
                                     <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,12,0">
-                                        <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis"/>
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="{x:Bind Id}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxWidth="220"/>
+                                            <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis"/>
+                                            <Border Visibility="{x:Bind IsCompleted, Mode=OneWay}" Background="#2510B981" BorderBrush="#5010B981" BorderThickness="1" Padding="6,1" CornerRadius="4" VerticalAlignment="Center">
+                                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                                    <FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#FF10B981"/>
+                                                    <TextBlock Text="Completed" FontSize="9.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
+                                            <TextBlock Text="{x:Bind Id}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxWidth="200"/>
                                             <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="4,1" CornerRadius="4" VerticalAlignment="Center">
                                                 <TextBlock Text="{x:Bind Source}" FontSize="9" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </Border>
@@ -291,28 +327,61 @@
 
                                     <!-- Version Comparison Pill -->
                                     <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,16,0">
-                                        <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="7,3" CornerRadius="6">
-                                            <TextBlock Text="{x:Bind InstalledVersion}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="8,4" CornerRadius="6">
+                                            <TextBlock Text="{x:Bind CurrentInstalledVersionDisplay, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </Border>
                                         <FontIcon Glyph="&#xE72A;" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
-                                        <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="7,3" CornerRadius="6">
-                                            <TextBlock Text="{x:Bind AvailableVersion}" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}"/>
+                                        <Border Background="{x:Bind StatusBgColor, Mode=OneWay}" BorderBrush="{x:Bind StatusBorderColor, Mode=OneWay}" BorderThickness="1" Padding="8,4" CornerRadius="6">
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <TextBlock Text="{x:Bind AvailableVersion}" FontSize="11.5" FontWeight="Bold" Foreground="{x:Bind StatusForegroundColor, Mode=OneWay}"/>
+                                                <FontIcon Glyph="{x:Bind StatusIconGlyph, Mode=OneWay}" FontSize="10" Foreground="{x:Bind StatusForegroundColor, Mode=OneWay}" VerticalAlignment="Center"/>
+                                            </StackPanel>
                                         </Border>
                                     </StackPanel>
 
-                                    <!-- Status Badge / Progress -->
-                                    <Grid Grid.Column="4" Margin="0,0,12,0" VerticalAlignment="Center" MinWidth="130">
+                                    <!-- Status Badge / Progress Bar Section -->
+                                    <Grid Grid.Column="4" Margin="0,0,14,0" VerticalAlignment="Center" MinWidth="150">
                                         <StackPanel Visibility="{x:Bind IsUpdatingVisibility, Mode=OneWay}" Spacing="4">
-                                            <ProgressBar Value="{x:Bind DownloadProgress, Mode=OneWay}" IsIndeterminate="{x:Bind IsIndeterminate, Mode=OneWay}" Maximum="100" Height="5" CornerRadius="2.5" Foreground="{StaticResource PrimaryAccentGradient}" />
-                                            <TextBlock Text="{x:Bind ProgressText, Mode=OneWay}" FontSize="9.5" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                            <ProgressBar Value="{x:Bind DownloadProgress, Mode=OneWay}" IsIndeterminate="{x:Bind IsIndeterminate, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
+                                            <TextBlock Text="{x:Bind ProgressText, Mode=OneWay}" FontSize="10" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{ThemeResource SystemAccentColor}" TextTrimming="CharacterEllipsis"/>
                                         </StackPanel>
-                                        <Border Visibility="{x:Bind IsNotUpdatingVisibility, Mode=OneWay}" Background="{x:Bind StatusBgColor, Mode=OneWay}" BorderBrush="{x:Bind StatusBorderColor, Mode=OneWay}" BorderThickness="1" CornerRadius="6" Padding="8,3" HorizontalAlignment="Center">
-                                            <TextBlock Text="{x:Bind UpdateStatusDisplay, Mode=OneWay}" Foreground="{x:Bind StatusForegroundColor, Mode=OneWay}" FontSize="10.5" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                        <Border Visibility="{x:Bind IsNotUpdatingVisibility, Mode=OneWay}" Background="{x:Bind StatusBgColor, Mode=OneWay}" BorderBrush="{x:Bind StatusBorderColor, Mode=OneWay}" BorderThickness="1" CornerRadius="8" Padding="10,4" HorizontalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <FontIcon Glyph="{x:Bind StatusIconGlyph, Mode=OneWay}" FontSize="11" Foreground="{x:Bind StatusForegroundColor, Mode=OneWay}"/>
+                                                <TextBlock Text="{x:Bind UpdateStatusDisplay, Mode=OneWay}" Foreground="{x:Bind StatusForegroundColor, Mode=OneWay}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                            </StackPanel>
                                         </Border>
                                     </Grid>
 
-                                    <!-- Update Action Button -->
-                                    <Button Grid.Column="5" Content="Update" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateSingleClick" IsEnabled="{x:Bind CanUpdate, Mode=OneWay}" VerticalAlignment="Center" Padding="14,6" CornerRadius="6"/>
+                                    <!-- Action Button / State Pill -->
+                                    <Grid Grid.Column="5" VerticalAlignment="Center">
+                                        <!-- Normal Update Button (Available) -->
+                                        <Button Visibility="{x:Bind IsAvailable, Mode=OneWay}" Content="{x:Bind ActionBtnText, Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateSingleClick" IsEnabled="{x:Bind CanUpdate, Mode=OneWay}" VerticalAlignment="Center" Padding="16,6" CornerRadius="6" FontWeight="SemiBold"/>
+
+                                        <!-- Retry Button (Failed) -->
+                                        <Button Visibility="{x:Bind IsFailed, Mode=OneWay}" Click="OnUpdateSingleClick" Background="#20EF4444" Foreground="#FFEF4444" BorderBrush="#50EF4444" BorderThickness="1" VerticalAlignment="Center" Padding="14,6" CornerRadius="6" FontWeight="SemiBold">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <FontIcon Glyph="&#xE72C;" FontSize="11" Foreground="#FFEF4444"/>
+                                                <TextBlock Text="Retry" FontSize="11.5" FontWeight="Bold" Foreground="#FFEF4444"/>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <!-- Up to Date Pill Badge (Completed) -->
+                                        <Border Visibility="{x:Bind IsCompleted, Mode=OneWay}" Background="#2010B981" BorderBrush="#6010B981" BorderThickness="1" Padding="14,6" CornerRadius="6">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="#FF10B981"/>
+                                                <TextBlock Text="Up to Date" FontSize="11.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Updating Badge Pill (Updating) -->
+                                        <Border Visibility="{x:Bind IsUpdating, Mode=OneWay}" Background="#20F59E0B" BorderBrush="#60F59E0B" BorderThickness="1" Padding="12,6" CornerRadius="6">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <ProgressRing IsActive="True" Width="12" Height="12" Foreground="#FFF59E0B"/>
+                                                <TextBlock Text="Updating..." FontSize="11.5" FontWeight="SemiBold" Foreground="#FFF59E0B"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -327,8 +396,8 @@
                         <FontIcon Glyph="&#xE73E;" FontSize="40" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Spacing="4" HorizontalAlignment="Center">
-                        <TextBlock Text="Your system is up to date!" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" />
-                        <TextBlock Text="No updates available for your third-party applications." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
+                        <TextBlock Text="System is up to date!" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" />
+                        <TextBlock Text="No pending updates found for the selected view filter." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
                     </StackPanel>
                     <Button Click="OnScanUpdatesClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Center" Padding="20,10" CornerRadius="8" FontWeight="SemiBold">
                         <StackPanel Orientation="Horizontal" Spacing="8">

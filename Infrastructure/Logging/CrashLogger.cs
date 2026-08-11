@@ -14,9 +14,12 @@ public static class CrashLogger
 
     private static readonly SemaphoreSlim FileLock = new(1, 1);
 
-    // Regex to redact sensitive patterns (e.g. usernames, passwords, API tokens)
+    // Regex to redact sensitive patterns (e.g. usernames, passwords, API tokens, file paths)
     private static readonly Regex PasswordRegex = new(@"password\s*=\s*[^;\s&]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
     private static readonly Regex TokenRegex = new(@"(bearer|token|secret)\s*[:=]\s*[^;\s&]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex ApiKeyRegex = new(@"(api[_\-]?key|apikey|x-api-key)\s*[:=]\s*[^;\s&]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex UserPathRegex = new(@"(C:\\Users\\|/home/)[^\\\s/]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex EmailRegex = new(@"[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}", RegexOptions.Compiled);
 
     public static void LogException(string context, Exception ex)
     {
@@ -72,6 +75,9 @@ public static class CrashLogger
         if (string.IsNullOrEmpty(input)) return string.Empty;
         string result = PasswordRegex.Replace(input, "password=***REDACTED***");
         result = TokenRegex.Replace(result, "$1=***REDACTED***");
+        result = ApiKeyRegex.Replace(result, "$1=***REDACTED***");
+        result = UserPathRegex.Replace(result, "$1***REDACTED***");
+        result = EmailRegex.Replace(result, "***REDACTED_EMAIL***");
         return result;
     }
 

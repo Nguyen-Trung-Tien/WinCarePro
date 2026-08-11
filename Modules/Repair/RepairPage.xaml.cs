@@ -13,8 +13,8 @@ public sealed partial class RepairPage : Page
 
     public RepairPage()
     {
-        InitializeComponent();
         ViewModel = App.Services.GetRequiredService<RepairViewModel>();
+        InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
 
@@ -40,7 +40,7 @@ public sealed partial class RepairPage : Page
     {
         if (LoadingOverlayGrid == null || FadeInLoading == null || FadeOutLoading == null) return;
 
-        bool isLoading = ViewModel.IsBusy || ViewModel.IsScanningDiagnostics;
+        bool isLoading = ViewModel?.IsBusy == true || ViewModel?.IsScanningDiagnostics == true;
         if (isLoading)
         {
             LoadingOverlayGrid.Visibility = Visibility.Visible;
@@ -54,7 +54,7 @@ public sealed partial class RepairPage : Page
 
     private void FadeOutLoading_Completed(object? sender, object e)
     {
-        bool isLoading = ViewModel.IsBusy || ViewModel.IsScanningDiagnostics;
+        bool isLoading = ViewModel?.IsBusy == true || ViewModel?.IsScanningDiagnostics == true;
         if (!isLoading && LoadingOverlayGrid != null)
         {
             LoadingOverlayGrid.Visibility = Visibility.Collapsed;
@@ -63,6 +63,7 @@ public sealed partial class RepairPage : Page
 
     private async void OnScanDiagnosticsClick(object sender, RoutedEventArgs e)
     {
+        if (ViewModel == null) return;
         var btn = ScanDiagnosticsBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, ScanDiagRing, ScanDiagText, ScanDiagIcon,
@@ -71,11 +72,12 @@ public sealed partial class RepairPage : Page
             {
                 await ViewModel.RunDiagnosticsScanAsync();
             },
-            minDurationMs: 1200);
+            minDurationMs: 1000);
     }
 
     private async void OnFixSelectedClick(object sender, RoutedEventArgs e)
     {
+        if (ViewModel == null) return;
         bool isAutoRepair = (sender as Button) == AutoRepairBtn;
         var btn = (sender as Button) ?? FixSelectedBtn ?? AutoRepairBtn;
         var ring = isAutoRepair ? AutoRepairRing : FixSelectedRing;
@@ -90,26 +92,73 @@ public sealed partial class RepairPage : Page
             {
                 await ViewModel.FixAllSelectedIssuesAsync();
             },
-            minDurationMs: 1200);
+            minDurationMs: 1000);
+    }
+
+    private async void OnFixSingleIssueClick(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel != null && (sender as Button)?.DataContext is DiagnosticIssueItem item)
+        {
+            await ViewModel.FixSingleIssueAsync(item);
+        }
+    }
+
+    private void OnCancelOperationClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel?.CancelCurrentOperation();
+    }
+
+    private void OnSelectAllClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel?.SelectAllIssues();
+    }
+
+    private void OnDeselectAllClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel?.DeselectAllIssues();
+    }
+
+    private void OnClearConsoleClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel?.ClearConsoleLog();
+    }
+
+    private void OnCopyConsoleClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel?.CopyConsoleLog();
+    }
+
+    private void OnToggleConsoleClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel?.ToggleConsoleVisibility();
+    }
+
+    private void OnFilterCategoryChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ViewModel != null && sender is ComboBox cb && cb.SelectedItem is ComboBoxItem item && item.Tag is string tag)
+        {
+            ViewModel.SelectedFilterCategory = tag;
+        }
     }
 
     private async void OnRepairRegistryPoliciesClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.RepairRegistryPoliciesAsync();
+        if (ViewModel != null) await ViewModel.RepairRegistryPoliciesAsync();
     }
 
     private async void OnCreateRestorePointClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.CreateRestorePointAsync();
+        if (ViewModel != null) await ViewModel.CreateRestorePointAsync();
     }
 
     private async void OnRepairNetworkStackClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.RepairNetworkStackAsync();
+        if (ViewModel != null) await ViewModel.RepairNetworkStackAsync();
     }
 
     private async void OnSfcScanClick(object sender, RoutedEventArgs e)
     {
+        if (ViewModel == null) return;
         var btn = SfcScanBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, SfcScanRing, SfcScanText, null,
@@ -118,11 +167,12 @@ public sealed partial class RepairPage : Page
             {
                 await ViewModel.RunSfcScanAsync(false);
             },
-            minDurationMs: 1200);
+            minDurationMs: 1000);
     }
 
     private async void OnSfcRepairClick(object sender, RoutedEventArgs e)
     {
+        if (ViewModel == null) return;
         var btn = SfcRepairBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, SfcRepairRing, SfcRepairText, null,
@@ -131,43 +181,45 @@ public sealed partial class RepairPage : Page
             {
                 await ViewModel.RunSfcScanAsync(true);
             },
-            minDurationMs: 1200);
+            minDurationMs: 1000);
     }
 
     private async void OnDismCheckClick(object sender, RoutedEventArgs e)
     {
+        if (ViewModel == null) return;
         var btn = DismCheckBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, DismCheckRing, DismCheckText, null,
             "Checking DISM Health...", "DISM Check",
             async () =>
             {
-                await ViewModel.RunDismOperationAsync("check");
+                await ViewModel.RunDismOperationAsync("checkhealth");
             },
-            minDurationMs: 1200);
+            minDurationMs: 1000);
     }
 
     private async void OnDismRestoreClick(object sender, RoutedEventArgs e)
     {
+        if (ViewModel == null) return;
         var btn = DismRestoreBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, DismRestoreRing, DismRestoreText, null,
             "Restoring DISM Health...", "DISM Restore",
             async () =>
             {
-                await ViewModel.RunDismOperationAsync("restore");
+                await ViewModel.RunDismOperationAsync("restorehealth");
             },
-            minDurationMs: 1200);
+            minDurationMs: 1000);
     }
 
     private async void OnResetUpdateClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.RepairWindowsUpdateAsync();
+        if (ViewModel != null) await ViewModel.RepairWindowsUpdateAsync();
     }
 
     private async void OnRestoreServicesClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.RepairServicesConfigAsync();
+        if (ViewModel != null) await ViewModel.RepairServicesConfigAsync();
     }
 
     public bool IsNot(bool val) => !val;
@@ -191,5 +243,6 @@ public sealed partial class RepairPage : Page
     }
 
     public string GetScoreText(int score) => $"{score} / 100";
-
 }
+
+

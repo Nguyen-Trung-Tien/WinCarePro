@@ -1,7 +1,11 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using System.ServiceProcess; // Note: System.ServiceProcess requires referencing System.ServiceProcess.ServiceController.
+using System.Security.Principal;
+using System.ServiceProcess;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using WinCarePro.Core.Helpers;
@@ -13,29 +17,75 @@ public class SystemEngine
     public event Action<string>? OutputReceived;
     public event Action<int>? ProgressChanged;
 
+    private static readonly Regex PercentRegex = new(@"(\d{1,3}(?:\.\d+)?)%", RegexOptions.Compiled);
+
     private void Log(string message) => OutputReceived?.Invoke($"[{DateTime.Now:HH:mm:ss}] {message}");
 
-    public async Task<bool> RunSfcScanAsync(bool repair = false)
+    public static bool IsUserAnAdmin()
+    {
+        try
+        {
+            using var identity = WindowsIdentity.GetCurrent();
+            var principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> RunSfcScanAsync(bool repair = false, CancellationToken cancellationToken = default)
     {
         string arguments = repair ? "/scannow" : "/verifyonly";
         Log($"Starting SFC tool (sfc {arguments})...");
-        ProgressChanged?.Invoke(10);
+        if (!IsUserAnAdmin())
+        {
+            Log("WARNING: System Repair Center is not running with Administrator privileges. SFC scan may require elevation.");
+        }
+        ProgressChanged?.Invoke(5);
+
+        string systemDir = Environment.GetFolderPath(Environment.SpecialFolder.System);
+        string sfcPath = Path.Combine(systemDir, "sfc.exe");
+        if (!File.Exists(sfcPath)) sfcPath = "sfc.exe";
+
+        using var heartbeatTimer = new System.Threading.Timer(_ =>
+        {
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                Log("SFC scan active... Verifying system files and DLL integrity.");
+            }
+        }, null, TimeSpan.FromSeconds(12), TimeSpan.FromSeconds(15));
 
         try
         {
-            ProgressChanged?.Invoke(50);
             var result = await ProcessRunner.RunAsync(
-                "sfc.exe",
+                sfcPath,
                 arguments,
-                TimeSpan.FromMinutes(20),
-                onOutput: Log,
-                onError: err => Log($"ERROR: {err}")
+                TimeSpan.FromMinutes(25),
+                onOutput: line =>
+                {
+                    Log(line);
+                    var match = PercentRegex.Match(line);
+                    if (match.Success && double.TryParse(match.Groups[1].Value, CultureInfo.InvariantCulture, out double pct))
+                    {
+                        int p = (int)Math.Clamp(pct, 0, 100);
+                        ProgressChanged?.Invoke(p);
+                    }
+                },
+                onError: err => Log($"ERROR: {err}"),
+                cancellationToken: cancellationToken
             );
             ProgressChanged?.Invoke(100);
 
             Log($"SFC finished with exit code {result.ExitCode}");
             Database.DbManager.LogAction($"SFC {arguments}", "System Repair", result.ExitCode == 0 ? "Success" : "Issues Found");
             return result.ExitCode == 0;
+        }
+        catch (OperationCanceledException)
+        {
+            Log("SFC operation was cancelled by user.");
+            return false;
         }
         catch (Exception ex)
         {
@@ -44,36 +94,66 @@ public class SystemEngine
         }
     }
 
-    public async Task<bool> RunDismAsync(string mode)
+    public async Task<bool> RunDismAsync(string mode, CancellationToken cancellationToken = default)
     {
-        // Modes: checkhealth, scanhealth, restorehealth, cleancomponent
-        string arguments = mode.ToLower() switch
+        string modeClean = (mode ?? "").ToLowerInvariant().Trim();
+        string arguments = modeClean switch
         {
-            "checkhealth" => "/online /cleanup-image /checkhealth",
-            "scanhealth" => "/online /cleanup-image /scanhealth",
-            "restorehealth" => "/online /cleanup-image /restorehealth",
-            "cleancomponent" => "/online /cleanup-image /startcomponentcleanup",
+            "check" or "checkhealth" => "/online /cleanup-image /checkhealth",
+            "scan" or "scanhealth" => "/online /cleanup-image /scanhealth",
+            "restore" or "restorehealth" => "/online /cleanup-image /restorehealth",
+            "clean" or "cleancomponent" => "/online /cleanup-image /startcomponentcleanup",
             _ => "/online /cleanup-image /checkhealth"
         };
 
         Log($"Starting DISM tool (dism {arguments})...");
-        ProgressChanged?.Invoke(15);
+        if (!IsUserAnAdmin())
+        {
+            Log("WARNING: System Repair Center is not running with Administrator privileges. DISM requires elevation.");
+        }
+        ProgressChanged?.Invoke(5);
+
+        string systemDir = Environment.GetFolderPath(Environment.SpecialFolder.System);
+        string dismPath = Path.Combine(systemDir, "dism.exe");
+        if (!File.Exists(dismPath)) dismPath = "dism.exe";
+
+        using var heartbeatTimer = new System.Threading.Timer(_ =>
+        {
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                Log("DISM operation active... Processing component store and servicing package state.");
+            }
+        }, null, TimeSpan.FromSeconds(12), TimeSpan.FromSeconds(15));
 
         try
         {
-            ProgressChanged?.Invoke(60);
             var result = await ProcessRunner.RunAsync(
-                "dism.exe",
+                dismPath,
                 arguments,
-                TimeSpan.FromMinutes(30),
-                onOutput: Log,
-                onError: err => Log($"ERROR: {err}")
+                TimeSpan.FromMinutes(35),
+                onOutput: line =>
+                {
+                    Log(line);
+                    var match = PercentRegex.Match(line);
+                    if (match.Success && double.TryParse(match.Groups[1].Value, CultureInfo.InvariantCulture, out double pct))
+                    {
+                        int p = (int)Math.Clamp(pct, 0, 100);
+                        ProgressChanged?.Invoke(p);
+                    }
+                },
+                onError: err => Log($"ERROR: {err}"),
+                cancellationToken: cancellationToken
             );
             ProgressChanged?.Invoke(100);
 
             Log($"DISM finished with exit code {result.ExitCode}");
             Database.DbManager.LogAction($"DISM {mode}", "System Repair", result.ExitCode == 0 ? "Success" : "Failed");
             return result.ExitCode == 0;
+        }
+        catch (OperationCanceledException)
+        {
+            Log("DISM operation was cancelled by user.");
+            return false;
         }
         catch (Exception ex)
         {
@@ -82,7 +162,7 @@ public class SystemEngine
         }
     }
 
-    public async Task<bool> RepairWindowsUpdateAsync()
+    public async Task<bool> RepairWindowsUpdateAsync(CancellationToken cancellationToken = default)
     {
         return await Task.Run(async () =>
         {
@@ -91,15 +171,20 @@ public class SystemEngine
 
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 // 1. Stop Windows Update Services
                 string[] services = { "wuauserv", "cryptSvc", "bits", "msiserver" };
                 foreach (var svc in services)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     Log($"Stopping service: {svc}...");
-                    await RunCmdAsync($"net stop {svc} /y");
-                    await Task.Delay(1000);
+                    await RunCmdAsync($"net stop {svc} /y", cancellationToken);
+                    await Task.Delay(1000, cancellationToken);
                 }
                 ProgressChanged?.Invoke(40);
+
+                cancellationToken.ThrowIfCancellationRequested();
 
                 // 2. Rename SoftwareDistribution & Catroot2 folder
                 Log("Renaming SoftwareDistribution & catroot2 directories...");
@@ -147,12 +232,14 @@ public class SystemEngine
                 }
                 ProgressChanged?.Invoke(70);
 
+                cancellationToken.ThrowIfCancellationRequested();
+
                 // 3. Start services again
                 foreach (var svc in services)
                 {
                     Log($"Starting service: {svc}...");
-                    await RunCmdAsync($"net start {svc}");
-                    await Task.Delay(1000);
+                    await RunCmdAsync($"net start {svc}", cancellationToken);
+                    await Task.Delay(1000, cancellationToken);
                 }
                 ProgressChanged?.Invoke(100);
 
@@ -160,15 +247,20 @@ public class SystemEngine
                 Database.DbManager.LogAction("Reset Windows Update", "System Repair", "Success");
                 return true;
             }
+            catch (OperationCanceledException)
+            {
+                Log("Windows Update Repair operation was cancelled.");
+                return false;
+            }
             catch (Exception ex)
             {
                 Log($"Windows Update Repair failed: {ex.Message}");
                 return false;
             }
-        });
+        }, cancellationToken);
     }
 
-    public async Task<bool> RepairServicesConfigAsync(System.Collections.Generic.IEnumerable<string> servicesToRepair)
+    public async Task<bool> RepairServicesConfigAsync(System.Collections.Generic.IEnumerable<string> servicesToRepair, CancellationToken cancellationToken = default)
     {
         return await Task.Run(async () =>
         {
@@ -188,12 +280,21 @@ public class SystemEngine
                 int count = 0;
                 foreach (var svc in serviceList)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    // Validate service name to prevent command injection
+                    if (!Core.Helpers.ProcessRunner.IsValidServiceName(svc))
+                    {
+                        Log($"Skipping invalid service name: {svc}");
+                        continue;
+                    }
+
                     Log($"Setting service {svc} startup type to Automatic...");
-                    await RunCmdAsync($"sc config {svc} start= auto");
-                    await RunCmdAsync($"sc start {svc}");
+                    await RunCmdAsync($"sc config {svc} start= auto", cancellationToken);
+                    await RunCmdAsync($"sc start {svc}", cancellationToken);
                     count++;
                     ProgressChanged?.Invoke(20 + (80 * count / serviceList.Count));
-                    await Task.Delay(500);
+                    await Task.Delay(500, cancellationToken);
                 }
                 ProgressChanged?.Invoke(100);
 
@@ -201,15 +302,20 @@ public class SystemEngine
                 Database.DbManager.LogAction($"Restore Services Config ({string.Join(", ", serviceList)})", "System Repair", "Success");
                 return true;
             }
+            catch (OperationCanceledException)
+            {
+                Log("Services Config Repair operation was cancelled.");
+                return false;
+            }
             catch (Exception ex)
             {
                 Log($"Services Config Repair failed: {ex.Message}");
                 return false;
             }
-        });
+        }, cancellationToken);
     }
 
-    public async Task<bool> CreateRestorePointAsync()
+    public async Task<bool> CreateRestorePointAsync(CancellationToken cancellationToken = default)
     {
         return await Task.Run(async () =>
         {
@@ -217,11 +323,13 @@ public class SystemEngine
             ProgressChanged?.Invoke(10);
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 Log("Enabling System Restore on drive C:...");
-                await RunCmdAsync("powershell -Command \"Enable-ComputerRestore -Drive 'C:'\"");
+                await RunCmdAsync("powershell -Command \"Enable-ComputerRestore -Drive 'C:'\"", cancellationToken);
                 ProgressChanged?.Invoke(30);
-                await Task.Delay(500);
+                await Task.Delay(500, cancellationToken);
 
+                cancellationToken.ThrowIfCancellationRequested();
                 Log("Executing Restore Point checkpoint (PowerShell)...");
                 ProgressChanged?.Invoke(60);
                 var result = await ProcessRunner.RunAsync(
@@ -229,7 +337,8 @@ public class SystemEngine
                     "-ExecutionPolicy Bypass -Command \"Checkpoint-Computer -Description 'WinCarePro Pre-Repair Restore Point' -RestorePointType 'MODIFY_SETTINGS' -Confirm:$false\"",
                     TimeSpan.FromMinutes(10),
                     onOutput: Log,
-                    onError: err => Log($"ERROR: {err}")
+                    onError: err => Log($"ERROR: {err}"),
+                    cancellationToken: cancellationToken
                 );
                 ProgressChanged?.Invoke(100);
 
@@ -246,15 +355,20 @@ public class SystemEngine
                     return false;
                 }
             }
+            catch (OperationCanceledException)
+            {
+                Log("Create Restore Point operation was cancelled.");
+                return false;
+            }
             catch (Exception ex)
             {
                 Log($"Failed to create restore point: {ex.Message}");
                 return false;
             }
-        });
+        }, cancellationToken);
     }
 
-    public async Task<bool> RepairRegistryPoliciesAsync()
+    public async Task<bool> RepairRegistryPoliciesAsync(CancellationToken cancellationToken = default)
     {
         return await Task.Run(() =>
         {
@@ -283,9 +397,10 @@ public class SystemEngine
                 int step = 0;
 
                 foreach (var root in rootKeys)
-                 {
+                {
                     foreach (var path in policyKeys)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         step++;
                         ProgressChanged?.Invoke(10 + (70 * step / totalSteps));
                         try
@@ -351,15 +466,20 @@ public class SystemEngine
                 Database.DbManager.LogAction($"Repair Registry Policies (Fixed {fixedCount})", "System Repair", "Success");
                 return true;
             }
+            catch (OperationCanceledException)
+            {
+                Log("Registry policy repair was cancelled.");
+                return false;
+            }
             catch (Exception ex)
             {
                 Log($"Registry Policies repair failed: {ex.Message}");
                 return false;
             }
-        });
+        }, cancellationToken);
     }
 
-    public async Task<bool> RepairNetworkStackAsync()
+    public async Task<bool> RepairNetworkStackAsync(CancellationToken cancellationToken = default)
     {
         return await Task.Run(async () =>
         {
@@ -367,51 +487,62 @@ public class SystemEngine
             ProgressChanged?.Invoke(10);
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 Log("1/5 Flushing DNS Cache...");
-                await RunCmdAsync("ipconfig /flushdns");
+                await RunCmdAsync("ipconfig /flushdns", cancellationToken);
                 ProgressChanged?.Invoke(30);
-                await Task.Delay(300);
+                await Task.Delay(300, cancellationToken);
 
+                cancellationToken.ThrowIfCancellationRequested();
                 Log("2/5 Registering DNS...");
-                await RunCmdAsync("ipconfig /registerdns");
+                await RunCmdAsync("ipconfig /registerdns", cancellationToken);
                 ProgressChanged?.Invoke(50);
-                await Task.Delay(300);
+                await Task.Delay(300, cancellationToken);
 
+                cancellationToken.ThrowIfCancellationRequested();
                 Log("3/5 Releasing current DHCP lease...");
-                await RunCmdAsync("ipconfig /release");
+                await RunCmdAsync("ipconfig /release", cancellationToken);
                 ProgressChanged?.Invoke(70);
-                await Task.Delay(300);
+                await Task.Delay(300, cancellationToken);
 
+                cancellationToken.ThrowIfCancellationRequested();
                 Log("4/5 Renewing DHCP network interface configs...");
-                await RunCmdAsync("ipconfig /renew");
+                await RunCmdAsync("ipconfig /renew", cancellationToken);
                 ProgressChanged?.Invoke(85);
-                await Task.Delay(300);
+                await Task.Delay(300, cancellationToken);
 
+                cancellationToken.ThrowIfCancellationRequested();
                 Log("5/5 Resetting Winsock catalog and IP routes...");
-                await RunCmdAsync("netsh winsock reset");
-                await RunCmdAsync("netsh int ip reset");
+                await RunCmdAsync("netsh winsock reset", cancellationToken);
+                await RunCmdAsync("netsh int ip reset", cancellationToken);
                 ProgressChanged?.Invoke(100);
 
                 Log("Network Stack and local DNS resolvers successfully repaired.");
                 Database.DbManager.LogAction("Repair Network Stack", "System Repair", "Success");
                 return true;
             }
+            catch (OperationCanceledException)
+            {
+                Log("Network stack repair was cancelled.");
+                return false;
+            }
             catch (Exception ex)
             {
                 Log($"Network repair failed: {ex.Message}");
                 return false;
             }
-        });
+        }, cancellationToken);
     }
 
-    private async Task RunCmdAsync(string command)
+    private async Task RunCmdAsync(string command, CancellationToken cancellationToken = default)
     {
         try
         {
             await ProcessRunner.RunAsync(
                 "cmd.exe",
                 $"/c {command}",
-                TimeSpan.FromSeconds(15)
+                TimeSpan.FromSeconds(15),
+                cancellationToken: cancellationToken
             );
         }
         catch

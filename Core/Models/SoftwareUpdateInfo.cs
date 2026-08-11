@@ -93,12 +93,22 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
                 OnPropertyChanged(nameof(UpdateStatusDisplay));
                 OnPropertyChanged(nameof(IsUpdating));
                 OnPropertyChanged(nameof(IsNotUpdating));
+                OnPropertyChanged(nameof(IsCompleted));
+                OnPropertyChanged(nameof(IsFailed));
+                OnPropertyChanged(nameof(IsAvailable));
                 OnPropertyChanged(nameof(CanUpdate));
+                OnPropertyChanged(nameof(CanRetry));
                 OnPropertyChanged(nameof(IsUpdatingVisibility));
                 OnPropertyChanged(nameof(IsNotUpdatingVisibility));
                 OnPropertyChanged(nameof(StatusBgColor));
                 OnPropertyChanged(nameof(StatusBorderColor));
                 OnPropertyChanged(nameof(StatusForegroundColor));
+                OnPropertyChanged(nameof(CardBackgroundBrush));
+                OnPropertyChanged(nameof(CardBorderBrush));
+                OnPropertyChanged(nameof(StatusIconGlyph));
+                OnPropertyChanged(nameof(CurrentInstalledVersionDisplay));
+                OnPropertyChanged(nameof(ActionBtnText));
+                OnPropertyChanged(nameof(IsActionBtnEnabled));
             }
         }
     }
@@ -108,10 +118,49 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
 
     public bool IsUpdating => UpdateStatus == StatusUpdating;
     public bool IsNotUpdating => UpdateStatus != StatusUpdating;
+    public bool IsCompleted => UpdateStatus == StatusCompleted;
+    public bool IsFailed => UpdateStatus == StatusFailed;
+    public bool IsAvailable => UpdateStatus == StatusAvailable;
     public bool CanUpdate => UpdateStatus != StatusCompleted && UpdateStatus != StatusUpdating;
+    public bool CanRetry => UpdateStatus == StatusFailed;
+    public bool IsActionBtnEnabled => UpdateStatus == StatusAvailable || UpdateStatus == StatusFailed;
 
     public Visibility IsUpdatingVisibility => IsUpdating ? Visibility.Visible : Visibility.Collapsed;
     public Visibility IsNotUpdatingVisibility => IsNotUpdating ? Visibility.Visible : Visibility.Collapsed;
+
+    public string CurrentInstalledVersionDisplay => IsCompleted ? AvailableVersion : InstalledVersion;
+
+    public string ActionBtnText => UpdateStatus switch
+    {
+        StatusCompleted => "Up to Date ✓".T(),
+        StatusUpdating => "Updating...".T(),
+        StatusFailed => "Retry ↻".T(),
+        _ => "Update".T()
+    };
+
+    public string StatusIconGlyph => UpdateStatus switch
+    {
+        StatusCompleted => "\uE73E", // Checkmark
+        StatusUpdating => "\uE896",  // Progress Sync
+        StatusFailed => "\uEA39",    // Error / Warning
+        _ => "\uE895"                // Download
+    };
+
+    public Brush CardBackgroundBrush => UpdateStatus switch
+    {
+        StatusCompleted => new SolidColorBrush(Color.FromArgb(18, 16, 185, 129)),  // Tinted Emerald Green
+        StatusUpdating => new SolidColorBrush(Color.FromArgb(22, 245, 158, 11)),   // Tinted Warm Amber
+        StatusFailed => new SolidColorBrush(Color.FromArgb(22, 239, 68, 68)),     // Tinted Rose Red
+        _ => new SolidColorBrush(Color.FromArgb(0, 0, 0, 0))                       // Transparent container
+    };
+
+    public Brush CardBorderBrush => UpdateStatus switch
+    {
+        StatusCompleted => new SolidColorBrush(Color.FromArgb(70, 16, 185, 129)),  // Glowing Emerald Border
+        StatusUpdating => new SolidColorBrush(Color.FromArgb(120, 245, 158, 11)),  // Glowing Amber Border
+        StatusFailed => new SolidColorBrush(Color.FromArgb(100, 239, 68, 68)),    // Red Error Border
+        _ => new SolidColorBrush(Color.FromArgb(32, 128, 128, 128))               // Standard stroke
+    };
 
     public Brush StatusBgColor => UpdateStatus switch
     {

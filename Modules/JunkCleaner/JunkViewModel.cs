@@ -377,20 +377,19 @@ public class JunkViewModel : ViewModelBase
                 }
             });
 
-            _dispatcherQueue.TryEnqueue(async () =>
-            {
+            // Use RunOnUIAsync instead of async void lambda in TryEnqueue to prevent unobserved exceptions
+            await RunOnUIAsync(async () =>
                 await _dialogService.ShowMessageAsync(
                     "Clean After Restart".T(),
                     "Cleanup scheduled successfully for next startup.".T()
-                );
-            });
+                )
+            );
         }
         catch (Exception ex)
         {
-            _dispatcherQueue.TryEnqueue(async () =>
-            {
-                await _dialogService.ShowMessageAsync("Error".T(), ex.Message);
-            });
+            await RunOnUIAsync(async () =>
+                await _dialogService.ShowMessageAsync("Error".T(), ex.Message)
+            );
         }
     }
 

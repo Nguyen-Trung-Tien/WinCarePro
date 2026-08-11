@@ -47,6 +47,31 @@ public partial class TranslationManager
         _translations["Hardware Center"] = "Thông tin phần cứng";
         _translations["Registry Center"] = "Quản lý Registry";
         _translations["Software Updater"] = "Cập nhật phần mềm";
+        _translations["Scan Updates"] = "Quét cập nhật";
+        _translations["Update Selected"] = "Cập nhật mục chọn";
+        _translations["Update All"] = "Cập nhật tất cả";
+        _translations["Pending Updates"] = "Cần cập nhật";
+        _translations["Completed Updates"] = "Đã cập nhật";
+        _translations["Active Engine"] = "Bộ máy hoạt động";
+        _translations["Security Health"] = "Sức khỏe bảo mật";
+        _translations["Search packages..."] = "Tìm kiếm gói phần mềm...";
+        _translations["Engine:"] = "Bộ máy:";
+        _translations["Select All"] = "Chọn tất cả";
+        _translations["Deselect All"] = "Bỏ chọn tất cả";
+        _translations["All"] = "Tất cả";
+        _translations["Pending"] = "Cần cập nhật";
+        _translations["Updating"] = "Đang cập nhật";
+        _translations["Completed"] = "Đã cập nhật";
+        _translations["Available"] = "Có bản mới";
+        _translations["Failed"] = "Thất bại";
+        _translations["Up to Date"] = "Đã mới nhất";
+        _translations["Up to Date ✓"] = "Đã mới nhất ✓";
+        _translations["Updating..."] = "Đang cập nhật...";
+        _translations["Retry"] = "Thử lại";
+        _translations["Retry ↻"] = "Thử lại ↻";
+        _translations["System is up to date!"] = "Hệ thống đã mới nhất!";
+        _translations["No pending updates found for the selected view filter."] = "Không tìm thấy bản cập nhật nào trong bộ lọc này.";
+        _translations["Check Again"] = "Kiểm tra lại";
         _translations["Driver Updater"] = "Cập nhật Driver";
         _translations["Context Menu"] = "Menu ngữ cảnh";
         _translations["CARE & CLEAN"] = "CHĂM SÓC & DỌN DẸP";
@@ -1811,6 +1836,12 @@ public partial class TranslationManager
         _translations["AI Recommended Optimizations"] = "Đề xuất Tối ưu hóa từ AI";
         _translations["Apply Fix"] = "Khắc phục ngay";
         _translations["Predictive Boot Delay Profiling"] = "Tiên lượng Trễ Khởi động";
+        _translations["Export AI Report"] = "Xuất Báo Cáo AI";
+        _translations["No System Bottlenecks Detected"] = "Không Phát hiện Thắt cổ chai Hệ thống";
+        _translations["Your system is running at optimal peak performance. AI Assistant is continuously monitoring telemetry."] = "Hệ thống của bạn đang hoạt động ở hiệu suất tối ưu đỉnh cao. AI Assistant đang liên tục giám sát thông số hệ thống.";
+        _translations["Export Failed"] = "Xuất Báo Cáo Thất Bại";
+        _translations["AI Report Exported"] = "Đã Xuất Báo Cáo AI";
+        _translations["High Memory Pressure"] = "Áp lực Bộ nhớ RAM Cao";
 
         // --- Network Center & Repair Items ---
         _translations["DNS Query Latency Benchmark & Optimization"] = "Đo & Tối ưu hóa Độ trễ Truy vấn DNS";

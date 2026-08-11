@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,17 @@ public static class ProcessRunner
         var outputBuilder = new StringBuilder();
         var errorBuilder = new StringBuilder();
 
+        // Determine optimal encoding (UTF-8 with fallback to Console Output Encoding)
+        Encoding encoding = Encoding.UTF8;
+        try
+        {
+            encoding = Encoding.GetEncoding(Console.OutputEncoding.CodePage);
+        }
+        catch
+        {
+            encoding = Encoding.UTF8;
+        }
+
         using var process = new Process
         {
             StartInfo = new ProcessStartInfo
@@ -38,42 +50,17 @@ public static class ProcessRunner
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
+                StandardOutputEncoding = encoding,
+                StandardErrorEncoding = encoding,
                 CreateNoWindow = true,
                 WorkingDirectory = workingDirectory ?? ""
             }
         };
 
-        using var outputCloseEvent = new SemaphoreSlim(0);
-        using var errorCloseEvent = new SemaphoreSlim(0);
-
-        process.OutputDataReceived += (s, e) =>
-        {
-            if (e.Data == null)
-            {
-                outputCloseEvent.Release();
-            }
-            else
-            {
-                outputBuilder.AppendLine(e.Data);
-                onOutput?.Invoke(e.Data);
-            }
-        };
-
-        process.ErrorDataReceived += (s, e) =>
-        {
-            if (e.Data == null)
-            {
-                errorCloseEvent.Release();
-            }
-            else
-            {
-                errorBuilder.AppendLine(e.Data);
-                onError?.Invoke(e.Data);
-            }
-        };
-
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (!process.Start())
             {
                 result.ExitCode = -1;
@@ -81,36 +68,56 @@ public static class ProcessRunner
                 return result;
             }
 
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            var processExitTask = process.WaitForExitAsync(cts.Token);
-            var timeoutTask = Task.Delay(timeout, cts.Token);
+            cts.CancelAfter(timeout);
 
-            var completedTask = await Task.WhenAny(processExitTask, timeoutTask);
-            if (completedTask == timeoutTask)
+            var outputTask = ReadStreamAsync(process.StandardOutput, outputBuilder, onOutput, cts.Token);
+            var errorTask = ReadStreamAsync(process.StandardError, errorBuilder, onError, cts.Token);
+
+            try
             {
-                result.TimedOut = true;
-                try
+                await process.WaitForExitAsync(cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                if (cancellationToken.IsCancellationRequested)
                 {
-                    process.Kill(true); // Kill the process and all its descendants
+                    try { process.Kill(true); } catch { }
+                    throw;
                 }
-                catch { }
+
+                // If cancelled because of timeout
+                result.TimedOut = true;
+                try { process.Kill(true); } catch { }
                 result.ExitCode = -1;
                 result.Error = "Process execution timed out.";
             }
-            else
-            {
-                cts.Cancel(); // Cancel the timeout Task.Delay task
-                result.ExitCode = process.ExitCode;
 
-                // Safely wait for the stream close events with a small timeout
-                await Task.WhenAll(
-                    outputCloseEvent.WaitAsync(TimeSpan.FromSeconds(2)),
-                    errorCloseEvent.WaitAsync(TimeSpan.FromSeconds(2))
-                );
+            if (!result.TimedOut)
+            {
+                result.ExitCode = process.ExitCode;
             }
+
+            // Signal stream readers to stop if standard output handle was inherited by a child process
+            try { cts.Cancel(); } catch { }
+
+            // Safely wait for stream readers with a small timeout
+            await Task.WhenAll(
+                Task.WhenAny(outputTask, Task.Delay(1000)),
+                Task.WhenAny(errorTask, Task.Delay(1000))
+            );
+        }
+        catch (OperationCanceledException)
+        {
+            try
+            {
+                if (!process.HasExited)
+                {
+                    process.Kill(true);
+                }
+            }
+            catch { }
+            throw;
         }
         catch (Exception ex)
         {
@@ -131,16 +138,76 @@ public static class ProcessRunner
         return result;
     }
 
+    private static async Task ReadStreamAsync(
+        StreamReader reader,
+        StringBuilder fullBuilder,
+        Action<string>? onLine,
+        CancellationToken cancellationToken)
+    {
+        char[] buffer = new char[1024];
+        var currentLine = new StringBuilder();
+
+        try
+        {
+            int read;
+            while ((read = await reader.ReadAsync(buffer.AsMemory(), cancellationToken)) > 0)
+            {
+                for (int i = 0; i < read; i++)
+                {
+                    char c = buffer[i];
+                    fullBuilder.Append(c);
+
+                    if (c == '\r' || c == '\n')
+                    {
+                        if (currentLine.Length > 0)
+                        {
+                            string line = currentLine.ToString().Trim();
+                            if (!string.IsNullOrWhiteSpace(line))
+                            {
+                                onLine?.Invoke(line);
+                            }
+                            currentLine.Clear();
+                        }
+                    }
+                    else
+                    {
+                        currentLine.Append(c);
+                    }
+                }
+            }
+
+            if (currentLine.Length > 0)
+            {
+                string line = currentLine.ToString().Trim();
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    onLine?.Invoke(line);
+                }
+            }
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error reading process stream: {ex.Message}");
+        }
+    }
+
     /// <summary>
     /// Escapes command line arguments safely to prevent command injection risks.
+    /// Strips dangerous shell metacharacters that enable command chaining or injection.
     /// </summary>
     public static string SanitizeArgument(string argument)
     {
         if (string.IsNullOrEmpty(argument))
             return "\"\"";
 
-        // Remove dangerous command chaining characters if unquoted
-        string sanitized = argument.Replace("\r", "").Replace("\n", "");
+        // Remove dangerous command chaining and shell injection characters
+        string sanitized = argument
+            .Replace("\r", "").Replace("\n", "")
+            .Replace("|", "").Replace("&", "")
+            .Replace(";", "").Replace("`", "")
+            .Replace("$(", "").Replace("${", "")
+            .Replace("<", "").Replace(">", "");
         
         // Wrap in quotes if contains whitespace or special chars
         if (sanitized.Contains(' ') || sanitized.Contains('\t') || sanitized.Contains('\"'))
@@ -150,4 +217,15 @@ public static class ProcessRunner
 
         return sanitized;
     }
+
+    /// <summary>
+    /// Validates that a service name contains only safe alphanumeric characters and underscores.
+    /// Returns true if the name is safe, false if it contains potential injection characters.
+    /// </summary>
+    public static bool IsValidServiceName(string serviceName)
+    {
+        if (string.IsNullOrWhiteSpace(serviceName)) return false;
+        return System.Text.RegularExpressions.Regex.IsMatch(serviceName, @"^[a-zA-Z0-9_\-\.]+$");
+    }
 }
+

@@ -42,13 +42,15 @@ namespace WinCarePro.Modules.GamingTurbo
                     {
                         try
                         {
-                            // Skip system & critical processes
-                            if (proc.Id <= 4 || proc.ProcessName.Equals("explorer", StringComparison.OrdinalIgnoreCase))
+                            // Skip system & critical processes, and already-exited processes
+                            if (proc.Id <= 4 || proc.HasExited ||
+                                proc.ProcessName.Equals("explorer", StringComparison.OrdinalIgnoreCase))
                                 continue;
 
                             // Trim Working Set
                             long before = proc.WorkingSet64;
                             EmptyWorkingSet(proc.Handle);
+                            proc.Refresh();
                             long after = proc.WorkingSet64;
 
                             if (before > after)
@@ -57,7 +59,13 @@ namespace WinCarePro.Modules.GamingTurbo
                                 count++;
                             }
                         }
+                        catch (System.ComponentModel.Win32Exception) { } // Access denied (expected for protected processes)
+                        catch (InvalidOperationException) { } // Process already exited between check and access
                         catch { }
+                        finally
+                        {
+                            try { proc.Dispose(); } catch { }
+                        }
                     }
 
                     OptimizedProcessesCount = count;

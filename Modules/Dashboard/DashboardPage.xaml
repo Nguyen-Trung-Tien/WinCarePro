@@ -268,7 +268,7 @@
                                 <Grid Grid.Column="1" Width="54" Height="54" Margin="10,0,0,0" VerticalAlignment="Center">
                                     <Ellipse Stroke="{StaticResource PrimaryAccentGradient}" StrokeThickness="3.5" Opacity="0.25"/>
                                     <ProgressRing Value="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" Width="50" Height="50" 
-                                                  Foreground="{StaticResource AiCopilotGradient}" Background="Transparent" IsIndeterminate="False"/>
+                                                  Foreground="{StaticResource PrimaryAccentBrush}" Background="Transparent" IsIndeterminate="False"/>
                                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <TextBlock x:Name="AiScoreText" Text="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" 
                                                    FontSize="16" FontWeight="ExtraBold" HorizontalAlignment="Center" 

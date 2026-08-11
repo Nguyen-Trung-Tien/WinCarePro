@@ -80,6 +80,42 @@ public class UpdaterViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _showLogPanel, v => _showLogPanel = v, value);
     }
 
+    // Filter Tab Properties
+    private string _selectedStatusFilter = "All";
+    public string SelectedStatusFilter
+    {
+        get => _selectedStatusFilter;
+        set
+        {
+            SetPropertyOnUI(() => _selectedStatusFilter, v =>
+            {
+                _selectedStatusFilter = v;
+                ApplyFilters();
+            }, value);
+        }
+    }
+
+    private int _pendingUpdatesCount;
+    public int PendingUpdatesCount
+    {
+        get => _pendingUpdatesCount;
+        set => SetPropertyOnUI(() => _pendingUpdatesCount, v => _pendingUpdatesCount = v, value);
+    }
+
+    private int _updatingCount;
+    public int UpdatingCount
+    {
+        get => _updatingCount;
+        set => SetPropertyOnUI(() => _updatingCount, v => _updatingCount = v, value);
+    }
+
+    private int _completedCount;
+    public int CompletedCount
+    {
+        get => _completedCount;
+        set => SetPropertyOnUI(() => _completedCount, v => _completedCount = v, value);
+    }
+
     // Statistics properties
     private int _updatesCount;
     public int UpdatesCount
@@ -116,7 +152,7 @@ public class UpdaterViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _systemHealthColor, v => _systemHealthColor = v, value);
     }
 
-    public bool HasSelectedUpdates => _allUpdates.Any(x => x.IsSelected);
+    public bool HasSelectedUpdates => _allUpdates.Any(x => x.IsSelected && x.UpdateStatus != SoftwareUpdateInfo.StatusCompleted);
 
     public ObservableCollection<SoftwareUpdateInfo> Updates { get; } = new();
 
@@ -150,6 +186,15 @@ public class UpdaterViewModel : ViewModelBase
         });
     }
 
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        _dispatcherQueue?.TryEnqueue(() =>
+        {
+            UpdateStatistics();
+            ApplyFilters();
+        });
+    }
+
     public void Initialize()
     {
         // Unsubscribe first to avoid double registration
@@ -157,6 +202,8 @@ public class UpdaterViewModel : ViewModelBase
         _updaterEngine.OutputReceived += OnOutputReceived;
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
         _updaterEngine.ItemProgressChanged += OnItemProgressChanged;
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
 
         _ = ScanUpdatesAsync();
     }
@@ -165,6 +212,7 @@ public class UpdaterViewModel : ViewModelBase
     {
         _updaterEngine.OutputReceived -= OnOutputReceived;
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
     }
 
     public async Task ScanUpdatesAsync()
@@ -211,6 +259,19 @@ public class UpdaterViewModel : ViewModelBase
                                    x.Id.Contains(query, StringComparison.OrdinalIgnoreCase));
         }
 
+        if (SelectedStatusFilter == "Pending")
+        {
+            list = list.Where(x => x.UpdateStatus == SoftwareUpdateInfo.StatusAvailable || x.UpdateStatus == SoftwareUpdateInfo.StatusFailed);
+        }
+        else if (SelectedStatusFilter == "Updating")
+        {
+            list = list.Where(x => x.UpdateStatus == SoftwareUpdateInfo.StatusUpdating);
+        }
+        else if (SelectedStatusFilter == "Completed")
+        {
+            list = list.Where(x => x.UpdateStatus == SoftwareUpdateInfo.StatusCompleted);
+        }
+
         foreach (var item in list)
         {
             item.PropertyChanged -= OnAppPropertyChanged;
@@ -223,31 +284,37 @@ public class UpdaterViewModel : ViewModelBase
 
     private void OnAppPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(SoftwareUpdateInfo.IsSelected))
+        if (e.PropertyName == nameof(SoftwareUpdateInfo.IsSelected) ||
+            e.PropertyName == nameof(SoftwareUpdateInfo.UpdateStatus))
         {
-            OnPropertyChanged(nameof(HasSelectedUpdates));
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                UpdateStatistics();
+            });
         }
     }
 
     private void UpdateStatistics()
     {
-        UpdatesCount = _allUpdates.Count;
-        int completedCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusCompleted);
-        int remainingUpdatesCount = UpdatesCount - completedCount;
+        PendingUpdatesCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusAvailable || x.UpdateStatus == SoftwareUpdateInfo.StatusFailed);
+        UpdatingCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusUpdating);
+        CompletedCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusCompleted);
+        UpdatesCount = PendingUpdatesCount;
 
-        if (remainingUpdatesCount == 0)
+        if (PendingUpdatesCount == 0)
         {
             SystemHealthStatus = "System Up-to-Date".T();
             SystemHealthColor = "#FF10B981"; // Green
         }
         else
         {
-            SystemHealthStatus = string.Format("Action Required ({0} Updates)".T(), remainingUpdatesCount);
+            SystemHealthStatus = string.Format("Action Required ({0} Updates)".T(), PendingUpdatesCount);
             SystemHealthColor = "#FFF59E0B"; // Amber
         }
 
         ActiveEngineName = UpdateEngine == "winget" ? "Windows Package Manager" : "WinCare Direct Downloader";
         OnPropertyChanged(nameof(HasSelectedUpdates));
+        OnPropertyChanged(nameof(SelectedStatusFilter));
     }
 
     public void SetAllSelection(bool isSelected)

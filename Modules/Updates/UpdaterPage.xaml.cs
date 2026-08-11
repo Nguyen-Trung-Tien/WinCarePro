@@ -25,12 +25,25 @@ public sealed partial class UpdaterPage : Page
     {
         base.OnNavigatedTo(e);
         ViewModel.Initialize();
+        WinCarePro.Services.TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        WinCarePro.Services.TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+        WinCarePro.Services.TranslationManager.Instance.Translate(this);
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
+        WinCarePro.Services.TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         ViewModel.Cleanup();
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            WinCarePro.Services.TranslationManager.Instance.Translate(this);
+            ViewModel.ApplyFilters();
+        });
     }
 
     private async void OnScanUpdatesClick(object sender, RoutedEventArgs e)
@@ -90,7 +103,27 @@ public sealed partial class UpdaterPage : Page
         ViewModel.SetAllSelection(false);
     }
 
+    private void OnFilterAllClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectedStatusFilter = "All";
+    }
 
+    private void OnFilterPendingClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectedStatusFilter = "Pending";
+    }
+
+    private void OnFilterUpdatingClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectedStatusFilter = "Updating";
+    }
+
+    private void OnFilterCompletedClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectedStatusFilter = "Completed";
+    }
+
+    public bool IsFilterSelected(string currentFilter, string targetFilter) => string.Equals(currentFilter, targetFilter, StringComparison.OrdinalIgnoreCase);
 
     public bool CanUpdateSelected(bool hasSelected, bool isBusy) => hasSelected && !isBusy;
 

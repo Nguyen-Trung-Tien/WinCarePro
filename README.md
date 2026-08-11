@@ -33,7 +33,7 @@
 
 **WinCare Pro v4.1.0** là giải pháp tối ưu hóa và chăm sóc hệ điều hành Windows thế hệ mới. Sở hữu ngôn ngữ thiết kế **Aura Glassmorphic Fluent 2.0**, hiệu ứng kính mờ Mica/Acrylic cùng tần số chuyển động **120 FPS Visual Composition**, ứng dụng mang lại trải nghiệm thị giác cao cấp và mượt mà tuyệt đối trên Windows 10 và Windows 11.
 
-Không chỉ dọn dẹp và bảo mật thông thường, WinCare Pro v4.1.0 tích hợp **Trợ lý AI Health Copilot Engine** tự động phân tích và dự đoán rủi ro phần cứng, cửa sổ nổi **Desktop HUD Widget** đơn thể (Single-Instance), cùng hệ thống **Hoàn tác Registry (Undo/Rollback System)** an toàn. Ứng dụng hoạt động độc lập, hoàn toàn không chứa quảng cáo hay tiến trình chạy ngầm làm chậm máy.
+Không chỉ dọn dẹp và bảo mật thông thường, WinCare Pro v4.1.0 tích hợp **Trợ lý AI WinCare Engine** tự động phân tích và dự đoán rủi ro phần cứng, cửa sổ nổi **Desktop HUD Widget** đơn thể (Single-Instance), cùng hệ thống **Hoàn tác Registry (Undo/Rollback System)** an toàn. Ứng dụng hoạt động độc lập, hoàn toàn không chứa quảng cáo hay tiến trình chạy ngầm làm chậm máy.
 
 ---
 
@@ -69,7 +69,7 @@ WinCare Pro v4.1.0 tích hợp bộ công cụ chuyên nghiệp toàn diện cho
 * **Giám sát tài nguyên 120 FPS:** Theo dõi biểu đồ động thời gian thực về CPU, RAM, GPU, dung lượng ổ đĩa và hoạt động I/O đĩa.
 * **Điểm sức khỏe Composite Health Score:** Phân tích tình trạng tổng thể máy tính theo thang điểm `0 - 100`, kiểm tra CPU Throttling, tuổi thọ SSD/HDD và nhiệt độ phần cứng.
 
-### 2. 🤖 Trợ lý AI Health Copilot Engine (Predictive AI Analytics)
+### 2. 🤖 Trợ lý AI WinCare Engine (Predictive AI Analytics)
 * **Dự đoán rủi ro thông minh:** Thuật toán AI phân tích xu hướng tiêu thụ lưu trữ và ước tính số ngày còn lại trước khi ổ C: bị đầy dung lượng.
 * **Tối ưu thời gian boot:** Tính toán ước tính số giây khởi động có thể cắt giảm dựa trên các ứng dụng startup và dịch vụ dư thừa.
 * **Khuyến nghị phân cấp:** Đưa ra giải pháp khắc phục trực quan theo mức độ nguy cơ (**Critical**, **High**, **Medium**).
@@ -212,7 +212,7 @@ WinCare/
 
 * **Trạng thái Biên dịch:** Bản Release win-x64 biên dịch hoàn hảo (`0 Errors, 0 Warnings`).
 * **Kết quả Kiểm thử Tự động (Unit Tests):** Đạt tỷ lệ vượt qua **100% (67/67 tests passed)** đối với tất cả các module cốt lõi:
-  * Trợ lý AI Health Copilot (`AiDiagnosticsEngine`)
+  * Trợ lý AI WinCare Engine (`AiDiagnosticsEngine`)
   * Tinh chỉnh RAM & Hệ thống (`SystemOptimizerEngine`)
   * Dọn rác hệ thống (`JunkCleanerEngine`)
   * Trình quản lý khởi động (`StartupEngine`)

@@ -1,7 +1,7 @@
 {
   "version": "4.1.0",
   "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.1.0/WinCareProSetup.exe",
-  "changelog": "Cập nhật v4.1.0: Nâng cấp AI Health Copilot Engine chẩn đoán chuyên sâu, phân hệ System Repair khắc phục sự cố Windows, Disk Analyzer tìm trùng lặp dữ liệu, công cụ dọn dẹp JunkCleaner đa luồng, Desktop HUD Widget tối ưu telemetry thời gian thực, quản lý Context Menu vỏ Windows, cùng hệ thống hướng dẫn UserGuide và hạ tầng CI/CD tự động.",
+  "changelog": "Cập nhật v4.1.0: Nâng cấp AI WinCare Engine chẩn đoán chuyên sâu, phân hệ System Repair khắc phục sự cố Windows, Disk Analyzer tìm trùng lặp dữ liệu, công cụ dọn dẹp JunkCleaner đa luồng, Desktop HUD Widget tối ưu telemetry thời gian thực, quản lý Context Menu vỏ Windows, cùng hệ thống hướng dẫn UserGuide và hạ tầng CI/CD tự động.",
   "beta_version": "4.1.0-beta",
   "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.1.0-beta/WinCareProSetup_Beta.exe",
   "beta_changelog": "WinCare Pro v4.1.0 Evolution Release"

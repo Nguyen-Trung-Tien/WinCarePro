@@ -78,7 +78,7 @@ public class SystemOptimizerViewModel : ViewModelBase
     public ObservableCollection<ServiceStatusItem> BackgroundServices { get; } = new();
 
     // ============================================================
-    // v4.0.0 — Embedded AI Health Copilot Properties & Engine
+    // v4.0.0 — Embedded AI WinCare Engine Properties & Engine
     // ============================================================
 
     private int _aiHealthScore = 95;

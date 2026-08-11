@@ -40,7 +40,7 @@ public sealed partial class DashboardPage : Page
             // Force responsive update after extended layer is fully initialized
             UpdateResponsiveLayout(this.ActualWidth);
 
-            // v4.0.0 — Auto-trigger embedded AI Health Copilot scan
+            // v4.0.0 — Auto-trigger embedded AI WinCare Engine scan
             _ = ViewModel.RunEmbeddedAiScanAsync().ContinueWith(_ =>
             {
                 DispatcherQueue.TryEnqueue(() =>
@@ -138,7 +138,7 @@ public sealed partial class DashboardPage : Page
                 LeftCol.Width = new GridLength(1, GridUnitType.Star);
                 RightCol.Width = new GridLength(1, GridUnitType.Star);
                 
-                // Row 0: System Health Overview (Left) & AI Health Copilot (Right) — SIDE-BY-SIDE
+                // Row 0: System Health Overview (Left) & AI WinCare Engine (Right) — SIDE-BY-SIDE
                 if (HealthGaugeCard != null)
                 {
                     Grid.SetRow(HealthGaugeCard, 0);

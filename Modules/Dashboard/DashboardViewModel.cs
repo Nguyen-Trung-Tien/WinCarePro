@@ -163,7 +163,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     public ObservableCollection<LogEntry> ActionLogs { get; } = new();
 
     // ============================================================
-    // v4.0.0 — Embedded AI Health Copilot Properties
+    // v4.0.0 — Embedded AI WinCare Engine Properties
     // ============================================================
 
     [ObservableProperty]
@@ -193,7 +193,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     public ObservableCollection<Modules.AiAssistant.AiHealthRecommendation> AiRecommendations { get; } = new();
 
     /// <summary>
-    /// Runs the embedded AI Health Copilot diagnostic scan.
+    /// Runs the embedded AI WinCare Engine diagnostic scan.
     /// Automatically triggered on Dashboard load; also callable via button.
     /// </summary>
     public async Task RunEmbeddedAiScanAsync()

@@ -124,7 +124,7 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- 1. AI Health Copilot Diagnostic Card -->
+            <!-- 1. AI WinCare Engine Diagnostic Card -->
             <Border Grid.Column="0" Style="{StaticResource AiCopilotCardStyle}" Padding="18,14"
                     helpers:AnimationHelper.HoverScale="1.008">
                 <Grid>

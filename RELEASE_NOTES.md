@@ -2,11 +2,11 @@
 
 ---
 
-## 🚀 WinCare Pro v4.1.0 — Phân Hệ System Repair, AI Health Copilot Engine, Trợ Lý Disk Analyzer & Hạ Tầng CI/CD Tự Động
+## 🚀 WinCare Pro v4.1.0 — Phân Hệ System Repair, AI WinCare Engine, Trợ Lý Disk Analyzer & Hạ Tầng CI/CD Tự Động
 
 > **Phát hành:** 11/08/2026 · **Loại:** Bản nâng cấp Chức năng Chuyên sâu (Feature & Reliability Evolution Release)
 
-Bản cập nhật **v4.1.0** mang đến những cải tiến vượt bậc về khả năng chẩn đoán, dọn dẹp và tự động sửa lỗi hệ thống của WinCare Pro. Phiên bản này chính thức ra mắt bộ phân hệ **Sửa lỗi Windows (System Repair Suite)**, phân tích bộ nhớ & tìm tệp trùng lặp (**Disk Analyzer & Duplicate Engine**), trình dọn dẹp đa luồng **JunkCleaner**, trợ lý chẩn đoán **AI Health Copilot Engine** nâng cấp, trình quản lý **Context Menu** vỏ Windows, cùng hệ thống hướng dẫn **UserGuide** tương tác và hạ tầng tích hợp liên tục **CI/CD Pipelines**.
+Bản cập nhật **v4.1.0** mang đến những cải tiến vượt bậc về khả năng chẩn đoán, dọn dẹp và tự động sửa lỗi hệ thống của WinCare Pro. Phiên bản này chính thức ra mắt bộ phân hệ **Sửa lỗi Windows (System Repair Suite)**, phân tích bộ nhớ & tìm tệp trùng lặp (**Disk Analyzer & Duplicate Engine**), trình dọn dẹp đa luồng **JunkCleaner**, trợ lý chẩn đoán **AI WinCare Engine** nâng cấp, trình quản lý **Context Menu** vỏ Windows, cùng hệ thống hướng dẫn **UserGuide** tương tác và hạ tầng tích hợp liên tục **CI/CD Pipelines**.
 
 ---
 
@@ -17,8 +17,8 @@ Bản cập nhật **v4.1.0** mang đến những cải tiến vượt bậc v�
   * Tự động quét và khôi phục các tệp hệ thống hỏng hóc thông qua lệnh SFC (System File Checker) và DISM Component Store Repair.
   * Sửa chữa các lỗi Registry phổ biến, sự cố mất kết nối mạng và khôi phục các dịch vụ hệ thống bị ngưng hoạt động.
 
-* **🤖 Trợ lý AI Health Copilot Engine Nâng Cấp (Predictive AI Health Analytics):**
-  * Động cơ chẩn đoán AI Copilot (`AiHealthEngine`) phân tích telemetry thời gian thực, đo lường áp lực bộ nhớ và cảnh báo sớm nguy cơ cạn kiệt dung lượng đĩa.
+* **🤖 Trợ lý AI WinCare Engine Nâng Cấp (Predictive AI Health Analytics):**
+  * Động cơ chẩn đoán AI WinCare (`AiHealthEngine`) phân tích telemetry thời gian thực, đo lường áp lực bộ nhớ và cảnh báo sớm nguy cơ cạn kiệt dung lượng đĩa.
   * Tự động xuất báo cáo tối ưu hóa thông minh kèm đề xuất hành động khắc phục cụ thể theo từng mức độ rủi ro.
 
 * **💾 Phân Tích Ổ Đĩa & Tìm Tệp Trùng Lặp (Disk Analyzer & Duplicate Search Engine):**

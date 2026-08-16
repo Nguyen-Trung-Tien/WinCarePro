@@ -167,19 +167,19 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     // ============================================================
 
     [ObservableProperty]
-    private int _aiHealthScore;
+    private int _aiHealthScore = 100;
 
     [ObservableProperty]
-    private string _aiStatusText = "Analyzing...".T();
+    private string _aiStatusText = "AI Engine Ready".T();
 
     [ObservableProperty]
-    private string _aiSummaryText = "WinCare AI Assistant is ready to analyze your system.".T();
+    private string _aiSummaryText = "Assessing predictive metrics...".T();
 
     [ObservableProperty]
-    private string _aiPredictiveStorageText = "--";
+    private string _aiPredictiveStorageText = "Calculating...".T();
 
     [ObservableProperty]
-    private string _aiPredictiveBootText = "--";
+    private string _aiPredictiveBootText = "Analyzing...".T();
 
     [ObservableProperty]
     private bool _isAiExpanded;
@@ -213,6 +213,13 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
                 AiSummaryText = report.SummaryText;
                 AiPredictiveStorageText = report.PredictiveStorageDaysText;
                 AiPredictiveBootText = report.PredictiveBootTimeSavingsText;
+
+                // Dynamically synchronize the main Dashboard circular gauge on startup
+                if (!HasScanned)
+                {
+                    HealthScore = report.OverallScore;
+                    HealthBreakdownText = report.SummaryText;
+                }
 
                 AiRecommendations.Clear();
                 foreach (var rec in report.Recommendations)

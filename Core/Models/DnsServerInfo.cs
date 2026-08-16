@@ -12,6 +12,8 @@ public class DnsServerInfo
     public double PingMs { get; set; } = -1;
     public bool IsFastest { get; set; }
     public string PingFormatted => PingMs < 0 ? "Timeout".T() : $"{PingMs:F0} ms";
+    public string LatencyFormatted => PingFormatted;
+    public string Provider => Name;
 
     // New optimized DNS benchmark fields
     public double AverageQueryMs { get; set; } = -1;

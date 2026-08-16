@@ -140,6 +140,9 @@ public sealed partial class MainPage : Page
         {
             if (ContentFrame.CurrentSourcePageType == pageType) return;
 
+            // Senior Optimization: Release memory, event listeners, and timers of previously active page
+            CleanupActivePage();
+
             ContentFrame.Navigate(pageType);
             
             // Set header text using the centralized UpdateHeader method

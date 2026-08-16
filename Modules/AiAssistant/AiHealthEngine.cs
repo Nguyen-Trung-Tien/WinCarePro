@@ -155,15 +155,27 @@ namespace WinCarePro.Modules.AiAssistant
                         int estimatedDaysLeft = Math.Max(3, (int)(freeGB * 1.5));
                         report.PredictiveStorageDaysText = estimatedDaysLeft > 30 ? "> 30 Days Free".T() : $"{estimatedDaysLeft} Days Left".T();
 
-                        if (freeGB < 20.0 || usedPercent > 88.0)
+                        if (freeGB < 5.0 || usedPercent > 96.0)
                         {
-                            penaltyScore += 25;
+                            penaltyScore += 15;
                             recommendations.Add(new AiHealthRecommendation
                             {
                                 Title = "Predictive Storage Warning".T(),
-                                Description = $"Drive C: has {freeGB:F1} GB free ({usedPercent:F0}% used). AI predicts disk exhaustion in approximately {estimatedDaysLeft} days under regular usage.".T(),
+                                Description = $"Drive C: has critically low space ({freeGB:F1} GB free, {usedPercent:F0}% used). AI recommends immediate disk cleanup.".T(),
                                 Category = "Storage",
-                                ImpactLevel = freeGB < 10.0 ? "Critical" : "High",
+                                ImpactLevel = "Critical",
+                                ActionKey = "NavigateDisk"
+                            });
+                        }
+                        else if (freeGB < 12.0 || usedPercent > 90.0)
+                        {
+                            penaltyScore += 5;
+                            recommendations.Add(new AiHealthRecommendation
+                            {
+                                Title = "Storage Consumption Outlook".T(),
+                                Description = $"Drive C: is at {usedPercent:F0}% capacity ({freeGB:F1} GB free). Consider freeing up large files.".T(),
+                                Category = "Storage",
+                                ImpactLevel = "Medium",
                                 ActionKey = "NavigateDisk"
                             });
                         }
@@ -172,7 +184,7 @@ namespace WinCarePro.Modules.AiAssistant
                             recommendations.Add(new AiHealthRecommendation
                             {
                                 Title = "Storage Consumption Outlook Good".T(),
-                                Description = $"Drive C: usage is at {usedPercent:F0}%. Estimated storage sustainability is over {estimatedDaysLeft} days.".T(),
+                                Description = $"Drive C: usage is healthy at {usedPercent:F0}% ({freeGB:F1} GB free). Storage sustainability is over {estimatedDaysLeft} days.".T(),
                                 Category = "Prediction",
                                 ImpactLevel = "Low",
                                 ActionKey = "None"
@@ -192,18 +204,30 @@ namespace WinCarePro.Modules.AiAssistant
                         finally { try { p.Dispose(); } catch { } }
                     }
 
-                    double potentialBootTimeSavingsSeconds = Math.Round(processCount * 0.04, 1);
+                    double potentialBootTimeSavingsSeconds = Math.Round(processCount * 0.02, 1);
                     report.PredictiveBootTimeSavingsText = $"-{potentialBootTimeSavingsSeconds}s Boot Time".T();
 
-                    if (processCount > 100)
+                    if (processCount > 250)
                     {
-                        penaltyScore += 15;
+                        penaltyScore += 8;
                         recommendations.Add(new AiHealthRecommendation
                         {
-                            Title = "Predictive Boot Delay Profiling".T(),
-                            Description = $"AI detected {processCount} active background processes. Disabling unnecessary startup items can shave up to {potentialBootTimeSavingsSeconds} seconds off boot time.".T(),
+                            Title = "Elevated Process Overhead".T(),
+                            Description = $"AI detected {processCount} active background processes. Disabling unnecessary startup items can improve boot time.".T(),
                             Category = "Performance",
-                            ImpactLevel = processCount > 150 ? "Critical" : "High",
+                            ImpactLevel = "High",
+                            ActionKey = "NavigateStartup"
+                        });
+                    }
+                    else if (processCount > 180)
+                    {
+                        penaltyScore += 4;
+                        recommendations.Add(new AiHealthRecommendation
+                        {
+                            Title = "Background Process Monitoring".T(),
+                            Description = $"There are {processCount} background processes active. System is operating normally.".T(),
+                            Category = "Performance",
+                            ImpactLevel = "Low",
                             ActionKey = "NavigateStartup"
                         });
                     }
@@ -225,15 +249,27 @@ namespace WinCarePro.Modules.AiAssistant
                     }
 
                     long tempMB = totalTempBytes / (1024 * 1024);
-                    if (tempMB > 300)
+                    if (tempMB > 3000)
                     {
-                        penaltyScore += 15;
+                        penaltyScore += 10;
                         recommendations.Add(new AiHealthRecommendation
                         {
                             Title = "High Temp Cache Accumulation".T(),
                             Description = $"System temporary directories contain approximately {tempMB:N0} MB of uncleaned cache and temporary files.".T(),
                             Category = "Junk",
-                            ImpactLevel = tempMB > 1500 ? "High" : "Medium",
+                            ImpactLevel = "High",
+                            ActionKey = "NavigateJunkCleaner"
+                        });
+                    }
+                    else if (tempMB > 1000)
+                    {
+                        penaltyScore += 5;
+                        recommendations.Add(new AiHealthRecommendation
+                        {
+                            Title = "Temp Files Cleanable".T(),
+                            Description = $"Found {tempMB:N0} MB of temporary files ready for cleanup.".T(),
+                            Category = "Junk",
+                            ImpactLevel = "Medium",
                             ActionKey = "NavigateJunkCleaner"
                         });
                     }
@@ -251,9 +287,9 @@ namespace WinCarePro.Modules.AiAssistant
                         finally { try { p.Dispose(); } catch { } }
                     }
                     long totalRamMB = totalWorkingSet / (1024 * 1024);
-                    if (totalRamMB > 8000) // High active process RAM usage (> 8GB)
+                    if (totalRamMB > 12000) // High active process RAM usage (> 12GB)
                     {
-                        penaltyScore += 10;
+                        penaltyScore += 8;
                         recommendations.Add(new AiHealthRecommendation
                         {
                             Title = "High Memory Pressure".T(),
@@ -267,7 +303,7 @@ namespace WinCarePro.Modules.AiAssistant
                 catch { }
 
                 // 5. Calculate final health score and status text
-                report.OverallScore = Math.Max(10, 100 - penaltyScore);
+                report.OverallScore = Math.Clamp(100 - penaltyScore, 20, 100);
 
                 if (report.OverallScore >= 90)
                 {

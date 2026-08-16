@@ -1,9 +1,13 @@
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
+using WinCarePro.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace WinCarePro.Views;
 
@@ -11,40 +15,18 @@ public sealed partial class NetworkPage : Page
 {
     public NetworkViewModel ViewModel { get; }
 
-    public static readonly DependencyProperty ShowTerminalProperty =
-        DependencyProperty.Register(
-            nameof(ShowTerminal),
-            typeof(bool),
-            typeof(NetworkPage),
-            new PropertyMetadata(false, OnShowTerminalChanged));
-
-    private static void OnShowTerminalChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is NetworkPage page)
-        {
-            page.UpdateTerminalLayout();
-        }
-    }
-
-    public bool ShowTerminal
-    {
-        get => (bool)GetValue(ShowTerminalProperty);
-        set => SetValue(ShowTerminalProperty, value);
-    }
-
     public NetworkPage()
     {
         ViewModel = App.Services?.GetService<NetworkViewModel>() ?? new NetworkViewModel();
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        
-        this.Loaded += (s, e) => 
-        {
-            DataContext = ViewModel;
-            UpdateTerminalLayout();
-        };
+        this.DataContext = ViewModel;
 
-        this.SizeChanged += (s, e) => UpdateTerminalLayout();
+        this.Loaded += (s, e) =>
+        {
+            TranslationManager.Instance.Translate(this);
+            SetActiveTab(ViewModel.ActiveTab ?? "quality");
+        };
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -52,7 +34,7 @@ public sealed partial class NetworkPage : Page
         base.OnNavigatedTo(e);
         ViewModel.Initialize();
         this.Bindings.Update();
-        SetActiveTab("quality");
+        SetActiveTab(ViewModel.ActiveTab ?? "quality");
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -61,13 +43,13 @@ public sealed partial class NetworkPage : Page
         ViewModel.Cleanup();
     }
 
-    private void OnTabClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is string tabName)
-        {
-            SetActiveTab(tabName);
-        }
-    }
+    public void OnTabQualityClick(object sender, RoutedEventArgs e) => SetActiveTab("quality");
+    public void OnTabDnsClick(object sender, RoutedEventArgs e) => SetActiveTab("dns");
+    public void OnTabPortsClick(object sender, RoutedEventArgs e) => SetActiveTab("ports");
+    public void OnTabRepairsClick(object sender, RoutedEventArgs e) => SetActiveTab("repairs");
+
+    private Style? _accentStyle;
+    private Style? _defaultStyle;
 
     private Style? GetButtonStyle(string key)
     {
@@ -82,25 +64,22 @@ public sealed partial class NetworkPage : Page
     {
         ViewModel.ActiveTab = tabName;
 
-        var accentStyle = GetButtonStyle("AccentButtonStyle");
-        var defaultStyle = GetButtonStyle("DefaultButtonStyle");
+        _accentStyle ??= GetButtonStyle("VibrantPrimaryButtonStyle") ?? GetButtonStyle("AccentButtonStyle");
+        _defaultStyle ??= GetButtonStyle("DefaultButtonStyle");
 
-        // Toggle tab button active styles
-        BtnTabQuality.Style = tabName == "quality" ? accentStyle : defaultStyle;
-        BtnTabDns.Style = tabName == "dns" ? accentStyle : defaultStyle;
-        BtnTabPorts.Style = tabName == "ports" ? accentStyle : defaultStyle;
-        BtnTabRepairs.Style = tabName == "repairs" ? accentStyle : defaultStyle;
+        if (BtnTabQuality != null) BtnTabQuality.Style = tabName == "quality" ? _accentStyle : _defaultStyle;
+        if (BtnTabDns != null) BtnTabDns.Style = tabName == "dns" ? _accentStyle : _defaultStyle;
+        if (BtnTabPorts != null) BtnTabPorts.Style = tabName == "ports" ? _accentStyle : _defaultStyle;
+        if (BtnTabRepairs != null) BtnTabRepairs.Style = tabName == "repairs" ? _accentStyle : _defaultStyle;
 
-        // Toggle content section visibility
-        SectionQuality.Visibility = tabName == "quality" ? Visibility.Visible : Visibility.Collapsed;
-        SectionDns.Visibility = tabName == "dns" ? Visibility.Visible : Visibility.Collapsed;
-        SectionPorts.Visibility = tabName == "ports" ? Visibility.Visible : Visibility.Collapsed;
-        SectionRepairs.Visibility = tabName == "repairs" ? Visibility.Visible : Visibility.Collapsed;
+        if (SectionQuality != null) SectionQuality.Visibility = tabName == "quality" ? Visibility.Visible : Visibility.Collapsed;
+        if (SectionDns != null) SectionDns.Visibility = tabName == "dns" ? Visibility.Visible : Visibility.Collapsed;
+        if (SectionPorts != null) SectionPorts.Visibility = tabName == "ports" ? Visibility.Visible : Visibility.Collapsed;
+        if (SectionRepairs != null) SectionRepairs.Visibility = tabName == "repairs" ? Visibility.Visible : Visibility.Collapsed;
 
-        // Immediate load when clicking ports tab
-        if (tabName == "ports")
+        if (tabName == "ports" && ViewModel.Connections.Count == 0)
         {
-            _ = ViewModel.LoadActiveConnectionsAsync();
+            _ = Task.Run(async () => await ViewModel.LoadActiveConnectionsAsync());
         }
     }
 
@@ -111,42 +90,9 @@ public sealed partial class NetworkPage : Page
         await ViewModel.LoadActiveConnectionsAsync();
     }
 
-    private async void OnPingClick(object sender, RoutedEventArgs e)
-    {
-        ShowTerminal = true;
-        await ViewModel.RunPingTestAsync();
-    }
-
-    private async void OnTraceClick(object sender, RoutedEventArgs e)
-    {
-        ShowTerminal = true;
-        await ViewModel.RunTracerouteAsync();
-    }
-
-    private async void OnDnsLookupClick(object sender, RoutedEventArgs e)
-    {
-        ShowTerminal = true;
-        await ViewModel.RunDnsLookupAsync();
-    }
-
-    private async void OnScanPortsClick(object sender, RoutedEventArgs e)
-    {
-        ShowTerminal = true;
-        await ViewModel.RunPortScanAsync();
-    }
-
     private async void OnSpeedTestClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.RunSpeedTestAsync();
-    }
-
-    private async void OnRepairClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is string op)
-        {
-            ShowTerminal = true;
-            await ViewModel.RunRepairOperationAsync(op);
-        }
     }
 
     private async void OnDnsBenchmarkClick(object sender, RoutedEventArgs e)
@@ -162,14 +108,46 @@ public sealed partial class NetworkPage : Page
         }
     }
 
-    private async void OnApplyDohClick(object sender, RoutedEventArgs e)
+    private async void OnRepairClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ApplyDohSettingsAsync();
+        if (sender is Button btn && btn.Tag is string op)
+        {
+            await ViewModel.RunRepairOperationAsync(op);
+        }
     }
 
     private async void OnRefreshConnectionsClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.LoadActiveConnectionsAsync();
+    }
+
+    private async void OnPingClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RunPingTestAsync();
+    }
+
+    private async void OnTraceClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RunTracerouteAsync();
+    }
+
+    private void OnClearConsoleClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.ConsoleOutput = "";
+    }
+
+    private void OnCopyPublicIpClick(object sender, RoutedEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(ViewModel.PublicIpAddress))
+        {
+            try
+            {
+                var package = new DataPackage();
+                package.SetText(ViewModel.PublicIpAddress);
+                Clipboard.SetContent(package);
+            }
+            catch { }
+        }
     }
 
     public bool IsNot(bool val) => !val;
@@ -190,82 +168,5 @@ public sealed partial class NetworkPage : Page
         return "Mbps";
     }
 
-    public string GetEstablishedCount(System.Collections.ObjectModel.ObservableCollection<ActiveConnectionInfo> connections)
-    {
-        if (connections == null) return "0";
-        return connections.Count(c => c.State != null && c.State.ToUpper() == "ESTABLISHED").ToString();
-    }
-
-    public string GetListeningCount(System.Collections.ObjectModel.ObservableCollection<ActiveConnectionInfo> connections)
-    {
-        if (connections == null) return "0";
-        return connections.Count(c => c.State != null && (c.State.ToUpper() == "LISTENING" || c.State.ToUpper() == "LISTEN")).ToString();
-    }
-
-    private void UpdateTerminalLayout()
-    {
-        if (RepTerminalBorder == null || SecRepCol0 == null || SecRepCol1 == null || RepToolkitBorder == null)
-            return;
-
-        bool isNarrow = this.ActualWidth < 850;
-
-        if (ShowTerminal)
-        {
-            RepTerminalBorder.Visibility = Visibility.Visible;
-            
-            if (isNarrow)
-            {
-                SecRepCol0.Width = new GridLength(1, GridUnitType.Star);
-                SecRepCol1.Width = new GridLength(0);
-                
-                Grid.SetColumn(RepTerminalBorder, 0);
-                Grid.SetColumnSpan(RepTerminalBorder, 2);
-                Grid.SetRow(RepTerminalBorder, 0);
-                
-                Grid.SetColumn(RepToolkitBorder, 0);
-                Grid.SetColumnSpan(RepToolkitBorder, 2);
-                Grid.SetRow(RepToolkitBorder, 1);
-                RepToolkitBorder.Margin = new Thickness(0, 16, 0, 0);
-            }
-            else
-            {
-                SecRepCol0.Width = new GridLength(1.2, GridUnitType.Star);
-                SecRepCol1.Width = new GridLength(0.8, GridUnitType.Star);
-                
-                Grid.SetColumn(RepTerminalBorder, 0);
-                Grid.SetColumnSpan(RepTerminalBorder, 1);
-                Grid.SetRow(RepTerminalBorder, 0);
-                
-                Grid.SetColumn(RepToolkitBorder, 1);
-                Grid.SetColumnSpan(RepToolkitBorder, 1);
-                Grid.SetRow(RepToolkitBorder, 0);
-                RepToolkitBorder.Margin = new Thickness(0);
-            }
-        }
-        else
-        {
-            RepTerminalBorder.Visibility = Visibility.Collapsed;
-            
-            if (isNarrow)
-            {
-                SecRepCol0.Width = new GridLength(1, GridUnitType.Star);
-                SecRepCol1.Width = new GridLength(0);
-                
-                Grid.SetColumn(RepToolkitBorder, 0);
-                Grid.SetColumnSpan(RepToolkitBorder, 2);
-                Grid.SetRow(RepToolkitBorder, 0);
-                RepToolkitBorder.Margin = new Thickness(0);
-            }
-            else
-            {
-                SecRepCol0.Width = new GridLength(0);
-                SecRepCol1.Width = new GridLength(1, GridUnitType.Star);
-                
-                Grid.SetColumn(RepToolkitBorder, 0);
-                Grid.SetColumnSpan(RepToolkitBorder, 2);
-                Grid.SetRow(RepToolkitBorder, 0);
-                RepToolkitBorder.Margin = new Thickness(0);
-            }
-        }
-    }
+    public string FormatConnectionCount(int count) => $"{count} Sockets Active";
 }

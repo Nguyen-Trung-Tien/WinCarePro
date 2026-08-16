@@ -57,6 +57,25 @@ public sealed partial class DiskPage : Page
         await ViewModel.AnalyzeStorageAsync();
     }
 
+    private async void OnAnalyzeSpaceClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.AnalyzeStorageAsync();
+    }
+
+    private async void OnGoUpDirectoryClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var parent = System.IO.Directory.GetParent(ViewModel.StorageScanPath);
+            if (parent != null && parent.Exists)
+            {
+                ViewModel.StorageScanPath = parent.FullName;
+                await ViewModel.AnalyzeStorageAsync();
+            }
+        }
+        catch { }
+    }
+
     private async void OnScanDuplicatesClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.FindDuplicatesAsync();
@@ -105,7 +124,7 @@ public sealed partial class DiskPage : Page
 
     private async void OnRunChkdskClick(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn && btn.DataContext is WinCarePro.Engines.DriveHealthInfo drive)
+        if (sender is Button btn && btn.DataContext is WinCarePro.Models.DriveHealthInfo drive)
         {
             await ViewModel.RunChkdskAsync(drive.Name);
         }
@@ -128,7 +147,7 @@ public sealed partial class DiskPage : Page
 
     private async void StorageItem_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
     {
-        if (sender is Grid grid && grid.DataContext is WinCarePro.Engines.StorageItem item)
+        if (sender is Grid grid && grid.DataContext is WinCarePro.Models.StorageItem item)
         {
             if (item.IsDirectory)
             {

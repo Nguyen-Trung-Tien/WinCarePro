@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
+using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Services.Implementations;
 
@@ -32,8 +33,18 @@ public class DiskViewModel : ViewModelBase
     public string StorageScanPath
     {
         get => _storageScanPath;
-        set => SetProperty(ref _storageScanPath, value);
+        set
+        {
+            if (SetProperty(ref _storageScanPath, value))
+            {
+                OnPropertyChanged(nameof(CurrentAnalysisPath));
+                OnPropertyChanged(nameof(CanGoUp));
+            }
+        }
     }
+
+    public string CurrentAnalysisPath => StorageScanPath;
+    public bool CanGoUp => !string.IsNullOrEmpty(StorageScanPath) && Directory.GetParent(StorageScanPath) != null;
 
     private string _consoleOutput = "Disk Tools ready.\n".T();
     public string ConsoleOutput

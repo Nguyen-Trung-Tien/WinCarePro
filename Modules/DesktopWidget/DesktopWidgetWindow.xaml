@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Window
     x:Class="WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -51,8 +51,7 @@
                 <!-- Custom Header Action Controls (Positioned safely 145px to the left of native Windows caption buttons: -, ☐, X) -->
                 <StackPanel x:Name="HeaderActionPanel" Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,145,0">
                     <!-- Open Main App -->
-                    <Button x:Name="OpenAppButton" Click="OnOpenMainAppClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="26" Height="26" Padding="0" ToolTipService.ToolTip="Mở WinCare Pro Main Window"
-                            helpers:AnimationHelper.HoverScale="1.1" helpers:AnimationHelper.PressedScale="0.9">
+                    <Button x:Name="OpenAppButton" Click="OnOpenMainAppClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="26" Height="26" Padding="0" ToolTipService.ToolTip="Mở WinCare Pro Main Window">
                         <FontIcon Glyph="&#xE80F;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     </Button>
                 </StackPanel>
@@ -67,8 +66,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- CPU Telemetry Card -->
-                <Border Grid.Column="0" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="10" Padding="10,8"
-                        helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                <Border Grid.Column="0" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="10" Padding="10,8">
                     <StackPanel Spacing="4">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -87,8 +85,7 @@
                 </Border>
 
                 <!-- RAM Telemetry Card -->
-                <Border Grid.Column="1" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="10" Padding="10,8"
-                        helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                <Border Grid.Column="1" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="10" Padding="10,8">
                     <StackPanel Spacing="4">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -109,8 +106,7 @@
                 <!-- Smart 1-Click Boost Button -->
                 <Button x:Name="BoostButton" Grid.Column="2" Click="OnFastCleanClick" 
                         Style="{StaticResource VibrantPrimaryButtonStyle}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                        CornerRadius="10" Padding="0" ToolTipService.ToolTip="Giải phóng RAM vật lý tức thì (Smart 1-Click Boost)"
-                        helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96">
+                        CornerRadius="10" Padding="0" ToolTipService.ToolTip="Giải phóng RAM vật lý tức thì (Smart 1-Click Boost)">
                     <StackPanel x:Name="BoostStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
                         <FontIcon x:Name="BoostIcon" Glyph="&#xE74C;" FontSize="16" Foreground="White"/>
                         <TextBlock x:Name="BoostText" Text="BOOST" FontSize="10" FontWeight="ExtraBold" Foreground="White" CharacterSpacing="20"/>
@@ -127,8 +123,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Disk C: Usage Card -->
-                <Border Grid.Column="0" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="9" Padding="9,7"
-                        helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                <Border Grid.Column="0" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="9" Padding="9,7">
                     <Grid ColumnSpacing="6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -151,8 +146,7 @@
                 </Border>
 
                 <!-- Network Speed Card -->
-                <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="9" Padding="9,7"
-                        helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="9" Padding="9,7">
                     <StackPanel VerticalAlignment="Center" Spacing="4">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -245,8 +239,7 @@
                     </Border>
 
                     <!-- Boost Button -->
-                    <Button Grid.Column="3" Click="OnFastCleanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="28" Padding="7,0" CornerRadius="7" VerticalAlignment="Center" ToolTipService.ToolTip="Boost RAM Nhanh (1-Click Boost)"
-                            helpers:AnimationHelper.HoverScale="1.05" helpers:AnimationHelper.PressedScale="0.95">
+                    <Button Grid.Column="3" Click="OnFastCleanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="28" Padding="7,0" CornerRadius="7" VerticalAlignment="Center" ToolTipService.ToolTip="Boost RAM Nhanh (1-Click Boost)">
                         <StackPanel Orientation="Horizontal" Spacing="3" VerticalAlignment="Center">
                             <FontIcon Glyph="&#xE74C;" FontSize="10" Foreground="White"/>
                             <TextBlock Text="BOOST" FontSize="9" FontWeight="Bold" Foreground="White"/>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="WinCarePro.Views.SystemOptimizerPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -125,8 +125,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- 1. AI WinCare Engine Diagnostic Card -->
-            <Border Grid.Column="0" Style="{StaticResource AiCopilotCardStyle}" Padding="18,14"
-                    helpers:AnimationHelper.HoverScale="1.008">
+            <Border Grid.Column="0" Style="{StaticResource AiCopilotCardStyle}" Padding="18,14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -148,8 +147,7 @@
                                    Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxLines="2" TextWrapping="Wrap"/>
 
                         <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
-                            <Button x:Name="RunAiScanBtn" Click="OnRunAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="30" MinWidth="160" Padding="12,0" CornerRadius="6"
-                                    helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96">
+                            <Button x:Name="RunAiScanBtn" Click="OnRunAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="30" MinWidth="160" Padding="12,0" CornerRadius="6">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <ProgressRing x:Name="AiScanRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="White" VerticalAlignment="Center"/>
                                     <FontIcon x:Name="AiScanIcon" Glyph="&#xE721;" FontSize="11"/>
@@ -176,8 +174,7 @@
             </Border>
 
             <!-- 2. System Turbo Mode (Performance Boost) Card -->
-            <Border Grid.Column="1" Style="{StaticResource GamingTurboCardStyle}" Padding="18,14"
-                    helpers:AnimationHelper.HoverScale="1.008">
+            <Border Grid.Column="1" Style="{StaticResource GamingTurboCardStyle}" Padding="18,14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -311,8 +308,7 @@
                     <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.FilteredTweaks, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:SystemTweak">
-                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10" Margin="0,0,0,4"
-                                        helpers:AnimationHelper.HoverScale="1.012" helpers:AnimationHelper.PressedScale="0.988">
+                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10" Margin="0,0,0,4">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />  <!-- CheckBox -->

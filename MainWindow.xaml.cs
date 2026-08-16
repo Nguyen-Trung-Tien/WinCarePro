@@ -285,6 +285,7 @@ public sealed partial class MainWindow : Window
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
         CleanupTrayIcon();
+        UnsubclassWindow();
         try
         {
             if (RootFrame.Content is MainPage mainPage)

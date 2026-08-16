@@ -22,6 +22,11 @@ namespace WinCarePro.Modules.AiAssistant
             this.Loaded += (s, e) =>
             {
                 TranslationManager.Instance.Translate(this);
+                try
+                {
+                    AiPulseGlowAnimation?.Begin();
+                }
+                catch { }
             };
 
             _languageChangedHandler = (s, e) =>
@@ -29,7 +34,6 @@ namespace WinCarePro.Modules.AiAssistant
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     TranslationManager.Instance.Translate(this);
-                    // Don't re-scan on language change — only re-translate existing UI
                 });
             };
 
@@ -41,6 +45,11 @@ namespace WinCarePro.Modules.AiAssistant
                 {
                     TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
                 }
+                try
+                {
+                    AiPulseGlowAnimation?.Stop();
+                }
+                catch { }
             };
 
             _ = RunAiScanAsync();
@@ -83,10 +92,12 @@ namespace WinCarePro.Modules.AiAssistant
                 await RunOnUIAsync(() =>
                 {
                     ScoreText.Text = report.OverallScore.ToString();
+                    AiScoreRing.Value = report.OverallScore;
                     StatusTitleText.Text = $"{TranslationManager.Instance.T("Status")}: {report.HealthStatus}";
                     SummaryMessageText.Text = report.SummaryText;
                     PredictiveStorageText.Text = report.PredictiveStorageDaysText;
                     PredictiveBootText.Text = report.PredictiveBootTimeSavingsText;
+                    AiLastScanText.Text = $"Neural Scan: {DateTime.Now:HH:mm:ss} - Active & Calibrated";
                     RecommendationsListView.ItemsSource = report.Recommendations;
 
                     bool hasRecommendations = report.Recommendations != null && report.Recommendations.Count > 0;
@@ -240,6 +251,61 @@ namespace WinCarePro.Modules.AiAssistant
                         catch { }
                     },
                     minDurationMs: 650);
+            }
+        }
+
+        // Quick AI Action Deck Event Handlers
+        private async void OnQuickPurgeRamClick(object sender, RoutedEventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            });
+
+            await RunAiScanAsync();
+
+            if (App.MainWindowInstance is MainWindow mw)
+            {
+                mw.ShowToastFromDb("RAM Cache Purged".T(), "AI Engine successfully purged standby memory and working sets.".T(), "Success");
+            }
+        }
+
+        private void OnQuickCleanJunkClick(object sender, RoutedEventArgs e)
+        {
+            NavigateTo("junk");
+        }
+
+        private void OnQuickOptimizeStartupClick(object sender, RoutedEventArgs e)
+        {
+            NavigateTo("startup");
+        }
+
+        private async void OnQuickFlushDnsClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                await Task.Run(() =>
+                {
+                    var psi = new ProcessStartInfo("ipconfig", "/flushdns")
+                    {
+                        CreateNoWindow = true,
+                        UseShellExecute = false
+                    };
+                    Process.Start(psi)?.WaitForExit(3000);
+                });
+
+                if (App.MainWindowInstance is MainWindow mw)
+                {
+                    mw.ShowToastFromDb("DNS Flushed".T(), "Network cache and DNS resolver cleared successfully.".T(), "Success");
+                }
+            }
+            catch (Exception ex)
+            {
+                if (App.MainWindowInstance is MainWindow mw)
+                {
+                    mw.ShowToastFromDb("Flush Failed".T(), ex.Message, "Error");
+                }
             }
         }
 

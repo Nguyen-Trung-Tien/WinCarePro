@@ -72,30 +72,28 @@ public partial class NetworkViewModel
     private void SyncAdapters(List<NetworkAdapterInfo> newList)
     {
         Adapters.Clear();
-        foreach (var item in newList)
+        var sorted = newList
+            .OrderByDescending(a => a.Status == "Up")
+            .ThenByDescending(a => !a.Name.Contains("Filter") && !a.Name.Contains("Scheduler") && !a.Name.Contains("LightWeight"))
+            .ToList();
+        foreach (var item in sorted)
         {
             Adapters.Add(item);
         }
     }
 
-    public async Task LoadActiveConnectionsAsync()
+    public async Task LoadActiveConnectionsAsync(bool forceRefresh = false)
     {
+        if (_rawConnections.Count > 0 && !forceRefresh) return;
+
         try
         {
             var list = await Task.Run(() => _engine.GetActiveConnections());
-            try
+            _rawConnections = list;
+            _dispatcherQueue?.TryEnqueue(() =>
             {
-                _dispatcherQueue?.TryEnqueue(() =>
-                {
-                    try
-                    {
-                        _rawConnections = list;
-                        ApplyConnectionFilter();
-                    }
-                    catch { }
-                });
-            }
-            catch { }
+                ApplyConnectionFilter();
+            });
         }
         catch (Exception ex)
         {

@@ -681,7 +681,7 @@ public sealed partial class DashboardPage : Page
     // Quick Stats Navigation handlers
     private void OnQuickStatUptimeClick(object sender, RoutedEventArgs e)
     {
-        GetMainPage()?.NavigateToPageExternal("hardware");
+        GetMainPage()?.NavigateToPageExternal("optimizer");
     }
 
     private void OnQuickStatNetworkClick(object sender, RoutedEventArgs e)

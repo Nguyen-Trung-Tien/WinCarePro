@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Window
     x:Class="WinCarePro.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -73,7 +73,7 @@
 
                 <!-- Live System Telemetry HUD Chips -->
                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,6,0">
-                    <Button x:Name="CpuChipButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Click="OnCpuChipClick" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance" helpers:AnimationHelper.HoverScale="1.1" helpers:AnimationHelper.PressedScale="0.9">
+                    <Button x:Name="CpuChipButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Click="OnCpuChipClick" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance">
                         <Border Background="{ThemeResource AppCpuChipBg}" BorderBrush="{ThemeResource AppCpuChipBorder}" BorderThickness="1" CornerRadius="12" Padding="8,3">
                             <StackPanel Orientation="Horizontal" Spacing="4">
                                 <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center"/>
@@ -82,7 +82,7 @@
                         </Border>
                     </Button>
 
-                    <Button x:Name="RamChipButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Click="OnRamChipClick" ToolTipService.ToolTip="RAM Memory Booster — Click for 1-Click RAM Purge" helpers:AnimationHelper.HoverScale="1.1" helpers:AnimationHelper.PressedScale="0.9">
+                    <Button x:Name="RamChipButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Click="OnRamChipClick" ToolTipService.ToolTip="RAM Memory Booster — Click for 1-Click RAM Purge">
                         <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="12" Padding="8,3">
                             <StackPanel Orientation="Horizontal" Spacing="4">
                                 <FontIcon Glyph="&#xE7F1;" FontSize="11" Foreground="{ThemeResource AppRamChipFg}" VerticalAlignment="Center"/>
@@ -102,14 +102,12 @@
                 <Border Width="1" Height="20" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="4,0" VerticalAlignment="Center" Opacity="0.5"/>
 
                  <!-- Theme Switcher -->
-                <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ThemeButton_Click"
-                        helpers:AnimationHelper.HoverScale="1.15" helpers:AnimationHelper.PressedScale="0.85">
+                <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ThemeButton_Click">
                     <FontIcon x:Name="ThemeIcon" Glyph="&#xE706;" FontSize="15" />
                 </Button>
                 
                 <!-- Notification Bell -->
-                <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="NotificationButton_Click"
-                        helpers:AnimationHelper.HoverScale="1.15" helpers:AnimationHelper.PressedScale="0.85">
+                <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="NotificationButton_Click">
                     <Grid>
                         <FontIcon Glyph="&#xEA8F;" FontSize="15" />
                         <!-- Red dot badge -->
@@ -118,8 +116,7 @@
                 </Button>
 
                 <!-- Exit App Button (Off Button) -->
-                <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ExitAppButton_Click"
-                        helpers:AnimationHelper.HoverScale="1.15" helpers:AnimationHelper.PressedScale="0.85">
+                <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ExitAppButton_Click">
                     <FontIcon Glyph="&#xE7E8;" FontSize="15" Foreground="#FFEF4444" />
                 </Button>
             </StackPanel>

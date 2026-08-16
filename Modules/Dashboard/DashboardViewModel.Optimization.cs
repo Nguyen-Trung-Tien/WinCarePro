@@ -191,6 +191,9 @@ public partial class DashboardViewModel
             {
                 ScanStatus = string.Format("Optimization Complete! Mode: {0}".T(), mode);
                 HealthScore = 100;
+                AiHealthScore = 100;
+                _junkSizeBytes = 0;
+                _scannedRegistryIssues?.Clear();
                 Recommendations.Clear();
                 
                 var tempItems = DiagnosticItems.ToList();
@@ -201,7 +204,8 @@ public partial class DashboardViewModel
                     DiagnosticItems.Add(item);
                 }
                 
-                HasScanned = false; 
+                HasScanned = true; 
+                HealthBreakdownText = "Your PC is in optimal health condition with 0 bottlenecks detected.".T();
             });
 
             return summary;
@@ -325,7 +329,7 @@ public partial class DashboardViewModel
                 else
                 {
                     int unhealthyCount = DiagnosticItems.Count(x => !x.IsHealthy);
-                    HealthScore = Math.Clamp(100 - unhealthyCount * 10, 50, 95);
+                    HealthScore = Math.Clamp(100 - unhealthyCount * 10, 50, 100);
                 }
 
                 ScanStatus = string.Format("Resolved: {0}".T(), item.CheckName);

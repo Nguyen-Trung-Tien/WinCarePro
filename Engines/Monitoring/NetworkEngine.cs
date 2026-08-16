@@ -266,7 +266,28 @@ public partial class NetworkEngine
         {
             foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+                if (ni.NetworkInterfaceType == NetworkInterfaceType.Loopback || ni.NetworkInterfaceType == NetworkInterfaceType.Tunnel) continue;
+
+                // Filter out virtual Windows miniports, QoS packet schedulers, and WFP lightweight filters
+                string desc = ni.Description ?? "";
+                string name = ni.Name ?? "";
+                if (desc.Contains("Filter", StringComparison.OrdinalIgnoreCase) ||
+                    desc.Contains("Scheduler", StringComparison.OrdinalIgnoreCase) ||
+                    desc.Contains("LightWeight", StringComparison.OrdinalIgnoreCase) ||
+                    desc.Contains("QoS", StringComparison.OrdinalIgnoreCase) ||
+                    desc.Contains("VirtualBox", StringComparison.OrdinalIgnoreCase) ||
+                    desc.Contains("VMware", StringComparison.OrdinalIgnoreCase) ||
+                    desc.Contains("vEthernet", StringComparison.OrdinalIgnoreCase) ||
+                    desc.Contains("Hyper-V", StringComparison.OrdinalIgnoreCase) ||
+                    desc.Contains("Kernel Debug", StringComparison.OrdinalIgnoreCase) ||
+                    name.Contains("Filter", StringComparison.OrdinalIgnoreCase) ||
+                    name.Contains("Scheduler", StringComparison.OrdinalIgnoreCase) ||
+                    name.Contains("Virtual Adapter", StringComparison.OrdinalIgnoreCase) ||
+                    name.Contains("Kernel Debug", StringComparison.OrdinalIgnoreCase) ||
+                    name.StartsWith("Local Area Connection*", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
 
                 var ipList = new List<string>();
                 try
@@ -274,7 +295,10 @@ public partial class NetworkEngine
                     var ipProps = ni.GetIPProperties();
                     foreach (var addr in ipProps.UnicastAddresses)
                     {
-                        ipList.Add(addr.Address.ToString());
+                        if (addr.Address.AddressFamily == AddressFamily.InterNetwork)
+                        {
+                            ipList.Add(addr.Address.ToString());
+                        }
                     }
                 }
                 catch { }
@@ -289,15 +313,21 @@ public partial class NetworkEngine
                         speedStr = $"{ni.Speed / 1_000_000.0:F0} Mbps";
                 }
 
+                string mac = ni.GetPhysicalAddress().ToString();
+                if (!string.IsNullOrEmpty(mac) && mac.Length == 12)
+                {
+                    mac = string.Join(":", Enumerable.Range(0, 6).Select(i => mac.Substring(i * 2, 2)));
+                }
+
                 list.Add(new NetworkAdapterInfo
                 {
-                    Name = ni.Name,
-                    Description = ni.Description,
+                    Name = ni.Name ?? "",
+                    Description = ni.Description ?? "",
                     Status = ni.OperationalStatus.ToString(),
                     Type = ni.NetworkInterfaceType.ToString(),
                     Speed = speedStr,
-                    MacAddress = ni.GetPhysicalAddress().ToString(),
-                    IpAddresses = string.Join(", ", ipList)
+                    MacAddress = string.IsNullOrEmpty(mac) ? "N/A" : mac,
+                    IpAddresses = ipList.Count > 0 ? string.Join(", ", ipList) : "No IPv4"
                 });
             }
         }

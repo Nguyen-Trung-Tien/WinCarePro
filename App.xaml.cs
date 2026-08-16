@@ -40,13 +40,15 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
             WriteCrashLog("crash_appdomain.txt",
-                $"AppDomain Unhandled Exception:\n{e.ExceptionObject}");
+                $"AppDomain Unhandled Exception (IsTerminating: {e.IsTerminating}):\n{e.ExceptionObject}");
         };
 
         this.UnhandledException += (sender, e) =>
         {
             WriteCrashLog("crash_unhandled.txt",
-                $"Unhandled Exception:\nMessage: {e.Message}\nException: {e.Exception}\nStackTrace: {e.Exception?.StackTrace}");
+                $"WinUI Unhandled Exception:\nMessage: {e.Message}\nException: {e.Exception}\nStackTrace: {e.Exception?.StackTrace}");
+            // Mark as handled to prevent application crash on recoverable UI errors
+            e.Handled = true;
         };
 
         // Catch unobserved task exceptions in asynchronous code

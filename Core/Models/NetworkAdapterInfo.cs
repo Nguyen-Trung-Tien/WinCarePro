@@ -12,10 +12,19 @@ public class NetworkAdapterInfo
     public string Speed { get; set; } = "";
     public string MacAddress { get; set; } = "";
     public string IpAddresses { get; set; } = "";
+    public string IpAddress => IpAddresses;
     public string StatusColor => Status == "Up" ? "MediumSeaGreen" : "Tomato";
     public string StatusGlyph => Status == "Up" ? "\uE73E" : "\uF140";
     public string DisplayStatus => Status.T();
     public string DisplaySpeed => Speed.T();
+
+    public Microsoft.UI.Xaml.Media.Brush StatusBadgeBg => Status == "Up"
+        ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129))
+        : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 239, 68, 68));
+
+    public Microsoft.UI.Xaml.Media.Brush StatusBadgeFg => Status == "Up"
+        ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129))
+        : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68));
 
     // New optimized telemetry fields
     public string CurrentDnsServers { get; set; } = "";

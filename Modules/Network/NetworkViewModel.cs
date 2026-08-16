@@ -182,13 +182,21 @@ public partial class NetworkViewModel : ViewModelBase
     public double DownloadSpeedMbps
     {
         get => _downloadSpeedMbps;
-        set => SetPropertyOnUI(() => _downloadSpeedMbps, v => _downloadSpeedMbps = v, value);
+        set
+        {
+            SetPropertyOnUI(() => _downloadSpeedMbps, v => _downloadSpeedMbps = v, value);
+            OnPropertyChanged(nameof(DownloadSpeed));
+        }
     }
 
     public double UploadSpeedMbps
     {
         get => _uploadSpeedMbps;
-        set => SetPropertyOnUI(() => _uploadSpeedMbps, v => _uploadSpeedMbps = v, value);
+        set
+        {
+            SetPropertyOnUI(() => _uploadSpeedMbps, v => _uploadSpeedMbps = v, value);
+            OnPropertyChanged(nameof(UploadSpeed));
+        }
     }
 
     public double JitterMs
@@ -217,14 +225,26 @@ public partial class NetworkViewModel : ViewModelBase
 
     public double DownloadSpeed
     {
-        get => _downloadSpeed;
-        set => SetPropertyOnUI(() => _downloadSpeed, v => _downloadSpeed = v, value);
+        get => _downloadSpeedMbps > 0 ? _downloadSpeedMbps : _downloadSpeed;
+        set
+        {
+            _downloadSpeed = value;
+            _downloadSpeedMbps = value;
+            OnPropertyChanged(nameof(DownloadSpeed));
+            OnPropertyChanged(nameof(DownloadSpeedMbps));
+        }
     }
 
     public double UploadSpeed
     {
-        get => _uploadSpeed;
-        set => SetPropertyOnUI(() => _uploadSpeed, v => _uploadSpeed = v, value);
+        get => _uploadSpeedMbps > 0 ? _uploadSpeedMbps : _uploadSpeed;
+        set
+        {
+            _uploadSpeed = value;
+            _uploadSpeedMbps = value;
+            OnPropertyChanged(nameof(UploadSpeed));
+            OnPropertyChanged(nameof(UploadSpeedMbps));
+        }
     }
 
     public ObservableCollection<SpeedTestResult> SpeedTestHistory { get; } = new();

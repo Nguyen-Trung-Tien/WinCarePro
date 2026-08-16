@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="WinCarePro.Views.SecurityPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -100,8 +100,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Tool 1: Windows Security -->
-                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="20"
-                                        helpers:AnimationHelper.HoverScale="1.015" helpers:AnimationHelper.PressedScale="0.985">
+                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                                     <Grid ColumnSpacing="16">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -120,8 +119,7 @@
                                 </Border>
 
                                 <!-- Tool 2: System Information -->
-                                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="20"
-                                        helpers:AnimationHelper.HoverScale="1.015" helpers:AnimationHelper.PressedScale="0.985">
+                                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                                     <Grid ColumnSpacing="16">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -140,8 +138,7 @@
                                 </Border>
 
                                 <!-- Tool 3: Windows Update -->
-                                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="20"
-                                        helpers:AnimationHelper.HoverScale="1.015" helpers:AnimationHelper.PressedScale="0.985">
+                                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                                     <Grid ColumnSpacing="16">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -160,8 +157,7 @@
                                 </Border>
 
                                 <!-- Tool 4: Task Manager -->
-                                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="20"
-                                        helpers:AnimationHelper.HoverScale="1.015" helpers:AnimationHelper.PressedScale="0.985">
+                                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                                     <Grid ColumnSpacing="16">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>

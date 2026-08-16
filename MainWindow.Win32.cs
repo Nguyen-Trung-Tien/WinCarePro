@@ -162,6 +162,16 @@ public sealed partial class MainWindow : Window
         _oldWndProc = SetWindowLongPtr(_hwnd, GWL_WNDPROC, Marshal.GetFunctionPointerForDelegate(_newWndProc));
     }
 
+    public void UnsubclassWindow()
+    {
+        if (_hwnd != IntPtr.Zero && _oldWndProc != IntPtr.Zero)
+        {
+            SetWindowLongPtr(_hwnd, GWL_WNDPROC, _oldWndProc);
+            _oldWndProc = IntPtr.Zero;
+            _newWndProc = null;
+        }
+    }
+
     private IntPtr NewWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         if (msg == WM_GETMINMAXINFO)
@@ -206,7 +216,10 @@ public sealed partial class MainWindow : Window
 
         try
         {
-            string openText = "🚀 Open WinCare Pro".T();
+            uint cmd = 0;
+            try
+            {
+                string openText = "🚀 Open WinCare Pro".T();
             string scanText = "🔍 Scan System Diagnostics".T();
             string ramText = "⚡ Optimize Memory (RAM)".T();
             string junkText = "🧹 Clean Junk Files".T();
@@ -234,8 +247,15 @@ public sealed partial class MainWindow : Window
             // Set foreground window to ensure popup menu closes when clicking outside
             SetForegroundWindow(_hwnd);
 
-            uint cmd = TrackPopupMenuEx(hMenu, TPM_RETURNCMD | TPM_RIGHTBUTTON, pt.x, pt.y, _hwnd, IntPtr.Zero);
-            DestroyMenu(hMenu);
+            cmd = TrackPopupMenuEx(hMenu, TPM_RETURNCMD | TPM_RIGHTBUTTON, pt.x, pt.y, _hwnd, IntPtr.Zero);
+        }
+        finally
+        {
+            if (hMenu != IntPtr.Zero)
+            {
+                DestroyMenu(hMenu);
+            }
+        }
 
             if (cmd == ID_TRAY_OPEN)
             {
@@ -309,9 +329,9 @@ public sealed partial class MainWindow : Window
                 PerformAppExit();
             }
         }
-        catch
+        catch (Exception ex)
         {
-            if (hMenu != IntPtr.Zero) DestroyMenu(hMenu);
+            System.Diagnostics.Debug.WriteLine($"[MainWindow] ShowTrayContextMenu error: {ex.Message}");
         }
     }
 

@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:WinCarePro.Engines"
+    xmlns:models="using:WinCarePro.Models"
     xmlns:vm="using:WinCarePro.ViewModels"
     xmlns:views="using:WinCarePro.Views"
     mc:Ignorable="d">
@@ -29,12 +29,12 @@
                             <!-- Space Analyzer Header Stacking -->
                             <Setter Target="SpaceAnalyzerHeaderCol0.Width" Value="*" />
                             <Setter Target="SpaceAnalyzerHeaderCol1.Width" Value="0" />
-                            <Setter Target="SpaceAnalyzerPathGrid.(Grid.ColumnSpan)" Value="2" />
-                            <Setter Target="SpaceAnalyzerBtn.(Grid.Row)" Value="1" />
-                            <Setter Target="SpaceAnalyzerBtn.(Grid.Column)" Value="0" />
-                            <Setter Target="SpaceAnalyzerBtn.(Grid.ColumnSpan)" Value="2" />
-                            <Setter Target="SpaceAnalyzerBtn.Margin" Value="0,8,0,0" />
-                            <Setter Target="SpaceAnalyzerBtn.HorizontalAlignment" Value="Left" />
+                            <Setter Target="SpaceAnalyzerHeaderText.(Grid.ColumnSpan)" Value="2" />
+                            <Setter Target="SpaceAnalyzerHeaderActions.(Grid.Row)" Value="1" />
+                            <Setter Target="SpaceAnalyzerHeaderActions.(Grid.Column)" Value="0" />
+                            <Setter Target="SpaceAnalyzerHeaderActions.(Grid.ColumnSpan)" Value="2" />
+                            <Setter Target="SpaceAnalyzerHeaderActions.Margin" Value="0,8,0,0" />
+                            <Setter Target="SpaceAnalyzerHeaderActions.HorizontalAlignment" Value="Left" />
 
                             <!-- Duplicate Finder Header Stacking -->
                             <Setter Target="DuplicateFinderHeaderCol0.Width" Value="*" />
@@ -89,7 +89,7 @@
 
                         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Drives, Mode=OneWay}" SelectionMode="None">
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="models:DriveHealthInfo">
+                                <DataTemplate>
                                     <Border Style="{StaticResource GlassmorphismCardStyle}" Margin="0,0,0,12" Padding="20">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -99,26 +99,24 @@
                                             </Grid.ColumnDefinitions>
 
                                             <Border Width="44" Height="44" Background="#1510B981" CornerRadius="22" VerticalAlignment="Center" Margin="0,0,16,0">
-                                                <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" />
+                                                <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" />
                                             </Border>
 
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
-                                                <TextBlock Text="{x:Bind Model}" FontWeight="Bold" FontSize="15" />
+                                                <TextBlock Text="{Binding Model}" FontWeight="Bold" FontSize="15" />
                                                 <StackPanel Orientation="Horizontal" Spacing="16">
-                                                    <TextBlock Text="{x:Bind Name}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                                    <TextBlock Text="{x:Bind Interface}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                                    <TextBlock Text="{x:Bind TemperatureFormatted}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                    <TextBlock Text="{Binding Name}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                    <TextBlock Text="{Binding Interface}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                    <TextBlock Text="{Binding TemperatureFormatted}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                                 </StackPanel>
                                             </StackPanel>
 
                                             <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="8">
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-                                                    <Border Background="{x:Bind views:DiskPage.GetHealthBadgeBg(HealthStatus)}" CornerRadius="4" Padding="8,4" HorizontalAlignment="Right">
-                                                        <TextBlock Text="{x:Bind HealthStatus}" FontWeight="Bold" FontSize="11" Foreground="{x:Bind views:DiskPage.GetHealthColor(HealthStatus)}" />
+                                                    <Border Background="#1510B981" CornerRadius="4" Padding="8,4">
+                                                        <TextBlock Text="{Binding HealthStatus}" Foreground="#FF10B981" FontWeight="Bold" FontSize="12"/>
                                                     </Border>
-                                                    <Button Content="Run CHKDSK" Click="OnRunChkdskClick" FontSize="11" Padding="8,4" VerticalAlignment="Center"/>
                                                 </StackPanel>
-                                                <TextBlock Text="S.M.A.R.T Status: Monitored" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Right" />
                                             </StackPanel>
                                         </Grid>
                                     </Border>
@@ -147,24 +145,19 @@
                                     <ColumnDefinition x:Name="SpaceAnalyzerHeaderCol1" Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 
-                                <StackPanel x:Name="SpaceAnalyzerPathGrid" Spacing="6" VerticalAlignment="Bottom" Margin="0,0,16,0">
-                                    <TextBlock Text="Analysis Target Folder" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                    <Grid Height="36">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox x:Name="SpaceAnalyzerPathBox" Text="{x:Bind ViewModel.StorageScanPath, Mode=TwoWay}" CornerRadius="6,0,0,6" Height="36" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-                                        <Button Grid.Column="1" Click="OnBrowseFolderClick" CornerRadius="0,6,6,0" Height="36" VerticalAlignment="Stretch" Padding="14,0" Margin="-1,0,0,0">
-                                            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                                                <FontIcon Glyph="&#xE8B7;" FontSize="14" />
-                                                <TextBlock Text="Browse" VerticalAlignment="Center" />
-                                            </StackPanel>
-                                        </Button>
-                                    </Grid>
+                                <StackPanel x:Name="SpaceAnalyzerHeaderText" VerticalAlignment="Center">
+                                    <TextBlock Text="Analyze disk space allocation across large directories and user folders." FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <!-- Breadcrumb Navigation Bar -->
+                                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
+                                        <TextBlock Text="Path:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{x:Bind ViewModel.CurrentAnalysisPath, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                        <Button Content="Go Up" Click="OnGoUpDirectoryClick" Visibility="{x:Bind ViewModel.CanGoUp, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" FontSize="10" Padding="8,2" Margin="6,0,0,0"/>
+                                    </StackPanel>
                                 </StackPanel>
 
-                                <Button x:Name="SpaceAnalyzerBtn" Grid.Column="1" Height="36" Content="Analyze Folder" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnAnalyzeClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" VerticalAlignment="Bottom"/>
+                                <StackPanel x:Name="SpaceAnalyzerHeaderActions" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Bottom">
+                                    <Button Content="Scan Directory" Click="OnAnalyzeSpaceClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}"/>
+                                </StackPanel>
                             </Grid>
                         </Border>
 
@@ -179,7 +172,7 @@
 
                                     <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.StorageItems, Mode=OneWay}" SelectionMode="None">
                                         <ListView.ItemTemplate>
-                                            <DataTemplate x:DataType="models:StorageItem">
+                                            <DataTemplate>
                                                 <Grid Padding="8,10" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" DoubleTapped="StorageItem_DoubleTapped" Background="Transparent">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto" />
@@ -187,19 +180,19 @@
                                                         <ColumnDefinition Width="140" />
                                                         <ColumnDefinition Width="Auto" />
                                                     </Grid.ColumnDefinitions>
-                                                    <FontIcon Glyph="{x:Bind IconGlyph}" FontSize="16" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                                    <FontIcon Glyph="{Binding IconGlyph}" FontSize="16" Foreground="{StaticResource PrimaryAccentBrush}" Margin="0,0,12,0" VerticalAlignment="Center"/>
                                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0">
-                                                        <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="13"/>
-                                                        <TextBlock Text="{x:Bind Path}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13"/>
+                                                        <TextBlock Text="{Binding Path}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
                                                     </StackPanel>
                                                     
                                                     <!-- Storage Visual Weight Progress Bar -->
                                                     <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,12,0" Spacing="2">
-                                                        <ProgressBar Value="{x:Bind Percentage}" Maximum="100" Height="6" CornerRadius="3" Foreground="{ThemeResource SystemAccentColor}" />
-                                                        <TextBlock Text="{x:Bind PercentageFormatted}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Right" />
+                                                        <ProgressBar Value="{Binding Percentage}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentBrush}" />
+                                                        <TextBlock Text="{Binding PercentageFormatted}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Right" />
                                                     </StackPanel>
 
-                                                    <TextBlock Grid.Column="3" Text="{x:Bind SizeFormatted}" FontWeight="Bold" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="3" Text="{Binding SizeFormatted}" FontWeight="Bold" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
                                                 </Grid>
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
@@ -249,24 +242,24 @@
                         <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
                             <ListView ItemsSource="{x:Bind ViewModel.DuplicateGroups, Mode=OneWay}" SelectionMode="None">
                                 <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:StorageDuplicateGroup">
+                                    <DataTemplate>
                                         <StackPanel Margin="0,0,0,16">
-                                            <TextBlock Text="{x:Bind SizeFormatted}" FontWeight="Bold" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" Margin="4,0,0,6"/>
-                                            <ItemsControl ItemsSource="{x:Bind Items}">
+                                            <TextBlock Text="{Binding SizeFormatted}" FontWeight="Bold" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" Margin="4,0,0,6"/>
+                                            <ItemsControl ItemsSource="{Binding Items}">
                                                 <ItemsControl.ItemTemplate>
-                                                    <DataTemplate x:DataType="vm:StorageDuplicateItem">
+                                                    <DataTemplate>
                                                         <Grid Padding="24,4" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="Auto" />
                                                                 <ColumnDefinition Width="*" />
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
-                                                            <CheckBox IsChecked="{x:Bind IsSelectedForDeletion, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,8,0" MinWidth="20" />
+                                                            <CheckBox IsChecked="{Binding IsSelectedForDeletion, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,8,0" MinWidth="20" />
                                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12"/>
-                                                                <TextBlock Text="{x:Bind Path}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="12"/>
+                                                                <TextBlock Text="{Binding Path}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                                             </StackPanel>
-                                                            <TextBlock Grid.Column="2" Text="{x:Bind LastModified}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                                            <TextBlock Grid.Column="2" Text="{Binding LastModifiedFormatted}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
                                                         </Grid>
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>

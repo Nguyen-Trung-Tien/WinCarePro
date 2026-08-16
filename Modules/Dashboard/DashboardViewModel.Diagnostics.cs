@@ -50,53 +50,98 @@ public partial class DashboardViewModel
 
     public void UpdateHealthScoreBreakdown()
     {
-        if (!HasScanned)
-        {
-            HealthBreakdownText = "No diagnostic scan performed yet.".T();
-            return;
-        }
-
         var details = new List<string>();
         int calculatedScore = 100;
 
+        // 1. Live Telemetry Load Deductions
+        if (CpuUsage > 85.0)
+        {
+            calculatedScore -= 15;
+            details.Add(string.Format("High CPU load: {0:F0}% (-15 pts)".T(), CpuUsage));
+        }
+        else if (CpuUsage > 65.0)
+        {
+            calculatedScore -= 5;
+            details.Add(string.Format("Moderate CPU: {0:F0}% (-5 pts)".T(), CpuUsage));
+        }
+
+        if (RamUsage > 88.0)
+        {
+            calculatedScore -= 15;
+            details.Add(string.Format("RAM memory saturated: {0:F0}% (-15 pts)".T(), RamUsage));
+        }
+        else if (RamUsage > 75.0)
+        {
+            calculatedScore -= 8;
+            details.Add(string.Format("Elevated RAM usage: {0:F0}% (-8 pts)".T(), RamUsage));
+        }
+
+        // 2. Drive C: Free Space Assessment
+        try
+        {
+            var drives = DriveInfo.GetDrives().Where(d => d.IsReady && d.DriveType == DriveType.Fixed);
+            var cDrive = drives.FirstOrDefault(d => d.Name.StartsWith("C", StringComparison.OrdinalIgnoreCase)) ?? drives.FirstOrDefault();
+            if (cDrive != null)
+            {
+                double freeGB = cDrive.AvailableFreeSpace / (1024.0 * 1024.0 * 1024.0);
+                if (freeGB < 10.0)
+                {
+                    calculatedScore -= 20;
+                    details.Add(string.Format("Critical disk space: {0:F1} GB free (-20 pts)".T(), freeGB));
+                }
+                else if (freeGB < 25.0)
+                {
+                    calculatedScore -= 10;
+                    details.Add(string.Format("Low disk space: {0:F1} GB free (-10 pts)".T(), freeGB));
+                }
+            }
+        }
+        catch { }
+
+        // 3. Junk Files Deductions
         if (_junkSizeBytes > 0)
         {
             double mb = _junkSizeBytes / 1024.0 / 1024.0;
-            int penalty = (int)Math.Min(15, mb / 100.0);
+            int penalty = (int)Math.Clamp(mb / 150.0, 2, 20);
             calculatedScore -= penalty;
-            details.Add(string.Format("{0:F1} MB Junk (-{1} pts)", mb, penalty));
+            details.Add(string.Format("{0:F1} MB Junk (-{1} pts)".T(), mb, penalty));
         }
 
+        // 4. Registry Issues Deductions
         if (_scannedRegistryIssues != null && _scannedRegistryIssues.Count > 0)
         {
             int penalty = Math.Min(15, _scannedRegistryIssues.Count);
             calculatedScore -= penalty;
-            details.Add(string.Format("{0} Registry errors (-{1} pts)", _scannedRegistryIssues.Count, penalty));
+            details.Add(string.Format("{0} Registry errors (-{1} pts)".T(), _scannedRegistryIssues.Count, penalty));
         }
 
+        // 5. Outdated Software Deductions
         if (AvailableUpdatesCount > 0)
         {
             int penalty = Math.Min(10, AvailableUpdatesCount * 2);
             calculatedScore -= penalty;
-            details.Add(string.Format("{0} Outdated apps (-{1} pts)", AvailableUpdatesCount, penalty));
+            details.Add(string.Format("{0} Outdated apps (-{1} pts)".T(), AvailableUpdatesCount, penalty));
         }
 
-        if (CpuUsage > 85.0 || RamUsage > 90.0)
-        {
-            calculatedScore -= 10;
-            details.Add("High system utilization (-10 pts)");
-        }
+        calculatedScore = Math.Clamp(calculatedScore, 20, 100);
 
-        calculatedScore = Math.Clamp(calculatedScore, 50, 100);
-
-        HealthScore = calculatedScore;
-        if (details.Count > 0)
+        // If AI Health Engine already produced a deep neural score and we haven't scanned yet, blend it
+        if (!HasScanned && AiHealthScore > 0)
         {
-            HealthBreakdownText = "Score Details: " + string.Join(", ", details);
+            HealthScore = Math.Min(calculatedScore, AiHealthScore);
         }
         else
         {
-            HealthBreakdownText = "Your PC is in perfect health!";
+            HealthScore = calculatedScore;
+        }
+
+        if (details.Count > 0)
+        {
+            HealthBreakdownText = "Score Details: ".T() + string.Join(" • ", details);
+        }
+        else
+        {
+            HealthBreakdownText = "Your PC is in optimal health condition with 0 bottlenecks detected.".T();
         }
     }
 

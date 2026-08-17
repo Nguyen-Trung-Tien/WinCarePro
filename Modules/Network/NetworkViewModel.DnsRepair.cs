@@ -108,6 +108,44 @@ public partial class NetworkViewModel
         }
     }
 
+    public async Task RestoreDefaultDnsAsync()
+    {
+        if (IsBusy) return;
+        IsBusy = true;
+        LogText("Restoring DNS to Automatic (DHCP)...".T());
+        try
+        {
+            bool ok = await _engine.ApplyDnsSettingsAsync("DHCP (Automatic)", "", "");
+            if (_cts == null || _cts.IsCancellationRequested) return;
+            if (ok)
+            {
+                LogText("Successfully reset DNS to Automatic (DHCP).".T());
+                _notificationService?.ShowSuccess("DNS Restored".T(), "Network adapter configured to obtain DNS automatically.".T());
+            }
+            else
+            {
+                LogText("Failed to reset DNS (Requires Administrator privilege).".T());
+                _notificationService?.ShowError("DNS Setup Failed".T(), "Administrative privileges required.".T());
+            }
+            await RunDiagnosticsAsync();
+            LoadAdapters();
+        }
+        catch (Exception ex)
+        {
+            if (_cts != null && !_cts.IsCancellationRequested)
+            {
+                LogText($"Error resetting DNS: {ex.Message}");
+            }
+        }
+        finally
+        {
+            if (_cts != null && !_cts.IsCancellationRequested)
+            {
+                IsBusy = false;
+            }
+        }
+    }
+
     public async Task RunRepairOperationAsync(string operation)
     {
         if (IsBusy) return;

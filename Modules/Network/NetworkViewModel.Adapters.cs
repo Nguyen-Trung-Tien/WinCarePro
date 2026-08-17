@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using WinCarePro.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
@@ -156,5 +157,47 @@ public partial class NetworkViewModel
             });
         }
         catch { }
+    }
+
+    public async Task<bool> TerminateProcessAsync(int pid, string processName)
+    {
+        if (pid <= 4) return false; // Protected system processes
+        try
+        {
+            await Task.Run(() =>
+            {
+                var proc = System.Diagnostics.Process.GetProcessById(pid);
+                proc.Kill(true);
+            });
+
+            LogText(string.Format("Terminated process '{0}' (PID {1}).".T(), processName, pid));
+            _notificationService?.ShowSuccess("Process Terminated".T(), string.Format("Process {0} (PID {1}) was stopped.".T(), processName, pid));
+            await LoadActiveConnectionsAsync(forceRefresh: true);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            LogText($"Failed to terminate process {processName} (PID {pid}): {ex.Message}");
+            _notificationService?.ShowError("Action Failed".T(), ex.Message);
+            return false;
+        }
+    }
+
+    public void OpenProcessLocation(int pid, string processName)
+    {
+        if (pid <= 4) return;
+        try
+        {
+            var proc = System.Diagnostics.Process.GetProcessById(pid);
+            string? exePath = proc.MainModule?.FileName;
+            if (!string.IsNullOrEmpty(exePath) && System.IO.File.Exists(exePath))
+            {
+                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{exePath}\"");
+            }
+        }
+        catch (Exception ex)
+        {
+            LogText($"Could not open process directory for {processName}: {ex.Message}");
+        }
     }
 }

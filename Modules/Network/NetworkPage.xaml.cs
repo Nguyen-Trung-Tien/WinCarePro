@@ -29,7 +29,42 @@ public sealed partial class NetworkPage : Page
             TranslationManager.Instance.Translate(this);
             SetActiveTab(ViewModel.ActiveTab ?? "quality");
             UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
+            InitDohComboBox();
         };
+
+        ViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(ViewModel.ConsoleOutput))
+            {
+                DispatcherQueue?.TryEnqueue(() =>
+                {
+                    try
+                    {
+                        TerminalScrollViewer?.ChangeView(null, TerminalScrollViewer.ScrollableHeight, null);
+                    }
+                    catch { }
+                });
+            }
+        };
+    }
+
+    private void InitDohComboBox()
+    {
+        if (CmbDohProvider != null)
+        {
+            if (CmbDohProvider.ItemsSource == null)
+            {
+                CmbDohProvider.ItemsSource = DohProviders;
+            }
+            if (!string.IsNullOrEmpty(ViewModel.SelectedDohProvider))
+            {
+                CmbDohProvider.SelectedItem = ViewModel.SelectedDohProvider;
+            }
+            if (CmbDohProvider.SelectedIndex < 0)
+            {
+                CmbDohProvider.SelectedIndex = 0;
+            }
+        }
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -39,6 +74,7 @@ public sealed partial class NetworkPage : Page
         this.Bindings.Update();
         SetActiveTab(ViewModel.ActiveTab ?? "quality");
         UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
+        InitDohComboBox();
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -91,7 +127,7 @@ public sealed partial class NetworkPage : Page
     {
         await ViewModel.RunDiagnosticsAsync();
         ViewModel.LoadAdapters();
-        await ViewModel.LoadActiveConnectionsAsync();
+        await ViewModel.LoadActiveConnectionsAsync(forceRefresh: true);
     }
 
     private async void OnSpeedTestClick(object sender, RoutedEventArgs e)
@@ -102,6 +138,11 @@ public sealed partial class NetworkPage : Page
     private async void OnDnsBenchmarkClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.StartDnsBenchmarkAsync();
+    }
+
+    private async void OnRestoreDefaultDnsClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RestoreDefaultDnsAsync();
     }
 
     private async void OnApplyDnsClick(object sender, RoutedEventArgs e)
@@ -115,6 +156,14 @@ public sealed partial class NetworkPage : Page
     private async void OnApplyDohClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.ApplyDohSettingsAsync();
+    }
+
+    private void OnDohProviderSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (CmbDohProvider?.SelectedItem is string provider)
+        {
+            ViewModel.SelectedDohProvider = provider;
+        }
     }
 
     private async void OnRepairClick(object sender, RoutedEventArgs e)
@@ -151,6 +200,14 @@ public sealed partial class NetworkPage : Page
         if (BtnFilterUdp != null) BtnFilterUdp.Style = activeCategory.Equals("UDP", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
     }
 
+    private void OnHostKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+    {
+        if (e.Key == Windows.System.VirtualKey.Enter)
+        {
+            _ = ViewModel.RunPingTestAsync();
+        }
+    }
+
     private async void OnPingClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.RunPingTestAsync();
@@ -174,6 +231,50 @@ public sealed partial class NetworkPage : Page
     private void OnClearConsoleClick(object sender, RoutedEventArgs e)
     {
         ViewModel.ConsoleOutput = "";
+    }
+
+    private void OnCopyConsoleClick(object sender, RoutedEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(ViewModel.ConsoleOutput))
+        {
+            try
+            {
+                var package = new DataPackage();
+                package.SetText(ViewModel.ConsoleOutput);
+                Clipboard.SetContent(package);
+            }
+            catch { }
+        }
+    }
+
+    private void OnCopySocketClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.DataContext is ActiveConnectionInfo conn)
+        {
+            try
+            {
+                var package = new DataPackage();
+                package.SetText($"Process: {conn.ProcessName} (PID: {conn.Pid})\nProtocol: {conn.Protocol}\nLocal: {conn.LocalAddress}\nRemote: {conn.RemoteAddress}\nState: {conn.State}");
+                Clipboard.SetContent(package);
+            }
+            catch { }
+        }
+    }
+
+    private void OnOpenProcessLocationClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.DataContext is ActiveConnectionInfo conn)
+        {
+            ViewModel.OpenProcessLocation(conn.Pid, conn.ProcessName);
+        }
+    }
+
+    private async void OnKillProcessClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.DataContext is ActiveConnectionInfo conn)
+        {
+            await ViewModel.TerminateProcessAsync(conn.Pid, conn.ProcessName);
+        }
     }
 
     private void OnCopyPublicIpClick(object sender, RoutedEventArgs e)

@@ -123,15 +123,36 @@ public partial class NetworkEngine
         Log($"Applying DNS settings for {dnsName} ({primaryIp}, {secondaryIp})...");
         try
         {
-            string script = "$route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object RouteMetric | Select-Object -First 1; " +
-                            "if ($route) { " +
-                            "  Set-DnsClientServerAddress -InterfaceIndex $route.InterfaceIndex -ServerAddresses ('" + primaryIp + "', '" + secondaryIp + "'); " +
-                            "} else { " +
-                            "  $adapters = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }; " +
-                            "  foreach ($adapter in $adapters) { " +
-                            "    Set-DnsClientServerAddress -InterfaceAlias $adapter.Name -ServerAddresses ('" + primaryIp + "', '" + secondaryIp + "'); " +
-                            "  } " +
-                            "}";
+            string script;
+            bool isDhcp = string.IsNullOrWhiteSpace(primaryIp) || 
+                          dnsName.Contains("DHCP", StringComparison.OrdinalIgnoreCase) || 
+                          dnsName.Contains("Automatic", StringComparison.OrdinalIgnoreCase);
+
+            if (isDhcp)
+            {
+                script = "$route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object RouteMetric | Select-Object -First 1; " +
+                         "if ($route) { " +
+                         "  Set-DnsClientServerAddress -InterfaceIndex $route.InterfaceIndex -ResetServerAddresses; " +
+                         "} else { " +
+                         "  $adapters = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }; " +
+                         "  foreach ($adapter in $adapters) { " +
+                         "    Set-DnsClientServerAddress -InterfaceAlias $adapter.Name -ResetServerAddresses; " +
+                         "  } " +
+                         "}";
+            }
+            else
+            {
+                script = "$route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object RouteMetric | Select-Object -First 1; " +
+                         "if ($route) { " +
+                         "  Set-DnsClientServerAddress -InterfaceIndex $route.InterfaceIndex -ServerAddresses ('" + primaryIp + "', '" + secondaryIp + "'); " +
+                         "} else { " +
+                         "  $adapters = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }; " +
+                         "  foreach ($adapter in $adapters) { " +
+                         "    Set-DnsClientServerAddress -InterfaceAlias $adapter.Name -ServerAddresses ('" + primaryIp + "', '" + secondaryIp + "'); " +
+                         "  } " +
+                         "}";
+            }
+
             var psi = new ProcessStartInfo
             {
                 FileName = "powershell.exe",

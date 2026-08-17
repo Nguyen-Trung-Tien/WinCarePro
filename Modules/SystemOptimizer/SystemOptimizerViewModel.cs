@@ -369,31 +369,70 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _usedRamText, value);
     }
 
-    // Live terminal log
-    private string _consoleLogText = "";
-    public string ConsoleLogText
+    // Kernel & Latency Profile Telemetry
+    private string _multimediaSchedulingStatus = "Realtime High Priority".T();
+    public string MultimediaSchedulingStatus
     {
-        get => _consoleLogText;
-        set => SetProperty(ref _consoleLogText, value);
+        get => _multimediaSchedulingStatus;
+        set => SetProperty(ref _multimediaSchedulingStatus, value);
+    }
+
+    private string _networkThrottlingStatus = "Disabled (Low Latency)".T();
+    public string NetworkThrottlingStatus
+    {
+        get => _networkThrottlingStatus;
+        set => SetProperty(ref _networkThrottlingStatus, value);
+    }
+
+    private string _kernelPagingStatus = "RAM Resident (Fast)".T();
+    public string KernelPagingStatus
+    {
+        get => _kernelPagingStatus;
+        set => SetProperty(ref _kernelPagingStatus, value);
+    }
+
+    private bool _isCleaningCache;
+    public bool IsCleaningCache
+    {
+        get => _isCleaningCache;
+        set => SetProperty(ref _isCleaningCache, value);
+    }
+
+    public async Task<long> CleanDeliveryCacheAsync()
+    {
+        if (IsCleaningCache || _isDisposed) return 0;
+        IsCleaningCache = true;
+        StatusText = "Purging Delivery Optimization Cache...".T();
+        try
+        {
+            long freed = await _optimizerEngine.CleanDeliveryOptimizationCacheAsync();
+            double mb = freed / 1024.0 / 1024.0;
+            StatusText = string.Format("Purged {0:F1} MB Delivery Optimization Cache.".T(), mb);
+
+            var notificationService = App.Services?.GetService<INotificationService>();
+            notificationService?.ShowToast(
+                "Cache Cleanup".T(), 
+                string.Format("Successfully purged {0:F1} MB from Delivery Optimization cache.".T(), mb),
+                NotificationSeverity.Success
+            );
+
+            return freed;
+        }
+        catch (Exception ex)
+        {
+            StatusText = "Error: ".T() + ex.Message;
+            return 0;
+        }
+        finally
+        {
+            IsCleaningCache = false;
+        }
     }
 
     public void Log(string message)
     {
-        if (_isDisposed) return;
-        _dispatcherQueue?.TryEnqueue(() =>
-        {
-            ConsoleLogText += $"[{DateTime.Now:HH:mm:ss}] {message}\n";
-            // Limit log memory
-            if (ConsoleLogText.Length > 20000)
-            {
-                ConsoleLogText = ConsoleLogText.Substring(ConsoleLogText.Length - 12000);
-            }
-        });
-    }
-
-    public void ClearLog()
-    {
-        ConsoleLogText = "";
+        // Lightweight debug logging without terminal UI allocations
+        System.Diagnostics.Debug.WriteLine($"[SystemOptimizer] {message}");
     }
 
     // Game Boost Properties
@@ -421,10 +460,8 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         
-        // Pipe engine progress logs to our console
         _optimizerEngine.ProgressMessage += (msg) => Log(msg.T());
 
-        Log("System Optimizer panel initialized.".T());
         LoadTweaks();
         InitializeBackgroundServices();
         UpdateRamAndServices();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,16 +14,29 @@ namespace WinCarePro.ViewModels;
 
 public class UpdaterViewModel : ViewModelBase
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly DispatcherQueue? _dispatcherQueue;
     private readonly SoftwareUpdaterEngine _updaterEngine = App.Services?.GetService<SoftwareUpdaterEngine>() ?? new();
     private readonly List<SoftwareUpdateInfo> _allUpdates = new();
+    private readonly DispatcherQueueTimer? _searchDebounceTimer;
+    private CancellationTokenSource? _operationCts;
 
     private bool _isBusy;
     public bool IsBusy
     {
         get => _isBusy;
-        set => SetPropertyOnUI(() => _isBusy, v => _isBusy = v, value);
+        set
+        {
+            SetPropertyOnUI(() => _isBusy, v => 
+            {
+                _isBusy = v;
+                OnPropertyChanged(nameof(CanCancel));
+                OnPropertyChanged(nameof(IsNotBusy));
+            }, value);
+        }
     }
+
+    public bool IsNotBusy => !_isBusy;
+    public bool CanCancel => _isBusy && _operationCts != null && !_operationCts.IsCancellationRequested;
 
     private string _progressMessage = "Ready".T();
     public string ProgressMessage
@@ -44,10 +58,11 @@ public class UpdaterViewModel : ViewModelBase
         get => _searchText;
         set
         {
-            SetPropertyOnUI(() => _searchText, v => 
+            SetPropertyOnUI(() => _searchText, v =>
             {
                 _searchText = v;
-                ApplyFilters();
+                _searchDebounceTimer?.Stop();
+                _searchDebounceTimer?.Start();
             }, value);
         }
     }
@@ -58,26 +73,13 @@ public class UpdaterViewModel : ViewModelBase
         get => _updateEngine;
         set
         {
-            SetPropertyOnUI(() => _updateEngine, v => 
+            SetPropertyOnUI(() => _updateEngine, v =>
             {
                 _updateEngine = v;
+                ActiveEngineName = v == "winget" ? "Windows Package Manager" : "WinCare Direct Downloader";
                 _ = ScanUpdatesAsync();
             }, value);
         }
-    }
-
-    private string _terminalLog = "";
-    public string TerminalLog
-    {
-        get => _terminalLog;
-        set => SetPropertyOnUI(() => _terminalLog, v => _terminalLog = v, value);
-    }
-
-    private bool _showLogPanel = false;
-    public bool ShowLogPanel
-    {
-        get => _showLogPanel;
-        set => SetPropertyOnUI(() => _showLogPanel, v => _showLogPanel = v, value);
     }
 
     // Filter Tab Properties
@@ -116,7 +118,13 @@ public class UpdaterViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _completedCount, v => _completedCount = v, value);
     }
 
-    // Statistics properties
+    private int _totalFoundCount;
+    public int TotalFoundCount
+    {
+        get => _totalFoundCount;
+        set => SetPropertyOnUI(() => _totalFoundCount, v => _totalFoundCount = v, value);
+    }
+
     private int _updatesCount;
     public int UpdatesCount
     {
@@ -138,14 +146,21 @@ public class UpdaterViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _activeEngineName, v => _activeEngineName = v, value);
     }
 
-    private string _systemHealthStatus = "Unknown".T();
+    private double _systemHealthScore = 100;
+    public double SystemHealthScore
+    {
+        get => _systemHealthScore;
+        set => SetPropertyOnUI(() => _systemHealthScore, v => _systemHealthScore = v, value);
+    }
+
+    private string _systemHealthStatus = "System Up-to-Date".T();
     public string SystemHealthStatus
     {
         get => _systemHealthStatus;
         set => SetPropertyOnUI(() => _systemHealthStatus, v => _systemHealthStatus = v, value);
     }
 
-    private string _systemHealthColor = "#FF3B82F6"; // Default Blue
+    private string _systemHealthColor = "#FF10B981"; // Emerald Green
     public string SystemHealthColor
     {
         get => _systemHealthColor;
@@ -153,20 +168,30 @@ public class UpdaterViewModel : ViewModelBase
     }
 
     public bool HasSelectedUpdates => _allUpdates.Any(x => x.IsSelected && x.UpdateStatus != SoftwareUpdateInfo.StatusCompleted);
+    public int SelectedCount => _allUpdates.Count(x => x.IsSelected && x.UpdateStatus != SoftwareUpdateInfo.StatusCompleted);
 
     public ObservableCollection<SoftwareUpdateInfo> Updates { get; } = new();
 
     public UpdaterViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = App.MainDispatcherQueue ?? DispatcherQueue.GetForCurrentThread();
+        if (_dispatcherQueue != null)
+        {
+            _searchDebounceTimer = _dispatcherQueue.CreateTimer();
+            _searchDebounceTimer.Interval = TimeSpan.FromMilliseconds(150);
+            _searchDebounceTimer.Tick += (s, e) =>
+            {
+                _searchDebounceTimer.Stop();
+                ApplyFilters();
+            };
+        }
     }
 
     private void OnOutputReceived(string msg)
     {
-        _dispatcherQueue?.TryEnqueue(() => 
+        _dispatcherQueue?.TryEnqueue(() =>
         {
             ProgressMessage = msg;
-            TerminalLog += msg + "\n";
         });
     }
 
@@ -174,7 +199,8 @@ public class UpdaterViewModel : ViewModelBase
     {
         _dispatcherQueue?.TryEnqueue(() =>
         {
-            var app = Updates.FirstOrDefault(x => x.Id.Equals(appId, StringComparison.OrdinalIgnoreCase));
+            var app = Updates.FirstOrDefault(x => x.Id.Equals(appId, StringComparison.OrdinalIgnoreCase)) ??
+                      _allUpdates.FirstOrDefault(x => x.Id.Equals(appId, StringComparison.OrdinalIgnoreCase));
             if (app != null)
             {
                 app.DownloadProgress = percent;
@@ -197,7 +223,6 @@ public class UpdaterViewModel : ViewModelBase
 
     public void Initialize()
     {
-        // Unsubscribe first to avoid double registration
         _updaterEngine.OutputReceived -= OnOutputReceived;
         _updaterEngine.OutputReceived += OnOutputReceived;
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
@@ -210,23 +235,37 @@ public class UpdaterViewModel : ViewModelBase
 
     public void Cleanup()
     {
+        CancelOperations();
         _updaterEngine.OutputReceived -= OnOutputReceived;
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+    }
+
+    public void CancelOperations()
+    {
+        if (_operationCts != null && !_operationCts.IsCancellationRequested)
+        {
+            _operationCts.Cancel();
+            ProgressMessage = "Operation cancelled by user.".T();
+        }
     }
 
     public async Task ScanUpdatesAsync()
     {
         if (IsBusy) return;
         IsBusy = true;
+        _operationCts = new CancellationTokenSource();
+        var ct = _operationCts.Token;
+
         _allUpdates.Clear();
         Updates.Clear();
-        ProgressMessage = "Auditing winget packages database...".T();
-        TerminalLog += string.Format("[WinCare] Scanning updates using {0} engine...\n".T(), UpdateEngine);
+        ProgressMessage = "Auditing software packages and repositories...".T();
+        ProgressPercent = 0;
 
         try
         {
-            var list = await Task.Run(() => _updaterEngine.ScanUpdatesAsync(UpdateEngine));
+            var list = await Task.Run(async () => await _updaterEngine.ScanUpdatesAsync(UpdateEngine, ct), ct);
+            
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 foreach (var item in list)
@@ -235,15 +274,24 @@ public class UpdaterViewModel : ViewModelBase
                 }
                 LastScanTime = DateTime.Now.ToString("HH:mm:ss");
                 ApplyFilters();
-                ProgressMessage = string.Format("Updates scan completed. {0} packages available.".T(), UpdatesCount);
+                ProgressMessage = string.Format("Updates scan completed. {0} packages found.".T(), list.Count);
+                ProgressPercent = 100;
                 IsBusy = false;
             });
+        }
+        catch (OperationCanceledException)
+        {
+            ProgressMessage = "Scan cancelled.".T();
+            IsBusy = false;
         }
         catch (Exception ex)
         {
             ProgressMessage = string.Format("Scan failed: {0}".T(), ex.Message);
-            TerminalLog += string.Format("[Error] {0}\n", ex.Message);
             IsBusy = false;
+        }
+        finally
+        {
+            _dispatcherQueue?.TryEnqueue(UpdateStatistics);
         }
     }
 
@@ -255,7 +303,7 @@ public class UpdaterViewModel : ViewModelBase
 
         if (!string.IsNullOrEmpty(query))
         {
-            list = list.Where(x => x.Name.Contains(query, StringComparison.OrdinalIgnoreCase) || 
+            list = list.Where(x => x.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
                                    x.Id.Contains(query, StringComparison.OrdinalIgnoreCase));
         }
 
@@ -287,10 +335,7 @@ public class UpdaterViewModel : ViewModelBase
         if (e.PropertyName == nameof(SoftwareUpdateInfo.IsSelected) ||
             e.PropertyName == nameof(SoftwareUpdateInfo.UpdateStatus))
         {
-            _dispatcherQueue?.TryEnqueue(() =>
-            {
-                UpdateStatistics();
-            });
+            _dispatcherQueue?.TryEnqueue(UpdateStatistics);
         }
     }
 
@@ -299,21 +344,25 @@ public class UpdaterViewModel : ViewModelBase
         PendingUpdatesCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusAvailable || x.UpdateStatus == SoftwareUpdateInfo.StatusFailed);
         UpdatingCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusUpdating);
         CompletedCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusCompleted);
+        TotalFoundCount = _allUpdates.Count;
         UpdatesCount = PendingUpdatesCount;
 
         if (PendingUpdatesCount == 0)
         {
-            SystemHealthStatus = "System Up-to-Date".T();
-            SystemHealthColor = "#FF10B981"; // Green
+            SystemHealthStatus = "All Packages Up-to-Date".T();
+            SystemHealthScore = 100.0;
+            SystemHealthColor = "#FF10B981"; // Emerald Green
         }
         else
         {
             SystemHealthStatus = string.Format("Action Required ({0} Updates)".T(), PendingUpdatesCount);
-            SystemHealthColor = "#FFF59E0B"; // Amber
+            SystemHealthScore = Math.Max(100.0 - (PendingUpdatesCount * 15.0), 25.0);
+            SystemHealthColor = PendingUpdatesCount > 3 ? "#FFEF4444" : "#FFF59E0B"; // Red or Amber
         }
 
         ActiveEngineName = UpdateEngine == "winget" ? "Windows Package Manager" : "WinCare Direct Downloader";
         OnPropertyChanged(nameof(HasSelectedUpdates));
+        OnPropertyChanged(nameof(SelectedCount));
         OnPropertyChanged(nameof(SelectedStatusFilter));
     }
 
@@ -321,9 +370,13 @@ public class UpdaterViewModel : ViewModelBase
     {
         foreach (var app in Updates)
         {
-            app.IsSelected = isSelected;
+            if (app.CanUpdate)
+            {
+                app.IsSelected = isSelected;
+            }
         }
         OnPropertyChanged(nameof(HasSelectedUpdates));
+        OnPropertyChanged(nameof(SelectedCount));
     }
 
     public async Task UpdateSelectedAppsAsync()
@@ -332,8 +385,9 @@ public class UpdaterViewModel : ViewModelBase
         if (selected.Count == 0 || IsBusy) return;
 
         IsBusy = true;
+        _operationCts = new CancellationTokenSource();
+        var ct = _operationCts.Token;
         ProgressPercent = 0;
-        TerminalLog += string.Format("[WinCare] Starting installation for {0} selected packages...\n".T(), selected.Count);
 
         try
         {
@@ -342,6 +396,8 @@ public class UpdaterViewModel : ViewModelBase
 
             for (int i = 0; i < selected.Count; i++)
             {
+                ct.ThrowIfCancellationRequested();
+
                 var app = selected[i];
                 app.UpdateStatus = SoftwareUpdateInfo.StatusUpdating;
                 app.DownloadProgress = 0;
@@ -350,8 +406,11 @@ public class UpdaterViewModel : ViewModelBase
 
                 ProgressMessage = string.Format("Silent updating {0} ({1}/{2})...".T(), app.Name, i + 1, selected.Count);
 
-                bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
-                _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; });
+                bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine, ct);
+                _dispatcherQueue?.TryEnqueue(() => 
+                { 
+                    app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; 
+                });
 
                 current += step;
                 ProgressPercent = (int)current;
@@ -359,17 +418,19 @@ public class UpdaterViewModel : ViewModelBase
 
             ProgressPercent = 100;
             ProgressMessage = "Selected package installations complete.".T();
-            TerminalLog += "[WinCare] Selected package installations complete.\n".T();
+        }
+        catch (OperationCanceledException)
+        {
+            ProgressMessage = "Batch update cancelled.".T();
         }
         catch (Exception ex)
         {
             ProgressMessage = string.Format("Updates failed: {0}".T(), ex.Message);
-            TerminalLog += string.Format("[Error] {0}\n", ex.Message);
         }
         finally
         {
             IsBusy = false;
-            UpdateStatistics();
+            _dispatcherQueue?.TryEnqueue(UpdateStatistics);
         }
     }
 
@@ -378,58 +439,74 @@ public class UpdaterViewModel : ViewModelBase
         if (IsBusy || app == null || app.UpdateStatus == SoftwareUpdateInfo.StatusCompleted || app.UpdateStatus == SoftwareUpdateInfo.StatusUpdating) return;
 
         IsBusy = true;
+        _operationCts = new CancellationTokenSource();
+        var ct = _operationCts.Token;
+
         app.UpdateStatus = SoftwareUpdateInfo.StatusUpdating;
         app.DownloadProgress = 0;
         app.IsIndeterminate = true;
         app.ProgressText = "Preparing...".T();
 
         ProgressMessage = string.Format("Silent updating {0}...".T(), app.Name);
-        TerminalLog += string.Format("[WinCare] Starting single update for {0}...\n".T(), app.Name);
 
         try
         {
-            bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
-            _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; });
+            bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine, ct);
+            _dispatcherQueue?.TryEnqueue(() => 
+            { 
+                app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; 
+            });
             
             ProgressMessage = ok ? string.Format("Successfully updated {0}".T(), app.Name) : string.Format("Failed to update {0}".T(), app.Name);
-            TerminalLog += string.Format("[WinCare] Single update finished. Status: {0}\n".T(), ok ? "Success" : "Failed");
+        }
+        catch (OperationCanceledException)
+        {
+            ProgressMessage = "Update cancelled.".T();
         }
         catch (Exception ex)
         {
             ProgressMessage = string.Format("Update failed: {0}".T(), ex.Message);
-            TerminalLog += string.Format("[Error] {0}\n", ex.Message);
         }
         finally
         {
             IsBusy = false;
-            UpdateStatistics();
+            _dispatcherQueue?.TryEnqueue(UpdateStatistics);
         }
     }
 
     public async Task UpdateAllAppsAsync()
     {
         if (Updates.Count == 0 || IsBusy) return;
+        var pending = Updates.Where(x => x.UpdateStatus != SoftwareUpdateInfo.StatusCompleted).ToList();
+        if (pending.Count == 0) return;
+
         IsBusy = true;
+        _operationCts = new CancellationTokenSource();
+        var ct = _operationCts.Token;
         ProgressPercent = 0;
-        TerminalLog += "[WinCare] Starting update for all packages...\n".T();
 
         try
         {
-            double step = 100.0 / Updates.Count;
+            double step = 100.0 / pending.Count;
             double current = 0;
 
-            for (int i = 0; i < Updates.Count; i++)
+            for (int i = 0; i < pending.Count; i++)
             {
-                var app = Updates[i];
+                ct.ThrowIfCancellationRequested();
+
+                var app = pending[i];
                 app.UpdateStatus = SoftwareUpdateInfo.StatusUpdating;
                 app.DownloadProgress = 0;
                 app.IsIndeterminate = true;
                 app.ProgressText = "Preparing...".T();
 
-                ProgressMessage = string.Format("Silent updating {0} ({1}/{2})...".T(), app.Name, i + 1, Updates.Count);
+                ProgressMessage = string.Format("Silent updating {0} ({1}/{2})...".T(), app.Name, i + 1, pending.Count);
 
-                bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine);
-                _dispatcherQueue.TryEnqueue(() => { app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; });
+                bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine, ct);
+                _dispatcherQueue?.TryEnqueue(() => 
+                { 
+                    app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; 
+                });
 
                 current += step;
                 ProgressPercent = (int)current;
@@ -437,17 +514,19 @@ public class UpdaterViewModel : ViewModelBase
 
             ProgressPercent = 100;
             ProgressMessage = "All background installations complete.".T();
-            TerminalLog += "[WinCare] All background installations complete.\n".T();
+        }
+        catch (OperationCanceledException)
+        {
+            ProgressMessage = "Update all cancelled.".T();
         }
         catch (Exception ex)
         {
             ProgressMessage = string.Format("Updates failed: {0}".T(), ex.Message);
-            TerminalLog += string.Format("[Error] {0}\n", ex.Message);
         }
         finally
         {
             IsBusy = false;
-            UpdateStatistics();
+            _dispatcherQueue?.TryEnqueue(UpdateStatistics);
         }
     }
 }

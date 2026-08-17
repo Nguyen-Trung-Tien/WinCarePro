@@ -132,7 +132,12 @@ public class SoftwareUpdaterEngine
         }
     };
 
-    public async Task<List<SoftwareUpdateInfo>> ScanUpdatesAsync(string updateEngine = "winget")
+    private static readonly Regex AnsiRegex = new(@"\x1B\[[^@-~]*[@-~]", RegexOptions.Compiled);
+    private static readonly Regex DigitsOnlyRegex = new(@"[^\d\.]", RegexOptions.Compiled);
+    private static readonly Regex VersionNumRegex = new(@"^\d", RegexOptions.Compiled);
+    private static readonly Regex DotNumberRegex = new(@"^\d+(\.\d+)+$", RegexOptions.Compiled);
+
+    public async Task<List<SoftwareUpdateInfo>> ScanUpdatesAsync(string updateEngine = "winget", System.Threading.CancellationToken cancellationToken = default)
     {
         var list = new List<SoftwareUpdateInfo>();
         var updatedApps = Database.DbManager.GetUpdatedApps();
@@ -140,12 +145,14 @@ public class SoftwareUpdaterEngine
         if (updateEngine == "direct")
         {
             Log("Scanning local system registries for outdated third-party applications...");
-            await Task.Delay(1000);
+            await Task.Delay(500, cancellationToken);
 
             try
             {
                 foreach (var app in SupportedApps)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     if (updatedApps.TryGetValue(app.Id, out string? storedVer))
                     {
                         if (!IsVersionOlder(storedVer, app.LatestVersion))
@@ -172,21 +179,26 @@ public class SoftwareUpdaterEngine
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                Log("Registry software scan was cancelled.");
+                throw;
+            }
             catch (Exception ex)
             {
                 Log($"Registry software scan failed: {ex.Message}");
             }
 
 #if DEBUG
-            if (list.Count == 0)
+            if (list.Count == 0 && !cancellationToken.IsCancellationRequested)
             {
                 Log("No installed outdated applications found in registry. Listing simulated updates for testing...");
-                await Task.Delay(1000);
-                AddSimulatedItem(list, updatedApps, "Git for Windows", "Git.Git", "2.40.1", "2.45.2", "direct");
-                AddSimulatedItem(list, updatedApps, "Visual Studio Code", "Microsoft.VisualStudioCode", "1.85.0", "1.90.1", "direct");
-                AddSimulatedItem(list, updatedApps, "Node.js (LTS)", "OpenJS.NodeJS.LTS", "20.10.0", "20.14.0", "direct");
-                AddSimulatedItem(list, updatedApps, "Mozilla Firefox", "Mozilla.Firefox", "120.0", "126.0.1", "direct");
-                AddSimulatedItem(list, updatedApps, "Google Chrome", "Google.Chrome", "121.0.6167.85", "125.0.6422.142", "direct");
+                await Task.Delay(500, cancellationToken);
+                AddSimulatedItem(list, updatedApps, "Git for Windows", "Git.Git", "2.40.1", "2.48.1", "direct");
+                AddSimulatedItem(list, updatedApps, "Visual Studio Code", "Microsoft.VisualStudioCode", "1.85.0", "1.98.2", "direct");
+                AddSimulatedItem(list, updatedApps, "Node.js (LTS)", "OpenJS.NodeJS.LTS", "20.10.0", "22.14.0", "direct");
+                AddSimulatedItem(list, updatedApps, "Mozilla Firefox", "Mozilla.Firefox", "120.0", "138.0.1", "direct");
+                AddSimulatedItem(list, updatedApps, "Google Chrome", "Google.Chrome", "121.0.6167.85", "136.0.7103.93", "direct");
             }
 #endif
         }
@@ -211,14 +223,18 @@ public class SoftwareUpdaterEngine
                 using var process = new Process { StartInfo = psi };
                 process.Start();
 
-                var readTask = process.StandardOutput.ReadToEndAsync();
+                using var registration = cancellationToken.Register(() =>
+                {
+                    try { if (!process.HasExited) process.Kill(true); } catch { }
+                });
+
+                var readTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
+                var exitTask = process.WaitForExitAsync(cancellationToken);
+                var completedTask = await Task.WhenAny(exitTask, Task.Delay(45000, cancellationToken));
                 
-                // Fix: tăng timeout lên 45s để winget kịp đồng bộ source repository
-                var exitTask = process.WaitForExitAsync();
-                var completedTask = await Task.WhenAny(exitTask, Task.Delay(45000));
                 if (completedTask != exitTask)
                 {
-                    try { process.Kill(); } catch {}
+                    try { if (!process.HasExited) process.Kill(true); } catch { }
                     throw new TimeoutException("Winget scan timed out (45s limit reached).");
                 }
 
@@ -240,22 +256,27 @@ public class SoftwareUpdaterEngine
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                Log("Winget scan cancelled by user.");
+                throw;
+            }
             catch (Exception ex)
             {
                 Log($"Winget query failed: {ex.Message}. Using secondary application updater...");
             }
 
 #if DEBUG
-            if (list.Count == 0)
+            if (list.Count == 0 && !cancellationToken.IsCancellationRequested)
             {
                 Log("Performing system registries software scan...");
-                await Task.Delay(1500); // Simulate scanning
+                await Task.Delay(800, cancellationToken);
                 
-                AddSimulatedItem(list, updatedApps, "Git for Windows", "Git.Git", "2.40.1", "2.45.2", "winget");
-                AddSimulatedItem(list, updatedApps, "Visual Studio Code", "Microsoft.VisualStudioCode", "1.85.0", "1.90.1", "winget");
-                AddSimulatedItem(list, updatedApps, "Node.js (LTS)", "OpenJS.NodeJS.LTS", "20.10.0", "20.14.0", "winget");
-                AddSimulatedItem(list, updatedApps, "Mozilla Firefox", "Mozilla.Firefox", "120.0", "126.0.1", "winget");
-                AddSimulatedItem(list, updatedApps, "Google Chrome", "Google.Chrome", "121.0.6167.85", "125.0.6422.142", "winget");
+                AddSimulatedItem(list, updatedApps, "Git for Windows", "Git.Git", "2.40.1", "2.48.1", "winget");
+                AddSimulatedItem(list, updatedApps, "Visual Studio Code", "Microsoft.VisualStudioCode", "1.85.0", "1.98.2", "winget");
+                AddSimulatedItem(list, updatedApps, "Node.js (LTS)", "OpenJS.NodeJS.LTS", "20.10.0", "22.14.0", "winget");
+                AddSimulatedItem(list, updatedApps, "Mozilla Firefox", "Mozilla.Firefox", "120.0", "138.0.1", "winget");
+                AddSimulatedItem(list, updatedApps, "Google Chrome", "Google.Chrome", "121.0.6167.85", "136.0.7103.93", "winget");
             }
 #endif
         }
@@ -353,8 +374,8 @@ public class SoftwareUpdaterEngine
     {
         try
         {
-            var instClean = Regex.Replace(installed, @"[^\d\.]", "");
-            var availClean = Regex.Replace(available, @"[^\d\.]", "");
+            var instClean = DigitsOnlyRegex.Replace(installed, "");
+            var availClean = DigitsOnlyRegex.Replace(available, "");
             
             if (Version.TryParse(instClean, out Version? vInst) && Version.TryParse(availClean, out Version? vAvail))
             {
@@ -371,7 +392,7 @@ public class SoftwareUpdaterEngine
         if (string.IsNullOrWhiteSpace(output)) return list;
 
         // Clean ANSI control sequences (spinners, colors)
-        string cleanOutput = Regex.Replace(output, @"\x1B\[[^@-~]*[@-~]", "");
+        string cleanOutput = AnsiRegex.Replace(output, "");
         var lines = cleanOutput.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         int nameStart = -1, idStart = -1, verStart = -1, availStart = -1, srcStart = -1;
@@ -448,9 +469,9 @@ public class SoftwareUpdaterEngine
                     string candAvail = tokens[i + 2];
 
                     if (candId.Contains(".") && 
-                        !Regex.IsMatch(candId, @"^\d+(\.\d+)+$") &&
-                        Regex.IsMatch(candVer, @"^\d") &&
-                        Regex.IsMatch(candAvail, @"^\d"))
+                        !DotNumberRegex.IsMatch(candId) &&
+                        VersionNumRegex.IsMatch(candVer) &&
+                        VersionNumRegex.IsMatch(candAvail))
                     {
                         string name = string.Join(" ", tokens.Take(i));
                         string source = (i + 3 < tokens.Length) ? tokens[i + 3] : "winget";
@@ -476,7 +497,7 @@ public class SoftwareUpdaterEngine
         return list;
     }
 
-    public async Task<bool> UpdateApplicationAsync(string appId, string version = "", string updateEngine = "winget")
+    public async Task<bool> UpdateApplicationAsync(string appId, string version = "", string updateEngine = "winget", System.Threading.CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(version))
         {
@@ -486,7 +507,7 @@ public class SoftwareUpdaterEngine
 
         if (updateEngine == "direct")
         {
-            return await UpdateApplicationDirectAsync(appId, version);
+            return await UpdateApplicationDirectAsync(appId, version, cancellationToken);
         }
 
         Log($"Upgrading application: {appId} (requires Administrator permission)...");
@@ -505,14 +526,18 @@ public class SoftwareUpdaterEngine
             using var process = new Process { StartInfo = psi };
             process.Start();
 
+            using var reg = cancellationToken.Register(() =>
+            {
+                try { if (!process.HasExited) process.Kill(true); } catch { }
+            });
+
             ItemProgressChanged?.Invoke(appId, 50, "Downloading & Installing...");
 
-            // Fix: lưu task vào biến để so sánh cùng instance, tránh race condition
-            var exitTask = process.WaitForExitAsync();
-            var completedTask = await Task.WhenAny(exitTask, Task.Delay(120000));
+            var exitTask = process.WaitForExitAsync(cancellationToken);
+            var completedTask = await Task.WhenAny(exitTask, Task.Delay(120000, cancellationToken));
             if (completedTask != exitTask)
             {
-                try { process.Kill(); } catch {}
+                try { if (!process.HasExited) process.Kill(true); } catch {}
                 throw new TimeoutException("Winget upgrade timed out.");
             }
 
@@ -523,8 +548,9 @@ public class SoftwareUpdaterEngine
             if (!ok)
             {
 #if DEBUG
+                if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
                 Log($"Winget returned error code {process.ExitCode} (likely because application is not installed or already up-to-date). Falling back to simulated upgrade for development environment...");
-                await Task.Delay(2000);
+                await Task.Delay(1500, cancellationToken);
                 Log($"Successfully updated {appId} (Simulated).");
                 Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
                 Database.DbManager.SaveUpdatedApp(appId, version);
@@ -540,12 +566,19 @@ public class SoftwareUpdaterEngine
             Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
         }
+        catch (OperationCanceledException)
+        {
+            ItemProgressChanged?.Invoke(appId, 0, "Cancelled");
+            Log($"Update cancelled for {appId}.");
+            return false;
+        }
         catch (Exception ex)
         {
             Log($"Failed to run winget upgrade for {appId}: {ex.Message}");
 #if DEBUG
+            if (cancellationToken.IsCancellationRequested) return false;
             // Simulate updating successful fallback for mock updates in development
-            await Task.Delay(3000);
+            await Task.Delay(1500, cancellationToken);
             Log($"Successfully updated {appId} (Simulated).");
             Database.DbManager.LogAction($"Update Software {appId} (Simulated)", "Software Updater", "Success");
             Database.DbManager.SaveUpdatedApp(appId, version);
@@ -558,7 +591,7 @@ public class SoftwareUpdaterEngine
         }
     }
 
-    public async Task<bool> UpdateApplicationDirectAsync(string appId, string version = "")
+    public async Task<bool> UpdateApplicationDirectAsync(string appId, string version = "", System.Threading.CancellationToken cancellationToken = default)
     {
         Log($"Upgrading application {appId} via WinCare Custom Downloader...");
         ItemProgressChanged?.Invoke(appId, 0, "Connecting...");
@@ -589,11 +622,11 @@ public class SoftwareUpdaterEngine
             using (var httpClient = new System.Net.Http.HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
-                using var response = await httpClient.GetAsync(app.DownloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead);
+                using var response = await httpClient.GetAsync(app.DownloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                 response.EnsureSuccessStatusCode();
 
                 long? totalBytes = response.Content.Headers.ContentLength;
-                using var contentStream = await response.Content.ReadAsStreamAsync();
+                using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
                 using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
 
                 var buffer = new byte[8192];
@@ -601,9 +634,9 @@ public class SoftwareUpdaterEngine
                 int read;
                 int lastReportedPercent = -1;
 
-                while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
                 {
-                    await fileStream.WriteAsync(buffer, 0, read);
+                    await fileStream.WriteAsync(buffer, 0, read, cancellationToken);
                     totalRead += read;
 
                     if (totalBytes.HasValue && totalBytes.Value > 0)
@@ -623,6 +656,8 @@ public class SoftwareUpdaterEngine
                     }
                 }
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             Log($"Download completed. Saved to: {filePath}");
             ItemProgressChanged?.Invoke(appId, 100, "Verifying Signature...");
@@ -654,14 +689,18 @@ public class SoftwareUpdaterEngine
                 throw new Exception("Failed to start installer process.");
             }
 
+            using var procReg = cancellationToken.Register(() =>
+            {
+                try { if (!process.HasExited) process.Kill(true); } catch { }
+            });
+
             Log("Installer running in background, waiting for completion...");
             
-            // Fix: lưu task vào biến để so sánh cùng instance, tránh race condition
-            var exitTask = process.WaitForExitAsync();
-            var completedTask = await Task.WhenAny(exitTask, Task.Delay(180000));
+            var exitTask = process.WaitForExitAsync(cancellationToken);
+            var completedTask = await Task.WhenAny(exitTask, Task.Delay(180000, cancellationToken));
             if (completedTask != exitTask)
             {
-                try { process.Kill(); } catch {}
+                try { if (!process.HasExited) process.Kill(true); } catch {}
                 throw new TimeoutException("Installer process timed out.");
             }
 
@@ -678,8 +717,9 @@ public class SoftwareUpdaterEngine
             if (!success)
             {
 #if DEBUG
+                if (cancellationToken.IsCancellationRequested) return false;
                 Log($"Installer returned exit code {process.ExitCode}. Falling back to simulated upgrade for development environment...");
-                await Task.Delay(2000);
+                await Task.Delay(1500, cancellationToken);
                 Log($"Successfully updated {appId} (Simulated).");
                 Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
                 Database.DbManager.SaveUpdatedApp(appId, version);
@@ -692,12 +732,19 @@ public class SoftwareUpdaterEngine
             Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
         }
+        catch (OperationCanceledException)
+        {
+            ItemProgressChanged?.Invoke(appId, 0, "Cancelled");
+            Log($"Direct update cancelled for {app.Name}.");
+            return false;
+        }
         catch (Exception ex)
         {
             Log($"Direct update failed for {app.Name}: {ex.Message}");
 #if DEBUG
+            if (cancellationToken.IsCancellationRequested) return false;
             Log("Falling back to simulated upgrade for development environment...");
-            await Task.Delay(3000);
+            await Task.Delay(1500, cancellationToken);
             Log($"Successfully updated {appId} (Simulated).");
             Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
             Database.DbManager.SaveUpdatedApp(appId, version);

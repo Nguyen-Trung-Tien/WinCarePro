@@ -9,21 +9,30 @@
     xmlns:vm="using:WinCarePro.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 1120px -->
+                <!-- Wide Layout: Viewport Width >= 1080px -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1120" />
+                        <AdaptiveTrigger MinWindowWidth="1080" />
                     </VisualState.StateTriggers>
                 </VisualState>
-                <!-- Medium Layout: Viewport Width >= 820px and < 1120px (Default windowed mode) -->
+
+                <!-- Medium Layout: Viewport Width between 720px and 1080px -->
                 <VisualState x:Name="MediumState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="820" />
+                        <AdaptiveTrigger MinWindowWidth="720" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="HeaderCol1.Width" Value="0" />
+                        <Setter Target="HeaderTitlePanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderActionsPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
+
                         <!-- Stats Grid Stacking to 2x2 layout -->
                         <Setter Target="StatsCol2.Width" Value="0" />
                         <Setter Target="StatsCol3.Width" Value="0" />
@@ -32,24 +41,24 @@
                         <Setter Target="StatCard4.(Grid.Row)" Value="1" />
                         <Setter Target="StatCard4.(Grid.Column)" Value="1" />
 
-                        <!-- Toolbar Section Adjustments -->
                         <Setter Target="ToolbarCol0.Width" Value="240" />
                     </VisualState.Setters>
                 </VisualState>
-                <!-- Narrow Layout: Viewport Width < 820px -->
+
+                <!-- Narrow Layout: Viewport Width < 720px -->
                 <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <!-- Header Buttons Stacking -->
-                        <Setter Target="HeaderCol0.Width" Value="*" />
+                        <!-- Header Stacking -->
                         <Setter Target="HeaderCol1.Width" Value="0" />
-                        <Setter Target="HeaderTextPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderTitlePanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderActionsPanel.(Grid.Row)" Value="1" />
                         <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
                         <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="HeaderActionsPanel.Margin" Value="0,8,0,0" />
+                        <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
 
                         <!-- Stats Grid Stacking to 1x4 layout -->
                         <Setter Target="StatsCol1.Width" Value="0" />
@@ -62,37 +71,47 @@
                         <Setter Target="StatCard4.(Grid.Row)" Value="3" />
                         <Setter Target="StatCard4.(Grid.Column)" Value="0" />
 
-                        <!-- Toolbar Section Stacking -->
+                        <!-- Toolbar Stacking -->
                         <Setter Target="ToolbarCol0.Width" Value="*" />
                         <Setter Target="ToolbarCol1.Width" Value="0" />
                         <Setter Target="ToolbarCol2.Width" Value="0" />
-                        <Setter Target="ToolbarCol3.Width" Value="0" />
                         <Setter Target="SearchBox.(Grid.ColumnSpan)" Value="4" />
                         <Setter Target="SearchBox.Width" Value="NaN" />
                         <Setter Target="SearchBox.HorizontalAlignment" Value="Stretch" />
+                        
                         <Setter Target="EngineStack.(Grid.Row)" Value="1" />
                         <Setter Target="EngineStack.(Grid.Column)" Value="0" />
                         <Setter Target="EngineStack.(Grid.ColumnSpan)" Value="4" />
                         <Setter Target="EngineStack.Margin" Value="0,8,0,0" />
+                        
                         <Setter Target="SelectionStack.(Grid.Row)" Value="2" />
                         <Setter Target="SelectionStack.(Grid.Column)" Value="0" />
                         <Setter Target="SelectionStack.(Grid.ColumnSpan)" Value="4" />
                         <Setter Target="SelectionStack.Margin" Value="0,8,0,0" />
 
+                        <Setter Target="StatusFilterStack.(Grid.Row)" Value="3" />
+                        <Setter Target="StatusFilterStack.(Grid.ColumnSpan)" Value="4" />
+                        <Setter Target="StatusFilterStack.Margin" Value="0,8,0,0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> <!-- Header -->
-            <RowDefinition Height="Auto" /> <!-- Stats Cards Grid -->
-            <RowDefinition Height="Auto" /> <!-- Toolbar -->
-            <RowDefinition Height="*" />    <!-- Main Content Area -->
+            <RowDefinition Height="Auto" /> <!-- 0. Header -->
+            <RowDefinition Height="Auto" /> <!-- 1. 4-Card Ribbon -->
+            <RowDefinition Height="Auto" /> <!-- 2. Toolbar & Filters -->
+            <RowDefinition Height="*" />    <!-- 3. Main Workspace -->
         </Grid.RowDefinitions>
 
-        <!-- 1. Header -->
-        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,16" RowSpacing="8">
+        <!-- ==================== 0. MODERN HEADER ==================== -->
+        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,14">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="HeaderRow0" Height="Auto" />
                 <RowDefinition x:Name="HeaderRow1" Height="Auto" />
@@ -101,33 +120,61 @@
                 <ColumnDefinition x:Name="HeaderCol0" Width="*" />
                 <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel x:Name="HeaderTextPanel" Grid.Row="0" Grid.Column="0">
-                <TextBlock Text="Software Updater" Style="{StaticResource PageHeaderTitleStyle}" />
+
+            <!-- Left: Title & Subtitle with Gradient Icon Badge -->
+            <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Spacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                    <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="10" Padding="8">
+                        <FontIcon Glyph="&#xE895;" FontSize="18" Foreground="White" />
+                    </Border>
+                    <StackPanel Spacing="1" VerticalAlignment="Center">
+                        <TextBlock Text="Software Updates &amp; Package Manager" Style="{StaticResource PageHeaderTitleStyle}" FontSize="20" />
+                        <TextBlock Text="Audit installed software, silent batch updates via WinGet &amp; verified Direct CDN repositories." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                    </StackPanel>
+                </StackPanel>
             </StackPanel>
+
+            <!-- Right: Action Buttons -->
             <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button x:Name="ScanUpdatesBtn" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold">
+                <!-- Cancel Button (Visible when busy) -->
+                <Button x:Name="CancelBtn" Click="OnCancelClick" Visibility="{x:Bind ViewModel.CanCancel, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" CornerRadius="8" Padding="12,7" FontSize="12">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE711;" FontSize="12" Foreground="#FFEF4444" />
+                        <TextBlock Text="Cancel" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FFEF4444" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Scan Updates Button -->
+                <Button x:Name="ScanUpdatesBtn" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,7" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ProgressRing x:Name="ScanUpdatesRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="ScanUpdatesText" Text="Scan Updates" FontWeight="SemiBold"/>
+                        <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" />
+                        <TextBlock x:Name="ScanUpdatesText" Text="Scan Updates" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="UpdateSelectedBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateSelectedClick" IsEnabled="{x:Bind CanUpdateSelected(ViewModel.HasSelectedUpdates, ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold">
+
+                <!-- Update Selected Button -->
+                <Button x:Name="UpdateSelectedBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateSelectedClick" IsEnabled="{x:Bind CanUpdateSelected(ViewModel.HasSelectedUpdates, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <ProgressRing x:Name="UpdateSelectedRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="UpdateSelectedText" Text="Update Selected" FontWeight="SemiBold"/>
+                        <ProgressRing x:Name="UpdateSelectedRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center"/>
+                        <FontIcon Glyph="&#xE896;" FontSize="12" Foreground="White" />
+                        <TextBlock x:Name="UpdateSelectedText" Text="Update Selected" FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="UpdateAllBtn" Click="OnUpdateAllClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Padding="16,8" CornerRadius="6" FontWeight="SemiBold">
+
+                <!-- Update All Button -->
+                <Button x:Name="UpdateAllBtn" Click="OnUpdateAllClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,7" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ProgressRing x:Name="UpdateAllRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="UpdateAllText" Text="Update All" FontWeight="SemiBold"/>
+                        <FontIcon Glyph="&#xE777;" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock x:Name="UpdateAllText" Text="Update All" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
         </Grid>
 
-        <!-- 2. Statistics Grid Section -->
-        <Grid x:Name="StatsGrid" Grid.Row="1" Margin="0,0,0,16" ColumnSpacing="16" RowSpacing="12">
+        <!-- ==================== 1. 4-CARD STAT RIBBON ==================== -->
+        <Grid x:Name="StatsGrid" Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="StatsRow0" Height="Auto" />
                 <RowDefinition x:Name="StatsRow1" Height="Auto" />
@@ -141,17 +188,22 @@
                 <ColumnDefinition x:Name="StatsCol3" Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Card 1: Updates Available -->
+            <!-- Card 1: Pending Updates -->
             <Border x:Name="StatCard1" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" Glyph="&#xE787;" FontSize="24" Foreground="#FFF59E0B" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8" Background="#20F59E0B" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE787;" FontSize="20" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Pending Updates" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="20" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                            <TextBlock Text="packages" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -163,10 +215,15 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" Glyph="&#xE73E;" FontSize="24" Foreground="#FF10B981" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8" Background="#2010B981" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE73E;" FontSize="20" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Completed Updates" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.CompletedCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                        <TextBlock Text="Up-to-Date Packages" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind ViewModel.CompletedCount, Mode=OneWay}" FontSize="20" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                            <TextBlock Text="installed" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -178,15 +235,17 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" Glyph="&#xE945;" FontSize="24" Foreground="#FF7F56D9" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8" Background="#208B5CF6" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE945;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Active Engine" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="Active Package Engine" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         <TextBlock Text="{x:Bind ViewModel.ActiveEngineName, Mode=OneWay}" FontSize="13" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <!-- Card 4: System Status with Visual Progress ring -->
+            <!-- Card 4: System Update Health Rating -->
             <Border x:Name="StatCard4" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -194,18 +253,18 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Column="0" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <ProgressRing Value="{x:Bind GetSecurityRating(ViewModel.PendingUpdatesCount), Mode=OneWay}" IsActive="True" IsIndeterminate="False" Width="36" Height="36" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" />
-                        <TextBlock Text="{x:Bind GetSecurityRatingText(ViewModel.PendingUpdatesCount), Mode=OneWay}" FontSize="9.5" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <ProgressRing Value="{x:Bind ViewModel.SystemHealthScore, Mode=OneWay}" IsActive="True" IsIndeterminate="False" Width="38" Height="38" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind GetSecurityRatingText(ViewModel.PendingUpdatesCount), Mode=OneWay}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Grid>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Security Health" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="System Update Health" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         <TextBlock Text="{x:Bind ViewModel.SystemHealthStatus, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                 </Grid>
             </Border>
         </Grid>
 
-        <!-- 3. Toolbar & Status Filter Tabs Section -->
+        <!-- ==================== 2. TOOLBAR & STATUS FILTER TABS ==================== -->
         <Grid x:Name="ToolbarGrid" Grid.Row="2" Margin="0,0,0,12" RowSpacing="8">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="ToolbarRow0" Height="Auto" />
@@ -214,31 +273,35 @@
                 <RowDefinition x:Name="ToolbarRow3" Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="ToolbarCol0" Width="260" />
+                <ColumnDefinition x:Name="ToolbarCol0" Width="280" />
                 <ColumnDefinition x:Name="ToolbarCol1" Width="Auto" />
                 <ColumnDefinition x:Name="ToolbarCol2" Width="Auto" />
                 <ColumnDefinition x:Name="ToolbarCol3" Width="*" />
             </Grid.ColumnDefinitions>
             
-            <TextBox x:Name="SearchBox" Grid.Column="0" PlaceholderText="Search packages..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="6" Height="32" VerticalAlignment="Center"/>
+            <!-- Search Box -->
+            <TextBox x:Name="SearchBox" Grid.Column="0" PlaceholderText="Search package name or ID..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="8" Height="34" VerticalAlignment="Center"/>
 
+            <!-- Engine Selector -->
             <StackPanel x:Name="EngineStack" Grid.Column="1" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
-                <TextBlock Text="Engine:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                <ComboBox SelectedValue="{x:Bind ViewModel.UpdateEngine, Mode=TwoWay}" SelectedValuePath="Tag" Width="240" Height="32" CornerRadius="6" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
+                <TextBlock Text="Engine:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                <ComboBox SelectedValue="{x:Bind ViewModel.UpdateEngine, Mode=TwoWay}" SelectedValuePath="Tag" Width="220" Height="34" CornerRadius="8" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
                     <ComboBoxItem Content="Windows Package Manager" Tag="winget"/>
                     <ComboBoxItem Content="Direct Downloader" Tag="direct"/>
                 </ComboBox>
             </StackPanel>
 
+            <!-- Multi Selection Controls -->
             <StackPanel x:Name="SelectionStack" Grid.Column="2" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="8">
-                <Button Content="Select All" Click="OnSelectAllClick" FontSize="11" Height="32" CornerRadius="6" Padding="12,0"/>
-                <Button Content="Deselect All" Click="OnDeselectAllClick" FontSize="11" Height="32" CornerRadius="6" Padding="12,0"/>
+                <Button Content="Select All" Click="OnSelectAllClick" FontSize="11.5" Height="34" CornerRadius="8" Padding="12,0"/>
+                <Button Content="Deselect All" Click="OnDeselectAllClick" FontSize="11.5" Height="34" CornerRadius="8" Padding="12,0"/>
             </StackPanel>
 
             <!-- Status Filter Tabs Row -->
             <StackPanel x:Name="StatusFilterStack" Grid.Row="1" Grid.ColumnSpan="4" Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
-                <ToggleButton Content="All" IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'All'), Mode=OneWay}" Click="OnFilterAllClick" CornerRadius="6" Padding="12,4" FontSize="11.5" FontWeight="SemiBold"/>
-                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Pending'), Mode=OneWay}" Click="OnFilterPendingClick" CornerRadius="6" Padding="12,4" FontSize="11.5" FontWeight="SemiBold">
+                <ToggleButton Content="All" IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'All'), Mode=OneWay}" Click="OnFilterAllClick" CornerRadius="8" Padding="12,5" FontSize="11.5" FontWeight="SemiBold"/>
+                
+                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Pending'), Mode=OneWay}" Click="OnFilterPendingClick" CornerRadius="8" Padding="12,5" FontSize="11.5" FontWeight="SemiBold">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock Text="Pending" />
                         <Border Background="#35F59E0B" Padding="6,1" CornerRadius="8">
@@ -246,7 +309,8 @@
                         </Border>
                     </StackPanel>
                 </ToggleButton>
-                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Updating'), Mode=OneWay}" Click="OnFilterUpdatingClick" CornerRadius="6" Padding="12,4" FontSize="11.5" FontWeight="SemiBold">
+
+                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Updating'), Mode=OneWay}" Click="OnFilterUpdatingClick" CornerRadius="8" Padding="12,5" FontSize="11.5" FontWeight="SemiBold">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock Text="Updating" />
                         <Border Background="#353B82F6" Padding="6,1" CornerRadius="8">
@@ -254,7 +318,8 @@
                         </Border>
                     </StackPanel>
                 </ToggleButton>
-                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Completed'), Mode=OneWay}" Click="OnFilterCompletedClick" CornerRadius="6" Padding="12,4" FontSize="11.5" FontWeight="SemiBold">
+
+                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Completed'), Mode=OneWay}" Click="OnFilterCompletedClick" CornerRadius="8" Padding="12,5" FontSize="11.5" FontWeight="SemiBold">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock Text="Completed" />
                         <Border Background="#3510B981" Padding="6,1" CornerRadius="8">
@@ -265,17 +330,34 @@
             </StackPanel>
         </Grid>
 
-        <!-- 4. Main Content Area -->
+        <!-- ==================== 3. MAIN WORKSPACE ==================== -->
         <Grid Grid.Row="3">
-            <!-- Progress Overlay -->
-            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="24" Height="100" VerticalAlignment="Center" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <StackPanel Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
-                </StackPanel>
+            <!-- Active Progress Banner Overlay -->
+            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20" Height="96" VerticalAlignment="Top" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center" Margin="0,0,0,8">
+                        <ProgressRing IsActive="True" Width="14" Height="14" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+
+                    <Button Grid.Row="0" Grid.Column="1" Click="OnCancelClick" Visibility="{x:Bind ViewModel.CanCancel, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Padding="10,4" CornerRadius="6" FontSize="11">
+                        <TextBlock Text="Cancel" Foreground="#FFEF4444" FontWeight="SemiBold"/>
+                    </Button>
+
+                    <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
+                </Grid>
             </Border>
 
-            <!-- Updates List -->
+            <!-- Updates List View -->
             <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="12" Visibility="{x:Bind IsListNotEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}">
                 <ListView ItemsSource="{x:Bind ViewModel.Updates, Mode=OneWay}" SelectionMode="None">
                     <ListView.ItemContainerStyle>
@@ -313,12 +395,12 @@
                                             <Border Visibility="{x:Bind IsCompleted, Mode=OneWay}" Background="#2510B981" BorderBrush="#5010B981" BorderThickness="1" Padding="6,1" CornerRadius="4" VerticalAlignment="Center">
                                                 <StackPanel Orientation="Horizontal" Spacing="4">
                                                     <FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#FF10B981"/>
-                                                    <TextBlock Text="Completed" FontSize="9.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                                    <TextBlock Text="Up to Date" FontSize="9.5" FontWeight="Bold" Foreground="#FF10B981"/>
                                                 </StackPanel>
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
-                                            <TextBlock Text="{x:Bind Id}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxWidth="200"/>
+                                            <TextBlock Text="{x:Bind Id}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxWidth="220"/>
                                             <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="4,1" CornerRadius="4" VerticalAlignment="Center">
                                                 <TextBlock Text="{x:Bind Source}" FontSize="9" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </Border>
@@ -397,7 +479,7 @@
                     </Border>
                     <StackPanel Spacing="4" HorizontalAlignment="Center">
                         <TextBlock Text="System is up to date!" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" />
-                        <TextBlock Text="No pending updates found for the selected view filter." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
+                        <TextBlock Text="No pending updates found for the selected filter." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
                     </StackPanel>
                     <Button Click="OnScanUpdatesClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Center" Padding="20,10" CornerRadius="8" FontWeight="SemiBold">
                         <StackPanel Orientation="Horizontal" Spacing="8">

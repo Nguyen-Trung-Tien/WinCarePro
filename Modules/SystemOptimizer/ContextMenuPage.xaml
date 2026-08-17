@@ -10,43 +10,151 @@
     xmlns:components="using:WinCarePro.Shared.Components"
     mc:Ignorable="d">
 
-    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 960px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="960" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+
+                <!-- Narrow Layout: Viewport Width < 960px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="LeftPanel.(Grid.Row)" Value="0" />
+                        <Setter Target="LeftPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="LeftPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="RightPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="RightPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="RightPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="StatCard1.(Grid.Row)" Value="1" />
+                        <Setter Target="StatCard1.(Grid.Column)" Value="0" />
+                        <Setter Target="StatCard2.(Grid.Row)" Value="2" />
+                        <Setter Target="StatCard2.(Grid.Column)" Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" /> <!-- 0. Header -->
+            <RowDefinition Height="Auto" /> <!-- 1. Stat Ribbon -->
+            <RowDefinition Height="*" />    <!-- 2. Main Content Workspace -->
+            <RowDefinition Height="Auto" /> <!-- 3. Status Footer -->
         </Grid.RowDefinitions>
 
-        <!-- Page Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <!-- ==================== 0. MODERN HEADER ==================== -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-                <TextBlock Text="Context Menu Manager" Style="{StaticResource PageHeaderTitleStyle}" />
+
+            <!-- Left: Title & Subtitle with Gradient Icon Badge -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="10" Padding="8">
+                    <FontIcon Glyph="&#xE8EC;" FontSize="18" Foreground="White" />
+                </Border>
+                <StackPanel Spacing="1" VerticalAlignment="Center">
+                    <TextBlock Text="Context Menu Manager" Style="{StaticResource PageHeaderTitleStyle}" FontSize="20" />
+                    <TextBlock Text="Clean up shell extensions, declutter right-click menus, and accelerate Windows File Explorer." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                </StackPanel>
             </StackPanel>
-            <Button x:Name="ScanBtn" Grid.Column="1" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" CornerRadius="8" Padding="16,8" FontWeight="SemiBold">
+
+            <!-- Right: Scan Button -->
+            <Button x:Name="ScanBtn" Grid.Column="1" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12">
                 <StackPanel Orientation="Horizontal" Spacing="6">
-                    <ProgressRing x:Name="ScanRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="ScanText" Text="Scan Context Menus" FontWeight="SemiBold"/>
+                    <ProgressRing x:Name="ScanRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center"/>
+                    <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="White" Visibility="{x:Bind ViewModel.IsBusy, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" />
+                    <TextBlock x:Name="ScanText" Text="Scan Context Menus" FontWeight="Bold"/>
                 </StackPanel>
             </Button>
         </Grid>
 
-        <!-- Main Content Area -->
-        <Grid Grid.Row="1" ColumnSpacing="18">
+        <!-- ==================== 1. 3-CARD STAT RIBBON ==================== -->
+        <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Card 0: Total Handlers -->
+            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE8EC;" FontSize="16" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Total Handlers" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.TotalCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 1: Active & Enabled -->
+            <Border x:Name="StatCard1" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#2010B981" BorderBrush="#5010B981" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Active in Context Menu" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.ActiveCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="#FF10B981" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 2: Disabled & Optimized -->
+            <Border x:Name="StatCard2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#20F59E0B" BorderBrush="#50F59E0B" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE711;" FontSize="16" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Disabled / Shelved" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.DisabledCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="#FFF59E0B" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 2. MAIN WORKSPACE ==================== -->
+        <Grid Grid.Row="2" ColumnSpacing="16" RowSpacing="16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="320" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left: Handlers List -->
-            <Border Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
+            <!-- Left: Handlers List Card -->
+            <Border x:Name="LeftPanel" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" /> <!-- Filters -->
+                        <RowDefinition Height="*" />    <!-- List -->
                     </Grid.RowDefinitions>
 
                     <!-- Filter / Search Section -->
@@ -59,15 +167,13 @@
                         <TextBox x:Name="SearchBox" 
                                  PlaceholderText="Search handlers or registry paths..."
                                  Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Header="Search"
-                                 CornerRadius="6" />
+                                 CornerRadius="8" Height="34" VerticalAlignment="Center" />
 
                         <ComboBox Grid.Column="1"
-                                  Header="Filter by Category"
                                   HorizontalAlignment="Stretch"
                                   SelectedValue="{x:Bind ViewModel.FilterCategory, Mode=TwoWay}"
                                   SelectedValuePath="Content"
-                                  CornerRadius="6">
+                                  CornerRadius="8" Height="34" VerticalAlignment="Center">
                             <ComboBoxItem Content="All" IsSelected="True" />
                             <ComboBoxItem Content="All Files" />
                             <ComboBoxItem Content="Desktop Background" />
@@ -77,29 +183,35 @@
 
                     <!-- List View of Context Menu Handlers -->
                     <Grid Grid.Row="1">
-                        <ListView ItemsSource="{x:Bind ViewModel.FilteredItems, Mode=OneWay}" SelectionMode="None">
+                        <ListView ItemsSource="{x:Bind ViewModel.FilteredItems, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:ContextMenuItem">
-                                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" Padding="8,12">
-                                        <Grid ColumnSpacing="16">
+                                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="12,9" Margin="0,0,0,4">
+                                        <Grid ColumnSpacing="12">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
                                             <!-- Type Icon Badge -->
-                                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Opacity="0.1" VerticalAlignment="Center" />
-                                            <FontIcon Grid.Column="0" Glyph="&#xE7C5;" FontSize="16" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                            <Border Grid.Column="0" Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE7C5;" FontSize="14" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                            </Border>
 
+                                            <!-- Details -->
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="13.5" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="{x:Bind RegistryPath}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{x:Bind RegistryPath}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                             </StackPanel>
 
-                                            <TextBlock Grid.Column="2" Text="{x:Bind Type}" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
+                                            <!-- Type Tag Badge -->
+                                            <Border Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind Type}" FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                            </Border>
 
+                                            <!-- Loading Toggle Switch -->
                                             <components:LoadingToggleSwitch Grid.Column="3" 
                                                                          IsOn="{x:Bind IsEnabled, Mode=OneWay}" 
                                                                          MinLoadingDurationMs="450"
@@ -118,47 +230,40 @@
                 </Grid>
             </Border>
 
-            <!-- Right: Instructions / Detail Panel -->
-            <Border Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
-                <StackPanel Spacing="16">
-                    <TextBlock Text="About Context Menus" FontSize="15" FontWeight="Bold" />
+            <!-- Right: Details & Guidelines Panel -->
+            <Border x:Name="RightPanel" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                <StackPanel Spacing="14">
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE946;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" />
+                        <TextBlock Text="Shell Guidelines" FontSize="13" FontWeight="Bold" />
+                    </StackPanel>
                     
-                    <TextBlock Text="When you install applications (such as WinRAR, Git, Photoshop, etc.), they register custom shell extensions to show up in the Windows right-click context menu."
-                               TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18" />
+                    <TextBlock Text="Installed software (such as archivers, cloud drives, editors) inject shell extensions into Windows right-click menus."
+                               TextWrapping="Wrap" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="16" />
 
-                    <TextBlock Text="If you have too many items, it can slow down file explorer or make it look cluttered."
-                               TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18" />
+                    <TextBlock Text="Disabling unused shell extensions significantly reduces context menu popup delay and eliminates Explorer freeze."
+                               TextWrapping="Wrap" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="16" />
 
-                    <Border Background="#15F59E0B" BorderBrush="#30F59E0B" BorderThickness="1" CornerRadius="8" Padding="12">
+                    <!-- Safe Mechanism Note -->
+                    <Border Background="#1510B981" BorderBrush="#3010B981" BorderThickness="1" CornerRadius="8" Padding="12">
                         <StackPanel Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xE7BA;" FontSize="14" Foreground="#FFF59E0B" VerticalAlignment="Center" />
-                                <TextBlock Text="Safe Mechanism" FontWeight="Bold" FontSize="12.5" Foreground="#FFF59E0B" VerticalAlignment="Center" />
+                                <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="#FF10B981" VerticalAlignment="Center" />
+                                <TextBlock Text="Safe Non-Destructive Mod" FontWeight="Bold" FontSize="11.5" Foreground="#FF10B981" VerticalAlignment="Center" />
                             </StackPanel>
-                            <TextBlock Text="WinCare Pro does not delete keys. It prefixes the active keys with '-' to safely disable them. Toggle back to re-enable anytime."
-                                       TextWrapping="Wrap" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="16" />
+                            <TextBlock Text="WinCare Pro does not delete registry keys. Disabled keys are cleanly prefixed with '-' so you can instantly re-enable them anytime."
+                                       TextWrapping="Wrap" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="15" />
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </Border>
         </Grid>
 
-        <!-- Log / Terminal Output -->
-        <Border Grid.Row="2" Margin="0,18,0,0" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Activity Log" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="4,0,0,6" />
-                <ScrollViewer Grid.Row="1" Height="130" Background="#0C000000" CornerRadius="6" Padding="12,8" VerticalScrollBarVisibility="Auto">
-                    <TextBlock Text="{x:Bind ViewModel.LogText, Mode=OneWay}" FontFamily="Consolas" FontSize="11" Foreground="#FF10B981" TextWrapping="Wrap" />
-                </ScrollViewer>
-            </Grid>
-        </Border>
+        <!-- ==================== 3. STATUS BAR FOOTER ==================== -->
+        <TextBlock Grid.Row="3" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,8,0,0" />
 
         <!-- Loading Overlay Indicator — smooth fade in/out -->
-        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="3" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.Resources>
                 <Storyboard x:Name="FadeInLoading">
                     <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
@@ -180,7 +285,7 @@
                     <!-- Glowing Mouse Badge -->
                     <Grid Width="60" Height="60" HorizontalAlignment="Center">
                         <Border Width="60" Height="60" CornerRadius="18" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
-                            <FontIcon Glyph="&#xE962;" FontSize="22" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <FontIcon Glyph="&#xE8EC;" FontSize="22" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </Grid>
 
@@ -195,5 +300,3 @@
         </Grid>
     </Grid>
 </Page>
-
-

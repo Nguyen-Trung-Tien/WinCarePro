@@ -15,9 +15,9 @@ public sealed partial class UpdaterPage : Page
 
     public UpdaterPage()
     {
-        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        InitializeComponent();
         ViewModel = App.Services.GetRequiredService<UpdaterViewModel>();
+        InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
     }
 
@@ -93,6 +93,11 @@ public sealed partial class UpdaterPage : Page
         }
     }
 
+    private void OnCancelClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.CancelOperations();
+    }
+
     private void OnSelectAllClick(object sender, RoutedEventArgs e)
     {
         ViewModel.SetAllSelection(true);
@@ -131,14 +136,14 @@ public sealed partial class UpdaterPage : Page
 
     public Visibility IsListEmpty(int count, bool isBusy) => (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 
-    public Brush GetBrushFromHex(string hex)
+    public Brush GetBrushFromHex(string? hex)
     {
-        if (string.IsNullOrEmpty(hex) || hex.Length < 7) 
+        if (string.IsNullOrWhiteSpace(hex)) 
             return new SolidColorBrush(Microsoft.UI.Colors.Gray);
         
         try
         {
-            string cleanHex = hex.Replace("#", "");
+            string cleanHex = hex.Replace("#", "").Trim();
             byte a = 255;
             byte r = 0, g = 0, b = 0;
             

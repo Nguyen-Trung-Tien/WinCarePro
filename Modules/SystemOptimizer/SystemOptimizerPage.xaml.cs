@@ -243,9 +243,25 @@ public sealed partial class SystemOptimizerPage : Page
         }
     }
 
-    private void OnClearLogClick(object sender, RoutedEventArgs e)
+    private async void OnCleanDeliveryCacheClick(object sender, RoutedEventArgs e)
     {
-        ViewModel.ClearLog();
+        var btn = CleanCacheBtn ?? (sender as Button);
+        long freed = 0;
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, CleanCacheRing, CleanCacheText, CleanCacheIcon,
+            "Purging Cache...", "Purge Delivery Cache",
+            async () =>
+            {
+                freed = await ViewModel.CleanDeliveryCacheAsync();
+            },
+            minDurationMs: 800);
+
+        if (App.MainWindowInstance is MainWindow mw && freed > 0)
+        {
+            double mb = freed / 1024.0 / 1024.0;
+            mw.ShowToastFromDb("Delivery Cache Purged".T(), 
+                string.Format("Successfully freed {0:F1} MB from Windows Delivery Optimization cache.".T(), mb), "Success");
+        }
     }
 
     private async void OnTurboToggled(object sender, RoutedEventArgs e)

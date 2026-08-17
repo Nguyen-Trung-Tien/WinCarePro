@@ -29,11 +29,25 @@ public class ContextMenuViewModel : ViewModelBase
         set => SetProperty(ref _statusText, value);
     }
 
-    private string _logText = "";
-    public string LogText
+    private int _totalCount;
+    public int TotalCount
     {
-        get => _logText;
-        set => SetProperty(ref _logText, value);
+        get => _totalCount;
+        set => SetProperty(ref _totalCount, value);
+    }
+
+    private int _activeCount;
+    public int ActiveCount
+    {
+        get => _activeCount;
+        set => SetProperty(ref _activeCount, value);
+    }
+
+    private int _disabledCount;
+    public int DisabledCount
+    {
+        get => _disabledCount;
+        set => SetProperty(ref _disabledCount, value);
     }
 
     private string _filterCategory = "All";
@@ -74,10 +88,14 @@ public class ContextMenuViewModel : ViewModelBase
 
     private void Log(string msg)
     {
-        _dispatcherQueue.TryEnqueue(() =>
-        {
-            LogText += $"[{DateTime.Now:HH:mm:ss}] {msg}\n";
-        });
+        System.Diagnostics.Debug.WriteLine($"[ContextMenu] {msg}");
+    }
+
+    private void UpdateCounts()
+    {
+        TotalCount = Items.Count;
+        ActiveCount = Items.Count(x => x.IsEnabled);
+        DisabledCount = Items.Count(x => !x.IsEnabled);
     }
 
     public async Task ScanAsync()
@@ -85,7 +103,6 @@ public class ContextMenuViewModel : ViewModelBase
         if (IsBusy) return;
         IsBusy = true;
         StatusText = "Scanning context menu handlers...".T();
-        LogText = "";
         Items.Clear();
         FilteredItems.Clear();
 
@@ -98,6 +115,7 @@ public class ContextMenuViewModel : ViewModelBase
                 {
                     Items.Add(item);
                 }
+                UpdateCounts();
                 ApplyFilter();
                 StatusText = string.Format("Found {0} context menu handlers.".T(), Items.Count);
             });
@@ -129,6 +147,7 @@ public class ContextMenuViewModel : ViewModelBase
                 _dispatcherQueue.TryEnqueue(() =>
                 {
                     item.IsEnabled = enable;
+                    UpdateCounts();
                     StatusText = string.Format(
                         enable ? "{0} enabled successfully.".T() : "{0} disabled successfully.".T(),
                         item.Name

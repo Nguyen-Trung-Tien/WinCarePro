@@ -2317,7 +2317,22 @@ public partial class TranslationManager
         _translations["Policy Safeguards"] = "Bảo Vệ Chính Sách";
         _translations["Safety Snapshots"] = "Ảnh Chụp Điểm An Toàn";
         _translations["Component Cache Flush"] = "Dọn Cache Thành Phần";
-        _translations["TCP/IP & Winsock Catalog"] = "Danh Mục TCP/IP & Winsock";
+        _translations["Kernel & Latency Tuning"] = "Tinh Chỉnh Kernel & Độ Trễ";
+        _translations["Kernel & Latency Profile"] = "Cấu Hình Kernel & Độ Trễ";
+        _translations["Multimedia Scheduling:"] = "Lập lịch Đa phương tiện:";
+        _translations["Realtime High Priority"] = "Ưu tiên Cao Thời gian thực";
+        _translations["Network Packet Rate:"] = "Tốc độ Gói tin Mạng:";
+        _translations["Disabled (Low Latency)"] = "Đã tắt (Độ trễ thấp)";
+        _translations["Kernel RAM Resident:"] = "Kernel Lưu trong RAM:";
+        _translations["RAM Resident (Fast)"] = "Trong RAM (Tốc độ cao)";
+        _translations["Purge Delivery Cache"] = "Dọn Cache Phân Phối";
+        _translations["Delivery Cache Purged"] = "Đã Dọn Cache Phân Phối";
+        _translations["Successfully freed {0:F1} MB from Windows Delivery Optimization cache."] = "Đã giải phóng thành công {0:F1} MB từ bộ nhớ đệm Delivery Optimization của Windows.";
+        _translations["Total Handlers"] = "Tổng Trình Xử Lý";
+        _translations["Active in Context Menu"] = "Đang Hoạt Động Trong Menu";
+        _translations["Disabled / Shelved"] = "Đã Tắt / Tạm Lưu";
+        _translations["Shell Guidelines"] = "Hướng Dẫn Menu Chuột Phải";
+        _translations["Safe Non-Destructive Mod"] = "Chế Độ An Toàn Không Hủy Dữ Liệu";
 
         _reverseTranslations.Clear();
         foreach (var kvp in _translations)

@@ -55,17 +55,57 @@ public class SystemTweak : INotifyPropertyChanged
 
     public string StatusFormatted => IsOptimized ? "Optimized" : "Available";
 
-    public Brush StatusBgColor => IsOptimized 
-        ? new SolidColorBrush(Color.FromArgb(30, 16, 185, 129)) 
-        : new SolidColorBrush(Color.FromArgb(20, 59, 130, 246));
+    private static SolidColorBrush? _optBgBrush;
+    private static SolidColorBrush? _availBgBrush;
+    private static SolidColorBrush? _optBorderBrush;
+    private static SolidColorBrush? _availBorderBrush;
+    private static SolidColorBrush? _optFgBrush;
+    private static SolidColorBrush? _availFgBrush;
 
-    public Brush StatusBorderColor => IsOptimized 
-        ? new SolidColorBrush(Color.FromArgb(48, 16, 185, 129))
-        : new SolidColorBrush(Color.FromArgb(32, 59, 130, 246));
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? StatusBgColor
+    {
+        get
+        {
+            try
+            {
+                return IsOptimized 
+                    ? (_optBgBrush ??= new SolidColorBrush(Color.FromArgb(30, 16, 185, 129)))
+                    : (_availBgBrush ??= new SolidColorBrush(Color.FromArgb(20, 59, 130, 246)));
+            }
+            catch { return null; }
+        }
+    }
 
-    public Brush StatusForegroundColor => IsOptimized 
-        ? new SolidColorBrush(Color.FromArgb(255, 16, 185, 129))
-        : new SolidColorBrush(Color.FromArgb(255, 59, 130, 246));
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? StatusBorderColor
+    {
+        get
+        {
+            try
+            {
+                return IsOptimized 
+                    ? (_optBorderBrush ??= new SolidColorBrush(Color.FromArgb(48, 16, 185, 129)))
+                    : (_availBorderBrush ??= new SolidColorBrush(Color.FromArgb(32, 59, 130, 246)));
+            }
+            catch { return null; }
+        }
+    }
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? StatusForegroundColor
+    {
+        get
+        {
+            try
+            {
+                return IsOptimized 
+                    ? (_optFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 16, 185, 129)))
+                    : (_availFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 59, 130, 246)));
+            }
+            catch { return null; }
+        }
+    }
 
     public string ComparisonText
     {

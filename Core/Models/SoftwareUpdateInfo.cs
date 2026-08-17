@@ -146,45 +146,125 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
         _ => "\uE895"                // Download
     };
 
-    public Brush CardBackgroundBrush => UpdateStatus switch
-    {
-        StatusCompleted => new SolidColorBrush(Color.FromArgb(18, 16, 185, 129)),  // Tinted Emerald Green
-        StatusUpdating => new SolidColorBrush(Color.FromArgb(22, 245, 158, 11)),   // Tinted Warm Amber
-        StatusFailed => new SolidColorBrush(Color.FromArgb(22, 239, 68, 68)),     // Tinted Rose Red
-        _ => new SolidColorBrush(Color.FromArgb(0, 0, 0, 0))                       // Transparent container
-    };
+    private static SolidColorBrush? _cardBgCompleted;
+    private static SolidColorBrush? _cardBgUpdating;
+    private static SolidColorBrush? _cardBgFailed;
+    private static SolidColorBrush? _cardBgDefault;
 
-    public Brush CardBorderBrush => UpdateStatus switch
-    {
-        StatusCompleted => new SolidColorBrush(Color.FromArgb(70, 16, 185, 129)),  // Glowing Emerald Border
-        StatusUpdating => new SolidColorBrush(Color.FromArgb(120, 245, 158, 11)),  // Glowing Amber Border
-        StatusFailed => new SolidColorBrush(Color.FromArgb(100, 239, 68, 68)),    // Red Error Border
-        _ => new SolidColorBrush(Color.FromArgb(32, 128, 128, 128))               // Standard stroke
-    };
+    private static SolidColorBrush? _cardBorderCompleted;
+    private static SolidColorBrush? _cardBorderUpdating;
+    private static SolidColorBrush? _cardBorderFailed;
+    private static SolidColorBrush? _cardBorderDefault;
 
-    public Brush StatusBgColor => UpdateStatus switch
-    {
-        StatusCompleted => new SolidColorBrush(Color.FromArgb(30, 16, 185, 129)),  // #1E10B981
-        StatusFailed => new SolidColorBrush(Color.FromArgb(30, 239, 68, 68)),    // #1EEF4444
-        StatusUpdating => new SolidColorBrush(Color.FromArgb(30, 245, 158, 11)), // #1EF59E0B
-        _ => new SolidColorBrush(Color.FromArgb(20, 59, 130, 246))           // #143B82F6
-    };
+    private static SolidColorBrush? _statusBgCompleted;
+    private static SolidColorBrush? _statusBgFailed;
+    private static SolidColorBrush? _statusBgUpdating;
+    private static SolidColorBrush? _statusBgDefault;
 
-    public Brush StatusBorderColor => UpdateStatus switch
-    {
-        StatusCompleted => new SolidColorBrush(Color.FromArgb(48, 16, 185, 129)),
-        StatusFailed => new SolidColorBrush(Color.FromArgb(48, 239, 68, 68)),
-        StatusUpdating => new SolidColorBrush(Color.FromArgb(48, 245, 158, 11)),
-        _ => new SolidColorBrush(Color.FromArgb(32, 59, 130, 246))
-    };
+    private static SolidColorBrush? _statusBorderCompleted;
+    private static SolidColorBrush? _statusBorderFailed;
+    private static SolidColorBrush? _statusBorderUpdating;
+    private static SolidColorBrush? _statusBorderDefault;
 
-    public Brush StatusForegroundColor => UpdateStatus switch
+    private static SolidColorBrush? _statusFgCompleted;
+    private static SolidColorBrush? _statusFgFailed;
+    private static SolidColorBrush? _statusFgUpdating;
+    private static SolidColorBrush? _statusFgDefault;
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? CardBackgroundBrush
     {
-        StatusCompleted => new SolidColorBrush(Color.FromArgb(255, 16, 185, 129)),
-        StatusFailed => new SolidColorBrush(Color.FromArgb(255, 239, 68, 68)),
-        StatusUpdating => new SolidColorBrush(Color.FromArgb(255, 245, 158, 11)),
-        _ => new SolidColorBrush(Color.FromArgb(255, 59, 130, 246))
-    };
+        get
+        {
+            try
+            {
+                return UpdateStatus switch
+                {
+                    StatusCompleted => _cardBgCompleted ??= new SolidColorBrush(Color.FromArgb(18, 16, 185, 129)),
+                    StatusUpdating => _cardBgUpdating ??= new SolidColorBrush(Color.FromArgb(22, 245, 158, 11)),
+                    StatusFailed => _cardBgFailed ??= new SolidColorBrush(Color.FromArgb(22, 239, 68, 68)),
+                    _ => _cardBgDefault ??= new SolidColorBrush(Color.FromArgb(0, 0, 0, 0))
+                };
+            }
+            catch { return null; }
+        }
+    }
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? CardBorderBrush
+    {
+        get
+        {
+            try
+            {
+                return UpdateStatus switch
+                {
+                    StatusCompleted => _cardBorderCompleted ??= new SolidColorBrush(Color.FromArgb(70, 16, 185, 129)),
+                    StatusUpdating => _cardBorderUpdating ??= new SolidColorBrush(Color.FromArgb(120, 245, 158, 11)),
+                    StatusFailed => _cardBorderFailed ??= new SolidColorBrush(Color.FromArgb(100, 239, 68, 68)),
+                    _ => _cardBorderDefault ??= new SolidColorBrush(Color.FromArgb(32, 128, 128, 128))
+                };
+            }
+            catch { return null; }
+        }
+    }
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? StatusBgColor
+    {
+        get
+        {
+            try
+            {
+                return UpdateStatus switch
+                {
+                    StatusCompleted => _statusBgCompleted ??= new SolidColorBrush(Color.FromArgb(30, 16, 185, 129)),
+                    StatusFailed => _statusBgFailed ??= new SolidColorBrush(Color.FromArgb(30, 239, 68, 68)),
+                    StatusUpdating => _statusBgUpdating ??= new SolidColorBrush(Color.FromArgb(30, 245, 158, 11)),
+                    _ => _statusBgDefault ??= new SolidColorBrush(Color.FromArgb(20, 59, 130, 246))
+                };
+            }
+            catch { return null; }
+        }
+    }
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? StatusBorderColor
+    {
+        get
+        {
+            try
+            {
+                return UpdateStatus switch
+                {
+                    StatusCompleted => _statusBorderCompleted ??= new SolidColorBrush(Color.FromArgb(48, 16, 185, 129)),
+                    StatusFailed => _statusBorderFailed ??= new SolidColorBrush(Color.FromArgb(48, 239, 68, 68)),
+                    StatusUpdating => _statusBorderUpdating ??= new SolidColorBrush(Color.FromArgb(48, 245, 158, 11)),
+                    _ => _statusBorderDefault ??= new SolidColorBrush(Color.FromArgb(32, 59, 130, 246))
+                };
+            }
+            catch { return null; }
+        }
+    }
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? StatusForegroundColor
+    {
+        get
+        {
+            try
+            {
+                return UpdateStatus switch
+                {
+                    StatusCompleted => _statusFgCompleted ??= new SolidColorBrush(Color.FromArgb(255, 16, 185, 129)),
+                    StatusFailed => _statusFgFailed ??= new SolidColorBrush(Color.FromArgb(255, 239, 68, 68)),
+                    StatusUpdating => _statusFgUpdating ??= new SolidColorBrush(Color.FromArgb(255, 245, 158, 11)),
+                    _ => _statusFgDefault ??= new SolidColorBrush(Color.FromArgb(255, 59, 130, 246))
+                };
+            }
+            catch { return null; }
+        }
+    }
 
     // App Branding & Icon Properties
     public string IconGlyph
@@ -198,15 +278,12 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
             if (id.Contains("chrome") || name.Contains("chrome")) return "\uE774";
             if (id.Contains("firefox") || name.Contains("firefox")) return "\uE774";
             if (id.Contains("code") || id.Contains("visualstudio") || name.Contains("visual studio")) return "\uE943"; // Code
-            if (id.Contains("git") || name.Contains("git")) return "\uEAF3"; // Git / Source Control
-            if (id.Contains("node") || name.Contains("node")) return "\uE756"; // Terminal / Script
-            if (id.Contains("python") || name.Contains("python")) return "\uE756";
-            if (id.Contains("vlc") || name.Contains("vlc")) return "\uE714"; // Media / Play
-            if (id.Contains("7zip") || id.Contains("winrar") || name.Contains("zip") || name.Contains("rar")) return "\uE8B7"; // Zip / Archive
-            if (id.Contains("notepad") || name.Contains("notepad")) return "\uE8C8"; // Document Editor
-            if (id.Contains("discord") || id.Contains("slack") || id.Contains("teams")) return "\uE8BD"; // Chat
+            if (id.Contains("discord") || id.Contains("slack") || id.Contains("telegram")) return "\uE8BD"; // Chat
+            if (id.Contains("spotify") || id.Contains("music") || id.Contains("vlc")) return "\uE8D6"; // Media
+            if (id.Contains("git") || id.Contains("node") || id.Contains("python")) return "\uE756"; // Developer Tool
+            if (id.Contains("7zip") || id.Contains("winrar") || id.Contains("zip")) return "\uF012"; // Archive
 
-            return "\uE74C"; // Default App Cube / Package
+            return "\uE71D"; // Default Generic Tool
         }
     }
 
@@ -217,46 +294,57 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
             var id = Id.ToLowerInvariant();
             var name = Name.ToLowerInvariant();
 
-            if (id.Contains("edge") || name.Contains("edge")) return "#0078D4";       // Microsoft Edge Blue
-            if (id.Contains("chrome") || name.Contains("chrome")) return "#EA4335";   // Google Red
-            if (id.Contains("firefox") || name.Contains("firefox")) return "#FF7139"; // Firefox Orange
-            if (id.Contains("code") || id.Contains("visualstudio")) return "#007ACC"; // VS Code Blue
-            if (id.Contains("git") || name.Contains("git")) return "#F05032";         // Git Orange
-            if (id.Contains("node") || name.Contains("node")) return "#339933";       // Node Green
-            if (id.Contains("python") || name.Contains("python")) return "#3776AB";   // Python Blue
-            if (id.Contains("vlc") || name.Contains("vlc")) return "#FF8800";         // VLC Orange
-            if (id.Contains("7zip") || id.Contains("winrar")) return "#10B981";       // Green Archive
-            if (id.Contains("notepad") || name.Contains("notepad")) return "#90B44C"; // Notepad++ Green
+            if (id.Contains("edge")) return "#0078D7";                                // Edge Blue
+            if (id.Contains("chrome") || name.Contains("chrome")) return "#EA4335";     // Chrome Red/Yellow
+            if (id.Contains("firefox")) return "#FF7139";                             // Firefox Orange
+            if (id.Contains("code") || id.Contains("vscode")) return "#007ACC";       // VS Code Blue
+            if (id.Contains("visualstudio")) return "#5C2D91";                        // Visual Studio Purple
+            if (id.Contains("spotify")) return "#1DB954";                             // Spotify Green
             if (id.Contains("discord") || id.Contains("slack")) return "#5865F2";     // Discord Blurple
 
             return "#3B82F6"; // Default Accent Blue
         }
     }
 
-    public Brush BrandColorBrush
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? BrandColorBrush
     {
         get
         {
-            var color = ColorFromHex(BrandColorHex);
-            return new SolidColorBrush(color);
+            try
+            {
+                var color = ColorFromHex(BrandColorHex);
+                return new SolidColorBrush(color);
+            }
+            catch { return null; }
         }
     }
 
-    public Brush BrandBgBrush
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? BrandBgBrush
     {
         get
         {
-            var color = ColorFromHex(BrandColorHex);
-            return new SolidColorBrush(Color.FromArgb(38, color.R, color.G, color.B)); // 15% opacity tint
+            try
+            {
+                var color = ColorFromHex(BrandColorHex);
+                return new SolidColorBrush(Color.FromArgb(38, color.R, color.G, color.B)); // 15% opacity tint
+            }
+            catch { return null; }
         }
     }
 
-    public Brush BrandBorderBrush
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? BrandBorderBrush
     {
         get
         {
-            var color = ColorFromHex(BrandColorHex);
-            return new SolidColorBrush(Color.FromArgb(76, color.R, color.G, color.B)); // 30% opacity border
+            try
+            {
+                var color = ColorFromHex(BrandColorHex);
+                return new SolidColorBrush(Color.FromArgb(76, color.R, color.G, color.B)); // 30% opacity border
+            }
+            catch { return null; }
         }
     }
 

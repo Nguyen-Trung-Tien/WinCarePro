@@ -51,6 +51,7 @@ public class ServiceEntry : INotifyPropertyChanged
     public bool IsMicrosoftService { get; set; }
     public string IconPath { get; set; } = "";
     public bool HasIcon => !string.IsNullOrWhiteSpace(IconPath) && System.IO.File.Exists(IconPath);
+    [System.Text.Json.Serialization.JsonIgnore]
     public ImageSource? IconImageSource
     {
         get
@@ -69,22 +70,75 @@ public class ServiceEntry : INotifyPropertyChanged
     public string ServiceDescription { get; set; } = "";
     public string RiskLevel { get; set; } = "Low"; // Low, Medium, High
 
+    private static SolidColorBrush? _runBgBrush;
+    private static SolidColorBrush? _stopBgBrush;
+    private static SolidColorBrush? _runFgBrush;
+    private static SolidColorBrush? _stopFgBrush;
+    private static SolidColorBrush? _msBgBrush;
+    private static SolidColorBrush? _tpBgBrush;
+    private static SolidColorBrush? _msFgBrush;
+    private static SolidColorBrush? _tpFgBrush;
+
     // UI Helper properties
-    public Brush StatusBgBrush => Status.Equals("Running", StringComparison.OrdinalIgnoreCase)
-        ? new SolidColorBrush(Color.FromArgb(30, 16, 185, 129))
-        : new SolidColorBrush(Color.FromArgb(30, 107, 114, 128));
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? StatusBgBrush
+    {
+        get
+        {
+            try
+            {
+                return Status.Equals("Running", StringComparison.OrdinalIgnoreCase)
+                    ? (_runBgBrush ??= new SolidColorBrush(Color.FromArgb(30, 16, 185, 129)))
+                    : (_stopBgBrush ??= new SolidColorBrush(Color.FromArgb(30, 107, 114, 128)));
+            }
+            catch { return null; }
+        }
+    }
 
-    public Brush StatusFgBrush => Status.Equals("Running", StringComparison.OrdinalIgnoreCase)
-        ? new SolidColorBrush(Color.FromArgb(255, 16, 185, 129))
-        : new SolidColorBrush(Color.FromArgb(255, 107, 114, 128));
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? StatusFgBrush
+    {
+        get
+        {
+            try
+            {
+                return Status.Equals("Running", StringComparison.OrdinalIgnoreCase)
+                    ? (_runFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 16, 185, 129)))
+                    : (_stopFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 107, 114, 128)));
+            }
+            catch { return null; }
+        }
+    }
 
-    public Brush CategoryBgBrush => IsMicrosoftService
-        ? new SolidColorBrush(Color.FromArgb(30, 59, 130, 246))
-        : new SolidColorBrush(Color.FromArgb(30, 127, 86, 217));
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? CategoryBgBrush
+    {
+        get
+        {
+            try
+            {
+                return IsMicrosoftService
+                    ? (_msBgBrush ??= new SolidColorBrush(Color.FromArgb(30, 59, 130, 246)))
+                    : (_tpBgBrush ??= new SolidColorBrush(Color.FromArgb(30, 127, 86, 217)));
+            }
+            catch { return null; }
+        }
+    }
 
-    public Brush CategoryFgBrush => IsMicrosoftService
-        ? new SolidColorBrush(Color.FromArgb(255, 59, 130, 246))
-        : new SolidColorBrush(Color.FromArgb(255, 127, 86, 217));
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? CategoryFgBrush
+    {
+        get
+        {
+            try
+            {
+                return IsMicrosoftService
+                    ? (_msFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 59, 130, 246)))
+                    : (_tpFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 127, 86, 217)));
+            }
+            catch { return null; }
+        }
+    }
 
     public string CategoryText => IsMicrosoftService ? "System" : "Third-Party";
 

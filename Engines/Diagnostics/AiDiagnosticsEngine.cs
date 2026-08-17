@@ -388,6 +388,79 @@ public class AiDiagnosticsEngine
             string json = JsonSerializer.Serialize(jsonPayload, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(fullPath, json);
         }
+        else if (format.ToUpper() == "HTML" || format.ToUpper() == "HTM")
+        {
+            fullPath = Path.Combine(ReportsFolder, fileName + ".html");
+            string scoreColor = diagnosticSummary.HealthScore >= 80 ? "#10B981" : (diagnosticSummary.HealthScore >= 50 ? "#F59E0B" : "#EF4444");
+            string scoreBg = diagnosticSummary.HealthScore >= 80 ? "rgba(16, 185, 129, 0.15)" : (diagnosticSummary.HealthScore >= 50 ? "rgba(245, 158, 11, 0.15)" : "rgba(239, 68, 68, 0.15)");
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("<!DOCTYPE html>");
+            sb.AppendLine("<html lang=\"en\">");
+            sb.AppendLine("<head>");
+            sb.AppendLine("  <meta charset=\"UTF-8\">");
+            sb.AppendLine("  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
+            sb.AppendLine("  <title>WinCare Pro — System Diagnostics Report</title>");
+            sb.AppendLine("  <style>");
+            sb.AppendLine("    * { box-sizing: border-box; margin: 0; padding: 0; }");
+            sb.AppendLine("    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #0f172a; color: #f8fafc; padding: 32px 16px; line-height: 1.6; }");
+            sb.AppendLine("    .container { max-width: 900px; margin: 0 auto; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }");
+            sb.AppendLine("    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 24px; margin-bottom: 28px; }");
+            sb.AppendLine("    .title { font-size: 24px; font-weight: 700; background: linear-gradient(135deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }");
+            sb.AppendLine("    .score-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 9999px; font-weight: 700; font-size: 18px; }");
+            sb.AppendLine("    .section-title { font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin: 24px 0 12px 0; }");
+            sb.AppendLine("    .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 28px; }");
+            sb.AppendLine("    .spec-card { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px; padding: 14px; }");
+            sb.AppendLine("    .spec-label { font-size: 12px; color: #64748b; margin-bottom: 4px; }");
+            sb.AppendLine("    .spec-value { font-size: 14px; font-weight: 600; color: #e2e8f0; }");
+            sb.AppendLine("    .diag-item { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 16px; margin-bottom: 10px; }");
+            sb.AppendLine("    .diag-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }");
+            sb.AppendLine("    .badge-healthy { color: #10B981; background: rgba(16, 185, 129, 0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }");
+            sb.AppendLine("    .badge-warn { color: #F59E0B; background: rgba(245, 158, 11, 0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }");
+            sb.AppendLine("    .footer { text-align: center; margin-top: 32px; font-size: 12px; color: #64748b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px; }");
+            sb.AppendLine("  </style>");
+            sb.AppendLine("</head>");
+            sb.AppendLine("<body>");
+            sb.AppendLine("  <div class=\"container\">");
+            sb.AppendLine("    <div class=\"header\">");
+            sb.AppendLine("      <div>");
+            sb.AppendLine("        <div class=\"title\">🚀 WinCare Pro System Report</div>");
+            sb.AppendLine($"        <div style=\"color: #64748b; font-size: 13px; margin-top: 4px;\">Generated on {DateTime.Now:yyyy-MM-dd HH:mm:ss} | User: {Environment.UserName}</div>");
+            sb.AppendLine("      </div>");
+            sb.AppendLine($"      <div class=\"score-badge\" style=\"background: {scoreBg}; color: {scoreColor}; border: 1px solid {scoreColor};\">Score: {diagnosticSummary.HealthScore}/100</div>");
+            sb.AppendLine("    </div>");
+            sb.AppendLine("    <div class=\"section-title\">Hardware & System Specifications</div>");
+            sb.AppendLine("    <div class=\"specs-grid\">");
+            sb.AppendLine($"      <div class=\"spec-card\"><div class=\"spec-label\">OS Version</div><div class=\"spec-value\">{System.Net.WebUtility.HtmlEncode(specs.OsVersion)}</div></div>");
+            sb.AppendLine($"      <div class=\"spec-card\"><div class=\"spec-label\">Processor</div><div class=\"spec-value\">{System.Net.WebUtility.HtmlEncode(specs.CpuModel)}</div></div>");
+            sb.AppendLine($"      <div class=\"spec-card\"><div class=\"spec-label\">RAM Memory</div><div class=\"spec-value\">{specs.RamCapacityGb:F1} GB ({System.Net.WebUtility.HtmlEncode(specs.RamSpeed)})</div></div>");
+            sb.AppendLine($"      <div class=\"spec-card\"><div class=\"spec-label\">Display Adapter</div><div class=\"spec-value\">{System.Net.WebUtility.HtmlEncode(specs.GpuModel)}</div></div>");
+            sb.AppendLine($"      <div class=\"spec-card\"><div class=\"spec-label\">Storage Layout</div><div class=\"spec-value\">{System.Net.WebUtility.HtmlEncode(specs.StorageInfo)}</div></div>");
+            sb.AppendLine($"      <div class=\"spec-card\"><div class=\"spec-label\">System Uptime</div><div class=\"spec-value\">{System.Net.WebUtility.HtmlEncode(specs.SystemUptime)}</div></div>");
+            sb.AppendLine("    </div>");
+            sb.AppendLine("    <div class=\"section-title\">Diagnostic Findings</div>");
+            foreach (var r in diagnosticSummary.Results)
+            {
+                string statusClass = r.IsHealthy ? "badge-healthy" : "badge-warn";
+                string statusText = r.IsHealthy ? "HEALTHY" : "ATTENTION";
+                sb.AppendLine("    <div class=\"diag-item\">");
+                sb.AppendLine($"      <div class=\"diag-header\"><strong style=\"font-size: 14px;\">[{System.Net.WebUtility.HtmlEncode(r.Category)}] {System.Net.WebUtility.HtmlEncode(r.CheckName)}</strong><span class=\"{statusClass}\">{statusText}</span></div>");
+                sb.AppendLine($"      <div style=\"font-size: 13px; color: #cbd5e1; margin-top: 4px;\">{System.Net.WebUtility.HtmlEncode(r.Description)}</div>");
+                if (!string.IsNullOrEmpty(r.Recommendation))
+                {
+                    sb.AppendLine($"      <div style=\"font-size: 12px; color: #38bdf8; margin-top: 4px;\">💡 {System.Net.WebUtility.HtmlEncode(r.Recommendation)}</div>");
+                }
+                sb.AppendLine("    </div>");
+            }
+            sb.AppendLine("    <div class=\"section-title\">Maintenance Actions</div>");
+            sb.AppendLine($"    <div class=\"diag-item\" style=\"font-family: monospace; font-size: 13px; color: #94a3b8; white-space: pre-wrap;\">{(string.IsNullOrEmpty(maintenanceResults) ? "No maintenance run recorded in this session." : System.Net.WebUtility.HtmlEncode(maintenanceResults))}</div>");
+            sb.AppendLine("    <div class=\"footer\">WinCare Pro Suite v4.1.0 • Aura Glassmorphic Architecture • Automated Engine Report</div>");
+            sb.AppendLine("  </div>");
+            sb.AppendLine("</body>");
+            sb.AppendLine("</html>");
+
+            File.WriteAllText(fullPath, sb.ToString());
+        }
         else // TXT / Markdown style (default)
         {
             fullPath = Path.Combine(ReportsFolder, fileName + ".txt");

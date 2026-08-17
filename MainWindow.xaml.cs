@@ -229,14 +229,74 @@ public sealed partial class MainWindow : Window
         // Update clock immediately
         ClockText.Text = DateTime.Now.ToString("HH:mm");
 
-        // Create a DispatcherTimer for periodic updates
+        // Create a DispatcherTimer for periodic clock and telemetry updates
         var timer = new Microsoft.UI.Xaml.DispatcherTimer();
-        timer.Interval = TimeSpan.FromSeconds(15);
+        timer.Interval = TimeSpan.FromSeconds(2);
         timer.Tick += (s, e) =>
         {
             ClockText.Text = DateTime.Now.ToString("HH:mm");
+            UpdateTitleBarTelemetry();
         };
         timer.Start();
+    }
+
+    private ulong _hudPrevIdleTime;
+    private ulong _hudPrevKernelTime;
+    private ulong _hudPrevUserTime;
+    private bool _hudHasPrevTimes = false;
+
+    private void UpdateTitleBarTelemetry()
+    {
+        Task.Run(() =>
+        {
+            try
+            {
+                // Sample RAM
+                var mem = new MEMORYSTATUSEX { dwLength = (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(MEMORYSTATUSEX)) };
+                GlobalMemoryStatusEx(ref mem);
+                double ramPercent = mem.dwMemoryLoad;
+                double freeGb = mem.ullAvailPhys / (1024.0 * 1024.0 * 1024.0);
+                double totalGb = mem.ullTotalPhys / (1024.0 * 1024.0 * 1024.0);
+
+                // Sample CPU
+                GetSystemTimes(out var idleTime, out var kernelTime, out var userTime);
+                ulong idle = ((ulong)idleTime.dwHighDateTime << 32) | idleTime.dwLowDateTime;
+                ulong kernel = ((ulong)kernelTime.dwHighDateTime << 32) | kernelTime.dwLowDateTime;
+                ulong user = ((ulong)userTime.dwHighDateTime << 32) | userTime.dwLowDateTime;
+
+                double cpuPercent = 0;
+                if (_hudHasPrevTimes)
+                {
+                    ulong usrDiff = user - _hudPrevUserTime;
+                    ulong kerDiff = kernel - _hudPrevKernelTime;
+                    ulong idlDiff = idle - _hudPrevIdleTime;
+                    ulong total = usrDiff + kerDiff;
+                    if (total > 0 && total >= idlDiff)
+                    {
+                        cpuPercent = Math.Clamp((double)(total - idlDiff) * 100.0 / total, 0, 100);
+                    }
+                }
+                _hudPrevIdleTime = idle;
+                _hudPrevKernelTime = kernel;
+                _hudPrevUserTime = user;
+                _hudHasPrevTimes = true;
+
+                this.DispatcherQueue.TryEnqueue(() =>
+                {
+                    if (CpuChipText != null)
+                    {
+                        CpuChipText.Text = cpuPercent > 0 ? $"CPU {cpuPercent:F0}%" : "CPU";
+                        ToolTipService.SetToolTip(CpuChipButton, $"CPU Usage: {cpuPercent:F0}%\nClick to open live Dashboard monitor.".T());
+                    }
+                    if (RamChipText != null)
+                    {
+                        RamChipText.Text = $"RAM {ramPercent:F0}%";
+                        ToolTipService.SetToolTip(RamChipButton, $"RAM Usage: {ramPercent:F0}% ({freeGb:F1} GB free of {totalGb:F1} GB)\nClick to perform 1-Click RAM Purge.".T());
+                    }
+                });
+            }
+            catch { }
+        });
     }
 
     private void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)

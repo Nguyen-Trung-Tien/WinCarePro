@@ -47,6 +47,7 @@ public class StartupEntry : INotifyPropertyChanged
     // New Properties
     public string IconPath { get; set; } = "";
     public bool HasIcon => !string.IsNullOrWhiteSpace(IconPath) && System.IO.File.Exists(IconPath);
+    [System.Text.Json.Serialization.JsonIgnore]
     public ImageSource? IconImageSource
     {
         get
@@ -76,20 +77,47 @@ public class StartupEntry : INotifyPropertyChanged
     public int EstimatedLaunchTimeMs { get; set; }
     public bool IsRecommendedDisable { get; set; }
 
-    // UI Helper properties
-    public Brush ImpactBgBrush => StartupImpact switch
-    {
-        "Critical" => new SolidColorBrush(Color.FromArgb(30, 239, 68, 68)),
-        "High" => new SolidColorBrush(Color.FromArgb(30, 239, 68, 68)),
-        "Medium" => new SolidColorBrush(Color.FromArgb(30, 245, 158, 11)),
-        _ => new SolidColorBrush(Color.FromArgb(30, 16, 185, 129))
-    };
+    private static SolidColorBrush? _critBgBrush;
+    private static SolidColorBrush? _medBgBrush;
+    private static SolidColorBrush? _lowBgBrush;
+    private static SolidColorBrush? _critFgBrush;
+    private static SolidColorBrush? _medFgBrush;
+    private static SolidColorBrush? _lowFgBrush;
 
-    public Brush ImpactFgBrush => StartupImpact switch
+    // UI Helper properties
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? ImpactBgBrush
     {
-        "Critical" => new SolidColorBrush(Color.FromArgb(255, 239, 68, 68)),
-        "High" => new SolidColorBrush(Color.FromArgb(255, 239, 68, 68)),
-        "Medium" => new SolidColorBrush(Color.FromArgb(255, 245, 158, 11)),
-        _ => new SolidColorBrush(Color.FromArgb(255, 16, 185, 129))
-    };
+        get
+        {
+            try
+            {
+                return StartupImpact switch
+                {
+                    "Critical" or "High" => _critBgBrush ??= new SolidColorBrush(Color.FromArgb(30, 239, 68, 68)),
+                    "Medium" => _medBgBrush ??= new SolidColorBrush(Color.FromArgb(30, 245, 158, 11)),
+                    _ => _lowBgBrush ??= new SolidColorBrush(Color.FromArgb(30, 16, 185, 129))
+                };
+            }
+            catch { return null; }
+        }
+    }
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? ImpactFgBrush
+    {
+        get
+        {
+            try
+            {
+                return StartupImpact switch
+                {
+                    "Critical" or "High" => _critFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 239, 68, 68)),
+                    "Medium" => _medFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 245, 158, 11)),
+                    _ => _lowFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 16, 185, 129))
+                };
+            }
+            catch { return null; }
+        }
+    }
 }

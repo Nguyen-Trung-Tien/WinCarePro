@@ -120,17 +120,88 @@ public class DbAndReportTests
         string jsonReportPath = engine.ExportMaintenanceReport("JSON", specs, summary, maintenanceResults);
         // 2. Export as TXT
         string txtReportPath = engine.ExportMaintenanceReport("TXT", specs, summary, maintenanceResults);
+        // 3. Export as HTML
+        string htmlReportPath = engine.ExportMaintenanceReport("HTML", specs, summary, maintenanceResults);
 
         // Assert
         Assert.True(File.Exists(jsonReportPath), $"JSON report not found at {jsonReportPath}");
         Assert.True(File.Exists(txtReportPath), $"TXT report not found at {txtReportPath}");
+        Assert.True(File.Exists(htmlReportPath), $"HTML report not found at {htmlReportPath}");
+
+        string htmlContent = File.ReadAllText(htmlReportPath);
+        Assert.Contains("WinCare Pro System Report", htmlContent);
+        Assert.Contains("Hardware & System Specifications", htmlContent);
 
         // Clean up
         try
         {
             File.Delete(jsonReportPath);
             File.Delete(txtReportPath);
+            File.Delete(htmlReportPath);
         }
         catch { }
+    }
+
+    [Fact]
+    public void ModelSerialization_ThreadSafety_DoesNotThrowComException()
+    {
+        // Test DiagnosticResult serialization
+        var diag = new DiagnosticResult
+        {
+            CheckName = "Test Check",
+            Category = "Performance",
+            IsHealthy = true,
+            Description = "Diagnostic description",
+            Recommendation = "Keep updated"
+        };
+        string diagJson = System.Text.Json.JsonSerializer.Serialize(diag);
+        Assert.NotNull(diagJson);
+        Assert.Contains("Test Check", diagJson);
+
+        // Test SystemTweak serialization
+        var tweak = new SystemTweak
+        {
+            Id = "twk_1",
+            Name = "Network Throttle",
+            Category = "Network",
+            IsOptimized = true
+        };
+        string tweakJson = System.Text.Json.JsonSerializer.Serialize(tweak);
+        Assert.NotNull(tweakJson);
+        Assert.Contains("Network Throttle", tweakJson);
+
+        // Test StartupEntry serialization
+        var startup = new StartupEntry
+        {
+            Name = "Discord",
+            Command = "discord.exe",
+            StartupImpact = "High"
+        };
+        string startupJson = System.Text.Json.JsonSerializer.Serialize(startup);
+        Assert.NotNull(startupJson);
+        Assert.Contains("Discord", startupJson);
+
+        // Test ServiceEntry serialization
+        var service = new ServiceEntry
+        {
+            Name = "wuauserv",
+            DisplayName = "Windows Update",
+            Status = "Running",
+            IsMicrosoftService = true
+        };
+        string serviceJson = System.Text.Json.JsonSerializer.Serialize(service);
+        Assert.NotNull(serviceJson);
+        Assert.Contains("wuauserv", serviceJson);
+
+        // Test SoftwareUpdateInfo serialization
+        var update = new SoftwareUpdateInfo
+        {
+            Id = "Mozilla.Firefox",
+            Name = "Firefox Browser",
+            UpdateStatus = SoftwareUpdateInfo.StatusCompleted
+        };
+        string updateJson = System.Text.Json.JsonSerializer.Serialize(update);
+        Assert.NotNull(updateJson);
+        Assert.Contains("Mozilla.Firefox", updateJson);
     }
 }

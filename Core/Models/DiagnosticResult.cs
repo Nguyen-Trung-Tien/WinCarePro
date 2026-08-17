@@ -15,14 +15,51 @@ public class DiagnosticResult
 
     public string StatusLabel => IsHealthy ? "PASSED" : "ATTENTION";
     public string StatusIcon => IsHealthy ? "\uE73E" : "\uE783";
+
+    [System.Text.Json.Serialization.JsonIgnore]
     public Visibility StatusBadgeVisibility => IsHealthy ? Visibility.Visible : Visibility.Collapsed;
+
+    [System.Text.Json.Serialization.JsonIgnore]
     public Visibility FixButtonVisibility => IsHealthy ? Visibility.Collapsed : Visibility.Visible;
 
-    private static readonly SolidColorBrush GreenBrush = new(Windows.UI.Color.FromArgb(255, 16, 185, 129));
-    private static readonly SolidColorBrush AmberBrush = new(Windows.UI.Color.FromArgb(255, 245, 158, 11));
-    private static readonly SolidColorBrush GreenBgBrush = new(Windows.UI.Color.FromArgb(32, 16, 185, 129));
-    private static readonly SolidColorBrush AmberBgBrush = new(Windows.UI.Color.FromArgb(32, 245, 158, 11));
+    private static SolidColorBrush? _greenBrush;
+    private static SolidColorBrush? _amberBrush;
+    private static SolidColorBrush? _greenBgBrush;
+    private static SolidColorBrush? _amberBgBrush;
 
-    public Brush StatusColor => IsHealthy ? GreenBrush : AmberBrush;
-    public Brush StatusBadgeBg => IsHealthy ? GreenBgBrush : AmberBgBrush;
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? StatusColor
+    {
+        get
+        {
+            try
+            {
+                return IsHealthy
+                    ? (_greenBrush ??= new(Windows.UI.Color.FromArgb(255, 16, 185, 129)))
+                    : (_amberBrush ??= new(Windows.UI.Color.FromArgb(255, 245, 158, 11)));
+            }
+            catch
+            {
+                return null;
+            }
+        }
+    }
+
+    [System.Text.Json.Serialization.JsonIgnore]
+    public Brush? StatusBadgeBg
+    {
+        get
+        {
+            try
+            {
+                return IsHealthy
+                    ? (_greenBgBrush ??= new(Windows.UI.Color.FromArgb(32, 16, 185, 129)))
+                    : (_amberBgBrush ??= new(Windows.UI.Color.FromArgb(32, 245, 158, 11)));
+            }
+            catch
+            {
+                return null;
+            }
+        }
+    }
 }

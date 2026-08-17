@@ -9,6 +9,16 @@
     xmlns:components="using:WinCarePro.Shared.Components"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Storyboard x:Name="PulsingUpdateGlowAnimation" AutoReverse="True" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="UpdateCardGlow" Storyboard.TargetProperty="Opacity" From="0.08" To="0.32" Duration="0:0:1.8">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseInOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </Page.Resources>
+
     <Grid Padding="24,20" HorizontalAlignment="Stretch" x:Name="SettingsRootGrid">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
@@ -460,30 +470,86 @@
                 <!-- Section 6: Software Updates -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 6), Mode=OneWay}">
                     <StackPanel Spacing="4">
-                        <TextBlock Text="Software Update Policies" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Manage background version checks, silent installations, and pre-release channels." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="Software Update Policies &amp; CDN Stream" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                        <TextBlock Text="Manage background version checks, live percentage telemetry stream, and automated installer delivery." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                     </StackPanel>
                     
+                    <!-- 1. Live Update Data Progress & Status Card -->
+                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20">
+                        <Grid>
+                            <!-- Ambient Pulsing Glow Reactor -->
+                            <Ellipse x:Name="UpdateCardGlow" Fill="{StaticResource PrimaryAccentGradient}" Opacity="0.18" HorizontalAlignment="Right" VerticalAlignment="Top" Width="260" Height="160" Margin="0,-40,-40,0" IsHitTestVisible="False"/>
+
+                            <StackPanel Spacing="16">
+                            <!-- Card Header with version and trigger -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Left: Version & Status -->
+                                <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
+                                            <TextBlock Text="v4.1.0" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                        </Border>
+                                        <TextBlock Text="WinCare Pro Distribution Channel" FontSize="14" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                        <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
+                                                <TextBlock x:Name="UpdateChannelBadgeText" Text="CDN Connected" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                    <TextBlock x:Name="UpdateStatusLabel" Text="System is up to date with the latest security and optimization definitions." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+
+                                <!-- Right: Action Button -->
+                                <Button x:Name="CheckUpdatesBtn" Grid.Column="1" Click="OnCheckUpdatesClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" Padding="14,0" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
+                                        <FontIcon x:Name="CheckUpdatesIcon" Glyph="&#xE72C;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                        <TextBlock x:Name="CheckUpdatesText" Text="Check for Updates" FontSize="12" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+
+                            <!-- Live % Data Stream Bar & Readout -->
+                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="12" Padding="16,14">
+                                <StackPanel Spacing="10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE895;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                            <TextBlock x:Name="UpdateProgressStepLabel" Text="Data Synchronization Status" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" x:Name="UpdatePercentText" Text="100%" FontSize="13" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                    </Grid>
+
+                                    <!-- Modern Data Progress Bar -->
+                                    <ProgressBar x:Name="UpdateProgressBar" Maximum="100" Value="100" Height="8" CornerRadius="4" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Foreground="{StaticResource PrimaryAccentGradient}" />
+
+                                    <!-- Bottom Telemetry Detail -->
+                                    <Grid>
+                                        <TextBlock x:Name="UpdateDetailsText" Text="CDN Manifest Sync: Complete • Channel: Stable • Digital Signature: Verified" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock x:Name="UpdateDataRateText" Text="Ready" HorizontalAlignment="Right" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                    
+                    <!-- 2. Update Configuration Settings -->
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <components:LoadingToggleSwitch x:Name="AutoUpdateToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Check for updates automatically in the background" />
                             <components:LoadingToggleSwitch x:Name="AutoInstallUpdatesToggle" Toggled="OnSettingsChanged" IsOn="False" HeaderText="Auto download &amp; install updates silently (Requires background check)" />
                             <components:LoadingToggleSwitch x:Name="BetaUpdatesToggle" Toggled="OnSettingsChanged" IsOn="False" HeaderText="Enroll in the pre-release channel (Beta updates)" ToolTipService.ToolTip="Receive early updates with new features before public release." />
-
-                            <MenuFlyoutSeparator />
-
-                            <StackPanel Orientation="Horizontal" Spacing="14">
-                                <Button x:Name="CheckUpdatesBtn" Click="OnCheckUpdatesClick" Style="{StaticResource VibrantPrimaryButtonStyle}">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
-                                        <FontIcon Glyph="&#xE72C;" FontSize="14" Foreground="White"/>
-                                        <TextBlock x:Name="CheckUpdatesText" Text="Check for Updates Now" FontWeight="Bold"/>
-                                    </StackPanel>
-                                </Button>
-                                <TextBlock x:Name="UpdateStatusLabel" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                            </StackPanel>
-                            
-                            <ProgressBar x:Name="UpdateProgressBar" Visibility="Collapsed" Maximum="100" Value="0" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
                         </StackPanel>
                     </Border>
                 </StackPanel>

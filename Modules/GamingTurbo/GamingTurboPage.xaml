@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="WinCarePro.Modules.GamingTurbo.GamingTurboPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -38,10 +38,10 @@
                         <FontIcon Glyph="&#xE7FC;" FontSize="20" Foreground="White"/>
                     </Border>
                     <TextBlock Text="Gaming Turbo 2.0 Pro Suite" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
-                    <Border Background="#20F59E0B" BorderBrush="#50F59E0B" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                    <Border Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
-                            <Ellipse Width="6" Height="6" Fill="#FFF59E0B"/>
-                            <TextBlock Text="Ultra Low-Latency Engine" FontSize="11" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                            <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeWarningFg}"/>
+                            <TextBlock Text="Ultra Low-Latency Engine" FontSize="11" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeWarningFg}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -85,9 +85,9 @@
                                 </Ellipse.Fill>
                             </Ellipse>
                             <Ellipse Width="110" Height="110" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="4" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.3"/>
-                            <ProgressRing x:Name="TurboPulseRing" Value="100" Width="114" Height="114" Foreground="#FFF59E0B" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <ProgressRing x:Name="TurboPulseRing" Value="100" Width="114" Height="114" Foreground="{ThemeResource AppBadgeWarningFg}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
-                                <FontIcon Glyph="&#xEA3B;" FontSize="28" Foreground="#FFF59E0B" HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xEA3B;" FontSize="28" Foreground="{ThemeResource AppBadgeWarningFg}" HorizontalAlignment="Center"/>
                                 <TextBlock Text="TURBO 2.0" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="15"/>
                             </StackPanel>
                         </Grid>
@@ -96,8 +96,8 @@
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="8">
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <TextBlock Text="Gaming Turbo Engine" FontSize="21" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                <Border x:Name="TurboStatusPill" Background="#20F59E0B" BorderBrush="#50F59E0B" BorderThickness="1" CornerRadius="6" Padding="8,3">
-                                    <TextBlock x:Name="TurboStatusPillText" Text="Standby" FontSize="11" FontWeight="Bold" Foreground="#FFF59E0B"/>
+                                <Border x:Name="TurboStatusPill" Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3">
+                                    <TextBlock x:Name="TurboStatusPillText" Text="Standby" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeWarningFg}"/>
                                 </Border>
                             </StackPanel>
                             <TextBlock x:Name="StatusMessageText" Text="Gaming Turbo 2.0 is in Standby mode. Ready to boost FPS &amp; latency." 

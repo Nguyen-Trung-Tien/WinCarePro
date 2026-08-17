@@ -78,8 +78,20 @@
 
         <!-- Page Header -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
-            <StackPanel>
-                <TextBlock Text="Startup &amp; Services" Style="{StaticResource PageHeaderTitleStyle}" />
+            <StackPanel Spacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Border Background="{StaticResource CyberAccentGradient}" CornerRadius="10" Padding="8">
+                        <FontIcon Glyph="&#xE7B5;" FontSize="18" Foreground="White"/>
+                    </Border>
+                    <TextBlock Text="Startup &amp; Services Manager" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
+                            <TextBlock Text="Boot Optimizer Active" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                <TextBlock Text="Accelerate Windows boot velocity, disable heavy startup applications &amp; configure background services." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
         </Grid>
 

@@ -32,9 +32,9 @@
                         <FontIcon Glyph="&#xEA8F;" FontSize="20" Foreground="White"/>
                     </Border>
                     <TextBlock x:Name="PageTitleTextBlock" Text="Notifications &amp; Activity Log" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
-                    <Border Background="#208B5CF6" BorderBrush="#508B5CF6" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                    <Border Background="{ThemeResource AppBadgeNeutralBg}" BorderBrush="{ThemeResource AppBadgeNeutralBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
-                            <Ellipse Width="6" Height="6" Fill="{StaticResource PrimaryAccentBrush}"/>
+                            <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
                             <TextBlock Text="Live Telemetry Sentinel" FontSize="11" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                         </StackPanel>
                     </Border>

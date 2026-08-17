@@ -42,18 +42,18 @@
                         <FontIcon Glyph="&#xE74D;" FontSize="20" Foreground="White"/>
                     </Border>
                     <TextBlock Text="App Uninstaller" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
-                    <Border Background="#203B82F6" BorderBrush="#503B82F6" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                    <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="5">
-                            <Ellipse Width="6" Height="6" Fill="#FF3B82F6"/>
+                            <Ellipse Width="6" Height="6" Fill="{ThemeResource AppRamChipFg}"/>
                             <TextBlock Text="Installed:" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Text="{x:Bind ViewModel.TotalAppsCount, Mode=OneWay}" FontSize="11" FontWeight="ExtraBold" Foreground="#FF3B82F6" />
+                            <TextBlock Text="{x:Bind ViewModel.TotalAppsCount, Mode=OneWay}" FontSize="11" FontWeight="ExtraBold" Foreground="{ThemeResource AppRamChipFg}" />
                         </StackPanel>
                     </Border>
-                    <Border Background="#2010B981" BorderBrush="#5010B981" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                    <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="5">
-                            <Ellipse Width="6" Height="6" Fill="#FF10B981"/>
+                            <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
                             <TextBlock Text="Occupied:" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <TextBlock Text="{x:Bind ViewModel.TotalAppsSizeFormatted, Mode=OneWay}" FontSize="11" FontWeight="ExtraBold" Foreground="#FF10B981" />
+                            <TextBlock Text="{x:Bind ViewModel.TotalAppsSizeFormatted, Mode=OneWay}" FontSize="11" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeGoodFg}" />
                         </StackPanel>
                     </Border>
                 </StackPanel>

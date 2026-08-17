@@ -51,6 +51,8 @@ public sealed partial class SettingsPage : Page
 
             string currentAccent = SettingsService.Instance.CurrentSettings.AccentColor ?? "Default";
             ApplyAccentColorSelection(currentAccent);
+
+            try { PulsingUpdateGlowAnimation?.Begin(); } catch {}
         };
 
         this.Unloaded += (s, e) =>
@@ -758,26 +760,43 @@ public sealed partial class SettingsPage : Page
     private async void OnCheckUpdatesClick(object sender, RoutedEventArgs e)
     {
         var btn = CheckUpdatesBtn ?? (sender as Button);
-        UpdateProgressBar.Visibility = Visibility.Collapsed;
+        UpdateProgressBar.Value = 10;
+        UpdatePercentText.Text = "10%";
+        UpdateProgressStepLabel.Text = "Connecting to CDN Repository...".T();
+        UpdateDataRateText.Text = "Scanning".T();
+        UpdateDetailsText.Text = "Negotiating HTTPS connection with distribution server...".T();
+
         await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, UpdateProgressRing, CheckUpdatesText, null,
-            "Checking for Updates...", "Check for Updates Now",
+            btn, UpdateProgressRing, CheckUpdatesText, CheckUpdatesIcon,
+            "Checking for Updates...", "Check for Updates",
             async () =>
             {
                 try
                 {
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        UpdateProgressBar.Value = 45;
+                        UpdatePercentText.Text = "45%";
+                        UpdateProgressStepLabel.Text = "Auditing Remote Version Manifest...".T();
+                    });
+
+                    await Task.Delay(250);
                     await CheckForUpdatesInternalAsync();
                 }
                 catch (FileNotFoundException fnfEx)
                 {
                     UpdateStatusLabel.Text = string.Format("Network library unavailable: {0}".T(), fnfEx.FileName ?? fnfEx.Message);
+                    UpdateProgressStepLabel.Text = "Check Failed".T();
+                    UpdateDataRateText.Text = "Error".T();
                 }
                 catch (Exception ex)
                 {
                     UpdateStatusLabel.Text = string.Format("Failed to check for updates: {0}".T(), ex.Message);
+                    UpdateProgressStepLabel.Text = "Check Failed".T();
+                    UpdateDataRateText.Text = "Error".T();
                 }
             },
-            minDurationMs: 1200);
+            minDurationMs: 1000);
     }
 
     private async Task CheckForUpdatesInternalAsync()
@@ -816,9 +835,18 @@ public sealed partial class SettingsPage : Page
 
         UpdateProgressRing.IsActive = false;
 
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            UpdateProgressBar.Value = 100;
+            UpdatePercentText.Text = "100%";
+        });
+
         if (remoteVersion > currentVersion)
         {
-            UpdateStatusLabel.Text = string.Format("New version {0} is available.".T(), remoteVerStr);
+            UpdateStatusLabel.Text = string.Format("New version {0} is available for download.".T(), remoteVerStr);
+            UpdateProgressStepLabel.Text = string.Format("Update v{0} Ready to Download".T(), remoteVerStr);
+            UpdateDetailsText.Text = string.Format("Remote version v{0} (Current: v{1})".T(), remoteVerStr, currentVersion.ToString(3));
+            UpdateDataRateText.Text = "Pending".T();
 
             ContentDialog updateDialog = new ContentDialog
             {
@@ -840,6 +868,9 @@ public sealed partial class SettingsPage : Page
         else
         {
             UpdateStatusLabel.Text = string.Format("You are running the latest version (v{0}).".T(), currentVersion.ToString(3));
+            UpdateProgressStepLabel.Text = "System Up to Date".T();
+            UpdateDetailsText.Text = string.Format("Manifest verified • Running latest v{0}".T(), currentVersion.ToString(3));
+            UpdateDataRateText.Text = "Synced".T();
         }
     }
 
@@ -848,9 +879,11 @@ public sealed partial class SettingsPage : Page
         if (string.IsNullOrEmpty(downloadUrl)) return;
 
         CheckUpdatesBtn.IsEnabled = false;
-        UpdateStatusLabel.Text = "Downloading update...".T();
-        UpdateProgressBar.Visibility = Visibility.Visible;
+        UpdateStatusLabel.Text = "Downloading update installer payload...".T();
+        UpdateProgressStepLabel.Text = "Downloading Binary Package...".T();
         UpdateProgressBar.Value = 0;
+        UpdatePercentText.Text = "0%";
+        UpdateDataRateText.Text = "0 KB/s";
 
         try
         {
@@ -878,13 +911,16 @@ public sealed partial class SettingsPage : Page
                     await fileStream.WriteAsync(buffer, 0, read);
                     totalRead += read;
                     
-                    if (totalBytes.HasValue)
+                    if (totalBytes.HasValue && totalBytes.Value > 0)
                     {
                         double progress = (double)totalRead / totalBytes.Value * 100.0;
                         DispatcherQueue.TryEnqueue(() =>
                         {
                             UpdateProgressBar.Value = progress;
-                            UpdateStatusLabel.Text = string.Format("Downloading update... {0}%".T(), progress.ToString("F0"));
+                            UpdatePercentText.Text = string.Format("{0}%", progress.ToString("F0"));
+                            UpdateStatusLabel.Text = string.Format("Downloading update payload... {0}%".T(), progress.ToString("F0"));
+                            UpdateDetailsText.Text = string.Format("{0:F1} MB of {1:F1} MB downloaded", (double)totalRead / (1024 * 1024), (double)totalBytes.Value / (1024 * 1024));
+                            UpdateDataRateText.Text = "Downloading".T();
                         });
                     }
                 }
@@ -900,7 +936,9 @@ public sealed partial class SettingsPage : Page
                     DispatcherQueue.TryEnqueue(() =>
                     {
                         UpdateProgressBar.Value = 100;
+                        UpdatePercentText.Text = "100%";
                         UpdateStatusLabel.Text = "Copying local update... 100%".T();
+                        UpdateDataRateText.Text = "Complete".T();
                     });
                 }
                 else
@@ -911,6 +949,7 @@ public sealed partial class SettingsPage : Page
 
             // Verify digital signature of the downloaded update installer
             UpdateStatusLabel.Text = "Verifying digital signature...".T();
+            UpdateProgressStepLabel.Text = "Verifying Cryptographic Signature...".T();
             bool isSignatureValid = await Task.Run(() => VerifyDigitalSignature(setupFilePath));
             if (!isSignatureValid)
             {

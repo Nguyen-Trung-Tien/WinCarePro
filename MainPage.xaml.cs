@@ -24,6 +24,8 @@ public sealed partial class MainPage : Page
         NavMachineName.Text = Environment.MachineName;
 
         // Register to theme changes to force update RequestedTheme for this page, children, and navigated content
+        ThemeManager.Instance.RegisterPage(this);
+        TranslationManager.Instance.RegisterPage(this);
         ThemeManager.Instance.ThemeChanged += (s, e) =>
         {
             var theme = ThemeManager.Instance.CurrentTheme;
@@ -54,6 +56,8 @@ public sealed partial class MainPage : Page
         {
             if (e.Content is Page page)
             {
+                ThemeManager.Instance.RegisterPage(page);
+                TranslationManager.Instance.RegisterPage(page);
                 page.RequestedTheme = ThemeManager.Instance.CurrentTheme;
                 TranslationManager.Instance.Translate(page);
 

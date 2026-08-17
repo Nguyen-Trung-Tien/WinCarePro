@@ -22,20 +22,32 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-                <TextBlock Text="Registry Center" Style="{StaticResource PageHeaderTitleStyle}" />
+            <StackPanel Grid.Column="0" Spacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Border Background="{StaticResource CyberAccentGradient}" CornerRadius="10" Padding="8">
+                        <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="White"/>
+                    </Border>
+                    <TextBlock Text="Registry Center &amp; Optimizer" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
+                            <TextBlock Text="Registry Integrity Guard" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                <TextBlock Text="Repair corrupted keys, eliminate invalid CLSIDs, streamline shell registrations &amp; defragment registry hives." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="14,8">
+                <Button Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" Padding="14,0">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE721;" FontSize="13" />
-                        <TextBlock Text="Scan Registry" VerticalAlignment="Center" FontSize="12.5" />
+                        <TextBlock Text="Scan Registry" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button Click="OnRepairClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="SemiBold">
+                <Button Click="OnRepairClick" Style="{StaticResource VibrantPrimaryButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="36" Padding="16,0">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE74D;" FontSize="13" Foreground="White" />
-                        <TextBlock Text="Clean Selected" VerticalAlignment="Center" FontSize="12.5" />
+                        <TextBlock Text="Clean Selected" VerticalAlignment="Center" FontSize="12.5" FontWeight="Bold" />
                     </StackPanel>
                 </Button>
             </StackPanel>

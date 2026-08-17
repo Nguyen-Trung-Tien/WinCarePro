@@ -30,6 +30,7 @@ public partial class TranslationManager
             {
                 _currentLanguage = value;
                 LanguageChanged?.Invoke(this, EventArgs.Empty);
+                ApplyLanguageChange();
             }
         }
     }
@@ -221,6 +222,53 @@ public partial class TranslationManager
     }
 
     private readonly List<WeakReference<DependencyObject>> _registeredControls = new();
+    private readonly List<WeakReference<Window>> _registeredWindows = new();
+    private readonly List<WeakReference<Page>> _registeredPages = new();
+
+    public void RegisterWindow(Window window)
+    {
+        if (window == null) return;
+        lock (_registeredWindows)
+        {
+            _registeredWindows.RemoveAll(wr => !wr.TryGetTarget(out var target) || target == window);
+            _registeredWindows.Add(new WeakReference<Window>(window));
+        }
+
+        if (window.Content != null)
+        {
+            Translate(window.Content);
+        }
+    }
+
+    public void UnregisterWindow(Window window)
+    {
+        if (window == null) return;
+        lock (_registeredWindows)
+        {
+            _registeredWindows.RemoveAll(wr => !wr.TryGetTarget(out var target) || target == window);
+        }
+    }
+
+    public void RegisterPage(Page page)
+    {
+        if (page == null) return;
+        lock (_registeredPages)
+        {
+            _registeredPages.RemoveAll(wr => !wr.TryGetTarget(out var target) || target == page);
+            _registeredPages.Add(new WeakReference<Page>(page));
+        }
+
+        Translate(page);
+    }
+
+    public void UnregisterPage(Page page)
+    {
+        if (page == null) return;
+        lock (_registeredPages)
+        {
+            _registeredPages.RemoveAll(wr => !wr.TryGetTarget(out var target) || target == page);
+        }
+    }
 
     private void RegisterControl(DependencyObject control)
     {
@@ -236,7 +284,7 @@ public partial class TranslationManager
 
     public void ApplyLanguageChange()
     {
-        // First, translate all currently registered controls
+        // 1. Translate all individually tracked controls
         lock (_registeredControls)
         {
             for (int i = _registeredControls.Count - 1; i >= 0; i--)
@@ -252,11 +300,59 @@ public partial class TranslationManager
             }
         }
 
-        // Next, execute a visual tree walk on the active window content (if available)
-        // to catch any unregistered, dynamic, or newly added elements.
+        // 2. Dispatch translation across all registered windows
+        lock (_registeredWindows)
+        {
+            for (int i = _registeredWindows.Count - 1; i >= 0; i--)
+            {
+                if (_registeredWindows[i].TryGetTarget(out var win))
+                {
+                    try
+                    {
+                        win.DispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, () =>
+                        {
+                            if (win.Content != null)
+                            {
+                                Translate(win.Content);
+                            }
+                        });
+                    }
+                    catch { }
+                }
+                else
+                {
+                    _registeredWindows.RemoveAt(i);
+                }
+            }
+        }
+
+        // 3. Dispatch translation across all active pages
+        lock (_registeredPages)
+        {
+            for (int i = _registeredPages.Count - 1; i >= 0; i--)
+            {
+                if (_registeredPages[i].TryGetTarget(out var page))
+                {
+                    try
+                    {
+                        page.DispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal, () =>
+                        {
+                            Translate(page);
+                        });
+                    }
+                    catch { }
+                }
+                else
+                {
+                    _registeredPages.RemoveAt(i);
+                }
+            }
+        }
+
+        // 4. Fallback for main window instance
         try
         {
-            if (WinCarePro.App.MainWindowInstance != null)
+            if (WinCarePro.App.MainWindowInstance != null && WinCarePro.App.MainWindowInstance.Content != null)
             {
                 Translate(WinCarePro.App.MainWindowInstance.Content);
             }

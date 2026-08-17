@@ -165,8 +165,14 @@ namespace WinCarePro.Modules.DesktopWidget
                 {
                     RemoveWindowSubclass(hwnd, _subclassProc, 101);
                 }
+                ThemeManager.Instance.UnregisterWindow(this);
+                TranslationManager.Instance.UnregisterWindow(this);
                 _currentInstance = null;
             };
+
+            // Register with ThemeManager and TranslationManager for centralized synchronization
+            ThemeManager.Instance.RegisterWindow(this);
+            TranslationManager.Instance.RegisterWindow(this);
 
             // Load position, size and view state configuration
             var state = LoadStateConfig();

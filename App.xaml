@@ -23,10 +23,16 @@
                     <SolidColorBrush x:Key="AppTerminalForeground" Color="#FF00F2FE" />
                     <SolidColorBrush x:Key="AppBadgeGoodBg" Color="#2510B981" />
                     <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#6010B981" />
+                    <SolidColorBrush x:Key="AppBadgeGoodFg" Color="#FF10B981" />
                     <SolidColorBrush x:Key="AppBadgeWarningBg" Color="#25F59E0B" />
                     <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#60F59E0B" />
+                    <SolidColorBrush x:Key="AppBadgeWarningFg" Color="#FFF59E0B" />
                     <SolidColorBrush x:Key="AppBadgeCriticalBg" Color="#25EF4444" />
                     <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#60EF4444" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalFg" Color="#FFEF4444" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralBg" Color="#208B5CF6" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralBorder" Color="#508B5CF6" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralFg" Color="#FFA78BFA" />
                     <SolidColorBrush x:Key="AppCpuChipBg" Color="#25F59E0B" />
                     <SolidColorBrush x:Key="AppCpuChipBorder" Color="#60F59E0B" />
                     <SolidColorBrush x:Key="AppCpuChipFg" Color="#FFFBF59E" />
@@ -56,10 +62,16 @@
                     <SolidColorBrush x:Key="AppTerminalForeground" Color="#0F172A" />
                     <SolidColorBrush x:Key="AppBadgeGoodBg" Color="#ECFDF5" />
                     <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#6EE7B7" />
+                    <SolidColorBrush x:Key="AppBadgeGoodFg" Color="#047857" />
                     <SolidColorBrush x:Key="AppBadgeWarningBg" Color="#FFFBEB" />
                     <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#FDE68A" />
+                    <SolidColorBrush x:Key="AppBadgeWarningFg" Color="#B45309" />
                     <SolidColorBrush x:Key="AppBadgeCriticalBg" Color="#FEF2F2" />
                     <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#FCA5A5" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalFg" Color="#DC2626" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralBg" Color="#EEF2FF" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralBorder" Color="#C7D2FE" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralFg" Color="#4F46E5" />
                     <SolidColorBrush x:Key="AppCpuChipBg" Color="#FFFBEB" />
                     <SolidColorBrush x:Key="AppCpuChipBorder" Color="#FDE68A" />
                     <SolidColorBrush x:Key="AppCpuChipFg" Color="#B45309" />
@@ -419,8 +431,8 @@
             <Style x:Key="VibrantPrimaryButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}" />
                 <Setter Property="Foreground" Value="White" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="CornerRadius" Value="12" />
                 <Setter Property="Padding" Value="20,10" />
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
@@ -430,42 +442,120 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <ContentPresenter x:Name="ContentPresenter"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                Padding="{TemplateBinding Padding}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
+                                </Grid.RenderTransform>
+
+                                <!-- 1. Ambient Dynamic Outer Glow Halo -->
+                                <Border x:Name="GlowHalo" 
+                                        Background="{StaticResource PrimaryAccentGradient}" 
+                                        CornerRadius="{TemplateBinding CornerRadius}" 
+                                        Opacity="0.0" 
+                                        Margin="-3,-2,-3,-2" />
+
+                                <!-- 2. Main Button Body -->
+                                <Border x:Name="MainButtonBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{StaticResource AuroraGlowBorderBrush}"
+                                        BorderThickness="1.2"
+                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                    <Grid>
+                                        <!-- Top Specular Glass Reflection Sheen -->
+                                        <Border Height="1.2" VerticalAlignment="Top" CornerRadius="12,12,0,0" Opacity="0.55">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="#00FFFFFF" Offset="0"/>
+                                                    <GradientStop Color="#FFFFFFFF" Offset="0.5"/>
+                                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+
+                                        <!-- Content Presenter -->
+                                        <ContentPresenter x:Name="ContentPresenter"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            Padding="{TemplateBinding Padding}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    </Grid>
+                                </Border>
+
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="CommonStates">
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition To="PointerOver" GeneratedDuration="0:0:0.18">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.03" Duration="0:0:0.18">
+                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.03" Duration="0:0:0.18">
+                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="-1.5" Duration="0:0:0.18">
+                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Storyboard.TargetName="GlowHalo" Storyboard.TargetProperty="Opacity" To="0.45" Duration="0:0:0.18"/>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition To="Pressed" GeneratedDuration="0:0:0.1">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="0.97" Duration="0:0:0.1">
+                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="0.97" Duration="0:0:0.1">
+                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="1.0" Duration="0:0:0.1">
+                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Storyboard.TargetName="GlowHalo" Storyboard.TargetProperty="Opacity" To="0.2" Duration="0:0:0.1"/>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition To="Normal" GeneratedDuration="0:0:0.25">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.25">
+                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.25">
+                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.25">
+                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                    </DoubleAnimation>
+                                                    <DoubleAnimation Storyboard.TargetName="GlowHalo" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.25"/>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                        </VisualStateGroup.Transitions>
+
                                         <VisualState x:Name="Normal" />
                                         <VisualState x:Name="PointerOver">
                                             <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.Background" Value="{StaticResource PrimaryAccentGradient}" />
-                                                <Setter Target="ContentPresenter.Foreground" Value="White" />
-                                                <Setter Target="ContentPresenter.Opacity" Value="0.9" />
+                                                <Setter Target="ButtonScaleTransform.ScaleX" Value="1.03" />
+                                                <Setter Target="ButtonScaleTransform.ScaleY" Value="1.03" />
+                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="-1.5" />
+                                                <Setter Target="GlowHalo.Opacity" Value="0.45" />
+                                                <Setter Target="MainButtonBorder.BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
                                             </VisualState.Setters>
                                         </VisualState>
                                         <VisualState x:Name="Pressed">
                                             <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.Background" Value="{StaticResource PrimaryAccentGradient}" />
-                                                <Setter Target="ContentPresenter.Foreground" Value="White" />
-                                                <Setter Target="ContentPresenter.Opacity" Value="0.8" />
+                                                <Setter Target="ButtonScaleTransform.ScaleX" Value="0.97" />
+                                                <Setter Target="ButtonScaleTransform.ScaleY" Value="0.97" />
+                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="1.0" />
+                                                <Setter Target="GlowHalo.Opacity" Value="0.2" />
                                             </VisualState.Setters>
                                         </VisualState>
                                         <VisualState x:Name="Disabled">
                                             <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.Opacity" Value="0.5" />
+                                                <Setter Target="RootButtonGrid.Opacity" Value="0.45" />
                                             </VisualState.Setters>
                                         </VisualState>
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
-                            </ContentPresenter>
+                            </Grid>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>

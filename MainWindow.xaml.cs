@@ -101,6 +101,10 @@ public sealed partial class MainWindow : Window
         this.AppWindow.Closing += AppWindow_Closing;
         this.Closed += MainWindow_Closed;
 
+        // Centralized Theme & Multi-Language Synchronization
+        ThemeManager.Instance.RegisterWindow(this);
+        TranslationManager.Instance.RegisterWindow(this);
+
         // Handle window resizing and start async application initialization on load
         if (RootGrid != null)
         {
@@ -351,6 +355,8 @@ public sealed partial class MainWindow : Window
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
+        ThemeManager.Instance.UnregisterWindow(this);
+        TranslationManager.Instance.UnregisterWindow(this);
         CleanupTrayIcon();
         UnsubclassWindow();
         try

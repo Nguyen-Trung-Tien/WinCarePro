@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace WinCarePro.Services;
 
 /// <summary>
-/// Separate Partial Class containing all User Guide & Feature Manual Translations.
+/// Separate Partial Class containing all User Guide and Feature Manual Translations.
 /// Modify this file to edit or add detailed guide descriptions for WinCare Pro modules.
 /// </summary>
 public partial class TranslationManager
@@ -12,8 +12,8 @@ public partial class TranslationManager
     private void InitializeUserGuideTranslations()
     {
         // --- General Guide Section Headers ---
-        _translations["Feature Guide & Manual"] = "Hướng Dẫn Sử Dụng & Mô Tả Chức Năng";
-        _translations["Feature Guide & System Manual"] = "Hướng Dẫn Sử Dụng & Mô Tả Chức Năng Hệ Thống";
+        _translations["Feature Guide & Manual"] = "Hướng dẫn sử dụng";
+        _translations["Feature Guide & System Manual"] = "Hướng dẫn sử dụng";
         _translations["Comprehensive documentation explaining the purpose, detailed features, step-by-step usage, and safety guidelines for each WinCare Pro module."] = "Tài liệu chi tiết mô tả mục đích, tính năng nổi bật, hướng dẫn thao tác từng bước và mức độ an toàn của từng phân hệ WinCare Pro.";
 
         _translations["Purpose & Overview"] = "Mục đích & Nguyên lý hoạt động";

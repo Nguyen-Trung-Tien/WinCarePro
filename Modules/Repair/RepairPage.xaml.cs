@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Services;
 
 namespace WinCarePro.Views;
 
@@ -13,7 +14,7 @@ public sealed partial class RepairPage : Page
 
     public RepairPage()
     {
-        ViewModel = App.Services.GetRequiredService<RepairViewModel>();
+        ViewModel = App.Services?.GetService<RepairViewModel>() ?? new RepairViewModel();
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
@@ -22,11 +23,35 @@ public sealed partial class RepairPage : Page
         {
             if (e.PropertyName == nameof(ViewModel.IsBusy) || e.PropertyName == nameof(ViewModel.IsScanningDiagnostics))
             {
-                UpdateProgressOverlayState();
+                DispatcherQueue?.TryEnqueue(UpdateProgressOverlayState);
             }
         };
 
-        this.Loaded += (s, e) => UpdateProgressOverlayState();
+        this.Loaded += (s, e) =>
+        {
+            UpdateProgressOverlayState();
+            TranslationManager.Instance.Translate(this);
+        };
+
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+
+        this.ActualThemeChanged += (s, e) =>
+        {
+            DispatcherQueue?.TryEnqueue(() =>
+            {
+                Bindings.Update();
+            });
+        };
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        DispatcherQueue?.TryEnqueue(() =>
+        {
+            TranslationManager.Instance.Translate(this);
+            Bindings.Update();
+        });
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -34,6 +59,46 @@ public sealed partial class RepairPage : Page
         base.OnNavigatedTo(e);
         this.DataContext = ViewModel;
         this.Bindings.Update();
+        SetActiveTab(ViewModel?.ActiveTab ?? "diagnostics");
+        TranslationManager.Instance.Translate(this);
+    }
+
+    public void OnTabDiagnosticsClick(object sender, RoutedEventArgs e) => SetActiveTab("diagnostics");
+    public void OnTabSfcDismClick(object sender, RoutedEventArgs e) => SetActiveTab("sfcdism");
+    public void OnTabRegistryClick(object sender, RoutedEventArgs e) => SetActiveTab("registry");
+    public void OnTabNetworkClick(object sender, RoutedEventArgs e) => SetActiveTab("network");
+
+    private Style? _accentStyle;
+    private Style? _defaultStyle;
+
+    private Style? GetButtonStyle(string key)
+    {
+        if (Application.Current.Resources.TryGetValue(key, out var styleObj) && styleObj is Style style)
+        {
+            return style;
+        }
+        return null;
+    }
+
+    private void SetActiveTab(string tabName)
+    {
+        if (ViewModel != null)
+        {
+            ViewModel.ActiveTab = tabName;
+        }
+
+        _accentStyle ??= GetButtonStyle("VibrantPrimaryButtonStyle") ?? GetButtonStyle("AccentButtonStyle");
+        _defaultStyle ??= GetButtonStyle("DefaultButtonStyle");
+
+        if (BtnTabDiagnostics != null) BtnTabDiagnostics.Style = tabName == "diagnostics" ? _accentStyle : _defaultStyle;
+        if (BtnTabSfcDism != null) BtnTabSfcDism.Style = tabName == "sfcdism" ? _accentStyle : _defaultStyle;
+        if (BtnTabRegistry != null) BtnTabRegistry.Style = tabName == "registry" ? _accentStyle : _defaultStyle;
+        if (BtnTabNetwork != null) BtnTabNetwork.Style = tabName == "network" ? _accentStyle : _defaultStyle;
+
+        if (SectionDiagnostics != null) SectionDiagnostics.Visibility = tabName == "diagnostics" ? Visibility.Visible : Visibility.Collapsed;
+        if (SectionSfcDism != null) SectionSfcDism.Visibility = tabName == "sfcdism" ? Visibility.Visible : Visibility.Collapsed;
+        if (SectionRegistry != null) SectionRegistry.Visibility = tabName == "registry" ? Visibility.Visible : Visibility.Collapsed;
+        if (SectionNetwork != null) SectionNetwork.Visibility = tabName == "network" ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void UpdateProgressOverlayState()
@@ -118,21 +183,6 @@ public sealed partial class RepairPage : Page
         ViewModel?.DeselectAllIssues();
     }
 
-    private void OnClearConsoleClick(object sender, RoutedEventArgs e)
-    {
-        ViewModel?.ClearConsoleLog();
-    }
-
-    private void OnCopyConsoleClick(object sender, RoutedEventArgs e)
-    {
-        ViewModel?.CopyConsoleLog();
-    }
-
-    private void OnToggleConsoleClick(object sender, RoutedEventArgs e)
-    {
-        ViewModel?.ToggleConsoleVisibility();
-    }
-
     private void OnFilterCategoryChanged(object sender, SelectionChangedEventArgs e)
     {
         if (ViewModel != null && sender is ComboBox cb && cb.SelectedItem is ComboBoxItem item && item.Tag is string tag)
@@ -162,7 +212,7 @@ public sealed partial class RepairPage : Page
         var btn = SfcScanBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, SfcScanRing, SfcScanText, null,
-            "Running SFC Scan...", "SFC Scan",
+            "Running SFC Verify...", "SFC Verify",
             async () =>
             {
                 await ViewModel.RunSfcScanAsync(false);
@@ -198,6 +248,20 @@ public sealed partial class RepairPage : Page
             minDurationMs: 1000);
     }
 
+    private async void OnDismScanClick(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel == null) return;
+        var btn = DismScanBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, DismScanRing, DismScanText, null,
+            "Scanning DISM Health...", "DISM Scan",
+            async () =>
+            {
+                await ViewModel.RunDismOperationAsync("scanhealth");
+            },
+            minDurationMs: 1000);
+    }
+
     private async void OnDismRestoreClick(object sender, RoutedEventArgs e)
     {
         if (ViewModel == null) return;
@@ -208,6 +272,20 @@ public sealed partial class RepairPage : Page
             async () =>
             {
                 await ViewModel.RunDismOperationAsync("restorehealth");
+            },
+            minDurationMs: 1000);
+    }
+
+    private async void OnDismCleanClick(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel == null) return;
+        var btn = DismCleanBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, DismCleanRing, DismCleanText, null,
+            "Cleaning Component Store...", "Clean WinSxS",
+            async () =>
+            {
+                await ViewModel.RunDismOperationAsync("startcomponentcleanup");
             },
             minDurationMs: 1000);
     }

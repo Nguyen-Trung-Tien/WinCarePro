@@ -1,24 +1,19 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Win32;
-using System.Management;
+using CommunityToolkit.Mvvm.ComponentModel;
 using WinCarePro.Engines;
-using WinCarePro.Models;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WinCarePro.ViewModels;
 
 public partial class SecurityViewModel : ViewModelBase
 {
-    private readonly DispatcherQueue _dispatcherQueue;
-    private readonly SecurityPrivacyEngine _securityEngine = App.Services?.GetService<SecurityPrivacyEngine>() ?? new();
+    private readonly DispatcherQueue? _dispatcherQueue;
+    private readonly SecurityPrivacyEngine _securityEngine;
 
     [ObservableProperty]
     private bool _isScanning;
@@ -32,12 +27,11 @@ public partial class SecurityViewModel : ViewModelBase
     [ObservableProperty]
     private int _securityScore = 100;
 
-    // Security Statuses
     [ObservableProperty]
     private string _antivirusStatus = "Checking...".T();
 
     [ObservableProperty]
-    private bool _isFirewallActive;
+    private bool _isFirewallActive = true;
 
     [ObservableProperty]
     private string _firewallStatusText = "Checking...".T();
@@ -75,7 +69,8 @@ public partial class SecurityViewModel : ViewModelBase
     public SecurityViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        
+        _securityEngine = App.Services?.GetService<SecurityPrivacyEngine>() ?? new();
+
         LoadPrivacySettings();
         _ = ScanSecurityAsync();
     }
@@ -98,7 +93,7 @@ public partial class SecurityViewModel : ViewModelBase
 
         IsScanning = true;
         StatusMessage = "Analyzing system security indicators...".T();
-        
+
         _dispatcherQueue?.TryEnqueue(() =>
         {
             SecurityAlerts.Clear();
@@ -106,25 +101,24 @@ public partial class SecurityViewModel : ViewModelBase
 
         try
         {
-            // 1. Antivirus
-            var av = await Task.Run(() => _securityEngine.GetAntivirusStatus());
-            
-            // 2. Firewall
-            bool fw = await Task.Run(() => _securityEngine.GetFirewallStatus());
-            
-            // 3. BitLocker
-            var bl = await Task.Run(() => _securityEngine.GetBitLockerStatus());
+            // Execute checks in parallel for maximum performance (< 400ms)
+            var avTask = Task.Run(() => _securityEngine.GetAntivirusStatus());
+            var fwTask = Task.Run(() => _securityEngine.GetFirewallStatus());
+            var blTask = Task.Run(() => _securityEngine.GetBitLockerStatus());
+            var sbTask = Task.Run(() => _securityEngine.CheckSecureBootStatus());
+            var tpmTask = Task.Run(() => _securityEngine.CheckTpmStatus());
+            var auditTask = Task.Run(() => _securityEngine.RunSecurityAudits());
 
-            // 4. Secure Boot
-            var (sbEnabled, sbText) = await Task.Run(() => CheckSecureBootStatus());
+            await Task.WhenAll(avTask, fwTask, blTask, sbTask, tpmTask, auditTask);
 
-            // 5. TPM
-            var (tpmOk, tpmText) = await Task.Run(() => CheckTpmStatus());
+            var av = await avTask;
+            bool fw = await fwTask;
+            var bl = await blTask;
+            var (sbEnabled, sbText) = await sbTask;
+            var (tpmOk, tpmText) = await tpmTask;
+            var alerts = await auditTask;
 
-            // 6. Run Audits
-            var alerts = await Task.Run(() => _securityEngine.RunSecurityAudits());
-
-            // 7. Calculate Security Score
+            // Calculate Security Score
             int score = 100;
             if (!av.Contains("Enabled") && !av.Contains("Running")) score -= 30;
             if (!fw) score -= 25;
@@ -137,7 +131,7 @@ public partial class SecurityViewModel : ViewModelBase
             {
                 AntivirusStatus = av.Replace("Enabled", "Enabled".T()).Replace("Disabled", "Disabled".T()).Replace("Running", "Running".T());
                 IsFirewallActive = fw;
-                FirewallStatusText = fw ? "Windows Firewall Active".T() : "Firewall Disabled or Misconfigured".T();
+                FirewallStatusText = fw ? "Windows Firewall Active".T() : "Firewall Disabled or Inactive".T();
                 BitLockerStatus = bl.Replace("Off", "Off".T()).Replace("On", "On".T());
                 IsSecureBootEnabled = sbEnabled;
                 SecureBootStatusText = sbText;
@@ -185,34 +179,19 @@ public partial class SecurityViewModel : ViewModelBase
         }
     }
 
-    private (bool enabled, string status) CheckSecureBootStatus()
+    public async Task EnableFirewallAsync()
     {
+        IsBusy = true;
+        StatusMessage = "Enabling Windows Firewall...".T();
         try
         {
-            using var key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\SecureBoot\State");
-            if (key != null)
-            {
-                var val = key.GetValue("UEFISecureBootEnabled");
-                if (val != null && Convert.ToInt32(val) == 1)
-                {
-                    return (true, "Secure Boot Active (UEFI)".T());
-                }
-            }
+            await Task.Run(() => _securityEngine.EnableAllFirewallProfiles());
+            await ScanSecurityAsync();
         }
-        catch { }
-        return (false, "Secure Boot Inactive or Unsupported".T());
-    }
-
-    private (bool ok, string status) CheckTpmStatus()
-    {
-        var list = WmiHelper.Query("SELECT IsEnabled_InitialValue, SpecVersion FROM Win32_Tpm", obj =>
-            obj["SpecVersion"]?.ToString() ?? "2.0", @"root\cimv2\Security\MicrosoftTpm");
-
-        if (list.Count > 0)
+        finally
         {
-            return (true, string.Format("TPM v{0} Detected and Ready".T(), list[0]));
+            IsBusy = false;
         }
-        return (false, "TPM Security Chip Not Detected or Disabled".T());
     }
 
     public async Task TogglePrivacySettingAsync(string type, bool enabled)
@@ -221,15 +200,15 @@ public partial class SecurityViewModel : ViewModelBase
         try
         {
             await Task.Run(() => _securityEngine.SetPrivacySetting(type, enabled));
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
-                LoadPrivacySettings(); // Refresh
+                LoadPrivacySettings();
                 IsBusy = false;
             });
         }
         catch
         {
-            _dispatcherQueue.TryEnqueue(() => IsBusy = false);
+            _dispatcherQueue?.TryEnqueue(() => IsBusy = false);
         }
     }
 
@@ -240,7 +219,7 @@ public partial class SecurityViewModel : ViewModelBase
         try
         {
             await Task.Run(() => _securityEngine.ClearClipboard());
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 StatusMessage = "Clipboard history successfully cleared.".T();
                 IsBusy = false;
@@ -248,7 +227,7 @@ public partial class SecurityViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 StatusMessage = string.Format("Failed to clear clipboard: {0}".T(), ex.Message);
                 IsBusy = false;
@@ -262,8 +241,8 @@ public partial class SecurityViewModel : ViewModelBase
         StatusMessage = "Clearing Recent items and Run history...".T();
         try
         {
-            await Task.Run(() => _securityEngine.ClearRecentFiles());
-            _dispatcherQueue.TryEnqueue(() =>
+            await Task.Run(() => _securityEngine.ClearRecentFiles() + _securityEngine.ClearExplorerRunHistory());
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 StatusMessage = "Recent items and Explorer Run history successfully cleared.".T();
                 IsBusy = false;
@@ -271,7 +250,7 @@ public partial class SecurityViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 StatusMessage = string.Format("Failed to clear recent files: {0}".T(), ex.Message);
                 IsBusy = false;

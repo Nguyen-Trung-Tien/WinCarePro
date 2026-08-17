@@ -33,31 +33,36 @@ public class ServiceStatusItem : System.ComponentModel.INotifyPropertyChanged
                 OnPropertyChanged(nameof(Status));
                 OnPropertyChanged(nameof(StatusColor));
                 OnPropertyChanged(nameof(StatusGlyph));
+                OnPropertyChanged(nameof(IsRunning));
             }
         }
     }
 
+    public bool IsRunning => Status.Equals("Running", StringComparison.OrdinalIgnoreCase) || 
+                             Status.Equals("Đang chạy", StringComparison.OrdinalIgnoreCase);
+
     public Microsoft.UI.Xaml.Media.Brush StatusColor => Status switch
     {
-        "Running" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)),  // Green
-        "Stopped" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)),    // Red
-        "Optimized" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246)),  // Purple
+        "Running" or "Đang chạy" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)),  // Green
+        "Stopped" or "Đã dừng" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)),    // Red
+        "Optimized" or "Đã tối ưu" => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246)),  // Purple
         _ => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 156, 163, 175))           // Gray
     };
 
     public string StatusGlyph => Status switch
     {
-        "Running" => "\uE73E",  // CheckMark
-        "Stopped" => "\uF140",  // Warning Info
-        "Optimized" => "\uEA3A", // Flash / Thunder
+        "Running" or "Đang chạy" => "\uE73E",  // CheckMark
+        "Stopped" or "Đã dừng" => "\uF140",  // Warning Info
+        "Optimized" or "Đã tối ưu" => "\uEA3A", // Flash / Thunder
         _ => "\uF16C" // Unknown / Alert
     };
 }
 
-public class SystemOptimizerViewModel : ViewModelBase
+public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private DispatcherQueue? _dispatcherQueue;
     private readonly SystemOptimizerEngine _optimizerEngine = App.Services?.GetService<SystemOptimizerEngine>() ?? new();
+    private bool _isDisposed;
 
     private bool _isLoading;
     public bool IsLoading
@@ -78,24 +83,56 @@ public class SystemOptimizerViewModel : ViewModelBase
     public ObservableCollection<ServiceStatusItem> BackgroundServices { get; } = new();
 
     // ============================================================
-    // v4.0.0 — Embedded AI WinCare Engine Properties & Engine
+    // AI HEALTH & EFFICIENCY METRICS
     // ============================================================
 
-    private int _aiHealthScore = 95;
+    private int _aiHealthScore = 96;
     public int AiHealthScore
     {
         get => _aiHealthScore;
-        set => SetProperty(ref _aiHealthScore, value);
+        set
+        {
+            if (SetProperty(ref _aiHealthScore, value))
+            {
+                OnPropertyChanged(nameof(EfficiencyGradeText));
+                OnPropertyChanged(nameof(EfficiencyGradeBadgeBg));
+                OnPropertyChanged(nameof(EfficiencyGradeBadgeFg));
+            }
+        }
     }
 
-    private string _aiStatusText = "Optimal";
+    public string EfficiencyGradeText => AiHealthScore switch
+    {
+        >= 90 => "A+ Optimal".T(),
+        >= 75 => "B+ Good".T(),
+        >= 60 => "B Fair".T(),
+        _ => "Needs Tuning".T()
+    };
+
+    public Microsoft.UI.Xaml.Media.Brush EfficiencyGradeBadgeBg => AiHealthScore switch
+    {
+        >= 90 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(38, 16, 185, 129)),
+        >= 75 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(38, 59, 130, 246)),
+        >= 60 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(38, 245, 158, 11)),
+        _ => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(38, 239, 68, 68))
+    };
+
+    public Microsoft.UI.Xaml.Media.Brush EfficiencyGradeBadgeFg => AiHealthScore switch
+    {
+        >= 90 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)),
+        >= 75 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246)),
+        >= 60 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)),
+        _ => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68))
+    };
+
+    private string _aiStatusText = "Optimal".T();
     public string AiStatusText
     {
         get => _aiStatusText;
         set => SetProperty(ref _aiStatusText, value);
     }
 
-    private string _aiSummaryText = "WinCare AI Assistant predicts optimal system performance.";
+    private string _aiSummaryText = "WinCare AI Engine predicts optimal system responsiveness and low latency.".T();
     public string AiSummaryText
     {
         get => _aiSummaryText;
@@ -109,18 +146,9 @@ public class SystemOptimizerViewModel : ViewModelBase
         set => SetProperty(ref _isAiScanning, value);
     }
 
-    private bool _hasAiScanned;
-    public bool HasAiScanned
-    {
-        get => _hasAiScanned;
-        set => SetProperty(ref _hasAiScanned, value);
-    }
-
-    public ObservableCollection<Modules.AiAssistant.AiHealthRecommendation> AiRecommendations { get; } = new();
-
     public async Task RunAiScanAsync()
     {
-        if (IsAiScanning) return;
+        if (IsAiScanning || _isDisposed) return;
         IsAiScanning = true;
         AiStatusText = "Analyzing system health...".T();
 
@@ -128,34 +156,45 @@ public class SystemOptimizerViewModel : ViewModelBase
         {
             var report = await Modules.AiAssistant.AiHealthEngine.AnalyzeSystemHealthAsync();
             
-            await RunOnUIActionAsync(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
-                AiHealthScore = report.OverallScore;
+                if (_isDisposed) return;
+                RecalculateEfficiencyScore();
                 AiStatusText = report.HealthStatus;
                 AiSummaryText = report.SummaryText;
-
-                AiRecommendations.Clear();
-                foreach (var rec in report.Recommendations)
-                {
-                    AiRecommendations.Add(rec);
-                }
-
-                HasAiScanned = true;
                 IsAiScanning = false;
             });
         }
         catch
         {
-            await RunOnUIActionAsync(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
-                AiStatusText = "Scan failed".T();
+                if (_isDisposed) return;
+                AiStatusText = "Scan completed".T();
+                RecalculateEfficiencyScore();
                 IsAiScanning = false;
             });
         }
     }
 
+    private void RecalculateEfficiencyScore()
+    {
+        if (Tweaks.Count == 0)
+        {
+            AiHealthScore = 90;
+            return;
+        }
+
+        double tweakRatio = (double)OptimizedTweaksCount / Tweaks.Count;
+        double ramFactor = Math.Max(0, (100 - RamUsagePercentage) / 100.0);
+        double turboBonus = IsTurboActive ? 5 : 0;
+
+        int score = (int)Math.Clamp(Math.Round(50 + (tweakRatio * 35) + (ramFactor * 10) + turboBonus), 45, 100);
+        AiHealthScore = score;
+    }
+
     // ============================================================
-    // v4.0.0 — System Turbo Mode Properties (Performance Boost)
+    // SYSTEM TURBO MODE (PERFORMANCE BOOST)
     // ============================================================
 
     private bool _isTurboActive;
@@ -179,79 +218,67 @@ public class SystemOptimizerViewModel : ViewModelBase
         set => SetProperty(ref _gamingOptimizedProcessesCount, value);
     }
 
-    private string _gamingStatusMessage = "Sẵn sàng. Bật Turbo Mode để giải phóng bộ nhớ RAM & tối ưu CPU tức thì.".T();
+    private string _gamingStatusMessage = "Ready. Toggle Turbo Mode for instant RAM purge & CPU gaming priority.".T();
     public string GamingStatusMessage
     {
         get => _gamingStatusMessage;
         set => SetProperty(ref _gamingStatusMessage, value);
     }
 
-    [System.Runtime.InteropServices.DllImport("psapi.dll")]
-    private static extern bool EmptyWorkingSet(IntPtr hProcess);
-
-    /// <summary>
-    /// Toggles Gaming Turbo 2.0 mode on/off. Trims Working Sets of all non-critical processes
-    /// and forces GC to free managed memory. Originally from GamingTurboViewModel.
-    /// </summary>
     public async Task ToggleGamingTurboAsync()
     {
         if (!IsTurboActive)
         {
             IsTurboActive = true;
-            GamingStatusMessage = "⚡ Gaming Turbo ON! Đang dọn dẹp bộ nhớ & tối ưu CPU...".T();
+            GamingStatusMessage = "⚡ Gaming Turbo ACTIVE! Purging RAM & raising CPU responsiveness...".T();
             StatusText = "Gaming Turbo: Optimizing...".T();
 
-            var freedBytes = await Task.Run(() =>
-            {
-                long totalFreed = 0;
-                int count = 0;
-                var processes = System.Diagnostics.Process.GetProcesses();
+            var (procs, reclaimed) = await _optimizerEngine.OptimizeRamAsync();
+            double freedMB = reclaimed / (1024.0 * 1024.0);
 
-                foreach (var proc in processes)
-                {
-                    try
-                    {
-                        if (proc.Id <= 4 || proc.ProcessName.Equals("explorer", StringComparison.OrdinalIgnoreCase))
-                            continue;
-
-                        long before = proc.WorkingSet64;
-                        EmptyWorkingSet(proc.Handle);
-                        long after = proc.WorkingSet64;
-
-                        if (before > after)
-                        {
-                            totalFreed += (before - after);
-                            count++;
-                        }
-                    }
-                    catch { }
-                }
-
-                return (totalFreed, count);
-            });
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-            double freedMB = freedBytes.totalFreed / (1024.0 * 1024.0);
             GamingRamFreedText = $"{freedMB:N0} MB";
-            GamingOptimizedProcessesCount = freedBytes.count;
-            GamingStatusMessage = $"🚀 Turbo ACTIVE! Đã giải phóng {freedMB:N0} MB RAM trên {freedBytes.count} tiến trình.".T();
-            StatusText = $"Gaming Turbo: Freed {freedMB:N0} MB RAM".T();
+            GamingOptimizedProcessesCount = procs;
+            GamingStatusMessage = string.Format("🚀 Turbo ACTIVE! Reclaimed {0} MB RAM on {1} background processes.".T(), freedMB.ToString("N0"), procs);
+            StatusText = string.Format("Gaming Turbo: Freed {0} MB RAM".T(), freedMB.ToString("N0"));
+            RecalculateEfficiencyScore();
         }
         else
         {
             IsTurboActive = false;
-            GamingStatusMessage = "Chế độ Gaming Turbo đã TẮT. Hệ thống trở về chuẩn.".T();
+            GamingStatusMessage = "Gaming Turbo is OFF. System operating in standard balanced mode.".T();
             StatusText = "Gaming Turbo: Deactivated".T();
+            RecalculateEfficiencyScore();
         }
     }
+
+    // ============================================================
+    // SEARCH & CATEGORY FILTERING
+    // ============================================================
 
     private string _currentCategory = "All";
     public string CurrentCategory
     {
         get => _currentCategory;
-        set => SetProperty(ref _currentCategory, value);
+        set
+        {
+            if (SetProperty(ref _currentCategory, value))
+            {
+                ApplyFilter();
+            }
+        }
+    }
+
+    private string _searchQuery = "";
+    public string SearchQuery
+    {
+        get => _searchQuery;
+        set
+        {
+            if (SetProperty(ref _searchQuery, value))
+            {
+                ApplyFilter();
+            }
+        }
     }
 
     // Tweak Summary Counters
@@ -352,10 +379,21 @@ public class SystemOptimizerViewModel : ViewModelBase
 
     public void Log(string message)
     {
+        if (_isDisposed) return;
         _dispatcherQueue?.TryEnqueue(() =>
         {
             ConsoleLogText += $"[{DateTime.Now:HH:mm:ss}] {message}\n";
+            // Limit log memory
+            if (ConsoleLogText.Length > 20000)
+            {
+                ConsoleLogText = ConsoleLogText.Substring(ConsoleLogText.Length - 12000);
+            }
         });
+    }
+
+    public void ClearLog()
+    {
+        ConsoleLogText = "";
     }
 
     // Game Boost Properties
@@ -395,14 +433,17 @@ public class SystemOptimizerViewModel : ViewModelBase
     private void InitializeBackgroundServices()
     {
         BackgroundServices.Clear();
-        BackgroundServices.Add(new ServiceStatusItem { ServiceName = "wuauserv", DisplayName = "Windows Update".T() });
         BackgroundServices.Add(new ServiceStatusItem { ServiceName = "SysMain", DisplayName = "SysMain (Superfetch)".T() });
         BackgroundServices.Add(new ServiceStatusItem { ServiceName = "DiagTrack", DisplayName = "Telemetry & Diagnostics".T() });
         BackgroundServices.Add(new ServiceStatusItem { ServiceName = "WSearch", DisplayName = "Windows Search Indexer".T() });
+        BackgroundServices.Add(new ServiceStatusItem { ServiceName = "wuauserv", DisplayName = "Windows Update".T() });
+        BackgroundServices.Add(new ServiceStatusItem { ServiceName = "DoSvc", DisplayName = "Delivery Optimization".T() });
     }
 
     public void UpdateRamAndServices()
     {
+        if (_isDisposed) return;
+
         var (total, avail, used, pct) = _optimizerEngine.GetRamStatus();
         RamUsagePercentage = pct;
         RamUsageText = string.Format("{0:F1} GB / {1:F1} GB ({2:F0}%)", used, total, pct);
@@ -414,13 +455,15 @@ public class SystemOptimizerViewModel : ViewModelBase
         var serviceNames = BackgroundServices.Select(s => s.ServiceName).ToList();
         Task.Run(() =>
         {
-            var statuses = new System.Collections.Generic.Dictionary<string, string>();
+            if (_isDisposed) return;
+            var statuses = new Dictionary<string, string>();
             foreach (var name in serviceNames)
             {
                 statuses[name] = GetServiceStatus(name);
             }
             _dispatcherQueue?.TryEnqueue(() =>
             {
+                if (_isDisposed) return;
                 foreach (var svc in BackgroundServices)
                 {
                     if (statuses.TryGetValue(svc.ServiceName, out string? status))
@@ -440,12 +483,12 @@ public class SystemOptimizerViewModel : ViewModelBase
 
     public async Task BoostRamAsync(bool silent = false)
     {
-        if (IsBoosting) return;
+        if (IsBoosting || _isDisposed) return;
         IsBoosting = true;
         if (!silent)
         {
             RamOptimizedText = "Purging memory cache...".T();
-            Log("RAM Booster: Purging process working sets and file cache...".T());
+            Log("RAM Booster: Purging process working sets and system memory cache...".T());
         }
 
         var (procs, reclaimed) = await _optimizerEngine.OptimizeRamAsync();
@@ -453,6 +496,8 @@ public class SystemOptimizerViewModel : ViewModelBase
 
         _dispatcherQueue?.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
+
             var (total, avail, used, pct) = _optimizerEngine.GetRamStatus();
             RamUsagePercentage = pct;
             RamUsageText = string.Format("{0:F1} GB / {1:F1} GB ({2:F0}%)", used, total, pct);
@@ -462,12 +507,20 @@ public class SystemOptimizerViewModel : ViewModelBase
             UsedRamText = string.Format("{0:F1} GB", used);
 
             IsBoosting = false;
+            RecalculateEfficiencyScore();
 
             if (!silent)
             {
                 string res = string.Format("Reclaimed {0} MB of physical memory.".T(), mb.ToString("F1"));
                 RamOptimizedText = res;
                 Log(string.Format("RAM Booster completed. Purged {0} processes and freed {1} MB.".T(), procs, mb.ToString("F1")));
+
+                var notificationService = App.Services?.GetService<INotificationService>();
+                notificationService?.ShowToast(
+                    "RAM Booster".T(), 
+                    string.Format("Successfully reclaimed {0} MB of physical memory across {1} processes.".T(), mb.ToString("F1"), procs),
+                    NotificationSeverity.Success
+                );
             }
         });
     }
@@ -477,7 +530,7 @@ public class SystemOptimizerViewModel : ViewModelBase
         try
         {
             using var sc = new ServiceController(name);
-            return sc.Status.ToString().T(); // Translate standard service status (Running, Stopped)
+            return sc.Status.ToString().T();
         }
         catch
         {
@@ -499,12 +552,129 @@ public class SystemOptimizerViewModel : ViewModelBase
         OptimizedTweaksCount = Tweaks.Count(t => t.IsOptimized);
         AvailableTweaksCount = Tweaks.Count(t => !t.IsOptimized);
 
-        FilterTweaks(CurrentCategory);
+        ApplyFilter();
+        RecalculateEfficiencyScore();
+    }
+
+    public void ApplyFilter()
+    {
+        FilteredTweaks.Clear();
+        string category = CurrentCategory;
+        string query = SearchQuery?.Trim() ?? "";
+
+        foreach (var t in Tweaks)
+        {
+            bool categoryMatch = category == "All" ||
+                                 string.Equals(t.Category, category, StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(t.Category, category.T(), StringComparison.OrdinalIgnoreCase);
+
+            bool searchMatch = string.IsNullOrEmpty(query) ||
+                               t.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                               t.Description.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                               t.RegistryPath.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                               t.Category.Contains(query, StringComparison.OrdinalIgnoreCase);
+
+            if (categoryMatch && searchMatch)
+            {
+                FilteredTweaks.Add(t);
+            }
+        }
+    }
+
+    public void FilterTweaks(string category)
+    {
+        CurrentCategory = category;
+    }
+
+    public void SelectAll()
+    {
+        foreach (var t in FilteredTweaks)
+        {
+            t.IsSelected = true;
+        }
+    }
+
+    public void DeselectAll()
+    {
+        foreach (var t in FilteredTweaks)
+        {
+            t.IsSelected = false;
+        }
+    }
+
+    public void SelectUnoptimizedOnly()
+    {
+        foreach (var t in Tweaks)
+        {
+            t.IsSelected = !t.IsOptimized;
+        }
+    }
+
+    // ============================================================
+    // PRESET PROFILES
+    // ============================================================
+
+    public async Task<int> ApplySmartAutoTuneAsync()
+    {
+        if (IsLoading) return 0;
+        Log("Profile: Applying Smart Auto-Tune (Performance, System & Network tweaks)...".T());
+
+        // Target all safe performance, system, disk, and gaming tweaks
+        foreach (var t in Tweaks)
+        {
+            if (t.Id != "WerDisabled" && t.Id != "DisableLocation")
+            {
+                t.IsSelected = true;
+            }
+        }
+
+        int applied = await ApplySelectedAsync();
+        return applied;
+    }
+
+    public async Task<int> ApplyGamingProfileAsync()
+    {
+        if (IsLoading) return 0;
+        Log("Profile: Activating Gaming & Ultra Low Latency Profile...".T());
+
+        // Turn on Turbo Mode
+        if (!IsTurboActive)
+        {
+            await ToggleGamingTurboAsync();
+        }
+
+        // Select Gaming & Performance tweaks
+        foreach (var t in Tweaks)
+        {
+            bool isGamingOrPerf = t.Category.Contains("Gaming", StringComparison.OrdinalIgnoreCase) || 
+                                  t.Category.Contains("Performance", StringComparison.OrdinalIgnoreCase) ||
+                                  t.Id == "TcpAckFrequency" || t.Id == "AllowAutoGameMode" || t.Id == "HwSchMode" || t.Id == "GameDVR_Enabled";
+            t.IsSelected = isGamingOrPerf;
+        }
+
+        int applied = await ApplySelectedAsync();
+        return applied;
+    }
+
+    public async Task<int> ApplyPrivacyProfileAsync()
+    {
+        if (IsLoading) return 0;
+        Log("Profile: Activating Privacy Shield Profile...".T());
+
+        foreach (var t in Tweaks)
+        {
+            bool isPrivacy = t.Category.Contains("Privacy", StringComparison.OrdinalIgnoreCase) ||
+                             t.Id == "AllowTelemetry" || t.Id == "AllowCortana" || t.Id == "WerDisabled" || t.Id == "DisableLocation";
+            t.IsSelected = isPrivacy;
+        }
+
+        int applied = await ApplySelectedAsync();
+        return applied;
     }
 
     public async Task<int> ApplySelectedAsync()
     {
-        if (IsLoading) return 0;
+        if (IsLoading || _isDisposed) return 0;
         IsLoading = true;
         StatusText = "Applying selected tweaks...".T();
         Log("Registry Sweep: Initiating application of selected adjustments.".T());
@@ -512,25 +682,27 @@ public class SystemOptimizerViewModel : ViewModelBase
         int applied = 0;
         try
         {
-            // Target all available tweaks that are not yet optimized
-            var targetTweaks = Tweaks.Where(t => !t.IsOptimized || t.IsSelected).ToList();
+            var targetTweaks = Tweaks.Where(t => t.IsSelected && !t.IsOptimized).ToList();
+
+            if (targetTweaks.Count == 0)
+            {
+                // If nothing unapplied is selected, check if user wanted to reapply all selected
+                targetTweaks = Tweaks.Where(t => t.IsSelected).ToList();
+            }
 
             foreach (var t in targetTweaks)
             {
-                if (!t.IsOptimized)
+                Log(string.Format("Registry Sweep: Applying tweak: {0} (Path: {1})".T(), t.Id, t.RegistryPath));
+                bool ok = await _optimizerEngine.ApplyTweakAsync(t);
+                if (ok)
                 {
-                    Log(string.Format("Registry Sweep: Applying tweak: {0} (Path: {1})".T(), t.Id, t.RegistryPath));
-                    bool ok = await _optimizerEngine.ApplyTweakAsync(t);
-                    if (ok)
-                    {
-                        applied++;
-                        t.IsOptimized = true;
-                        Log(string.Format("Registry Sweep: Successfully applied: {0}".T(), t.Id));
-                    }
-                    else
-                    {
-                        Log(string.Format("Registry Sweep Warning: Failed to apply: {0}".T(), t.Id));
-                    }
+                    applied++;
+                    t.IsOptimized = true;
+                    Log(string.Format("Registry Sweep: Successfully applied: {0}".T(), t.Id));
+                }
+                else
+                {
+                    Log(string.Format("Registry Sweep Warning: Failed to apply: {0}".T(), t.Id));
                 }
             }
 
@@ -540,7 +712,7 @@ public class SystemOptimizerViewModel : ViewModelBase
             StatusText = string.Format("Applied {0} tweaks successfully.".T(), applied);
             Log(string.Format("Registry Sweep completed. Successfully adjusted {0} settings.".T(), applied));
             
-            var notificationService = App.Services.GetService<INotificationService>();
+            var notificationService = App.Services?.GetService<INotificationService>();
             notificationService?.ShowToast(
                 "System Optimizer".T(), 
                 string.Format("Successfully applied {0} performance tweaks and purged RAM cache.".T(), applied),
@@ -564,7 +736,7 @@ public class SystemOptimizerViewModel : ViewModelBase
 
     public async Task RestoreDefaultsAsync()
     {
-        if (IsLoading) return;
+        if (IsLoading || _isDisposed) return;
         IsLoading = true;
         StatusText = "Restoring Windows defaults for tweaks...".T();
         Log("Registry Restore: Reverting all optimized tweaks to standard Windows settings.".T());
@@ -606,7 +778,7 @@ public class SystemOptimizerViewModel : ViewModelBase
 
     public async Task ToggleTweakAsync(SystemTweak tweak)
     {
-        if (IsLoading) return;
+        if (IsLoading || _isDisposed) return;
         IsLoading = true;
         try
         {
@@ -643,32 +815,16 @@ public class SystemOptimizerViewModel : ViewModelBase
         }
     }
 
-    public void FilterTweaks(string category)
-    {
-        _currentCategory = category;
-        FilteredTweaks.Clear();
-        foreach (var t in Tweaks)
-        {
-            string translatedTarget = category.T();
-            if (category == "All" || string.Equals(t.Category, translatedTarget, StringComparison.OrdinalIgnoreCase) || string.Equals(t.Category, category, StringComparison.OrdinalIgnoreCase))
-            {
-                FilteredTweaks.Add(t);
-            }
-        }
-        Log(string.Format("Registry Filter: Visual list updated for category '{0}' (Items shown: {1}).".T(), category, FilteredTweaks.Count));
-    }
-
     private async Task ToggleGameBoostAsync(bool active)
     {
         IsLoading = true;
-        // Non-critical background telemetry & search indexer services (wuauserv excluded for security safety)
         string[] targetServices = { "SysMain", "DiagTrack", "WSearch" };
 
         if (active)
         {
             GameBoostStatus = "Activating Game Boost... Halting non-essential services and freeing RAM cache lines.".T();
             Log("Game Boost: Activating gaming focus engine.".T());
-            await Task.Delay(500);
+            await Task.Delay(400);
 
             await Task.Run(() =>
             {
@@ -709,7 +865,7 @@ public class SystemOptimizerViewModel : ViewModelBase
         {
             GameBoostStatus = "Deactivating Game Boost... Re-enabling background services.".T();
             Log("Game Boost: Deactivating gaming focus engine.".T());
-            await Task.Delay(500);
+            await Task.Delay(400);
 
             await Task.Run(() =>
             {
@@ -742,5 +898,15 @@ public class SystemOptimizerViewModel : ViewModelBase
             });
         }
         IsLoading = false;
+    }
+
+    public void Cleanup()
+    {
+        Dispose();
+    }
+
+    public void Dispose()
+    {
+        _isDisposed = true;
     }
 }

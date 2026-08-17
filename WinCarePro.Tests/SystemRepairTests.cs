@@ -43,6 +43,8 @@ public class SystemRepairTests
     [InlineData("restorehealth", "/online /cleanup-image /restorehealth")]
     [InlineData("clean", "/online /cleanup-image /startcomponentcleanup")]
     [InlineData("cleancomponent", "/online /cleanup-image /startcomponentcleanup")]
+    [InlineData("startcomponentcleanup", "/online /cleanup-image /startcomponentcleanup")]
+    [InlineData("cleanup", "/online /cleanup-image /startcomponentcleanup")]
     public void DismMode_MapsToCorrectArguments(string modeInput, string expectedArguments)
     {
         string modeClean = (modeInput ?? "").ToLowerInvariant().Trim();
@@ -51,7 +53,7 @@ public class SystemRepairTests
             "check" or "checkhealth" => "/online /cleanup-image /checkhealth",
             "scan" or "scanhealth" => "/online /cleanup-image /scanhealth",
             "restore" or "restorehealth" => "/online /cleanup-image /restorehealth",
-            "clean" or "cleancomponent" => "/online /cleanup-image /startcomponentcleanup",
+            "clean" or "cleancomponent" or "startcomponentcleanup" or "cleanup" => "/online /cleanup-image /startcomponentcleanup",
             _ => "/online /cleanup-image /checkhealth"
         };
 

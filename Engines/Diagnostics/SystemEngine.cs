@@ -102,7 +102,7 @@ public class SystemEngine
             "check" or "checkhealth" => "/online /cleanup-image /checkhealth",
             "scan" or "scanhealth" => "/online /cleanup-image /scanhealth",
             "restore" or "restorehealth" => "/online /cleanup-image /restorehealth",
-            "clean" or "cleancomponent" => "/online /cleanup-image /startcomponentcleanup",
+            "clean" or "cleancomponent" or "startcomponentcleanup" or "cleanup" => "/online /cleanup-image /startcomponentcleanup",
             _ => "/online /cleanup-image /checkhealth"
         };
 

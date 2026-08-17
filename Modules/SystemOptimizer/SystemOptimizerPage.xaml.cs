@@ -1,7 +1,7 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
@@ -45,25 +45,6 @@ public sealed partial class SystemOptimizerPage : Page
         _ramTimer.Start();
     }
 
-    private async void OnRunAiScanClick(object sender, RoutedEventArgs e)
-    {
-        var btn = RunAiScanBtn ?? (sender as Button);
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, AiScanRing, AiScanText, AiScanIcon,
-            "Scanning AI Diagnostics...", "Run AI Diagnostics",
-            async () =>
-            {
-                await ViewModel.RunAiScanAsync();
-            },
-            minDurationMs: 400);
-
-        if (App.MainWindowInstance is MainWindow mw)
-        {
-            mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
-                $"AI Health Score: {ViewModel.AiHealthScore}/100. {ViewModel.AiSummaryText}", "Success");
-        }
-    }
-
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
@@ -77,22 +58,82 @@ public sealed partial class SystemOptimizerPage : Page
         ViewModel.UpdateRamAndServices();
     }
 
+    private async void OnSmartTuneClick(object sender, RoutedEventArgs e)
+    {
+        var btn = SmartTuneBtn ?? (sender as Button);
+        int applied = 0;
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, null, null, null,
+            "Auto-Tuning...", "Auto-Tune",
+            async () =>
+            {
+                applied = await ViewModel.ApplySmartAutoTuneAsync();
+            },
+            minDurationMs: 800);
+
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Smart Auto-Tune Complete".T(), 
+                string.Format("Successfully tuned {0} system settings & optimized RAM.".T(), applied), "Success");
+        }
+    }
+
+    private async void OnGamingProfileClick(object sender, RoutedEventArgs e)
+    {
+        var btn = GamingProfileBtn ?? (sender as Button);
+        int applied = 0;
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, null, null, null,
+            "Activating Gaming...", "Gaming Mode",
+            async () =>
+            {
+                applied = await ViewModel.ApplyGamingProfileAsync();
+            },
+            minDurationMs: 800);
+
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Gaming Profile Active".T(), 
+                string.Format("Gaming Turbo ON, network latency minimized, {0} tweaks applied.".T(), applied), "Success");
+        }
+    }
+
+    private async void OnPrivacyProfileClick(object sender, RoutedEventArgs e)
+    {
+        var btn = PrivacyProfileBtn ?? (sender as Button);
+        int applied = 0;
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, null, null, null,
+            "Hardening Privacy...", "Privacy Shield",
+            async () =>
+            {
+                applied = await ViewModel.ApplyPrivacyProfileAsync();
+            },
+            minDurationMs: 800);
+
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Privacy Shield Active".T(), 
+                string.Format("Disabled background telemetry & logs ({0} tweaks applied).".T(), applied), "Success");
+        }
+    }
+
     private async void OnApplyTweaksClick(object sender, RoutedEventArgs e)
     {
         var btn = ApplyTweaksBtn ?? (sender as Button);
         int applied = 0;
         await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, ApplyTweaksRing, ApplyTweaksText, null,
-            "Applying Tweaks...", "Apply Tweaks",
+            btn, ApplyTweaksRing, ApplyTweaksText, ApplyTweaksIcon,
+            "Applying...", "Apply Tweaks",
             async () =>
             {
                 applied = await ViewModel.ApplySelectedAsync();
             },
-            minDurationMs: 1200);
+            minDurationMs: 1000);
 
         string msg = applied > 0 
             ? string.Format("Successfully applied {0} Windows system tweaks and purged memory cache for maximum responsiveness.".T(), applied)
-            : "Your system tweaks and memory resources are already fully optimized!".T();
+            : "Your selected system tweaks and memory resources are already fully optimized!".T();
 
         ContentDialog dialog = new ContentDialog
         {
@@ -111,18 +152,36 @@ public sealed partial class SystemOptimizerPage : Page
         catch { }
     }
 
-    private async void OnReloadTweaksClick(object sender, RoutedEventArgs e)
+    private async void OnRunAiScanClick(object sender, RoutedEventArgs e)
     {
-        var btn = ScanRegistryBtn ?? (sender as Button);
+        var btn = RunAiScanBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, ScanRegistryRing, ScanRegistryText, null,
-            "Scanning Registry...", "Scan Registry",
-            () =>
+            btn, null, null, AiScanIcon,
+            "Scanning...", "Scan",
+            async () =>
             {
-                ViewModel.LoadTweaks();
-                return Task.CompletedTask;
+                await ViewModel.RunAiScanAsync();
             },
-            minDurationMs: 1000);
+            minDurationMs: 500);
+
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
+                $"AI Efficiency Score: {ViewModel.AiHealthScore}/100 ({ViewModel.EfficiencyGradeText}). {ViewModel.AiSummaryText}", "Success");
+        }
+    }
+
+    private async void OnBoostRamClick(object sender, RoutedEventArgs e)
+    {
+        var btn = BoostRamBtn ?? (sender as Button);
+        await UiLoadingHelper.ExecuteWithLoadingAsync(
+            btn, BoostRamRing, BoostRamText, BoostRamIcon,
+            "Purging RAM...", "Purge RAM Cache",
+            async () =>
+            {
+                await ViewModel.BoostRamAsync();
+            },
+            minDurationMs: 800);
     }
 
     private async void OnRestoreDefaultsClick(object sender, RoutedEventArgs e)
@@ -153,6 +212,29 @@ public sealed partial class SystemOptimizerPage : Page
         }
     }
 
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (sender is TextBox tb)
+        {
+            ViewModel.SearchQuery = tb.Text;
+        }
+    }
+
+    private void OnSelectAllClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectAll();
+    }
+
+    private void OnDeselectAllClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.DeselectAll();
+    }
+
+    private void OnSelectUnappliedClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectUnoptimizedOnly();
+    }
+
     private async void OnToggleTweakClick(object sender, RoutedEventArgs e)
     {
         if (sender is Button btn && btn.DataContext is SystemTweak tweak)
@@ -161,37 +243,9 @@ public sealed partial class SystemOptimizerPage : Page
         }
     }
 
-    private async void OnBoostRamClick(object sender, RoutedEventArgs e)
+    private void OnClearLogClick(object sender, RoutedEventArgs e)
     {
-        var btn = BoostRamBtn ?? (sender as Button);
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, BoostRamRing, BoostRamText, BoostRamIcon,
-            "Boosting RAM...", "Boost RAM Now",
-            async () =>
-            {
-                await ViewModel.BoostRamAsync();
-            },
-            minDurationMs: 1200);
-    }
-
-    public bool IsNot(bool val) => !val;
-
-    public string GetPercentageText(double val) => $"{val:F0}%";
-
-    public Style? GetStatusBadgeStyle(bool isOptimized)
-    {
-        if (isOptimized)
-        {
-            return Application.Current.Resources.TryGetValue("StatusBadgeGoodStyle", out var styleObj) && styleObj is Style style 
-                 ? style 
-                 : null;
-        }
-        else
-        {
-            return Application.Current.Resources.TryGetValue("StatusBadgeWarningStyle", out var styleObj) && styleObj is Style style 
-                 ? style 
-                 : null;
-        }
+        ViewModel.ClearLog();
     }
 
     private async void OnTurboToggled(object sender, RoutedEventArgs e)
@@ -201,10 +255,6 @@ public sealed partial class SystemOptimizerPage : Page
             if (ts.IsOn != ViewModel.IsTurboActive)
             {
                 await ViewModel.ToggleGamingTurboAsync();
-                if (TurboStatusText != null)
-                {
-                    TurboStatusText.Text = ViewModel.GamingStatusMessage;
-                }
             }
         }
         else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
@@ -215,10 +265,6 @@ public sealed partial class SystemOptimizerPage : Page
                 try
                 {
                     await ViewModel.ToggleGamingTurboAsync();
-                    if (TurboStatusText != null)
-                    {
-                        TurboStatusText.Text = ViewModel.GamingStatusMessage;
-                    }
                 }
                 finally
                 {
@@ -227,4 +273,6 @@ public sealed partial class SystemOptimizerPage : Page
             }
         }
     }
+
+    public bool IsNot(bool val) => !val;
 }

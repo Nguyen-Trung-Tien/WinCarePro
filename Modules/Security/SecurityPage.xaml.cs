@@ -2,9 +2,10 @@ using System;
 using System.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
+using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Services;
 
 namespace WinCarePro.Views;
 
@@ -16,7 +17,9 @@ public sealed partial class SecurityPage : Page
     {
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        ViewModel = new SecurityViewModel();
+        ViewModel = App.Services?.GetService<SecurityViewModel>() ?? new SecurityViewModel();
+        this.DataContext = ViewModel;
+        
         ViewModel.PropertyChanged += (s, e) =>
         {
             if (e.PropertyName == nameof(ViewModel.IsBusy))
@@ -29,33 +32,104 @@ public sealed partial class SecurityPage : Page
         {
             DataContext = ViewModel;
             UpdateLoadingOverlayState();
+            TranslationManager.Instance.Translate(this);
+        };
+
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+
+        this.ActualThemeChanged += (s, e) =>
+        {
+            DispatcherQueue?.TryEnqueue(() =>
+            {
+                Bindings.Update();
+            });
         };
     }
 
-    // --- Security Center Tab: Shortcut buttons to Windows built-in tools ---
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        DispatcherQueue?.TryEnqueue(() =>
+        {
+            TranslationManager.Instance.Translate(this);
+            Bindings.Update();
+        });
+    }
+
+    protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        this.DataContext = ViewModel;
+        ViewModel.LoadPrivacySettings();
+        _ = ViewModel.ScanSecurityAsync();
+        TranslationManager.Instance.Translate(this);
+        Bindings.Update();
+    }
+
+    // ==================== SECURITY CENTER: SHORTCUTS & LAUNCHERS ====================
 
     private void OnOpenWindowsSecurityClick(object sender, RoutedEventArgs e)
     {
-        try { Process.Start(new ProcessStartInfo("windowsdefender:") { UseShellExecute = true }); }
-        catch { Process.Start(new ProcessStartInfo("ms-settings:windowsdefender") { UseShellExecute = true }); }
+        try 
+        { 
+            Process.Start(new ProcessStartInfo("windowsdefender:") { UseShellExecute = true }); 
+        }
+        catch 
+        { 
+            try 
+            { 
+                Process.Start(new ProcessStartInfo("ms-settings:windowsdefender") { UseShellExecute = true }); 
+            } 
+            catch { }
+        }
     }
 
     private void OnOpenMsinfoClick(object sender, RoutedEventArgs e)
     {
-        Process.Start(new ProcessStartInfo("msinfo32.exe") { UseShellExecute = true });
+        try { Process.Start(new ProcessStartInfo("msinfo32.exe") { UseShellExecute = true }); } catch { }
     }
 
     private void OnOpenWindowsUpdateClick(object sender, RoutedEventArgs e)
     {
-        Process.Start(new ProcessStartInfo("ms-settings:windowsupdate") { UseShellExecute = true });
+        try { Process.Start(new ProcessStartInfo("ms-settings:windowsupdate") { UseShellExecute = true }); } catch { }
     }
 
     private void OnOpenTaskManagerClick(object sender, RoutedEventArgs e)
     {
-        Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true });
+        try { Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true }); } catch { }
     }
 
-    // --- Privacy Tuning Tab handlers ---
+    private void OnOpenFirewallClick(object sender, RoutedEventArgs e)
+    {
+        try { Process.Start(new ProcessStartInfo("wf.msc") { UseShellExecute = true }); } catch { }
+    }
+
+    private void OnOpenEventViewerClick(object sender, RoutedEventArgs e)
+    {
+        try { Process.Start(new ProcessStartInfo("eventvwr.msc") { UseShellExecute = true }); } catch { }
+    }
+
+    private void OnOpenServicesClick(object sender, RoutedEventArgs e)
+    {
+        try { Process.Start(new ProcessStartInfo("services.msc") { UseShellExecute = true }); } catch { }
+    }
+
+    private void OnOpenRegistryEditorClick(object sender, RoutedEventArgs e)
+    {
+        try { Process.Start(new ProcessStartInfo("regedit.exe") { UseShellExecute = true }); } catch { }
+    }
+
+    private async void OnScanSecurityClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ScanSecurityAsync();
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Security Scan Complete".T(),
+                string.Format("System Health Score: {0}/100".T(), ViewModel.SecurityScore), "Success");
+        }
+    }
+
+    // ==================== PRIVACY TUNING TOGGLES ====================
 
     private async void OnAdvertisingIdToggled(object sender, RoutedEventArgs e)
     {
@@ -137,17 +211,25 @@ public sealed partial class SecurityPage : Page
         }
     }
 
+    // ==================== TRACE ERADICATION ====================
+
     private async void OnClearClipboardClick(object sender, RoutedEventArgs e)
     {
         var btn = WipeClipboardBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, WipeClipboardRing, WipeClipboardText, null,
-            "Wiping Clipboard...", "Wipe Clipboard Cache",
+            "Wiping Clipboard...".T(), "Wipe Clipboard Cache".T(),
             async () =>
             {
                 await ViewModel.ClearClipboardAsync();
             },
-            minDurationMs: 1000);
+            minDurationMs: 800);
+
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Clipboard Cache".T(),
+                "Clipboard memory successfully cleared.".T(), "Success");
+        }
     }
 
     private async void OnClearRecentClick(object sender, RoutedEventArgs e)
@@ -155,15 +237,19 @@ public sealed partial class SecurityPage : Page
         var btn = ClearRecentBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, ClearRecentRing, ClearRecentText, null,
-            "Clearing Recent Files...", "Clear Recent Files & Run History",
+            "Clearing Recent Files...".T(), "Clear Recent Files & Run History".T(),
             async () =>
             {
                 await ViewModel.ClearRecentFilesAsync();
             },
-            minDurationMs: 1000);
-    }
+            minDurationMs: 800);
 
-    public bool IsNot(bool val) => !val;
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Activity Traces".T(),
+                "Recent items and Explorer Run history successfully cleared.".T(), "Success");
+        }
+    }
 
     private void UpdateLoadingOverlayState()
     {
@@ -187,4 +273,6 @@ public sealed partial class SecurityPage : Page
             LoadingOverlayGrid.Visibility = Visibility.Collapsed;
         }
     }
+
+    public bool IsNot(bool val) => !val;
 }

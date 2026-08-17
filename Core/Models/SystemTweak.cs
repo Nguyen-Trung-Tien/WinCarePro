@@ -115,15 +115,20 @@ public class SystemTweak : INotifyPropertyChanged
             string rec = RecommendedValue;
             try
             {
-                if (Id == "AllowAutoGameMode" || Id == "NtfsDisableLastAccessUpdate" || Id == "AllowTelemetry" || Id == "AllowCortana" || Id == "WerDisabled" || Id == "DisableBackoff")
+                if (Id == "AllowAutoGameMode" || Id == "NtfsDisableLastAccessUpdate" || Id == "AllowTelemetry" || Id == "AllowCortana" || Id == "WerDisabled" || Id == "DisableBackoff" || Id == "LargeSystemCache" || Id == "DisablePagingExecutive" || Id == "TcpAckFrequency" || Id == "DisableLocation")
                 {
                     cur = cur == "1" ? "Enabled".T() : "Disabled".T();
                     rec = rec == "1" ? "Enabled".T() : "Disabled".T();
                 }
+                else if (Id == "GameDVR_Enabled")
+                {
+                    cur = cur == "0" ? "Disabled".T() : "Enabled".T();
+                    rec = "Disabled".T();
+                }
                 else if (Id == "HwSchMode")
                 {
                     cur = cur == "2" ? "Enabled".T() : "Disabled".T();
-                    rec = rec == "2" ? "Enabled".T() : "Disabled".T();
+                    rec = "Enabled".T();
                 }
                 else if (Id == "MenuShowDelay")
                 {

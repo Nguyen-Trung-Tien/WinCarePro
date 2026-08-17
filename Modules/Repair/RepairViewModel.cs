@@ -177,6 +177,13 @@ public class RepairViewModel : ViewModelBase
         set => SetProperty(ref _repairProgressPercent, value);
     }
 
+    private string _activeTab = "diagnostics";
+    public string ActiveTab
+    {
+        get => _activeTab;
+        set => SetProperty(ref _activeTab, value);
+    }
+
     private string _selectedFilterCategory = "All";
     public string SelectedFilterCategory
     {
@@ -195,6 +202,20 @@ public class RepairViewModel : ViewModelBase
     {
         get => _isConsoleVisible;
         set => SetProperty(ref _isConsoleVisible, value);
+    }
+
+    private bool _isAutoScrollEnabled = true;
+    public bool IsAutoScrollEnabled
+    {
+        get => _isAutoScrollEnabled;
+        set => SetProperty(ref _isAutoScrollEnabled, value);
+    }
+
+    private int _logLineCount = 1;
+    public int LogLineCount
+    {
+        get => _logLineCount;
+        set => SetProperty(ref _logLineCount, value);
     }
 
     public ObservableCollection<RepairServiceItem> Services { get; } = new();
@@ -294,6 +315,7 @@ public class RepairViewModel : ViewModelBase
         lock (_logLock)
         {
             _logBuffer.AppendLine(msg);
+            _logLineCount++;
             if (_isLogUpdatePending) return;
             _isLogUpdatePending = true;
         }
@@ -301,27 +323,31 @@ public class RepairViewModel : ViewModelBase
         _dispatcherQueue?.TryEnqueue(() =>
         {
             string textToAppend;
+            int totalLines;
             lock (_logLock)
             {
                 textToAppend = _logBuffer.ToString();
                 _logBuffer.Clear();
                 _isLogUpdatePending = false;
+                totalLines = _logLineCount;
             }
             if (!string.IsNullOrEmpty(textToAppend))
             {
                 string newLog = ConsoleLog + textToAppend;
-                if (newLog.Length > 150000)
+                if (newLog.Length > 80000)
                 {
-                    newLog = newLog.Substring(newLog.Length - 100000);
+                    newLog = newLog.Substring(newLog.Length - 50000);
                 }
                 ConsoleLog = newLog;
+                LogLineCount = totalLines;
             }
         });
     }
 
     public void ClearConsoleLog()
     {
-        ConsoleLog = "Console output cleared.\n".T();
+        ConsoleLog = "Windows Repair Center Console Ready.\n".T();
+        LogLineCount = 1;
     }
 
     public void CopyConsoleLog()
@@ -339,6 +365,11 @@ public class RepairViewModel : ViewModelBase
     public void ToggleConsoleVisibility()
     {
         IsConsoleVisible = !IsConsoleVisible;
+    }
+
+    public void ToggleAutoScroll()
+    {
+        IsAutoScrollEnabled = !IsAutoScrollEnabled;
     }
 
     public void SelectAllIssues()

@@ -23,7 +23,7 @@ public class SystemOptimizerEngineTests
 
         // Assert
         Assert.NotNull(tweaks);
-        Assert.Equal(13, tweaks.Count);
+        Assert.Equal(18, tweaks.Count);
         
         // Verify specific tweak IDs exist
         Assert.Contains(tweaks, t => t.Id == "MenuShowDelay");
@@ -39,6 +39,11 @@ public class SystemOptimizerEngineTests
         Assert.Contains(tweaks, t => t.Id == "WerDisabled");
         Assert.Contains(tweaks, t => t.Id == "DisableBackoff");
         Assert.Contains(tweaks, t => t.Id == "MinAnimate");
+        Assert.Contains(tweaks, t => t.Id == "LargeSystemCache");
+        Assert.Contains(tweaks, t => t.Id == "DisablePagingExecutive");
+        Assert.Contains(tweaks, t => t.Id == "TcpAckFrequency");
+        Assert.Contains(tweaks, t => t.Id == "GameDVR_Enabled");
+        Assert.Contains(tweaks, t => t.Id == "DisableLocation");
     }
 
     [Theory]
@@ -55,6 +60,11 @@ public class SystemOptimizerEngineTests
     [InlineData("WerDisabled", "1", "Privacy & Logs")]
     [InlineData("DisableBackoff", "1", "System & Disk")]
     [InlineData("MinAnimate", "0", "Performance")]
+    [InlineData("LargeSystemCache", "1", "System & Disk")]
+    [InlineData("DisablePagingExecutive", "1", "Performance")]
+    [InlineData("TcpAckFrequency", "1", "Gaming & GPU")]
+    [InlineData("GameDVR_Enabled", "0", "Gaming & GPU")]
+    [InlineData("DisableLocation", "1", "Privacy & Logs")]
     public void GetTweaks_VerifiesTweakConfigurations(string id, string recommendedValue, string category)
     {
         // Act

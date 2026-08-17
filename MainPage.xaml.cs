@@ -223,6 +223,10 @@ public sealed partial class MainPage : Page
             {
                 junkPage.ViewModel?.Cleanup();
             }
+            else if (ContentFrame.Content is Views.SystemOptimizerPage optPage)
+            {
+                optPage.ViewModel?.Dispose();
+            }
 
             if (ContentFrame.Content is Page page && page.DataContext is IDisposable disposable)
             {

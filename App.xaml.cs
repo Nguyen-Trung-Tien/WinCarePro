@@ -103,6 +103,7 @@ public partial class App : Application
         services.AddTransient<RegistryViewModel>();
         services.AddTransient<UpdaterViewModel>();
         services.AddTransient<ContextMenuViewModel>();
+        services.AddTransient<SecurityViewModel>();
 
         Services = services.BuildServiceProvider();
     }

@@ -8,16 +8,16 @@
     xmlns:vm="using:WinCarePro.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 1100px -->
+                <!-- Wide Layout: Viewport Width >= 1150px -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1100" />
+                        <AdaptiveTrigger MinWindowWidth="1150" />
                     </VisualState.StateTriggers>
                 </VisualState>
-                <!-- Narrow Layout: Viewport Width < 1100px -->
+                <!-- Narrow Layout: Viewport Width < 1150px -->
                 <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
@@ -30,19 +30,24 @@
                         <Setter Target="HeaderButtonsPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderButtonsPanel.Margin" Value="0,12,0,0" />
                         <Setter Target="HeaderButtonsPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="StatsGridCol2.(Grid.Row)" Value="1" />
+                        <Setter Target="StatsGridCol2.(Grid.Column)" Value="0" />
+                        <Setter Target="StatsGridCol3.(Grid.Row)" Value="1" />
+                        <Setter Target="StatsGridCol3.(Grid.Column)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> <!-- Header Section -->
-            <RowDefinition Height="Auto" /> <!-- Stats Banner Section -->
-            <RowDefinition Height="*" />    <!-- Main Operations Area -->
+            <RowDefinition Height="Auto" /> <!-- 0. Header -->
+            <RowDefinition Height="Auto" /> <!-- 1. Stats Cards Ribbon -->
+            <RowDefinition Height="Auto" /> <!-- 2. Cyber Segmented Tabs -->
+            <RowDefinition Height="*" />    <!-- 3. Active Tab Content -->
         </Grid.RowDefinitions>
 
-        <!-- 1. Header -->
-        <Grid Grid.Row="0" x:Name="HeaderGrid" Margin="0,0,0,16">
+        <!-- ==================== 0. MODERN HEADER ==================== -->
+        <Grid Grid.Row="0" x:Name="HeaderGrid" Margin="0,0,0,14">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="HeaderRow0" Height="Auto" />
                 <RowDefinition x:Name="HeaderRow1" Height="Auto" />
@@ -51,49 +56,47 @@
                 <ColumnDefinition x:Name="HeaderCol0" Width="*" />
                 <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel x:Name="HeaderTitlePanel" Grid.Column="0" Grid.Row="0">
-                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <TextBlock Text="System Repair Center" Style="{StaticResource PageHeaderTitleStyle}" />
-                    <Border Visibility="{x:Bind ViewModel.IsAdmin, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#2610B981" BorderBrush="#10B981" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" Spacing="4">
-                            <FontIcon Glyph="&#xE72E;" FontSize="11" Foreground="#10B981"/>
-                            <TextBlock Text="Admin Rights Active" FontSize="11" FontWeight="Bold" Foreground="#10B981"/>
-                        </StackPanel>
+            
+            <StackPanel x:Name="HeaderTitlePanel" Grid.Column="0" Grid.Row="0" Spacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                    <Border Background="{StaticResource CyberAccentGradient}" CornerRadius="10" Padding="8">
+                        <FontIcon Glyph="&#xE90F;" FontSize="18" Foreground="White"/>
                     </Border>
-                    <Border Visibility="{x:Bind ViewModel.IsAdmin, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Background="#26F59E0B" BorderBrush="#F59E0B" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" Spacing="4">
-                            <FontIcon Glyph="&#xE7BA;" FontSize="11" Foreground="#F59E0B"/>
-                            <TextBlock Text="User Mode (SFC/DISM Recommend Admin)" FontSize="11" FontWeight="Bold" Foreground="#F59E0B"/>
-                        </StackPanel>
-                    </Border>
+                    <StackPanel Spacing="1" VerticalAlignment="Center">
+                        <TextBlock Text="System Repair Center" Style="{StaticResource PageHeaderTitleStyle}" FontSize="20"/>
+                        <TextBlock Text="Deep Windows component store diagnosis, SFC file integrity recovery, registry policies and network stack repair." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
+
             <StackPanel x:Name="HeaderButtonsPanel" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button x:Name="CancelHeaderBtn" Click="OnCancelOperationClick" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" CornerRadius="8" Padding="14,8" Background="#33EF4444" Foreground="#FFEF4444" FontWeight="Bold">
+                <Button x:Name="CancelHeaderBtn" Click="OnCancelOperationClick" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" CornerRadius="8" Padding="14,8" Background="#26EF4444" Foreground="#FFEF4444" FontWeight="Bold">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE711;" FontSize="14" />
-                        <TextBlock Text="Cancel Operation" VerticalAlignment="Center" />
+                        <FontIcon Glyph="&#xE711;" FontSize="13" />
+                        <TextBlock Text="Cancel Operation" VerticalAlignment="Center" FontSize="12.5" />
                     </StackPanel>
                 </Button>
+                
                 <Button x:Name="ScanDiagnosticsBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanDiagnosticsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="ScanDiagRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
-                        <FontIcon x:Name="ScanDiagIcon" Glyph="&#xE721;" FontSize="14" />
-                        <TextBlock x:Name="ScanDiagText" Text="Scan Diagnostics" VerticalAlignment="Center" />
+                        <FontIcon x:Name="ScanDiagIcon" Glyph="&#xE721;" FontSize="13" />
+                        <TextBlock x:Name="ScanDiagText" Text="Scan Diagnostics" VerticalAlignment="Center" FontSize="12.5" />
                     </StackPanel>
                 </Button>
+
                 <Button x:Name="FixSelectedBtn" Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="FixSelectedRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" VerticalAlignment="Center"/>
-                        <FontIcon x:Name="FixSelectedIcon" Glyph="&#xE77F;" FontSize="14" />
-                        <TextBlock x:Name="FixSelectedText" Text="Fix Selected" VerticalAlignment="Center" />
+                        <FontIcon x:Name="FixSelectedIcon" Glyph="&#xE77F;" FontSize="13" />
+                        <TextBlock x:Name="FixSelectedText" Text="Fix Selected" VerticalAlignment="Center" FontSize="12.5" />
                     </StackPanel>
                 </Button>
             </StackPanel>
         </Grid>
 
-        <!-- 2. Statistics Grid Section -->
-        <Grid Grid.Row="1" Margin="0,0,0,16" ColumnSpacing="16">
+        <!-- ==================== 1. UNIFIED STAT RIBBON ==================== -->
+        <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -108,12 +111,14 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" Glyph="&#xE713;" FontSize="24" Foreground="#FF7F56D9" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE713;" FontSize="17" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Services Active" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="Core Services Active" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         <StackPanel Orientation="Horizontal" Spacing="4">
-                            <TextBlock Text="{x:Bind ViewModel.ServicesHealthyCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" />
-                            <TextBlock Text="/ 5" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                            <TextBlock Text="{x:Bind ViewModel.ServicesHealthyCount, Mode=OneWay}" FontSize="17" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                            <TextBlock Text="/ 5" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -126,106 +131,124 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" Glyph="&#xEDA2;" FontSize="24" Foreground="#FFEF4444" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#20EF4444" BorderBrush="#50EF4444" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xEDA2;" FontSize="17" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Policy Bans Found" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.RegistryRestrictionsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{x:Bind GetRestrictionColor(ViewModel.RegistryRestrictionsCount), Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind ViewModel.RegistryRestrictionsCount, Mode=OneWay}" FontSize="17" FontWeight="ExtraBold" Foreground="{x:Bind GetRestrictionColor(ViewModel.RegistryRestrictionsCount), Mode=OneWay}" />
                     </StackPanel>
                 </Grid>
             </Border>
 
             <!-- Card 3: DNS Query Response -->
-            <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatsGridCol2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" Glyph="&#xE774;" FontSize="24" Foreground="#FF3B82F6" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#203B82F6" BorderBrush="#503B82F6" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE774;" FontSize="17" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="DNS Query Ping" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.NetworkPingStatus, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" />
+                        <TextBlock Text="{x:Bind ViewModel.NetworkPingStatus, Mode=OneWay}" FontSize="17" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <!-- Card 4: Health Score -->
-            <Border Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
+            <!-- Card 4: Security Health Score -->
+            <Border x:Name="StatsGridCol3" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <FontIcon Grid.Column="0" Glyph="&#xE73E;" FontSize="24" Foreground="{x:Bind GetScoreColor(ViewModel.HealthScore), Mode=OneWay}" Margin="0,0,12,0" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE73E;" FontSize="17" Foreground="{x:Bind GetScoreColor(ViewModel.HealthScore), Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="System Security Score" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind GetScoreText(ViewModel.HealthScore), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="{x:Bind GetScoreColor(ViewModel.HealthScore), Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind GetScoreText(ViewModel.HealthScore), Mode=OneWay}" FontSize="15.5" FontWeight="ExtraBold" Foreground="{x:Bind GetScoreColor(ViewModel.HealthScore), Mode=OneWay}" />
                     </StackPanel>
                 </Grid>
             </Border>
         </Grid>
 
-        <!-- 3. Main Content Area -->
-        <Grid Grid.Row="2">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
-                <StackPanel Spacing="16">
-                    <!-- Active Operation Progress Banner -->
-                    <Border Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource GlassmorphismCardStyle}" Padding="16" Margin="0,0,0,8">
-                        <StackPanel Spacing="8">
-                            <Grid>
-                                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
-                                    <ProgressRing Width="14" Height="14" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
-                                    <TextBlock Text="{x:Bind ViewModel.CurrentScanStepText, Mode=OneWay}" FontSize="12.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                                </StackPanel>
-                                <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="12.5" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            </Grid>
-                            <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" />
-                        </StackPanel>
-                    </Border>
+        <!-- ==================== 2. CYBER SEGMENTED TABS ==================== -->
+        <Border Grid.Row="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="4" Margin="0,0,0,12">
+            <Grid ColumnSpacing="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                    <!-- Diagnostic Scans Prompt -->
-                    <Border Visibility="{x:Bind ViewModel.HasDiagnosticsRun, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource GlassmorphismCardStyle}" Padding="24" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
-                        <StackPanel Spacing="16" HorizontalAlignment="Center" Padding="0,32">
+                <Button x:Name="BtnTabDiagnostics" Grid.Column="0" Content="🔍 Diagnostics &amp; Issues" Click="OnTabDiagnosticsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="Bold" FontSize="12" Padding="0,8"/>
+                <Button x:Name="BtnTabSfcDism" Grid.Column="1" Content="🛡️ SFC &amp; DISM Servicing" Click="OnTabSfcDismClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="SemiBold" FontSize="12" Padding="0,8"/>
+                <Button x:Name="BtnTabRegistry" Grid.Column="2" Content="🔒 Registry Safeguards" Click="OnTabRegistryClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="SemiBold" FontSize="12" Padding="0,8"/>
+                <Button x:Name="BtnTabNetwork" Grid.Column="3" Content="⚡ Update &amp; Network" Click="OnTabNetworkClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="SemiBold" FontSize="12" Padding="0,8"/>
+            </Grid>
+        </Border>
+
+        <!-- ==================== 3. ACTIVE TAB CONTENT VIEWPORT ==================== -->
+        <Grid Grid.Row="3">
+            <!-- Active Operation Progress Banner (Visible during active tasks) -->
+            <Border Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource AuraGlassCardStyle}" Padding="14" Margin="0,0,0,12" VerticalAlignment="Top" Canvas.ZIndex="10">
+                <StackPanel Spacing="8">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
+                            <ProgressRing Width="15" Height="15" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{x:Bind ViewModel.CurrentScanStepText, Mode=OneWay}" FontSize="12.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="12.5" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+                    <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="5" CornerRadius="2.5" Foreground="{StaticResource PrimaryAccentGradient}" />
+                </StackPanel>
+            </Border>
+
+            <!-- TAB 1: DIAGNOSTICS & ISSUES COCKPIT -->
+            <ScrollViewer x:Name="SectionDiagnostics" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+                <StackPanel Spacing="16">
+                    <!-- Initial Prompt (when not yet scanned) -->
+                    <Border Visibility="{x:Bind ViewModel.HasDiagnosticsRun, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource AuraGlassCardStyle}" Padding="28">
+                        <StackPanel Spacing="16" HorizontalAlignment="Center" Padding="0,20">
                             <Border Width="64" Height="64" CornerRadius="32" Background="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE721;" FontSize="28" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </Border>
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="Run System Diagnostics Scan" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" />
-                                <TextBlock Text="Scan Windows configuration databases, network health, and core service registry startup properties." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center"/>
+                                <TextBlock Text="Run Deep System Diagnostics Scan" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                <TextBlock Text="Scan Windows configuration databases, registry policy locks, network health, and core background service states." FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" MaxWidth="500"/>
                             </StackPanel>
-                            <Button Content="Scan Now" Click="OnScanDiagnosticsClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" Padding="20,8" CornerRadius="8" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}"/>
+                            <Button Content="Scan Diagnostics Now" Click="OnScanDiagnosticsClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" Padding="24,10" CornerRadius="8" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Diagnostic Issues Cockpit -->
-                    <Border Visibility="{x:Bind ViewModel.HasDiagnosticsRun, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
-                        <StackPanel Spacing="12">
-                            <!-- Header & Filter Bar -->
+                    <!-- Findings Cockpit (when scanned) -->
+                    <Border Visibility="{x:Bind ViewModel.HasDiagnosticsRun, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource AuraGlassCardStyle}" Padding="18">
+                        <StackPanel Spacing="14">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Spacing="2">
-                                    <TextBlock Text="Diagnostics Findings" FontSize="15" FontWeight="Bold" />
-                                    <TextBlock Text="Issues detected in system registry policies, updates and background processes." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="Diagnostics Findings" FontSize="16" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                    <TextBlock Text="Issues detected in system registry policies, background services, network and file integrity." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                                 
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                    <!-- Category Filter -->
                                     <ComboBox SelectionChanged="OnFilterCategoryChanged" SelectedIndex="0" Width="130" CornerRadius="6">
                                         <ComboBoxItem Tag="All" Content="All Issues"/>
                                         <ComboBoxItem Tag="Critical" Content="Critical"/>
                                         <ComboBoxItem Tag="Warning" Content="Warning"/>
                                         <ComboBoxItem Tag="Info" Content="Info"/>
                                     </ComboBox>
-
-                                    <!-- Batch Select buttons -->
-                                    <Button Content="Select All" Click="OnSelectAllClick" Padding="8,4" FontSize="11" CornerRadius="6" />
-                                    <Button Content="Clear All" Click="OnDeselectAllClick" Padding="8,4" FontSize="11" CornerRadius="6" />
-
-                                    <!-- Health Score Badge -->
-                                    <Border Padding="8,4" CornerRadius="6" Background="{x:Bind GetScoreColor(ViewModel.HealthScore), Mode=OneWay}" VerticalAlignment="Center">
+                                    <Button Content="Select All" Click="OnSelectAllClick" Padding="10,5" FontSize="11" CornerRadius="6" />
+                                    <Button Content="Clear All" Click="OnDeselectAllClick" Padding="10,5" FontSize="11" CornerRadius="6" />
+                                    <Border Padding="10,5" CornerRadius="6" Background="{x:Bind GetScoreColor(ViewModel.HealthScore), Mode=OneWay}" VerticalAlignment="Center">
                                         <TextBlock Text="{x:Bind GetScoreText(ViewModel.HealthScore), Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="White" />
                                     </Border>
                                 </StackPanel>
@@ -233,11 +256,10 @@
 
                             <MenuFlyoutSeparator />
 
-                            <!-- Filtered Issues List -->
                             <ItemsControl ItemsSource="{x:Bind ViewModel.FilteredDiscoveredIssues, Mode=OneWay}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="vm:DiagnosticIssueItem">
-                                        <Grid Padding="0,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                        <Grid Padding="0,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
@@ -245,34 +267,27 @@
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            
                                             <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" IsEnabled="{x:Bind IsNotFixed, Mode=OneWay}" />
-                                            
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                                    <TextBlock Text="{x:Bind Title}" FontWeight="SemiBold" FontSize="12.5" />
-                                                    <Border Padding="6,1" CornerRadius="4" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}">
-                                                        <TextBlock Text="{x:Bind Category}" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                    <TextBlock Text="{x:Bind Title}" FontWeight="SemiBold" FontSize="13" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                                    <Border Padding="6,1" CornerRadius="4" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1">
+                                                        <TextBlock Text="{x:Bind Category}" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                                     </Border>
                                                 </StackPanel>
-                                                <TextBlock Text="{x:Bind Description}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                                <TextBlock Text="{x:Bind Description}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                             </StackPanel>
-
-                                            <Border Grid.Column="2" Margin="12,0" VerticalAlignment="Center" CornerRadius="4" Padding="6,2" Background="{x:Bind SeverityBrush, Mode=OneWay}">
-                                                <TextBlock Text="{x:Bind SeverityText, Mode=OneWay}" FontSize="9.5" FontWeight="Bold" Foreground="White" />
+                                            <Border Grid.Column="2" Margin="12,0" VerticalAlignment="Center" CornerRadius="6" Padding="8,3" Background="{x:Bind SeverityBrush, Mode=OneWay}">
+                                                <TextBlock Text="{x:Bind SeverityText, Mode=OneWay}" FontSize="10" FontWeight="Bold" Foreground="White" />
                                             </Border>
-
-                                            <TextBlock Grid.Column="3" Text="{x:Bind StatusText, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{x:Bind StatusBrush, Mode=OneWay}" VerticalAlignment="Center" Margin="8,0,4,0" Width="60" TextAlignment="Right"/>
-
-                                            <!-- Single-item Repair Button -->
-                                            <Button Grid.Column="4" Content="Fix" Click="OnFixSingleIssueClick" IsEnabled="{x:Bind IsNotFixed, Mode=OneWay}" CornerRadius="4" Padding="10,3" FontSize="11" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="3" Text="{x:Bind StatusText, Mode=OneWay}" FontSize="11.5" FontWeight="Bold" Foreground="{x:Bind StatusBrush, Mode=OneWay}" VerticalAlignment="Center" Margin="8,0,4,0" Width="64" TextAlignment="Right"/>
+                                            <Button Grid.Column="4" Content="Fix" Click="OnFixSingleIssueClick" IsEnabled="{x:Bind IsNotFixed, Mode=OneWay}" CornerRadius="6" Padding="12,4" FontSize="11.5" Margin="8,0,0,0" VerticalAlignment="Center"/>
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
-                            <!-- Auto Repair Selected Button -->
-                            <Button x:Name="AutoRepairBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold" HorizontalAlignment="Right">
+                            <Button x:Name="AutoRepairBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="18,8" FontWeight="Bold" HorizontalAlignment="Right">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <ProgressRing x:Name="AutoRepairRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                                     <TextBlock x:Name="AutoRepairText" Text="Auto-Repair Selected Issues" FontWeight="Bold"/>
@@ -281,119 +296,19 @@
                         </StackPanel>
                     </Border>
 
-                    <TextBlock Text="Manual Troubleshooting Tools" FontSize="16" FontWeight="ExtraBold" Margin="0,8,0,0"/>
-
-                    <!-- SFC & DISM Component Fixer -->
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
-                        <StackPanel Spacing="10">
+                    <!-- Background Services Checklist Card -->
+                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="18">
+                        <StackPanel Spacing="12">
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xE9F5;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" />
-                                <TextBlock Text="SFC Component Verification" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
+                                <FontIcon Glyph="&#xE713;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Services Restoration Registry" FontSize="14.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center" />
                             </StackPanel>
-                            <Grid ColumnSpacing="8" Margin="0,4,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Button x:Name="SfcScanBtn" Grid.Column="0" Click="OnSfcScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" HorizontalAlignment="Stretch">
-                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
-                                        <ProgressRing x:Name="SfcScanRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
-                                        <TextBlock x:Name="SfcScanText" Text="SFC Scan"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button x:Name="SfcRepairBtn" Grid.Column="1" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnSfcRepairClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" FontWeight="Bold" HorizontalAlignment="Stretch">
-                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
-                                        <ProgressRing x:Name="SfcRepairRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="White" VerticalAlignment="Center"/>
-                                        <TextBlock x:Name="SfcRepairText" Text="SFC Repair" FontWeight="Bold"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button x:Name="DismCheckBtn" Grid.Column="2" Click="OnDismCheckClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" HorizontalAlignment="Stretch">
-                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
-                                        <ProgressRing x:Name="DismCheckRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
-                                        <TextBlock x:Name="DismCheckText" Text="DISM Check"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button x:Name="DismRestoreBtn" Grid.Column="3" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDismRestoreClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" FontWeight="Bold" HorizontalAlignment="Stretch">
-                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
-                                        <ProgressRing x:Name="DismRestoreRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="White" VerticalAlignment="Center"/>
-                                        <TextBlock x:Name="DismRestoreText" Text="DISM Restore" FontWeight="Bold"/>
-                                    </StackPanel>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Advanced Safeguards & Policies -->
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
-                        <Grid ColumnSpacing="12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            
-                            <!-- Col 1: System Policies & Extensions -->
-                            <StackPanel Grid.Column="0" Spacing="8">
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="Tomato" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Registry &amp; Policies" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
-                                </StackPanel>
-                                <Button Content="Repair Registry Policies" Click="OnRepairRegistryPoliciesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,6" HorizontalAlignment="Stretch" />
-                            </StackPanel>
-
-                            <!-- Col 2: Safekeep Restore Points -->
-                            <StackPanel Grid.Column="1" Spacing="8">
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon Glyph="&#xEC7A;" FontSize="18" Foreground="MediumAquamarine" VerticalAlignment="Center"/>
-                                    <TextBlock Text="System Protection" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
-                                </StackPanel>
-                                <Button Content="Create Restore Point" Click="OnCreateRestorePointClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,6" HorizontalAlignment="Stretch" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <!-- Windows Update & Network Repair -->
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
-                        <Grid ColumnSpacing="12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            
-                            <!-- Col 1: Windows Update Cache -->
-                            <StackPanel Grid.Column="0" Spacing="8">
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon Glyph="&#xE736;" FontSize="18" Foreground="Crimson" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Windows Update Fixer" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
-                                </StackPanel>
-                                <Button Content="Reset Update Components" Click="OnResetUpdateClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,6" HorizontalAlignment="Stretch" />
-                            </StackPanel>
-
-                            <!-- Col 2: Network Stack Fixer -->
-                            <StackPanel Grid.Column="1" Spacing="8">
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <FontIcon Glyph="&#xE774;" FontSize="18" Foreground="DodgerBlue" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Network Stack Reset" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
-                                </StackPanel>
-                                <Button Content="Flush DNS &amp; Winsock Reset" Click="OnRepairNetworkStackClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,6" HorizontalAlignment="Stretch" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <!-- Services Restore Checklist -->
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
-                        <StackPanel Spacing="10">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xE713;" FontSize="18" Foreground="Gold" VerticalAlignment="Center"/>
-                                <TextBlock Text="Services Restoration Registry" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
-                            </StackPanel>
-                            <TextBlock Text="Restore background core update services to standard boot setups." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Text="Restore background core update and security services to standard automatic boot configurations." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
 
                             <ItemsControl ItemsSource="{x:Bind ViewModel.Services, Mode=OneWay}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="vm:RepairServiceItem">
-                                        <Grid Padding="0,4" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                        <Grid Padding="0,6" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
@@ -401,26 +316,207 @@
                                             </Grid.ColumnDefinitions>
                                             <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,8,0" MinWidth="20" />
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind DisplayName}" FontWeight="SemiBold" FontSize="11.5" />
-                                                <TextBlock Text="{x:Bind Name}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                <TextBlock Text="{x:Bind DisplayName}" FontWeight="SemiBold" FontSize="12" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                                <TextBlock Text="{x:Bind Name}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                             </StackPanel>
-                                            <TextBlock Grid.Column="2" Text="{x:Bind Status}" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="2" Text="{x:Bind Status}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" />
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
                             <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
-                                <Button Content="Restore Selected Services" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnRestoreServicesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="4" Padding="12,5" FontWeight="Bold" />
+                                <Button Content="Restore Selected Services" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnRestoreServicesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="6" Padding="14,6" FontWeight="Bold" />
                             </StackPanel>
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </ScrollViewer>
+
+            <!-- TAB 2: SFC & DISM SERVICING -->
+            <ScrollViewer x:Name="SectionSfcDism" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+                <StackPanel Spacing="16">
+                    <!-- SFC Component Verification & Repair -->
+                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20">
+                        <StackPanel Spacing="14">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="10" Padding="8">
+                                    <FontIcon Glyph="&#xE9F5;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" />
+                                </Border>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="System File Checker (SFC)" FontSize="16" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                    <TextBlock Text="Scan and verify protected Windows system files (DLL, EXE, SYS) and replace corrupted versions with healthy copies." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Grid ColumnSpacing="12" Margin="0,6,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Button x:Name="SfcScanBtn" Grid.Column="0" Click="OnSfcScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,10" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                        <ProgressRing x:Name="SfcScanRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE721;" FontSize="13" />
+                                        <TextBlock x:Name="SfcScanText" Text="SFC Verification (/verifyonly)" FontWeight="SemiBold" />
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="SfcRepairBtn" Grid.Column="1" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnSfcRepairClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,10" FontWeight="Bold" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                        <ProgressRing x:Name="SfcRepairRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE9F5;" FontSize="13" Foreground="White" />
+                                        <TextBlock x:Name="SfcRepairText" Text="SFC Auto-Repair (/scannow)" FontWeight="Bold" />
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- DISM Image Servicing & Component Store Management -->
+                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20">
+                        <StackPanel Spacing="14">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="10" Padding="8">
+                                    <FontIcon Glyph="&#xE8B9;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" />
+                                </Border>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="Deployment Image Servicing &amp; Management (DISM)" FontSize="16" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                    <TextBlock Text="Analyze Windows component store corruption, repair system images via Windows Update, and clean obsolete package payloads." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Grid ColumnSpacing="10" RowSpacing="10" Margin="0,6,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <Button x:Name="DismCheckBtn" Grid.Column="0" Click="OnDismCheckClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <ProgressRing x:Name="DismCheckRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="DismCheckText" Text="DISM Check" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button x:Name="DismScanBtn" Grid.Column="1" Click="OnDismScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <ProgressRing x:Name="DismScanRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="DismScanText" Text="DISM Scan" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Button>
+                                
+                                <Button x:Name="DismRestoreBtn" Grid.Column="2" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDismRestoreClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" FontWeight="Bold" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <ProgressRing x:Name="DismRestoreRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="White" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="DismRestoreText" Text="DISM Restore" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button x:Name="DismCleanBtn" Grid.Column="3" Click="OnDismCleanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                        <ProgressRing x:Name="DismCleanRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="DismCleanText" Text="Clean WinSxS" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- TAB 3: REGISTRY & SAFEGUARDS -->
+            <ScrollViewer x:Name="SectionRegistry" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+                <StackPanel Spacing="16">
+                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20">
+                        <Grid ColumnSpacing="20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- Registry Policies -->
+                            <StackPanel Grid.Column="0" Spacing="10">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Border Background="#20EF4444" BorderBrush="#50EF4444" BorderThickness="1" CornerRadius="10" Padding="8">
+                                        <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="#FFEF4444" />
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="Registry Policy Restrictions" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                        <TextBlock Text="Policy Safeguards" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <TextBlock Text="Unlock disabled Task Manager, Registry Editor, CMD, and restore corrupted file extensions (.exe, .lnk)." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                <Button Content="Repair Registry Policies" Click="OnRepairRegistryPoliciesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" HorizontalAlignment="Stretch" Style="{StaticResource VibrantPrimaryButtonStyle}"/>
+                            </StackPanel>
+
+                            <!-- Restore Points -->
+                            <StackPanel Grid.Column="1" Spacing="10">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Border Background="#2010B981" BorderBrush="#5010B981" BorderThickness="1" CornerRadius="10" Padding="8">
+                                        <FontIcon Glyph="&#xEC7A;" FontSize="18" Foreground="#FF10B981" />
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="System Restore Checkpoint" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                        <TextBlock Text="Safety Snapshots" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <TextBlock Text="Create a lightweight system snapshot checkpoint before applying significant system tweaks or modifications." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                <Button Content="Create Restore Point" Click="OnCreateRestorePointClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" HorizontalAlignment="Stretch" Style="{StaticResource DefaultButtonStyle}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- TAB 4: WINDOWS UPDATE & NETWORK STACK -->
+            <ScrollViewer x:Name="SectionNetwork" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+                <StackPanel Spacing="16">
+                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20">
+                        <Grid ColumnSpacing="20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- Windows Update Fixer -->
+                            <StackPanel Grid.Column="0" Spacing="10">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Border Background="#208B5CF6" BorderBrush="#508B5CF6" BorderThickness="1" CornerRadius="10" Padding="8">
+                                        <FontIcon Glyph="&#xE736;" FontSize="18" Foreground="#FF8B5CF6" />
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="Windows Update Fixer" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                        <TextBlock Text="Component Cache Flush" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <TextBlock Text="Stop update services, purge and rename corrupted SoftwareDistribution &amp; Catroot2 folders." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                <Button Content="Reset Update Components" Click="OnResetUpdateClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" HorizontalAlignment="Stretch" Style="{StaticResource DefaultButtonStyle}"/>
+                            </StackPanel>
+
+                            <!-- Network Stack Fixer -->
+                            <StackPanel Grid.Column="1" Spacing="10">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Border Background="#203B82F6" BorderBrush="#503B82F6" BorderThickness="1" CornerRadius="10" Padding="8">
+                                        <FontIcon Glyph="&#xE774;" FontSize="18" Foreground="#FF3B82F6" />
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="Network Stack &amp; Winsock Reset" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                        <TextBlock Text="TCP/IP &amp; Winsock Catalog" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    </StackPanel>
+                                </StackPanel>
+                                <TextBlock Text="Flush DNS resolver caches, release/renew DHCP leases, and reset Winsock and TCP/IP catalogs." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                <Button Content="Flush DNS &amp; Winsock Reset" Click="OnRepairNetworkStackClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" HorizontalAlignment="Stretch" Style="{StaticResource VibrantPrimaryButtonStyle}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
 
-        <!-- Loading Overlay Indicator — smooth fade in/out -->
-        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="3" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!-- ==================== 4. LOADING OVERLAY ==================== -->
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.Resources>
                 <Storyboard x:Name="FadeInLoading">
                     <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
@@ -439,7 +535,6 @@
             </Grid.Resources>
             <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
                 <StackPanel Spacing="14" HorizontalAlignment="Center">
-                    <!-- Glowing Wrench Badge -->
                     <Grid Width="64" Height="64" HorizontalAlignment="Center">
                         <Border Width="64" Height="64" CornerRadius="18" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
                             <FontIcon Glyph="&#xE90F;" FontSize="24" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -447,11 +542,10 @@
                     </Grid>
 
                     <StackPanel Spacing="4" HorizontalAlignment="Center">
-                        <TextBlock Text="System Diagnostics &amp; Repair" FontSize="15" FontWeight="Bold" TextAlignment="Center" />
+                        <TextBlock Text="System Diagnostics &amp; Repair" FontSize="15" FontWeight="Bold" TextAlignment="Center" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                         <TextBlock Text="{x:Bind ViewModel.CurrentScanStepText, Mode=OneWay}" FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="320"/>
                     </StackPanel>
 
-                    <!-- Percentage Progress Bar -->
                     <StackPanel Spacing="8" Width="320" HorizontalAlignment="Center">
                         <Grid>
                             <TextBlock Text="Repair Progress" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>

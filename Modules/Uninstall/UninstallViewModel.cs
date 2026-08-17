@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
@@ -256,6 +257,15 @@ public class UninstallViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _hasSelectedApps, v => _hasSelectedApps = v, value);
     }
 
+    private int _selectedAppsCount;
+    public int SelectedAppsCount
+    {
+        get => _selectedAppsCount;
+        set => SetPropertyOnUI(() => _selectedAppsCount, v => _selectedAppsCount = v, value);
+    }
+
+    public int LeftoversCount => Leftovers.Count;
+
     public UninstallViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
@@ -378,11 +388,12 @@ public class UninstallViewModel : ViewModelBase
         UpdateIsAllAppsSelectedState();
     }
 
-    private void OnAppPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void OnAppPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(InstalledAppInfo.IsSelected))
         {
-            HasSelectedApps = _allApps.Any(x => x.IsSelected);
+            SelectedAppsCount = _allApps.Count(x => x.IsSelected);
+            HasSelectedApps = SelectedAppsCount > 0;
             UpdateIsAllAppsSelectedState();
         }
     }

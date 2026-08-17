@@ -99,29 +99,6 @@ public sealed partial class UninstallPage : Page
             SizeColumnWidth = isWide ? new GridLength(100) : new GridLength(0);
             WideLayoutVisibility = isWide ? Visibility.Visible : Visibility.Collapsed;
             UpdateDetailsPaneVisibility();
-
-            // Adjust stats grid layout
-            if (StatsGrid != null && StatCard1 != null && StatCard2 != null && StatCard3 != null && StatCard4 != null)
-            {
-                if (isWide)
-                {
-                    StatsCol2.Width = new GridLength(1, GridUnitType.Star);
-                    StatsCol3.Width = new GridLength(1, GridUnitType.Star);
-                    Grid.SetColumn(StatCard1, 0); Grid.SetRow(StatCard1, 0);
-                    Grid.SetColumn(StatCard2, 1); Grid.SetRow(StatCard2, 0);
-                    Grid.SetColumn(StatCard3, 2); Grid.SetRow(StatCard3, 0);
-                    Grid.SetColumn(StatCard4, 3); Grid.SetRow(StatCard4, 0);
-                }
-                else
-                {
-                    StatsCol2.Width = new GridLength(0, GridUnitType.Pixel);
-                    StatsCol3.Width = new GridLength(0, GridUnitType.Pixel);
-                    Grid.SetColumn(StatCard1, 0); Grid.SetRow(StatCard1, 0);
-                    Grid.SetColumn(StatCard2, 1); Grid.SetRow(StatCard2, 0);
-                    Grid.SetColumn(StatCard3, 0); Grid.SetRow(StatCard3, 1);
-                    Grid.SetColumn(StatCard4, 1); Grid.SetRow(StatCard4, 1);
-                }
-            }
         };
     }
 

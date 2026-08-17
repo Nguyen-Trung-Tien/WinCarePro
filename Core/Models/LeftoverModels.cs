@@ -27,16 +27,7 @@ public class LeftoverItem : INotifyPropertyChanged
         get
         {
             if (Type == LeftoverType.RegistryKey || Type == LeftoverType.RegistryValue) return "N/A";
-            if (SizeBytes <= 0) return "0 B";
-            string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-            int i = 0;
-            double doubleBytes = SizeBytes;
-            while (doubleBytes >= 1024 && i < suffix.Length - 1)
-            {
-                i++;
-                doubleBytes /= 1024;
-            }
-            return $"{doubleBytes:F1} {suffix[i]}";
+            return WinCarePro.Core.Helpers.FormatHelper.FormatBytes(SizeBytes);
         }
     }
 

@@ -82,22 +82,26 @@ public class InstalledAppInfo : INotifyPropertyChanged
         : new SolidColorBrush(Color.FromArgb(255, 127, 86, 217));
 
     public string DefaultIconGlyph => IsStoreApp ? "\uE719" : "\uE736";
+    public string TypeBadgeText => IsStoreApp ? "Store App" : "Win32 Desktop";
+    public string AppTypeDescription => IsStoreApp ? "Microsoft Store / UWP Package" : "Desktop Application (Win32 / Native)";
 
-    public long SizeBytes { get; set; }
-    public string SizeFormatted
+    private long _sizeBytes;
+    public long SizeBytes
     {
-        get
+        get => _sizeBytes;
+        set
         {
-            if (SizeBytes <= 0) return "Unknown";
-            string[] suffix = { "B", "KB", "MB", "GB", "TB" };
-            int i = 0;
-            double doubleBytes = SizeBytes;
-            while (doubleBytes >= 1024 && i < suffix.Length - 1)
+            if (_sizeBytes != value)
             {
-                i++;
-                doubleBytes /= 1024;
+                _sizeBytes = value;
+                OnPropertyChanged(nameof(SizeBytes));
+                OnPropertyChanged(nameof(SizeFormatted));
+                OnPropertyChanged(nameof(IsLargeApp));
             }
-            return $"{doubleBytes:F1} {suffix[i]}";
         }
     }
+
+    public bool IsLargeApp => SizeBytes >= 500L * 1024 * 1024;
+
+    public string SizeFormatted => SizeBytes <= 0 ? "Unknown" : WinCarePro.Core.Helpers.FormatHelper.FormatBytes(SizeBytes);
 }

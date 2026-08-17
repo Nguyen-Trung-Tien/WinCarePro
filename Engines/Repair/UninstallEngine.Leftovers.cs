@@ -99,6 +99,7 @@ public partial class UninstallEngine
         {
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow"),
             Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86)
@@ -478,29 +479,28 @@ public partial class UninstallEngine
         }
     }
     
-    private bool IsSystemFolder(string name)
+    public bool IsSystemFolder(string name)
     {
         string[] sysFolders = { "Windows", "System32", "SysWOW64", "Microsoft", "Intel", "AMD", "Common Files", "Windows Defender", "WindowsApps", "Windows Mail", "Windows NT", "Windows Photo Viewer", "Windows Portable Devices", "Windows Sidebar", "WindowsPowerShell" };
         return sysFolders.Contains(name, StringComparer.OrdinalIgnoreCase);
     }
 
-    private bool IsSystemKey(string name)
+    public bool IsSystemKey(string name)
     {
         string[] sysKeys = { "Microsoft", "Intel", "AMD", "Windows", "Windows NT", "Classes", "Clients", "Policies", "RegisteredApplications" };
         return sysKeys.Contains(name, StringComparer.OrdinalIgnoreCase);
     }
 
-    private string CleanAppNameForMatching(string name)
+    public string CleanAppNameForMatching(string name)
     {
         if (string.IsNullOrEmpty(name)) return "";
         string cleaned = name.Replace("(R)", "").Replace("(TM)", "").Replace("™", "").Replace("®", "");
-        cleaned = Regex.Replace(cleaned, @"\b(version|v|edition|build|x64|x86|64-bit|64bit|32-bit|32bit)\b.*", "", RegexOptions.IgnoreCase);
-        cleaned = Regex.Replace(cleaned, @"\b\d+(\.\d+)*\b", "");
+        cleaned = Regex.Replace(cleaned, @"\s*(?:\b(?:version|edition|build|x64|x86|64-bit|64bit|32-bit|32bit)\b|\bv?\d+(\.\d+)*).*", "", RegexOptions.IgnoreCase);
         cleaned = cleaned.Trim();
         return cleaned;
     }
 
-    private bool IsMatch(string folderOrKeyName, string fullDisplayName, string cleanName, string fullPublisher, string cleanPublisher)
+    public bool IsMatch(string folderOrKeyName, string fullDisplayName, string cleanName, string fullPublisher, string cleanPublisher)
     {
         if (string.IsNullOrEmpty(folderOrKeyName)) return false;
         

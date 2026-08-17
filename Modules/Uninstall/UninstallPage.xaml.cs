@@ -129,7 +129,7 @@ public sealed partial class UninstallPage : Page
     {
         var btn = ReloadBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, ScanAppsRing, ScanAppsText, null,
+            btn, ScanAppsRing, ScanAppsText, ScanAppsIcon,
             "Scanning Applications...", "Scan Registry Apps",
             async () =>
             {

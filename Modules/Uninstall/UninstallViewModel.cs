@@ -242,6 +242,13 @@ public class UninstallViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _storeAppsCount, v => _storeAppsCount = v, value);
     }
 
+    private int _largeAppsCount;
+    public int LargeAppsCount
+    {
+        get => _largeAppsCount;
+        set => SetPropertyOnUI(() => _largeAppsCount, v => _largeAppsCount = v, value);
+    }
+
     private bool _hasSelectedApps;
     public bool HasSelectedApps
     {
@@ -254,8 +261,8 @@ public class UninstallViewModel : ViewModelBase
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         _dialogService = App.Services.GetRequiredService<IDialogService>();
 
-        _uninstallEngine.OutputReceived += msg => _dispatcherQueue.TryEnqueue(() => ProgressMessage = msg.T());
-        _uninstallEngine.ProgressChanged += pct => _dispatcherQueue.TryEnqueue(() => ProgressPercent = pct);
+        _uninstallEngine.OutputReceived += msg => _dispatcherQueue?.TryEnqueue(() => ProgressMessage = msg.T());
+        _uninstallEngine.ProgressChanged += pct => _dispatcherQueue?.TryEnqueue(() => ProgressPercent = pct);
 
         _ = ScanAppsAsync();
     }
@@ -300,6 +307,7 @@ public class UninstallViewModel : ViewModelBase
         TotalAppsCount = _allApps.Count;
         DesktopAppsCount = _allApps.Count(x => !x.IsStoreApp);
         StoreAppsCount = _allApps.Count(x => x.IsStoreApp);
+        LargeAppsCount = _allApps.Count(x => x.IsLargeApp);
         
         long totalBytes = _allApps.Sum(x => x.SizeBytes);
         TotalAppsSizeFormatted = FormatHelper.FormatBytes(totalBytes);
@@ -315,11 +323,12 @@ public class UninstallViewModel : ViewModelBase
         if (!string.IsNullOrEmpty(query))
         {
             list = list.Where(x => x.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase) || 
-                                   x.Publisher.Contains(query, StringComparison.OrdinalIgnoreCase));
+                                   x.Publisher.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                                   x.Version.Contains(query, StringComparison.OrdinalIgnoreCase));
         }
 
         // 2. Type filter
-        // 0 = All, 1 = Desktop, 2 = Store
+        // 0 = All, 1 = Desktop, 2 = Store, 3 = Large Apps (>500 MB)
         if (SelectedFilterIndex == 1)
         {
             list = list.Where(x => !x.IsStoreApp);
@@ -327,6 +336,10 @@ public class UninstallViewModel : ViewModelBase
         else if (SelectedFilterIndex == 2)
         {
             list = list.Where(x => x.IsStoreApp);
+        }
+        else if (SelectedFilterIndex == 3)
+        {
+            list = list.Where(x => x.IsLargeApp);
         }
 
         // 3. Sorting

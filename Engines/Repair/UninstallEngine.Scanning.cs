@@ -77,6 +77,23 @@ public partial class UninstallEngine
                             {
                                 installDate = $"{installDateRaw.Substring(0, 4)}-{installDateRaw.Substring(4, 2)}-{installDateRaw.Substring(6, 2)}";
                             }
+                            else if (!string.IsNullOrEmpty(installDateRaw) && DateTime.TryParse(installDateRaw, out var parsedDt))
+                            {
+                                installDate = parsedDt.ToString("yyyy-MM-dd");
+                            }
+
+                            if (sizeBytes == 0 && !string.IsNullOrWhiteSpace(installLocation) && Directory.Exists(installLocation))
+                            {
+                                try
+                                {
+                                    sizeBytes = GetDirectorySize(installLocation);
+                                    if (string.IsNullOrEmpty(installDate))
+                                    {
+                                        installDate = Directory.GetCreationTime(installLocation).ToString("yyyy-MM-dd");
+                                    }
+                                }
+                                catch {}
+                            }
                             
                             string iconPath = "";
                             if (!string.IsNullOrWhiteSpace(displayIcon))

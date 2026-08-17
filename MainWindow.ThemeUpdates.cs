@@ -19,46 +19,19 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            string raw = DbManager.GetSettings();
-            if (!string.IsNullOrEmpty(raw))
+            var settings = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+            ApplyAppTheme(settings.Theme == "Dark");
+            App.ApplyAccentColor(settings.AccentColor ?? "Default");
+            ApplyTransparency(settings.TransparencyLevel);
+
+            // Check for updates automatically in the background
+            if (settings.AutoCheckUpdates)
             {
-                using var doc = JsonDocument.Parse(raw);
-                var root = doc.RootElement;
-                if (root.TryGetProperty("Theme", out var themeProp))
+                _ = Task.Run(async () =>
                 {
-                    string theme = themeProp.GetString() ?? "Dark";
-                    ApplyAppTheme(theme == "Dark");
-                }
-                else
-                {
-                    ApplyAppTheme(true);
-                }
-
-                // Load and apply Accent Color on start
-                if (root.TryGetProperty("AccentColor", out var accentProp))
-                {
-                    App.ApplyAccentColor(accentProp.GetString() ?? "Default");
-                }
-
-                // Load and apply Transparency Level on start
-                if (root.TryGetProperty("TransparencyLevel", out var transProp))
-                {
-                    ApplyTransparency(transProp.GetDouble());
-                }
-
-                // Check for updates automatically in the background
-                if (root.TryGetProperty("AutoCheckUpdates", out var autoProp) && autoProp.GetBoolean())
-                {
-                    _ = Task.Run(async () =>
-                    {
-                        await Task.Delay(3000);
-                        await RunSilentUpdateCheckAsync();
-                    });
-                }
-            }
-            else
-            {
-                ApplyAppTheme(true); // Default to Dark
+                    await Task.Delay(3000);
+                    await RunSilentUpdateCheckAsync();
+                });
             }
         }
         catch
@@ -106,16 +79,7 @@ public sealed partial class MainWindow : Window
                 response = await client.GetStringAsync(jsonUrl);
             }
             
-            bool betaEnabled = false;
-            string settingsRaw = DbManager.GetSettings();
-            if (!string.IsNullOrEmpty(settingsRaw))
-            {
-                using var setDoc = JsonDocument.Parse(settingsRaw);
-                if (setDoc.RootElement.TryGetProperty("BetaUpdates", out var betaProp))
-                {
-                    betaEnabled = betaProp.GetBoolean();
-                }
-            }
+            bool betaEnabled = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.BetaUpdates;
 
             using var doc = JsonDocument.Parse(response);
             var root = doc.RootElement;
@@ -146,15 +110,7 @@ public sealed partial class MainWindow : Window
                 DbManager.LogAction($"Update available: v{remoteVerStr}", "Software Updater", "Success");
                 
                 // Read configuration to determine if we should auto install
-                bool autoInstall = false;
-                if (!string.IsNullOrEmpty(settingsRaw))
-                {
-                    using var setDoc = JsonDocument.Parse(settingsRaw);
-                    if (setDoc.RootElement.TryGetProperty("AutoInstallUpdates", out var autoInstallProp))
-                    {
-                        autoInstall = autoInstallProp.GetBoolean();
-                    }
-                }
+                bool autoInstall = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.AutoInstallUpdates;
 
                 if (autoInstall)
                 {
@@ -259,21 +215,11 @@ public sealed partial class MainWindow : Window
         bool nextIsDark = !isCurrentlyDark;
         ApplyAppTheme(nextIsDark);
 
-        // Update stored settings
-        try
+        // Update stored settings reactively
+        WinCarePro.Services.Implementations.SettingsService.Instance.UpdateSettings(s =>
         {
-            string raw = DbManager.GetSettings();
-            var settingsDict = new System.Collections.Generic.Dictionary<string, object>();
-            if (!string.IsNullOrEmpty(raw))
-            {
-                var parsed = JsonSerializer.Deserialize<System.Collections.Generic.Dictionary<string, object>>(raw);
-                if (parsed != null) settingsDict = parsed;
-            }
-            settingsDict["Theme"] = nextIsDark ? "Dark" : "Light";
-            string themeJson = JsonSerializer.Serialize(settingsDict);
-            Task.Run(() => DbManager.SaveSettings(themeJson));
-        }
-        catch { }
+            s.Theme = nextIsDark ? "Dark" : "Light";
+        }, "Theme");
     }
 
     public void InstallDownloadedUpdate(bool silent = false)

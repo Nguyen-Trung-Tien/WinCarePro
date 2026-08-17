@@ -163,12 +163,8 @@ public class NotificationService : INotificationService
     {
         try
         {
-            string raw = Database.DbManager.GetSettings();
-            if (string.IsNullOrEmpty(raw)) return true;
-
-            using var doc = System.Text.Json.JsonDocument.Parse(raw);
-            var root = doc.RootElement;
-            if (root.TryGetProperty("ShowNotifications", out var showProp) && !showProp.GetBoolean())
+            var settings = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+            if (!settings.ShowNotifications)
             {
                 return false;
             }
@@ -176,14 +172,14 @@ public class NotificationService : INotificationService
             // Specific filter conditions
             if (dbSeverity.Equals("Warning", StringComparison.OrdinalIgnoreCase))
             {
-                if (title.Contains("Update") && root.TryGetProperty("ShowUpdateNotifications", out var upProp) && !upProp.GetBoolean())
+                if (title.Contains("Update") && !settings.ShowUpdateNotifications)
                     return false;
-                else if (root.TryGetProperty("NotifyOnLowHealth", out var lhProp) && !lhProp.GetBoolean())
+                else if (!settings.NotifyOnLowHealth)
                     return false;
             }
             else if (dbSeverity.Equals("Info", StringComparison.OrdinalIgnoreCase))
             {
-                if (root.TryGetProperty("NotifyOnMaintenance", out var maintProp) && !maintProp.GetBoolean())
+                if (!settings.NotifyOnMaintenance)
                     return false;
             }
         }
@@ -270,20 +266,7 @@ public class NotificationService : INotificationService
         if (win.ToastStackContainer == null) return;
 
         // Check if sound settings are enabled
-        bool playSound = true;
-        try
-        {
-            string raw = Database.DbManager.GetSettings();
-            if (!string.IsNullOrEmpty(raw))
-            {
-                using var doc = System.Text.Json.JsonDocument.Parse(raw);
-                if (doc.RootElement.TryGetProperty("NotificationSound", out var soundProp) && !soundProp.GetBoolean())
-                {
-                    playSound = false;
-                }
-            }
-        }
-        catch { }
+        bool playSound = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.NotificationSound;
 
         if (playSound)
         {

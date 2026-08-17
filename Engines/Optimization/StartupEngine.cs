@@ -725,21 +725,7 @@ public class StartupEngine
             var td = ts.NewTask();
             td.RegistrationInfo.Description = "WinCarePro Automated System Junk Clean and Maintenance";
 
-            int freqIndex = 1; // Default: Weekly
-            try
-            {
-                string raw = Database.DbManager.GetSettings();
-                if (!string.IsNullOrEmpty(raw))
-                {
-                    using var doc = System.Text.Json.JsonDocument.Parse(raw);
-                    var root = doc.RootElement;
-                    if (root.TryGetProperty("MaintenanceFrequencyIndex", out var freqProp))
-                    {
-                        freqIndex = freqProp.GetInt32();
-                    }
-                }
-            }
-            catch { }
+            int freqIndex = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.MaintenanceFrequencyIndex;
 
             Trigger trigger;
             string frequencyName;

@@ -3,6 +3,8 @@ using System.IO;
 using System.Text.Json;
 using WinCarePro.Database;
 using WinCarePro.Models;
+using WinCarePro.Services.Contracts;
+using WinCarePro.Services.Implementations;
 using Xunit;
 
 namespace WinCarePro.Tests;
@@ -93,5 +95,96 @@ public class SettingsAndStateTests
         var retrievedProfile = JsonSerializer.Deserialize<SettingsProfile>(retrievedJson);
         Assert.NotNull(retrievedProfile);
         Assert.Equal("Purple", retrievedProfile.AccentColor);
+    }
+
+    [Fact]
+    public void SettingsService_UpdateSettings_FiresEventAndUpdatesMemoryCache()
+    {
+        // Arrange
+        var service = SettingsService.Instance;
+        bool eventFired = false;
+        string? changedProp = null;
+
+        void OnSettingsChanged(object? sender, SettingsChangedEventArgs e)
+        {
+            eventFired = true;
+            changedProp = e.PropertyName;
+        }
+
+        service.SettingsChanged += OnSettingsChanged;
+
+        try
+        {
+            // Act
+            service.UpdateSettings(s =>
+            {
+                s.AccentColor = "Amber";
+                s.TransparencyLevel = 65.0;
+            }, "AccentColor");
+
+            // Assert
+            Assert.True(eventFired);
+            Assert.Equal("AccentColor", changedProp);
+            Assert.Equal("Amber", service.CurrentSettings.AccentColor);
+            Assert.Equal(65.0, service.CurrentSettings.TransparencyLevel);
+        }
+        finally
+        {
+            service.SettingsChanged -= OnSettingsChanged;
+        }
+    }
+
+    [Fact]
+    public void SettingsService_ExportAndImportJson_RoundTripsCorrectly()
+    {
+        // Arrange
+        var service = SettingsService.Instance;
+        service.UpdateSettings(s =>
+        {
+            s.Theme = "Light";
+            s.AccentColor = "Pink";
+            s.AutoCleanupTriggerSizeGB = 12.5;
+            s.LanguageIndex = 1;
+        });
+
+        // Act
+        string exportedJson = service.ExportSettingsJson();
+        Assert.NotNull(exportedJson);
+        Assert.Contains("\"AccentColor\": \"Pink\"", exportedJson);
+
+        // Reset to default first
+        service.ResetToDefaults();
+        Assert.Equal("Default", service.CurrentSettings.AccentColor);
+
+        // Import the exported backup
+        bool importSuccess = service.ImportSettingsJson(exportedJson);
+
+        // Assert
+        Assert.True(importSuccess);
+        Assert.Equal("Pink", service.CurrentSettings.AccentColor);
+        Assert.Equal("Light", service.CurrentSettings.Theme);
+        Assert.Equal(12.5, service.CurrentSettings.AutoCleanupTriggerSizeGB);
+        Assert.Equal(1, service.CurrentSettings.LanguageIndex);
+    }
+
+    [Fact]
+    public void SettingsService_ResetToDefaults_RestoresFactoryDefaults()
+    {
+        // Arrange
+        var service = SettingsService.Instance;
+        service.UpdateSettings(s =>
+        {
+            s.Theme = "Light";
+            s.AccentColor = "Green";
+            s.TransparencyLevel = 30.0;
+        });
+
+        // Act
+        service.ResetToDefaults();
+
+        // Assert
+        Assert.Equal("Dark", service.CurrentSettings.Theme);
+        Assert.Equal("Default", service.CurrentSettings.AccentColor);
+        Assert.Equal(80.0, service.CurrentSettings.TransparencyLevel);
     }
 }

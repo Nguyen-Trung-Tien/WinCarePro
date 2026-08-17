@@ -67,6 +67,7 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         // Register core engines wrapped in services
+        services.AddSingleton<ISettingsService>(SettingsService.Instance);
         services.AddSingleton<IJunkCleanerService, JunkCleanerService>();
         services.AddSingleton<INetworkService, NetworkService>();
         services.AddSingleton<INetworkHistoryService, NetworkHistoryService>();

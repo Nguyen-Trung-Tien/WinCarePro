@@ -54,17 +54,8 @@ public partial class TranslationManager
     {
         try
         {
-            string raw = Database.DbManager.GetSettings();
-            if (!string.IsNullOrEmpty(raw))
-            {
-                using var doc = JsonDocument.Parse(raw);
-                var root = doc.RootElement;
-                if (root.TryGetProperty("LanguageIndex", out var langProp))
-                {
-                    int index = langProp.GetInt32();
-                    CurrentLanguage = index == 1 ? AppLanguage.Vietnamese : AppLanguage.English;
-                }
-            }
+            int index = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.LanguageIndex;
+            CurrentLanguage = index == 1 ? AppLanguage.Vietnamese : AppLanguage.English;
         }
         catch { }
     }

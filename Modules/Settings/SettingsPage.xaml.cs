@@ -14,13 +14,14 @@ using WinCarePro.Core.Helpers;
 using WinCarePro.Database;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Services.Contracts;
+using WinCarePro.Services.Implementations;
 
 namespace WinCarePro.Views;
 
 public sealed partial class SettingsPage : Page
 {
     private bool _loadingSettings = true; // Guard initialization events from saving settings early
-    private Microsoft.UI.Xaml.DispatcherTimer? _saveSettingsDebounceTimer;
 
     // Shared HttpClient singleton to prevent socket exhaustion from per-call instantiation
     private static readonly HttpClient _httpClient = new()
@@ -33,7 +34,7 @@ public sealed partial class SettingsPage : Page
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         
-        LoadSettings();
+        LoadSettingsToUI();
         UpdateStorageSizes();
 
         this.Loaded += (s, e) =>
@@ -41,75 +42,144 @@ public sealed partial class SettingsPage : Page
             ThemeManager.Instance.ThemeChanged -= OnThemeChangedExternally;
             ThemeManager.Instance.ThemeChanged += OnThemeChangedExternally;
 
+            SettingsService.Instance.SettingsChanged -= OnSettingsChangedExternally;
+            SettingsService.Instance.SettingsChanged += OnSettingsChangedExternally;
+
             // Sync with current theme on load
             bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
             ApplyThemeCardSelection(isDark);
 
-            string currentAccent = GetSelectedAccentColorTag();
+            string currentAccent = SettingsService.Instance.CurrentSettings.AccentColor ?? "Default";
             ApplyAccentColorSelection(currentAccent);
         };
 
         this.Unloaded += (s, e) =>
         {
             ThemeManager.Instance.ThemeChanged -= OnThemeChangedExternally;
+            SettingsService.Instance.SettingsChanged -= OnSettingsChangedExternally;
         };
     }
 
-    private void LoadSettings()
+    private void LoadSettingsToUI()
     {
         _loadingSettings = true;
         try
         {
-            string raw = DbManager.GetSettings();
-            if (!string.IsNullOrEmpty(raw))
+            var profile = SettingsService.Instance.CurrentSettings;
+
+            // General & updates
+            LanguageComboBox.SelectedIndex = profile.LanguageIndex;
+            AutoScanToggle.IsOn = profile.AutoScan;
+            AutoUpdateToggle.IsOn = profile.AutoCheckUpdates;
+            AutoInstallUpdatesToggle.IsOn = profile.AutoInstallUpdates;
+            MinimizeToTrayToggle.IsOn = profile.MinimizeToTray;
+            BetaUpdatesToggle.IsOn = profile.BetaUpdates;
+
+            // Appearance
+            ApplyAccentColorSelection(profile.AccentColor);
+            TransparencySlider.Value = profile.TransparencyLevel;
+            if (TransparencyValueLabel != null)
             {
-                var profile = JsonSerializer.Deserialize<SettingsProfile>(raw);
-                if (profile != null)
-                {
-                    // General & updates
-                    LanguageComboBox.SelectedIndex = profile.LanguageIndex;
-                    AutoScanToggle.IsOn = profile.AutoScan;
-                    AutoUpdateToggle.IsOn = profile.AutoCheckUpdates;
-                    AutoInstallUpdatesToggle.IsOn = profile.AutoInstallUpdates;
-                    MinimizeToTrayToggle.IsOn = profile.MinimizeToTray;
-                    BetaUpdatesToggle.IsOn = profile.BetaUpdates;
-
-                    // Appearance
-                    ApplyAccentColorSelection(profile.AccentColor);
-                    TransparencySlider.Value = profile.TransparencyLevel;
-                    EnableAnimationsToggle.IsOn = profile.EnableAnimations;
-                    ApplyThemeCardSelection(profile.Theme == "Dark");
-
-                    // Auto Maintenance
-                    AutoCleanupSlider.Value = profile.AutoCleanupTriggerSizeGB;
-                    CleanupSizeLabel.Text = $"{profile.AutoCleanupTriggerSizeGB:F1} GB";
-                    TriggerSmartBoostToggle.IsOn = profile.TriggerSmartBoost;
-                    MaintenanceFrequencyComboBox.SelectedIndex = profile.MaintenanceFrequencyIndex;
-
-                    // Notifications Settings
-                    ShowNotificationsToggle.IsOn = profile.ShowNotifications;
-                    NotificationThresholdSlider.Value = profile.NotificationThreshold;
-                    NotificationThresholdLabel.Text = $"{profile.NotificationThreshold:F0}%";
-                    NotifyOnLowHealthToggle.IsOn = profile.NotifyOnLowHealth;
-                    NotifyOnMaintenanceToggle.IsOn = profile.NotifyOnMaintenance;
-                    ShowUpdateNotificationsToggle.IsOn = profile.ShowUpdateNotifications;
-                    NotificationSoundToggle.IsOn = profile.NotificationSound;
-
-                    // Telemetry
-                    TelemetryIntervalComboBox.SelectedIndex = profile.TelemetryIntervalIndex;
-                    PerformanceHistoryComboBox.SelectedIndex = profile.PerformanceHistoryDurationIndex;
-                    EnableHardwareSensorsToggle.IsOn = profile.EnableSensorsThread;
-
-                    // Safety
-                    CreateRestorePointToggle.IsOn = profile.CreateRestorePoint;
-                    BackupRegistryToggle.IsOn = profile.BackupRegistryHive;
-                    AlertsLevelSlider.Value = profile.ConfirmationAlertsLevel;
-
-                    // Advanced
-                    EnableVerboseLogsToggle.IsOn = profile.EnableVerboseLogs;
-                    EnableExperimentalAiToggle.IsOn = profile.EnableExperimentalAi;
-                }
+                TransparencyValueLabel.Text = $"{profile.TransparencyLevel:F0}%";
             }
+            EnableAnimationsToggle.IsOn = profile.EnableAnimations;
+            ApplyThemeCardSelection(profile.Theme == "Dark");
+
+            // Auto Maintenance
+            AutoCleanupSlider.Value = profile.AutoCleanupTriggerSizeGB;
+            if (CleanupSizeLabel != null)
+            {
+                CleanupSizeLabel.Text = $"{profile.AutoCleanupTriggerSizeGB:F1} GB";
+            }
+            TriggerSmartBoostToggle.IsOn = profile.TriggerSmartBoost;
+            MaintenanceFrequencyComboBox.SelectedIndex = profile.MaintenanceFrequencyIndex;
+
+            // Notifications Settings
+            ShowNotificationsToggle.IsOn = profile.ShowNotifications;
+            NotificationThresholdSlider.Value = profile.NotificationThreshold;
+            if (NotificationThresholdLabel != null)
+            {
+                NotificationThresholdLabel.Text = $"{profile.NotificationThreshold:F0}%";
+            }
+            NotifyOnLowHealthToggle.IsOn = profile.NotifyOnLowHealth;
+            NotifyOnMaintenanceToggle.IsOn = profile.NotifyOnMaintenance;
+            ShowUpdateNotificationsToggle.IsOn = profile.ShowUpdateNotifications;
+            NotificationSoundToggle.IsOn = profile.NotificationSound;
+
+            // Telemetry
+            TelemetryIntervalComboBox.SelectedIndex = profile.TelemetryIntervalIndex;
+            PerformanceHistoryComboBox.SelectedIndex = profile.PerformanceHistoryDurationIndex;
+            EnableHardwareSensorsToggle.IsOn = profile.EnableSensorsThread;
+
+            // Safety
+            CreateRestorePointToggle.IsOn = profile.CreateRestorePoint;
+            BackupRegistryToggle.IsOn = profile.BackupRegistryHive;
+            AlertsLevelSlider.Value = profile.ConfirmationAlertsLevel;
+
+            // Advanced
+            EnableVerboseLogsToggle.IsOn = profile.EnableVerboseLogs;
+            EnableExperimentalAiToggle.IsOn = profile.EnableExperimentalAi;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SettingsPage] Error loading settings to UI: {ex.Message}");
+        }
+        finally
+        {
+            _loadingSettings = false;
+        }
+    }
+
+    private void SyncUIWithSettings(SettingsProfile profile)
+    {
+        _loadingSettings = true;
+        try
+        {
+            LanguageComboBox.SelectedIndex = profile.LanguageIndex;
+            AutoScanToggle.IsOn = profile.AutoScan;
+            AutoUpdateToggle.IsOn = profile.AutoCheckUpdates;
+            AutoInstallUpdatesToggle.IsOn = profile.AutoInstallUpdates;
+            MinimizeToTrayToggle.IsOn = profile.MinimizeToTray;
+            BetaUpdatesToggle.IsOn = profile.BetaUpdates;
+
+            ApplyAccentColorSelection(profile.AccentColor);
+            TransparencySlider.Value = profile.TransparencyLevel;
+            if (TransparencyValueLabel != null)
+            {
+                TransparencyValueLabel.Text = $"{profile.TransparencyLevel:F0}%";
+            }
+            EnableAnimationsToggle.IsOn = profile.EnableAnimations;
+            ApplyThemeCardSelection(profile.Theme == "Dark");
+
+            AutoCleanupSlider.Value = profile.AutoCleanupTriggerSizeGB;
+            if (CleanupSizeLabel != null)
+            {
+                CleanupSizeLabel.Text = $"{profile.AutoCleanupTriggerSizeGB:F1} GB";
+            }
+            TriggerSmartBoostToggle.IsOn = profile.TriggerSmartBoost;
+            MaintenanceFrequencyComboBox.SelectedIndex = profile.MaintenanceFrequencyIndex;
+
+            ShowNotificationsToggle.IsOn = profile.ShowNotifications;
+            NotificationThresholdSlider.Value = profile.NotificationThreshold;
+            if (NotificationThresholdLabel != null)
+            {
+                NotificationThresholdLabel.Text = $"{profile.NotificationThreshold:F0}%";
+            }
+            NotifyOnLowHealthToggle.IsOn = profile.NotifyOnLowHealth;
+            NotifyOnMaintenanceToggle.IsOn = profile.NotifyOnMaintenance;
+            ShowUpdateNotificationsToggle.IsOn = profile.ShowUpdateNotifications;
+            NotificationSoundToggle.IsOn = profile.NotificationSound;
+
+            TelemetryIntervalComboBox.SelectedIndex = profile.TelemetryIntervalIndex;
+            PerformanceHistoryComboBox.SelectedIndex = profile.PerformanceHistoryDurationIndex;
+            EnableHardwareSensorsToggle.IsOn = profile.EnableSensorsThread;
+
+            CreateRestorePointToggle.IsOn = profile.CreateRestorePoint;
+            BackupRegistryToggle.IsOn = profile.BackupRegistryHive;
+            AlertsLevelSlider.Value = profile.ConfirmationAlertsLevel;
+
+            EnableVerboseLogsToggle.IsOn = profile.EnableVerboseLogs;
+            EnableExperimentalAiToggle.IsOn = profile.EnableExperimentalAi;
         }
         catch { }
         finally
@@ -122,85 +192,52 @@ public sealed partial class SettingsPage : Page
     {
         if (_loadingSettings) return;
 
-        try
+        double sizeGB = AutoCleanupSlider.Value;
+        if (sizeGB <= 0) sizeGB = 5.0;
+
+        string currentTheme = (ThemeManager.Instance.CurrentTheme == ElementTheme.Light) ? "Light" : "Dark";
+
+        SettingsService.Instance.UpdateSettings(p =>
         {
-            double sizeGB = AutoCleanupSlider.Value;
-            if (sizeGB <= 0) sizeGB = 5.0;
+            p.Theme = currentTheme;
+            p.AutoScan = AutoScanToggle.IsOn;
+            p.ReportFormat = "TXT";
+            
+            p.LanguageIndex = LanguageComboBox.SelectedIndex;
+            p.AutoCheckUpdates = AutoUpdateToggle.IsOn;
+            p.AutoInstallUpdates = AutoInstallUpdatesToggle.IsOn;
+            p.MinimizeToTray = MinimizeToTrayToggle.IsOn;
+            p.BetaUpdates = BetaUpdatesToggle.IsOn;
 
-            string currentTheme = "Dark";
-            if (App.MainWindowInstance != null)
-            {
-                currentTheme = (App.MainWindowInstance.Content as FrameworkElement)?.RequestedTheme == ElementTheme.Light ? "Light" : "Dark";
-            }
+            p.AccentColor = GetSelectedAccentColorTag();
+            p.TransparencyLevel = TransparencySlider.Value;
+            p.EnableAnimations = EnableAnimationsToggle.IsOn;
 
-            var profile = new SettingsProfile
-            {
-                Theme = currentTheme,
-                AutoScan = AutoScanToggle.IsOn,
-                ReportFormat = "TXT",
-                
-                LanguageIndex = LanguageComboBox.SelectedIndex,
-                AutoCheckUpdates = AutoUpdateToggle.IsOn,
-                AutoInstallUpdates = AutoInstallUpdatesToggle.IsOn,
-                MinimizeToTray = MinimizeToTrayToggle.IsOn,
-                BetaUpdates = BetaUpdatesToggle.IsOn,
+            p.AutoCleanupTriggerSizeGB = sizeGB;
+            p.TriggerSmartBoost = TriggerSmartBoostToggle.IsOn;
+            p.MaintenanceFrequencyIndex = MaintenanceFrequencyComboBox.SelectedIndex;
 
-                AccentColor = GetSelectedAccentColorTag(),
-                TransparencyLevel = TransparencySlider.Value,
-                EnableAnimations = EnableAnimationsToggle.IsOn,
+            p.ShowNotifications = ShowNotificationsToggle.IsOn;
+            p.NotificationThreshold = NotificationThresholdSlider.Value;
+            p.NotifyOnLowHealth = NotifyOnLowHealthToggle.IsOn;
+            p.NotifyOnMaintenance = NotifyOnMaintenanceToggle.IsOn;
+            p.ShowUpdateNotifications = ShowUpdateNotificationsToggle.IsOn;
+            p.NotificationSound = NotificationSoundToggle.IsOn;
 
-                AutoCleanupTriggerSizeGB = sizeGB,
-                TriggerSmartBoost = TriggerSmartBoostToggle.IsOn,
-                MaintenanceFrequencyIndex = MaintenanceFrequencyComboBox.SelectedIndex,
+            p.TelemetryIntervalIndex = TelemetryIntervalComboBox.SelectedIndex;
+            p.PerformanceHistoryDurationIndex = PerformanceHistoryComboBox.SelectedIndex;
+            p.EnableSensorsThread = EnableHardwareSensorsToggle.IsOn;
 
-                ShowNotifications = ShowNotificationsToggle.IsOn,
-                NotificationThreshold = NotificationThresholdSlider.Value,
-                NotifyOnLowHealth = NotifyOnLowHealthToggle.IsOn,
-                NotifyOnMaintenance = NotifyOnMaintenanceToggle.IsOn,
-                ShowUpdateNotifications = ShowUpdateNotificationsToggle.IsOn,
-                NotificationSound = NotificationSoundToggle.IsOn,
+            p.CreateRestorePoint = CreateRestorePointToggle.IsOn;
+            p.BackupRegistryHive = BackupRegistryToggle.IsOn;
+            p.ConfirmationAlertsLevel = AlertsLevelSlider.Value;
 
-                TelemetryIntervalIndex = TelemetryIntervalComboBox.SelectedIndex,
-                PerformanceHistoryDurationIndex = PerformanceHistoryComboBox.SelectedIndex,
-                EnableSensorsThread = EnableHardwareSensorsToggle.IsOn,
+            p.EnableVerboseLogs = EnableVerboseLogsToggle.IsOn;
+            p.EnableExperimentalAi = EnableExperimentalAiToggle.IsOn;
+        });
 
-                CreateRestorePoint = CreateRestorePointToggle.IsOn,
-                BackupRegistryHive = BackupRegistryToggle.IsOn,
-                ConfirmationAlertsLevel = AlertsLevelSlider.Value,
-
-                EnableVerboseLogs = EnableVerboseLogsToggle.IsOn,
-                EnableExperimentalAi = EnableExperimentalAiToggle.IsOn
-            };
-
-            string json = JsonSerializer.Serialize(profile);
-            Task.Run(() => DbManager.SaveSettings(json));
-
-            // Apply modifications immediately
-            ApplyRuntimeSettings(profile);
-        }
-        catch { }
-    }
-
-    private void QueueSaveSettings()
-    {
-        if (_loadingSettings) return;
-
-        if (_saveSettingsDebounceTimer == null)
-        {
-            _saveSettingsDebounceTimer = new Microsoft.UI.Xaml.DispatcherTimer();
-            _saveSettingsDebounceTimer.Interval = TimeSpan.FromMilliseconds(400);
-            _saveSettingsDebounceTimer.Tick += (s, e) =>
-            {
-                _saveSettingsDebounceTimer.Stop();
-                SaveSettings();
-            };
-        }
-        else
-        {
-            _saveSettingsDebounceTimer.Stop();
-        }
-
-        _saveSettingsDebounceTimer.Start();
+        // Apply runtime changes immediately
+        ApplyRuntimeSettings(SettingsService.Instance.CurrentSettings);
     }
 
     private void ApplyRuntimeSettings(SettingsProfile profile)
@@ -272,12 +309,8 @@ public sealed partial class SettingsPage : Page
 
         if (selectedEllipse != null)
         {
-            bool isDark = true;
-            if (App.MainWindowInstance != null)
-            {
-                isDark = (App.MainWindowInstance.MainRootGrid.RequestedTheme != ElementTheme.Light);
-            }
-            selectedEllipse.Stroke = new Microsoft.UI.Xaml.Media.SolidColorBrush(isDark ? Microsoft.UI.Colors.White : Microsoft.UI.Colors.DimGray);
+            bool isDark = (ThemeManager.Instance.CurrentTheme == ElementTheme.Dark);
+            selectedEllipse.Stroke = new SolidColorBrush(isDark ? Microsoft.UI.Colors.White : Microsoft.UI.Colors.DimGray);
             selectedEllipse.StrokeThickness = 2.5;
         }
 
@@ -297,7 +330,7 @@ public sealed partial class SettingsPage : Page
             lts.IsLoading = true;
             try
             {
-                await System.Threading.Tasks.Task.Run(() =>
+                await Task.Run(() =>
                 {
                     var engine = new WinCarePro.Engines.StartupEngine();
                     engine.RegisterScheduledMaintenanceTask(AutoScanToggle.IsOn);
@@ -329,9 +362,10 @@ public sealed partial class SettingsPage : Page
     private void OnLanguageSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_loadingSettings) return;
-        SaveSettings();
         
         int index = LanguageComboBox.SelectedIndex;
+        SettingsService.Instance.UpdateSettings(s => s.LanguageIndex = index, "LanguageIndex");
+        
         TranslationManager.Instance.CurrentLanguage = index == 1 ? AppLanguage.Vietnamese : AppLanguage.English;
         
         // Fast-path cached translation update (Zero visual tree walks)
@@ -362,7 +396,7 @@ public sealed partial class SettingsPage : Page
             App.MainWindowInstance.ApplyTransparency(e.NewValue);
         }
 
-        QueueSaveSettings();
+        SettingsService.Instance.UpdateSettings(s => s.TransparencyLevel = e.NewValue, "TransparencyLevel");
     }
 
     private void OnAutoCleanupSliderChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
@@ -372,7 +406,7 @@ public sealed partial class SettingsPage : Page
             CleanupSizeLabel.Text = $"{e.NewValue:F1} GB";
         }
         if (_loadingSettings) return;
-        QueueSaveSettings();
+        SettingsService.Instance.UpdateSettings(s => s.AutoCleanupTriggerSizeGB = e.NewValue, "AutoCleanupTriggerSizeGB");
     }
 
     private void OnNotificationThresholdSliderChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
@@ -382,13 +416,14 @@ public sealed partial class SettingsPage : Page
             NotificationThresholdLabel.Text = $"{e.NewValue:F0}%";
         }
         if (_loadingSettings) return;
-        QueueSaveSettings();
+        SettingsService.Instance.UpdateSettings(s => s.NotificationThreshold = e.NewValue, "NotificationThreshold");
     }
 
     private void OnMaintenanceFrequencyChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_loadingSettings) return;
-        SaveSettings();
+        int freq = MaintenanceFrequencyComboBox.SelectedIndex;
+        SettingsService.Instance.UpdateSettings(s => s.MaintenanceFrequencyIndex = freq, "MaintenanceFrequencyIndex");
         
         try
         {
@@ -399,8 +434,17 @@ public sealed partial class SettingsPage : Page
     }
 
     // Storage Purge Management
+    private void OnRefreshStorageClick(object sender, RoutedEventArgs e)
+    {
+        UpdateStorageSizes();
+    }
+
     private void UpdateStorageSizes()
     {
+        if (LogsDbSizeLabel != null) LogsDbSizeLabel.Text = "Scanning...".T();
+        if (ReportsDbSizeLabel != null) ReportsDbSizeLabel.Text = "Scanning...".T();
+        if (CacheDbSizeLabel != null) CacheDbSizeLabel.Text = "Scanning...".T();
+
         Task.Run(() =>
         {
             try
@@ -475,8 +519,6 @@ public sealed partial class SettingsPage : Page
             catch {}
         });
     }
-
-    // FormatSize centralized to FormatHelper.FormatBytes
 
     private async void OnPurgeDatabaseClick(object sender, RoutedEventArgs e)
     {
@@ -567,9 +609,19 @@ public sealed partial class SettingsPage : Page
             bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
             ApplyThemeCardSelection(isDark);
 
-            // Re-apply indicators to fit new theme contrast (DimGray/White)
-            string currentAccent = GetSelectedAccentColorTag();
+            string currentAccent = SettingsService.Instance.CurrentSettings.AccentColor ?? "Default";
             ApplyAccentColorSelection(currentAccent);
+        });
+    }
+
+    private void OnSettingsChangedExternally(object? sender, SettingsChangedEventArgs e)
+    {
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            if (!_loadingSettings)
+            {
+                SyncUIWithSettings(e.Settings);
+            }
         });
     }
 
@@ -600,27 +652,13 @@ public sealed partial class SettingsPage : Page
         {
             mainWindow.ApplyAppTheme(dark);
         }
-        else if (this.XamlRoot?.Content is FrameworkElement rootElement)
+        else
         {
-            rootElement.RequestedTheme = dark ? ElementTheme.Dark : ElementTheme.Light;
+            ThemeManager.Instance.ApplyTheme(dark ? ElementTheme.Dark : ElementTheme.Light);
         }
 
-        try
-        {
-            string raw = DbManager.GetSettings();
-            var settingsDict = new Dictionary<string, object>();
-            if (!string.IsNullOrEmpty(raw))
-            {
-                var parsed = JsonSerializer.Deserialize<Dictionary<string, object>>(raw);
-                if (parsed != null) settingsDict = parsed;
-            }
-            settingsDict["Theme"] = dark ? "Dark" : "Light";
-            string themeJson = JsonSerializer.Serialize(settingsDict);
-            Task.Run(() => DbManager.SaveSettings(themeJson));
-        }
-        catch { }
+        SettingsService.Instance.UpdateSettings(s => s.Theme = dark ? "Dark" : "Light", "Theme");
 
-        // Re-apply indicators to fit new theme contrast (DimGray/White)
         string currentAccent = GetSelectedAccentColorTag();
         ApplyAccentColorSelection(currentAccent);
     }
@@ -636,12 +674,86 @@ public sealed partial class SettingsPage : Page
         if (!string.IsNullOrEmpty(tag))
         {
             ApplyAccentColorSelection(tag);
-            SaveSettings();
+            SettingsService.Instance.UpdateSettings(s => s.AccentColor = tag, "AccentColor");
+            App.ApplyAccentColor(tag);
             App.MainWindowInstance?.ShowToastNotification("Accent Applied".T(), string.Format("System accent color successfully updated to {0}.".T(), tag), "Success");
         }
     }
 
+    // Backup, Export, Import & Reset handlers
+    private async void OnExportSettingsClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            string json = SettingsService.Instance.ExportSettingsJson();
+            string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "WinCarePro");
+            string backupPath = Path.Combine(appData, $"WinCarePro_SettingsBackup_{DateTime.Now:yyyyMMdd_HHmmss}.json");
+            
+            await File.WriteAllTextAsync(backupPath, json);
+            DbManager.LogAction($"Exported settings backup to {backupPath}", "Settings", "Success");
+            
+            App.MainWindowInstance?.ShowToastNotification("Backup Exported".T(), string.Format("Settings saved successfully to: {0}".T(), Path.GetFileName(backupPath)), "Success");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Export Failed".T(), ex.Message, "Critical");
+        }
+    }
 
+    private async void OnImportSettingsClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "WinCarePro");
+            if (Directory.Exists(appData))
+            {
+                var files = Directory.GetFiles(appData, "WinCarePro_SettingsBackup_*.json");
+                if (files.Length > 0)
+                {
+                    Array.Sort(files);
+                    string latestBackup = files[^1]; // Get latest backup
+                    string json = await File.ReadAllTextAsync(latestBackup);
+                    bool ok = SettingsService.Instance.ImportSettingsJson(json);
+                    if (ok)
+                    {
+                        SyncUIWithSettings(SettingsService.Instance.CurrentSettings);
+                        ApplyRuntimeSettings(SettingsService.Instance.CurrentSettings);
+                        App.MainWindowInstance?.ShowToastNotification("Settings Restored".T(), string.Format("Restored from: {0}".T(), Path.GetFileName(latestBackup)), "Success");
+                        return;
+                    }
+                }
+            }
+            App.MainWindowInstance?.ShowToastNotification("No Backup Found".T(), "No existing settings backup files were found in AppData.".T(), "Warning");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Import Failed".T(), ex.Message, "Critical");
+        }
+    }
+
+    private async void OnResetDefaultsClick(object sender, RoutedEventArgs e)
+    {
+        var confirmDialog = new ContentDialog
+        {
+            Title = "Reset to Factory Defaults?".T(),
+            Content = "Are you sure you want to reset all configuration settings to factory defaults? This cannot be undone.".T(),
+            PrimaryButtonText = "Reset All".T(),
+            CloseButtonText = "Cancel".T(),
+            DefaultButton = ContentDialogButton.Close,
+            XamlRoot = this.Content.XamlRoot,
+            RequestedTheme = ThemeManager.Instance.CurrentTheme
+        };
+
+        var result = await confirmDialog.ShowAsync();
+        if (result == ContentDialogResult.Primary)
+        {
+            SettingsService.Instance.ResetToDefaults();
+            SyncUIWithSettings(SettingsService.Instance.CurrentSettings);
+            ApplyRuntimeSettings(SettingsService.Instance.CurrentSettings);
+            DbManager.LogAction("Reset all settings to factory defaults", "Settings", "Warning");
+            App.MainWindowInstance?.ShowToastNotification("Reset Complete".T(), "All settings have been restored to factory defaults.".T(), "Success");
+        }
+    }
 
     private async void OnCheckUpdatesClick(object sender, RoutedEventArgs e)
     {
@@ -656,7 +768,7 @@ public sealed partial class SettingsPage : Page
                 {
                     await CheckForUpdatesInternalAsync();
                 }
-                catch (System.IO.FileNotFoundException fnfEx)
+                catch (FileNotFoundException fnfEx)
                 {
                     UpdateStatusLabel.Text = string.Format("Network library unavailable: {0}".T(), fnfEx.FileName ?? fnfEx.Message);
                 }
@@ -673,20 +785,7 @@ public sealed partial class SettingsPage : Page
         string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
         string response = await _httpClient.GetStringAsync(jsonUrl);
         
-        bool betaEnabled = false;
-        try
-        {
-            string raw = DbManager.GetSettings();
-            if (!string.IsNullOrEmpty(raw))
-            {
-                using var docSettings = JsonDocument.Parse(raw);
-                if (docSettings.RootElement.TryGetProperty("BetaUpdates", out var betaProp))
-                {
-                    betaEnabled = betaProp.GetBoolean();
-                }
-            }
-        }
-        catch { }
+        bool betaEnabled = SettingsService.Instance.CurrentSettings.BetaUpdates;
 
         using var doc = JsonDocument.Parse(response);
         var root = doc.RootElement;
@@ -826,17 +925,7 @@ public sealed partial class SettingsPage : Page
             // System restore point policy check
             try
             {
-                string raw = DbManager.GetSettings();
-                bool createRp = true;
-                if (!string.IsNullOrEmpty(raw))
-                {
-                    using var doc = JsonDocument.Parse(raw);
-                    if (doc.RootElement.TryGetProperty("CreateRestorePoint", out var rpProp))
-                    {
-                        createRp = rpProp.GetBoolean();
-                    }
-                }
-
+                bool createRp = SettingsService.Instance.CurrentSettings.CreateRestorePoint;
                 if (createRp)
                 {
                     UpdateStatusLabel.Text = "Creating System Restore Point...".T();
@@ -856,7 +945,7 @@ public sealed partial class SettingsPage : Page
                 UseShellExecute = true
             });
 
-            Microsoft.UI.Xaml.Application.Current.Exit();
+            Application.Current.Exit();
         }
         catch (Exception ex)
         {
@@ -928,7 +1017,7 @@ public sealed partial class SettingsPage : Page
 
     private void SettingsNavList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        // View switches automatically
+        // View switches automatically via binding
     }
 
     private Visibility GetSectionVisibility(int selectedIndex, int targetIndex)

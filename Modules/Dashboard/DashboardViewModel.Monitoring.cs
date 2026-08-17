@@ -144,39 +144,18 @@ public partial class DashboardViewModel
                 {
                     tickCount++;
 
-                    // Cache settings ONCE per tick — avoids 3x redundant DB calls per monitoring cycle
-                    bool sensorsEnabled = true;
-                    bool smartBoostEnabled = true;
-                    int delayMs = 1000;
-                    try
+                    // High-performance O(1) in-memory settings lookup (Zero DB I/O, zero JSON deserialization per tick)
+                    var currentSettings = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+                    bool sensorsEnabled = currentSettings.EnableSensorsThread;
+                    bool smartBoostEnabled = currentSettings.TriggerSmartBoost;
+                    int delayMs = currentSettings.TelemetryIntervalIndex switch
                     {
-                        string rawSettings = Database.DbManager.GetSettings();
-                        if (!string.IsNullOrEmpty(rawSettings))
-                        {
-                            using var settingsDoc = System.Text.Json.JsonDocument.Parse(rawSettings);
-                            var root = settingsDoc.RootElement;
-
-                            if (root.TryGetProperty("EnableSensorsThread", out var sensorsProp))
-                                sensorsEnabled = sensorsProp.GetBoolean();
-
-                            if (root.TryGetProperty("TriggerSmartBoost", out var sbProp))
-                                smartBoostEnabled = sbProp.GetBoolean();
-
-                            if (root.TryGetProperty("TelemetryIntervalIndex", out var intervalProp))
-                            {
-                                int index = intervalProp.GetInt32();
-                                delayMs = index switch
-                                {
-                                    0 => 500,   // 0.5s
-                                    1 => 1000,  // 1.0s
-                                    2 => 2000,  // 2.0s
-                                    3 => 5000,  // 5.0s
-                                    _ => 1000
-                                };
-                            }
-                        }
-                    }
-                    catch { }
+                        0 => 500,   // 0.5s
+                        1 => 1000,  // 1.0s
+                        2 => 2000,  // 2.0s
+                        3 => 5000,  // 5.0s
+                        _ => 1000
+                    };
                     
                     // CPU and RAM are queried every tick (1000ms)
                     var (cpu, ram) = GetSystemResourceUsage();

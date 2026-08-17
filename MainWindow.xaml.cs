@@ -327,17 +327,7 @@ public sealed partial class MainWindow : Window
         args.Cancel = true;
         try
         {
-            string raw = DbManager.GetSettings();
-            bool minimizeToTray = false;
-            if (!string.IsNullOrEmpty(raw))
-            {
-                using var doc = JsonDocument.Parse(raw);
-                var root = doc.RootElement;
-                if (root.TryGetProperty("MinimizeToTray", out var minProp) && minProp.GetBoolean())
-                {
-                    minimizeToTray = true;
-                }
-            }
+            bool minimizeToTray = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.MinimizeToTray;
 
             if (minimizeToTray)
             {

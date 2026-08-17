@@ -252,7 +252,8 @@ public sealed partial class NotificationPage : Page
                 PrimaryButtonText = "Clear Alerts".T(),
                 CloseButtonText = "Cancel".T(),
                 DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                RequestedTheme = ThemeManager.Instance.CurrentTheme
             };
 
             var result = await dialog.ShowAsync();
@@ -280,7 +281,8 @@ public sealed partial class NotificationPage : Page
                 PrimaryButtonText = "Clear Logs".T(),
                 CloseButtonText = "Cancel".T(),
                 DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                RequestedTheme = ThemeManager.Instance.CurrentTheme
             };
 
             var result = await dialog.ShowAsync();

@@ -99,7 +99,8 @@ public sealed partial class DiskPage : Page
                 Title = "No Items Selected",
                 Content = "Please select at least one duplicate file to delete.",
                 CloseButtonText = "OK",
-                XamlRoot = this.XamlRoot
+                XamlRoot = this.XamlRoot,
+                RequestedTheme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme
             };
             await dialogEmpty.ShowAsync();
             return;
@@ -112,7 +113,8 @@ public sealed partial class DiskPage : Page
             PrimaryButtonText = "Delete Permanently",
             CloseButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Close,
-            XamlRoot = this.XamlRoot
+            XamlRoot = this.XamlRoot,
+            RequestedTheme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme
         };
 
         var result = await dialog.ShowAsync();

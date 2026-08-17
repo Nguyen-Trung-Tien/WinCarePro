@@ -313,7 +313,8 @@ public sealed partial class NetworkPage : Page
             PrimaryButtonText = tm.T("Close"),
             SecondaryButtonText = history.Count > 0 ? tm.T("Clear All History") : null,
             DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = this.XamlRoot
+            XamlRoot = this.XamlRoot,
+            RequestedTheme = ThemeManager.Instance.CurrentTheme
         };
 
         var res = await dialog.ShowAsync();

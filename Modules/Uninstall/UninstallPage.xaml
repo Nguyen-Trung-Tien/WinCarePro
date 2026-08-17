@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="WinCarePro.Views.UninstallPage"
     x:Name="PageRoot"
@@ -487,11 +487,30 @@
                 </Border>
 
                 <!-- Step 1: Progress Card -->
-                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="32" HorizontalAlignment="Center" VerticalAlignment="Center" Width="420" Height="220" Visibility="{x:Bind GetStepProgressVisibility(ViewModel.UninstallStep), Mode=OneWay}">
-                    <StackPanel Spacing="20" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <ProgressRing IsActive="True" Width="60" Height="60" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Center"/>
-                        <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" LineHeight="20" MaxWidth="360"/>
-                        <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="8" CornerRadius="4" Foreground="{StaticResource PrimaryAccentGradient}" Width="320" HorizontalAlignment="Center"/>
+                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="32,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Visibility="{x:Bind GetStepProgressVisibility(ViewModel.UninstallStep), Mode=OneWay}">
+                    <StackPanel Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <!-- Glowing Icon Badge -->
+                        <Grid Width="64" Height="64" HorizontalAlignment="Center">
+                            <Border Width="64" Height="64" CornerRadius="18" Background="#15EF4444" BorderBrush="#40EF4444" BorderThickness="1.5">
+                                <FontIcon Glyph="&#xE74D;" FontSize="24" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+
+                        <StackPanel Spacing="4" HorizontalAlignment="Center">
+                            <TextBlock Text="App Uninstallation Engine" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" />
+                            <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" LineHeight="18" MaxWidth="320"/>
+                        </StackPanel>
+
+                        <!-- Percentage Progress Bar -->
+                        <StackPanel Spacing="8" Width="320" HorizontalAlignment="Center">
+                            <Grid>
+                                <TextBlock Text="Uninstallation Progress" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
+                                <TextBlock Text="{x:Bind ViewModel.ProgressPercentFormatted, Mode=OneWay}" FontSize="13" Foreground="#FFEF4444" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                            </Grid>
+                            <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1">
+                                <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="#FFEF4444" Background="Transparent" HorizontalAlignment="Stretch"/>
+                            </Border>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
 

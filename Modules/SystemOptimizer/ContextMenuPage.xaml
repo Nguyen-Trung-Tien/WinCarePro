@@ -175,10 +175,21 @@
                     </DoubleAnimation>
                 </Storyboard>
             </Grid.Resources>
-            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
-                <StackPanel Spacing="16" HorizontalAlignment="Center">
-                    <ProgressRing Width="48" Height="48" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" />
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
+                <StackPanel Spacing="14" HorizontalAlignment="Center">
+                    <!-- Glowing Mouse Badge -->
+                    <Grid Width="60" Height="60" HorizontalAlignment="Center">
+                        <Border Width="60" Height="60" CornerRadius="18" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
+                            <FontIcon Glyph="&#xE962;" FontSize="22" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+
                     <TextBlock Text="Scanning Context Menus..." FontSize="14" FontWeight="Bold" TextAlignment="Center" />
+
+                    <!-- Linear Progress Bar -->
+                    <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1" Width="260">
+                        <ProgressBar IsIndeterminate="True" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch"/>
+                    </Border>
                 </StackPanel>
             </Border>
         </Grid>

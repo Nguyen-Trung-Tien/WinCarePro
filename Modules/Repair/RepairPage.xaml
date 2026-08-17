@@ -437,13 +437,30 @@
                     </DoubleAnimation>
                 </Storyboard>
             </Grid.Resources>
-            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
                 <StackPanel Spacing="14" HorizontalAlignment="Center">
-                    <ProgressRing Width="52" Height="52" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" />
-                    <TextBlock Text="System Diagnostics &amp; Repair" FontSize="15" FontWeight="Bold" TextAlignment="Center" />
-                    <TextBlock Text="{x:Bind ViewModel.CurrentScanStepText, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="320"/>
-                    <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="20" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center"/>
-                    <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Stretch"/>
+                    <!-- Glowing Wrench Badge -->
+                    <Grid Width="64" Height="64" HorizontalAlignment="Center">
+                        <Border Width="64" Height="64" CornerRadius="18" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
+                            <FontIcon Glyph="&#xE90F;" FontSize="24" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <StackPanel Spacing="4" HorizontalAlignment="Center">
+                        <TextBlock Text="System Diagnostics &amp; Repair" FontSize="15" FontWeight="Bold" TextAlignment="Center" />
+                        <TextBlock Text="{x:Bind ViewModel.CurrentScanStepText, Mode=OneWay}" FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="320"/>
+                    </StackPanel>
+
+                    <!-- Percentage Progress Bar -->
+                    <StackPanel Spacing="8" Width="320" HorizontalAlignment="Center">
+                        <Grid>
+                            <TextBlock Text="Repair Progress" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
+                            <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="14" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Right" FontFamily="Segoe UI Variable Display"/>
+                        </Grid>
+                        <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1">
+                            <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch"/>
+                        </Border>
+                    </StackPanel>
                     
                     <Button Click="OnCancelOperationClick" Content="Cancel Operation" HorizontalAlignment="Center" CornerRadius="8" Padding="18,6" Margin="0,4,0,0" Background="#26EF4444" Foreground="#FFEF4444" FontWeight="Bold"/>
                 </StackPanel>

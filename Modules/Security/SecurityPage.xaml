@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="WinCarePro.Views.SecurityPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -311,10 +311,21 @@
                     </DoubleAnimation>
                 </Storyboard>
             </Grid.Resources>
-            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,28" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
-                <StackPanel Spacing="16" HorizontalAlignment="Center">
-                    <ProgressRing Width="48" Height="48" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" />
-                    <TextBlock Text="Applying Privacy &amp; Protection Settings..." FontSize="14" FontWeight="Bold" TextAlignment="Center" />
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
+                <StackPanel Spacing="14" HorizontalAlignment="Center">
+                    <!-- Glowing Shield Badge -->
+                    <Grid Width="60" Height="60" HorizontalAlignment="Center">
+                        <Border Width="60" Height="60" CornerRadius="18" Background="#1510B981" BorderBrush="#4010B981" BorderThickness="1.5">
+                            <FontIcon Glyph="&#xE72E;" FontSize="22" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <TextBlock Text="Applying Privacy &amp; Protection Settings..." FontSize="14" FontWeight="Bold" TextAlignment="Center" TextWrapping="Wrap"/>
+
+                    <!-- Linear Progress Bar -->
+                    <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1" Width="260">
+                        <ProgressBar IsIndeterminate="True" Height="4" CornerRadius="2" Foreground="#FF10B981" Background="Transparent" HorizontalAlignment="Stretch"/>
+                    </Border>
                 </StackPanel>
             </Border>
         </Grid>

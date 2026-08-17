@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="WinCarePro.Views.JunkPage"
     x:Name="PageRoot"
@@ -401,14 +401,30 @@
                             </DoubleAnimation>
                         </Storyboard>
                     </Grid.Resources>
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="24" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="12,0">
-                        <StackPanel Spacing="20" HorizontalAlignment="Center">
-                            <TextBlock Text="Cleanup Progress" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" />
-                            <Grid Height="100" Width="100" HorizontalAlignment="Center">
-                                <ProgressRing IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsCleaning), Mode=OneWay}" Width="80" Height="80" />
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="28,24" VerticalAlignment="Center" HorizontalAlignment="Center" Width="380">
+                        <StackPanel Spacing="16" HorizontalAlignment="Center">
+                            <!-- Glowing Icon Badge -->
+                            <Grid Width="64" Height="64" HorizontalAlignment="Center">
+                                <Border Width="64" Height="64" CornerRadius="18" Background="#1510B981" BorderBrush="#4010B981" BorderThickness="1.5">
+                                    <FontIcon Glyph="&#xE74D;" FontSize="24" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
                             </Grid>
-                            <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Width="240" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Center" />
-                            <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" TextWrapping="Wrap" FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextAlignment="Center" MaxWidth="300" HorizontalAlignment="Center" />
+
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock Text="Junk Sweeper Operation" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center" />
+                                <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" TextWrapping="Wrap" FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextAlignment="Center" MaxWidth="320" HorizontalAlignment="Center" />
+                            </StackPanel>
+
+                            <!-- Percentage Progress Bar -->
+                            <StackPanel Spacing="8" Width="300" HorizontalAlignment="Center">
+                                <Grid>
+                                    <TextBlock Text="Progress" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{x:Bind ViewModel.ProgressPercentFormatted, Mode=OneWay}" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                </Grid>
+                                <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1">
+                                    <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch" />
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
                     </Border>
                 </Grid>

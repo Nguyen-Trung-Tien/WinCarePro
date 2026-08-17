@@ -40,8 +40,13 @@ public class UninstallViewModel : ViewModelBase
     public int ProgressPercent
     {
         get => _progressPercent;
-        set => SetPropertyOnUI(() => _progressPercent, v => _progressPercent = v, value);
+        set
+        {
+            SetPropertyOnUI(() => _progressPercent, v => _progressPercent = v, value);
+            OnPropertyChanged(nameof(ProgressPercentFormatted));
+        }
     }
+    public string ProgressPercentFormatted => $"{ProgressPercent}%";
 
     private List<InstalledAppInfo> _allApps = new();
     public ObservableCollection<InstalledAppInfo> FilteredApps { get; } = new();

@@ -45,8 +45,13 @@ public class JunkViewModel : ViewModelBase
     public int ProgressPercent
     {
         get => _progressPercent;
-        set => SetPropertyOnUI(() => _progressPercent, v => _progressPercent = v, value);
+        set
+        {
+            SetPropertyOnUI(() => _progressPercent, v => _progressPercent = v, value);
+            OnPropertyChanged(nameof(ProgressPercentFormatted));
+        }
     }
+    public string ProgressPercentFormatted => $"{ProgressPercent}%";
 
     private string _totalJunkSize = "0.0 B";
     public string TotalJunkSize

@@ -258,6 +258,19 @@ public partial class NetworkViewModel : ViewModelBase
         }
     }
 
+    private string _speedTestPhase = "Ready";
+    public string SpeedTestPhase
+    {
+        get => _speedTestPhase.T();
+        set => SetPropertyOnUI(() => _speedTestPhase, v => _speedTestPhase = v, value);
+    }
+
+    public double DisplaySpeed => (IsBusy && SpeedProgress > 50) ? UploadSpeed : DownloadSpeed;
+    public string DisplaySpeedLabel => (IsBusy && SpeedProgress > 50) ? "UPLOAD" : (IsBusy ? "DOWNLOAD" : "LIVE TRAFFIC");
+
+    public bool HasSpeedTestHistory => SpeedTestHistory.Count > 0;
+    public bool HasNoSpeedTestHistory => SpeedTestHistory.Count == 0;
+
     public ObservableCollection<SpeedTestResult> SpeedTestHistory { get; } = new();
 
     public NetworkViewModel(INetworkService engine, INetworkHistoryService historyService, INotificationService notificationService)
@@ -430,7 +443,7 @@ public partial class NetworkViewModel : ViewModelBase
                     await Task.Delay(5000, token);
                     if (ActiveTab == "ports")
                     {
-                        await LoadActiveConnectionsAsync();
+                        await LoadActiveConnectionsAsync(forceRefresh: true);
                     }
                 }
                 catch (TaskCanceledException) { break; }
@@ -476,7 +489,7 @@ public partial class NetworkViewModel : ViewModelBase
             {
                 try
                 {
-                    await RunDiagnosticsAsync();
+                    await RunDiagnosticsAsync(userTriggered: false);
                     await Task.Delay(120000, token);
                 }
                 catch (TaskCanceledException) { break; }

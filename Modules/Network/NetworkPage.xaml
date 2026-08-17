@@ -231,20 +231,28 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
+                            <!-- Speedometer Header with Live Phase Badge -->
                             <Grid Grid.Row="0" Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Border Grid.Column="0" Background="{StaticResource CyberAccentGradient}" CornerRadius="7" Padding="6" Margin="0,0,10,0">
                                     <FontIcon Glyph="&#xEB42;" FontSize="13" Foreground="White"/>
                                 </Border>
                                 <TextBlock Grid.Column="1" Text="Bandwidth Speedometer" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                <Border Grid.Column="2" Background="#208B5CF6" BorderBrush="#358B5CF6" BorderThickness="1" CornerRadius="6" Padding="8,2" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <Ellipse Width="6" Height="6" Fill="{StaticResource PrimaryAccentBrush}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.SpeedTestPhase, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                    </StackPanel>
+                                </Border>
                             </Grid>
 
                             <!-- Cyber Speedometer Centerpiece -->
-                            <Grid Grid.Row="1" Height="108" Margin="0,2">
-                                <Ellipse Width="104" Height="104" Opacity="0.18" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Grid Grid.Row="1" Height="118" Margin="0,2">
+                                <Ellipse Width="116" Height="116" Opacity="0.2" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Ellipse.Fill>
                                         <RadialGradientBrush>
                                             <GradientStop Color="#FF8B5CF6" Offset="0"/>
@@ -253,19 +261,20 @@
                                         </RadialGradientBrush>
                                     </Ellipse.Fill>
                                 </Ellipse>
-                                <Ellipse Width="100" Height="100" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.35"/>
-                                <Ellipse Width="84" Height="84" Fill="{ThemeResource AppStatChipBackground}" Stroke="{StaticResource CyberGlassBorderBrush}" StrokeThickness="1.2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
-                                    <TextBlock Text="{x:Bind FormatSpeedValue(ViewModel.DownloadSpeed), Mode=OneWay}" FontSize="24" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center"/>
+                                <Ellipse Width="112" Height="112" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="3" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.35"/>
+                                <Ellipse Width="94" Height="94" Fill="{ThemeResource AppStatChipBackground}" Stroke="{StaticResource CyberGlassBorderBrush}" StrokeThickness="1.2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="1">
+                                    <TextBlock Text="{x:Bind ViewModel.DisplaySpeedLabel, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{x:Bind FormatSpeedValue(ViewModel.DisplaySpeed), Mode=OneWay}" FontSize="26" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center"/>
                                     <Border Background="#258B5CF6" CornerRadius="4" Padding="6,1" HorizontalAlignment="Center">
-                                        <TextBlock Text="{x:Bind FormatSpeedUnit(ViewModel.DownloadSpeed), Mode=OneWay}" FontSize="9.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                        <TextBlock Text="{x:Bind FormatSpeedUnit(ViewModel.DisplaySpeed), Mode=OneWay}" FontSize="9.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                     </Border>
                                 </StackPanel>
                             </Grid>
 
                             <!-- Live Progress Gauge -->
                             <StackPanel Grid.Row="2" Spacing="3" Margin="0,6,0,10">
-                                <ProgressBar Value="{x:Bind ViewModel.SpeedProgress, Mode=OneWay}" Maximum="100" Height="5" CornerRadius="2.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <ProgressBar Value="{x:Bind ViewModel.SpeedProgress, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                 <Grid>
                                     <TextBlock Text="0%" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Left"/>
                                     <TextBlock Text="{x:Bind FormatPercent(ViewModel.SpeedProgress), Mode=OneWay}" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center"/>
@@ -301,10 +310,11 @@
                                 </Border>
                             </Grid>
 
-                            <!-- Speed Test Button -->
-                            <Button Grid.Row="4" Click="OnSpeedTestClick" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" Height="36" CornerRadius="8" Margin="0,0,0,12">
-                                <StackPanel Orientation="Horizontal" Spacing="7">
-                                    <FontIcon Glyph="&#xE768;" FontSize="12"/>
+                            <!-- Speed Test Action Button with Active Progress Indicator -->
+                            <Button Grid.Row="4" Click="OnSpeedTestClick" IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" Height="36" CornerRadius="8" Margin="0,0,0,12">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                                    <FontIcon Glyph="&#xE768;" FontSize="12" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
                                     <TextBlock Text="Start Speed Test" FontSize="12" FontWeight="SemiBold"/>
                                 </StackPanel>
                             </Button>
@@ -316,8 +326,25 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock Grid.Row="0" Text="Recent Speed Tests" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,0,6"/>
-                                    <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.SpeedTestHistory, Mode=OneWay}" SelectionMode="None">
+                                    <Grid Grid.Row="0" Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE81C;" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="Recent Speed Tests" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Empty State when no test run yet -->
+                                    <StackPanel Grid.Row="1" Visibility="{x:Bind ViewModel.HasNoSpeedTestHistory, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4" Padding="0,12">
+                                        <FontIcon Glyph="&#xEB42;" FontSize="18" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Opacity="0.5" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="No speed test history yet" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <!-- History List -->
+                                    <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.SpeedTestHistory, Mode=OneWay}" Visibility="{x:Bind ViewModel.HasSpeedTestHistory, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectionMode="None">
                                         <ListView.ItemTemplate>
                                             <DataTemplate x:DataType="models:SpeedTestResult">
                                                 <Grid Padding="4,3">
@@ -825,7 +852,7 @@
                                         <StackPanel Spacing="5">
                                             <TextBlock Text="Flush DNS/ARP" FontWeight="Bold" FontSize="12"/>
                                             <TextBlock Text="Purge cache table." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                            <Button Click="OnRepairClick" Tag="flushdns" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,4">
+                                            <Button Click="OnRepairClick" Tag="flushdns" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,4">
                                                 <TextBlock Text="Flush Cache" FontSize="11" FontWeight="SemiBold"/>
                                             </Button>
                                         </StackPanel>
@@ -836,7 +863,7 @@
                                         <StackPanel Spacing="5">
                                             <TextBlock Text="Reset Adapters" FontWeight="Bold" FontSize="12"/>
                                             <TextBlock Text="Restart NIC devices." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                            <Button Click="OnRepairClick" Tag="resetadapters" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,4">
+                                            <Button Click="OnRepairClick" Tag="resetadapters" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,4">
                                                 <TextBlock Text="Restart NICs" FontSize="11" FontWeight="SemiBold"/>
                                             </Button>
                                         </StackPanel>
@@ -847,7 +874,7 @@
                                         <StackPanel Spacing="5">
                                             <TextBlock Text="Repair Firewall" FontWeight="Bold" FontSize="12"/>
                                             <TextBlock Text="Restore default rules." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                            <Button Click="OnRepairClick" Tag="repairfirewall" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,4">
+                                            <Button Click="OnRepairClick" Tag="repairfirewall" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,4">
                                                 <TextBlock Text="Fix Firewall" FontSize="11" FontWeight="SemiBold"/>
                                             </Button>
                                         </StackPanel>
@@ -910,7 +937,7 @@
                                         <StackPanel Spacing="5">
                                             <TextBlock Text="Reset WinHTTP &amp; Proxy" FontWeight="Bold" FontSize="12"/>
                                             <TextBlock Text="Purge corrupt proxy redirects." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                            <Button Click="OnRepairClick" Tag="resetproxy" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,4">
+                                            <Button Click="OnRepairClick" Tag="resetproxy" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,4">
                                                 <TextBlock Text="Reset Proxy" FontSize="11" FontWeight="SemiBold"/>
                                             </Button>
                                         </StackPanel>
@@ -921,7 +948,7 @@
                                         <StackPanel Spacing="5">
                                             <TextBlock Text="Reset Windows Hosts" FontWeight="Bold" FontSize="12"/>
                                             <TextBlock Text="Restore default hosts file." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                            <Button Click="OnRepairClick" Tag="resethosts" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,4">
+                                            <Button Click="OnRepairClick" Tag="resethosts" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,4">
                                                 <TextBlock Text="Reset Hosts" FontSize="11" FontWeight="SemiBold"/>
                                             </Button>
                                         </StackPanel>
@@ -1005,8 +1032,8 @@
 
                         <!-- Terminal Console Output Screen -->
                         <Border Grid.Row="2" Background="{ThemeResource AppTerminalBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="12">
-                            <ScrollViewer x:Name="TerminalScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                                <TextBlock Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" FontFamily="Cascadia Code, Consolas, Courier New" FontSize="12" Foreground="{ThemeResource AppTerminalForeground}" TextWrapping="Wrap" LineHeight="18"/>
+                            <ScrollViewer x:Name="TerminalScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <TextBlock Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" FontFamily="Cascadia Code, Consolas, Courier New" FontSize="12" Foreground="{ThemeResource AppTerminalForeground}" TextWrapping="Wrap" IsTextSelectionEnabled="True" LineHeight="18"/>
                             </ScrollViewer>
                         </Border>
                     </Grid>

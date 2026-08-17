@@ -125,7 +125,7 @@ public sealed partial class NetworkPage : Page
 
     private async void OnRefreshClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.RunDiagnosticsAsync();
+        await ViewModel.RunDiagnosticsAsync(userTriggered: true);
         ViewModel.LoadAdapters();
         await ViewModel.LoadActiveConnectionsAsync(forceRefresh: true);
     }

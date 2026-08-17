@@ -9,37 +9,35 @@ namespace WinCarePro.ViewModels;
 
 public partial class NetworkViewModel
 {
-    public async Task RunDiagnosticsAsync()
+    public async Task RunDiagnosticsAsync(bool userTriggered = false)
     {
-        if (IsBusy) return;
-        IsBusy = true;
+        if (userTriggered && IsBusy) return;
+        if (userTriggered) IsBusy = true;
+        
         LogText("Starting connectivity diagnosis...".T());
 
         try
         {
-            bool hasInternet = await Task.Run(() => _engine.CheckInternetConnection());
-            if (_cts == null || _cts.IsCancellationRequested) return;
-            InternetStatus = hasInternet ? "Connected" : "No Internet";
+            var internetTask = Task.Run(() => _engine.CheckInternetConnection());
+            var gwTask = Task.Run(() => _engine.GetGatewayAddress());
+            var gwReachTask = Task.Run(() => _engine.CheckGatewayReachability());
+            var dnsTask = Task.Run(() => _engine.CheckDnsResolution());
+            var ipTask = Task.Run(() => _engine.CheckIpStatus());
+            var pingTask = _engine.AnalyzePingQualityAsync("1.1.1.1", 3);
 
-            string gw = await Task.Run(() => _engine.GetGatewayAddress());
-            if (_cts == null || _cts.IsCancellationRequested) return;
-            GatewayAddress = gw;
+            await Task.WhenAll(internetTask, gwTask, gwReachTask, dnsTask, ipTask, pingTask);
 
-            bool gatewayOk = await Task.Run(() => _engine.CheckGatewayReachability());
             if (_cts == null || _cts.IsCancellationRequested) return;
-            GatewayReachability = gatewayOk ? "Reachable" : "Unreachable";
 
-            bool dnsOk = await Task.Run(() => _engine.CheckDnsResolution());
-            if (_cts == null || _cts.IsCancellationRequested) return;
-            DnsStatus = dnsOk ? "Resolving" : "Failed";
+            InternetStatus = internetTask.Result ? "Connected" : "No Internet";
+            GatewayAddress = gwTask.Result;
+            GatewayReachability = gwReachTask.Result ? "Reachable" : "Unreachable";
+            DnsStatus = dnsTask.Result ? "Resolving" : "Failed";
 
-            var (v4, v6) = await Task.Run(() => _engine.CheckIpStatus());
-            if (_cts == null || _cts.IsCancellationRequested) return;
+            var (v4, v6) = ipTask.Result;
             IpStatus = $"IPv4: {(v4 ? "Active" : "Inactive")}, IPv6: {(v6 ? "Active" : "Inactive")}";
 
-            LogText("Estimating packet loss, latency, and jitter quality...".T());
-            var (loss, latency, jitter) = await _engine.AnalyzePingQualityAsync();
-            if (_cts == null || _cts.IsCancellationRequested) return;
+            var (loss, latency, jitter) = pingTask.Result;
             LatencyMs = Math.Round(latency, 1);
             PacketLossPercent = Math.Round(loss, 1);
             JitterMs = Math.Round(jitter, 1);
@@ -66,7 +64,7 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (_cts != null && !_cts.IsCancellationRequested)
+            if (userTriggered && _cts != null && !_cts.IsCancellationRequested)
             {
                 IsBusy = false;
             }
@@ -75,11 +73,12 @@ public partial class NetworkViewModel
 
     public async Task RunPingTestAsync()
     {
-        if (IsBusy || string.IsNullOrEmpty(TestHost)) return;
+        string host = string.IsNullOrWhiteSpace(TestHost) ? "8.8.8.8" : TestHost.Trim();
+        if (IsBusy) return;
         IsBusy = true;
         try
         {
-            await _engine.RunPingTestAsync(TestHost);
+            await _engine.RunPingTestAsync(host);
         }
         catch (Exception ex)
         {
@@ -99,11 +98,12 @@ public partial class NetworkViewModel
 
     public async Task RunTracerouteAsync()
     {
-        if (IsBusy || string.IsNullOrEmpty(TestHost)) return;
+        string host = string.IsNullOrWhiteSpace(TestHost) ? "8.8.8.8" : TestHost.Trim();
+        if (IsBusy) return;
         IsBusy = true;
         try
         {
-            await _engine.RunTracerouteAsync(TestHost);
+            await _engine.RunTracerouteAsync(host);
         }
         catch (Exception ex)
         {
@@ -123,11 +123,12 @@ public partial class NetworkViewModel
 
     public async Task RunDnsLookupAsync()
     {
-        if (IsBusy || string.IsNullOrEmpty(TestHost)) return;
+        string host = string.IsNullOrWhiteSpace(TestHost) ? "google.com" : TestHost.Trim();
+        if (IsBusy) return;
         IsBusy = true;
         try
         {
-            await _engine.RunDnsLookupAsync(TestHost);
+            await _engine.RunDnsLookupAsync(host);
         }
         catch (Exception ex)
         {
@@ -147,7 +148,8 @@ public partial class NetworkViewModel
 
     public async Task RunPortScanAsync()
     {
-        if (IsBusy || string.IsNullOrEmpty(PortScannerHost)) return;
+        string host = string.IsNullOrWhiteSpace(TestHost) ? (string.IsNullOrWhiteSpace(PortScannerHost) ? "127.0.0.1" : PortScannerHost.Trim()) : TestHost.Trim();
+        if (IsBusy) return;
         IsBusy = true;
         try
         {
@@ -156,7 +158,12 @@ public partial class NetworkViewModel
                 .Where(v => v > 0)
                 .ToArray();
 
-            await _engine.RunPortScanAsync(PortScannerHost, ports);
+            if (ports.Length == 0)
+            {
+                ports = new[] { 80, 443, 3389, 8080, 22 };
+            }
+
+            await _engine.RunPortScanAsync(host, ports);
         }
         catch (Exception ex)
         {
@@ -178,12 +185,16 @@ public partial class NetworkViewModel
     {
         if (IsBusy) return;
         IsBusy = true;
+        SpeedTestPhase = "Preparing...";
         SpeedProgress = 0;
         DownloadSpeedMbps = 0;
         UploadSpeedMbps = 0;
+        OnPropertyChanged(nameof(DisplaySpeed));
+        OnPropertyChanged(nameof(DisplaySpeedLabel));
         LogText("Starting speed test...".T());
         try
         {
+            SpeedTestPhase = "Testing Latency...";
             LogText("Measuring network latency & ping quality...".T());
             var pingQuality = await _engine.AnalyzePingQualityAsync("1.1.1.1", 4);
             if (pingQuality.avgLatencyMs > 0)
@@ -192,24 +203,31 @@ public partial class NetworkViewModel
                 JitterMs = Math.Round(pingQuality.jitterMs, 1);
             }
 
+            SpeedTestPhase = "Testing Download...";
             LogText("Running download speed benchmark...".T());
             double dl = await _engine.RunSpeedTestAsync((speed, progress) =>
             {
                 DownloadSpeedMbps = Math.Round(speed, 1);
                 SpeedProgress = Math.Round(progress / 2.0, 1);
+                OnPropertyChanged(nameof(DisplaySpeed));
+                OnPropertyChanged(nameof(DisplaySpeedLabel));
             });
 
             if (_cts == null || _cts.IsCancellationRequested) return;
 
+            SpeedTestPhase = "Testing Upload...";
             LogText("Running upload speed benchmark...".T());
             double ul = await _engine.RunUploadSpeedTestAsync((speed, progress) =>
             {
                 UploadSpeedMbps = Math.Round(speed, 1);
                 SpeedProgress = Math.Round(50.0 + (progress / 2.0), 1);
+                OnPropertyChanged(nameof(DisplaySpeed));
+                OnPropertyChanged(nameof(DisplaySpeedLabel));
             });
 
             if (_cts == null || _cts.IsCancellationRequested) return;
             SpeedProgress = 100;
+            SpeedTestPhase = "Completed";
 
             var result = new SpeedTestResult
             {
@@ -232,6 +250,7 @@ public partial class NetworkViewModel
         {
             if (_cts != null && !_cts.IsCancellationRequested)
             {
+                SpeedTestPhase = "Failed";
                 LogText(string.Format("Speed test failed: {0}".T(), ex.Message));
                 _notificationService?.ShowError("Speed Test Failed".T(), ex.Message);
             }
@@ -241,6 +260,12 @@ public partial class NetworkViewModel
             if (_cts != null && !_cts.IsCancellationRequested)
             {
                 IsBusy = false;
+                if (SpeedTestPhase != "Completed")
+                {
+                    SpeedTestPhase = "Ready";
+                }
+                OnPropertyChanged(nameof(DisplaySpeed));
+                OnPropertyChanged(nameof(DisplaySpeedLabel));
             }
         }
     }
@@ -257,6 +282,8 @@ public partial class NetworkViewModel
                 {
                     SpeedTestHistory.Add(item);
                 }
+                OnPropertyChanged(nameof(HasSpeedTestHistory));
+                OnPropertyChanged(nameof(HasNoSpeedTestHistory));
             });
         }
         catch { }

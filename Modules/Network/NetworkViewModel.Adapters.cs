@@ -83,13 +83,17 @@ public partial class NetworkViewModel
         }
     }
 
+    private bool _isLoadingConnections;
     public async Task LoadActiveConnectionsAsync(bool forceRefresh = false)
     {
         if (_rawConnections.Count > 0 && !forceRefresh) return;
+        if (_isLoadingConnections) return;
+        _isLoadingConnections = true;
 
         try
         {
             var list = await Task.Run(() => _engine.GetActiveConnections());
+            if (_cts == null || _cts.IsCancellationRequested) return;
             _rawConnections = list;
             _dispatcherQueue?.TryEnqueue(() =>
             {
@@ -99,6 +103,10 @@ public partial class NetworkViewModel
         catch (Exception ex)
         {
             LogText($"Failed to load active connections: {ex.Message}");
+        }
+        finally
+        {
+            _isLoadingConnections = false;
         }
     }
 

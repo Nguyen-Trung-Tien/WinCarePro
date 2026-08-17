@@ -23,7 +23,7 @@ public partial class NetworkEngine
         try
         {
             using var ping = new Ping();
-            var reply = ping.Send("8.8.8.8", 2000);
+            var reply = ping.Send("8.8.8.8", 1500);
             return reply.Status == IPStatus.Success;
         }
         catch
@@ -55,11 +55,11 @@ public partial class NetworkEngine
     public bool CheckGatewayReachability()
     {
         string gw = GetGatewayAddress();
-        if (gw == "Unknown") return false;
+        if (gw == "Unknown" || string.IsNullOrWhiteSpace(gw)) return false;
         try
         {
             using var ping = new Ping();
-            var reply = ping.Send(gw, 2000);
+            var reply = ping.Send(gw, 1500);
             return reply.Status == IPStatus.Success;
         }
         catch
@@ -72,8 +72,12 @@ public partial class NetworkEngine
     {
         try
         {
-            var ips = Dns.GetHostAddresses("google.com");
-            return ips.Length > 0;
+            var task = Dns.GetHostAddressesAsync("google.com");
+            if (task.Wait(1500))
+            {
+                return task.Result.Length > 0;
+            }
+            return false;
         }
         catch
         {
@@ -104,7 +108,7 @@ public partial class NetworkEngine
         return (ipv4, ipv6);
     }
 
-    public async Task<(double packetLossPercent, double avgLatencyMs, double jitterMs)> AnalyzePingQualityAsync(string target = "8.8.8.8", int count = 5)
+    public async Task<(double packetLossPercent, double avgLatencyMs, double jitterMs)> AnalyzePingQualityAsync(string target = "8.8.8.8", int count = 3)
     {
         int packetsSent = 0;
         int packetsReceived = 0;
@@ -117,7 +121,7 @@ public partial class NetworkEngine
             try
             {
                 packetsSent++;
-                var reply = await ping.SendPingAsync(target, 1500);
+                var reply = await ping.SendPingAsync(target, 1200);
                 if (reply.Status == IPStatus.Success)
                 {
                     packetsReceived++;
@@ -127,7 +131,7 @@ public partial class NetworkEngine
                 }
             }
             catch { }
-            await Task.Delay(100);
+            await Task.Delay(50);
         }
 
         if (packetsSent == 0) return (100.0, 0.0, 0.0);
@@ -343,7 +347,15 @@ public partial class NetworkEngine
         var list = new List<ActiveConnectionInfo>();
         try
         {
-            var procDict = Process.GetProcesses().ToDictionary(p => p.Id, p => p.ProcessName);
+            var procDict = new Dictionary<int, string>();
+            try
+            {
+                foreach (var p in Process.GetProcesses())
+                {
+                    procDict[p.Id] = p.ProcessName;
+                }
+            }
+            catch { }
 
             var psi = new ProcessStartInfo
             {
@@ -356,8 +368,12 @@ public partial class NetworkEngine
             using var proc = Process.Start(psi);
             if (proc != null)
             {
+                string output = proc.StandardOutput.ReadToEnd();
+                proc.WaitForExit(4000);
+
+                using var reader = new StringReader(output);
                 string? line;
-                while ((line = proc.StandardOutput.ReadLine()) != null)
+                while ((line = reader.ReadLine()) != null)
                 {
                     line = line.Trim();
                     if (string.IsNullOrEmpty(line)) continue;

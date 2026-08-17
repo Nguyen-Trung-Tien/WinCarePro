@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Window
     x:Class="WinCarePro.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -198,23 +198,32 @@
                 </Border>
             </Grid>
             
-            <StackPanel x:Name="ExitOverlayContent" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="32">
+            <StackPanel x:Name="ExitOverlayContent" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24" Width="380">
                 <StackPanel.RenderTransform>
                     <TranslateTransform Y="40" />
                 </StackPanel.RenderTransform>
                 
-                <!-- Premium Custom Spinner Ring -->
+                <!-- Exit App Icon with glowing frame -->
                 <Grid Width="72" Height="72" HorizontalAlignment="Center">
-                    <!-- Pulsing outer ring -->
-                    <Ellipse Width="72" Height="72" Stroke="{StaticResource PrimaryAccentBorderBrush}" StrokeThickness="2" />
-                    <!-- Indeterminate loader -->
-                    <ProgressRing IsActive="True" Width="56" Height="56" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Width="72" Height="72" CornerRadius="20" Background="#15EF4444" BorderBrush="#40EF4444" BorderThickness="1.5">
+                        <FontIcon Glyph="&#xE7E8;" FontSize="28" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
                 </Grid>
                 
-                <StackPanel Spacing="12" HorizontalAlignment="Center">
-                    <TextBlock x:Name="ExitOverlayTitle" Text="Shutting Down" FontSize="26" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="1"/>
-                    <TextBlock x:Name="ExitOverlayMessage" Text="Closing database connections and freeing resources..." FontSize="14.5" Foreground="#FFA0A0B5" HorizontalAlignment="Center" FontWeight="Normal"/>
-                    <TextBlock Text="Please don't turn off your computer or close the app" FontSize="11" Foreground="#FF5B5B73" HorizontalAlignment="Center" FontWeight="Light" Margin="0,4,0,0"/>
+                <StackPanel Spacing="6" HorizontalAlignment="Center">
+                    <TextBlock x:Name="ExitOverlayTitle" Text="Shutting Down" FontSize="24" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="1"/>
+                    <TextBlock x:Name="ExitOverlayMessage" Text="Closing database connections and freeing resources..." FontSize="13" Foreground="#FFA0A0B5" HorizontalAlignment="Center" FontWeight="Normal" TextAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Exit Percentage Progress Bar -->
+                <StackPanel Spacing="8" Margin="0,4,0,0">
+                    <Grid>
+                        <TextBlock Text="Finalizing shutdown..." FontSize="12.5" Foreground="#FFA0A0B5" HorizontalAlignment="Left" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="ExitProgressPercent" Text="100%" FontSize="12.5" Foreground="#FFEF4444" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                    </Grid>
+                    <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1">
+                        <ProgressBar x:Name="ExitProgressBar" Minimum="0" Maximum="100" Value="100" Height="4" CornerRadius="2" Foreground="#FFEF4444" Background="Transparent" HorizontalAlignment="Stretch"/>
+                    </Border>
                 </StackPanel>
             </StackPanel>
         </Grid>
@@ -261,17 +270,30 @@
                 </Border>
             </Grid>
             
-            <StackPanel x:Name="StartupOverlayContent" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="32">
-                <!-- Premium Custom Spinner Ring with inner Logo Image -->
-                <Grid Width="80" Height="80" HorizontalAlignment="Center">
-                    <Ellipse Width="80" Height="80" Stroke="{StaticResource PrimaryAccentBorderBrush}" StrokeThickness="2" />
-                    <ProgressRing IsActive="True" Width="64" Height="64" Foreground="{StaticResource PrimaryAccentGradient}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="36" Height="36" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+            <StackPanel x:Name="StartupOverlayContent" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24" Width="380">
+                <!-- App Logo with Ambient Pulsing Glow Frame -->
+                <Grid Width="76" Height="76" HorizontalAlignment="Center">
+                    <Border Width="76" Height="76" CornerRadius="22" Background="#15FFFFFF" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
+                        <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="46" Height="46" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+                    </Border>
                 </Grid>
                 
-                <StackPanel Spacing="12" HorizontalAlignment="Center">
-                    <TextBlock Text="WinCare Pro" FontSize="28" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="1"/>
-                    <TextBlock x:Name="StartupProgressText" Text="Loading systems..." FontSize="14.5" Foreground="#FFA0A0B5" HorizontalAlignment="Center" FontWeight="Normal"/>
+                <StackPanel Spacing="6" HorizontalAlignment="Center">
+                    <TextBlock Text="WinCare Pro" FontSize="26" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="1"/>
+                    <TextBlock Text="System Optimization &amp; Care Suite" FontSize="12.5" Foreground="#FFA0A0B5" HorizontalAlignment="Center" FontWeight="Normal"/>
+                </StackPanel>
+
+                <!-- Modern Percentage Progress Bar Container -->
+                <StackPanel Spacing="8" Margin="0,6,0,0">
+                    <Grid>
+                        <TextBlock x:Name="StartupProgressText" Text="Loading systems..." FontSize="12.5" Foreground="#FFA0A0B5" HorizontalAlignment="Left" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="StartupProgressPercent" Text="0%" FontSize="12.5" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                    </Grid>
+
+                    <!-- Glowing Linear Progress Bar Track -->
+                    <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1">
+                        <ProgressBar x:Name="StartupProgressBar" Minimum="0" Maximum="100" Value="0" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch"/>
+                    </Border>
                 </StackPanel>
             </StackPanel>
         </Grid>

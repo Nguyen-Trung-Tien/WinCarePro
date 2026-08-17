@@ -185,21 +185,27 @@ public partial class NetworkViewModel
     {
         if (IsBusy) return;
         IsBusy = true;
-        SpeedTestPhase = "Testing Latency...";
+        SpeedTestPhase = "Testing Ping...";
         SpeedProgress = 5;
         DownloadSpeedMbps = 0;
         UploadSpeedMbps = 0;
+        OnPropertyChanged(nameof(DisplaySpeed));
+        OnPropertyChanged(nameof(DisplaySpeedLabel));
+        OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
+        OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
         LogText("Starting speed test...".T());
         try
         {
             LogText("Measuring network latency & ping quality...".T());
-            var pingQuality = await _engine.AnalyzePingQualityAsync("1.1.1.1", 2);
+            var pingQuality = await _engine.AnalyzePingQualityAsync("1.1.1.1", 3);
             if (pingQuality.avgLatencyMs > 0)
             {
                 _dispatcherQueue?.TryEnqueue(() =>
                 {
                     LatencyMs = Math.Round(pingQuality.avgLatencyMs, 1);
                     JitterMs = Math.Round(pingQuality.jitterMs, 1);
+                    OnPropertyChanged(nameof(DisplaySpeed));
+                    OnPropertyChanged(nameof(DisplaySpeedLabel));
                 });
             }
 
@@ -207,13 +213,18 @@ public partial class NetworkViewModel
 
             SpeedTestPhase = "Testing Download...";
             SpeedProgress = 10;
+            OnPropertyChanged(nameof(DisplaySpeedLabel));
+            OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
+            OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
             LogText("Running download speed benchmark...".T());
             double dl = await _engine.RunSpeedTestAsync((speed, progress) =>
             {
                 _dispatcherQueue?.TryEnqueue(() =>
                 {
                     DownloadSpeedMbps = Math.Round(speed, 1);
-                    SpeedProgress = Math.Round(10.0 + (progress * 0.4), 1);
+                    SpeedProgress = Math.Round(10.0 + (progress * 0.42), 1);
+                    OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
+                    OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
                 });
             });
 
@@ -221,19 +232,28 @@ public partial class NetworkViewModel
 
             SpeedTestPhase = "Testing Upload...";
             SpeedProgress = 55;
+            OnPropertyChanged(nameof(DisplaySpeedLabel));
+            OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
+            OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
             LogText("Running upload speed benchmark...".T());
             double ul = await _engine.RunUploadSpeedTestAsync((speed, progress) =>
             {
                 _dispatcherQueue?.TryEnqueue(() =>
                 {
                     UploadSpeedMbps = Math.Round(speed, 1);
-                    SpeedProgress = Math.Round(55.0 + (progress * 0.45), 1);
+                    SpeedProgress = Math.Round(55.0 + (progress * 0.44), 1);
+                    OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
+                    OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
                 });
             });
 
             if (_cts == null || _cts.IsCancellationRequested) return;
             SpeedProgress = 100;
             SpeedTestPhase = "Completed";
+            OnPropertyChanged(nameof(DisplaySpeed));
+            OnPropertyChanged(nameof(DisplaySpeedLabel));
+            OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
+            OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
 
             var result = new SpeedTestResult
             {

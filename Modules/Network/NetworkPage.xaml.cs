@@ -487,12 +487,20 @@ public sealed partial class NetworkPage : Page
 
     public string FormatSpeedValue(double val)
     {
+        if (ViewModel.DisplaySpeedLabel == "PING" || ViewModel.DisplaySpeedLabel == "PING".T())
+        {
+            return val.ToString("F0");
+        }
         if (val >= 1000) return (val / 1000.0).ToString("F2");
         return val.ToString("F1");
     }
 
     public string FormatSpeedUnit(double val)
     {
+        if (ViewModel.DisplaySpeedLabel == "PING" || ViewModel.DisplaySpeedLabel == "PING".T())
+        {
+            return "ms";
+        }
         if (val >= 1000) return "Gbps";
         return "Mbps";
     }

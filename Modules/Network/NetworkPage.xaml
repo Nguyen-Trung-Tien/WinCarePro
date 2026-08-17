@@ -116,15 +116,16 @@
             </Grid>
         </Border>
 
-        <!-- ==================== 2. MAIN CONTENT AREA (FIT TO VIEWPORT) ==================== -->
+        <!-- ==================== 2. MAIN CONTENT AREA ==================== -->
         <Grid Grid.Row="2">
 
             <!-- ++++++++++++++++++++ TAB 1: QUALITY & SPEED (NO EXCESSIVE SCROLL) ++++++++++++++++++++ -->
-            <Grid x:Name="SectionQuality" Visibility="Visible">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/> <!-- 0: 4 Stats -->
-                    <RowDefinition Height="*"/>    <!-- 1: Main Split -->
-                </Grid.RowDefinitions>
+            <ScrollViewer x:Name="SectionQuality" Visibility="Visible" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,4,8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- 0: 4 Stats -->
+                        <RowDefinition Height="*"/>    <!-- 1: Main Split -->
+                    </Grid.RowDefinitions>
 
                 <!-- Top Row: 4 Telemetry Cards -->
                 <Grid Grid.Row="0" ColumnSpacing="12" Margin="0,0,0,12">
@@ -224,9 +225,9 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/> <!-- 0: Header with View History Button -->
-                                <RowDefinition Height="Auto"/> <!-- 1: Gauge & Metrics Deck -->
+                                <RowDefinition Height="*"/>    <!-- 1: Expanded Gauge & Metrics Deck -->
                                 <RowDefinition Height="Auto"/> <!-- 2: Progress Bar -->
-                                <RowDefinition Height="Auto"/> <!-- 3: Action Button -->
+                                <RowDefinition Height="Auto"/> <!-- 3: Hero Action Button -->
                             </Grid.RowDefinitions>
 
                             <!-- Speedometer Header with View History Button & Live Phase Badge -->
@@ -250,25 +251,25 @@
                                             <TextBlock Text="View History ↗" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                         </StackPanel>
                                     </Button>
-                                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center">
+                                    <Border Background="{x:Bind ViewModel.SpeedPhaseBadgeBgBrush, Mode=OneWay}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center">
                                         <StackPanel Orientation="Horizontal" Spacing="6">
-                                            <Ellipse Width="6" Height="6" Fill="{StaticResource PrimaryAccentBrush}"/>
-                                            <TextBlock Text="{x:Bind ViewModel.SpeedTestPhase, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                            <Ellipse Width="6" Height="6" Fill="{x:Bind ViewModel.SpeedPhaseAccentBrush, Mode=OneWay}"/>
+                                            <TextBlock Text="{x:Bind ViewModel.SpeedTestPhase, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{x:Bind ViewModel.SpeedPhaseAccentBrush, Mode=OneWay}"/>
                                         </StackPanel>
                                     </Border>
                                 </StackPanel>
                             </Grid>
 
-                            <!-- Cyber Speedometer + 3-Card Telemetry Deck -->
-                            <Grid Grid.Row="1" Margin="0,2,0,12">
+                            <!-- Expanded Cyber Speedometer + 4-Card Telemetry Deck -->
+                            <Grid Grid.Row="1" Margin="0,4,0,14" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="138"/>
+                                    <ColumnDefinition Width="185"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Holographic Cyber Speedometer Gauge -->
-                                <Grid Grid.Column="0" Width="132" Height="132" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Ellipse Width="130" Height="130" Opacity="0.2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <!-- Holographic Cyber Speedometer Gauge (Dynamically Color Shifted) -->
+                                <Grid Grid.Column="0" Width="175" Height="175" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Ellipse Width="170" Height="170" Opacity="0.22" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Ellipse.Fill>
                                             <RadialGradientBrush>
                                                 <GradientStop Color="#FF8B5CF6" Offset="0"/>
@@ -277,95 +278,119 @@
                                             </RadialGradientBrush>
                                         </Ellipse.Fill>
                                     </Ellipse>
-                                    <Ellipse Width="124" Height="124" Stroke="{StaticResource PrimaryAccentBrush}" StrokeThickness="2" StrokeDashArray="5 3" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
-                                    <Ellipse Width="104" Height="104" Fill="{ThemeResource AppStatChipBackground}" Stroke="{ThemeResource AppStatChipBorder}" StrokeThickness="1.2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="1">
-                                        <TextBlock Text="{x:Bind ViewModel.DisplaySpeedLabel, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{x:Bind FormatSpeedValue(ViewModel.DisplaySpeed), Mode=OneWay}" FontSize="24" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center"/>
-                                        <Border Background="#258B5CF6" CornerRadius="4" Padding="6,1" HorizontalAlignment="Center">
-                                            <TextBlock Text="{x:Bind FormatSpeedUnit(ViewModel.DisplaySpeed), Mode=OneWay}" FontSize="9.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                    <Ellipse Width="162" Height="162" Stroke="{x:Bind ViewModel.SpeedPhaseAccentBrush, Mode=OneWay}" StrokeThickness="2" StrokeDashArray="5 3" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.5"/>
+                                    
+                                    <!-- Dynamic Animated Speed Arc Ring when active -->
+                                    <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" Width="164" Height="164" Foreground="{x:Bind ViewModel.SpeedPhaseAccentBrush, Mode=OneWay}" IsIndeterminate="True" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                                    <Ellipse Width="136" Height="136" Fill="{ThemeResource AppStatChipBackground}" Stroke="{ThemeResource AppStatChipBorder}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="{x:Bind ViewModel.DisplaySpeedLabel, Mode=OneWay}" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{x:Bind FormatSpeedValue(ViewModel.DisplaySpeed), Mode=OneWay}" FontSize="32" FontWeight="ExtraBold" Foreground="{x:Bind ViewModel.SpeedPhaseAccentBrush, Mode=OneWay}" HorizontalAlignment="Center"/>
+                                        <Border Background="{x:Bind ViewModel.SpeedPhaseBadgeBgBrush, Mode=OneWay}" CornerRadius="5" Padding="8,2" HorizontalAlignment="Center">
+                                            <TextBlock Text="{x:Bind FormatSpeedUnit(ViewModel.DisplaySpeed), Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{x:Bind ViewModel.SpeedPhaseAccentBrush, Mode=OneWay}"/>
                                         </Border>
                                     </StackPanel>
                                 </Grid>
 
-                                <!-- 3 Compact Telemetry Metric Tiles -->
-                                <Grid Grid.Column="1" Margin="12,0,0,0" RowSpacing="6">
+                                <!-- 4 Rich Telemetry Metric Tiles -->
+                                <Grid Grid.Column="1" Margin="14,0,0,0" RowSpacing="7">
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
                                         <RowDefinition Height="*"/>
                                         <RowDefinition Height="*"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
 
                                     <!-- Download Card -->
-                                    <Border Grid.Row="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,6">
+                                    <Border Grid.Row="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,7">
                                         <Grid VerticalAlignment="Center">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Background="#2010B981" CornerRadius="5" Padding="5" Margin="0,0,10,0">
-                                                <FontIcon Glyph="&#xE896;" FontSize="12" Foreground="#FF10B981"/>
+                                            <Border Grid.Column="0" Background="#2010B981" CornerRadius="6" Padding="6" Margin="0,0,10,0">
+                                                <FontIcon Glyph="&#xE896;" FontSize="13" Foreground="#FF10B981"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="DOWNLOAD" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                                <TextBlock Text="Inbound throughput" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                <TextBlock Text="Inbound throughput" FontSize="8.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMbps(ViewModel.DownloadSpeed), Mode=OneWay}" FontSize="15" FontWeight="ExtraBold" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMbps(ViewModel.DownloadSpeed), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF10B981" VerticalAlignment="Center"/>
                                         </Grid>
                                     </Border>
 
                                     <!-- Upload Card -->
-                                    <Border Grid.Row="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,6">
+                                    <Border Grid.Row="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,7">
                                         <Grid VerticalAlignment="Center">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Background="#208B5CF6" CornerRadius="5" Padding="5" Margin="0,0,10,0">
-                                                <FontIcon Glyph="&#xE898;" FontSize="12" Foreground="#FF8B5CF6"/>
+                                            <Border Grid.Column="0" Background="#208B5CF6" CornerRadius="6" Padding="6" Margin="0,0,10,0">
+                                                <FontIcon Glyph="&#xE898;" FontSize="13" Foreground="#FF8B5CF6"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="UPLOAD" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                                <TextBlock Text="Outbound throughput" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                <TextBlock Text="Outbound throughput" FontSize="8.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMbps(ViewModel.UploadSpeed), Mode=OneWay}" FontSize="15" FontWeight="ExtraBold" Foreground="#FF8B5CF6" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMbps(ViewModel.UploadSpeed), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF8B5CF6" VerticalAlignment="Center"/>
                                         </Grid>
                                     </Border>
 
                                     <!-- Latency / Ping Card -->
-                                    <Border Grid.Row="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,6">
+                                    <Border Grid.Row="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,7">
                                         <Grid VerticalAlignment="Center">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Background="#2006B6D4" CornerRadius="5" Padding="5" Margin="0,0,10,0">
-                                                <FontIcon Glyph="&#xE774;" FontSize="12" Foreground="#FF06B6D4"/>
+                                            <Border Grid.Column="0" Background="#2006B6D4" CornerRadius="6" Padding="6" Margin="0,0,10,0">
+                                                <FontIcon Glyph="&#xE774;" FontSize="13" Foreground="#FF06B6D4"/>
                                             </Border>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="PING LATENCY" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                                <TextBlock Text="Round-trip echo" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                <TextBlock Text="Round-trip echo" FontSize="8.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}" FontSize="15" FontWeight="ExtraBold" Foreground="#FF06B6D4" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF06B6D4" VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Jitter / Stability Card -->
+                                    <Border Grid.Row="3" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,7">
+                                        <Grid VerticalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Background="#20F59E0B" CornerRadius="6" Padding="6" Margin="0,0,10,0">
+                                                <FontIcon Glyph="&#xE9D9;" FontSize="13" Foreground="#FFF59E0B"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="BUFFER JITTER" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                                <TextBlock Text="Latency deviation" FontSize="8.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMs(ViewModel.JitterMs), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FFF59E0B" VerticalAlignment="Center"/>
                                         </Grid>
                                     </Border>
                                 </Grid>
                             </Grid>
 
-                            <!-- Live Progress Gauge -->
-                            <StackPanel Grid.Row="2" Spacing="2" Margin="0,0,0,10">
-                                <ProgressBar Value="{x:Bind ViewModel.SpeedProgress, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <!-- Live Progress Gauge (Dynamic Phase Color Shift) -->
+                            <StackPanel Grid.Row="2" Spacing="2" Margin="0,0,0,12">
+                                <ProgressBar Value="{x:Bind ViewModel.SpeedProgress, Mode=OneWay}" Maximum="100" Height="7" CornerRadius="3.5" Foreground="{x:Bind ViewModel.SpeedPhaseAccentBrush, Mode=OneWay}"/>
                             </StackPanel>
 
                             <!-- Hero Speed Test Action Button -->
-                            <Button Grid.Row="3" Click="OnSpeedTestClick" IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" Height="38" CornerRadius="9">
+                            <Button Grid.Row="3" Click="OnSpeedTestClick" IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" Height="42" CornerRadius="10">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
-                                    <FontIcon Glyph="&#xE768;" FontSize="12" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
-                                    <TextBlock Text="Start Speed Test" FontSize="12.5" FontWeight="SemiBold"/>
+                                    <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Width="16" Height="16" Foreground="White" VerticalAlignment="Center"/>
+                                    <FontIcon Glyph="&#xE768;" FontSize="13" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                                    <TextBlock Text="Start Speed Test" FontSize="13.5" FontWeight="SemiBold"/>
                                 </StackPanel>
                             </Button>
                         </Grid>
@@ -375,7 +400,7 @@
                     <Grid x:Name="SpeedGridRight" Grid.Row="0" Grid.Column="1" RowSpacing="12">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>    <!-- Adapters List -->
-                            <RowDefinition Height="Auto"/> <!-- Quick 1-Click Tools -->
+                            <RowDefinition Height="Auto"/> <!-- 2x2 Quick 1-Click Tools -->
                         </Grid.RowDefinitions>
 
                         <!-- Hardware Network Interfaces -->
@@ -449,40 +474,46 @@
                             </Grid>
                         </Border>
 
-                        <!-- Quick 1-Click Fix Actions Strip -->
-                        <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,12">
-                            <Grid ColumnSpacing="10">
+                        <!-- Quick 1-Click Fix Actions 2x2 Grid (No Text Clipping) -->
+                        <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
+                            <Grid RowSpacing="8" ColumnSpacing="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Button Grid.Column="0" Click="OnRepairClick" Tag="flushdns" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="4,0">
-                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                        <FontIcon Glyph="&#xE72C;" FontSize="11.5"/>
+                                <!-- Button 1: Flush DNS -->
+                                <Button Grid.Row="0" Grid.Column="0" Click="OnRepairClick" Tag="flushdns" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="8,0">
+                                    <StackPanel Orientation="Horizontal" Spacing="7" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE72C;" FontSize="12"/>
                                         <TextBlock Text="Flush DNS" FontSize="11.5" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
 
-                                <Button Grid.Column="1" Click="OnRepairClick" Tag="resettcp" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="4,0">
-                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                        <FontIcon Glyph="&#xE896;" FontSize="11.5"/>
+                                <!-- Button 2: Reset TCP/IP -->
+                                <Button Grid.Row="0" Grid.Column="1" Click="OnRepairClick" Tag="resettcp" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="8,0">
+                                    <StackPanel Orientation="Horizontal" Spacing="7" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE896;" FontSize="12"/>
                                         <TextBlock Text="Reset TCP/IP" FontSize="11.5" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
 
-                                <Button Grid.Column="2" Click="OnRepairClick" Tag="renewdhcp" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="4,0">
-                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                        <FontIcon Glyph="&#xE8D7;" FontSize="11.5"/>
+                                <!-- Button 3: Renew DHCP -->
+                                <Button Grid.Row="1" Grid.Column="0" Click="OnRepairClick" Tag="renewdhcp" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="8,0">
+                                    <StackPanel Orientation="Horizontal" Spacing="7" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE8D7;" FontSize="12"/>
                                         <TextBlock Text="Renew DHCP" FontSize="11.5" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
 
-                                <Button Grid.Column="3" Click="OnDnsBenchmarkClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="4,0">
-                                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                        <FontIcon Glyph="&#xEC1B;" FontSize="11.5"/>
+                                <!-- Button 4: Optimize DNS -->
+                                <Button Grid.Row="1" Grid.Column="1" Click="OnDnsBenchmarkClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="8,0">
+                                    <StackPanel Orientation="Horizontal" Spacing="7" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xEC1B;" FontSize="12"/>
                                         <TextBlock Text="Optimize DNS" FontSize="11.5" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
@@ -490,7 +521,8 @@
                         </Border>
                     </Grid>
                 </Grid>
-            </Grid>
+                </Grid>
+            </ScrollViewer>
 
             <!-- ++++++++++++++++++++ TAB 2: DNS OPTIMIZER (NO EXCESSIVE SCROLL) ++++++++++++++++++++ -->
             <Grid x:Name="SectionDns" Visibility="Collapsed" RowSpacing="12">
@@ -601,7 +633,7 @@
                             </StackPanel>
                         </Grid>
 
-                        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.DnsServers, Mode=OneWay}" SelectionMode="None">
+                        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.DnsServers, Mode=OneWay}" SelectionMode="None" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:DnsServerInfo">
                                     <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Margin="0,0,0,8" Padding="14,10">
@@ -716,7 +748,7 @@
                         </Grid>
 
                         <!-- Connection Rows Virtualized ListView -->
-                        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Connections, Mode=OneWay}" SelectionMode="None">
+                        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Connections, Mode=OneWay}" SelectionMode="None" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:ActiveConnectionInfo">
                                     <Grid Padding="10,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
@@ -773,51 +805,51 @@
                 </Border>
             </Grid>
 
-            <!-- ++++++++++++++++++++ TAB 4: REPAIR & DIAGNOSTICS SUITE (2-PANE WORKSPACE) ++++++++++++++++++++ -->
-            <Grid x:Name="SectionRepairs" Visibility="Collapsed" ColumnSpacing="14">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <!-- ++++++++++++++++++++ TAB 4: REPAIR & DIAGNOSTICS SUITE (2-PANE BALANCED WORKSPACE) ++++++++++++++++++++ -->
+            <ScrollViewer x:Name="SectionRepairs" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,4,8">
+                <Grid ColumnSpacing="14">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="RepairPaneCol0" Width="1.15*"/>
+                    <ColumnDefinition x:Name="RepairPaneCol0" Width="1.18*"/>
                     <ColumnDefinition x:Name="RepairPaneCol1" Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Left Pane: 10 Tools categorized into Core Repairs & Performance Tweaks -->
+                <!-- Left Pane: 12 Symmetrical Tools in 2 Matching 3x2 Cards -->
                 <Grid x:Name="RepairPaneLeft" Grid.Row="0" Grid.Column="0" RowSpacing="12">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1.25*"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Section 1: 1-Click TCP/IP & Winsock Repair Suite (6 Tiles) -->
-                    <Border Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="18">
+                    <!-- Section 1: 1-Click TCP/IP & Winsock Repair Suite (6 Tiles, 3x2 Symmetrical Grid) -->
+                    <Border Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <Grid Grid.Row="0" Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" Spacing="2">
-                                    <TextBlock Text="1-Click TCP/IP &amp; Winsock Repairs" FontSize="14.5" FontWeight="Bold"/>
-                                    <TextBlock Text="Resolve DNS failures, socket corruption &amp; IP lease timeouts" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="1-Click TCP/IP &amp; Winsock Repairs" FontSize="14" FontWeight="Bold"/>
+                                    <TextBlock Text="Resolve DNS failures, socket corruption &amp; IP lease timeouts" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                                 <Border Grid.Column="1" Background="#2010B981" CornerRadius="6" Padding="10,3" VerticalAlignment="Center">
                                     <TextBlock Text="Core Repairs" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981"/>
                                 </Border>
                             </Grid>
 
-                            <!-- 3x2 Grid of Core Fix Tiles (Stretched to match pane height) -->
-                            <Grid Grid.Row="1" RowSpacing="10" ColumnSpacing="10">
+                            <!-- 3x2 Grid of Core Fix Tiles -->
+                            <Grid Grid.Row="1" RowSpacing="8" ColumnSpacing="8">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -826,97 +858,97 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Fix 1: Reset TCP/IP -->
-                                <Border Grid.Row="0" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="12,10" VerticalAlignment="Stretch">
+                                <Border Grid.Row="0" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Reset TCP/IP" FontWeight="Bold" FontSize="12.5"/>
-                                        <TextBlock Grid.Row="1" Text="Rebuild TCP/IP stack." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resettcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="0,0">
-                                            <TextBlock Text="Reset TCP" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Reset TCP/IP" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Rebuild TCP/IP stack." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resettcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Reset TCP" FontSize="11" FontWeight="SemiBold"/>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Fix 2: Reset Winsock -->
-                                <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="12,10" VerticalAlignment="Stretch">
+                                <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Reset Winsock" FontWeight="Bold" FontSize="12.5"/>
-                                        <TextBlock Grid.Row="1" Text="Restore Sockets API." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetwinsock" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="0,0">
-                                            <TextBlock Text="Reset Winsock" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Reset Winsock" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Restore Sockets API." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetwinsock" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Reset Winsock" FontSize="11" FontWeight="SemiBold"/>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Fix 3: Renew DHCP Lease -->
-                                <Border Grid.Row="0" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="12,10" VerticalAlignment="Stretch">
+                                <Border Grid.Row="0" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Renew DHCP" FontWeight="Bold" FontSize="12.5"/>
-                                        <TextBlock Grid.Row="1" Text="Re-request IP lease." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="renewdhcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="0,0">
-                                            <TextBlock Text="Renew DHCP" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Renew DHCP" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Re-request IP lease." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="renewdhcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Renew DHCP" FontSize="11" FontWeight="SemiBold"/>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Fix 4: Flush DNS & ARP -->
-                                <Border Grid.Row="1" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="12,10" VerticalAlignment="Stretch">
+                                <Border Grid.Row="1" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Flush DNS/ARP" FontWeight="Bold" FontSize="12.5"/>
-                                        <TextBlock Grid.Row="1" Text="Purge cache table." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="flushdns" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="0,0">
-                                            <TextBlock Text="Flush Cache" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Flush DNS/ARP" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Purge cache table." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="flushdns" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Flush Cache" FontSize="11" FontWeight="SemiBold"/>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Fix 5: Reset Network Adapters -->
-                                <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="12,10" VerticalAlignment="Stretch">
+                                <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Reset Adapters" FontWeight="Bold" FontSize="12.5"/>
-                                        <TextBlock Grid.Row="1" Text="Restart NIC devices." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetadapters" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="0,0">
-                                            <TextBlock Text="Restart NICs" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Reset Adapters" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Restart NIC devices." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetadapters" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Restart NICs" FontSize="11" FontWeight="SemiBold"/>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Fix 6: Repair Windows Firewall -->
-                                <Border Grid.Row="1" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="12,10" VerticalAlignment="Stretch">
+                                <Border Grid.Row="1" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Repair Firewall" FontWeight="Bold" FontSize="12.5"/>
-                                        <TextBlock Grid.Row="1" Text="Restore default rules." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="repairfirewall" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="0,0">
-                                            <TextBlock Text="Fix Firewall" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Repair Firewall" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Restore default rules." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="repairfirewall" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Fix Firewall" FontSize="11" FontWeight="SemiBold"/>
                                         </Button>
                                     </Grid>
                                 </Border>
@@ -924,98 +956,132 @@
                         </Grid>
                     </Border>
 
-                    <!-- Section 2: Gaming & Latency Optimization Suite (4 Advanced Tiles) -->
-                    <Border Grid.Row="1" Style="{StaticResource AuraGlassCardStyle}" Padding="18">
+                    <!-- Section 2: Gaming & Latency Optimization Suite (6 Tiles, 3x2 Symmetrical Grid) -->
+                    <Border Grid.Row="1" Style="{StaticResource AuraGlassCardStyle}" Padding="16,14">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <Grid Grid.Row="0" Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" Spacing="2">
-                                    <TextBlock Text="Gaming &amp; Performance Latency Boost" FontSize="14.5" FontWeight="Bold"/>
-                                    <TextBlock Text="Reduce bufferbloat, lower game ping &amp; clean routing" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="Gaming &amp; Performance Latency Boost" FontSize="14" FontWeight="Bold"/>
+                                    <TextBlock Text="Reduce bufferbloat, lower game ping &amp; clean routing" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                                 <Border Grid.Column="1" Background="#208B5CF6" CornerRadius="6" Padding="10,3" VerticalAlignment="Center">
                                     <TextBlock Text="Performance Boost" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                 </Border>
                             </Grid>
 
-                            <Grid Grid.Row="1" RowSpacing="10" ColumnSpacing="10">
+                            <!-- 3x2 Grid perfectly matching Section 1 above -->
+                            <Grid Grid.Row="1" RowSpacing="8" ColumnSpacing="8">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Advanced Fix 1: Optimize TCP Auto-Tuning -->
-                                <Border Grid.Row="0" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10" VerticalAlignment="Stretch">
+                                <Border Grid.Row="0" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="TCP Auto-Tuning" FontWeight="Bold" FontSize="13"/>
-                                        <TextBlock Grid.Row="1" Text="Unlock max throughput &amp; window size." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="optimizetcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="0,0">
-                                            <TextBlock Text="Enable TCP Tuning" FontSize="12" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="TCP Auto-Tuning" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Unlock max throughput." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="optimizetcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Enable Tuning" FontSize="11" FontWeight="SemiBold"/>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Advanced Fix 2: Disable Energy-Efficient Ethernet -->
-                                <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10" VerticalAlignment="Stretch">
+                                <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Disable EEE (Lower Ping)" FontWeight="Bold" FontSize="13"/>
-                                        <TextBlock Grid.Row="1" Text="Prevents Ethernet sleep in gaming." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="disableeee" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="0,0">
-                                            <TextBlock Text="Disable EEE" FontSize="12" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Disable EEE" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Lower ping in gaming." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="disableeee" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Disable EEE" FontSize="11" FontWeight="SemiBold"/>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Advanced Fix 3: Reset Proxy & WinHTTP -->
-                                <Border Grid.Row="1" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10" VerticalAlignment="Stretch">
+                                <Border Grid.Row="0" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Reset WinHTTP &amp; Proxy" FontWeight="Bold" FontSize="13"/>
-                                        <TextBlock Grid.Row="1" Text="Purge corrupt proxy redirects." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetproxy" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="0,0">
-                                            <TextBlock Text="Reset Proxy" FontSize="12" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Reset WinHTTP" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Purge corrupt proxies." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetproxy" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Reset Proxy" FontSize="11" FontWeight="SemiBold"/>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Advanced Fix 4: Reset Hosts File -->
-                                <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10" VerticalAlignment="Stretch">
+                                <Border Grid.Row="1" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Reset Windows Hosts" FontWeight="Bold" FontSize="13"/>
-                                        <TextBlock Grid.Row="1" Text="Restore default hosts file." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resethosts" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" HorizontalAlignment="Stretch" Padding="0,0">
-                                            <TextBlock Text="Reset Hosts" FontSize="12" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Reset Hosts File" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Restore clean hosts." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resethosts" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Reset Hosts" FontSize="11" FontWeight="SemiBold"/>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Advanced Fix 5: Release & Rebind IP -->
+                                <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Text="Rebind IP Lease" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Renew DHCP routing." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="renewdhcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Rebind IP" FontSize="11" FontWeight="SemiBold"/>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Advanced Fix 6: Purge Routing Cache -->
+                                <Border Grid.Row="1" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Text="Purge Routing" FontWeight="Bold" FontSize="12"/>
+                                        <TextBlock Grid.Row="1" Text="Clear socket route cache." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="flushdns" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
+                                            <TextBlock Text="Clear Routes" FontSize="11" FontWeight="SemiBold"/>
                                         </Button>
                                     </Grid>
                                 </Border>
@@ -1024,8 +1090,8 @@
                     </Border>
                 </Grid>
 
-                <!-- Right Pane: Diagnostic Terminal Console & Ping/Trace/DNS/Port Tools -->
-                <Border x:Name="RepairPaneRight" Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
+                <!-- Right Pane: Diagnostic Terminal Console (Pixel-Perfect Balanced Height) -->
+                <Border x:Name="RepairPaneRight" Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -1095,15 +1161,16 @@
                             </Grid>
                         </StackPanel>
 
-                        <!-- Terminal Console Output Screen -->
-                        <Border Grid.Row="2" Background="{ThemeResource AppTerminalBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="12">
+                        <!-- Terminal Console Output Screen (Height-Balanced with Left Pane) -->
+                        <Border Grid.Row="2" Height="285" Background="{ThemeResource AppTerminalBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="12">
                             <ScrollViewer x:Name="TerminalScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                                 <TextBlock Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" FontFamily="Cascadia Code, Consolas, Courier New" FontSize="12" Foreground="{ThemeResource AppTerminalForeground}" TextWrapping="Wrap" IsTextSelectionEnabled="True" LineHeight="18"/>
                             </ScrollViewer>
                         </Border>
                     </Grid>
                 </Border>
-            </Grid>
+                </Grid>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>

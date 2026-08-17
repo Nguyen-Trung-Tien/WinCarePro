@@ -271,8 +271,65 @@ public partial class NetworkViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _speedTestPhase, v => _speedTestPhase = v, value);
     }
 
-    public double DisplaySpeed => (IsBusy && SpeedProgress > 50) ? UploadSpeed : DownloadSpeed;
-    public string DisplaySpeedLabel => (IsBusy && SpeedProgress > 50) ? "UPLOAD" : (IsBusy ? "DOWNLOAD" : "LIVE TRAFFIC");
+    public double DisplaySpeed
+    {
+        get
+        {
+            if (IsBusy)
+            {
+                if (SpeedProgress > 52) return UploadSpeed;
+                if (SpeedProgress > 8) return DownloadSpeed;
+                return LatencyMs;
+            }
+            return DownloadSpeed > 0 ? DownloadSpeed : 0.0;
+        }
+    }
+
+    public string DisplaySpeedLabel
+    {
+        get
+        {
+            if (IsBusy)
+            {
+                if (SpeedProgress > 52) return "UPLOAD".T();
+                if (SpeedProgress > 8) return "DOWNLOAD".T();
+                return "PING".T();
+            }
+            return DownloadSpeed > 0 ? "PEAK DOWNLOAD".T() : "READY".T();
+        }
+    }
+
+    public Microsoft.UI.Xaml.Media.Brush SpeedPhaseAccentBrush
+    {
+        get
+        {
+            if (IsBusy)
+            {
+                if (SpeedProgress > 52) return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246));   // UPLOAD -> Electric Purple
+                if (SpeedProgress > 8) return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));   // DOWNLOAD -> Emerald Green
+                return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 6, 182, 212));                             // PING -> Neon Cyan
+            }
+            return DownloadSpeed > 0 
+                ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129))
+                : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246));
+        }
+    }
+
+    public Microsoft.UI.Xaml.Media.Brush SpeedPhaseBadgeBgBrush
+    {
+        get
+        {
+            if (IsBusy)
+            {
+                if (SpeedProgress > 52) return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 139, 92, 246));
+                if (SpeedProgress > 8) return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129));
+                return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 6, 182, 212));
+            }
+            return DownloadSpeed > 0 
+                ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129))
+                : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 139, 92, 246));
+        }
+    }
 
     public bool HasSpeedTestHistory => SpeedTestHistory.Count > 0;
     public bool HasNoSpeedTestHistory => SpeedTestHistory.Count == 0;

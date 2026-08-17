@@ -83,12 +83,12 @@ public partial class NetworkEngine
         
         string selectedUrl = await SelectFastEndpointAsync(DownloadEndpoints, isPost: false);
 
-        int numThreads = 2;
+        int numThreads = 4; // 4 parallel streams for maximum fiber throughput
         long totalBytes = 0;
         long activeMeasurementBytes = 0;
         var stopwatch = Stopwatch.StartNew();
 
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3.5));
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5.8));
         var tasks = new List<Task>();
 
         for (int i = 0; i < numThreads; i++)
@@ -97,19 +97,19 @@ public partial class NetworkEngine
             {
                 try
                 {
-                    while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 3.2)
+                    while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 5.2)
                     {
                         using var req = new HttpRequestMessage(HttpMethod.Get, selectedUrl);
                         using var response = await SpeedTestHttpClient.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cts.Token);
                         if (response.IsSuccessStatusCode)
                         {
                             using var stream = await response.Content.ReadAsStreamAsync(cts.Token);
-                            var buffer = new byte[32768]; // 32KB buffer
+                            var buffer = new byte[65536]; // 64KB buffer
                             int read;
-                            while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 3.2 && (read = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token)) > 0)
+                            while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 5.2 && (read = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token)) > 0)
                             {
                                 Interlocked.Add(ref totalBytes, read);
-                                if (stopwatch.ElapsedMilliseconds > 150)
+                                if (stopwatch.ElapsedMilliseconds > 100)
                                 {
                                     Interlocked.Add(ref activeMeasurementBytes, read);
                                 }
@@ -121,27 +121,36 @@ public partial class NetworkEngine
             }, cts.Token));
         }
 
-        // Real-time speed sampling & UI progress updates
-        while (!Task.WhenAll(tasks).IsCompleted && stopwatch.Elapsed.TotalSeconds < 3.2 && !cts.Token.IsCancellationRequested)
+        // Real-time speed sampling & 60fps smooth UI progress updates with EMA filter
+        double smoothedSpeed = 0;
+        while (!Task.WhenAll(tasks).IsCompleted && stopwatch.Elapsed.TotalSeconds < 5.2 && !cts.Token.IsCancellationRequested)
         {
             double elapsedSec = stopwatch.Elapsed.TotalSeconds;
-            double activeSec = Math.Max(0.1, elapsedSec - 0.15);
-            if (elapsedSec > 0.15)
+            double activeSec = Math.Max(0.05, elapsedSec - 0.1);
+            if (elapsedSec > 0.08)
             {
-                double currentSpeedMbps = (activeMeasurementBytes * 8.0) / (activeSec * 1_000_000.0);
-                double progressPercent = (elapsedSec / 3.2) * 100.0;
-                if (progressPercent > 100.0) progressPercent = 100.0;
+                double instantaneousSpeed = (activeMeasurementBytes * 8.0) / (activeSec * 1_000_000.0);
+                if (smoothedSpeed <= 0)
+                {
+                    smoothedSpeed = instantaneousSpeed;
+                }
+                else
+                {
+                    // Responsive Exponential Moving Average
+                    smoothedSpeed = (smoothedSpeed * 0.35) + (instantaneousSpeed * 0.65);
+                }
 
-                progressCallback?.Invoke(currentSpeedMbps, progressPercent);
+                double progressPercent = Math.Min(100.0, (elapsedSec / 5.2) * 100.0);
+                progressCallback?.Invoke(Math.Round(smoothedSpeed, 1), progressPercent);
             }
-            await Task.Delay(100);
+            await Task.Delay(50);
         }
 
         cts.Cancel();
-        try { await Task.WhenAny(Task.WhenAll(tasks), Task.Delay(200)); } catch { }
+        try { await Task.WhenAny(Task.WhenAll(tasks), Task.Delay(150)); } catch { }
 
         stopwatch.Stop();
-        double finalElapsedSec = Math.Max(0.1, stopwatch.Elapsed.TotalSeconds - 0.15);
+        double finalElapsedSec = Math.Max(0.1, stopwatch.Elapsed.TotalSeconds - 0.1);
         double finalSpeedMbps = (activeMeasurementBytes * 8.0) / (finalElapsedSec * 1_000_000.0);
 
         if (finalSpeedMbps < 1.0 && totalBytes > 0)
@@ -154,7 +163,7 @@ public partial class NetworkEngine
             finalSpeedMbps = 65.4;
         }
 
-        progressCallback?.Invoke(finalSpeedMbps, 100.0);
+        progressCallback?.Invoke(Math.Round(finalSpeedMbps, 1), 100.0);
         Log($"Download speed test complete: {finalSpeedMbps:F2} Mbps (Downloaded {totalBytes / 1024 / 1024} MB)");
         return finalSpeedMbps;
     }
@@ -165,7 +174,7 @@ public partial class NetworkEngine
         
         string selectedUrl = await SelectFastEndpointAsync(UploadEndpoints, isPost: true);
 
-        int numThreads = 2;
+        int numThreads = 3;
         long totalUploadedBytes = 0;
         long activeUploadedBytes = 0;
         var stopwatch = Stopwatch.StartNew();
@@ -173,7 +182,7 @@ public partial class NetworkEngine
         byte[] dummyData = new byte[128 * 1024]; // 128 KB payload per chunk
         new Random().NextBytes(dummyData);
 
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3.0));
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5.0));
         var tasks = new List<Task>();
 
         for (int i = 0; i < numThreads; i++)
@@ -182,14 +191,14 @@ public partial class NetworkEngine
             {
                 try
                 {
-                    while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 2.8)
+                    while (!cts.Token.IsCancellationRequested && stopwatch.Elapsed.TotalSeconds < 4.5)
                     {
                         using var content = new ByteArrayContent(dummyData);
                         using var response = await SpeedTestHttpClient.PostAsync(selectedUrl, content, cts.Token);
                         if (response.IsSuccessStatusCode)
                         {
                             Interlocked.Add(ref totalUploadedBytes, dummyData.Length);
-                            if (stopwatch.ElapsedMilliseconds > 150)
+                            if (stopwatch.ElapsedMilliseconds > 100)
                             {
                                 Interlocked.Add(ref activeUploadedBytes, dummyData.Length);
                             }
@@ -200,26 +209,34 @@ public partial class NetworkEngine
             }, cts.Token));
         }
 
-        while (!Task.WhenAll(tasks).IsCompleted && stopwatch.Elapsed.TotalSeconds < 2.8 && !cts.Token.IsCancellationRequested)
+        double smoothedUploadSpeed = 0;
+        while (!Task.WhenAll(tasks).IsCompleted && stopwatch.Elapsed.TotalSeconds < 4.5 && !cts.Token.IsCancellationRequested)
         {
             double elapsedSec = stopwatch.Elapsed.TotalSeconds;
-            double activeSec = Math.Max(0.1, elapsedSec - 0.15);
-            if (elapsedSec > 0.15)
+            double activeSec = Math.Max(0.05, elapsedSec - 0.1);
+            if (elapsedSec > 0.08)
             {
-                double currentSpeedMbps = (activeUploadedBytes * 8.0) / (activeSec * 1_000_000.0);
-                double progressPercent = (elapsedSec / 2.8) * 100.0;
-                if (progressPercent > 100.0) progressPercent = 100.0;
+                double instantaneousSpeed = (activeUploadedBytes * 8.0) / (activeSec * 1_000_000.0);
+                if (smoothedUploadSpeed <= 0)
+                {
+                    smoothedUploadSpeed = instantaneousSpeed;
+                }
+                else
+                {
+                    smoothedUploadSpeed = (smoothedUploadSpeed * 0.35) + (instantaneousSpeed * 0.65);
+                }
 
-                progressCallback?.Invoke(currentSpeedMbps, progressPercent);
+                double progressPercent = Math.Min(100.0, (elapsedSec / 4.5) * 100.0);
+                progressCallback?.Invoke(Math.Round(smoothedUploadSpeed, 1), progressPercent);
             }
-            await Task.Delay(100);
+            await Task.Delay(50);
         }
 
         cts.Cancel();
-        try { await Task.WhenAny(Task.WhenAll(tasks), Task.Delay(200)); } catch { }
+        try { await Task.WhenAny(Task.WhenAll(tasks), Task.Delay(150)); } catch { }
 
         stopwatch.Stop();
-        double finalElapsedSec = Math.Max(0.1, stopwatch.Elapsed.TotalSeconds - 0.15);
+        double finalElapsedSec = Math.Max(0.1, stopwatch.Elapsed.TotalSeconds - 0.1);
         double finalSpeedMbps = (activeUploadedBytes * 8.0) / (finalElapsedSec * 1_000_000.0);
 
         if (finalSpeedMbps < 1.0 && totalUploadedBytes > 0)
@@ -232,7 +249,7 @@ public partial class NetworkEngine
             finalSpeedMbps = 42.8;
         }
 
-        progressCallback?.Invoke(finalSpeedMbps, 100.0);
+        progressCallback?.Invoke(Math.Round(finalSpeedMbps, 1), 100.0);
         Log($"Upload speed test complete: {finalSpeedMbps:F2} Mbps (Uploaded {totalUploadedBytes / 1024 / 1024} MB)");
         return finalSpeedMbps;
     }

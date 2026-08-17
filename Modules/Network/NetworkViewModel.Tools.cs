@@ -286,6 +286,28 @@ public partial class NetworkViewModel
                 OnPropertyChanged(nameof(HasNoSpeedTestHistory));
             });
         }
-        catch { }
+        catch (Exception ex)
+        {
+            LogText($"Failed to load speed test history: {ex.Message}");
+        }
+    }
+
+    public async Task ClearSpeedTestHistoryAsync()
+    {
+        try
+        {
+            await _historyService.ClearHistoryAsync();
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                SpeedTestHistory.Clear();
+                OnPropertyChanged(nameof(HasSpeedTestHistory));
+                OnPropertyChanged(nameof(HasNoSpeedTestHistory));
+            });
+            _notificationService?.ShowSuccess("History Cleared".T(), "Speed test telemetry history has been wiped.".T());
+        }
+        catch (Exception ex)
+        {
+            LogText($"Failed to clear history: {ex.Message}");
+        }
     }
 }

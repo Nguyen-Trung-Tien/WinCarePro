@@ -61,6 +61,17 @@ public partial class NetworkViewModel : ViewModelBase
     public ObservableCollection<DnsServerInfo> DnsServers { get; } = new();
     public ObservableCollection<ActiveConnectionInfo> Connections { get; } = new();
 
+    private string _connectionFilterCategory = "All";
+    public string ConnectionFilterCategory
+    {
+        get => _connectionFilterCategory;
+        set
+        {
+            SetPropertyOnUI(() => _connectionFilterCategory, v => _connectionFilterCategory = v, value);
+            ApplyConnectionFilter();
+        }
+    }
+
     public string ConnectionSearchQuery
     {
         get => _connectionSearchQuery;

@@ -118,16 +118,16 @@ public partial class NetworkViewModel
         {
             bool ok = operation.ToLower() switch
             {
-                "dns" => await _engine.FlushDnsAsync(),
-                "winsock" => await _engine.ResetWinsockAsync(),
-                "tcpip" => await _engine.ResetTcpIpAsync(),
-                "iprenew" => await _engine.ReleaseRenewIpAsync(),
-                "adapter" => await _engine.RestartNetworkAdapterAsync(),
-                "firewall" => await _engine.ResetFirewallAsync(),
-                "proxy" => await _engine.ResetProxyAsync(),
-                "hosts" => await _engine.ResetHostsFileAsync(),
-                "optimize" => await _engine.OptimizeTcpAutoTuningAsync(),
-                "green" => await _engine.DisableEnergyEfficientEthernetAsync(),
+                "dns" or "flushdns" => await _engine.FlushDnsAsync(),
+                "winsock" or "resetwinsock" => await _engine.ResetWinsockAsync(),
+                "tcpip" or "resettcp" or "resettcpip" => await _engine.ResetTcpIpAsync(),
+                "iprenew" or "renewdhcp" or "renewip" => await _engine.ReleaseRenewIpAsync(),
+                "adapter" or "resetadapters" or "restartadapter" => await _engine.RestartNetworkAdapterAsync(),
+                "firewall" or "repairfirewall" or "resetfirewall" => await _engine.ResetFirewallAsync(),
+                "proxy" or "resetproxy" => await _engine.ResetProxyAsync(),
+                "hosts" or "resethosts" => await _engine.ResetHostsFileAsync(),
+                "optimize" or "optimizetcp" => await _engine.OptimizeTcpAutoTuningAsync(),
+                "green" or "disableeee" => await _engine.DisableEnergyEfficientEthernetAsync(),
                 _ => false
             };
 
@@ -136,12 +136,12 @@ public partial class NetworkViewModel
             if (ok)
             {
                 LogText("Repair operation succeeded.".T());
-                _notificationService?.ShowSuccess("Network Repair".T(), string.Format("Operation '{0}' completed successfully.", operation).T());
+                _notificationService?.ShowSuccess("Network Repair".T(), string.Format("Operation '{0}' completed successfully.".T(), operation));
             }
             else
             {
                 LogText("Repair operation encountered errors.".T());
-                _notificationService?.ShowWarning("Network Repair".T(), string.Format("Operation '{0}' failed or requires Administrator elevation.", operation).T());
+                _notificationService?.ShowWarning("Network Repair".T(), string.Format("Operation '{0}' failed or requires Administrator elevation.".T(), operation));
             }
             await RunDiagnosticsAsync(); // refresh connectivity status
         }

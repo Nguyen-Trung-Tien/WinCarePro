@@ -110,25 +110,44 @@ public partial class NetworkViewModel
                 try
                 {
                     var query = _connectionSearchQuery?.Trim().ToLower() ?? "";
-                    List<ActiveConnectionInfo> filtered;
-                    if (string.IsNullOrEmpty(query))
+                    var category = _connectionFilterCategory?.Trim().ToLower() ?? "all";
+
+                    var filtered = _rawConnections.AsEnumerable();
+
+                    // Apply category filter
+                    if (category == "established")
                     {
-                        filtered = _rawConnections;
+                        filtered = filtered.Where(c => c.State.Equals("ESTABLISHED", StringComparison.OrdinalIgnoreCase));
                     }
-                    else
+                    else if (category == "listening" || category == "listen")
                     {
-                        filtered = _rawConnections.Where(c =>
+                        filtered = filtered.Where(c => c.State.StartsWith("LISTEN", StringComparison.OrdinalIgnoreCase));
+                    }
+                    else if (category == "tcp")
+                    {
+                        filtered = filtered.Where(c => c.Protocol.Equals("TCP", StringComparison.OrdinalIgnoreCase));
+                    }
+                    else if (category == "udp")
+                    {
+                        filtered = filtered.Where(c => c.Protocol.Equals("UDP", StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    // Apply text search query
+                    if (!string.IsNullOrEmpty(query))
+                    {
+                        filtered = filtered.Where(c =>
                             c.ProcessName.ToLower().Contains(query) ||
                             c.Protocol.ToLower().Contains(query) ||
                             c.LocalAddress.ToLower().Contains(query) ||
                             c.ForeignAddress.ToLower().Contains(query) ||
                             c.State.ToLower().Contains(query) ||
                             c.Pid.ToString().Contains(query)
-                        ).ToList();
+                        );
                     }
 
+                    var resultList = filtered.ToList();
                     Connections.Clear();
-                    foreach (var item in filtered)
+                    foreach (var item in resultList)
                     {
                         Connections.Add(item);
                     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.ViewModels;
@@ -14,6 +15,7 @@ namespace WinCarePro.Views;
 public sealed partial class NetworkPage : Page
 {
     public NetworkViewModel ViewModel { get; }
+    public string[] DohProviders { get; } = new[] { "Cloudflare", "Google", "AdGuard", "NextDNS" };
 
     public NetworkPage()
     {
@@ -26,6 +28,7 @@ public sealed partial class NetworkPage : Page
         {
             TranslationManager.Instance.Translate(this);
             SetActiveTab(ViewModel.ActiveTab ?? "quality");
+            UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
         };
     }
 
@@ -35,6 +38,7 @@ public sealed partial class NetworkPage : Page
         ViewModel.Initialize();
         this.Bindings.Update();
         SetActiveTab(ViewModel.ActiveTab ?? "quality");
+        UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -108,6 +112,11 @@ public sealed partial class NetworkPage : Page
         }
     }
 
+    private async void OnApplyDohClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ApplyDohSettingsAsync();
+    }
+
     private async void OnRepairClick(object sender, RoutedEventArgs e)
     {
         if (sender is Button btn && btn.Tag is string op)
@@ -118,7 +127,28 @@ public sealed partial class NetworkPage : Page
 
     private async void OnRefreshConnectionsClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.LoadActiveConnectionsAsync();
+        await ViewModel.LoadActiveConnectionsAsync(forceRefresh: true);
+    }
+
+    private void OnFilterSocketCategoryClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is string category)
+        {
+            ViewModel.ConnectionFilterCategory = category;
+            UpdateFilterCategoryButtons(category);
+        }
+    }
+
+    private void UpdateFilterCategoryButtons(string activeCategory)
+    {
+        _accentStyle ??= GetButtonStyle("VibrantPrimaryButtonStyle") ?? GetButtonStyle("AccentButtonStyle");
+        _defaultStyle ??= GetButtonStyle("DefaultButtonStyle");
+
+        if (BtnFilterAll != null) BtnFilterAll.Style = activeCategory.Equals("All", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
+        if (BtnFilterEstablished != null) BtnFilterEstablished.Style = activeCategory.Equals("Established", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
+        if (BtnFilterListening != null) BtnFilterListening.Style = activeCategory.Equals("Listening", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
+        if (BtnFilterTcp != null) BtnFilterTcp.Style = activeCategory.Equals("TCP", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
+        if (BtnFilterUdp != null) BtnFilterUdp.Style = activeCategory.Equals("UDP", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
     }
 
     private async void OnPingClick(object sender, RoutedEventArgs e)
@@ -129,6 +159,16 @@ public sealed partial class NetworkPage : Page
     private async void OnTraceClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.RunTracerouteAsync();
+    }
+
+    private async void OnDnsLookupClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RunDnsLookupAsync();
+    }
+
+    private async void OnPortScanClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RunPortScanAsync();
     }
 
     private void OnClearConsoleClick(object sender, RoutedEventArgs e)

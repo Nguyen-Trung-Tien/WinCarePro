@@ -1542,6 +1542,27 @@ public partial class TranslationManager
         _translations["Quad9 DNS"] = "Quad9 DNS";
         _translations["OpenDNS"] = "OpenDNS";
         _translations["AdGuard DNS"] = "AdGuard DNS";
+        _translations["DNS-over-HTTPS (DoH) Secure Encryption"] = "Mã hóa bảo mật DNS-over-HTTPS (DoH)";
+        _translations["Encrypted DNS"] = "DNS mã hóa";
+        _translations["Encrypts your DNS queries through TLS to prevent ISP eavesdropping and DNS spoofing."] = "Mã hóa các truy vấn DNS qua TLS để chống nghe lén từ ISP và ngăn chặn giả mạo DNS.";
+        _translations["Secure DoH Encryption"] = "Bật mã hóa DoH";
+        _translations["DoH Provider"] = "Nhà cung cấp DoH";
+        _translations["Apply Secure DoH"] = "Áp dụng DoH";
+        _translations["Search process, IP or port..."] = "Tìm theo tiến trình, IP hoặc cổng...";
+        _translations["All"] = "Tất cả";
+        _translations["Established"] = "Đã kết nối";
+        _translations["Listening"] = "Đang lắng nghe";
+        _translations["TCP"] = "TCP";
+        _translations["UDP"] = "UDP";
+        _translations["Port Scan"] = "Quét cổng";
+        _translations["Port Scanner"] = "Trình quét cổng";
+        _translations["DNS over HTTPS successfully enabled."] = "Đã kích hoạt DNS over HTTPS thành công.";
+        _translations["DNS over HTTPS successfully disabled."] = "Đã tắt DNS over HTTPS thành công.";
+        _translations["Failed to update DNS over HTTPS configuration. Admin rights required."] = "Cập nhật DNS over HTTPS thất bại. Yêu cầu quyền Administrator.";
+        _translations["Secure DNS Updated"] = "Đã cập nhật DNS bảo mật";
+        _translations["Secure DNS Failed"] = "Cấu hình DNS bảo mật thất bại";
+        _translations["DNS over HTTPS configured successfully."] = "Đã cấu hình DNS over HTTPS thành công.";
+        _translations["DNS config reset to automatic."] = "Cấu hình DNS đã được đặt lại về tự động (DHCP).";
 
         // --- MainPage & MainWindow ---
         _translations["User"] = "Người dùng";

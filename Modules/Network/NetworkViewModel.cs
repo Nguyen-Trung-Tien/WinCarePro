@@ -190,26 +190,6 @@ public partial class NetworkViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _packetLossPercent, v => _packetLossPercent = v, value);
     }
 
-    public double DownloadSpeedMbps
-    {
-        get => _downloadSpeedMbps;
-        set
-        {
-            SetPropertyOnUI(() => _downloadSpeedMbps, v => _downloadSpeedMbps = v, value);
-            OnPropertyChanged(nameof(DownloadSpeed));
-        }
-    }
-
-    public double UploadSpeedMbps
-    {
-        get => _uploadSpeedMbps;
-        set
-        {
-            SetPropertyOnUI(() => _uploadSpeedMbps, v => _uploadSpeedMbps = v, value);
-            OnPropertyChanged(nameof(UploadSpeed));
-        }
-    }
-
     public double JitterMs
     {
         get => _jitterMs;
@@ -234,15 +214,42 @@ public partial class NetworkViewModel : ViewModelBase
         set => SetPropertyOnUI(() => _currentDnsText, v => _currentDnsText = v, value);
     }
 
+    public double DownloadSpeedMbps
+    {
+        get => _downloadSpeedMbps;
+        set
+        {
+            SetPropertyOnUI(() => _downloadSpeedMbps, v => {
+                _downloadSpeedMbps = v;
+                OnPropertyChanged(nameof(DownloadSpeed));
+                OnPropertyChanged(nameof(DisplaySpeed));
+                OnPropertyChanged(nameof(DisplaySpeedLabel));
+            }, value);
+        }
+    }
+
+    public double UploadSpeedMbps
+    {
+        get => _uploadSpeedMbps;
+        set
+        {
+            SetPropertyOnUI(() => _uploadSpeedMbps, v => {
+                _uploadSpeedMbps = v;
+                OnPropertyChanged(nameof(UploadSpeed));
+                OnPropertyChanged(nameof(DisplaySpeed));
+                OnPropertyChanged(nameof(DisplaySpeedLabel));
+            }, value);
+        }
+    }
+
     public double DownloadSpeed
     {
         get => _downloadSpeedMbps > 0 ? _downloadSpeedMbps : _downloadSpeed;
         set
         {
             _downloadSpeed = value;
-            _downloadSpeedMbps = value;
             OnPropertyChanged(nameof(DownloadSpeed));
-            OnPropertyChanged(nameof(DownloadSpeedMbps));
+            OnPropertyChanged(nameof(DisplaySpeed));
         }
     }
 
@@ -252,9 +259,8 @@ public partial class NetworkViewModel : ViewModelBase
         set
         {
             _uploadSpeed = value;
-            _uploadSpeedMbps = value;
             OnPropertyChanged(nameof(UploadSpeed));
-            OnPropertyChanged(nameof(UploadSpeedMbps));
+            OnPropertyChanged(nameof(DisplaySpeed));
         }
     }
 

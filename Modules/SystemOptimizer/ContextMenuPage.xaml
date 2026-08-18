@@ -66,9 +66,9 @@
                 <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="10" Padding="8">
                     <FontIcon Glyph="&#xE8EC;" FontSize="18" Foreground="White" />
                 </Border>
-                <StackPanel Spacing="1" VerticalAlignment="Center">
-                    <TextBlock Text="Context Menu Manager" Style="{StaticResource PageHeaderTitleStyle}" FontSize="20" />
-                    <TextBlock Text="Clean up shell extensions, declutter right-click menus, and accelerate Windows File Explorer." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="Context Menu Manager" Style="{StaticResource PageHeaderTitleStyle}" />
+                    <TextBlock Text="Clean up shell extensions, declutter right-click menus, and accelerate Windows File Explorer." Style="{StaticResource PageHeaderSubtitleStyle}" />
                 </StackPanel>
             </StackPanel>
 

@@ -97,9 +97,9 @@
                     <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="10" Padding="8">
                         <FontIcon Glyph="&#xE7FC;" FontSize="18" Foreground="White" />
                     </Border>
-                    <StackPanel Spacing="1" VerticalAlignment="Center">
-                        <TextBlock Text="System Optimizer &amp; Performance" Style="{StaticResource PageHeaderTitleStyle}" FontSize="20" />
-                        <TextBlock Text="Kernel response tuning, high-speed RAM working set purger, latency reduction, and gaming acceleration." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="System Optimizer &amp; Performance" Style="{StaticResource PageHeaderTitleStyle}" />
+                        <TextBlock Text="Kernel response tuning, high-speed RAM working set purger, latency reduction, and gaming acceleration." Style="{StaticResource PageHeaderSubtitleStyle}" />
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

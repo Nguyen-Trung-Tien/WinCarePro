@@ -76,27 +76,60 @@ public class JunkCleanerEngine
         long cleanableBytes = 0;
         long lockedBytes = 0;
         int count = 0;
-        var fileItems = new System.Collections.Concurrent.ConcurrentBag<JunkFileItem>();
+        var fileItems = new List<JunkFileItem>();
 
-        try
+        if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path))
+            return (0, 0, 0, 0, fileItems);
+
+        var dirsToVisit = new Queue<string>();
+        dirsToVisit.Enqueue(path);
+
+        while (dirsToVisit.Count > 0)
         {
-            if (!Directory.Exists(path)) return (0, 0, 0, 0, new List<JunkFileItem>());
+            token.ThrowIfCancellationRequested();
+            string currentDir = dirsToVisit.Dequeue();
 
             try
             {
-                foreach (var file in Directory.EnumerateFiles(path, searchPattern))
+                var dirInfo = new DirectoryInfo(currentDir);
+                if (currentDir != path && (dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
+                    continue;
+
+                // Enumerate files in current directory
+                try
                 {
-                    token.ThrowIfCancellationRequested();
+                    foreach (var file in Directory.EnumerateFiles(currentDir, searchPattern))
+                    {
+                        token.ThrowIfCancellationRequested();
+                        try
+                        {
+                            var info = new FileInfo(file);
+                            long size = info.Length;
+                            bytes += size;
+                            cleanableBytes += size;
+                            count++;
+
+                            if (fileItems.Count < maxFiles)
+                            {
+                                fileItems.Add(new JunkFileItem { Path = file, SizeBytes = size, IsLocked = false });
+                            }
+                        }
+                        catch (OperationCanceledException) { throw; }
+                        catch { }
+                    }
+                }
+                catch (OperationCanceledException) { throw; }
+                catch { }
+
+                // Enumerate sub-directories if recursive
+                if (recursive)
+                {
                     try
                     {
-                        var info = new FileInfo(file);
-                        long size = info.Length;
-                        System.Threading.Interlocked.Add(ref bytes, size);
-                        System.Threading.Interlocked.Add(ref cleanableBytes, size);
-                        System.Threading.Interlocked.Increment(ref count);
-                        if (fileItems.Count < maxFiles)
+                        foreach (var subDir in Directory.EnumerateDirectories(currentDir))
                         {
-                            fileItems.Add(new JunkFileItem { Path = file, SizeBytes = size, IsLocked = false });
+                            token.ThrowIfCancellationRequested();
+                            dirsToVisit.Enqueue(subDir);
                         }
                     }
                     catch (OperationCanceledException) { throw; }
@@ -105,46 +138,9 @@ public class JunkCleanerEngine
             }
             catch (OperationCanceledException) { throw; }
             catch { }
-
-            if (recursive)
-            {
-                try
-                {
-                    var subDirs = Directory.EnumerateDirectories(path);
-                    Parallel.ForEach(subDirs, new ParallelOptions { CancellationToken = token, MaxDegreeOfParallelism = Environment.ProcessorCount }, dir =>
-                    {
-                        try
-                        {
-                            var dirInfo = new DirectoryInfo(dir);
-                            if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
-                                return;
-
-                            int remainingMax = Math.Max(0, maxFiles - fileItems.Count);
-                            var (subBytes, subCleanable, subLocked, subCount, subFiles) = GetDirectoryDetails(dir, searchPattern, recursive, token, remainingMax);
-
-                            System.Threading.Interlocked.Add(ref bytes, subBytes);
-                            System.Threading.Interlocked.Add(ref cleanableBytes, subCleanable);
-                            System.Threading.Interlocked.Add(ref lockedBytes, subLocked);
-                            System.Threading.Interlocked.Add(ref count, subCount);
-
-                            foreach (var f in subFiles)
-                            {
-                                if (fileItems.Count >= maxFiles) break;
-                                fileItems.Add(f);
-                            }
-                        }
-                        catch (OperationCanceledException) { throw; }
-                        catch { }
-                    });
-                }
-                catch (OperationCanceledException) { throw; }
-                catch { }
-            }
         }
-        catch (OperationCanceledException) { throw; }
-        catch { }
 
-        return (bytes, cleanableBytes, lockedBytes, count, fileItems.ToList());
+        return (bytes, cleanableBytes, lockedBytes, count, fileItems);
     }
 
     private void UpdateCategoryLockStatus(JunkCategory cat, CancellationToken token = default)

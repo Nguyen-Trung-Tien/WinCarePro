@@ -53,7 +53,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!-- Page Header -->
@@ -283,15 +282,6 @@
                     </Grid>
                 </PivotItem>
             </Pivot>
-
-            <!-- Activity Log & Diagnostics Console Expander -->
-            <Expander Grid.Row="2" Header="Disk Tools Operations Console" HorizontalAlignment="Stretch" Margin="0,16,0,0" IsExpanded="False">
-                <Border Background="{ThemeResource AppTerminalBackground}" CornerRadius="6" Padding="12" Height="140">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                        <TextBlock Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" FontFamily="Consolas, Cascadia Code, Courier New" FontSize="11.5" Foreground="{ThemeResource AppTerminalForeground}" TextWrapping="Wrap"/>
-                    </ScrollViewer>
-                </Border>
-            </Expander>
         </Grid>
     </ScrollViewer>
 </Page>

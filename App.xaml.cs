@@ -123,11 +123,14 @@ public partial class App : Application
             ConfigureServices();
 
             // Check if launched in background mode
-            var commandLineArgs = Environment.GetCommandLineArgs();
-            if (commandLineArgs.Any(arg => arg.Equals("/background", StringComparison.OrdinalIgnoreCase) || 
+            var commandLineArgs = Environment.GetCommandLineArgs();            if (commandLineArgs.Any(arg => arg.Equals("/background", StringComparison.OrdinalIgnoreCase) || 
                                            arg.Equals("-background", StringComparison.OrdinalIgnoreCase)))
             {
-                RunSilentCleanup();
+                Task.Run(async () =>
+                {
+                    await RunSilentCleanupAsync();
+                    Environment.Exit(0);
+                });
                 return;
             }
 
@@ -141,13 +144,13 @@ public partial class App : Application
         }
     }
 
-    private static void RunSilentCleanup()
+    private static async Task RunSilentCleanupAsync()
     {
         try
         {
             var cleaner = Services.GetRequiredService<Engines.JunkCleanerEngine>();
             // Scan for all categories
-            var categories = cleaner.ScanJunkAsync().GetAwaiter().GetResult();
+            var categories = await cleaner.ScanJunkAsync();
             
             // Calculate total size of junk
             long totalJunkBytes = 0;
@@ -178,7 +181,7 @@ public partial class App : Application
             if (totalJunkGB >= triggerSizeGB)
             {
                 // Perform clean
-                long cleanedBytes = cleaner.CleanJunkAsync(categories).GetAwaiter().GetResult();
+                long cleanedBytes = await cleaner.CleanJunkAsync(categories);
                 Database.DbManager.LogAction(
                     $"Silent background clean completed. Freed {(cleanedBytes / 1024.0 / 1024.0):F2} MB.", 
                     "Background Scheduler", 
@@ -201,10 +204,6 @@ public partial class App : Application
                 "Background Scheduler", 
                 "Failed"
             );
-        }
-        finally
-        {
-            Environment.Exit(0);
         }
     }
 

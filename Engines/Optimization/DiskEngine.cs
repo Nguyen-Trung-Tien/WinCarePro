@@ -103,38 +103,57 @@ public class DiskEngine
 
     public async Task<List<StorageItem>> AnalyzeStorageAsync(string folderPath, CancellationToken token = default)
     {
-        var list = new List<StorageItem>();
-        if (!Directory.Exists(folderPath)) return list;
+        var list = new System.Collections.Concurrent.ConcurrentBag<StorageItem>();
+        if (string.IsNullOrWhiteSpace(folderPath) || !Directory.Exists(folderPath)) return new List<StorageItem>();
 
         await Task.Run(() =>
         {
             try
             {
-                // Enumerate files
-                foreach (var file in Directory.GetFiles(folderPath))
-                {
-                    token.ThrowIfCancellationRequested();
-                    try
-                    {
-                        var info = new FileInfo(file);
-                        list.Add(new StorageItem
-                        {
-                            Path = file,
-                            Name = Path.GetFileName(file),
-                            SizeBytes = info.Length,
-                            IsDirectory = false
-                        });
-                    }
-                    catch { }
-                }
+                token.ThrowIfCancellationRequested();
 
-                // Enumerate folders
-                foreach (var dir in Directory.GetDirectories(folderPath))
+                // 1. Enumerate top-level files
+                try
                 {
-                    token.ThrowIfCancellationRequested();
+                    foreach (var file in Directory.EnumerateFiles(folderPath))
+                    {
+                        token.ThrowIfCancellationRequested();
+                        try
+                        {
+                            var info = new FileInfo(file);
+                            list.Add(new StorageItem
+                            {
+                                Path = file,
+                                Name = Path.GetFileName(file),
+                                SizeBytes = info.Length,
+                                IsDirectory = false
+                            });
+                        }
+                        catch { }
+                    }
+                }
+                catch { }
+
+                // 2. Enumerate and calculate top-level folders in parallel
+                string[] subDirs = Array.Empty<string>();
+                try
+                {
+                    subDirs = Directory.GetDirectories(folderPath);
+                }
+                catch { }
+
+                var parallelOptions = new ParallelOptions
+                {
+                    CancellationToken = token,
+                    MaxDegreeOfParallelism = Math.Clamp(Environment.ProcessorCount, 2, 8)
+                };
+
+                Parallel.ForEach(subDirs, parallelOptions, dir =>
+                {
                     try
                     {
-                        long size = GetDirSizeRecursively(dir, token);
+                        token.ThrowIfCancellationRequested();
+                        long size = CalculateDirectorySizeBytes(dir, token);
                         list.Add(new StorageItem
                         {
                             Path = dir,
@@ -144,56 +163,63 @@ public class DiskEngine
                         });
                     }
                     catch { }
-                }
+                });
             }
+            catch (OperationCanceledException) { throw; }
             catch { }
         }, token);
 
-        long total = list.Sum(x => x.SizeBytes);
-        foreach (var item in list)
+        var resultList = list.ToList();
+        long total = resultList.Sum(x => x.SizeBytes);
+        foreach (var item in resultList)
         {
             item.Percentage = total > 0 ? ((double)item.SizeBytes / total) * 100.0 : 0.0;
         }
 
-        return list.OrderByDescending(x => x.SizeBytes).ToList();
+        return resultList.OrderByDescending(x => x.SizeBytes).ToList();
     }
 
-    private long GetDirSizeRecursively(string path, CancellationToken token = default)
+    private long CalculateDirectorySizeBytes(string path, CancellationToken token = default)
     {
         token.ThrowIfCancellationRequested();
-        long bytes = 0;
-        try
+        long totalBytes = 0;
+        if (!Directory.Exists(path)) return 0;
+
+        var queue = new Queue<string>();
+        queue.Enqueue(path);
+
+        while (queue.Count > 0)
         {
-            if (!Directory.Exists(path)) return 0;
+            token.ThrowIfCancellationRequested();
+            string current = queue.Dequeue();
 
-            string[] files = Array.Empty<string>();
             try
             {
-                files = Directory.GetFiles(path);
+                var dirInfo = new DirectoryInfo(current);
+                if (current != path && (dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
+                    continue;
+
+                foreach (var file in Directory.EnumerateFiles(current))
+                {
+                    token.ThrowIfCancellationRequested();
+                    try
+                    {
+                        totalBytes += new FileInfo(file).Length;
+                    }
+                    catch { }
+                }
+
+                foreach (var sub in Directory.EnumerateDirectories(current))
+                {
+                    token.ThrowIfCancellationRequested();
+                    queue.Enqueue(sub);
+                }
             }
+            catch (OperationCanceledException) { throw; }
             catch { }
-
-            foreach (var file in files)
-            {
-                token.ThrowIfCancellationRequested();
-                try { bytes += new FileInfo(file).Length; } catch { }
-            }
-
-            string[] dirs = Array.Empty<string>();
-            try
-            {
-                dirs = Directory.GetDirectories(path);
-            }
-            catch { }
-
-            foreach (var dir in dirs)
-            {
-                token.ThrowIfCancellationRequested();
-                bytes += GetDirSizeRecursively(dir, token);
-            }
         }
-        catch { }
-        return bytes;
+
+        return totalBytes;
     }
 
 

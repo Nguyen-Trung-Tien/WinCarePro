@@ -65,9 +65,9 @@
                 <Border Background="{StaticResource CyberAccentGradient}" CornerRadius="10" Padding="8">
                     <FontIcon Glyph="&#xE701;" FontSize="18" Foreground="White"/>
                 </Border>
-                <StackPanel Spacing="1" VerticalAlignment="Center">
-                    <TextBlock Text="Network Center &amp; Diagnostics" Style="{StaticResource PageHeaderTitleStyle}" FontSize="20"/>
-                    <TextBlock Text="Real-time network telemetry, low-latency DNS optimizer, socket traffic &amp; TCP/IP repair." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="Network Center &amp; Diagnostics" Style="{StaticResource PageHeaderTitleStyle}"/>
+                    <TextBlock Text="Real-time network telemetry, low-latency DNS optimizer, socket traffic &amp; TCP/IP repair." Style="{StaticResource PageHeaderSubtitleStyle}"/>
                 </StackPanel>
                 
                 <!-- Live Internet Connection Status Pill -->

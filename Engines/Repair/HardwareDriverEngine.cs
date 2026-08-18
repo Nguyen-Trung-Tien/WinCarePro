@@ -10,8 +10,20 @@ namespace WinCarePro.Engines;
 
 public class HardwareDriverEngine
 {
+    private HardwareSpecs? _cachedSpecs;
+    private DateTime _specsCacheTime = DateTime.MinValue;
+
     public HardwareSpecs GetHardwareSpecifications()
     {
+        var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
+        string uptimeStr = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
+
+        if (_cachedSpecs != null && (DateTime.UtcNow - _specsCacheTime).TotalMinutes < 30)
+        {
+            _cachedSpecs.SystemUptime = uptimeStr;
+            return _cachedSpecs;
+        }
+
         var specs = new HardwareSpecs();
         
         // OS and Uptime
@@ -23,8 +35,7 @@ public class HardwareDriverEngine
             specs.OsVersion = osList[0];
         }
 
-        var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
-        specs.SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
+        specs.SystemUptime = uptimeStr;
 
         // CPU specs
         var cpuList = WmiHelper.Query("SELECT Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed FROM Win32_Processor", obj => new
@@ -130,6 +141,8 @@ public class HardwareDriverEngine
             specs.StorageInfo = "Local Fixed Disk: 512 GB";
         }
 
+        _cachedSpecs = specs;
+        _specsCacheTime = DateTime.UtcNow;
         return specs;
     }
 
@@ -188,59 +201,6 @@ public class HardwareDriverEngine
             }
         }
 #endif
-
-        // Check updates based on realistic heuristics (third-party vendor, critical class, and release date)
-        var referenceDate = new DateTime(2026, 7, 14);
-        var eligibleClasses = new[] { "DISPLAY", "NET", "MEDIA", "BLUETOOTH", "PORTS", "USB", "MOUSE", "KEYBOARD", "IMAGE" };
-
-        foreach (var driver in list)
-        {
-            bool hasUpdate = false;
-            
-            // Only update non-Microsoft/generic drivers or critical ones to prevent spamming motherboard resources
-            string provider = driver.Provider.ToLowerInvariant();
-            string name = driver.Name.ToLowerInvariant();
-            string devClass = driver.DeviceClass.ToUpperInvariant();
-
-            bool isGenericOrMicrosoft = provider.Contains("microsoft") || 
-                                       provider.Contains("generic") || 
-                                       provider.Contains("standard") || 
-                                       name.Contains("pci express") || 
-                                       name.Contains("acpi") ||
-                                       name.Contains("root port") ||
-                                       name.Contains("motherboard");
-
-            bool isCriticalClass = eligibleClasses.Contains(devClass);
-
-            if (isCriticalClass && !isGenericOrMicrosoft)
-            {
-                // Parse date
-                if (DateTime.TryParse(driver.DriverDate, out DateTime dt))
-                {
-                    // Outdated if older than 180 days (6 months)
-                    if ((referenceDate - dt).TotalDays > 180)
-                    {
-                        hasUpdate = true;
-                    }
-                }
-                else
-                {
-                    // Fallback to update if date parsing is missing
-                    hasUpdate = true;
-                }
-            }
-
-            if (hasUpdate)
-            {
-                driver.HasUpdate = true;
-                driver.AvailableVersion = GenerateRealisticVersionBump(driver.DriverVersion);
-            }
-            else
-            {
-                driver.HasUpdate = false;
-                driver.AvailableVersion = driver.DriverVersion;
-            }
-        }
 
         return list;
     }
@@ -391,7 +351,20 @@ public class HardwareDriverEngine
 
     private static PerformanceCounter[]? _gpuCounters;
     private static DateTime _lastGpuQuery = DateTime.MinValue;
+    private static DateTime _lastCategoryDetect = DateTime.MinValue;
     private static double _lastGpuValue = 0;
+
+    private static void DisposeGpuCounters()
+    {
+        if (_gpuCounters != null)
+        {
+            foreach (var c in _gpuCounters)
+            {
+                try { c.Dispose(); } catch { }
+            }
+            _gpuCounters = null;
+        }
+    }
 
     public double GetActualGpuUsage()
     {
@@ -406,6 +379,13 @@ public class HardwareDriverEngine
         {
             if (_gpuCounters == null)
             {
+                // Rate-limit category detection to at most once every 5 seconds to prevent freezes
+                if ((DateTime.Now - _lastCategoryDetect).TotalSeconds < 5)
+                {
+                    return _lastGpuValue;
+                }
+                _lastCategoryDetect = DateTime.Now;
+
                 var category = new PerformanceCounterCategory("GPU Engine");
                 var instanceNames = category.GetInstanceNames();
                 var list = new List<PerformanceCounter>();
@@ -420,6 +400,7 @@ public class HardwareDriverEngine
             }
 
             double total = 0;
+            bool counterFailed = false;
             foreach (var counter in _gpuCounters)
             {
                 try
@@ -428,18 +409,23 @@ public class HardwareDriverEngine
                 }
                 catch
                 {
-                    // Counter might have expired/been disposed if the process ended
-                    _gpuCounters = null; // force re-detect next time
+                    counterFailed = true;
                     break;
                 }
             }
+
+            if (counterFailed)
+            {
+                DisposeGpuCounters();
+            }
+
             // Clamp to 100% max
             _lastGpuValue = Math.Clamp(total, 0.0, 100.0);
             return _lastGpuValue;
         }
         catch
         {
-            // fallback simulation
+            DisposeGpuCounters();
             return -1;
         }
     }

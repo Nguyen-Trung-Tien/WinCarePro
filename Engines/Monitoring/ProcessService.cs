@@ -585,20 +585,27 @@ public class ProcessService
 
     private void KillProcessTree(int pid)
     {
-        // Recursively find child processes via WMI and kill them, then kill parent
-        var children = WinCarePro.Core.Helpers.WmiHelper.Query($"Select ProcessID From Win32_Process Where ParentProcessId={pid}", obj => 
-            Convert.ToInt32(obj["ProcessID"]));
-
-        foreach (int childPid in children)
-        {
-            KillProcessTree(childPid);
-        }
-
         try
         {
             using var proc = Process.GetProcessById(pid);
-            proc.Kill(true); // .NET 8+ support Kill(true) which kills tree directly, but recursion ensures safety
+            proc.Kill(entireProcessTree: true); // .NET native fast process tree kill
         }
-        catch { }
+        catch
+        {
+            try
+            {
+                var children = WinCarePro.Core.Helpers.WmiHelper.Query($"Select ProcessID From Win32_Process Where ParentProcessId={pid}", obj => 
+                    Convert.ToInt32(obj["ProcessID"]));
+
+                foreach (int childPid in children)
+                {
+                    KillProcessTree(childPid);
+                }
+
+                using var fallbackProc = Process.GetProcessById(pid);
+                fallbackProc.Kill();
+            }
+            catch { }
+        }
     }
 }

@@ -215,7 +215,7 @@ public class RegistryBackupEngine
     }
 
     // Registry Backup
-    public bool CreateRegistryBackup(string name)
+    public async Task<bool> CreateRegistryBackupAsync(string name)
     {
         if (!Directory.Exists(BackupFolder))
         {
@@ -228,7 +228,7 @@ public class RegistryBackupEngine
         try
         {
             // 1. We export HKCU hive (user settings) which is safe and easy, and does not require exclusive locks
-            var result = ProcessRunner.RunAsync("reg.exe", $"export HKCU \"{backupFile}\" /y", TimeSpan.FromSeconds(10)).GetAwaiter().GetResult();
+            var result = await ProcessRunner.RunAsync("reg.exe", $"export HKCU \"{backupFile}\" /y", TimeSpan.FromSeconds(10));
             bool success = result.ExitCode == 0;
 
             // 2. Export key HKLM paths we modify and append them to the backup file
@@ -244,10 +244,10 @@ public class RegistryBackupEngine
                 string tempFile = Path.Combine(BackupFolder, $"temp_{Guid.NewGuid():N}.reg");
                 try
                 {
-                    var resultHklm = ProcessRunner.RunAsync("reg.exe", $"export \"{path}\" \"{tempFile}\" /y", TimeSpan.FromSeconds(10)).GetAwaiter().GetResult();
+                    var resultHklm = await ProcessRunner.RunAsync("reg.exe", $"export \"{path}\" \"{tempFile}\" /y", TimeSpan.FromSeconds(10));
                     if (resultHklm.ExitCode == 0 && File.Exists(tempFile))
                     {
-                        var lines = File.ReadAllLines(tempFile, System.Text.Encoding.Unicode);
+                        var lines = await File.ReadAllLinesAsync(tempFile, System.Text.Encoding.Unicode);
                         using (var sw = new StreamWriter(backupFile, true, System.Text.Encoding.Unicode))
                         {
                             sw.WriteLine();
@@ -276,13 +276,18 @@ public class RegistryBackupEngine
         }
     }
 
-    public bool RestoreRegistryBackup(string filePath)
+    public bool CreateRegistryBackup(string name)
+    {
+        return Task.Run(() => CreateRegistryBackupAsync(name)).GetAwaiter().GetResult();
+    }
+
+    public async Task<bool> RestoreRegistryBackupAsync(string filePath)
     {
         if (!File.Exists(filePath)) return false;
         try
         {
             // Verify header to ensure valid .reg backup file
-            string firstLine = File.ReadLines(filePath).FirstOrDefault() ?? "";
+            string firstLine = (await File.ReadAllLinesAsync(filePath)).FirstOrDefault() ?? "";
             if (!firstLine.Trim().StartsWith("Windows Registry Editor", StringComparison.OrdinalIgnoreCase) &&
                 !firstLine.Trim().StartsWith("REGEDIT", StringComparison.OrdinalIgnoreCase))
             {
@@ -291,7 +296,7 @@ public class RegistryBackupEngine
             }
 
             string safeFilePath = ProcessRunner.SanitizeArgument(filePath);
-            var result = ProcessRunner.RunAsync("reg.exe", $"import {safeFilePath}", TimeSpan.FromSeconds(15)).GetAwaiter().GetResult();
+            var result = await ProcessRunner.RunAsync("reg.exe", $"import {safeFilePath}", TimeSpan.FromSeconds(15));
             bool success = result.ExitCode == 0;
             Database.DbManager.LogAction($"Restored Registry Backup: {Path.GetFileName(filePath)}", "Registry Tools", success ? "Success" : "Failed");
             return success;
@@ -300,6 +305,11 @@ public class RegistryBackupEngine
         {
             return false;
         }
+    }
+
+    public bool RestoreRegistryBackup(string filePath)
+    {
+        return Task.Run(() => RestoreRegistryBackupAsync(filePath)).GetAwaiter().GetResult();
     }
 
     public List<RegistryBackupItem> GetRegistryBackupsList()

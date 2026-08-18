@@ -137,14 +137,46 @@ public class JunkViewModel : ViewModelBase
         catch { }
     }
 
+    private readonly System.Text.StringBuilder _logBuffer = new();
+    private DateTime _lastLogUpdate = DateTime.MinValue;
+
     private void OnProgressMessage(string msg)
     {
-        _dispatcherQueue?.TryEnqueue(() =>
+        string translated = msg.T();
+        string timestamp = DateTime.Now.ToString("HH:mm:ss");
+        string logLine = $"[{timestamp}] {translated}";
+
+        lock (_logBuffer)
         {
-            ProgressMessage = msg.T();
-            string timestamp = DateTime.Now.ToString("HH:mm:ss");
-            LiveLogs += (string.IsNullOrEmpty(LiveLogs) ? "" : "\r\n") + $"[{timestamp}] {msg.T()}";
-        });
+            if (_logBuffer.Length > 20000)
+            {
+                // Truncate older logs to maintain bounded memory
+                _logBuffer.Remove(0, 5000);
+            }
+            if (_logBuffer.Length > 0) _logBuffer.AppendLine();
+            _logBuffer.Append(logLine);
+        }
+
+        var now = DateTime.UtcNow;
+        if ((now - _lastLogUpdate).TotalMilliseconds > 100)
+        {
+            _lastLogUpdate = now;
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                ProgressMessage = translated;
+                lock (_logBuffer)
+                {
+                    LiveLogs = _logBuffer.ToString();
+                }
+            });
+        }
+        else
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                ProgressMessage = translated;
+            });
+        }
     }
 
     private void OnProgressChanged(int pct)
@@ -168,6 +200,7 @@ public class JunkViewModel : ViewModelBase
 
         IsScanning = true;
         ProgressPercent = 0;
+        lock (_logBuffer) { _logBuffer.Clear(); }
         LiveLogs = "";
         Categories.Clear();
         SelectedCategory = null;
@@ -210,19 +243,15 @@ public class JunkViewModel : ViewModelBase
         }
         catch (OperationCanceledException)
         {
-            await RunOnUIActionAsync(() =>
-            {
-                ProgressMessage = "Scan cancelled.".T();
-                IsScanning = false;
-            });
+            await RunOnUIActionAsync(() => ProgressMessage = "Scan cancelled.".T());
         }
         catch (Exception ex)
         {
-            await RunOnUIActionAsync(() =>
-            {
-                ProgressMessage = "Scan failed:".T() + " " + ex.Message;
-                IsScanning = false;
-            });
+            await RunOnUIActionAsync(() => ProgressMessage = "Scan failed:".T() + " " + ex.Message);
+        }
+        finally
+        {
+            await RunOnUIActionAsync(() => IsScanning = false);
         }
     }
 
@@ -244,6 +273,7 @@ public class JunkViewModel : ViewModelBase
 
         IsCleaning = true;
         ProgressPercent = 0;
+        lock (_logBuffer) { _logBuffer.Clear(); }
         LiveLogs = "";
 
         try

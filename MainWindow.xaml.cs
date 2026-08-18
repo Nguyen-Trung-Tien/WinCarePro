@@ -161,55 +161,45 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private async Task SetStartupProgressAsync(double targetValue, string message, int durationMs = 200)
+    private void SetStartupProgress(double targetValue, string message)
     {
         if (StartupProgressText != null) StartupProgressText.Text = message.T();
-        double startValue = StartupProgressBar?.Value ?? 0;
-        int steps = 10;
-        int stepDelay = Math.Max(10, durationMs / steps);
-
-        for (int i = 1; i <= steps; i++)
-        {
-            double current = startValue + (targetValue - startValue) * (i / (double)steps);
-            if (StartupProgressBar != null) StartupProgressBar.Value = current;
-            if (StartupProgressPercent != null) StartupProgressPercent.Text = $"{(int)current}%";
-            await Task.Delay(stepDelay);
-        }
+        if (StartupProgressBar != null) StartupProgressBar.Value = targetValue;
+        if (StartupProgressPercent != null) StartupProgressPercent.Text = $"{(int)targetValue}%";
     }
 
     private async void InitializeAppAsync()
     {
         try
         {
-            await SetStartupProgressAsync(15, "Starting engine...", 100);
+            SetStartupProgress(20, "Initializing system engine...");
 
             // 1. Initialize SQLite Database asynchronously
-            await SetStartupProgressAsync(35, "Initializing database...", 150);
+            SetStartupProgress(40, "Loading database...");
             await Task.Run(() => Database.DbManager.InitializeDatabase());
 
             // 2. Load theme settings and transparency levels from DB
-            await SetStartupProgressAsync(60, "Loading configuration...", 150);
+            SetStartupProgress(65, "Loading configuration...");
             LoadThemeConfiguration();
 
             // 3. Load language setting and apply translations to window content
-            await SetStartupProgressAsync(80, "Applying translations...", 150);
+            SetStartupProgress(85, "Applying translations...");
             TranslationManager.Instance.LoadLanguageFromSettings();
             TranslationManager.Instance.Translate(this.Content);
 
             // 4. Update notification badge indicator & prepare main view
-            await SetStartupProgressAsync(95, "Starting WinCare Pro...", 150);
+            SetStartupProgress(98, "Starting WinCare Pro...");
             UpdateNotificationBadge();
             RootFrame.Navigate(typeof(MainPage));
 
-            await SetStartupProgressAsync(100, "Ready!", 100);
-            await Task.Delay(150);
+            SetStartupProgress(100, "Ready!");
 
             // 5. Start Clock Ticker & fade out splash overlay smoothly
             StartClockTicker();
             FadeOutStartupOverlay.Begin();
 
-            // 7. Deferred background tasks: Index search registry & database maintenance
-            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(4, 0, 0, 0);
+            // 6. Deferred background tasks: Index search registry & database maintenance
+            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(4, 1, 0, 0);
             CheckAndShowChangelog(currentVersion);
 
             _ = Task.Run(() =>

@@ -62,9 +62,9 @@
                     <Border Background="{StaticResource CyberAccentGradient}" CornerRadius="10" Padding="8">
                         <FontIcon Glyph="&#xE90F;" FontSize="18" Foreground="White"/>
                     </Border>
-                    <StackPanel Spacing="1" VerticalAlignment="Center">
-                        <TextBlock Text="System Repair Center" Style="{StaticResource PageHeaderTitleStyle}" FontSize="20"/>
-                        <TextBlock Text="Deep Windows component store diagnosis, SFC file integrity recovery, registry policies and network stack repair." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="System Repair Center" Style="{StaticResource PageHeaderTitleStyle}"/>
+                        <TextBlock Text="Deep Windows component store diagnosis, SFC file integrity recovery, registry policies and network stack repair." Style="{StaticResource PageHeaderSubtitleStyle}"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

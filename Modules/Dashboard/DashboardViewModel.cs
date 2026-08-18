@@ -66,6 +66,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     private readonly IMaintenanceSchedulerService _schedulerService = App.Services.GetService<IMaintenanceSchedulerService>() ?? new MaintenanceSchedulerService();
     
     private bool _isDisposed = false;
+    private readonly EventHandler? _languageChangedHandler;
 
     private double _cachedRamCapacityGb = 16.0;
     private CancellationTokenSource? _monitorCts;
@@ -363,6 +364,18 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
             }
         };
 
+        _languageChangedHandler = (s, e) =>
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                AiStatusText = "AI Engine Ready".T();
+                AiSummaryText = "Assessing predictive metrics...".T();
+                UpdateHealthScoreBreakdown();
+            });
+        };
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+
         _ = InitializeSystemInfoAsync();
         InitializeCounters();
     }
@@ -462,6 +475,10 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     public void Dispose()
     {
         _isDisposed = true;
+        if (_languageChangedHandler != null)
+        {
+            TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        }
         StopMonitoring();
         _monitorCts?.Dispose();
         _monitorCts = null;

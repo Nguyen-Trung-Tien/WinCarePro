@@ -456,11 +456,30 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _gameBoostStatus, value);
     }
 
+    private readonly EventHandler _languageChangedHandler;
+
     public SystemOptimizerViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         
         _optimizerEngine.ProgressMessage += (msg) => Log(msg.T());
+
+        _languageChangedHandler = (s, e) =>
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                OnPropertyChanged(nameof(EfficiencyGradeText));
+                StatusText = "Status: Ready".T();
+                AiSummaryText = "WinCare AI Engine predicts optimal system responsiveness and low latency.".T();
+                MultimediaSchedulingStatus = "Realtime High Priority".T();
+                NetworkThrottlingStatus = "Disabled (Low Latency)".T();
+                KernelPagingStatus = "RAM Resident (Fast)".T();
+                InitializeBackgroundServices();
+                UpdateRamAndServices();
+            });
+        };
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
 
         LoadTweaks();
         InitializeBackgroundServices();
@@ -945,5 +964,6 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     public void Dispose()
     {
         _isDisposed = true;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 }

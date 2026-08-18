@@ -90,11 +90,13 @@ public class DiagnosticIssueItem : ViewModelBase
     }
 }
 
-public class RepairViewModel : ViewModelBase
+public class RepairViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue? _dispatcherQueue;
     private readonly SystemEngine _repairEngine = App.Services?.GetService<SystemEngine>() ?? new();
+    private readonly EventHandler _languageChangedHandler;
     private CancellationTokenSource? _cts;
+    private bool _isDisposed;
 
     private readonly StringBuilder _logBuffer = new();
     private bool _isLogUpdatePending;
@@ -160,8 +162,34 @@ public class RepairViewModel : ViewModelBase
     public int HealthScore
     {
         get => _healthScore;
-        set => SetProperty(ref _healthScore, value);
+        set
+        {
+            if (SetProperty(ref _healthScore, value))
+            {
+                OnPropertyChanged(nameof(HealthScoreText));
+                OnPropertyChanged(nameof(HealthScoreGrade));
+                OnPropertyChanged(nameof(HealthScoreBrush));
+            }
+        }
     }
+
+    public string HealthScoreText => $"{HealthScore}/100";
+
+    public string HealthScoreGrade => HealthScore switch
+    {
+        >= 90 => "Optimal".T(),
+        >= 75 => "Good".T(),
+        >= 50 => "Fair".T(),
+        _ => "Critical".T()
+    };
+
+    public Microsoft.UI.Xaml.Media.Brush HealthScoreBrush => HealthScore switch
+    {
+        >= 90 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)),
+        >= 75 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246)),
+        >= 50 => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)),
+        _ => new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68))
+    };
 
     private string _consoleLog = "Windows Repair Center Console Ready.\n".T();
     public string ConsoleLog
@@ -232,7 +260,26 @@ public class RepairViewModel : ViewModelBase
             _repairEngine.ProgressChanged += Pct => _dispatcherQueue.TryEnqueue(() => RepairProgressPercent = Pct);
         }
 
+        _languageChangedHandler = (s, e) =>
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                OnPropertyChanged(nameof(HealthScoreGrade));
+                ApplyFilter();
+            });
+        };
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+
         LoadServices();
+    }
+
+    public void Dispose()
+    {
+        _isDisposed = true;
+        CancelCurrentOperation();
+        _repairEngine.OutputReceived -= LogText;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
     public void CancelCurrentOperation()

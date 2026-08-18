@@ -61,15 +61,21 @@ public partial class TranslationManager
         catch { }
     }
 
+    private static readonly System.Text.RegularExpressions.Regex DriveUsageRegex = new(@"^Drive ([A-Z]): usage is at (\d+)%\. Estimated storage sustainability is over (\d+) days\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex RamBoostedRegex = new(@"^RAM Boosted: Optimized (\d+) processes, freed (\d+) bytes$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex CleanedBytesRegex = new(@"^Cleaned (\d+) bytes$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex SystemUpdatedRegex = new(@"^System updated to version (.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex AiProcessesRegex = new(@"^AI detected (\d+) active background processes\. Disabling unnecessary startup items can shave up to ([\d\.,]+) seconds off boot time\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
     private static string PreserveWhitespace(string original, string newText)
     {
-        if (!string.IsNullOrEmpty(original) && (original.StartsWith(" ") || original.EndsWith(" ")))
+        if (string.IsNullOrEmpty(original) || (!original.StartsWith(' ') && !original.EndsWith(' ')))
         {
-            int leading = original.Length - original.TrimStart().Length;
-            int trailing = original.Length - original.TrimEnd().Length;
-            return new string(' ', leading) + newText + new string(' ', trailing);
+            return newText;
         }
-        return newText;
+        int leading = original.Length - original.TrimStart().Length;
+        int trailing = original.Length - original.TrimEnd().Length;
+        return new string(' ', leading) + newText + new string(' ', trailing);
     }
 
     public string T(string? text)
@@ -100,46 +106,45 @@ public partial class TranslationManager
             }
 
             // Dynamic Regex translation for storage sustainability
-            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Drive ([A-Z]): usage is at (\d+)%\. Estimated storage sustainability is over (\d+) days\.$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            if (DriveUsageRegex.IsMatch(trimmed))
             {
-                string res = System.Text.RegularExpressions.Regex.Replace(trimmed, @"^Drive ([A-Z]): usage is at (\d+)%\. Estimated storage sustainability is over (\d+) days\.$", "Ổ $1: đang sử dụng $2%. Ước tính dung lượng bền vững hơn $3 ngày.", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                string res = DriveUsageRegex.Replace(trimmed, "Ổ $1: đang sử dụng $2%. Ước tính dung lượng bền vững hơn $3 ngày.");
                 return PreserveWhitespace(key, res);
             }
 
             // Dynamic Regex translation for RAM Boosted logs
-            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^RAM Boosted: Optimized (\d+) processes, freed (\d+) bytes$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            if (RamBoostedRegex.IsMatch(trimmed))
             {
-                string res = System.Text.RegularExpressions.Regex.Replace(trimmed, @"^RAM Boosted: Optimized (\d+) processes, freed (\d+) bytes$", "Giải phóng RAM: Đã tối ưu $1 tiến trình, giải phóng $2 bytes", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                string res = RamBoostedRegex.Replace(trimmed, "Giải phóng RAM: Đã tối ưu $1 tiến trình, giải phóng $2 bytes");
                 return PreserveWhitespace(key, res);
             }
 
             // Dynamic Regex translation for Cleaned bytes logs
-            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Cleaned (\d+) bytes$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            if (CleanedBytesRegex.IsMatch(trimmed))
             {
-                string res = System.Text.RegularExpressions.Regex.Replace(trimmed, @"^Cleaned (\d+) bytes$", "Đã dọn dẹp $1 bytes", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                string res = CleanedBytesRegex.Replace(trimmed, "Đã dọn dẹp $1 bytes");
                 return PreserveWhitespace(key, res);
             }
 
             // Dynamic Regex translation for System updated version logs
-            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^System updated to version (.+)$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            if (SystemUpdatedRegex.IsMatch(trimmed))
             {
-                string res = System.Text.RegularExpressions.Regex.Replace(trimmed, @"^System updated to version (.+)$", "Hệ thống đã cập nhật lên phiên bản $1", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                string res = SystemUpdatedRegex.Replace(trimmed, "Hệ thống đã cập nhật lên phiên bản $1");
                 return PreserveWhitespace(key, res);
             }
 
-            // Dynamic Regex translation for Trạng thái: ... Condition
-            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Trạng thái:\s*Fair Condition$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                return PreserveWhitespace(key, "Trạng thái: Khá");
-            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Trạng thái:\s*Good Condition$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                return PreserveWhitespace(key, "Trạng thái: Tốt");
-            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Trạng thái:\s*Excellent Condition$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                return PreserveWhitespace(key, "Trạng thái: Tuyệt vời");
-            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^Trạng thái:\s*Critical Condition$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                return PreserveWhitespace(key, "Trạng thái: Cảnh báo");
-
-            if (System.Text.RegularExpressions.Regex.IsMatch(trimmed, @"^AI detected (\d+) active background processes\. Disabling unnecessary startup items can shave up to ([\d\.,]+) seconds off boot time\.$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            // Fast-path prefix check for Status Condition
+            if (trimmed.StartsWith("Trạng thái:", StringComparison.OrdinalIgnoreCase))
             {
-                string res = System.Text.RegularExpressions.Regex.Replace(trimmed, @"^AI detected (\d+) active background processes\. Disabling unnecessary startup items can shave up to ([\d\.,]+) seconds off boot time\.$", "AI phát hiện $1 tiến trình ngầm đang hoạt động. Tắt các mục khởi động không cần thiết có thể rút ngắn tới $2 giây boot.", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                if (trimmed.EndsWith("Fair Condition", StringComparison.OrdinalIgnoreCase)) return PreserveWhitespace(key, "Trạng thái: Khá");
+                if (trimmed.EndsWith("Good Condition", StringComparison.OrdinalIgnoreCase)) return PreserveWhitespace(key, "Trạng thái: Tốt");
+                if (trimmed.EndsWith("Excellent Condition", StringComparison.OrdinalIgnoreCase)) return PreserveWhitespace(key, "Trạng thái: Tuyệt vời");
+                if (trimmed.EndsWith("Critical Condition", StringComparison.OrdinalIgnoreCase)) return PreserveWhitespace(key, "Trạng thái: Cảnh báo");
+            }
+
+            if (AiProcessesRegex.IsMatch(trimmed))
+            {
+                string res = AiProcessesRegex.Replace(trimmed, "AI phát hiện $1 tiến trình ngầm đang hoạt động. Tắt các mục khởi động không cần thiết có thể rút ngắn tới $2 giây boot.");
                 return PreserveWhitespace(key, res);
             }
 

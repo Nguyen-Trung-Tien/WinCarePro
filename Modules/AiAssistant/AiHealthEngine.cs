@@ -326,12 +326,22 @@ namespace WinCarePro.Modules.AiAssistant
             });
         }
 
+        private static long _cachedTempSize = -1;
+        private static DateTime _lastTempScan = DateTime.MinValue;
+
         private static long GetDirectorySizeBytesSafely(string dirPath)
         {
+            if (_cachedTempSize >= 0 && (DateTime.Now - _lastTempScan).TotalSeconds < 60)
+            {
+                return _cachedTempSize;
+            }
+
             long size = 0;
             try
             {
                 var dirInfo = new DirectoryInfo(dirPath);
+                if (!dirInfo.Exists) return 0;
+
                 foreach (var file in dirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly))
                 {
                     try { size += file.Length; } catch { }
@@ -348,6 +358,9 @@ namespace WinCarePro.Modules.AiAssistant
                     }
                     catch { }
                 }
+
+                _cachedTempSize = size;
+                _lastTempScan = DateTime.Now;
             }
             catch { }
             return size;

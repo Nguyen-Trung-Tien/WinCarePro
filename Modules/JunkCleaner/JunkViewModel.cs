@@ -12,13 +12,15 @@ using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
-public class JunkViewModel : ViewModelBase
+public class JunkViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly IJunkCleanerService _junkEngine;
     private readonly ILockingAppService _lockingAppService;
     private readonly IDialogService _dialogService;
+    private readonly EventHandler _languageChangedHandler;
     private System.Threading.CancellationTokenSource? _scanCts;
+    private bool _isDisposed;
 
     private bool _isScanning;
     public bool IsScanning
@@ -105,6 +107,16 @@ public class JunkViewModel : ViewModelBase
         _dialogService = dialogService;
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         DispatcherQueueInstance = _dispatcherQueue;
+
+        _languageChangedHandler = (s, e) =>
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                ProgressMessage = "Ready to scan junk files".T();
+            });
+        };
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
     }
 
     public JunkViewModel() : this(
@@ -125,8 +137,10 @@ public class JunkViewModel : ViewModelBase
 
     public void Cleanup()
     {
+        _isDisposed = true;
         _junkEngine.ProgressMessage -= OnProgressMessage;
         _junkEngine.ProgressChanged -= OnProgressChanged;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
 
         try
         {
@@ -136,6 +150,8 @@ public class JunkViewModel : ViewModelBase
         }
         catch { }
     }
+
+    public void Dispose() => Cleanup();
 
     private readonly System.Text.StringBuilder _logBuffer = new();
     private DateTime _lastLogUpdate = DateTime.MinValue;

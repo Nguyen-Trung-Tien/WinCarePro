@@ -14,13 +14,15 @@ using WinCarePro.Services.Implementations;
 
 namespace WinCarePro.ViewModels;
 
-public class StartupViewModel : ViewModelBase
+public class StartupViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly StartupEngine _startupEngine;
     private readonly IconCacheService _iconCache;
     private readonly ServiceSafetyService _safety;
     private readonly AuditLogService _audit;
+    private readonly EventHandler _languageChangedHandler;
+    private bool _isDisposed;
 
     // Undo Stack Definition
     private class UndoAction
@@ -209,7 +211,24 @@ public class StartupViewModel : ViewModelBase
             _audit = new AuditLogService();
         }
 
+        _languageChangedHandler = (s, e) =>
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                StatusText = "Ready".T();
+                ApplyFilters();
+            });
+        };
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+
         _ = LoadAllDataAsync();
+    }
+
+    public void Dispose()
+    {
+        _isDisposed = true;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
     public async Task LoadAllDataAsync()

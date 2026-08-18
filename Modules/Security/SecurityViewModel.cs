@@ -10,10 +10,12 @@ using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
-public partial class SecurityViewModel : ViewModelBase
+public partial class SecurityViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue? _dispatcherQueue;
     private readonly SecurityPrivacyEngine _securityEngine;
+    private readonly EventHandler _languageChangedHandler;
+    private bool _isDisposed;
 
     [ObservableProperty]
     private bool _isScanning;
@@ -71,8 +73,24 @@ public partial class SecurityViewModel : ViewModelBase
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         _securityEngine = App.Services?.GetService<SecurityPrivacyEngine>() ?? new();
 
+        _languageChangedHandler = (s, e) =>
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                StatusMessage = "Ready to scan security status".T();
+            });
+        };
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+
         LoadPrivacySettings();
         _ = ScanSecurityAsync();
+    }
+
+    public void Dispose()
+    {
+        _isDisposed = true;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
     public void LoadPrivacySettings()

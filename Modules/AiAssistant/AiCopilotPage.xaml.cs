@@ -97,7 +97,7 @@ namespace WinCarePro.Modules.AiAssistant
                     SummaryMessageText.Text = report.SummaryText;
                     PredictiveStorageText.Text = report.PredictiveStorageDaysText;
                     PredictiveBootText.Text = report.PredictiveBootTimeSavingsText;
-                    AiLastScanText.Text = $"Neural Scan: {DateTime.Now:HH:mm:ss} - Active & Calibrated";
+                    AiLastScanText.Text = $"{TranslationManager.Instance.T("Neural Scan: Active & Calibrated")} ({DateTime.Now:HH:mm:ss})";
                     RecommendationsListView.ItemsSource = report.Recommendations;
 
                     bool hasRecommendations = report.Recommendations != null && report.Recommendations.Count > 0;

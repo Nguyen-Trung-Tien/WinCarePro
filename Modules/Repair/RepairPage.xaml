@@ -64,7 +64,7 @@
                     </Border>
                     <StackPanel Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="System Repair Center" Style="{StaticResource PageHeaderTitleStyle}"/>
-                        <TextBlock Text="Deep Windows component store diagnosis, SFC file integrity recovery, registry policies and network stack repair." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                        <TextBlock Text="Diagnose and repair Windows components, SFC integrity, and services." Style="{StaticResource PageHeaderSubtitleStyle}"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

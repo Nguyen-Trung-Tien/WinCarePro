@@ -14,11 +14,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro.ViewModels;
 
-public class UninstallViewModel : ViewModelBase
+public class UninstallViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly UninstallEngine _uninstallEngine = new();
     private readonly IDialogService _dialogService;
+    private readonly EventHandler _languageChangedHandler;
+    private bool _isDisposed;
 
     private bool _updatingAllAppsFlag;
     private bool _updatingAllLeftoversFlag;
@@ -273,6 +275,17 @@ public class UninstallViewModel : ViewModelBase
 
         _uninstallEngine.OutputReceived += msg => _dispatcherQueue?.TryEnqueue(() => ProgressMessage = msg.T());
         _uninstallEngine.ProgressChanged += pct => _dispatcherQueue?.TryEnqueue(() => ProgressPercent = pct);
+
+        _languageChangedHandler = (s, e) =>
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                ProgressMessage = "Ready".T();
+                ApplyAppFilter();
+            });
+        };
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
 
         _ = ScanAppsAsync();
     }
@@ -681,5 +694,11 @@ public class UninstallViewModel : ViewModelBase
         {
             ProgressMessage = "Error searching online:".T() + " " + ex.Message;
         }
+    }
+
+    public void Dispose()
+    {
+        _isDisposed = true;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 }

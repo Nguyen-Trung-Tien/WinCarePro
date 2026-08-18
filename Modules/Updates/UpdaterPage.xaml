@@ -128,8 +128,8 @@
                         <FontIcon Glyph="&#xE895;" FontSize="18" Foreground="White" />
                     </Border>
                     <StackPanel Spacing="2" VerticalAlignment="Center">
-                        <TextBlock Text="Software Updates &amp; Package Manager" Style="{StaticResource PageHeaderTitleStyle}" />
-                        <TextBlock Text="Audit installed software, silent batch updates via WinGet &amp; verified Direct CDN repositories." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                        <TextBlock Text="Software Updater" Style="{StaticResource PageHeaderTitleStyle}" />
+                        <TextBlock Text="Update applications and system packages via WinGet." Style="{StaticResource PageHeaderSubtitleStyle}" />
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

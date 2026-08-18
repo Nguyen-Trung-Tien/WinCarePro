@@ -16,12 +16,23 @@ public sealed partial class NotificationPage : Page
 {
     private Microsoft.UI.Dispatching.DispatcherQueueTimer? _searchDebounceTimer;
     private bool _isAlertsTabActive = true;
+    private EventHandler? _languageChangedHandler;
 
     public NotificationPage()
     {
         this.InitializeComponent();
         this.Loaded += NotificationPage_Loaded;
         this.Unloaded += NotificationPage_Unloaded;
+
+        _languageChangedHandler = (s, e) =>
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                TranslationManager.Instance.Translate(this);
+                ApplyLocalization();
+            });
+        };
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
     }
 
     private async void NotificationPage_Loaded(object sender, RoutedEventArgs e)
@@ -36,15 +47,19 @@ public sealed partial class NotificationPage : Page
     private void NotificationPage_Unloaded(object sender, RoutedEventArgs e)
     {
         _searchDebounceTimer?.Stop();
+        if (_languageChangedHandler != null)
+        {
+            TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        }
     }
 
     private void ApplyLocalization()
     {
         if (PageTitleTextBlock != null) PageTitleTextBlock.Text = "Notifications & Activity Log".T();
-        if (PageSubtitleTextBlock != null) PageSubtitleTextBlock.Text = "Review real-time system alerts, critical health warnings, and background optimization history.".T();
+        if (PageSubtitleTextBlock != null) PageSubtitleTextBlock.Text = "System alerts, notifications, and optimization activity history.".T();
 
-        if (BtnTabAlerts != null) BtnTabAlerts.Content = "System Alerts & Advisories".T();
-        if (BtnTabLogs != null) BtnTabLogs.Content = "Operations & Optimization Timeline".T();
+        if (BtnTabAlerts != null && BtnTabAlerts.Content is not StackPanel) BtnTabAlerts.Content = "System Alerts".T();
+        if (BtnTabLogs != null && BtnTabLogs.Content is not StackPanel) BtnTabLogs.Content = "Activity History".T();
 
         if (NotificationSearchBox != null) NotificationSearchBox.PlaceholderText = "Search alerts by title or description...".T();
         if (SearchBox != null) SearchBox.PlaceholderText = "Search logs by action or status...".T();

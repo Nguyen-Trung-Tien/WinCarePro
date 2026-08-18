@@ -14,7 +14,7 @@ using WinCarePro.Models;
 
 namespace WinCarePro.ViewModels;
 
-public partial class NetworkViewModel : ViewModelBase
+public partial class NetworkViewModel : ViewModelBase, IDisposable
 {
     private DispatcherQueue _dispatcherQueue;
     private readonly INetworkService _engine;
@@ -397,6 +397,8 @@ public partial class NetworkViewModel : ViewModelBase
         }
         CancelDnsBenchmark();
     }
+
+    public void Dispose() => Cleanup();
 
     private void OnLanguageChanged(object? sender, EventArgs e)
     {

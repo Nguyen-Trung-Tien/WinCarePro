@@ -35,11 +35,11 @@
                     <Border Background="{ThemeResource AppBadgeNeutralBg}" BorderBrush="{ThemeResource AppBadgeNeutralBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
-                            <TextBlock Text="Live Telemetry Sentinel" FontSize="11" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Live Activity" FontSize="11" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock x:Name="PageSubtitleTextBlock" Text="Review real-time system alerts, critical health warnings, and background optimization history." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock x:Name="PageSubtitleTextBlock" Text="System alerts, notifications, and optimization activity history." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
             <!-- Quick Action: Refresh -->
@@ -61,8 +61,19 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button x:Name="BtnTabAlerts" Grid.Column="0" Content="System Alerts &amp; Advisories" Click="OnTabAlertsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="Bold" Padding="0,10"/>
-                <Button x:Name="BtnTabLogs" Grid.Column="1" Content="Operations &amp; Optimization Timeline" Click="OnTabLogsClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="SemiBold" Padding="0,10"/>
+                <Button x:Name="BtnTabAlerts" Grid.Column="0" Click="OnTabAlertsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" Height="38">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="14"/>
+                        <TextBlock Text="System Alerts" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="BtnTabLogs" Grid.Column="1" Click="OnTabLogsClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Height="38">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon Glyph="&#xE81C;" FontSize="14"/>
+                        <TextBlock Text="Activity History" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
             </Grid>
         </Border>
 

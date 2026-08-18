@@ -2456,6 +2456,156 @@ public partial class TranslationManager
         _translations["Contact Support:"] = "Liên hệ hỗ trợ:";
         _translations["Source Code Repository & Feedback"] = "Kho Mã Nguồn & Đóng Góp Ý Kiến";
         _translations["Contributions, bug reports, and feature requests are welcome on GitHub."] = "Hoan nghênh các đóng góp, báo cáo lỗi và yêu cầu tính năng trên GitHub.";
+        // --- Additional Comprehensive Module Translations ---
+        // AI Assistant & Diagnostics
+        _translations["Neural Scan: Active & Calibrated"] = "Quét Neural: Hoạt Động & Đã Hiệu Chuẩn";
+        _translations["AI Diagnostics Complete"] = "Chẩn Đoán AI Hoàn Tất";
+        _translations["WinCare AI completed system health analysis and generated optimization insights."] = "WinCare AI đã hoàn tất phân tích sức khỏe hệ thống và đưa ra các đề xuất tối ưu.";
+        _translations["AI Report Exported"] = "Đã Xuất Báo Cáo AI";
+        _translations["Export Failed"] = "Xuất Báo Cáo Thất Bại";
+        _translations["AI Quick Fix Applied"] = "Đã Áp Dụng Sửa Nhanh AI";
+        _translations["Purged memory working set and optimized background execution."] = "Đã dọn dẹp working set của bộ nhớ và tối ưu hóa thực thi tiến trình nền.";
+        _translations["Predictive Storage Warning"] = "Cảnh Báo Dự Đoán Bộ Nhớ Lưu Trữ";
+        _translations["Storage Consumption Outlook"] = "Triển Vọng Tiêu Thụ Bộ Nhớ";
+        _translations["Storage Consumption Outlook Good"] = "Triển Vọng Lưu Trữ Ổn Định";
+        _translations["Elevated Process Overhead"] = "Quá Tải Tiến Trình Nền";
+        _translations["Background Process Monitoring"] = "Giám Sát Tiến Trình Nền";
+        _translations["High Temp Cache Accumulation"] = "Tích Tụ Bộ Đệm Tạm Thời Cao";
+        _translations["Temp Files Cleanable"] = "Tệp Tạm Có Thể Dọn Dẹp";
+        _translations["High Memory Pressure"] = "Áp Lực Bộ Nhớ RAM Cao";
+        _translations["Optimal Health"] = "Sức Khỏe Tối Ưu";
+        _translations["WinCare AI Assistant predicts maximum system stability with 0 critical bottlenecks detected."] = "WinCare AI Assistant dự đoán hệ thống đạt độ ổn định tối đa với 0 điểm nghẽn nghiêm trọng.";
+        _translations["Fair Condition"] = "Trạng Thái Khá";
+        _translations["System is stable, but AI predicts performance gain if temp junk and memory working sets are purged."] = "Hệ thống ổn định, AI dự đoán hiệu năng sẽ tăng nếu tệp rác tạm và bộ nhớ working set được dọn dẹp.";
+        _translations["Maintenance Required"] = "Cần Bảo Trì";
+        _translations["Multiple predictive bottlenecks detected. Please execute recommended actions."] = "Phát hiện nhiều điểm nghẽn dự đoán. Vui lòng thực hiện các hành động được đề xuất.";
+        _translations["> 30 Days Free"] = "> 30 Ngày Dung Lượng Thoải Mái";
+        _translations["Days Left"] = "Ngày Còn Lại";
+        _translations["Boot Time"] = "Thời Gian Khởi Động";
+        _translations["Scanning AI Diagnostics..."] = "Đang Quét Chẩn Đoán AI...";
+        _translations["Run AI Diagnostics"] = "Chạy Chẩn Đoán AI";
+        _translations["Exporting AI Report..."] = "Đang Xuất Báo Cáo AI...";
+        _translations["Export AI Report"] = "Xuất Báo Cáo AI";
+        _translations["Applying Fix..."] = "Đang Áp Dụng Sửa Lỗi...";
+        _translations["Apply Fix"] = "Áp Dụng";
+        _translations["Critical"] = "Nghiêm Trọng";
+        _translations["High"] = "Cao";
+        _translations["Medium"] = "Trung Bình";
+        _translations["Low"] = "Thấp";
+        _translations["Prediction"] = "Dự Đoán";
+        _translations["Performance"] = "Hiệu Năng";
+        _translations["Junk"] = "Tệp Rác";
+        _translations["Security"] = "Bảo Mật";
+        _translations["Storage"] = "Lưu Trữ";
+
+        // Gaming Turbo 2.0
+        _translations["Gaming Turbo 2.0 is in Standby mode. Ready to boost FPS & latency."] = "Gaming Turbo 2.0 đang ở chế độ Chờ. Sẵn sàng tăng tốc FPS & giảm độ trễ.";
+        _translations["⚡ Gaming Turbo ACTIVE! Quenching background apps & allocating high-priority CPU..."] = "⚡ Gaming Turbo ĐANG BẬT! Tạm dừng ứng dụng ngầm & ưu tiên tối đa tài nguyên CPU...";
+        _translations["Gaming Turbo is OFF. System resources restored to standard desktop profile."] = "Gaming Turbo đã TẮT. Tài nguyên hệ thống đã được phục hồi về cấu hình tiêu chuẩn.";
+        _translations["Applied preset: Competitive FPS. Optimal tuning profile calibrated."] = "Đã áp dụng cấu hình: Competitive FPS. Hồ sơ điều chỉnh tối ưu đã được hiệu chuẩn.";
+        _translations["Applied preset: Ultra Fidelity. Optimal tuning profile calibrated."] = "Đã áp dụng cấu hình: Ultra Fidelity. Hồ sơ điều chỉnh tối ưu đã được hiệu chuẩn.";
+        _translations["Applied preset: Balanced Gaming. Optimal tuning profile calibrated."] = "Đã áp dụng cấu hình: Balanced Gaming. Hồ sơ điều chỉnh tối ưu đã được hiệu chuẩn.";
+        _translations["Competitive FPS"] = "Competitive FPS (FPS Cạnh Tranh)";
+        _translations["Ultra Fidelity"] = "Ultra Fidelity (Đồ Họa Cực Cao)";
+        _translations["Balanced Gaming"] = "Balanced Gaming (Cân Bằng)";
+        _translations["Power Save"] = "Power Save (Tiết Kiệm Pin/Điện)";
+        _translations["Boost Now"] = "Tăng Tốc Ngay";
+        _translations["Restoring System..."] = "Đang Khôi Phục Hệ Thống...";
+
+        // System Optimizer & Tweaks
+        _translations["Status: Ready"] = "Trạng Thái: Sẵn Sàng";
+        _translations["Analyzing system health..."] = "Đang phân tích sức khỏe hệ thống...";
+        _translations["Scan completed"] = "Đã hoàn tất quét";
+        _translations["A+ Optimal"] = "A+ Tối Ưu Nhất";
+        _translations["B+ Good"] = "B+ Tốt";
+        _translations["B Fair"] = "B Khá";
+        _translations["Needs Tuning"] = "Cần Tinh Chỉnh";
+        _translations["WinCare AI Engine predicts optimal system responsiveness and low latency."] = "WinCare AI Engine dự đoán hệ thống đạt độ phản hồi tối ưu và độ trễ thấp.";
+        _translations["Ready. Toggle Turbo Mode for instant RAM purge & CPU gaming priority."] = "Sẵn sàng. Bật Chế độ Turbo để dọn RAM tức thì & ưu tiên CPU cho Game.";
+        _translations["Gaming Turbo: Optimizing..."] = "Gaming Turbo: Đang tối ưu...";
+        _translations["Gaming Turbo: Deactivated"] = "Gaming Turbo: Đã tắt";
+        _translations["Running"] = "Đang Chạy";
+        _translations["Stopped"] = "Đã Dừng";
+        _translations["Optimized"] = "Đã Tối Ưu";
+        _translations["Unknown"] = "Không Xác Định";
+        _translations["Đang chạy"] = "Đang Chạy";
+        _translations["Đã dừng"] = "Đã Dừng";
+        _translations["Đã tối ưu"] = "Đã Tối Ưu";
+
+        // Software Updater & Winget
+        _translations["Windows Package Manager"] = "Trình Quản Lý Gói Windows (Winget)";
+        _translations["WinCare Direct Downloader"] = "Trình Tải Xuống Trực Tiếp WinCare";
+        _translations["No Updates Available"] = "Không Có Bản Cập Nhật Nào";
+        _translations["All applications are up to date."] = "Tất cả ứng dụng đều đang ở phiên bản mới nhất.";
+        _translations["Updates Available"] = "Có Bản Cập Nhật Mới";
+        _translations["Download and install latest versions."] = "Tải xuống và cài đặt các phiên bản mới nhất.";
+        _translations["Updating Application..."] = "Đang Cập Nhật Ứng Dụng...";
+        _translations["Update Complete"] = "Cập Nhật Hoàn Tất";
+        _translations["Application updated successfully."] = "Đã cập nhật ứng dụng thành công.";
+        _translations["Update Failed"] = "Cập Nhật Thất Bại";
+
+        // Network Center & Tools
+        _translations["Connected"] = "Đã Kết Nối";
+        _translations["Disconnected"] = "Đã Ngắt Kết Nối";
+        _translations["Speed Test"] = "Đo Tốc Độ";
+        _translations["Ping Test"] = "Đo Độ Trễ (Ping)";
+        _translations["Flush DNS"] = "Xóa Bộ Đệm DNS";
+        _translations["Reset Network Stack"] = "Đặt Lại Cấu Hình Mạng";
+        _translations["Optimize TCP/IP"] = "Tối Ưu Giao Thức TCP/IP";
+        _translations["Default Gateway"] = "Cổng Mặc Định (Gateway)";
+        _translations["Subnet Mask"] = "Mặt Nạ Mạng (Subnet Mask)";
+        _translations["MAC Address"] = "Địa Chỉ MAC";
+        _translations["IPv4 Address"] = "Địa Chỉ IPv4";
+        _translations["IPv6 Address"] = "Địa Chỉ IPv6";
+        _translations["DNS Servers"] = "Máy Chủ DNS";
+
+        // Disk Tools & S.M.A.R.T
+        _translations["Disk Health"] = "Sức Khỏe Ổ Đĩa";
+        _translations["Good"] = "Tốt (Good)";
+        _translations["Warning"] = "Cảnh Báo (Warning)";
+        _translations["Bad"] = "Nguy Hiểm (Bad)";
+        _translations["Scan Large Files"] = "Quét Tệp Dung Lượng Lớn";
+        _translations["Find Duplicates"] = "Tìm Tệp Trùng Lặp";
+        _translations["Analyze Disk Usage"] = "Phân Tích Sử Dụng Ổ Đĩa";
+        _translations["Free Space"] = "Dung Lượng Trống";
+        _translations["Used Space"] = "Dung Lượng Đã Dùng";
+        _translations["Total Capacity"] = "Tổng Dung Lượng";
+
+        // App Uninstaller
+        _translations["Search apps..."] = "Tìm kiếm ứng dụng...";
+        _translations["Scanning installed applications..."] = "Đang quét các ứng dụng đã cài đặt...";
+        _translations["No apps found matching criteria."] = "Không tìm thấy ứng dụng phù hợp.";
+        _translations["Uninstalling app: {0}..."] = "Đang gỡ cài đặt ứng dụng: {0}...";
+        _translations["App uninstalled successfully."] = "Đã gỡ cài đặt ứng dụng thành công.";
+        _translations["Cleaning leftovers..."] = "Đang dọn dẹp tệp tin & registry còn sót lại...";
+        _translations["Leftovers cleaned."] = "Đã dọn dẹp sạch tệp dư thừa.";
+        _translations["Total Apps"] = "Tổng Số Ứng Dụng";
+        _translations["Total Size"] = "Tổng Dung Lượng";
+        _translations["Publisher"] = "Nhà Phát Hành";
+        _translations["Install Date"] = "Ngày Cài Đặt";
+        _translations["Version"] = "Phiên Bản";
+
+        // System Repair & Security
+        _translations["Run SFC Scan"] = "Chạy Quét SFC (System File Checker)";
+        _translations["Run DISM RestoreHealth"] = "Chạy DISM RestoreHealth";
+        _translations["Fix Windows Update"] = "Sửa Lỗi Windows Update";
+        _translations["Repair Component Store"] = "Sửa Chữa Kho Thành Phần Hệ Thống";
+        _translations["Security Shield Active"] = "Khiên Bảo Mật Đang Hoạt Động";
+        _translations["Windows Defender is enabled and protecting your PC."] = "Windows Defender đang bật và bảo vệ máy tính của bạn.";
+        _translations["Firewall is active."] = "Tường lửa đang hoạt động.";
+        _translations["UAC is enabled."] = "Kiểm soát tài khoản người dùng (UAC) đang bật.";
+
+        // Concise Subtitles & Modern UI Labels
+        _translations["Software Updater"] = "Cập Nhật Phần Mềm";
+        _translations["Update applications and system packages via WinGet."] = "Cập nhật ứng dụng và các gói hệ thống qua WinGet.";
+        _translations["Cleanly uninstall applications and remove leftover files."] = "Gỡ sạch ứng dụng và xóa triệt để tệp tin dư thừa.";
+        _translations["Protect system security, hardware trust, and privacy settings."] = "Bảo vệ an ninh hệ thống, phần cứng tin cậy và quyền riêng tư.";
+        _translations["Diagnose and repair Windows components, SFC integrity, and services."] = "Chẩn đoán và sửa lỗi các thành phần Windows, tính toàn vẹn SFC và dịch vụ.";
+        _translations["Boost gaming FPS, reduce latency, and optimize CPU priority."] = "Tăng tốc FPS chơi game, giảm độ trễ và tối ưu ưu tiên CPU.";
+        _translations["System alerts, notifications, and optimization activity history."] = "Cảnh báo hệ thống, thông báo và lịch sử hoạt động tối ưu.";
+        _translations["Live Activity"] = "Hoạt Động Trực Tiếp";
+        _translations["System Alerts"] = "Cảnh Báo Hệ Thống";
+        _translations["Activity History"] = "Lịch Sử Hoạt Động";
 
         _reverseTranslations.Clear();
         foreach (var kvp in _translations)

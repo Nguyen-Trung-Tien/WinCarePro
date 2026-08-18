@@ -231,6 +231,22 @@ public sealed partial class MainPage : Page
             {
                 optPage.ViewModel?.Dispose();
             }
+            else if (ContentFrame.Content is Views.StartupPage startupPage)
+            {
+                if (startupPage.DataContext is IDisposable disp) disp.Dispose();
+            }
+            else if (ContentFrame.Content is Views.UpdaterPage updaterPage)
+            {
+                if (updaterPage.DataContext is IDisposable disp) disp.Dispose();
+            }
+            else if (ContentFrame.Content is Views.UninstallPage uninstPage)
+            {
+                if (uninstPage.DataContext is IDisposable disp) disp.Dispose();
+            }
+            else if (ContentFrame.Content is Views.RepairPage repairPage)
+            {
+                if (repairPage.DataContext is IDisposable disp) disp.Dispose();
+            }
 
             if (ContentFrame.Content is Page page && page.DataContext is IDisposable disposable)
             {

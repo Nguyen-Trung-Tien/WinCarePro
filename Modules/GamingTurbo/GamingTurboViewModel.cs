@@ -9,8 +9,10 @@ using WinCarePro.Services;
 
 namespace WinCarePro.Modules.GamingTurbo
 {
-    public partial class GamingTurboViewModel : ObservableObject
+    public partial class GamingTurboViewModel : ObservableObject, IDisposable
     {
+        private readonly EventHandler _langHandler;
+
         [ObservableProperty]
         private bool _isTurboActive;
 
@@ -37,6 +39,25 @@ namespace WinCarePro.Modules.GamingTurbo
 
         [ObservableProperty]
         private string _activePresetName = "Competitive FPS";
+
+        public GamingTurboViewModel()
+        {
+            _langHandler = (s, e) => RefreshLocalizedMessages();
+            TranslationManager.Instance.LanguageChanged += _langHandler;
+        }
+
+        private void RefreshLocalizedMessages()
+        {
+            if (IsTurboActive)
+            {
+                string statusFormat = "🚀 Hyper-Turbo Activated! Freed {0:N0} MB RAM across {1} background processes.".T();
+                GameStatusMessage = string.Format(statusFormat, RamFreedText, OptimizedProcessesCount);
+            }
+            else
+            {
+                GameStatusMessage = "Gaming Turbo 2.0 is in Standby mode. Ready to boost FPS & latency.".T();
+            }
+        }
 
         [RelayCommand]
         public async Task ToggleTurboAsync()
@@ -108,6 +129,11 @@ namespace WinCarePro.Modules.GamingTurbo
         {
             ActivePresetName = preset;
             GameStatusMessage = $"Applied preset: {preset}. Optimal tuning profile calibrated.".T();
+        }
+
+        public void Dispose()
+        {
+            TranslationManager.Instance.LanguageChanged -= _langHandler;
         }
 
         [System.Runtime.InteropServices.DllImport("psapi.dll")]

@@ -45,7 +45,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Maximize gaming framerates, eliminate micro-stutters &amp; optimize hardware thread scheduling." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Boost gaming FPS, reduce latency, and optimize CPU priority." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
             <!-- Quick Tuning Presets -->

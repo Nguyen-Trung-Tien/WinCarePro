@@ -12,13 +12,14 @@ using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
-public class UpdaterViewModel : ViewModelBase
+public class UpdaterViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue? _dispatcherQueue;
     private readonly SoftwareUpdaterEngine _updaterEngine = App.Services?.GetService<SoftwareUpdaterEngine>() ?? new();
     private readonly List<SoftwareUpdateInfo> _allUpdates = new();
     private readonly DispatcherQueueTimer? _searchDebounceTimer;
     private CancellationTokenSource? _operationCts;
+    private bool _isDisposed;
 
     private bool _isBusy;
     public bool IsBusy
@@ -216,6 +217,7 @@ public class UpdaterViewModel : ViewModelBase
     {
         _dispatcherQueue?.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
             UpdateStatistics();
             ApplyFilters();
         });
@@ -235,11 +237,15 @@ public class UpdaterViewModel : ViewModelBase
 
     public void Cleanup()
     {
+        _isDisposed = true;
         CancelOperations();
+        _searchDebounceTimer?.Stop();
         _updaterEngine.OutputReceived -= OnOutputReceived;
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
     }
+
+    public void Dispose() => Cleanup();
 
     public void CancelOperations()
     {

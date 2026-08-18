@@ -72,7 +72,7 @@
                 </Border>
                 <StackPanel Spacing="2" VerticalAlignment="Center">
                     <TextBlock Text="Security &amp; Privacy Shield" Style="{StaticResource PageHeaderTitleStyle}" />
-                    <TextBlock Text="Windows Defender management, diagnostics, hardware trust, and anti-telemetry privacy tuning." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                    <TextBlock Text="Protect system security, hardware trust, and privacy settings." Style="{StaticResource PageHeaderSubtitleStyle}" />
                 </StackPanel>
             </StackPanel>
 

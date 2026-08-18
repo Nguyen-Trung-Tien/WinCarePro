@@ -12,14 +12,17 @@ using WinCarePro.Services.Implementations;
 
 namespace WinCarePro.ViewModels;
 
-public class DiskViewModel : ViewModelBase
+public class DiskViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly DiskEngine _engine = App.Services?.GetService<DiskEngine>() ?? new();
+    private readonly EventHandler _languageChangedHandler;
     private System.Threading.CancellationTokenSource? _diskCts;
+    private bool _isDisposed;
 
     public void Cleanup()
     {
+        _isDisposed = true;
         try
         {
             _diskCts?.Cancel();
@@ -27,7 +30,11 @@ public class DiskViewModel : ViewModelBase
             _diskCts = null;
         }
         catch { }
+        UnsubscribeEvents();
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
+
+    public void Dispose() => Cleanup();
 
     private string _storageScanPath = "";
     public string StorageScanPath
@@ -80,6 +87,16 @@ public class DiskViewModel : ViewModelBase
 
         string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         StorageScanPath = Path.Combine(userProfile, "Downloads");
+
+        _languageChangedHandler = (s, e) =>
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                ConsoleOutput = "Disk Tools ready.\n".T();
+            });
+        };
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
 
         _ = LoadDrivesAsync();
     }

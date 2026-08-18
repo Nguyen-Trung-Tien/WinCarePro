@@ -337,20 +337,45 @@ public class DiskEngine
 
     private string ComputeQuickHeaderHash(string path)
     {
-        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        using var sha = SHA256.Create();
-        byte[] buffer = new byte[64 * 1024];
-        int bytesRead = stream.Read(buffer, 0, buffer.Length);
-        byte[] hash = sha.ComputeHash(buffer, 0, bytesRead);
-        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+        try
+        {
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 64 * 1024, FileOptions.SequentialScan);
+            using var sha = SHA256.Create();
+            byte[] buffer = new byte[64 * 1024];
+            int bytesRead = stream.Read(buffer, 0, buffer.Length);
+            byte[] hash = sha.ComputeHash(buffer, 0, bytesRead);
+            return Convert.ToHexString(hash).ToLowerInvariant();
+        }
+        catch
+        {
+            return string.Empty;
+        }
     }
 
     private string ComputeFullFileHash(string path, System.Threading.CancellationToken token = default)
     {
-        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-        using var sha = SHA256.Create();
-        byte[] hash = sha.ComputeHash(stream);
-        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+        try
+        {
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 128 * 1024, FileOptions.SequentialScan);
+            using var incHash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+            byte[] buffer = new byte[128 * 1024];
+            int bytesRead;
+            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                token.ThrowIfCancellationRequested();
+                incHash.AppendData(buffer, 0, bytesRead);
+            }
+            byte[] hash = incHash.GetHashAndReset();
+            return Convert.ToHexString(hash).ToLowerInvariant();
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch
+        {
+            return string.Empty;
+        }
     }
 
     private IEnumerable<string> EnumerateFilesSafe(string path, System.Threading.CancellationToken token = default)

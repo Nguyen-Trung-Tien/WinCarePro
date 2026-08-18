@@ -59,6 +59,18 @@ namespace WinCarePro.Modules.GamingTurbo
             }
         }
 
+        [System.Runtime.InteropServices.DllImport("psapi.dll", SetLastError = true)]
+        private static extern bool EmptyWorkingSet(IntPtr hProcess);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hObject);
+
+        private const uint PROCESS_SET_QUOTA = 0x0100;
+        private const uint PROCESS_QUERY_INFORMATION = 0x0400;
+
         [RelayCommand]
         public async Task ToggleTurboAsync()
         {
@@ -76,29 +88,52 @@ namespace WinCarePro.Modules.GamingTurbo
 
                     foreach (var proc in processes)
                     {
+                        if (proc.Id <= 4)
+                        {
+                            try { proc.Dispose(); } catch { }
+                            continue;
+                        }
+
+                        IntPtr hProcess = IntPtr.Zero;
                         try
                         {
-                            if (proc.Id <= 4 || proc.HasExited ||
-                                proc.ProcessName.Equals("explorer", StringComparison.OrdinalIgnoreCase) ||
+                            if (proc.ProcessName.Equals("explorer", StringComparison.OrdinalIgnoreCase) ||
                                 proc.ProcessName.Equals("WinCarePro", StringComparison.OrdinalIgnoreCase))
-                                continue;
-
-                            long before = proc.WorkingSet64;
-                            EmptyWorkingSet(proc.Handle);
-                            proc.Refresh();
-                            long after = proc.WorkingSet64;
-
-                            if (before > after)
                             {
-                                totalFreed += (before - after);
-                                count++;
+                                continue;
+                            }
+
+                            long before = 0;
+                            try { before = proc.WorkingSet64; } catch { }
+
+                            hProcess = OpenProcess(PROCESS_SET_QUOTA | PROCESS_QUERY_INFORMATION, false, proc.Id);
+                            if (hProcess != IntPtr.Zero)
+                            {
+                                if (EmptyWorkingSet(hProcess))
+                                {
+                                    long after = 0;
+                                    try
+                                    {
+                                        proc.Refresh();
+                                        after = proc.WorkingSet64;
+                                    }
+                                    catch { }
+
+                                    if (before > after)
+                                    {
+                                        totalFreed += (before - after);
+                                    }
+                                    count++;
+                                }
                             }
                         }
-                        catch (System.ComponentModel.Win32Exception) { }
-                        catch (InvalidOperationException) { }
                         catch { }
                         finally
                         {
+                            if (hProcess != IntPtr.Zero)
+                            {
+                                CloseHandle(hProcess);
+                            }
                             try { proc.Dispose(); } catch { }
                         }
                     }
@@ -135,8 +170,5 @@ namespace WinCarePro.Modules.GamingTurbo
         {
             TranslationManager.Instance.LanguageChanged -= _langHandler;
         }
-
-        [System.Runtime.InteropServices.DllImport("psapi.dll")]
-        private static extern bool EmptyWorkingSet(IntPtr hProcess);
     }
 }

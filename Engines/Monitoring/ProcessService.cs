@@ -51,6 +51,7 @@ public class ProcessService
     private static readonly object _cacheLock = new();
     private const int CACHE_TTL_SECONDS = 60;
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Task<string>> _activeIconTasks = new();
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, byte> _failedIconKeys = new();
 
     // Strict OS process protection list
     private static readonly HashSet<string> _criticalProcesses = new(StringComparer.OrdinalIgnoreCase)
@@ -145,12 +146,27 @@ public class ProcessService
                 return destPng;
             }
 
+            if (_failedIconKeys.ContainsKey(safeKeyName))
+            {
+                return "";
+            }
+
             // Extract asynchronously in background to prevent blocking, avoiding duplicate task writes
             _activeIconTasks.GetOrAdd(destPng, key => Task.Run(async () =>
             {
                 try
                 {
-                    return await ExtractProcessIconAsync(filePath, processName);
+                    string result = await ExtractProcessIconAsync(filePath, processName);
+                    if (string.IsNullOrEmpty(result))
+                    {
+                        _failedIconKeys.TryAdd(safeKeyName, 0);
+                    }
+                    return result;
+                }
+                catch
+                {
+                    _failedIconKeys.TryAdd(safeKeyName, 0);
+                    return "";
                 }
                 finally
                 {

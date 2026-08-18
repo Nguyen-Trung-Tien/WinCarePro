@@ -66,6 +66,9 @@ public partial class TranslationManager
     private static readonly System.Text.RegularExpressions.Regex CleanedBytesRegex = new(@"^Cleaned (\d+) bytes$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex SystemUpdatedRegex = new(@"^System updated to version (.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex AiProcessesRegex = new(@"^AI detected (\d+) active background processes\. Disabling unnecessary startup items can shave up to ([\d\.,]+) seconds off boot time\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex UninstallingAppRegex = new(@"^Uninstalling\s+(?:app:\s*)?(.+?)(?:\.\.\.|…)?$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex CleanedDirsRegex = new(@"^Cleaned (\d+) empty directories under (.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex GamingTurboActiveRegex = new(@"^🚀 Gaming Turbo ACTIVE! Freed ([\d\.,]+) MB RAM across (\d+) processes\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
     private static string PreserveWhitespace(string original, string newText)
     {
@@ -88,11 +91,15 @@ public partial class TranslationManager
     {
         if (string.IsNullOrEmpty(key)) return string.Empty;
         string trimmed = key.Trim();
+        string normalizedLf = trimmed.Replace("\r\n", "\n");
+        string normalizedCrlf = trimmed.Replace("\r\n", "\n").Replace("\n", "\r\n");
 
         if (language == AppLanguage.English)
         {
-            if (_translations.ContainsKey(trimmed)) return key;
-            if (_reverseTranslations.TryGetValue(trimmed, out var englishKey))
+            if (_translations.ContainsKey(trimmed) || _translations.ContainsKey(normalizedLf) || _translations.ContainsKey(normalizedCrlf)) return key;
+            if (_reverseTranslations.TryGetValue(trimmed, out var englishKey) ||
+                _reverseTranslations.TryGetValue(normalizedLf, out englishKey) ||
+                _reverseTranslations.TryGetValue(normalizedCrlf, out englishKey))
             {
                 return PreserveWhitespace(key, englishKey);
             }
@@ -100,7 +107,9 @@ public partial class TranslationManager
         }
         else // Vietnamese
         {
-            if (_translations.TryGetValue(trimmed, out string? translated))
+            if (_translations.TryGetValue(trimmed, out string? translated) ||
+                _translations.TryGetValue(normalizedLf, out translated) ||
+                _translations.TryGetValue(normalizedCrlf, out translated))
             {
                 return PreserveWhitespace(key, translated);
             }
@@ -130,6 +139,32 @@ public partial class TranslationManager
             if (SystemUpdatedRegex.IsMatch(trimmed))
             {
                 string res = SystemUpdatedRegex.Replace(trimmed, "Hệ thống đã cập nhật lên phiên bản $1");
+                return PreserveWhitespace(key, res);
+            }
+
+            // Dynamic translation for Uninstalling app
+            if (trimmed.StartsWith("Uninstalling ", StringComparison.OrdinalIgnoreCase))
+            {
+                string rest = trimmed.Substring(13).Trim();
+                if (rest.StartsWith("app:", StringComparison.OrdinalIgnoreCase))
+                {
+                    rest = rest.Substring(4).Trim();
+                }
+                rest = rest.TrimEnd('.', '…').Trim();
+                return PreserveWhitespace(key, $"Đang gỡ cài đặt ứng dụng: {rest}...");
+            }
+
+            // Dynamic Regex translation for Cleaned empty directories
+            if (CleanedDirsRegex.IsMatch(trimmed))
+            {
+                string res = CleanedDirsRegex.Replace(trimmed, "Đã dọn dẹp $1 thư mục rỗng trong $2");
+                return PreserveWhitespace(key, res);
+            }
+
+            // Dynamic Regex translation for Gaming Turbo Active
+            if (GamingTurboActiveRegex.IsMatch(trimmed))
+            {
+                string res = GamingTurboActiveRegex.Replace(trimmed, "🚀 Gaming Turbo HOẠT ĐỘNG! Đã giải phóng $1 MB RAM trên $2 tiến trình.");
                 return PreserveWhitespace(key, res);
             }
 

@@ -88,7 +88,7 @@ public partial class NetworkViewModel
             else
             {
                 LogText("Failed to apply DNS settings (Requires administrator privilege).".T());
-                _notificationService?.ShowError("DNS Setup Failed".T(), "Administrative privileges required.");
+                _notificationService?.ShowError("DNS Setup Failed".T(), "Administrative privileges required.".T());
             }
             await RunDiagnosticsAsync();
         }

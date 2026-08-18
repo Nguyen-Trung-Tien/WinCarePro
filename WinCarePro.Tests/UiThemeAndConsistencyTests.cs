@@ -89,12 +89,10 @@ public class UiThemeAndConsistencyTests
     public void TranslationManager_Translate_EnglishAndVietnamese()
     {
         var manager = TranslationManager.Instance;
-        manager.CurrentLanguage = AppLanguage.English;
-        string en = manager.T("Check for Updates");
+        string en = manager.GetTranslationForLanguage("Check for Updates", AppLanguage.English);
         Assert.Equal("Check for Updates", en);
 
-        manager.CurrentLanguage = AppLanguage.Vietnamese;
-        string vi = manager.T("Check for Updates");
+        string vi = manager.GetTranslationForLanguage("Check for Updates", AppLanguage.Vietnamese);
         Assert.Equal("Kiểm tra cập nhật", vi);
     }
 
@@ -102,8 +100,37 @@ public class UiThemeAndConsistencyTests
     public void TranslationManager_WhitespacePreserved()
     {
         var manager = TranslationManager.Instance;
-        manager.CurrentLanguage = AppLanguage.Vietnamese;
-        string translated = manager.T("  Check for Updates  ");
+        string translated = manager.GetTranslationForLanguage("  Check for Updates  ", AppLanguage.Vietnamese);
         Assert.Equal("  Kiểm tra cập nhật  ", translated);
+    }
+
+    [Fact]
+    public void TranslationManager_DynamicRegex_Translations()
+    {
+        var manager = TranslationManager.Instance;
+
+        string gamingTurbo = manager.GetTranslationForLanguage("🚀 Gaming Turbo ACTIVE! Freed 350 MB RAM across 12 processes.", AppLanguage.Vietnamese);
+        Assert.Contains("Gaming Turbo HOẠT ĐỘNG", gamingTurbo);
+        Assert.Contains("350 MB RAM", gamingTurbo);
+
+        string uninstall = manager.GetTranslationForLanguage("Uninstalling app: Google Chrome...", AppLanguage.Vietnamese);
+        Assert.Equal("Đang gỡ cài đặt ứng dụng: Google Chrome...", uninstall);
+
+        string cleanDirs = manager.GetTranslationForLanguage("Cleaned 5 empty directories under C:\\Temp", AppLanguage.Vietnamese);
+        Assert.Equal("Đã dọn dẹp 5 thư mục rỗng trong C:\\Temp", cleanDirs);
+    }
+
+    [Fact]
+    public void TranslationManager_Multiline_Normalized_Translations()
+    {
+        var manager = TranslationManager.Instance;
+
+        string crlf = "1. Open Dashboard from the top of the left navigation pane.\r\n2. Observe hardware loads and current Health Score.\r\n3. Click [Quick Boost] to instantly reclaim RAM and optimize system processes.";
+        string translatedCrlf = manager.GetTranslationForLanguage(crlf, AppLanguage.Vietnamese);
+        Assert.Contains("Mở trang Tổng quan", translatedCrlf);
+
+        string lf = "1. Open Dashboard from the top of the left navigation pane.\n2. Observe hardware loads and current Health Score.\n3. Click [Quick Boost] to instantly reclaim RAM and optimize system processes.";
+        string translatedLf = manager.GetTranslationForLanguage(lf, AppLanguage.Vietnamese);
+        Assert.Contains("Mở trang Tổng quan", translatedLf);
     }
 }

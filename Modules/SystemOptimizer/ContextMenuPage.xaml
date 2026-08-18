@@ -63,8 +63,8 @@
 
             <!-- Left: Title & Subtitle with Gradient Icon Badge -->
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="10" Padding="8">
-                    <FontIcon Glyph="&#xE8EC;" FontSize="18" Foreground="White" />
+                <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
+                    <FontIcon Glyph="&#xE8EC;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 <StackPanel Spacing="2" VerticalAlignment="Center">
                     <TextBlock Text="Context Menu Manager" Style="{StaticResource PageHeaderTitleStyle}" />

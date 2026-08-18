@@ -77,8 +77,8 @@
             <!-- Left: Icon, Title, Dynamic Status Badges, Subtitle -->
             <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Border Background="{StaticResource CyberAccentGradient}" CornerRadius="10" Padding="8">
-                        <FontIcon Glyph="&#xE74D;" FontSize="20" Foreground="White"/>
+                    <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
+                        <FontIcon Glyph="&#xE74D;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <TextBlock Text="App Uninstaller" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
                     <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">

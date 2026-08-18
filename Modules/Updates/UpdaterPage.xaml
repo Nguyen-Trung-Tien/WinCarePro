@@ -124,8 +124,8 @@
             <!-- Left: Title & Subtitle with Gradient Icon Badge -->
             <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="10" Padding="8">
-                        <FontIcon Glyph="&#xE895;" FontSize="18" Foreground="White" />
+                    <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
+                        <FontIcon Glyph="&#xE895;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="Software Updater" Style="{StaticResource PageHeaderTitleStyle}" />

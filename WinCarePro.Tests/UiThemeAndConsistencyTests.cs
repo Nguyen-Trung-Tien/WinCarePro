@@ -118,6 +118,19 @@ public class UiThemeAndConsistencyTests
 
         string cleanDirs = manager.GetTranslationForLanguage("Cleaned 5 empty directories under C:\\Temp", AppLanguage.Vietnamese);
         Assert.Equal("Đã dọn dẹp 5 thư mục rỗng trong C:\\Temp", cleanDirs);
+
+        string driveHealthy = manager.GetTranslationForLanguage("Drive C: usage is healthy at 39% (155,0 GB free). Storage sustainability is over 232 days.", AppLanguage.Vietnamese);
+        Assert.Contains("Ổ C: mức sử dụng tốt", driveHealthy);
+        Assert.Contains("232 ngày", driveHealthy);
+
+        string preset = manager.GetTranslationForLanguage("Preset: Competitive FPS", AppLanguage.Vietnamese);
+        Assert.Equal("Cấu hình: FPS Cạnh Tranh", preset);
+
+        string bootSav = manager.GetTranslationForLanguage("-5.3s Boot Time", AppLanguage.Vietnamese);
+        Assert.Equal("-5.3s Khởi Động", bootSav);
+
+        string aiProc = manager.GetTranslationForLanguage("AI detected 268 active background processes. Disabling unnecessary startup items can improve boot time.", AppLanguage.Vietnamese);
+        Assert.Contains("AI phát hiện 268 tiến trình nền", aiProc);
     }
 
     [Fact]
@@ -132,5 +145,25 @@ public class UiThemeAndConsistencyTests
         string lf = "1. Open Dashboard from the top of the left navigation pane.\n2. Observe hardware loads and current Health Score.\n3. Click [Quick Boost] to instantly reclaim RAM and optimize system processes.";
         string translatedLf = manager.GetTranslationForLanguage(lf, AppLanguage.Vietnamese);
         Assert.Contains("Mở trang Tổng quan", translatedLf);
+    }
+
+    [Fact]
+    public void IconCacheService_InvalidOrEmptyPath_ReturnsEmpty()
+    {
+        var service = new WinCarePro.Services.Implementations.IconCacheService();
+        Assert.Equal("", service.GetIconForExecutable(""));
+        Assert.Equal("", service.GetIconForExecutable("   "));
+        Assert.Equal("", service.GetIconForExecutable("System Process"));
+        Assert.Equal("", service.GetIconForExecutable("non_existent_file_xyz_123.exe"));
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task IconCacheService_Async_InvalidOrEmptyPath_ReturnsEmpty()
+    {
+        var service = new WinCarePro.Services.Implementations.IconCacheService();
+        string res1 = await service.GetIconForExecutableAsync("");
+        string res2 = await service.GetIconForExecutableAsync("System Process");
+        Assert.Equal("", res1);
+        Assert.Equal("", res2);
     }
 }

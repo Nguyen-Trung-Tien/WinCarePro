@@ -43,7 +43,7 @@
 
                 <NavigationViewItem Content="AI Assistant" Tag="AiCopilot">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE99A;" Foreground="{StaticResource PrimaryAccentBrush}" />
+                        <FontIcon Glyph="&#xE99A;" Foreground="#FF06B6D4" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
@@ -66,7 +66,7 @@
 
                 <NavigationViewItem Content="Network Center" Tag="Network">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE774;" Foreground="DodgerBlue" />
+                        <FontIcon Glyph="&#xE701;" Foreground="DodgerBlue" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
@@ -95,13 +95,13 @@
 
                 <NavigationViewItem Content="Gaming Turbo" Tag="GamingTurbo">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7FC;" Foreground="#FFFF4081" />
+                        <FontIcon Glyph="&#xE785;" Foreground="#FFFF4081" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem Content="Context Menu" Tag="ContextMenu">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE71D;" Foreground="Thistle" />
+                        <FontIcon Glyph="&#xE8EC;" Foreground="#FFA855F7" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
@@ -111,7 +111,7 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Disk Tools" Tag="Disk">
+                <NavigationViewItem Content="Disk &amp; Storage" Tag="Disk">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7F1;" Foreground="SkyBlue" />
                     </NavigationViewItem.Icon>
@@ -125,7 +125,7 @@
 
                 <NavigationViewItem Content="Software Updater" Tag="Updater">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE75C;" Foreground="Crimson" />
+                        <FontIcon Glyph="&#xE895;" Foreground="#FF6366F1" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 

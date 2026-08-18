@@ -14,6 +14,7 @@ namespace WinCarePro.Modules.AiAssistant
         public string Description { get; set; } = string.Empty;
         public string Category { get; set; } = "General"; // Performance, Junk, Security, Storage, Prediction
         public string ImpactLevel { get; set; } = "Medium"; // Critical, High, Medium, Low
+        public string ImpactLevelDisplayName => ImpactLevel.T();
         public string ActionKey { get; set; } = string.Empty;
 
         public string CategoryIconGlyph => Category switch

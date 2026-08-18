@@ -62,13 +62,20 @@ public partial class TranslationManager
     }
 
     private static readonly System.Text.RegularExpressions.Regex DriveUsageRegex = new(@"^Drive ([A-Z]): usage is at (\d+)%\. Estimated storage sustainability is over (\d+) days\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex DriveUsageHealthyRegex = new(@"^Drive ([A-Z]): usage is healthy at (\d+)% \(([\d\.,]+)\s*GB free\)\. Storage sustainability is over (\d+) days\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex DriveUsageCritRegex = new(@"^Drive ([A-Z]): has critically low space \(([\d\.,]+)\s*GB free,\s*(\d+)% used\)\. AI recommends immediate disk cleanup\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex DriveUsageCapRegex = new(@"^Drive ([A-Z]): is at (\d+)% capacity \(([\d\.,]+)\s*GB free\)\. Consider freeing up large files\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex RamBoostedRegex = new(@"^RAM Boosted: Optimized (\d+) processes, freed (\d+) bytes$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex CleanedBytesRegex = new(@"^Cleaned (\d+) bytes$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex SystemUpdatedRegex = new(@"^System updated to version (.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-    private static readonly System.Text.RegularExpressions.Regex AiProcessesRegex = new(@"^AI detected (\d+) active background processes\. Disabling unnecessary startup items can shave up to ([\d\.,]+) seconds off boot time\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex AiProcessesRegex = new(@"^AI detected (\d+) active background processes\. Disabling unnecessary startup items can (?:shave up to ([\d\.,]+) seconds off|improve) boot time\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex BackgroundProcessesActiveRegex = new(@"^There are (\d+) background processes active\. System is operating normally\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex UninstallingAppRegex = new(@"^Uninstalling\s+(?:app:\s*)?(.+?)(?:\.\.\.|…)?$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex CleanedDirsRegex = new(@"^Cleaned (\d+) empty directories under (.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex GamingTurboActiveRegex = new(@"^🚀 Gaming Turbo ACTIVE! Freed ([\d\.,]+) MB RAM across (\d+) processes\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex PresetRegex = new(@"^Preset:\s*(.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex BootSavingsRegex = new(@"^-([\d\.,]+)s\s+Boot Time$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex DaysLeftRegex = new(@"^(\d+)\s+Days Left$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
     private static string PreserveWhitespace(string original, string newText)
     {
@@ -115,6 +122,24 @@ public partial class TranslationManager
             }
 
             // Dynamic Regex translation for storage sustainability
+            if (DriveUsageHealthyRegex.IsMatch(trimmed))
+            {
+                string res = DriveUsageHealthyRegex.Replace(trimmed, "Ổ $1: mức sử dụng tốt ở mức $2% ($3 GB trống). Độ bền dung lượng ước tính trên $4 ngày.");
+                return PreserveWhitespace(key, res);
+            }
+
+            if (DriveUsageCritRegex.IsMatch(trimmed))
+            {
+                string res = DriveUsageCritRegex.Replace(trimmed, "Ổ $1: dung lượng cực thấp ($2 GB trống, đã dùng $3%). AI khuyến nghị dọn dẹp ổ đĩa ngay.");
+                return PreserveWhitespace(key, res);
+            }
+
+            if (DriveUsageCapRegex.IsMatch(trimmed))
+            {
+                string res = DriveUsageCapRegex.Replace(trimmed, "Ổ $1: đang ở mức $2% dung lượng ($3 GB trống). Hãy cân nhắc giải phóng các tệp lớn.");
+                return PreserveWhitespace(key, res);
+            }
+
             if (DriveUsageRegex.IsMatch(trimmed))
             {
                 string res = DriveUsageRegex.Replace(trimmed, "Ổ $1: đang sử dụng $2%. Ước tính dung lượng bền vững hơn $3 ngày.");
@@ -168,6 +193,29 @@ public partial class TranslationManager
                 return PreserveWhitespace(key, res);
             }
 
+            // Dynamic Regex for Preset chip
+            if (PresetRegex.IsMatch(trimmed))
+            {
+                var match = PresetRegex.Match(trimmed);
+                string presetVal = match.Groups[1].Value.Trim();
+                string translatedVal = _translations.TryGetValue(presetVal, out var tVal) ? tVal : presetVal;
+                return PreserveWhitespace(key, $"Cấu hình: {translatedVal}");
+            }
+
+            // Dynamic Regex for Boot Savings
+            if (BootSavingsRegex.IsMatch(trimmed))
+            {
+                string res = BootSavingsRegex.Replace(trimmed, "-$1s Khởi Động");
+                return PreserveWhitespace(key, res);
+            }
+
+            // Dynamic Regex for Days Left
+            if (DaysLeftRegex.IsMatch(trimmed))
+            {
+                string res = DaysLeftRegex.Replace(trimmed, "Còn $1 Ngày");
+                return PreserveWhitespace(key, res);
+            }
+
             // Fast-path prefix check for Status Condition
             if (trimmed.StartsWith("Trạng thái:", StringComparison.OrdinalIgnoreCase))
             {
@@ -179,7 +227,13 @@ public partial class TranslationManager
 
             if (AiProcessesRegex.IsMatch(trimmed))
             {
-                string res = AiProcessesRegex.Replace(trimmed, "AI phát hiện $1 tiến trình ngầm đang hoạt động. Tắt các mục khởi động không cần thiết có thể rút ngắn tới $2 giây boot.");
+                string res = AiProcessesRegex.Replace(trimmed, "AI phát hiện $1 tiến trình nền đang hoạt động. Tắt các mục khởi động không cần thiết có thể cải thiện thời gian khởi động.");
+                return PreserveWhitespace(key, res);
+            }
+
+            if (BackgroundProcessesActiveRegex.IsMatch(trimmed))
+            {
+                string res = BackgroundProcessesActiveRegex.Replace(trimmed, "Có $1 tiến trình nền đang hoạt động. Hệ thống đang vận hành bình thường.");
                 return PreserveWhitespace(key, res);
             }
 
@@ -253,7 +307,33 @@ public partial class TranslationManager
         }
 
         string trimmed = text.Trim();
-        return _translations.ContainsKey(trimmed) || _reverseTranslations.ContainsKey(trimmed);
+        if (_translations.ContainsKey(trimmed) || _reverseTranslations.ContainsKey(trimmed))
+            return true;
+
+        if (DriveUsageHealthyRegex.IsMatch(trimmed) ||
+            DriveUsageCritRegex.IsMatch(trimmed) ||
+            DriveUsageCapRegex.IsMatch(trimmed) ||
+            DriveUsageRegex.IsMatch(trimmed) ||
+            RamBoostedRegex.IsMatch(trimmed) ||
+            CleanedBytesRegex.IsMatch(trimmed) ||
+            SystemUpdatedRegex.IsMatch(trimmed) ||
+            CleanedDirsRegex.IsMatch(trimmed) ||
+            GamingTurboActiveRegex.IsMatch(trimmed) ||
+            PresetRegex.IsMatch(trimmed) ||
+            BootSavingsRegex.IsMatch(trimmed) ||
+            DaysLeftRegex.IsMatch(trimmed) ||
+            AiProcessesRegex.IsMatch(trimmed) ||
+            BackgroundProcessesActiveRegex.IsMatch(trimmed) ||
+            trimmed.StartsWith("Drive ", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Uninstalling ", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Trạng thái:", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Preset:", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("AI detected", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private bool ShouldTranslate(string? text)

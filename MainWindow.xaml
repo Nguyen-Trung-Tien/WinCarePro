@@ -32,7 +32,7 @@
 
             <!-- Brand (Left) — v3.0 with version badge -->
             <StackPanel Grid.Column="0" Orientation="Horizontal" Padding="16,0" VerticalAlignment="Center" Spacing="8" Canvas.ZIndex="10">
-                <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="20" Height="20" VerticalAlignment="Center" Stretch="Uniform"/>
+                <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="22" Height="22" VerticalAlignment="Center" Stretch="Uniform"/>
                 <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                 <Border Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
                     <TextBlock Text="v4.1.0" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
@@ -274,7 +274,7 @@
                 <!-- App Logo with Ambient Pulsing Glow Frame -->
                 <Grid Width="76" Height="76" HorizontalAlignment="Center">
                     <Border Width="76" Height="76" CornerRadius="22" Background="#15FFFFFF" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
-                        <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="46" Height="46" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+                        <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
                     </Border>
                 </Grid>
                 

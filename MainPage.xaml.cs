@@ -231,6 +231,10 @@ public sealed partial class MainPage : Page
             {
                 optPage.ViewModel?.Dispose();
             }
+            else if (ContentFrame.Content is Views.SecurityPage secPage)
+            {
+                if (secPage.DataContext is IDisposable dispSec) dispSec.Dispose();
+            }
             else if (ContentFrame.Content is Views.StartupPage startupPage)
             {
                 if (startupPage.DataContext is IDisposable disp) disp.Dispose();
@@ -246,6 +250,18 @@ public sealed partial class MainPage : Page
             else if (ContentFrame.Content is Views.RepairPage repairPage)
             {
                 if (repairPage.DataContext is IDisposable disp) disp.Dispose();
+            }
+            else if (ContentFrame.Content is Views.RegistryPage regPage)
+            {
+                if (regPage.DataContext is IDisposable disp) disp.Dispose();
+            }
+            else if (ContentFrame.Content is Modules.AiAssistant.AiCopilotPage aiPage)
+            {
+                if (aiPage.DataContext is IDisposable disp) disp.Dispose();
+            }
+            else if (ContentFrame.Content is Modules.GamingTurbo.GamingTurboPage gtPage)
+            {
+                if (gtPage.DataContext is IDisposable disp) disp.Dispose();
             }
 
             if (ContentFrame.Content is Page page && page.DataContext is IDisposable disposable)

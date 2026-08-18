@@ -62,8 +62,8 @@
 
             <!-- Title & Status Chips Inline -->
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <Border Background="{StaticResource CyberAccentGradient}" CornerRadius="10" Padding="8">
-                    <FontIcon Glyph="&#xE701;" FontSize="18" Foreground="White"/>
+                <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
+                    <FontIcon Glyph="&#xE701;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 <StackPanel Spacing="2" VerticalAlignment="Center">
                     <TextBlock Text="Network Center &amp; Diagnostics" Style="{StaticResource PageHeaderTitleStyle}"/>

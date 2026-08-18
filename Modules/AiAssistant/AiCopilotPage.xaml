@@ -33,11 +33,11 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Spacing="4">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Border Background="{StaticResource CyberAccentGradient}" CornerRadius="10" Padding="8">
-                        <FontIcon Glyph="&#xE945;" FontSize="20" Foreground="White"/>
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
+                        <FontIcon Glyph="&#xE99A;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <TextBlock Text="WinCare AI Assistant" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="AI Assistant" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
                     <Border Background="{ThemeResource AppBadgeNeutralBg}" BorderBrush="{ThemeResource AppBadgeNeutralBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
@@ -276,7 +276,7 @@
                                             <Border Background="{Binding ImpactBadgeBackgroundBrush}" 
                                                     BorderBrush="{Binding ImpactBadgeBorderBrush}" 
                                                     BorderThickness="1" CornerRadius="4" Padding="6,2">
-                                                <TextBlock Text="{Binding ImpactLevel}" FontSize="10" FontWeight="Bold" 
+                                                <TextBlock Text="{Binding ImpactLevelDisplayName}" FontSize="10" FontWeight="Bold" 
                                                            Foreground="{Binding ImpactBadgeForegroundBrush}"/>
                                             </Border>
                                         </StackPanel>

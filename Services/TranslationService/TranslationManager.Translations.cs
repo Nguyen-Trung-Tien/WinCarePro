@@ -2777,6 +2777,27 @@ public partial class TranslationManager
         _translations["System Up-to-Date"] = "Hệ Thống Đã Mới Nhất";
         _translations["Temp Files Cleanable"] = "Tệp Tạm Có Thể Dọn";
         _translations["RAM optimized and standby memory reclaimed."] = "RAM đã được tối ưu và bộ nhớ chờ đã được thu hồi.";
+        _translations["Back to Apps List"] = "Quay lại danh sách ứng dụng";
+        _translations["Standard Uninstall Selected"] = "Gỡ cài đặt các mục đã chọn";
+        _translations["Force Wipe Selected"] = "Xóa triệt để các mục đã chọn";
+        _translations["Standard Uninstall"] = "Gỡ cài đặt tiêu chuẩn";
+        _translations["Force Wipe & Residual Clean"] = "Xóa triệt để & Dọn tàn dư";
+        _translations["Search App Online"] = "Tra cứu ứng dụng trực tuyến";
+        _translations["Jump to Registry Key"] = "Mở khóa Registry";
+        _translations["Open Installation Folder"] = "Mở thư mục cài đặt";
+        _translations["Select / Deselect All Leftovers"] = "Chọn / Bỏ chọn tất cả tàn dư";
+        _translations["Select / Deselect All"] = "Chọn / Bỏ chọn tất cả";
+        _translations["Cancel & Back"] = "Hủy & Quay lại";
+        _translations["Wipe Leftovers"] = "Xóa tàn dư";
+        _translations["Wiping Leftovers..."] = "Đang xóa tàn dư...";
+        _translations["Scanning Applications..."] = "Đang quét ứng dụng...";
+        _translations["Residual Items Found"] = "Mục tàn dư phát hiện";
+        _translations["Reclaimable Space"] = "Dung lượng có thể giải phóng";
+        _translations["Residual Item Details"] = "Chi tiết mục tàn dư";
+        _translations["No application selected"] = "Chưa chọn ứng dụng nào";
+        _translations["Choose an app from the list to view detailed specifications and advanced actions."] = "Chọn một ứng dụng từ danh sách để xem thông số chi tiết và các thao tác nâng cao.";
+        _translations["Multiple applications are selected for queued execution"] = "Đã chọn nhiều ứng dụng để thực thi theo hàng đợi";
+        _translations["Batch Actions"] = "Hành động hàng loạt";
 
         _reverseTranslations.Clear();
         foreach (var kvp in _translations)

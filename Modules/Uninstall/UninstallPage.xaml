@@ -17,6 +17,45 @@
             </TransitionCollection>
         </Grid.ChildrenTransitions>
 
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 1050px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1050" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <!-- Medium Layout: Viewport Width >= 750px and < 1050px -->
+                <VisualState x:Name="MediumState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="750" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <!-- Narrow Layout: Viewport Width < 750px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderCol0.Width" Value="*" />
+                        <Setter Target="HeaderCol1.Width" Value="0" />
+                        <Setter Target="HeaderActionsPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderActionsPanel.Margin" Value="0,12,0,0" />
+                        <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
+
+                        <Setter Target="FiltersCol0.Width" Value="*" />
+                        <Setter Target="FiltersCol1.Width" Value="0" />
+                        <Setter Target="FilterStack.(Grid.Row)" Value="1" />
+                        <Setter Target="FilterStack.(Grid.Column)" Value="0" />
+                        <Setter Target="FilterStack.(Grid.ColumnSpan)" Value="3" />
+                        <Setter Target="FilterStack.Margin" Value="0,8,0,0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0: Page Header -->
             <RowDefinition Height="Auto" /> <!-- 1: Unified Ribbon Stat Deck -->
@@ -351,27 +390,36 @@
                             </Grid.RowDefinitions>
 
                             <!-- Header: Icon + Details -->
-                            <Grid Grid.Row="0" Margin="0,0,0,16">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid Grid.Column="0" Width="52" Height="52" CornerRadius="12" Background="{x:Bind ViewModel.SelectedApp.IconBackground, Mode=OneWay}" Margin="0,0,12,0" VerticalAlignment="Center">
-                                    <FontIcon Glyph="{x:Bind ViewModel.SelectedApp.DefaultIconGlyph, Mode=OneWay}" Foreground="{x:Bind ViewModel.SelectedApp.IconForeground, Mode=OneWay}" FontSize="26" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.SelectedApp.FallbackVisibility, Mode=OneWay}"/>
-                                    <Image Source="{x:Bind ViewModel.SelectedApp.IconImageSource, Mode=OneWay}" Width="40" Height="40" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.SelectedApp.IconVisibility, Mode=OneWay}"/>
-                                </Grid>
-
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                                    <TextBlock Text="{x:Bind ViewModel.SelectedApp.DisplayName, Mode=OneWay}" FontWeight="Bold" FontSize="15" TextWrapping="Wrap" />
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                        <Border Background="#1E8B5CF6" BorderBrush="#308B5CF6" BorderThickness="1" CornerRadius="4" Padding="6,1" VerticalAlignment="Center">
-                                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.TypeBadgeText, Mode=OneWay}" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}"/>
-                                        </Border>
+                            <StackPanel Grid.Row="0" Margin="0,0,0,16" Spacing="8">
+                                <Button Click="OnBackToListClick" Visibility="{x:Bind NarrowBackBtnVisibility, Mode=OneWay}" Style="{StaticResource DefaultButtonStyle}" Padding="10,4" HorizontalAlignment="Left">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <FontIcon Glyph="&#xE72B;" FontSize="12"/>
+                                        <TextBlock Text="Back to Apps List" FontSize="11.5" FontWeight="SemiBold"/>
                                     </StackPanel>
-                                </StackPanel>
-                            </Grid>
+                                </Button>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid Grid.Column="0" Width="52" Height="52" CornerRadius="12" Background="{x:Bind ViewModel.SelectedApp.IconBackground, Mode=OneWay}" Margin="0,0,12,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="{x:Bind ViewModel.SelectedApp.DefaultIconGlyph, Mode=OneWay}" Foreground="{x:Bind ViewModel.SelectedApp.IconForeground, Mode=OneWay}" FontSize="26" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.SelectedApp.FallbackVisibility, Mode=OneWay}"/>
+                                        <Image Source="{x:Bind ViewModel.SelectedApp.IconImageSource, Mode=OneWay}" Width="40" Height="40" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.SelectedApp.IconVisibility, Mode=OneWay}"/>
+                                    </Grid>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.DisplayName, Mode=OneWay}" FontWeight="Bold" FontSize="15" TextWrapping="Wrap" />
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                            <Border Background="#1E8B5CF6" BorderBrush="#308B5CF6" BorderThickness="1" CornerRadius="4" Padding="6,1" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind ViewModel.SelectedApp.TypeBadgeText, Mode=OneWay}" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
 
                             <!-- Specifications Table -->
                             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">

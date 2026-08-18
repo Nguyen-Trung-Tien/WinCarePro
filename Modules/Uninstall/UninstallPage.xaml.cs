@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
+using WinCarePro.Services;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Core.Helpers;
 
@@ -51,10 +52,20 @@ public sealed partial class UninstallPage : Page
         set => SetValue(DetailsPaneVisibilityProperty, value);
     }
 
+    public static readonly DependencyProperty NarrowBackBtnVisibilityProperty =
+        DependencyProperty.Register(nameof(NarrowBackBtnVisibility), typeof(Visibility), typeof(UninstallPage), new PropertyMetadata(Visibility.Collapsed));
+
+    public Visibility NarrowBackBtnVisibility
+    {
+        get => (Visibility)GetValue(NarrowBackBtnVisibilityProperty);
+        set => SetValue(NarrowBackBtnVisibilityProperty, value);
+    }
+
     private void UpdateDetailsPaneVisibility()
     {
-        bool isWide = this.ActualWidth >= 800;
-        DetailsPaneVisibility = (isWide && ViewModel.SelectedApp != null) ? Visibility.Visible : Visibility.Collapsed;
+        bool isWide = this.ActualWidth >= 850;
+        DetailsPaneVisibility = isWide ? Visibility.Visible : (ViewModel.SelectedApp != null ? Visibility.Visible : Visibility.Collapsed);
+        NarrowBackBtnVisibility = (!isWide && ViewModel.SelectedApp != null) ? Visibility.Visible : Visibility.Collapsed;
         
         if (ListCol != null && DetailCol != null)
         {
@@ -65,8 +76,16 @@ public sealed partial class UninstallPage : Page
             }
             else
             {
-                ListCol.Width = new GridLength(1, GridUnitType.Star);
-                DetailCol.Width = new GridLength(0, GridUnitType.Pixel);
+                if (ViewModel.SelectedApp != null)
+                {
+                    ListCol.Width = new GridLength(0, GridUnitType.Pixel);
+                    DetailCol.Width = new GridLength(1, GridUnitType.Star);
+                }
+                else
+                {
+                    ListCol.Width = new GridLength(1, GridUnitType.Star);
+                    DetailCol.Width = new GridLength(0, GridUnitType.Pixel);
+                }
             }
         }
     }
@@ -78,10 +97,21 @@ public sealed partial class UninstallPage : Page
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
 
+        ThemeManager.Instance.RegisterPage(this);
+        TranslationManager.Instance.RegisterPage(this);
+
         this.Loaded += (s, e) =>
         {
             var dialogService = App.Services.GetRequiredService<IDialogService>();
             dialogService.SetXamlRoot(this.XamlRoot);
+            TranslationManager.Instance.Translate(this);
+            UpdateDetailsPaneVisibility();
+        };
+
+        this.Unloaded += (s, e) =>
+        {
+            ThemeManager.Instance.UnregisterPage(this);
+            TranslationManager.Instance.UnregisterPage(this);
         };
 
         ViewModel.PropertyChanged += (s, e) =>
@@ -94,12 +124,17 @@ public sealed partial class UninstallPage : Page
 
         this.SizeChanged += (s, e) =>
         {
-            bool isWide = e.NewSize.Width >= 800;
+            bool isWide = e.NewSize.Width >= 850;
             BadgesColumnWidth = isWide ? GridLength.Auto : new GridLength(0);
             SizeColumnWidth = isWide ? new GridLength(100) : new GridLength(0);
             WideLayoutVisibility = isWide ? Visibility.Visible : Visibility.Collapsed;
             UpdateDetailsPaneVisibility();
         };
+    }
+
+    private void OnBackToListClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectedApp = null;
     }
 
     private async void OnReloadAppsClick(object sender, RoutedEventArgs e)

@@ -50,6 +50,7 @@ public class ProcessService
     private static readonly Dictionary<int, ProcessMetadata> _metadataCache = new();
     private static readonly object _cacheLock = new();
     private const int CACHE_TTL_SECONDS = 60;
+    private const int MAX_CACHE_ENTRIES = 500;
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Task<string>> _activeIconTasks = new();
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, byte> _failedIconKeys = new();
 
@@ -61,6 +62,46 @@ public class ProcessService
         "taskhostw", "RuntimeBroker", "SearchHost", "StartMenuExperienceHost",
         "MsMpEng", "NisSrv", "WinCarePro"
     };
+
+    private static void CleanExpiredCacheEntries()
+    {
+        lock (_cacheLock)
+        {
+            if (_metadataCache.Count > MAX_CACHE_ENTRIES)
+            {
+                var now = DateTime.UtcNow;
+                var expiredKeys = _metadataCache
+                    .Where(kvp => (now - kvp.Value.CacheTime).TotalSeconds > CACHE_TTL_SECONDS)
+                    .Select(kvp => kvp.Key)
+                    .ToList();
+
+                foreach (var k in expiredKeys)
+                {
+                    _metadataCache.Remove(k);
+                }
+
+                // If still too large, remove oldest 20%
+                if (_metadataCache.Count > MAX_CACHE_ENTRIES)
+                {
+                    var oldestKeys = _metadataCache
+                        .OrderBy(kvp => kvp.Value.CacheTime)
+                        .Take(_metadataCache.Count / 5)
+                        .Select(kvp => kvp.Key)
+                        .ToList();
+
+                    foreach (var k in oldestKeys)
+                    {
+                        _metadataCache.Remove(k);
+                    }
+                }
+            }
+
+            if (_failedIconKeys.Count > 1000)
+            {
+                _failedIconKeys.Clear();
+            }
+        }
+    }
 
     private static string GetProcessExecutablePath(Process p)
     {
@@ -354,6 +395,7 @@ public class ProcessService
                     // Save basic metadata
                     lock (_cacheLock)
                     {
+                        CleanExpiredCacheEntries();
                         _metadataCache[p.Id] = new ProcessMetadata
                         {
                             FilePath = path,

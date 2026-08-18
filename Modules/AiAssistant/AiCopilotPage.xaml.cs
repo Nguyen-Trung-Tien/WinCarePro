@@ -285,19 +285,17 @@ namespace WinCarePro.Modules.AiAssistant
         {
             try
             {
-                await Task.Run(() =>
-                {
-                    var psi = new ProcessStartInfo("ipconfig", "/flushdns")
-                    {
-                        CreateNoWindow = true,
-                        UseShellExecute = false
-                    };
-                    Process.Start(psi)?.WaitForExit(3000);
-                });
-
+                var result = await ProcessRunner.RunHiddenAsync("ipconfig.exe", "/flushdns", 3);
                 if (App.MainWindowInstance is MainWindow mw)
                 {
-                    mw.ShowToastFromDb("DNS Flushed".T(), "Network cache and DNS resolver cleared successfully.".T(), "Success");
+                    if (result.Success)
+                    {
+                        mw.ShowToastFromDb("DNS Flushed".T(), "Network cache and DNS resolver cleared successfully.".T(), "Success");
+                    }
+                    else
+                    {
+                        mw.ShowToastFromDb("Flush Notice".T(), "DNS flush command completed with warnings.".T(), "Info");
+                    }
                 }
             }
             catch (Exception ex)

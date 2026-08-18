@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -13,10 +14,14 @@ public class ProcessResult
     public string Output { get; set; } = "";
     public string Error { get; set; } = "";
     public bool TimedOut { get; set; }
+    public bool Success => ExitCode == 0 && !TimedOut;
 }
 
 public static class ProcessRunner
 {
+    /// <summary>
+    /// Executes a system process asynchronously with strict timeout and output capturing.
+    /// </summary>
     public static async Task<ProcessResult> RunAsync(
         string fileName,
         string arguments,
@@ -138,23 +143,35 @@ public static class ProcessRunner
         return result;
     }
 
+    /// <summary>
+    /// Fast helper to execute short-lived commands without throwing exceptions on non-zero exit code.
+    /// </summary>
+    public static Task<ProcessResult> RunHiddenAsync(
+        string fileName,
+        string arguments,
+        int timeoutSeconds = 5,
+        CancellationToken cancellationToken = default)
+    {
+        return RunAsync(fileName, arguments, TimeSpan.FromSeconds(timeoutSeconds), null, null, null, cancellationToken);
+    }
+
     private static async Task ReadStreamAsync(
         StreamReader reader,
         StringBuilder fullBuilder,
         Action<string>? onLine,
         CancellationToken cancellationToken)
     {
-        char[] buffer = new char[1024];
+        char[] rentedBuffer = ArrayPool<char>.Shared.Rent(2048);
         var currentLine = new StringBuilder();
 
         try
         {
             int read;
-            while ((read = await reader.ReadAsync(buffer.AsMemory(), cancellationToken)) > 0)
+            while ((read = await reader.ReadAsync(rentedBuffer.AsMemory(0, 2048), cancellationToken)) > 0)
             {
                 for (int i = 0; i < read; i++)
                 {
-                    char c = buffer[i];
+                    char c = rentedBuffer[i];
                     fullBuilder.Append(c);
 
                     if (c == '\r' || c == '\n')
@@ -189,6 +206,10 @@ public static class ProcessRunner
         catch (Exception ex)
         {
             Debug.WriteLine($"Error reading process stream: {ex.Message}");
+        }
+        finally
+        {
+            ArrayPool<char>.Shared.Return(rentedBuffer);
         }
     }
 

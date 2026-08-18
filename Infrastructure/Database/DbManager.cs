@@ -27,7 +27,7 @@ public class DbManager
         try
         {
             connection.Open();
-            using (var cmd = new SqliteCommand("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=5000;", connection))
+            using (var cmd = new SqliteCommand("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=5000; PRAGMA cache_size=-2000; PRAGMA temp_store=MEMORY;", connection))
             {
                 try
                 {
@@ -68,6 +68,24 @@ public class DbManager
             }
             return defaultValue;
         }
+    }
+
+    public static void ExecuteInTransaction(Action<SqliteConnection, SqliteTransaction> operation)
+    {
+        ExecuteWithConnection(connection =>
+        {
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                operation(connection, transaction);
+                transaction.Commit();
+            }
+            catch
+            {
+                try { transaction.Rollback(); } catch { }
+                throw;
+            }
+        });
     }
 
     private static void ExecuteWithConnection(Action<SqliteConnection> operation)

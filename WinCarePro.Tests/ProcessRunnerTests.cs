@@ -52,4 +52,34 @@ public class ProcessRunnerTests
         Assert.True(result.TimedOut);
         Assert.Equal(-1, result.ExitCode);
     }
+
+    [Fact]
+    public async Task RunHiddenAsync_ValidCommand_ExecutesSuccessfully()
+    {
+        var result = await ProcessRunner.RunHiddenAsync("cmd.exe", "/c echo HiddenExecution");
+        Assert.True(result.Success);
+        Assert.Contains("HiddenExecution", result.Output);
+    }
+
+    [Theory]
+    [InlineData("safe_arg", "safe_arg")]
+    [InlineData("arg with space", "\"arg with space\"")]
+    [InlineData("bad;echo_inject", "badecho_inject")]
+    [InlineData("pipe|danger", "pipedanger")]
+    public void SanitizeArgument_StripsMaliciousCharacters(string input, string expected)
+    {
+        string actual = ProcessRunner.SanitizeArgument(input);
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("wuauserv", true)]
+    [InlineData("WinDefend", true)]
+    [InlineData("wuauserv; rm -rf /", false)]
+    [InlineData("svc & calc", false)]
+    public void IsValidServiceName_ValidatesCorrectly(string serviceName, bool expected)
+    {
+        bool actual = ProcessRunner.IsValidServiceName(serviceName);
+        Assert.Equal(expected, actual);
+    }
 }

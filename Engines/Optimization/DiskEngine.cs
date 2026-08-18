@@ -270,6 +270,8 @@ public class DiskEngine
                         try
                         {
                             string headHash = ComputeQuickHeaderHash(filePath);
+                            if (string.IsNullOrEmpty(headHash)) continue;
+
                             if (!headHashGroups.TryGetValue(headHash, out var list))
                             {
                                 list = new List<string>();
@@ -280,7 +282,7 @@ public class DiskEngine
                         catch { }
                     }
 
-                    // Stage 2: For groups matching head hash, verify full hash if file > 64KB
+                    // Stage 2: For matching head hashes, if file > 64KB, check Tail Hash (last 4KB) before Full Hash
                     foreach (var headGroup in headHashGroups.Where(hg => hg.Value.Count > 1))
                     {
                         token.ThrowIfCancellationRequested();
@@ -295,31 +297,54 @@ public class DiskEngine
                         }
                         else
                         {
-                            // File size > 64KB: compute full SHA-256 to guarantee 100% accuracy
-                            var fullHashGroups = new Dictionary<string, List<string>>();
+                            // Stage 2.5: Tail Hash comparison (last 4KB)
+                            var tailHashGroups = new Dictionary<string, List<string>>();
                             foreach (var filePath in headGroup.Value)
                             {
                                 token.ThrowIfCancellationRequested();
                                 try
                                 {
-                                    string fullHash = ComputeFullFileHash(filePath, token);
-                                    if (!fullHashGroups.TryGetValue(fullHash, out var list))
+                                    string tailHash = ComputeQuickTailHash(filePath, fileSize);
+                                    if (!tailHashGroups.TryGetValue(tailHash, out var list))
                                     {
                                         list = new List<string>();
-                                        fullHashGroups[fullHash] = list;
+                                        tailHashGroups[tailHash] = list;
                                     }
                                     list.Add(filePath);
                                 }
                                 catch { }
                             }
 
-                            foreach (var fullGroup in fullHashGroups.Where(fg => fg.Value.Count > 1))
+                            // Stage 3: Full SHA-256 for files with identical head and tail
+                            foreach (var tailGroup in tailHashGroups.Where(tg => tg.Value.Count > 1))
                             {
-                                duplicatesList.Add(new DuplicateFileGroup
+                                var fullHashGroups = new Dictionary<string, List<string>>();
+                                foreach (var filePath in tailGroup.Value)
                                 {
-                                    FileSize = fileSize,
-                                    FilePaths = fullGroup.Value
-                                });
+                                    token.ThrowIfCancellationRequested();
+                                    try
+                                    {
+                                        string fullHash = ComputeFullFileHash(filePath, token);
+                                        if (string.IsNullOrEmpty(fullHash)) continue;
+
+                                        if (!fullHashGroups.TryGetValue(fullHash, out var list))
+                                        {
+                                            list = new List<string>();
+                                            fullHashGroups[fullHash] = list;
+                                        }
+                                        list.Add(filePath);
+                                    }
+                                    catch { }
+                                }
+
+                                foreach (var fullGroup in fullHashGroups.Where(fg => fg.Value.Count > 1))
+                                {
+                                    duplicatesList.Add(new DuplicateFileGroup
+                                    {
+                                        FileSize = fileSize,
+                                        FilePaths = fullGroup.Value
+                                    });
+                                }
                             }
                         }
                     }
@@ -337,44 +362,71 @@ public class DiskEngine
 
     private string ComputeQuickHeaderHash(string path)
     {
+        byte[] rented = System.Buffers.ArrayPool<byte>.Shared.Rent(64 * 1024);
         try
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 64 * 1024, FileOptions.SequentialScan);
             using var sha = SHA256.Create();
-            byte[] buffer = new byte[64 * 1024];
-            int bytesRead = stream.Read(buffer, 0, buffer.Length);
-            byte[] hash = sha.ComputeHash(buffer, 0, bytesRead);
+            int bytesRead = stream.Read(rented, 0, 64 * 1024);
+            byte[] hash = sha.ComputeHash(rented, 0, bytesRead);
             return Convert.ToHexString(hash).ToLowerInvariant();
         }
         catch
         {
             return string.Empty;
+        }
+        finally
+        {
+            System.Buffers.ArrayPool<byte>.Shared.Return(rented);
+        }
+    }
+
+    private string ComputeQuickTailHash(string path, long fileSize)
+    {
+        byte[] rented = System.Buffers.ArrayPool<byte>.Shared.Rent(4 * 1024);
+        try
+        {
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4 * 1024, FileOptions.RandomAccess);
+            int readLength = (int)Math.Min(4096, fileSize);
+            stream.Seek(-readLength, SeekOrigin.End);
+            int bytesRead = stream.Read(rented, 0, readLength);
+            using var sha = SHA256.Create();
+            byte[] hash = sha.ComputeHash(rented, 0, bytesRead);
+            return Convert.ToHexString(hash).ToLowerInvariant();
+        }
+        catch
+        {
+            return string.Empty;
+        }
+        finally
+        {
+            System.Buffers.ArrayPool<byte>.Shared.Return(rented);
         }
     }
 
     private string ComputeFullFileHash(string path, System.Threading.CancellationToken token = default)
     {
+        byte[] rented = System.Buffers.ArrayPool<byte>.Shared.Rent(128 * 1024);
         try
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 128 * 1024, FileOptions.SequentialScan);
             using var incHash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
-            byte[] buffer = new byte[128 * 1024];
             int bytesRead;
-            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+            while ((bytesRead = stream.Read(rented, 0, 128 * 1024)) > 0)
             {
                 token.ThrowIfCancellationRequested();
-                incHash.AppendData(buffer, 0, bytesRead);
+                incHash.AppendData(rented, 0, bytesRead);
             }
             byte[] hash = incHash.GetHashAndReset();
             return Convert.ToHexString(hash).ToLowerInvariant();
         }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
         catch
         {
             return string.Empty;
+        }
+        finally
+        {
+            System.Buffers.ArrayPool<byte>.Shared.Return(rented);
         }
     }
 

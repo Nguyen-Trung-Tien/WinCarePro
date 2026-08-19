@@ -22,6 +22,7 @@ public sealed partial class MainPage : Page
         // Populate user chip with system info
         NavUserName.Text = Environment.UserName;
         NavMachineName.Text = Environment.MachineName;
+        ToolTipService.SetToolTip(UserProfileBorder, $"{Environment.UserName} • {Environment.MachineName}");
 
         // Register to theme changes to force update RequestedTheme for this page, children, and navigated content
         ThemeManager.Instance.RegisterPage(this);

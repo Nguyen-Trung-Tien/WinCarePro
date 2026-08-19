@@ -15,18 +15,18 @@
             <NavigationView.PaneFooter>
                 <StackPanel Padding="0,0,0,12">
                     <!-- User Profile Chip at the bottom — Soft rounded pill -->
-                    <Border Margin="8,4,8,4" Padding="8,6" CornerRadius="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                        <Grid>
+                    <Border x:Name="UserProfileBorder" Margin="6,4,6,4" Padding="6,5" CornerRadius="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                        <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Width="32" Height="32" CornerRadius="16" Background="{StaticResource CyberAccentGradient}" VerticalAlignment="Center">
+                            <Border Grid.Column="0" Width="32" Height="32" CornerRadius="16" Background="{StaticResource CyberAccentGradient}" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE77B;" FontSize="14" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </Border>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1" Margin="10,0,0,0" Visibility="{x:Bind NavView.IsPaneOpen, Mode=OneWay}">
-                                <TextBlock x:Name="NavUserName" Text="User" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="120"/>
-                                <TextBlock x:Name="NavMachineName" Text="PC" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="120"/>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1" Margin="8,0,0,0" Visibility="{x:Bind NavView.IsPaneOpen, Mode=OneWay}">
+                                <TextBlock x:Name="NavUserName" Text="User" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+                                <TextBlock x:Name="NavMachineName" Text="PC" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
                             </StackPanel>
                         </Grid>
                     </Border>

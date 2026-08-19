@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using WinCarePro.Engines;
 using WinCarePro.Services;
+using WinCarePro.Shared.Animations;
 
 namespace WinCarePro.Modules.DesktopWidget
 {
@@ -19,7 +20,7 @@ namespace WinCarePro.Modules.DesktopWidget
         public int X { get; set; } = -1;
         public int Y { get; set; } = -1;
         public int Width { get; set; } = 440;
-        public int Height { get; set; } = 185;
+        public int Height { get; set; } = 245;
         public bool IsAlwaysOnTop { get; set; } = true;
         public bool IsCompact { get; set; } = false;
     }
@@ -61,6 +62,16 @@ namespace WinCarePro.Modules.DesktopWidget
 
         [DllImport("comctl32.dll", SetLastError = true)]
         private static extern IntPtr DefSubclassProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern IntPtr LoadImage(IntPtr hinst, string lpszName, uint uType, int cxDesired, int cyDesired, uint fuLoad);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        private const uint WM_SETICON = 0x0080;
+        private static readonly IntPtr ICON_SMALL = (IntPtr)0;
+        private static readonly IntPtr ICON_BIG = (IntPtr)1;
 
         private delegate IntPtr SUBCLASSPROC(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, uint uIdSubclass, IntPtr dwRefData);
 
@@ -159,6 +170,29 @@ namespace WinCarePro.Modules.DesktopWidget
                 SetWindowSubclass(hwnd, _subclassProc, 101, IntPtr.Zero);
             }
 
+            // Set Window and Taskbar / Alt-Tab Icon
+            try
+            {
+                string iconPath = Path.Combine(AppContext.BaseDirectory, "Assets", "AppIcon.ico");
+                if (!File.Exists(iconPath))
+                {
+                    iconPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AppIcon.ico");
+                }
+                if (File.Exists(iconPath))
+                {
+                    this.AppWindow.SetIcon(iconPath);
+
+                    if (hwnd != IntPtr.Zero)
+                    {
+                        var hIconBig = LoadImage(IntPtr.Zero, iconPath, 1, 256, 256, 0x00000010);
+                        var hIconSmall = LoadImage(IntPtr.Zero, iconPath, 1, 32, 32, 0x00000010);
+                        if (hIconBig != IntPtr.Zero) SendMessage(hwnd, WM_SETICON, ICON_BIG, hIconBig);
+                        if (hIconSmall != IntPtr.Zero) SendMessage(hwnd, WM_SETICON, ICON_SMALL, hIconSmall);
+                    }
+                }
+            }
+            catch { }
+
             this.Closed += (s, e) =>
             {
                 if (hwnd != IntPtr.Zero && _subclassProc != null)
@@ -225,6 +259,8 @@ namespace WinCarePro.Modules.DesktopWidget
                 BoostText.Text = "BOOST";
                 BoostIcon.Glyph = "\uE74C";
                 BoostBadgeText.Visibility = Visibility.Collapsed;
+                if (CompactBoostText != null) CompactBoostText.Text = "BOOST";
+                if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE74C";
             };
 
             // Window closed cleanup & state saving
@@ -273,12 +309,11 @@ namespace WinCarePro.Modules.DesktopWidget
             try
             {
                 int rightInset = AppWindow.TitleBar.RightInset;
-                double rightMargin = rightInset > 0 ? Math.Max(140.0, rightInset + 8) : 140.0;
+                double rightMargin = rightInset > 0 ? Math.Max(50.0, rightInset + 4) : 50.0;
 
-                HeaderActionPanel.Margin = new Thickness(0, 0, rightMargin, 0);
-                if (CompactHeaderPanel != null)
+                if (HeaderActionPanel != null)
                 {
-                    CompactHeaderPanel.Margin = new Thickness(0, 0, rightMargin, 0);
+                    HeaderActionPanel.Margin = new Thickness(0, 0, rightMargin, 0);
                 }
             }
             catch { }
@@ -292,8 +327,8 @@ namespace WinCarePro.Modules.DesktopWidget
                 CompactViewGrid.Visibility = Visibility.Visible;
                 SetTitleBar(CompactDragArea);
 
-                int w = 340; // Super compact 340px x 76px HUD Card
-                int h = 76;
+                int w = 440; // Consistent 440px width - ample room for all 4 telemetry pills!
+                int h = 100;
                 this.AppWindow.Resize(new Windows.Graphics.SizeInt32(w, h));
             }
             else
@@ -302,8 +337,8 @@ namespace WinCarePro.Modules.DesktopWidget
                 CompactViewGrid.Visibility = Visibility.Collapsed;
                 SetTitleBar(WidgetDragArea);
 
-                int w = 440;
-                int h = 185;
+                int w = 440; // Full Detailed 440px x 245px HUD Card
+                int h = 245;
                 this.AppWindow.Resize(new Windows.Graphics.SizeInt32(w, h));
             }
 
@@ -354,9 +389,9 @@ namespace WinCarePro.Modules.DesktopWidget
                 if (this.AppWindow.Presenter is OverlappedPresenter presenter)
                 {
                     presenter.IsAlwaysOnTop = _isAlwaysOnTop;
-                    presenter.IsResizable = false; // Disable window resizing
-                    presenter.IsMinimizable = true; // Keep minimize button (-)
-                    presenter.IsMaximizable = true; // Native ☐ Maximize button acts as Compact/Full HUD toggle!
+                    presenter.IsResizable = false; // Fixed HUD size
+                    presenter.IsMinimizable = false; // Disable redundant minimize button (-)
+                    presenter.IsMaximizable = false; // Disable redundant maximize button (☐)
                 }
 
                 TopmostDot.Fill = _isAlwaysOnTop ? GreenBrush : AmberBrush;
@@ -612,8 +647,32 @@ namespace WinCarePro.Modules.DesktopWidget
             try
             {
                 _isBoosting = true;
+
+                // GPU Spark Burst Micro-Interaction
+                if (BoostButton != null) FluidAnimationHelper.ApplyGlowSparkBurst(BoostButton);
+                if (CompactBoostButton != null) FluidAnimationHelper.ApplyGlowSparkBurst(CompactBoostButton);
+
                 BoostText.Text = "...";
                 BoostIcon.Glyph = "\uE895";
+                if (CompactBoostText != null) CompactBoostText.Text = "...";
+                if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE895";
+
+                // Spin Boost Icon smoothly
+                var spinTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
+                spinTimer.Tick += (s, ev) =>
+                {
+                    if (BoostIconRotation != null) BoostIconRotation.Angle = (BoostIconRotation.Angle + 20) % 360;
+                    if (CompactBoostIconRotation != null) CompactBoostIconRotation.Angle = (CompactBoostIconRotation.Angle + 20) % 360;
+                };
+                spinTimer.Start();
+
+                int oldRamPercent = 0;
+                var memStatusOld = new MEMORYSTATUSEX();
+                memStatusOld.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
+                if (GlobalMemoryStatusEx(ref memStatusOld))
+                {
+                    oldRamPercent = (int)memStatusOld.dwMemoryLoad;
+                }
 
                 var optEngine = new SystemOptimizerEngine();
                 var (_, memoryReclaimedBytes) = await optEngine.OptimizeRamAsync();
@@ -621,7 +680,24 @@ namespace WinCarePro.Modules.DesktopWidget
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
 
+                spinTimer.Stop();
+                if (BoostIconRotation != null) BoostIconRotation.Angle = 0;
+                if (CompactBoostIconRotation != null) CompactBoostIconRotation.Angle = 0;
+
                 UpdateStats();
+
+                // Animate RAM % decrease count-down
+                var memStatusNew = new MEMORYSTATUSEX();
+                memStatusNew.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
+                if (GlobalMemoryStatusEx(ref memStatusNew))
+                {
+                    int newRamPercent = (int)memStatusNew.dwMemoryLoad;
+                    if (oldRamPercent > 0 && newRamPercent < oldRamPercent)
+                    {
+                        FluidAnimationHelper.AnimateNumberInt(RamText, oldRamPercent, newRamPercent, "%", 600);
+                        FluidAnimationHelper.AnimateNumberInt(CompactRamText, oldRamPercent, newRamPercent, "%", 600);
+                    }
+                }
 
                 double freedMb = memoryReclaimedBytes / (1024.0 * 1024.0);
                 if (freedMb > 0)
@@ -629,10 +705,16 @@ namespace WinCarePro.Modules.DesktopWidget
                     BoostBadgeText.Text = $"+{freedMb:F0}MB";
                     BoostBadgeText.Visibility = Visibility.Visible;
                     BoostText.Text = "FREED!";
+                    BoostIcon.Glyph = "\uE73E"; // Checkmark glyph
+                    if (CompactBoostText != null) CompactBoostText.Text = $"+{freedMb:F0}M";
+                    if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE73E";
                 }
                 else
                 {
                     BoostText.Text = "OPTIMAL";
+                    BoostIcon.Glyph = "\uE73E";
+                    if (CompactBoostText != null) CompactBoostText.Text = "OK!";
+                    if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE73E";
                 }
 
                 _badgeResetTimer.Stop();
@@ -642,6 +724,8 @@ namespace WinCarePro.Modules.DesktopWidget
             {
                 BoostText.Text = "BOOST";
                 BoostIcon.Glyph = "\uE74C";
+                if (CompactBoostText != null) CompactBoostText.Text = "BOOST";
+                if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE74C";
             }
             finally
             {
@@ -684,8 +768,8 @@ namespace WinCarePro.Modules.DesktopWidget
                 {
                     X = this.AppWindow.Position.X,
                     Y = this.AppWindow.Position.Y,
-                    Width = _isCompact ? 340 : 440,
-                    Height = _isCompact ? 76 : 185,
+                    Width = _isCompact ? 440 : 440,
+                    Height = _isCompact ? 100 : 245,
                     IsAlwaysOnTop = _isAlwaysOnTop,
                     IsCompact = _isCompact
                 };

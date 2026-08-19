@@ -660,13 +660,13 @@ namespace WinCarePro.Shared.Animations
         }
 
         // ============================================================
-        // 15. SELECTION PULSE MICRO-INTERACTION
+        // 16. GLOW SPARK BURST & REACTOR ANIMATION (NEW v4.0.0)
         // ============================================================
 
         /// <summary>
-        /// Subtle pop-in scale animation when an item checkbox or toggle switch is clicked.
+        /// Applies an intense spark & spring burst scale animation on click (ideal for Turbo / Boost / Clean buttons).
         /// </summary>
-        public static void AnimateSelectionPulse(UIElement element)
+        public static void ApplyGlowSparkBurst(UIElement element)
         {
             if (element == null) return;
 
@@ -678,15 +678,55 @@ namespace WinCarePro.Shared.Animations
                 visual.CenterPoint = new Vector3((float)fe.ActualWidth / 2f, (float)fe.ActualHeight / 2f, 0);
             }
 
-            Vector3KeyFrameAnimation popAnim = compositor.CreateVector3KeyFrameAnimation();
-            popAnim.InsertKeyFrame(0.0f, new Vector3(1.0f, 1.0f, 1.0f));
-            popAnim.InsertKeyFrame(0.4f, new Vector3(1.04f, 1.04f, 1.0f),
+            Vector3KeyFrameAnimation burstAnim = compositor.CreateVector3KeyFrameAnimation();
+            burstAnim.InsertKeyFrame(0.0f, new Vector3(1.0f, 1.0f, 1.0f));
+            burstAnim.InsertKeyFrame(0.2f, new Vector3(0.90f, 0.90f, 1.0f),
                 compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
-            popAnim.InsertKeyFrame(1.0f, new Vector3(1.0f, 1.0f, 1.0f),
+            burstAnim.InsertKeyFrame(0.5f, new Vector3(1.10f, 1.10f, 1.0f),
+                compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+            burstAnim.InsertKeyFrame(1.0f, new Vector3(1.0f, 1.0f, 1.0f),
                 compositor.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.8f), new Vector2(0.3f, 1.0f)));
-            popAnim.Duration = TimeSpan.FromMilliseconds(220);
+            burstAnim.Duration = TimeSpan.FromMilliseconds(450);
 
-            visual.StartAnimation("Scale", popAnim);
+            visual.StartAnimation("Scale", burstAnim);
+        }
+
+        /// <summary>
+        /// Animates a TextBlock showing integer numerical changes with smooth rolling count-down/up.
+        /// </summary>
+        public static void AnimateNumberInt(TextBlock textBlock, int from, int to, string suffix = "", int durationMs = 600)
+        {
+            if (textBlock == null) return;
+
+            DispatcherQueue dispatcherQueue = textBlock.DispatcherQueue;
+            if (dispatcherQueue == null) return;
+
+            int frameCount = 30;
+            double intervalMs = (double)durationMs / frameCount;
+
+            int currentFrame = 0;
+            DispatcherQueueTimer timer = dispatcherQueue.CreateTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(Math.Max(16, intervalMs));
+            timer.IsRepeating = true;
+
+            timer.Tick += (s, e) =>
+            {
+                currentFrame++;
+                double progress = (double)currentFrame / frameCount;
+                double easedProgress = 1.0 - Math.Pow(1.0 - progress, 3); // Cubic ease out
+                int currentVal = (int)Math.Round(from + ((to - from) * easedProgress));
+
+                textBlock.Text = $"{currentVal}{suffix}";
+
+                if (currentFrame >= frameCount)
+                {
+                    textBlock.Text = $"{to}{suffix}";
+                    timer.Stop();
+                }
+            };
+
+            textBlock.Text = $"{from}{suffix}";
+            timer.Start();
         }
     }
 }

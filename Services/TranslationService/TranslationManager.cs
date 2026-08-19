@@ -237,6 +237,29 @@ public partial class TranslationManager
                 return PreserveWhitespace(key, res);
             }
 
+            // Fallback for multiline blocks: translate each line individually
+            if (trimmed.Contains('\n'))
+            {
+                var lines = trimmed.Split('\n');
+                bool anyTranslated = false;
+                var translatedLines = new List<string>(lines.Length);
+                foreach (var line in lines)
+                {
+                    string rawLine = line.TrimEnd('\r');
+                    string tLine = GetTranslationForLanguage(rawLine, language);
+                    if (!string.Equals(tLine, rawLine, StringComparison.Ordinal))
+                    {
+                        anyTranslated = true;
+                    }
+                    translatedLines.Add(tLine);
+                }
+                if (anyTranslated)
+                {
+                    string joiner = trimmed.Contains("\r\n") ? "\r\n" : "\n";
+                    return PreserveWhitespace(key, string.Join(joiner, translatedLines));
+                }
+            }
+
             return key;
         }
     }

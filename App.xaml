@@ -306,6 +306,7 @@
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
                 <Setter Property="Padding" Value="0" />
+                <Setter Property="CornerRadius" Value="18" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -348,6 +349,67 @@
                                     </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
                             </ContentPresenter>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Telemetry HUD Pill Button Style (Clean capsule hover, no square background artifact) -->
+            <Style x:Key="TelemetryChipButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid x:Name="ChipRootGrid" RenderTransformOrigin="0.5,0.5" CornerRadius="{TemplateBinding CornerRadius}">
+                                <Grid.RenderTransform>
+                                    <ScaleTransform x:Name="ChipScaleTransform" ScaleX="1.0" ScaleY="1.0"/>
+                                </Grid.RenderTransform>
+                                <ContentPresenter x:Name="ContentPresenter"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="0"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    Padding="{TemplateBinding Padding}"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition To="PointerOver" GeneratedDuration="0:0:0.12"/>
+                                            <VisualTransition To="Normal" GeneratedDuration="0:0:0.15"/>
+                                            <VisualTransition To="Pressed" GeneratedDuration="0:0:0.06"/>
+                                        </VisualStateGroup.Transitions>
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Target="ChipScaleTransform.ScaleX" Value="1.05" />
+                                                <Setter Target="ChipScaleTransform.ScaleY" Value="1.05" />
+                                                <Setter Target="ChipRootGrid.Opacity" Value="0.88" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Target="ChipScaleTransform.ScaleX" Value="0.95" />
+                                                <Setter Target="ChipScaleTransform.ScaleY" Value="0.95" />
+                                                <Setter Target="ChipRootGrid.Opacity" Value="0.7" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Target="ChipRootGrid.Opacity" Value="0.4" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>

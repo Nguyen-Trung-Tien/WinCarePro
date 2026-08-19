@@ -73,7 +73,7 @@
 
                 <!-- Live System Telemetry HUD Chips -->
                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,6,0">
-                    <Button x:Name="CpuChipButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Click="OnCpuChipClick" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance">
+                    <Button x:Name="CpuChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="12" Click="OnCpuChipClick" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance">
                         <Border Background="{ThemeResource AppCpuChipBg}" BorderBrush="{ThemeResource AppCpuChipBorder}" BorderThickness="1" CornerRadius="12" Padding="8,3">
                             <StackPanel Orientation="Horizontal" Spacing="4">
                                 <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center"/>
@@ -82,7 +82,7 @@
                         </Border>
                     </Button>
 
-                    <Button x:Name="RamChipButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Click="OnRamChipClick" ToolTipService.ToolTip="RAM Memory Booster — Click for 1-Click RAM Purge">
+                    <Button x:Name="RamChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="12" Click="OnRamChipClick" ToolTipService.ToolTip="RAM Memory Booster — Click for 1-Click RAM Purge">
                         <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="12" Padding="8,3">
                             <StackPanel Orientation="Horizontal" Spacing="4">
                                 <FontIcon Glyph="&#xE7F1;" FontSize="11" Foreground="{ThemeResource AppRamChipFg}" VerticalAlignment="Center"/>

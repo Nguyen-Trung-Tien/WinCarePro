@@ -11,11 +11,11 @@ using WinCarePro.Engines;
 
 namespace WinCarePro.Modules.AiAssistant
 {
-    public sealed partial class AiCopilotPage : Page
+    public sealed partial class AiWinCareEnginePage : Page
     {
         private EventHandler? _languageChangedHandler;
 
-        public AiCopilotPage()
+        public AiWinCareEnginePage()
         {
             InitializeComponent();
             
@@ -87,7 +87,7 @@ namespace WinCarePro.Modules.AiAssistant
                     StatusTitleText.Text = $"{TranslationManager.Instance.T("Status")}: {TranslationManager.Instance.T("Analyzing...")}";
                 });
                 
-                var report = await AiHealthEngine.AnalyzeSystemHealthAsync();
+                var report = await AiWinCareEngine.AnalyzeSystemHealthAsync();
 
                 await RunOnUIAsync(() =>
                 {

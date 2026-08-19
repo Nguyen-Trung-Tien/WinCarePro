@@ -454,7 +454,7 @@ public class AiDiagnosticsEngine
             }
             sb.AppendLine("    <div class=\"section-title\">Maintenance Actions</div>");
             sb.AppendLine($"    <div class=\"diag-item\" style=\"font-family: monospace; font-size: 13px; color: #94a3b8; white-space: pre-wrap;\">{(string.IsNullOrEmpty(maintenanceResults) ? "No maintenance run recorded in this session." : System.Net.WebUtility.HtmlEncode(maintenanceResults))}</div>");
-            sb.AppendLine("    <div class=\"footer\">WinCare Pro Suite v4.1.0 • Aura Glassmorphic Architecture • Automated Engine Report</div>");
+            sb.AppendLine("    <div class=\"footer\">WinCare Pro Suite • Aura Glassmorphic Architecture • Automated Engine Report</div>");
             sb.AppendLine("  </div>");
             sb.AppendLine("</body>");
             sb.AppendLine("</html>");

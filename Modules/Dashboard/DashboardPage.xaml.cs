@@ -70,13 +70,13 @@ public sealed partial class DashboardPage : Page
         };
     }
 
-    private void OnLaunchAiCopilotClick(object sender, RoutedEventArgs e)
+    private void OnLaunchAiWinCareEngineClick(object sender, RoutedEventArgs e)
     {
         try
         {
             if (App.MainWindowInstance is MainWindow mw && mw.MainFrame.Content is MainPage mp)
             {
-                mp.NavigateToPageExternal("aicopilot");
+                mp.NavigateToPageExternal("aiwincareengine");
             }
         }
         catch { }
@@ -108,7 +108,7 @@ public sealed partial class DashboardPage : Page
     }
 
     /// <summary>
-    /// v4.0.0 — Handles the embedded AI Copilot scan button click on Dashboard.
+    /// v4.0.0 — Handles the embedded AI WinCare Engine scan button click on Dashboard.
     /// </summary>
     private async void OnEmbeddedAiScanClick(object sender, RoutedEventArgs e)
     {
@@ -145,11 +145,11 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(HealthGaugeCard, 0);
                     Grid.SetColumnSpan(HealthGaugeCard, 1);
                 }
-                if (AiCopilotEmbeddedPanel != null)
+                if (AiWinCareEngineEmbeddedPanel != null)
                 {
-                    Grid.SetRow(AiCopilotEmbeddedPanel, 0);
-                    Grid.SetColumn(AiCopilotEmbeddedPanel, 1);
-                    Grid.SetColumnSpan(AiCopilotEmbeddedPanel, 1);
+                    Grid.SetRow(AiWinCareEngineEmbeddedPanel, 0);
+                    Grid.SetColumn(AiWinCareEngineEmbeddedPanel, 1);
+                    Grid.SetColumnSpan(AiWinCareEngineEmbeddedPanel, 1);
                 }
 
                 // Row 1: CPU/RAM (Left Col 0) & Bottleneck Advisor (Right Col 1) — SIDE-BY-SIDE
@@ -232,11 +232,11 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(HealthGaugeCard, 0);
                     Grid.SetColumnSpan(HealthGaugeCard, 2);
                 }
-                if (AiCopilotEmbeddedPanel != null)
+                if (AiWinCareEngineEmbeddedPanel != null)
                 {
-                    Grid.SetRow(AiCopilotEmbeddedPanel, 1);
-                    Grid.SetColumn(AiCopilotEmbeddedPanel, 0);
-                    Grid.SetColumnSpan(AiCopilotEmbeddedPanel, 2);
+                    Grid.SetRow(AiWinCareEngineEmbeddedPanel, 1);
+                    Grid.SetColumn(AiWinCareEngineEmbeddedPanel, 0);
+                    Grid.SetColumnSpan(AiWinCareEngineEmbeddedPanel, 2);
                 }
                 if (BottleneckCard != null)
                 {

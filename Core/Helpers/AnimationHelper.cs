@@ -250,7 +250,7 @@ public static class AnimationHelper
     }
 
     // ==========================================
-    // 6. Attached Property: IsShimmering (NEW v4.1.0)
+    // 6. Attached Property: IsShimmering
     //    Enables a continuous smooth opacity pulse shimmer loading animation.
     // ==========================================
     public static readonly DependencyProperty IsShimmeringProperty =

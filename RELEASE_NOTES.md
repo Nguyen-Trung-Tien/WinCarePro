@@ -2,51 +2,45 @@
 
 ---
 
-## 🚀 WinCare Pro v4.1.0 — Phân Hệ System Repair, AI WinCare Engine, Trợ Lý Disk Analyzer & Hạ Tầng CI/CD Tự Động
+## 🚀 WinCare Pro v4.2.0 — Hệ Thống Đa Ngôn Ngữ Tự Động, Trình Hướng Dẫn UserGuide, Tiện Ích Desktop HUD & Phân Hệ Tối Ưu Hệ Thống
 
-> **Phát hành:** 11/08/2026 · **Loại:** Bản nâng cấp Chức năng Chuyên sâu (Feature & Reliability Evolution Release)
+> **Phát hành:** 19/08/2026 · **Loại:** Bản nâng cấp Chức năng & Trải nghiệm Người dùng (Feature & User Experience Evolution)
 
-Bản cập nhật **v4.1.0** mang đến những cải tiến vượt bậc về khả năng chẩn đoán, dọn dẹp và tự động sửa lỗi hệ thống của WinCare Pro. Phiên bản này chính thức ra mắt bộ phân hệ **Sửa lỗi Windows (System Repair Suite)**, phân tích bộ nhớ & tìm tệp trùng lặp (**Disk Analyzer & Duplicate Engine**), trình dọn dẹp đa luồng **JunkCleaner**, trợ lý chẩn đoán **AI WinCare Engine** nâng cấp, trình quản lý **Context Menu** vỏ Windows, cùng hệ thống hướng dẫn **UserGuide** tương tác và hạ tầng tích hợp liên tục **CI/CD Pipelines**.
+Bản cập nhật **v4.2.0** mang đến những bước tiến quan trọng về trải nghiệm người dùng, khả năng tối ưu hóa hệ thống và tính tiện dụng của WinCare Pro. Phiên bản này ra mắt hệ thống **Tự động Đa ngôn ngữ (Anh - Việt)** tức thì, **Trình hướng dẫn sử dụng trực quan (UserGuide)**, tiện ích **Desktop HUD Widget** giám sát tài nguyên thời gian thực, bộ công cụ **Tăng tốc Chơi Game (Gaming Turbo)** & **Tối ưu Hệ thống (System Optimizer)**, phân hệ **Gỡ cài đặt phần mềm tận gốc (Uninstaller)**, cùng giao diện **Menu Nguồn Điện** và **Thông báo Toast** thế hệ mới.
 
 ---
 
-### ✨ Các tính năng & cải tiến đột phá trong phiên bản v4.1.0 (Key Features)
+### ✨ Các tính năng & chức năng nổi bật trong phiên bản v4.2.0 (Key User Features)
 
-* **🛠️ Phân hệ Sửa Lỗi Hệ Thống Chuyên Sâu (System Repair Suite):**
-  * Tích hợp bộ công cụ tự động chẩn đoán và khắc phục sự cố hệ điều hành Windows (`RepairViewModel` / `RepairPage`).
-  * Tự động quét và khôi phục các tệp hệ thống hỏng hóc thông qua lệnh SFC (System File Checker) và DISM Component Store Repair.
-  * Sửa chữa các lỗi Registry phổ biến, sự cố mất kết nối mạng và khôi phục các dịch vụ hệ thống bị ngưng hoạt động.
+* **🌐 Hệ Thống Tự Động Đa Ngôn Ngữ (Auto Multi-Language Localization System):**
+  * Hỗ trợ chuyển đổi ngôn ngữ tức thì giữa **Tiếng Việt** và **Tiếng Anh** trên toàn bộ giao diện ứng dụng mà không cần khởi động lại.
+  * Tự động quét và dịch thuật danh mục công cụ, thẻ thông số, nút bấm, cửa sổ thông báo và tài liệu hướng dẫn.
 
-* **🤖 Trợ lý AI WinCare Engine Nâng Cấp (Predictive AI Health Analytics):**
-  * Động cơ chẩn đoán AI WinCare (`AiHealthEngine`) phân tích telemetry thời gian thực, đo lường áp lực bộ nhớ và cảnh báo sớm nguy cơ cạn kiệt dung lượng đĩa.
-  * Tự động xuất báo cáo tối ưu hóa thông minh kèm đề xuất hành động khắc phục cụ thể theo từng mức độ rủi ro.
+* **📖 Trình Hướng Dẫn Sử Dụng Tương Tác Trực Quan (Interactive User Guide System):**
+  * Tích hợp phân hệ hướng dẫn người dùng trực quan ngay trong phần Cài đặt (`UserGuideView`).
+  * Cung cấp tài liệu chi tiết, các bước thao tác mẫu, hướng dẫn sử dụng tính năng và quy tắc an toàn khi dọn dẹp hệ thống.
 
-* **💾 Phân Tích Ổ Đĩa & Tìm Tệp Trùng Lặp (Disk Analyzer & Duplicate Search Engine):**
-  * Phân hệ quản lý và phân tích cấu hình đĩa (`DiskEngine` / `DiskPage`) với biểu đồ trực quan hóa dung lượng lưu trữ.
-  * Tích hợp thuật toán quét và loại bỏ tệp trùng lặp (`StorageDuplicateModels`), kết hợp tối ưu hóa ổ cứng SSD/HDD (TRIM / Defrag) giúp thu hồi tối đa dung lượng bộ nhớ.
+* **🖥️ Tiện Ích Desktop HUD Widget & Giám Sát Telemetry Thời Gian Thực:**
+  * Cửa sổ nổi mini mờ kính Aura Glass hiển thị chỉ số CPU, RAM, Network I/O thời gian thực ngay trên màn hình Desktop.
+  * Hỗ trợ chế độ thu nhỏ (Compact Mode) tiện lợi và cơ chế hoạt động đơn thể (Single-Instance) an toàn tuyệt đối.
 
-* **🧹 Dọn Dẹp Rác Đa Luồng & Tối Ưu Tiến Trình (Multi-Threaded Junk Cleaner):**
-  * Thuật toán dọn dẹp bộ đệm ứng dụng, tệp tạm hệ thống và bộ nhớ đệm trình duyệt đa luồng siêu tốc.
-  * Tích hợp bộ hỗ trợ tải giao diện `UiLoadingHelper` và trình ghi nhật ký sự cố `CrashLogger` chống giật lag UI khi quét dung lượng lớn.
+* **⚡ Phân Hệ Tăng Tốc Chơi Game (Gaming Turbo) & Tối Ưu Hệ Thống (System Optimizer):**
+  * Tự động giải phóng dung lượng RAM, tạm dừng các tiến trình ngầm không cần thiết để ưu tiên tài nguyên phần cứng cho các tựa game và ứng dụng nặng.
+  * Tối ưu hóa cấu hình hệ thống giúp máy tính vận hành mượt mà và duy trì độ ổn định cao.
 
-* **🪟 Cửa Sổ Desktop HUD Widget Đơn Thể (Single-Instance TopMost HUD):**
-  * Cửa sổ nổi mini `DesktopWidgetWindow` mờ kính Aura Glass, hiển thị thời gian thực chỉ số CPU, RAM, Network I/O.
-  * Hỗ trợ dọn dẹp nhanh và kích hoạt Turbo Mode trực tiếp từ cửa sổ Widget với cơ chế quản lý Single-Instance tuyệt đối an toàn.
+* **🔋 Menu Nguồn Điện Nhanh & Tiến Trình Thoát Ứng Dụng Hiện Đại:**
+  * Tích hợp tùy chọn nguồn điện nhanh (Tắt máy, Khởi động lại, Chế độ ngủ) trực tiếp tại nút thoát ứng dụng với giao diện Flyout bắt mắt.
+  * Cửa sổ tiến trình thoát ứng dụng thiết kế mượt mà, đảm bảo lưu trạng thái và dọn dẹp tài nguyên trước khi đóng.
 
-* **🖱️ Quản Lý Shell Extension & Context Menu Windows:**
-  * Trang `ContextMenuPage` cho phép người dùng bật/tắt và loại bỏ các mục thừa trong menu chuột phải (Windows Explorer Context Menu) giúp mở file/folder mượt mà hơn.
+* **🔔 Hệ Thống Thông Báo Toast Nổi Trực Quan (Toast Notification System):**
+  * Cung cấp các thông báo dạng Toast nổi hiện đại, cập nhật nhanh kết quả sau khi dọn dẹp rác, tối ưu RAM hoặc khi hệ thống chạm ngưỡng cảnh báo tài nguyên.
 
-* **⚡ Bộ Đo Tốc Độ Mạng Đa Luồng (Multi-Threaded Network SpeedTest):**
-  * Động cơ đo tốc độ mạng đa luồng (`NetworkEngine.SpeedTest.cs`), đồng bộ hóa chỉ số Ping, Download, Upload chính xác, xử lý triệt để hiện tượng trễ/bất đồng bộ trạng thái quét.
+* **🗑️ Phân Hệ Gỡ Cài Đặt Ứng Dụng Tận Gốc (Uninstaller Suite):**
+  * Quản lý danh sách phần mềm đã cài đặt trên Windows, cho phép tìm kiếm nhanh và gỡ bỏ tận gốc các ứng dụng thừa.
+  * Tự động tìm kiếm và quét sạch các tệp rác, thư mục thừa và khóa Registry còn sót lại sau khi gỡ cài đặt.
 
-* **📖 Trình Hướng Dẫn Tương Tác & Tối Ưu Đa Ngôn Ngữ (Interactive User Guide System):**
-  * Tích hợp giao diện hướng dẫn người dùng trực quan (`UserGuideView`) kèm tài liệu hướng dẫn chi tiết `USER_GUIDE.md`.
-  * Mở rộng từ điển dịch thuật song ngữ Anh - Việt (`TranslationManager`), đáp ứng 100% thao tác chuyển đổi ngôn ngữ tức thì.
-
-* **⚙️ Bộ Linh Kiện UI & Hạ Tầng Tự Động Hóa CI/CD:**
-  * Thêm các thành phần giao diện mới: `LoadingToggleSwitch`, `SkeletonLoader`, `CircularProgressMeter` tạo phản hồi chuyển động mịn 120 FPS.
-  * Tích hợp tự động hóa xây dựng và phát hành GitHub Actions workflows (`ci.yml`, `release.yml`).
-  * Đảm bảo độ tin cậy hệ thống với **100% Unit Tests Pass (WinCarePro.Tests)**.
+* **🎨 Giao Diện Aura Glassmorphic Fluent 2.0 & Hiệu Ứng Visual Modern:**
+  * Thiết kế giao diện cao cấp với hiệu ứng mờ Mica/Acrylic, chip hiển thị thông số hệ thống độc đáo (`TelemetryChipButtonStyle`) và hiệu ứng chuyển động mượt mà 120 FPS.
 
 ---
 

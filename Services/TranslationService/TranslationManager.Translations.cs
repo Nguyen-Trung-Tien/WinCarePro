@@ -12,7 +12,8 @@ public partial class TranslationManager
     {
         // --- Sidebar Navigation Menu Items & App Header ---
         _translations["Dashboard"] = "Trang chủ";
-        _translations["🤖 WinCare AI Assistant"] = "🤖 Trợ Lý WinCare AI";
+        _translations["🤖 AI WinCare Engine"] = "🤖 AI WinCare Engine";
+        _translations["AI WinCare Engine"] = "AI WinCare Engine";
         _translations["⚡ System Turbo Mode"] = "⚡ System Turbo Mode";
         _translations["WinCare AI Assistant"] = "Trợ Lý WinCare AI Chẩn Đoán";
         _translations["System Optimizer"] = "Tối Ưu Hệ Thống";
@@ -1911,7 +1912,7 @@ public partial class TranslationManager
         _translations["Diagnostics Trace Log Reader"] = "Trình đọc nhật ký theo dõi chẩn đoán";
         _translations["Real-time application framework execution events."] = "Các sự kiện thực thi framework ứng dụng theo thời gian thực.";
         _translations["System Optimizer & Security Shield"] = "Tối ưu hóa hệ thống & Khiên bảo mật";
-        _translations["Version 4.1.0 (Stable Release)"] = "Phiên bản 4.1.0 (Bản ổn định)";
+        _translations["Version 4.2.0 (Stable Release)"] = "Phiên bản 4.2.0 (Bản ổn định)";
         _translations["Check for Updates Now"] = "Kiểm tra cập nhật ngay";
         _translations["Purge SQLite Activity History Logs"] = "Xóa nhật ký hoạt động SQLite";
         _translations["Wipe Saved Diagnostic Report Files"] = "Xóa tệp báo cáo chẩn đoán đã lưu";
@@ -1977,7 +1978,7 @@ public partial class TranslationManager
         _translations["Tiếng Việt"] = "Tiếng Việt";
         _translations["v3.4.0"] = "v3.4.0";
         _translations["v3.4.1"] = "v3.4.1";
-        _translations["v4.1.0"] = "v4.1.0";
+        _translations["v4.2.0"] = "v4.2.0";
         _translations["TXT"] = "TXT";
         _translations["JSON"] = "JSON";
         _translations["CSV"] = "CSV";
@@ -2451,7 +2452,7 @@ public partial class TranslationManager
         _translations["About WinCare Pro"] = "Thông tin về WinCare Pro";
         _translations["Software build specifications, developer contact, and open-source repository."] = "Thông số bản dựng phần mềm, liên hệ nhà phát triển và kho mã nguồn mở.";
         _translations["System Optimizer, Security Shield & Care Suite"] = "Bộ Tối Ưu Hệ Thống, Lá Chắn Bảo Mật & Chăm Sóc Toàn Diện";
-        _translations["Version 4.1.0 (Evolution Suite Release)"] = "Phiên bản 4.1.0 (Bản phát hành Evolution Suite)";
+        _translations["Version 4.2.0 (Evolution Suite Release)"] = "Phiên bản 4.2.0 (Bản phát hành Evolution Suite)";
         _translations["Lead Developer:"] = "Nhà phát triển chính:";
         _translations["Contact Support:"] = "Liên hệ hỗ trợ:";
         _translations["Source Code Repository & Feedback"] = "Kho Mã Nguồn & Đóng Góp Ý Kiến";
@@ -2844,7 +2845,8 @@ public partial class TranslationManager
         _translations["Your PC is in optimal health condition with 0 bottlenecks detected."] = "Máy tính của bạn đang ở trạng thái tối ưu và không phát hiện nghẽn hiệu năng nào.";
         _translations["Live Telemetry"] = "Đo Lường Trực Tiếp";
         _translations["Realtime Kernel Engine"] = "Bộ Máy Kernel Trực Tiếp";
-        _translations["AI Assistant"] = "Trợ Lý AI";
+        _translations["AI Assistant"] = "AI WinCare Engine";
+        _translations["AI WinCare Engine"] = "AI WinCare Engine";
         _translations["System Turbo"] = "Tăng Tốc Hệ Thống";
         _translations["Low"] = "Thấp";
         _translations["Medium"] = "Trung Bình";

@@ -5,13 +5,13 @@ using Xunit;
 
 namespace WinCarePro.Tests;
 
-public class AiHealthEngineTests
+public class AiWinCareEngineTests
 {
     [Fact]
     public void EvaluateHealth_WithOptimalMetrics_ShouldReturnHighScore()
     {
         // Arrange
-        var scoringEngine = new AiHealthScoringEngine();
+        var scoringEngine = new AiWinCareScoringEngine();
 
         // Act
         var assessment = scoringEngine.EvaluateHealth(

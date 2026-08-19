@@ -89,7 +89,7 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Spacing="16">
                 
-                <!-- v4.1.0 ULTRA-PREMIUM EVOLUTION BANNER -->
+                <!-- ULTRA-PREMIUM EVOLUTION BANNER -->
                 <Border Style="{StaticResource AuraGlassCardStyle}" Margin="8,0,8,4" Padding="18,14">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -116,10 +116,10 @@
 
                         <!-- Fast Action Navigation Deck -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="12,0,0,0">
-                            <Button Click="OnLaunchAiCopilotClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="14,0" VerticalAlignment="Center">
+                            <Button Click="OnLaunchAiWinCareEngineClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="14,0" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <FontIcon Glyph="&#xE99A;" FontSize="13"/>
-                                    <TextBlock Text="AI Assistant" FontSize="12" FontWeight="SemiBold"/>
+                                    <TextBlock Text="AI WinCare Engine" FontSize="12" FontWeight="SemiBold"/>
                                 </StackPanel>
                             </Button>
 
@@ -255,8 +255,8 @@
                         </Grid>
                     </Border>
 
-                    <!-- Right Side Row 0 Column 1: WinCare AI Assistant Card -->
-                    <Border x:Name="AiCopilotEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource AiCopilotCardStyle}" Margin="8" Padding="18,16">
+                    <!-- Right Side Row 0 Column 1: WinCare AI Engine Card -->
+                    <Border x:Name="AiWinCareEngineEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource AiWinCareEngineCardStyle}" Margin="8" Padding="18,16">
                         <StackPanel Spacing="10">
                             <!-- AI Header Row -->
                             <Grid>
@@ -267,10 +267,10 @@
 
                                 <StackPanel Grid.Column="0" Spacing="4">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <Border Background="{StaticResource AiCopilotGradient}" CornerRadius="6" Padding="6,3">
+                                        <Border Background="{StaticResource AiWinCareEngineGradient}" CornerRadius="6" Padding="6,3">
                                             <FontIcon Glyph="&#xE99A;" FontSize="12" Foreground="White"/>
                                         </Border>
-                                        <TextBlock Text="WinCare AI Assistant" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="AI WinCare Engine" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
                                         <Border Background="#2510B981" BorderBrush="#6010B981" BorderThickness="1" CornerRadius="6" Padding="5,1" VerticalAlignment="Center">
                                             <TextBlock Text="Active" FontSize="9" FontWeight="ExtraBold" Foreground="#FF10B981"/>
                                         </Border>

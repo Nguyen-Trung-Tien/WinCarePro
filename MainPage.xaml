@@ -41,7 +41,7 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="AI Assistant" Tag="AiCopilot">
+                <NavigationViewItem Content="AI WinCare Engine" Tag="AiWinCareEngine">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE99A;" Foreground="#FF06B6D4" />
                     </NavigationViewItem.Icon>

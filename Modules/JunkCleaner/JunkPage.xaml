@@ -431,7 +431,7 @@
             </Grid>
         </Grid>
 
-        <!-- Sticky Floating Action Deck (v4.1.0 Evolution) -->
+        <!-- Sticky Floating Action Deck -->
         <Border x:Name="FloatingJunkActionDeck" 
                 Grid.Row="0" Grid.RowSpan="3"
                 Style="{StaticResource FloatingActionDeckStyle}" 

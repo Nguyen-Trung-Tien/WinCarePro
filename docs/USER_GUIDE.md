@@ -7,7 +7,7 @@ WinCare Pro là phần mềm tối ưu hóa, dọn dẹp và bảo vệ hệ th�
 
 ## 📋 Danh Sách & Mô Tả Các Chức Năng Cốt Lõi
 
-### 1. 🤖 AI Assistant & Diagnostics (Trợ lý AI & Chẩn đoán)
+### 1. 🤖 AI WinCare Engine & Diagnostics (Phân hệ AI WinCare Engine & Chẩn đoán)
 - **Mô tả**: Tự động phân tích toàn diện sức khỏe hệ thống Windows bằng AI. Phát hiện tệp rác, xung đột bộ nhớ, ứng dụng gây giật lag và nguy cơ bảo mật.
 - **Tính năng nổi bật**:
   - Đưa ra **Điểm số sức khỏe (Health Score)** trực quan.
@@ -94,7 +94,7 @@ WinCare Pro là phần mềm tối ưu hóa, dọn dẹp và bảo vệ hệ th�
 ---
 
 ## 🛠️ Hướng Dẫn Sử Dụng Nhanh (Quick Start)
-1. **Dọn dẹp hệ thống 1-click**: Chọn mục **Dashboard** hoặc **AI Assistant** -> Nhấn nút **Run AI Diagnostics** -> Nhấn **Apply Recommended Tweaks**.
+1. **Dọn dẹp hệ thống 1-click**: Chọn mục **Dashboard** hoặc **AI WinCare Engine** -> Nhấn nút **Run AI Diagnostics** -> Nhấn **Apply Recommended Tweaks**.
 2. **Giải phóng RAM khi chơi game**: Chọn mục **System Optimizer** -> Nhấn nút **ENABLE TURBO NOW**.
 3. **Sửa lỗi Windows bị giật lag**: Chọn mục **System Repair** -> Nhấn **SFC Repair** hoặc **DISM Restore**.
 4. **Xem hướng dẫn ngay trong app**: Mở **Settings (Cài đặt)** -> Chọn mục **Feature Guide & Manual (Hướng dẫn sử dụng & Mô tả chức năng)**.

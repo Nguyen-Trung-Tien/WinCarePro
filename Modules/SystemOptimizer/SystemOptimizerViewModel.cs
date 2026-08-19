@@ -154,7 +154,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 
         try
         {
-            var report = await Modules.AiAssistant.AiHealthEngine.AnalyzeSystemHealthAsync();
+            var report = await Modules.AiAssistant.AiWinCareEngine.AnalyzeSystemHealthAsync();
             
             _dispatcherQueue?.TryEnqueue(() =>
             {

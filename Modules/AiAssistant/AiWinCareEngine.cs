@@ -8,7 +8,7 @@ using WinCarePro.Services;
 
 namespace WinCarePro.Modules.AiAssistant
 {
-    public class AiHealthRecommendation
+    public class AiWinCareRecommendation
     {
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
@@ -118,14 +118,14 @@ namespace WinCarePro.Modules.AiAssistant
         }
     }
 
-    public class AiHealthReport
+    public class AiWinCareReport
     {
         public int OverallScore { get; set; } = 100;
         public string HealthStatus { get; set; } = "Optimal";
         public string SummaryText { get; set; } = string.Empty;
         public string PredictiveStorageDaysText { get; set; } = "30+ days free";
         public string PredictiveBootTimeSavingsText { get; set; } = "1.5s faster boot";
-        public List<AiHealthRecommendation> Recommendations { get; set; } = new();
+        public List<AiWinCareRecommendation> Recommendations { get; set; } = new();
         public DateTime GeneratedAt { get; set; } = DateTime.Now;
     }
 
@@ -133,14 +133,14 @@ namespace WinCarePro.Modules.AiAssistant
     /// AI Engine v4.0.0 analyzing system telemetry, memory pressure, predictive storage exhaustion, 
     /// boot time overhead profiling, and generating smart diagnostic recommendations.
     /// </summary>
-    public static class AiHealthEngine
+    public static class AiWinCareEngine
     {
-        public static async Task<AiHealthReport> AnalyzeSystemHealthAsync()
+        public static async Task<AiWinCareReport> AnalyzeSystemHealthAsync()
         {
             return await Task.Run(() =>
             {
-                var report = new AiHealthReport();
-                var recommendations = new List<AiHealthRecommendation>();
+                var report = new AiWinCareReport();
+                var recommendations = new List<AiWinCareRecommendation>();
                 int penaltyScore = 0;
 
                 // 1. Predictive Storage Exhaustion Analysis (Dự đoán ngày đầy ổ đĩa C:)
@@ -159,7 +159,7 @@ namespace WinCarePro.Modules.AiAssistant
                         if (freeGB < 5.0 || usedPercent > 96.0)
                         {
                             penaltyScore += 15;
-                            recommendations.Add(new AiHealthRecommendation
+                            recommendations.Add(new AiWinCareRecommendation
                             {
                                 Title = "Predictive Storage Warning".T(),
                                 Description = $"Drive C: has critically low space ({freeGB:F1} GB free, {usedPercent:F0}% used). AI recommends immediate disk cleanup.".T(),
@@ -171,7 +171,7 @@ namespace WinCarePro.Modules.AiAssistant
                         else if (freeGB < 12.0 || usedPercent > 90.0)
                         {
                             penaltyScore += 5;
-                            recommendations.Add(new AiHealthRecommendation
+                            recommendations.Add(new AiWinCareRecommendation
                             {
                                 Title = "Storage Consumption Outlook".T(),
                                 Description = $"Drive C: is at {usedPercent:F0}% capacity ({freeGB:F1} GB free). Consider freeing up large files.".T(),
@@ -182,7 +182,7 @@ namespace WinCarePro.Modules.AiAssistant
                         }
                         else
                         {
-                            recommendations.Add(new AiHealthRecommendation
+                            recommendations.Add(new AiWinCareRecommendation
                             {
                                 Title = "Storage Consumption Outlook Good".T(),
                                 Description = $"Drive C: usage is healthy at {usedPercent:F0}% ({freeGB:F1} GB free). Storage sustainability is over {estimatedDaysLeft} days.".T(),
@@ -211,7 +211,7 @@ namespace WinCarePro.Modules.AiAssistant
                     if (processCount > 250)
                     {
                         penaltyScore += 8;
-                        recommendations.Add(new AiHealthRecommendation
+                        recommendations.Add(new AiWinCareRecommendation
                         {
                             Title = "Elevated Process Overhead".T(),
                             Description = $"AI detected {processCount} active background processes. Disabling unnecessary startup items can improve boot time.".T(),
@@ -223,7 +223,7 @@ namespace WinCarePro.Modules.AiAssistant
                     else if (processCount > 180)
                     {
                         penaltyScore += 4;
-                        recommendations.Add(new AiHealthRecommendation
+                        recommendations.Add(new AiWinCareRecommendation
                         {
                             Title = "Background Process Monitoring".T(),
                             Description = $"There are {processCount} background processes active. System is operating normally.".T(),
@@ -253,7 +253,7 @@ namespace WinCarePro.Modules.AiAssistant
                     if (tempMB > 3000)
                     {
                         penaltyScore += 10;
-                        recommendations.Add(new AiHealthRecommendation
+                        recommendations.Add(new AiWinCareRecommendation
                         {
                             Title = "High Temp Cache Accumulation".T(),
                             Description = $"System temporary directories contain approximately {tempMB:N0} MB of uncleaned cache and temporary files.".T(),
@@ -265,7 +265,7 @@ namespace WinCarePro.Modules.AiAssistant
                     else if (tempMB > 1000)
                     {
                         penaltyScore += 5;
-                        recommendations.Add(new AiHealthRecommendation
+                        recommendations.Add(new AiWinCareRecommendation
                         {
                             Title = "Temp Files Cleanable".T(),
                             Description = $"Found {tempMB:N0} MB of temporary files ready for cleanup.".T(),
@@ -291,7 +291,7 @@ namespace WinCarePro.Modules.AiAssistant
                     if (totalRamMB > 12000) // High active process RAM usage (> 12GB)
                     {
                         penaltyScore += 8;
-                        recommendations.Add(new AiHealthRecommendation
+                        recommendations.Add(new AiWinCareRecommendation
                         {
                             Title = "High Memory Pressure".T(),
                             Description = $"Active process working set is currently using {totalRamMB:N0} MB. Optimization can release standby cache.".T(),

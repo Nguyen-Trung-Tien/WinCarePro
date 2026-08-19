@@ -191,7 +191,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private bool _hasAiScanned;
 
-    public ObservableCollection<Modules.AiAssistant.AiHealthRecommendation> AiRecommendations { get; } = new();
+    public ObservableCollection<Modules.AiAssistant.AiWinCareRecommendation> AiRecommendations { get; } = new();
 
     /// <summary>
     /// Runs the embedded AI WinCare Engine diagnostic scan.
@@ -205,7 +205,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
 
         try
         {
-            var report = await Modules.AiAssistant.AiHealthEngine.AnalyzeSystemHealthAsync();
+            var report = await Modules.AiAssistant.AiWinCareEngine.AnalyzeSystemHealthAsync();
 
             _dispatcherQueue?.TryEnqueue(() =>
             {

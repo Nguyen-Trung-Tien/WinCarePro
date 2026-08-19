@@ -484,8 +484,8 @@
                 <GradientStop Color="#FFF97316" Offset="1" />
             </LinearGradientBrush>
 
-            <!-- AI Copilot Gradient -->
-            <LinearGradientBrush x:Key="AiCopilotGradient" StartPoint="0,0" EndPoint="1,1">
+            <!-- AI WinCare Engine Gradient -->
+            <LinearGradientBrush x:Key="AiWinCareEngineGradient" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#FF06B6D4" Offset="0" />
                 <GradientStop Color="#FF8B5CF6" Offset="0.5" />
                 <GradientStop Color="#FFC084FC" Offset="1" />
@@ -518,10 +518,10 @@
                 <Setter Property="Padding" Value="20" />
             </Style>
 
-            <!-- AI Copilot Card Style (Cyan-purple glow) -->
-            <Style x:Key="AiCopilotCardStyle" TargetType="Border">
+            <!-- AI WinCare Engine Card Style (Cyan-purple glow) -->
+            <Style x:Key="AiWinCareEngineCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource AiCopilotGradient}" />
+                <Setter Property="BorderBrush" Value="{StaticResource AiWinCareEngineGradient}" />
                 <Setter Property="BorderThickness" Value="1.5" />
                 <Setter Property="CornerRadius" Value="16" />
                 <Setter Property="Padding" Value="20" />

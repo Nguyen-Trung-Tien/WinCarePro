@@ -122,7 +122,7 @@ public sealed partial class MainPage : Page
         Type? pageType = tag.ToLower() switch
         {
             "dashboard" => typeof(DashboardPage),
-            "aicopilot" => typeof(WinCarePro.Modules.AiAssistant.AiCopilotPage),
+            "aiwincareengine" => typeof(WinCarePro.Modules.AiAssistant.AiWinCareEnginePage),
             "gamingturbo" => typeof(WinCarePro.Modules.GamingTurbo.GamingTurboPage),
             "junk" => typeof(JunkPage),
             "uninstall" => typeof(UninstallPage),
@@ -255,7 +255,7 @@ public sealed partial class MainPage : Page
             {
                 if (regPage.DataContext is IDisposable disp) disp.Dispose();
             }
-            else if (ContentFrame.Content is Modules.AiAssistant.AiCopilotPage aiPage)
+            else if (ContentFrame.Content is Modules.AiAssistant.AiWinCareEnginePage aiPage)
             {
                 if (aiPage.DataContext is IDisposable disp) disp.Dispose();
             }

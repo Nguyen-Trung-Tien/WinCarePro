@@ -492,7 +492,7 @@
                                 <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                         <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
-                                            <TextBlock Text="v4.1.0" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                            <TextBlock Text="v4.2.0" FontSize="11" FontWeight="Bold" Foreground="White"/>
                                         </Border>
                                         <TextBlock Text="WinCare Pro Distribution Channel" FontSize="14" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                         <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
@@ -643,7 +643,7 @@
                                 <StackPanel VerticalAlignment="Center" Spacing="2">
                                     <TextBlock Text="WinCare Pro" FontSize="20" FontWeight="ExtraBold" />
                                     <TextBlock Text="System Optimizer, Security Shield &amp; Care Suite" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="Version 4.1.0 (Evolution Suite Release)" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
+                                    <TextBlock Text="Version 4.2.0 (Evolution Suite Release)" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
                                 </StackPanel>
                             </StackPanel>
 

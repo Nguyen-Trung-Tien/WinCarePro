@@ -6,7 +6,7 @@ using WinCarePro.Services;
 
 namespace WinCarePro.Engines;
 
-public class AiHealthScoringEngine
+public class AiWinCareScoringEngine
 {
     public SystemHealthAssessment EvaluateHealth(
         double cpuUsage,

@@ -1,4 +1,4 @@
-# 🚀 WinCare Pro Suite v4.1.0
+# 🚀 WinCare Pro Suite v4.2.0
 
 <div align="center">
   <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(127, 86, 217, 0.3); margin-bottom: 20px;" />
@@ -9,8 +9,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.1.0/WinCareProSetup.exe">
-      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v4.1.0-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v4.1.0" />
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.2.0/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v4.2.0-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v4.2.0" />
     </a>
   </p>
 
@@ -31,9 +31,9 @@
 
 ## 📖 Tổng quan dự án
 
-**WinCare Pro v4.1.0** là giải pháp tối ưu hóa và chăm sóc hệ điều hành Windows thế hệ mới. Sở hữu ngôn ngữ thiết kế **Aura Glassmorphic Fluent 2.0**, hiệu ứng kính mờ Mica/Acrylic cùng tần số chuyển động **120 FPS Visual Composition**, ứng dụng mang lại trải nghiệm thị giác cao cấp và mượt mà tuyệt đối trên Windows 10 và Windows 11.
+**WinCare Pro v4.2.0** là giải pháp tối ưu hóa và chăm sóc hệ điều hành Windows thế hệ mới. Sở hữu ngôn ngữ thiết kế **Aura Glassmorphic Fluent 2.0**, hiệu ứng kính mờ Mica/Acrylic cùng tần số chuyển động **120 FPS Visual Composition**, ứng dụng mang lại trải nghiệm thị giác cao cấp và mượt mà tuyệt đối trên Windows 10 và Windows 11.
 
-Không chỉ dọn dẹp và bảo mật thông thường, WinCare Pro v4.1.0 tích hợp **Trợ lý AI WinCare Engine** tự động phân tích và dự đoán rủi ro phần cứng, cửa sổ nổi **Desktop HUD Widget** đơn thể (Single-Instance), cùng hệ thống **Hoàn tác Registry (Undo/Rollback System)** an toàn. Ứng dụng hoạt động độc lập, hoàn toàn không chứa quảng cáo hay tiến trình chạy ngầm làm chậm máy.
+Không chỉ dọn dẹp và bảo mật thông thường, WinCare Pro v4.2.0 tích hợp **Trợ lý AI WinCare Engine** tự động phân tích và dự đoán rủi ro phần cứng, cửa sổ nổi **Desktop HUD Widget** đơn thể (Single-Instance), cùng hệ thống **Hoàn tác Registry (Undo/Rollback System)** an toàn. Ứng dụng hoạt động độc lập, hoàn toàn không chứa quảng cáo hay tiến trình chạy ngầm làm chậm máy.
 
 ---
 
@@ -63,7 +63,7 @@ graph TD
 
 ## ✨ Các Phân hệ Chức năng Cốt lõi (Core Modules)
 
-WinCare Pro v4.1.0 tích hợp bộ công cụ chuyên nghiệp toàn diện cho Windows:
+WinCare Pro v4.2.0 tích hợp bộ công cụ chuyên nghiệp toàn diện cho Windows:
 
 ### 1. 📊 Bảng điều khiển (Dashboard & Live Monitoring)
 * **Giám sát tài nguyên 120 FPS:** Theo dõi biểu đồ động thời gian thực về CPU, RAM, GPU, dung lượng ổ đĩa và hoạt động I/O đĩa.

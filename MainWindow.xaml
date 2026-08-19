@@ -129,11 +129,11 @@
                                     <Setter Property="BorderThickness" Value="1"/>
                                 </Style>
                             </Flyout.FlyoutPresenterStyle>
-                            <Border Width="270" Background="{ThemeResource AppFlyoutBackground}" BorderBrush="{ThemeResource AppFlyoutBorder}" BorderThickness="1" CornerRadius="16" Padding="16,14">
+                            <Border Width="280" Background="{ThemeResource AppFlyoutBackground}" BorderBrush="{ThemeResource AppFlyoutBorder}" BorderThickness="1" CornerRadius="16" Padding="16,14">
                                 <StackPanel Spacing="10">
-                                    <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <Border Width="28" Height="28" CornerRadius="14" Background="#20EF4444" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE7E8;" FontSize="13" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <Border Width="32" Height="32" CornerRadius="10" Background="#20EF4444" BorderBrush="#40EF4444" BorderThickness="1" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE7E8;" FontSize="14" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Text="Power Options" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
@@ -150,8 +150,10 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <FontIcon Grid.Column="0" Glyph="&#xE7E8;" FontSize="14" Foreground="#FFEF4444" VerticalAlignment="Center"/>
-                                            <StackPanel Grid.Column="1" Spacing="1">
+                                            <Border Grid.Column="0" Width="28" Height="28" CornerRadius="8" Background="#18EF4444" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE7E8;" FontSize="12" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
                                                 <TextBlock Text="Shut Down WinCare Pro" FontSize="12" FontWeight="Bold" Foreground="#FFEF4444"/>
                                                 <TextBlock Text="Save state &amp; close completely" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                             </StackPanel>
@@ -165,8 +167,10 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <FontIcon Grid.Column="0" Glyph="&#xE718;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
-                                            <StackPanel Grid.Column="1" Spacing="1">
+                                            <Border Grid.Column="0" Width="28" Height="28" CornerRadius="8" Background="{StaticResource PrimaryAccentLightBrush}" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE718;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
                                                 <TextBlock Text="Minimize to Tray" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                                 <TextBlock Text="Keep active in background" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                             </StackPanel>
@@ -229,16 +233,17 @@
             <!-- Background Ambient Glowing Mesh -->
             <Grid x:Name="AmbientGlowContainer">
                 <!-- Outer Radial Glow Circle 1 -->
-                <Ellipse Width="480" Height="480" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.14">
+                <Ellipse Width="500" Height="500" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.18">
                     <Ellipse.Fill>
                         <RadialGradientBrush>
-                            <GradientStop Color="#FF8B5CF6" Offset="0" />
+                            <GradientStop Color="#FFF43F5E" Offset="0" />
+                            <GradientStop Color="#FF8B5CF6" Offset="0.6" />
                             <GradientStop Color="Transparent" Offset="1" />
                         </RadialGradientBrush>
                     </Ellipse.Fill>
                 </Ellipse>
                 <!-- Outer Radial Glow Circle 2 -->
-                <Ellipse Width="380" Height="380" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="80,40,0,0" Opacity="0.10">
+                <Ellipse Width="380" Height="380" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="60,30,0,0" Opacity="0.14">
                     <Ellipse.Fill>
                         <RadialGradientBrush>
                             <GradientStop Color="#FFEF4444" Offset="0" />
@@ -251,7 +256,7 @@
                 <Border BorderThickness="0">
                     <Border.BackgroundSizing>OuterBorderEdge</Border.BackgroundSizing>
                     <Border.Background>
-                        <AcrylicBrush TintColor="#050508" TintOpacity="0.85" FallbackColor="#050508"/>
+                        <AcrylicBrush TintColor="#050508" TintOpacity="0.88" FallbackColor="#050508"/>
                     </Border.Background>
                 </Border>
             </Grid>
@@ -261,11 +266,19 @@
                     <TranslateTransform Y="30" />
                 </StackPanel.RenderTransform>
                 
-                <!-- Exit App Icon with Cyber glowing frame -->
-                <Grid Width="76" Height="76" HorizontalAlignment="Center">
-                    <Ellipse Width="76" Height="76" Stroke="#30EF4444" StrokeThickness="3" StrokeDashArray="3,2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Border Width="64" Height="64" CornerRadius="20" Background="#1AEF4444" BorderBrush="#50EF4444" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE7E8;" FontSize="28" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <!-- Master Cyber Power-Down Holographic Shield -->
+                <Grid Width="90" Height="90" HorizontalAlignment="Center">
+                    <!-- Ambient Pulsing Halo -->
+                    <Ellipse Width="90" Height="90" Stroke="#40F43F5E" StrokeThickness="2" StrokeDashArray="4,2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    
+                    <!-- Glassmorphic App Shield -->
+                    <Border Width="74" Height="74" CornerRadius="22" Background="#18FFFFFF" BorderBrush="#50F43F5E" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="44" Height="44" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+                    </Border>
+
+                    <!-- Neon Power Status Micro-Badge -->
+                    <Border Width="26" Height="26" CornerRadius="13" Background="#FFEF4444" BorderBrush="#20000000" BorderThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,2,2">
+                        <FontIcon Glyph="&#xE7E8;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                 </Grid>
                 
@@ -278,10 +291,10 @@
                 <StackPanel Spacing="8" Margin="0,4,0,0">
                     <Grid>
                         <TextBlock x:Name="ExitProgressSubtext" Text="Finalizing shutdown..." FontSize="12" Foreground="#FFA0A0B5" HorizontalAlignment="Left" FontWeight="SemiBold"/>
-                        <TextBlock x:Name="ExitProgressPercent" Text="0%" FontSize="12.5" Foreground="#FFEF4444" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        <TextBlock x:Name="ExitProgressPercent" Text="0%" FontSize="12.5" Foreground="#FFF43F5E" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                     </Grid>
                     <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1">
-                        <ProgressBar x:Name="ExitProgressBar" Minimum="0" Maximum="100" Value="0" Height="4" CornerRadius="2" Foreground="#FFEF4444" Background="Transparent" HorizontalAlignment="Stretch"/>
+                        <ProgressBar x:Name="ExitProgressBar" Minimum="0" Maximum="100" Value="0" Height="4" CornerRadius="2" Foreground="#FFF43F5E" Background="Transparent" HorizontalAlignment="Stretch"/>
                     </Border>
                 </StackPanel>
             </StackPanel>

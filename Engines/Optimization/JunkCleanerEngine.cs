@@ -367,6 +367,25 @@ public class JunkCleanerEngine
             var crashCat = ScanPaths(new[] { minidumpPath, memoryDmp }, "System Crash Dumps", "Memory dump files and log traces created when system crash or error occurs.", JunkType.CrashDumps, "\uE7BA", "#FFDC2626", minidumpPath, token: token);
             categories.Add(crashCat);
 
+            // 12. Developer & IDE Caches (VS Code, npm, pip, NuGet)
+            Log("Scanning Developer & IDE caches...");
+            token.ThrowIfCancellationRequested();
+            string appDataRoaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var devPaths = new List<string>
+            {
+                Path.Combine(appDataRoaming, @"Code\Cache"),
+                Path.Combine(appDataRoaming, @"Code\CachedData"),
+                Path.Combine(appDataRoaming, @"Code\CachedExtensionVSIXs"),
+                Path.Combine(localAppData, @"npm-cache"),
+                Path.Combine(userProfile, @".npm\_cacache"),
+                Path.Combine(localAppData, @"pip\cache"),
+                Path.Combine(localAppData, @"NuGet\v3-cache")
+            };
+            string primaryDevFolder = devPaths.FirstOrDefault(Directory.Exists) ?? localAppData;
+            var devCat = ScanPaths(devPaths, "Developer & IDE Caches", "Cached build artifacts, package manager caches (npm, pip, NuGet, VS Code).", JunkType.DeveloperCache, "\uE943", "#FF8B5CF6", primaryDevFolder, token: token);
+            categories.Add(devCat);
+
             ProgressChanged?.Invoke(100);
             Log("Junk scan completed.");
             return categories;
@@ -455,6 +474,18 @@ public class JunkCleanerEngine
                                 Log("Skipped locked file: MEMORY.DMP");
                             }
                         }
+                        break;
+                    case JunkType.DeveloperCache:
+                        string appDataR = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                        string userProf = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                        string locApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(appDataR, @"Code\Cache"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(appDataR, @"Code\CachedData"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(appDataR, @"Code\CachedExtensionVSIXs"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(locApp, @"npm-cache"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(userProf, @".npm\_cacache"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(locApp, @"pip\cache"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(locApp, @"NuGet\v3-cache"));
                         break;
                 }
 

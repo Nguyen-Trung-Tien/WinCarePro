@@ -181,6 +181,8 @@ public partial class TranslationManager
         _translations["System prefetch cache files created to speed up application startup."] = "Các tệp prefetch hệ thống được tạo ra để tăng tốc khởi động ứng dụng.";
         _translations["System Crash Dumps"] = "Tệp kết xuất sự cố hệ thống";
         _translations["Memory dump files and log traces created when system crash or error occurs."] = "Các tệp kết xuất bộ nhớ và nhật ký sự cố được tạo ra khi hệ thống gặp lỗi hoặc sập nguồn.";
+        _translations["Developer & IDE Caches"] = "Bộ nhớ đệm Lập trình & IDE";
+        _translations["Cached build artifacts, package manager caches (npm, pip, NuGet, VS Code)."] = "Bộ nhớ đệm tệp build và các trình quản lý gói (npm, pip, NuGet, VS Code).";
         _translations["Top Largest Files"] = "Các tệp lớn nhất";
         _translations["Open Folder Location"] = "Mở vị trí thư mục";
         _translations["No files found or scanner is idle."] = "Không tìm thấy tệp hoặc trình quét đang rảnh.";

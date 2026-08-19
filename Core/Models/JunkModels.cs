@@ -20,7 +20,8 @@ public enum JunkType
     ThumbnailCache,
     DeliveryOptimization,
     Prefetch,
-    CrashDumps
+    CrashDumps,
+    DeveloperCache
 }
 
 public class JunkFileItem

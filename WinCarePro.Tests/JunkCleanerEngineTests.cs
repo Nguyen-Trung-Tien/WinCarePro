@@ -37,4 +37,28 @@ public class JunkCleanerEngineTests
             }
         }
     }
+
+    [Fact]
+    public void JunkType_ContainsDeveloperCache()
+    {
+        Assert.True(Enum.IsDefined(typeof(WinCarePro.Models.JunkType), WinCarePro.Models.JunkType.DeveloperCache));
+    }
+
+    [Fact]
+    public void JunkCategory_FormatProperties_ReturnAccurateStrings()
+    {
+        var category = new WinCarePro.Models.JunkCategory
+        {
+            Name = "Developer & IDE Caches",
+            Type = WinCarePro.Models.JunkType.DeveloperCache,
+            SizeBytes = 10485760, // 10 MB
+            CleanableBytes = 10485760,
+            LockedBytes = 0,
+            FileCount = 42
+        };
+
+        Assert.Equal("42 files", category.FileCountFormatted);
+        Assert.Contains("10", category.SizeFormatted);
+        Assert.Equal(Microsoft.UI.Xaml.Visibility.Collapsed, category.LockedSizeVisibility);
+    }
 }

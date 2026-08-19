@@ -135,6 +135,16 @@ public sealed partial class JunkPage : Page
         ViewModel.UpdateTotalSize();
     }
 
+    private void OnSelectAllCategoriesClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectAllCategories();
+    }
+
+    private void OnDeselectAllCategoriesClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.DeselectAllCategories();
+    }
+
     private void OnOpenFolderClick(object sender, RoutedEventArgs e)
     {
         ViewModel.OpenSelectedFolder();

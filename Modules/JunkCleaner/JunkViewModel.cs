@@ -359,6 +359,24 @@ public class JunkViewModel : ViewModelBase, IDisposable
         TotalLockedSize = FormatHelper.FormatBytes(locked);
     }
 
+    public void SelectAllCategories()
+    {
+        foreach (var cat in Categories)
+        {
+            cat.IsSelected = true;
+        }
+        UpdateTotalSize();
+    }
+
+    public void DeselectAllCategories()
+    {
+        foreach (var cat in Categories)
+        {
+            cat.IsSelected = false;
+        }
+        UpdateTotalSize();
+    }
+
     public void CheckLockingApps()
     {
         var running = new List<string>();

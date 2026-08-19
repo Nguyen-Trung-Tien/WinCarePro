@@ -49,6 +49,13 @@
                     <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#D5141424" />
                     <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="#FF0F0E17" />
                     <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="#308B5CF6" />
+                    
+                    <!-- Solid Opaque Flyout & Popup Brushes (Dark Mode) -->
+                    <SolidColorBrush x:Key="AppFlyoutBackground" Color="#FF181826" />
+                    <SolidColorBrush x:Key="AppFlyoutBorder" Color="#508B5CF6" />
+                    <SolidColorBrush x:Key="AppFlyoutItemBackground" Color="#FF222234" />
+                    <SolidColorBrush x:Key="AppFlyoutItemPointerOver" Color="#FF2D2D45" />
+                    <SolidColorBrush x:Key="AppFlyoutItemBorder" Color="#308B5CF6" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
                     <!-- Light Theme Tokens (Ultra Premium Structural Precision, Crisp Slate-Ice & Vivid Accents) -->
@@ -92,6 +99,13 @@
                     <SolidColorBrush x:Key="SubtleFillColorSecondaryBrush" Color="#F1F5F9" />
                     <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="#EEF2FF" />
                     <SolidColorBrush x:Key="SystemControlHighlightListMediumBrush" Color="#E0E7FF" />
+                    
+                    <!-- Solid Opaque Flyout & Popup Brushes (Light Mode) -->
+                    <SolidColorBrush x:Key="AppFlyoutBackground" Color="#FFFFFFFF" />
+                    <SolidColorBrush x:Key="AppFlyoutBorder" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="AppFlyoutItemBackground" Color="#FFF8FAFC" />
+                    <SolidColorBrush x:Key="AppFlyoutItemPointerOver" Color="#FFF1F5F9" />
+                    <SolidColorBrush x:Key="AppFlyoutItemBorder" Color="#E2E8F0" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
@@ -634,6 +648,58 @@
                                         <VisualState x:Name="Pressed">
                                             <VisualState.Setters>
                                                 <Setter Target="ContentPresenter.Background" Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
+                                                <Setter Target="ContentPresenter.Opacity" Value="0.8" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Target="ContentPresenter.Opacity" Value="0.4" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </ContentPresenter>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Power Option Item Button Style (Solid, perfectly contrast in Dark & Light) -->
+            <Style x:Key="PowerOptionItemButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{ThemeResource AppFlyoutItemBackground}" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppFlyoutItemBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="12,10" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <ContentPresenter x:Name="ContentPresenter"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Padding="{TemplateBinding Padding}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Target="ContentPresenter.Background" Value="{ThemeResource AppFlyoutItemPointerOver}" />
+                                                <Setter Target="ContentPresenter.BorderBrush" Value="{StaticResource PrimaryAccentBrush}" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Target="ContentPresenter.Background" Value="{ThemeResource AppFlyoutItemBackground}" />
                                                 <Setter Target="ContentPresenter.Opacity" Value="0.8" />
                                             </VisualState.Setters>
                                         </VisualState>

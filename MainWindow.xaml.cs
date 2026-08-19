@@ -161,38 +161,59 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void SetStartupProgress(double targetValue, string message)
+    private async Task SmoothTweenProgressAsync(double targetValue, string message, int durationMs = 280)
     {
         if (StartupProgressText != null) StartupProgressText.Text = message.T();
-        if (StartupProgressBar != null) StartupProgressBar.Value = targetValue;
-        if (StartupProgressPercent != null) StartupProgressPercent.Text = $"{(int)targetValue}%";
+        if (StartupProgressBar == null || StartupProgressPercent == null) return;
+
+        double startVal = StartupProgressBar.Value;
+        double diff = targetValue - startVal;
+        if (Math.Abs(diff) < 0.01) return;
+
+        int steps = Math.Max(6, durationMs / 16);
+        int stepDelay = durationMs / steps;
+
+        for (int i = 1; i <= steps; i++)
+        {
+            double t = (double)i / steps;
+            // Cubic Ease-Out curve for progress
+            double easeT = 1.0 - Math.Pow(1.0 - t, 3);
+            double currentVal = startVal + diff * easeT;
+
+            StartupProgressBar.Value = currentVal;
+            StartupProgressPercent.Text = $"{(int)Math.Min(100, Math.Round(currentVal))}%";
+            await Task.Delay(stepDelay);
+        }
+
+        StartupProgressBar.Value = targetValue;
+        StartupProgressPercent.Text = $"{(int)Math.Min(100, Math.Round(targetValue))}%";
     }
 
     private async void InitializeAppAsync()
     {
         try
         {
-            SetStartupProgress(20, "Initializing system engine...");
+            await SmoothTweenProgressAsync(20, "Initializing core system engine...", 240);
 
             // 1. Initialize SQLite Database asynchronously
-            SetStartupProgress(40, "Loading database...");
+            await SmoothTweenProgressAsync(45, "Loading database & telemetry store...", 200);
             await Task.Run(() => Database.DbManager.InitializeDatabase());
 
             // 2. Load theme settings and transparency levels from DB
-            SetStartupProgress(65, "Loading configuration...");
+            await SmoothTweenProgressAsync(70, "Applying visual themes & typography...", 180);
             LoadThemeConfiguration();
 
             // 3. Load language setting and apply translations to window content
-            SetStartupProgress(85, "Applying translations...");
+            await SmoothTweenProgressAsync(88, "Applying localized linguistic model...", 180);
             TranslationManager.Instance.LoadLanguageFromSettings();
             TranslationManager.Instance.Translate(this.Content);
 
             // 4. Update notification badge indicator & prepare main view
-            SetStartupProgress(98, "Starting WinCare Pro...");
+            await SmoothTweenProgressAsync(96, "Launching WinCare Pro workspace...", 150);
             UpdateNotificationBadge();
             RootFrame.Navigate(typeof(MainPage));
 
-            SetStartupProgress(100, "Ready!");
+            await SmoothTweenProgressAsync(100, "Ready!", 150);
 
             // 5. Start Clock Ticker & fade out splash overlay smoothly
             StartClockTicker();
@@ -484,17 +505,45 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private async Task SmoothTweenExitProgressAsync(double targetValue, string subtext, int durationMs = 220)
+    {
+        if (ExitProgressSubtext != null) ExitProgressSubtext.Text = subtext.T();
+        if (ExitProgressBar == null || ExitProgressPercent == null) return;
+
+        double startVal = ExitProgressBar.Value;
+        double diff = targetValue - startVal;
+        if (Math.Abs(diff) < 0.01) return;
+
+        int steps = Math.Max(5, durationMs / 16);
+        int stepDelay = durationMs / steps;
+
+        for (int i = 1; i <= steps; i++)
+        {
+            double t = (double)i / steps;
+            double easeT = 1.0 - Math.Pow(1.0 - t, 3);
+            double currentVal = startVal + diff * easeT;
+
+            ExitProgressBar.Value = currentVal;
+            ExitProgressPercent.Text = $"{(int)Math.Min(100, Math.Round(currentVal))}%";
+            await Task.Delay(stepDelay);
+        }
+
+        ExitProgressBar.Value = targetValue;
+        ExitProgressPercent.Text = $"{(int)Math.Min(100, Math.Round(targetValue))}%";
+    }
+
     public async void PerformAppExit()
     {
         this.AppWindow.Show();
         BringToForeground();
 
         ExitOverlayTitle.Text = "Shutting Down".T();
-        ExitOverlayMessage.Text = "Closing database connections and freeing resources...".T();
+        ExitOverlayMessage.Text = "Securing database, flushing memory caches & closing services...".T();
         ExitOverlayGrid.Visibility = Visibility.Visible;
         FadeInExitOverlay.Begin();
 
-        // Step 1: Perform active page cleanup on the UI thread first (synchronous)
+        // Stage 1: UI and active page cleanup
+        await SmoothTweenExitProgressAsync(30, "Saving session state & active modules...", 200);
         try
         {
             if (RootFrame.Content is MainPage mainPage)
@@ -510,22 +559,58 @@ public sealed partial class MainWindow : Window
         }
         catch { }
 
-        // Step 2: Safe database WAL checkpoint & connection pool clear (background, after UI cleanup)
+        // Stage 2: Database shutdown & WAL checkpoint flush
+        await SmoothTweenExitProgressAsync(70, "Flushing SQLite WAL checkpoint & memory pools...", 220);
         await Task.Run(() =>
         {
-            DbManager.ShutdownDatabase();
+            try
+            {
+                DbManager.ShutdownDatabase();
+            }
+            catch { }
         });
 
-        await Task.Delay(1000); // Smooth visual feedback padding
-
+        // Stage 3: Disposing telemetry & tray icons
+        await SmoothTweenExitProgressAsync(95, "Disposing telemetry engines & system monitors...", 180);
         CleanupTrayIcon();
+
+        // Stage 4: Farewell complete
+        await SmoothTweenExitProgressAsync(100, "All resources secured. Goodbye!", 150);
+        ExitOverlayTitle.Text = "Session Terminated".T();
+
+        await Task.Delay(250);
+
         _forceClose = true;
         this.Close();
     }
 
+    private void OnConfirmShutdownClick(object sender, RoutedEventArgs e)
+    {
+        ExitPowerFlyout.Hide();
+        PerformAppExit();
+    }
+
+    private void OnMinimizeToTrayClick(object sender, RoutedEventArgs e)
+    {
+        ExitPowerFlyout.Hide();
+        this.AppWindow.Hide();
+        InitializeTrayIcon();
+
+        var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
+        notificationService?.ShowToast("WinCare Pro Running", "Application is minimized to the system tray.", Services.Contracts.NotificationSeverity.Info);
+    }
+
     private void ExitAppButton_Click(object sender, RoutedEventArgs e)
     {
-        PerformAppExit();
+        // Fallback if flyout is not triggered directly
+        if (ExitPowerFlyout != null)
+        {
+            ExitPowerFlyout.ShowAt(ExitAppButton);
+        }
+        else
+        {
+            PerformAppExit();
+        }
     }
 
     private void OnCpuChipClick(object sender, RoutedEventArgs e)

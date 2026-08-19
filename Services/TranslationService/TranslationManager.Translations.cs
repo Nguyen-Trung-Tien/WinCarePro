@@ -2801,7 +2801,7 @@ public partial class TranslationManager
 
         // --- System Subtitles & Header Text ---
         _translations["Real-time kernel diagnostics, hardware monitors, predictive storage telemetry & automated background care."] = "Chẩn đoán kernel thời gian thực, giám sát phần cứng, dự đoán dung lượng lưu trữ & tự động chăm sóc nền.";
-        _translations["Live telemetry, predictive disk sustainability, RAM working set purge & AI diagnostics."] = "Đo lường trực tiếp, dự báo độ bền ổ đĩa, giải phóng RAM working set & chẩn đoán AI.";
+        _translations["Live telemetry, predictive disk sustainability, RAM working set purge & AI diagnostics."] = "Đo lường trực tiếp, dự báo độ bền ổ đĩa, giải phóng RAM";
         _translations["Predictive neural diagnostics, automated bottleneck detection & smart PC optimization."] = "Chẩn đoán thần kinh dự đoán, phát hiện nghẽn tự động & tối ưu máy tính thông minh.";
         _translations["Reclaim gigabytes of storage by sweeping system caches, browser debris, temporary files & memory dumps."] = "Giải phóng hàng gigabyte dung lượng bằng cách quét sạch bộ đệm hệ thống, tệp rác trình duyệt, tệp tạm & bản ghi bộ nhớ.";
         _translations["Cleanly uninstall applications and remove leftover files."] = "Gỡ cài đặt sạch sẽ các ứng dụng và dọn dẹp triệt để tệp tàn dư.";

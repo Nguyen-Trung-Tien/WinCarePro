@@ -42,7 +42,17 @@ public static class SafePathGuard
                 BlacklistedPathPrefixes.Add(Path.Combine(winDir, "SysWOW64"));
                 BlacklistedPathPrefixes.Add(Path.Combine(winDir, "WinSxS"));
                 BlacklistedPathPrefixes.Add(Path.Combine(winDir, "Boot"));
+                BlacklistedPathPrefixes.Add(Path.Combine(winDir, "system32\\config"));
             }
+
+            // System Drive root critical boot components
+            BlacklistedExactPaths.Add(Path.Combine(systemDrive, "bootmgr"));
+            BlacklistedExactPaths.Add(Path.Combine(systemDrive, "BOOTNXT"));
+            BlacklistedExactPaths.Add(Path.Combine(systemDrive, "autoexec.bat"));
+            BlacklistedExactPaths.Add(Path.Combine(systemDrive, "config.sys"));
+            BlacklistedPathPrefixes.Add(Path.Combine(systemDrive, "Boot"));
+            BlacklistedPathPrefixes.Add(Path.Combine(systemDrive, "Recovery"));
+            BlacklistedPathPrefixes.Add(Path.Combine(systemDrive, "System Volume Information"));
 
             var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             if (!string.IsNullOrEmpty(programFiles))
@@ -137,7 +147,9 @@ public static class SafePathGuard
                 fileName.Equals("SAM", StringComparison.OrdinalIgnoreCase) ||
                 fileName.Equals("SYSTEM", StringComparison.OrdinalIgnoreCase) ||
                 fileName.Equals("SECURITY", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("SOFTWARE", StringComparison.OrdinalIgnoreCase))
+                fileName.Equals("SOFTWARE", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("BCD", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("BOOTSECT.BAK", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }

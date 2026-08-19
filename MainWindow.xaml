@@ -115,70 +115,23 @@
                     </Grid>
                 </Button>
 
-                <!-- Exit App Button with Power Options Flyout -->
-                <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" ToolTipService.ToolTip="Power &amp; Exit Options">
+                <!-- Exit App Button with Native Fluent MenuFlyout -->
+                <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" ToolTipService.ToolTip="Power Options">
                     <FontIcon Glyph="&#xE7E8;" FontSize="15" Foreground="#FFEF4444" />
                     <Button.Flyout>
-                        <Flyout x:Name="ExitPowerFlyout" Placement="BottomEdgeAlignedRight" Opening="ExitPowerFlyout_Opening">
-                            <Flyout.FlyoutPresenterStyle>
-                                <Style TargetType="FlyoutPresenter">
-                                    <Setter Property="CornerRadius" Value="16"/>
-                                    <Setter Property="Padding" Value="0"/>
-                                    <Setter Property="Background" Value="{ThemeResource AppFlyoutBackground}"/>
-                                    <Setter Property="BorderBrush" Value="{ThemeResource AppFlyoutBorder}"/>
-                                    <Setter Property="BorderThickness" Value="1"/>
-                                </Style>
-                            </Flyout.FlyoutPresenterStyle>
-                            <Border Width="280" Background="{ThemeResource AppFlyoutBackground}" BorderBrush="{ThemeResource AppFlyoutBorder}" BorderThickness="1" CornerRadius="16" Padding="16,14">
-                                <StackPanel Spacing="10">
-                                    <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <Border Width="32" Height="32" CornerRadius="10" Background="#20EF4444" BorderBrush="#40EF4444" BorderThickness="1" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE7E8;" FontSize="14" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="Power Options" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                            <TextBlock Text="WinCare Pro Session" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                        </StackPanel>
-                                    </StackPanel>
-
-                                    <Border Height="1" Background="{ThemeResource AppFlyoutItemBorder}" Margin="-16,2,-16,2"/>
-
-                                    <!-- Shutdown Option -->
-                                    <Button Click="OnConfirmShutdownClick" Style="{StaticResource PowerOptionItemButtonStyle}">
-                                        <Grid ColumnSpacing="10">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Width="28" Height="28" CornerRadius="8" Background="#18EF4444" VerticalAlignment="Center">
-                                                <FontIcon Glyph="&#xE7E8;" FontSize="12" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
-                                                <TextBlock Text="Shut Down WinCare Pro" FontSize="12" FontWeight="Bold" Foreground="#FFEF4444"/>
-                                                <TextBlock Text="Save state &amp; close completely" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Button>
-
-                                    <!-- Minimize to Tray Option -->
-                                    <Button Click="OnMinimizeToTrayClick" Style="{StaticResource PowerOptionItemButtonStyle}">
-                                        <Grid ColumnSpacing="10">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" Width="28" Height="28" CornerRadius="8" Background="{StaticResource PrimaryAccentLightBrush}" VerticalAlignment="Center">
-                                                <FontIcon Glyph="&#xE718;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel Grid.Column="1" Spacing="1" VerticalAlignment="Center">
-                                                <TextBlock Text="Minimize to Tray" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                                <TextBlock Text="Keep active in background" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Button>
-                                </StackPanel>
-                            </Border>
-                        </Flyout>
+                        <MenuFlyout x:Name="ExitPowerFlyout" Placement="BottomEdgeAlignedRight" Opening="ExitPowerFlyout_Opening">
+                            <MenuFlyoutItem x:Name="MenuMinimizeToTray" Text="Minimize to Tray" Click="OnMinimizeToTrayClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE718;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem x:Name="MenuShutdown" Text="Shutdown" Click="OnConfirmShutdownClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE7E8;" FontSize="14" Foreground="#FFEF4444"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
                     </Button.Flyout>
                 </Button>
             </StackPanel>
@@ -266,21 +219,10 @@
                     <TranslateTransform Y="30" />
                 </StackPanel.RenderTransform>
                 
-                <!-- Master Cyber Power-Down Holographic Shield -->
-                <Grid Width="90" Height="90" HorizontalAlignment="Center">
-                    <!-- Ambient Pulsing Halo -->
-                    <Ellipse Width="90" Height="90" Stroke="#40F43F5E" StrokeThickness="2" StrokeDashArray="4,2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    
-                    <!-- Glassmorphic App Shield -->
-                    <Border Width="74" Height="74" CornerRadius="22" Background="#18FFFFFF" BorderBrush="#50F43F5E" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="44" Height="44" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
-                    </Border>
-
-                    <!-- Neon Power Status Micro-Badge -->
-                    <Border Width="26" Height="26" CornerRadius="13" Background="#FFEF4444" BorderBrush="#20000000" BorderThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,2,2">
-                        <FontIcon Glyph="&#xE7E8;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                </Grid>
+                <!-- Clean App Logo (No outer circle or clunky ring) -->
+                <Border Width="76" Height="76" CornerRadius="22" Background="#18FFFFFF" BorderBrush="#35FFFFFF" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+                </Border>
                 
                 <StackPanel Spacing="6" HorizontalAlignment="Center">
                     <TextBlock x:Name="ExitOverlayTitle" Text="Shutting Down" FontSize="24" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="0.5"/>

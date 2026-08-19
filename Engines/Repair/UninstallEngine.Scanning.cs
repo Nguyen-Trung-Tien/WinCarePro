@@ -299,10 +299,11 @@ public partial class UninstallEngine
         Log("Attempting fallback uninstallation via PowerShell...");
         try
         {
+            var safePackage = packageFullName.Replace("'", "''").Replace("\"", "").Replace(";", "").Replace("$", "").Replace("`", "");
             var psi = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = "powershell.exe",
-                Arguments = $"-NoProfile -WindowStyle Hidden -Command \"Remove-AppxPackage -Package '{packageFullName}'\"",
+                Arguments = $"-NoProfile -NonInteractive -WindowStyle Hidden -Command \"Remove-AppxPackage -Package '{safePackage}'\"",
                 UseShellExecute = true,
                 Verb = "runas"
             };

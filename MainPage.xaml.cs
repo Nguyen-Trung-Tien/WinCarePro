@@ -192,6 +192,11 @@ public sealed partial class MainPage : Page
                         {
                             Effect = Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionEffect.FromRight
                         }
+                    },
+                    new Microsoft.UI.Xaml.Media.Animation.EntranceThemeTransition
+                    {
+                        FromVerticalOffset = 16,
+                        IsStaggeringEnabled = true
                     }
                 };
             }

@@ -505,47 +505,7 @@ public class JunkCleanerEngine
     public static bool IsPathSafeToClean(string? path)
     {
         if (string.IsNullOrWhiteSpace(path)) return false;
-
-        try
-        {
-            string fullPath = Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-            // Block root drive paths (e.g., "C:", "D:\")
-            if (fullPath.Length <= 3 || Path.GetPathRoot(fullPath)?.Equals(fullPath, StringComparison.OrdinalIgnoreCase) == true)
-            {
-                return false;
-            }
-
-            // Strictly protected system directories
-            string systemRoot = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-            string system32 = Environment.GetFolderPath(Environment.SpecialFolder.System);
-            string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-            string programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-            string[] forbiddenExactPaths = new[]
-            {
-                systemRoot,
-                system32,
-                programFiles,
-                programFilesX86,
-                userProfile
-            };
-
-            foreach (var forbidden in forbiddenExactPaths)
-            {
-                if (!string.IsNullOrEmpty(forbidden) && fullPath.Equals(Path.GetFullPath(forbidden).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar), StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
+        return WinCarePro.Core.Helpers.SafePathGuard.IsPathSafeForDeletion(path);
     }
 
     private long ClearDirectoryRecursively(string path)

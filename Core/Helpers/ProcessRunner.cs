@@ -20,6 +20,56 @@ public class ProcessResult
 public static class ProcessRunner
 {
     /// <summary>
+    /// Executes a system process asynchronously with structured arguments (safe against command injection).
+    /// </summary>
+    public static async Task<ProcessResult> RunAsync(
+        string fileName,
+        System.Collections.Generic.IEnumerable<string> argumentList,
+        TimeSpan timeout,
+        string? workingDirectory = null,
+        Action<string>? onOutput = null,
+        Action<string>? onError = null,
+        CancellationToken cancellationToken = default)
+    {
+        var result = new ProcessResult();
+        var outputBuilder = new StringBuilder();
+        var errorBuilder = new StringBuilder();
+
+        Encoding encoding = Encoding.UTF8;
+        try
+        {
+            encoding = Encoding.GetEncoding(Console.OutputEncoding.CodePage);
+        }
+        catch
+        {
+            encoding = Encoding.UTF8;
+        }
+
+        var psi = new ProcessStartInfo
+        {
+            FileName = fileName,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            StandardOutputEncoding = encoding,
+            StandardErrorEncoding = encoding,
+            CreateNoWindow = true,
+            WorkingDirectory = workingDirectory ?? ""
+        };
+
+        if (argumentList != null)
+        {
+            foreach (var arg in argumentList)
+            {
+                psi.ArgumentList.Add(arg);
+            }
+        }
+
+        using var process = new Process { StartInfo = psi };
+        return await ExecuteProcessCoreAsync(process, timeout, outputBuilder, errorBuilder, onOutput, onError, cancellationToken);
+    }
+
+    /// <summary>
     /// Executes a system process asynchronously with strict timeout and output capturing.
     /// </summary>
     public static async Task<ProcessResult> RunAsync(
@@ -31,11 +81,9 @@ public static class ProcessRunner
         Action<string>? onError = null,
         CancellationToken cancellationToken = default)
     {
-        var result = new ProcessResult();
         var outputBuilder = new StringBuilder();
         var errorBuilder = new StringBuilder();
 
-        // Determine optimal encoding (UTF-8 with fallback to Console Output Encoding)
         Encoding encoding = Encoding.UTF8;
         try
         {
@@ -61,6 +109,20 @@ public static class ProcessRunner
                 WorkingDirectory = workingDirectory ?? ""
             }
         };
+
+        return await ExecuteProcessCoreAsync(process, timeout, outputBuilder, errorBuilder, onOutput, onError, cancellationToken);
+    }
+
+    private static async Task<ProcessResult> ExecuteProcessCoreAsync(
+        Process process,
+        TimeSpan timeout,
+        StringBuilder outputBuilder,
+        StringBuilder errorBuilder,
+        Action<string>? onOutput,
+        Action<string>? onError,
+        CancellationToken cancellationToken)
+    {
+        var result = new ProcessResult();
 
         try
         {

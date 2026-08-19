@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using WinCarePro.Services.Contracts;
@@ -17,16 +18,33 @@ public sealed partial class ToastNotification : UserControl
     public Action<ToastNotification>? DismissRequested { get; set; }
 
     private List<NotificationAction>? _currentActions;
+    private DispatcherTimer? _countdownTimer;
+    private int _remainingDurationMs = 5500;
+    private int _totalDurationMs = 5500;
+    private bool _isPaused = false;
 
     public ToastNotification()
     {
         this.InitializeComponent();
         CloseBtn.Click += (s, e) => DismissRequested?.Invoke(this);
+
+        this.PointerEntered += ToastNotification_PointerEntered;
+        this.PointerExited += ToastNotification_PointerExited;
     }
 
     public ToastNotification(string title, string message, string level) : this()
     {
         Update(title, message, level, null, 1);
+    }
+
+    private void ToastNotification_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        _isPaused = true;
+    }
+
+    private void ToastNotification_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        _isPaused = false;
     }
 
     public void Update(string title, string message, string level, List<NotificationAction>? actions, int repeatCount)
@@ -37,14 +55,26 @@ public sealed partial class ToastNotification : UserControl
         DescTextBlock.Text = message;
         SeverityText = level;
 
-        // Reset visibility of elements
-        RepeatBadge.Visibility = repeatCount > 1 ? Visibility.Visible : Visibility.Collapsed;
-        RepeatCountText.Text = repeatCount.ToString();
+        // Repeat counter badge
+        if (repeatCount > 1)
+        {
+            RepeatBadge.Visibility = Visibility.Visible;
+            RepeatCountText.Text = $"x{repeatCount}";
+            try
+            {
+                RepeatPulseAnimation.Begin();
+            }
+            catch { }
+        }
+        else
+        {
+            RepeatBadge.Visibility = Visibility.Collapsed;
+        }
 
         // Style according to severity level
         ApplySeverityStyle(level);
 
-        // Setup action buttons
+        // Setup contextual action button
         _currentActions = actions;
         if (actions != null && actions.Count > 0)
         {
@@ -52,7 +82,6 @@ public sealed partial class ToastNotification : UserControl
             ActionBtn.Content = firstAction.Label;
             ActionBtn.Visibility = Visibility.Visible;
             
-            // Remove existing handlers to avoid memory leak and multiple registrations
             ActionBtn.Click -= ActionBtn_Click;
             ActionBtn.Click += ActionBtn_Click;
         }
@@ -60,6 +89,9 @@ public sealed partial class ToastNotification : UserControl
         {
             ActionBtn.Visibility = Visibility.Collapsed;
         }
+
+        // Start / Reset countdown progress
+        StartCountdown(5500);
     }
 
     private void ActionBtn_Click(object sender, RoutedEventArgs e)
@@ -75,12 +107,51 @@ public sealed partial class ToastNotification : UserControl
         DismissRequested?.Invoke(this);
     }
 
+    public void StartCountdown(int durationMs = 5500)
+    {
+        _totalDurationMs = durationMs;
+        _remainingDurationMs = durationMs;
+        _isPaused = false;
+
+        DismissProgressBar.Value = 100;
+
+        _countdownTimer?.Stop();
+        _countdownTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(50)
+        };
+
+        _countdownTimer.Tick += (s, e) =>
+        {
+            if (_isPaused) return;
+
+            _remainingDurationMs -= 50;
+            if (_remainingDurationMs <= 0)
+            {
+                _countdownTimer.Stop();
+                DismissProgressBar.Value = 0;
+                DismissRequested?.Invoke(this);
+            }
+            else
+            {
+                double pct = ((double)_remainingDurationMs / _totalDurationMs) * 100.0;
+                DismissProgressBar.Value = Math.Max(0, Math.Min(100, pct));
+            }
+        };
+
+        _countdownTimer.Start();
+    }
+
     public void Reset()
     {
-        // Stop animations
+        _countdownTimer?.Stop();
+        _countdownTimer = null;
+        _isPaused = false;
+
         try
         {
             PulseAnimation.Stop();
+            RepeatPulseAnimation.Stop();
         }
         catch { }
 
@@ -91,26 +162,22 @@ public sealed partial class ToastNotification : UserControl
         _currentActions = null;
         DismissRequested = null;
         RepeatBadge.Visibility = Visibility.Collapsed;
+        DismissProgressBar.Value = 100;
         Opacity = 0;
-        RenderTransform = new TranslateTransform { X = 360 };
+        RenderTransform = new TranslateTransform { X = 380 };
     }
 
     private void ApplySeverityStyle(string level)
     {
         string glyph = "\uE946"; // Info
-        string hexColor = "#FF3B82F6"; // Blue
+        string hexColor = "#FF8B5CF6"; // Aurora Violet
 
         if (level.Equals("Warning", StringComparison.OrdinalIgnoreCase))
         {
             glyph = "\uE7BA";
             hexColor = "#FFF59E0B"; // Amber
         }
-        else if (level.Equals("Critical", StringComparison.OrdinalIgnoreCase))
-        {
-            glyph = "\uEA39";
-            hexColor = "#FFEF4444"; // Red
-        }
-        else if (level.Equals("Error", StringComparison.OrdinalIgnoreCase))
+        else if (level.Equals("Critical", StringComparison.OrdinalIgnoreCase) || level.Equals("Error", StringComparison.OrdinalIgnoreCase))
         {
             glyph = "\uEA39";
             hexColor = "#FFEF4444"; // Red
@@ -118,24 +185,34 @@ public sealed partial class ToastNotification : UserControl
         else if (level.Equals("Success", StringComparison.OrdinalIgnoreCase))
         {
             glyph = "\uE73E";
-            hexColor = "#FF10B981"; // Green
+            hexColor = "#FF10B981"; // Emerald
         }
 
-        var statusColor = Windows.UI.Color.FromArgb(255, 
-            Convert.ToByte(hexColor.Substring(1, 2), 16), 
-            Convert.ToByte(hexColor.Substring(3, 2), 16), 
-            Convert.ToByte(hexColor.Substring(5, 2), 16));
-        
-        var statusBrush = new SolidColorBrush(statusColor);
+        byte a = 255;
+        byte r = Convert.ToByte(hexColor.Substring(1, 2), 16);
+        byte g = Convert.ToByte(hexColor.Substring(3, 2), 16);
+        byte b = Convert.ToByte(hexColor.Substring(5, 2), 16);
 
-        StatusAccentBar.Background = statusBrush;
+        var solidColor = Windows.UI.Color.FromArgb(a, r, g, b);
+        var alpha15Color = Windows.UI.Color.FromArgb(38, r, g, b);
+        var alpha35Color = Windows.UI.Color.FromArgb(90, r, g, b);
+
+        var solidBrush = new SolidColorBrush(solidColor);
+        var tintBrush = new SolidColorBrush(alpha15Color);
+        var borderBrush = new SolidColorBrush(alpha35Color);
+
         StatusIcon.Glyph = glyph;
-        StatusIcon.Foreground = statusBrush;
+        StatusIcon.Foreground = solidBrush;
+        IconGlowRing.Background = tintBrush;
+        IconGlowRing.BorderBrush = borderBrush;
+        AmbientTintBorder.Background = tintBrush;
+        DismissProgressBar.Foreground = solidBrush;
+        RepeatBadge.Background = solidBrush;
 
         // Apply critical pulse if needed
-        if (level.Equals("Critical", StringComparison.OrdinalIgnoreCase))
+        if (level.Equals("Critical", StringComparison.OrdinalIgnoreCase) || level.Equals("Error", StringComparison.OrdinalIgnoreCase))
         {
-            ContainerBorder.BorderBrush = statusBrush;
+            ContainerBorder.BorderBrush = solidBrush;
             try
             {
                 PulseAnimation.Begin();
@@ -155,14 +232,14 @@ public sealed partial class ToastNotification : UserControl
 
     public void AnimateIn(Action? onCompleted = null)
     {
-        var trans = new TranslateTransform { X = 360 };
+        var trans = new TranslateTransform { X = 380 };
         this.RenderTransform = trans;
         this.Opacity = 0;
 
         var sb = new Storyboard();
-        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
-        var animX = new DoubleAnimation { From = 360, To = 0, Duration = TimeSpan.FromMilliseconds(350), EasingFunction = ease };
-        var animOpacity = new DoubleAnimation { From = 0, To = 1, Duration = TimeSpan.FromMilliseconds(250), EasingFunction = ease };
+        var ease = new CircleEase { EasingMode = EasingMode.EaseOut };
+        var animX = new DoubleAnimation { From = 380, To = 0, Duration = TimeSpan.FromMilliseconds(380), EasingFunction = ease };
+        var animOpacity = new DoubleAnimation { From = 0, To = 1, Duration = TimeSpan.FromMilliseconds(280), EasingFunction = ease };
 
         Storyboard.SetTarget(animX, this);
         Storyboard.SetTargetProperty(animX, "(UIElement.RenderTransform).(TranslateTransform.X)");
@@ -184,9 +261,9 @@ public sealed partial class ToastNotification : UserControl
     public void AnimateOut(Action? onCompleted = null)
     {
         var sb = new Storyboard();
-        var ease = new CubicEase { EasingMode = EasingMode.EaseIn };
-        var animOpacity = new DoubleAnimation { To = 0, Duration = TimeSpan.FromMilliseconds(200), EasingFunction = ease };
-        var animX = new DoubleAnimation { To = 120, Duration = TimeSpan.FromMilliseconds(200), EasingFunction = ease };
+        var ease = new CircleEase { EasingMode = EasingMode.EaseIn };
+        var animOpacity = new DoubleAnimation { To = 0, Duration = TimeSpan.FromMilliseconds(220), EasingFunction = ease };
+        var animX = new DoubleAnimation { To = 140, Duration = TimeSpan.FromMilliseconds(220), EasingFunction = ease };
 
         Storyboard.SetTarget(animOpacity, this);
         Storyboard.SetTargetProperty(animOpacity, "Opacity");

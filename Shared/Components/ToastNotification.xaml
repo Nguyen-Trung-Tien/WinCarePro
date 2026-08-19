@@ -6,81 +6,97 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Width="340"
-    Margin="0,0,0,8"
+    Width="356"
+    Margin="0,0,0,10"
     Opacity="0">
 
     <UserControl.Resources>
         <Storyboard x:Name="PulseAnimation" RepeatBehavior="Forever" AutoReverse="True">
-            <DoubleAnimation Storyboard.TargetName="StatusAccentBar"
+            <DoubleAnimation Storyboard.TargetName="IconGlowRing"
                              Storyboard.TargetProperty="Opacity"
-                             From="1.0" To="0.3" Duration="0:0:0.8"/>
+                             From="0.8" To="0.25" Duration="0:0:0.9"/>
             <DoubleAnimation Storyboard.TargetName="StatusIcon"
                              Storyboard.TargetProperty="Opacity"
-                             From="1.0" To="0.3" Duration="0:0:0.8"/>
+                             From="1.0" To="0.4" Duration="0:0:0.9"/>
+        </Storyboard>
+        <Storyboard x:Name="RepeatPulseAnimation">
+            <DoubleAnimation Storyboard.TargetName="RepeatBadgeTransform" Storyboard.TargetProperty="ScaleX" From="1.0" To="1.25" Duration="0:0:0.18" AutoReverse="True"/>
+            <DoubleAnimation Storyboard.TargetName="RepeatBadgeTransform" Storyboard.TargetProperty="ScaleY" From="1.0" To="1.25" Duration="0:0:0.18" AutoReverse="True"/>
         </Storyboard>
     </UserControl.Resources>
 
     <Border x:Name="ContainerBorder"
-            Background="{ThemeResource SystemControlAcrylicElementBrush}"
-            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-            BorderThickness="1"
-            CornerRadius="12"
-            Translation="0,4,16">
+            Background="{ThemeResource AppCardBackground}"
+            BorderBrush="{ThemeResource AppCardBorder}"
+            BorderThickness="1.2"
+            CornerRadius="16"
+            Padding="0"
+            Translation="0,4,18">
         <Grid>
-            <!-- Columns: Accent Bar, Content Area -->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+            <!-- Background Accent Ambient Tint -->
+            <Border x:Name="AmbientTintBorder"
+                    CornerRadius="16"
+                    Opacity="0.08"
+                    Background="{StaticResource PrimaryAccentBrush}" />
 
-            <!-- Status Indicator Left Accent Bar -->
-            <Border x:Name="StatusAccentBar"
-                    Grid.Column="0"
-                    Width="6"
-                    CornerRadius="12,0,0,12"
-                    HorizontalAlignment="Left"/>
-
-            <!-- Main Content Container Grid -->
-            <Grid Grid.Column="1" Padding="12,12,12,12">
+            <!-- Main Content Grid -->
+            <Grid Padding="14,12,12,12">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="28"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Icon -->
-                <FontIcon x:Name="StatusIcon"
-                          Grid.Column="0"
-                          FontSize="16"
-                          VerticalAlignment="Top"
-                          HorizontalAlignment="Left"
-                          Margin="0,2,0,0"/>
+                <!-- Left Glowing Status Icon Badge -->
+                <Grid Grid.Column="0" Width="36" Height="36" VerticalAlignment="Top" Margin="0,2,12,0">
+                    <Border x:Name="IconGlowRing"
+                            Width="36" Height="36"
+                            CornerRadius="12"
+                            Background="#208B5CF6"
+                            BorderBrush="#408B5CF6"
+                            BorderThickness="1"/>
+                    <FontIcon x:Name="StatusIcon"
+                              Glyph="&#xE946;"
+                              FontSize="16"
+                              Foreground="{StaticResource PrimaryAccentBrush}"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+                </Grid>
 
-                <!-- Text Info -->
-                <StackPanel Grid.Column="1" Margin="8,0,8,0" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,0,0,2">
+                <!-- Text Content Info -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3" Margin="0,0,8,0">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock x:Name="TitleTextBlock"
                                    FontWeight="Bold"
-                                   FontSize="12.5"
+                                   FontSize="13"
+                                   FontFamily="Segoe UI Variable Display"
                                    TextWrapping="Wrap"
                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                        
+                        <!-- Repeat Counter Badge (e.g. x2, x3) -->
                         <Border x:Name="RepeatBadge"
-                                Background="{ThemeResource SystemAccentColor}"
+                                Background="{StaticResource PrimaryAccentBrush}"
                                 CornerRadius="8"
                                 Padding="6,1"
                                 VerticalAlignment="Center"
-                                Visibility="Collapsed">
+                                Visibility="Collapsed"
+                                RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="RepeatBadgeTransform"/>
+                            </Border.RenderTransform>
                             <TextBlock x:Name="RepeatCountText"
                                        Text="1"
-                                       FontSize="9"
-                                       FontWeight="Bold"
-                                       Foreground="White" />
+                                       FontSize="9.5"
+                                       FontWeight="ExtraBold"
+                                       Foreground="White"
+                                       Typography.NumeralAlignment="Tabular"/>
                         </Border>
                     </StackPanel>
+
                     <TextBlock x:Name="DescTextBlock"
-                               FontSize="11"
+                               FontSize="11.5"
+                               LineHeight="16"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                TextWrapping="Wrap"/>
                 </StackPanel>
@@ -88,26 +104,39 @@
                 <!-- Contextual Action Button -->
                 <Button x:Name="ActionBtn"
                         Grid.Column="2"
-                        Margin="4,0,8,0"
-                        Padding="8,4"
+                        Margin="2,0,6,0"
+                        Padding="10,5"
                         FontSize="11"
-                        FontWeight="SemiBold"
-                        CornerRadius="6"
+                        FontWeight="Bold"
+                        CornerRadius="8"
                         VerticalAlignment="Center"
-                        Style="{StaticResource AccentButtonStyle}"
+                        Style="{StaticResource VibrantPrimaryButtonStyle}"
                         Visibility="Collapsed"/>
 
                 <!-- Close Button -->
                 <Button x:Name="CloseBtn"
                         Grid.Column="3"
                         Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}"
-                        Width="24"
-                        Height="24"
-                        CornerRadius="12"
-                        VerticalAlignment="Top">
-                    <FontIcon Glyph="&#xE711;" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        Width="26"
+                        Height="26"
+                        CornerRadius="13"
+                        VerticalAlignment="Top"
+                        Margin="0,-2,-2,0">
+                    <FontIcon Glyph="&#xE711;" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </Button>
             </Grid>
+
+            <!-- Bottom Auto-dismiss Progress Micro-Bar -->
+            <ProgressBar x:Name="DismissProgressBar"
+                         Minimum="0"
+                         Maximum="100"
+                         Value="100"
+                         Height="2"
+                         CornerRadius="0,0,16,16"
+                         VerticalAlignment="Bottom"
+                         HorizontalAlignment="Stretch"
+                         Background="Transparent"
+                         Foreground="{StaticResource PrimaryAccentBrush}"/>
         </Grid>
     </Border>
 </UserControl>

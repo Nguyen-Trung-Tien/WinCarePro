@@ -56,7 +56,6 @@ public sealed partial class NotificationPage : Page
     private void ApplyLocalization()
     {
         if (PageTitleTextBlock != null) PageTitleTextBlock.Text = "Notifications & Activity Log".T();
-        if (PageSubtitleTextBlock != null) PageSubtitleTextBlock.Text = "System alerts, notifications, and optimization activity history.".T();
 
         if (BtnTabAlerts != null && BtnTabAlerts.Content is not StackPanel) BtnTabAlerts.Content = "System Alerts".T();
         if (BtnTabLogs != null && BtnTabLogs.Content is not StackPanel) BtnTabLogs.Content = "Activity History".T();
@@ -139,30 +138,53 @@ public sealed partial class NotificationPage : Page
 
         try
         {
-            var (groups, count) = await System.Threading.Tasks.Task.Run(() =>
+            var (groups, count, totalActive) = await System.Threading.Tasks.Task.Run(() =>
             {
-                var notifications = DbManager.GetRecentNotifications();
-                if (notifications == null) notifications = new List<NotificationItem>();
+                var allNotifications = DbManager.GetRecentNotifications();
+                if (allNotifications == null) allNotifications = new List<NotificationItem>();
+
+                int total = allNotifications.Count;
+                var filtered = allNotifications;
 
                 if (!string.IsNullOrEmpty(search))
                 {
-                    notifications = notifications.Where(n => 
+                    filtered = filtered.Where(n => 
                         n.Title.Contains(search, StringComparison.OrdinalIgnoreCase) || 
                         n.Message.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
 
                 if (tag != "All")
                 {
-                    notifications = notifications.Where(n => n.Level.Equals(tag, StringComparison.OrdinalIgnoreCase)).ToList();
+                    filtered = filtered.Where(n => n.Level.Equals(tag, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
 
-                var grouped = notifications
+                var grouped = filtered
                     .GroupBy(n => n.TimeAgoGroup)
                     .Select(g => new NotificationGroup(g.Key, g.ToList()))
                     .ToList();
 
-                return (grouped, notifications.Count);
+                return (grouped, filtered.Count, total);
             });
+
+            // Update Telemetry Deck Card 1
+            if (DeckAlertsCountText != null) DeckAlertsCountText.Text = totalActive.ToString();
+            if (DeckAlertsPill != null && DeckAlertsPillText != null)
+            {
+                if (totalActive == 0)
+                {
+                    DeckAlertsPill.Background = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeGoodBg"];
+                    DeckAlertsPill.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeGoodBorder"];
+                    DeckAlertsPillText.Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeGoodFg"];
+                    DeckAlertsPillText.Text = "All clear".T();
+                }
+                else
+                {
+                    DeckAlertsPill.Background = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeWarningBg"];
+                    DeckAlertsPill.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeWarningBorder"];
+                    DeckAlertsPillText.Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeWarningFg"];
+                    DeckAlertsPillText.Text = $"{totalActive} Action(s)".T();
+                }
+            }
 
             if (count == 0)
             {
@@ -206,6 +228,26 @@ public sealed partial class NotificationPage : Page
         {
             var logs = await System.Threading.Tasks.Task.Run(() => DbManager.GetLogs(module, search));
             LogsListView.ItemsSource = logs;
+
+            // Update Telemetry Deck Cards 2 & 3
+            if (logs != null && logs.Count > 0)
+            {
+                int todayCount = logs.Count(l => l.CreatedAt.Date == DateTime.Today);
+                if (DeckOperationsCountText != null) DeckOperationsCountText.Text = todayCount.ToString();
+
+                var latest = logs.OrderByDescending(l => l.CreatedAt).FirstOrDefault();
+                if (latest != null)
+                {
+                    if (DeckRecentPulseText != null) DeckRecentPulseText.Text = latest.RelativeTimeAgo;
+                    if (DeckRecentModuleText != null) DeckRecentModuleText.Text = $"{latest.Module} • {latest.Status}";
+                }
+            }
+            else
+            {
+                if (DeckOperationsCountText != null) DeckOperationsCountText.Text = "0";
+                if (DeckRecentPulseText != null) DeckRecentPulseText.Text = "Just Now";
+                if (DeckRecentModuleText != null) DeckRecentModuleText.Text = "System Idle";
+            }
 
             bool isEmpty = logs == null || logs.Count == 0;
             LogsEmptyState.Visibility = isEmpty ? Visibility.Visible : Visibility.Collapsed;

@@ -119,7 +119,7 @@
                 <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" ToolTipService.ToolTip="Power &amp; Exit Options">
                     <FontIcon Glyph="&#xE7E8;" FontSize="15" Foreground="#FFEF4444" />
                     <Button.Flyout>
-                        <Flyout x:Name="ExitPowerFlyout" Placement="BottomEdgeAlignedRight">
+                        <Flyout x:Name="ExitPowerFlyout" Placement="BottomEdgeAlignedRight" Opening="ExitPowerFlyout_Opening">
                             <Flyout.FlyoutPresenterStyle>
                                 <Style TargetType="FlyoutPresenter">
                                     <Setter Property="CornerRadius" Value="16"/>

@@ -27,12 +27,15 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left: Title & Badge -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Width="32" Height="32" CornerRadius="8" Background="{StaticResource CyberAccentGradient}">
-                    <FontIcon Glyph="&#xEA8F;" FontSize="15" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <!-- Left: Title & Subtitle with Badge -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
+                    <FontIcon Glyph="&#xEA8F;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
-                <TextBlock x:Name="PageTitleTextBlock" Text="Notifications &amp; Activity Log" FontSize="18" FontWeight="Bold" FontFamily="Segoe UI Variable Display" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock x:Name="PageTitleTextBlock" Text="Notifications &amp; Activity Log" Style="{StaticResource PageHeaderTitleStyle}"/>
+                    <TextBlock x:Name="PageSubtitleTextBlock" Text="System telemetry alerts, diagnostic logs &amp; operation records." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                </StackPanel>
             </StackPanel>
 
             <!-- Center/Right: Segmented Tabs in a sleek compact pill deck -->

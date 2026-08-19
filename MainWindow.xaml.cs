@@ -600,6 +600,14 @@ public sealed partial class MainWindow : Window
         notificationService?.ShowToast("WinCare Pro Running", "Application is minimized to the system tray.", Services.Contracts.NotificationSeverity.Info);
     }
 
+    private void ExitPowerFlyout_Opening(object sender, object e)
+    {
+        if (ExitPowerFlyout?.Content != null)
+        {
+            TranslationManager.Instance.Translate(ExitPowerFlyout.Content);
+        }
+    }
+
     private void ExitAppButton_Click(object sender, RoutedEventArgs e)
     {
         // Fallback if flyout is not triggered directly

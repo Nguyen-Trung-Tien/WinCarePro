@@ -4,6 +4,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
+using WinCarePro.Services;
+using WinCarePro.Shared.Animations;
 
 namespace WinCarePro.Views;
 
@@ -35,54 +37,51 @@ public sealed partial class RegistryPage : Page
             }
         };
 
-        this.Loaded += (s, e) => UpdateLoadingOverlayState();
-
-        this.SizeChanged += (s, e) =>
+        this.Loaded += (s, e) =>
         {
-            bool isWide = e.NewSize.Width >= 800;
-            WideLayoutVisibility = isWide ? Visibility.Visible : Visibility.Collapsed;
-
-            if (LeftCol != null && RightCol != null)
-            {
-                if (isWide)
-                {
-                    LeftCol.Width = new GridLength(1, GridUnitType.Star);
-                    RightCol.Width = new GridLength(380, GridUnitType.Pixel);
-                }
-                else
-                {
-                    LeftCol.Width = new GridLength(1, GridUnitType.Star);
-                    RightCol.Width = new GridLength(0, GridUnitType.Pixel);
-                }
-            }
+            TranslationManager.Instance.Translate(this);
+            UpdateLoadingOverlayState();
         };
     }
 
     private async void OnScanClick(object sender, RoutedEventArgs e)
     {
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
         await ViewModel.ScanRegistryAsync();
     }
 
     private async void OnRepairClick(object sender, RoutedEventArgs e)
     {
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
         await ViewModel.RepairSelectedAsync();
     }
 
     // Registry Editor shortcut — safe alternative to registry cleaner
     private void OnOpenRegeditClick(object sender, RoutedEventArgs e)
     {
-        Process.Start(new ProcessStartInfo("regedit.exe") { UseShellExecute = true });
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
+        try
+        {
+            Process.Start(new ProcessStartInfo("regedit.exe") { UseShellExecute = true });
+        }
+        catch { }
     }
 
     // System Restore shortcut
     private void OnOpenSystemRestoreClick(object sender, RoutedEventArgs e)
     {
-        Process.Start(new ProcessStartInfo("rstrui.exe") { UseShellExecute = true });
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
+        try
+        {
+            Process.Start(new ProcessStartInfo("rstrui.exe") { UseShellExecute = true });
+        }
+        catch { }
     }
 
-    // Registry Backup — still valuable, kept
+    // Registry Backup — safe backup
     private async void OnCreateBackupClick(object sender, RoutedEventArgs e)
     {
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
         await ViewModel.BackupRegistryAsync();
     }
 

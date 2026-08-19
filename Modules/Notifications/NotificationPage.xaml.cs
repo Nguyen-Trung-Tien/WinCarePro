@@ -56,6 +56,7 @@ public sealed partial class NotificationPage : Page
     private void ApplyLocalization()
     {
         if (PageTitleTextBlock != null) PageTitleTextBlock.Text = "Notifications & Activity Log".T();
+        if (PageSubtitleTextBlock != null) PageSubtitleTextBlock.Text = "System telemetry alerts, diagnostic logs & operation records.".T();
 
         if (BtnTabAlerts != null && BtnTabAlerts.Content is not StackPanel) BtnTabAlerts.Content = "System Alerts".T();
         if (BtnTabLogs != null && BtnTabLogs.Content is not StackPanel) BtnTabLogs.Content = "Activity History".T();

@@ -19,52 +19,11 @@
                         <AdaptiveTrigger MinWindowWidth="1000" />
                     </VisualState.StateTriggers>
                 </VisualState>
-                <!-- Medium Layout: Viewport Width >= 720px and < 1000px -->
-                <VisualState x:Name="MediumState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <!-- Card 3 (AI Insights) full width below Cards 1 & 2 -->
-                        <Setter Target="TopCol2.Width" Value="0" />
-                        <Setter Target="Card3.(Grid.Row)" Value="1" />
-                        <Setter Target="Card3.(Grid.Column)" Value="0" />
-                        <Setter Target="Card3.(Grid.ColumnSpan)" Value="3" />
-                    </VisualState.Setters>
-                </VisualState>
-                <!-- Narrow Layout: Viewport Width < 720px -->
+                <!-- Narrow Layout: Viewport Width < 1000px -->
                 <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <!-- Top Cards stacked vertically -->
-                        <Setter Target="TopCol1.Width" Value="0" />
-                        <Setter Target="TopCol2.Width" Value="0" />
-                        <Setter Target="Card1.(Grid.ColumnSpan)" Value="3" />
-                        <Setter Target="Card2.(Grid.Row)" Value="1" />
-                        <Setter Target="Card2.(Grid.Column)" Value="0" />
-                        <Setter Target="Card2.(Grid.ColumnSpan)" Value="3" />
-                        <Setter Target="Card3.(Grid.Row)" Value="2" />
-                        <Setter Target="Card3.(Grid.Column)" Value="0" />
-                        <Setter Target="Card3.(Grid.ColumnSpan)" Value="3" />
-
-                        <!-- Search & Filters Bar Stacking -->
-                        <Setter Target="FiltersBarCol1.Width" Value="0" />
-                        <Setter Target="FiltersBarCol2.Width" Value="0" />
-                        <Setter Target="SearchBox.(Grid.ColumnSpan)" Value="3" />
-                        <Setter Target="SearchBox.Width" Value="NaN" />
-                        <Setter Target="SearchBox.HorizontalAlignment" Value="Stretch" />
-                        <Setter Target="CheckBoxesPanel.(Grid.Row)" Value="1" />
-                        <Setter Target="CheckBoxesPanel.(Grid.Column)" Value="0" />
-                        <Setter Target="CheckBoxesPanel.(Grid.ColumnSpan)" Value="3" />
-                        <Setter Target="CheckBoxesPanel.Margin" Value="0,8,0,0" />
-                        <Setter Target="ScanButton.(Grid.Row)" Value="2" />
-                        <Setter Target="ScanButton.(Grid.Column)" Value="0" />
-                        <Setter Target="ScanButton.(Grid.ColumnSpan)" Value="3" />
-                        <Setter Target="ScanButton.Margin" Value="0,8,0,0" />
-                        <Setter Target="ScanButton.HorizontalAlignment" Value="Left" />
-                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
@@ -91,7 +50,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Accelerate Windows boot velocity, disable heavy startup applications &amp; configure background services." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Manage startup applications, background services, and boot velocity." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
         </Grid>
 
@@ -156,7 +115,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2" Margin="0,0,12,0">
-                        <TextBlock Text="Smart Optimizer Insights" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" />
+                        <TextBlock Text="Smart Insights" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" />
                         <TextBlock Text="{x:Bind ViewModel.OptimizationSuggestions, Mode=OneWay}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" MaxHeight="36" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                     <Button x:Name="QuickOptimizeBtn" Grid.Column="1" Style="{StaticResource AccentButtonStyle}" Click="OnQuickOptimizeClick" VerticalAlignment="Center" Padding="12,6" CornerRadius="6">
@@ -169,32 +128,33 @@
             </Grid>
         </Border>
 
-        <!-- 2. Search & Filters Bar -->
-        <Border Grid.Row="2" Margin="0,0,0,16" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10">
-            <Grid x:Name="FiltersBarGrid" RowSpacing="8">
-                <Grid.RowDefinitions>
-                    <RowDefinition x:Name="FiltersBarRow0" Height="Auto" />
-                    <RowDefinition x:Name="FiltersBarRow1" Height="Auto" />
-                    <RowDefinition x:Name="FiltersBarRow2" Height="Auto" />
-                </Grid.RowDefinitions>
+        <!-- 2. Filter & Actions Toolbar -->
+        <Border Grid.Row="2" Margin="0,0,0,14" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,8">
+            <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="FiltersBarCol0" Width="280" />
-                    <ColumnDefinition x:Name="FiltersBarCol1" Width="*" />
-                    <ColumnDefinition x:Name="FiltersBarCol2" Width="Auto" />
+                    <ColumnDefinition Width="260" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <AutoSuggestBox x:Name="SearchBox" QueryIcon="Find" PlaceholderText="Search applications, services, tasks..." Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay}" VerticalAlignment="Center" CornerRadius="8"/>
+                <!-- Search box -->
+                <TextBox x:Name="FilterBox" 
+                         PlaceholderText="Search apps, services, or tasks..." 
+                         Text="{x:Bind ViewModel.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Height="34" CornerRadius="6" VerticalAlignment="Center"/>
 
-                <StackPanel x:Name="CheckBoxesPanel" Grid.Column="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" Margin="24,0,0,0">
-                    <CheckBox Content="Microsoft Items" IsChecked="{x:Bind ViewModel.FilterMicrosoft, Mode=TwoWay}" CornerRadius="4"/>
-                    <CheckBox Content="Third-Party Items" IsChecked="{x:Bind ViewModel.FilterThirdParty, Mode=TwoWay}" CornerRadius="4"/>
-                    <CheckBox Content="High Impact Only" IsChecked="{x:Bind ViewModel.FilterHighImpact, Mode=TwoWay}" CornerRadius="4"/>
+                <!-- Filter CheckBoxes -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <CheckBox Content="Microsoft Items" IsChecked="{x:Bind ViewModel.FilterMicrosoft, Mode=TwoWay}" FontSize="12" CornerRadius="4"/>
+                    <CheckBox Content="Third-Party Items" IsChecked="{x:Bind ViewModel.FilterThirdParty, Mode=TwoWay}" FontSize="12" CornerRadius="4"/>
+                    <CheckBox Content="High Impact Only" IsChecked="{x:Bind ViewModel.FilterHighImpact, Mode=TwoWay}" FontSize="12" CornerRadius="4"/>
                 </StackPanel>
 
-                <Button x:Name="ScanButton" Grid.Column="2" Click="OnReloadStartupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" VerticalAlignment="Center" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Padding="12,6">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <ProgressRing x:Name="ScanSystemRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
-                        <FontIcon x:Name="ScanSystemIcon" Glyph="&#xE72C;" FontSize="13" />
+                <!-- Scan Button -->
+                <Button x:Name="ScanButton" Grid.Column="2" Click="OnReloadStartupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Height="34" Padding="14,0" CornerRadius="6">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <ProgressRing x:Name="ScanSystemRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
+                        <FontIcon x:Name="ScanSystemIcon" Glyph="&#xE72C;" FontSize="13" Foreground="White" Visibility="{x:Bind ViewModel.IsLoading, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"/>
                         <TextBlock x:Name="ScanSystemText" Text="Scan System" FontSize="12.5" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
@@ -304,7 +264,7 @@
                                             </StackPanel>
                                         </StackPanel>
                                         
-                                        <TextBlock Grid.Row="1" Text="Mở trình quản lý dịch vụ Windows chính thức để cấu hình loại khởi chạy (Automatic, Manual, Disabled) và bật/tắt các tiến trình chạy ngầm." TextWrapping="Wrap" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
+                                        <TextBlock Grid.Row="1" Text="Configure Windows services startup types and background processes." TextWrapping="Wrap" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
                                         
                                         <Button Grid.Row="2" Content="Open Services Manager →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOpenServicesMscClick" CornerRadius="10" Padding="18,10" FontWeight="Bold" HorizontalAlignment="Stretch"/>
                                     </Grid>
@@ -329,7 +289,7 @@
                                             </StackPanel>
                                         </StackPanel>
                                         
-                                        <TextBlock Grid.Row="1" Text="Theo dõi PID thực tế, mức tiêu thụ tài nguyên RAM/CPU theo thời gian thực và quản lý nhanh danh sách dịch vụ của hệ điều hành." TextWrapping="Wrap" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
+                                        <TextBlock Grid.Row="1" Text="Monitor live service PIDs and real-time CPU/RAM usage." TextWrapping="Wrap" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
                                         
                                         <Button Grid.Row="2" Content="Open Task Manager →" Click="OnOpenTaskMgrServicesClick" CornerRadius="10" Padding="18,10" FontWeight="Bold" HorizontalAlignment="Stretch"/>
                                     </Grid>
@@ -353,7 +313,7 @@
                                                 <TextBlock Text="14 Core Services Protected" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
                                             </Border>
                                         </StackPanel>
-                                        <TextBlock Text="WinCare Pro tự động bảo vệ các dịch vụ hệ thống cốt lõi của Windows (WinDefend, wuauserv, RpcSs, EventLog, Dhcp...) nhằm chống vô tình dừng hoặc tắt dịch vụ gây sập máy." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock Text="Protects vital Windows services (WinDefend, RpcSs, EventLog, Dhcp) against accidental termination." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>

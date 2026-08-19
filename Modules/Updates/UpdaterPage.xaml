@@ -129,7 +129,7 @@
                     </Border>
                     <StackPanel Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="Software Updater" Style="{StaticResource PageHeaderTitleStyle}" />
-                        <TextBlock Text="Update applications and system packages via WinGet." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                        <TextBlock Text="Update installed applications and system packages via WinGet." Style="{StaticResource PageHeaderSubtitleStyle}" />
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

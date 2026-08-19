@@ -786,6 +786,30 @@
                 <Setter Property="Opacity" Value="0.6" />
             </Style>
 
+            <!-- Active Preset Profile Chip Button Style (Glowing Neon Pill) -->
+            <Style x:Key="ActivePresetChipButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="BorderBrush" Value="{StaticResource AuroraGlowBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1.2" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="12,8" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+            </Style>
+
+            <!-- Inactive Preset Profile Chip Button Style (Subtle Card Pill) -->
+            <Style x:Key="InactivePresetChipButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="12,8" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+            </Style>
+
             <!-- Value Converters -->
             <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />

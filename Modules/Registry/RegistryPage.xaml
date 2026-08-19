@@ -10,61 +10,181 @@
     xmlns:vm="using:WinCarePro.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 960px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="960" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+
+                <!-- Narrow Layout: Viewport Width < 960px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderCol1.Width" Value="0" />
+                        <Setter Target="HeaderTitlePanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderActionsPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
+                        <Setter Target="StatCard2.(Grid.Row)" Value="1" />
+                        <Setter Target="StatCard2.(Grid.Column)" Value="0" />
+                        <Setter Target="StatCard3.(Grid.Row)" Value="2" />
+                        <Setter Target="StatCard3.(Grid.Column)" Value="0" />
+                        <Setter Target="LeftCol.Width" Value="*" />
+                        <Setter Target="RightCol.Width" Value="0" />
+                        <Setter Target="RightPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="RightPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="RightPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="RightPanel.Margin" Value="0,14,0,0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" /> <!-- 0. Header -->
+            <RowDefinition Height="Auto" /> <!-- 1. Stat Ribbon -->
+            <RowDefinition Height="*" />    <!-- 2. Main Content Workspace -->
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <!-- ==================== 0. MODERN HEADER ==================== -->
+        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,14">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="HeaderRow0" Height="Auto" />
+                <RowDefinition x:Name="HeaderRow1" Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition x:Name="HeaderCol0" Width="*" />
+                <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Spacing="4">
-                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+
+            <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Spacing="4">
+                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                     <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
                         <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <TextBlock Text="Registry Center &amp; Optimizer" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
-                    <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                    <StackPanel Spacing="2" VerticalAlignment="Center">
+                        <TextBlock Text="Registry Center &amp; Optimizer" Style="{StaticResource PageHeaderTitleStyle}" />
+                        <TextBlock Text="Scan invalid registry entries, repair keys, and manage safety backups." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                    </StackPanel>
+                    <!-- Integrity Guard Pill -->
+                    <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center" Margin="6,0,0,0">
                         <StackPanel Orientation="Horizontal" Spacing="5">
                             <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
                             <TextBlock Text="Registry Integrity Guard" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Repair corrupted keys, eliminate invalid CLSIDs, streamline shell registrations &amp; defragment registry hives." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" Padding="14,0">
+
+            <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" CornerRadius="8" Padding="14,0">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE721;" FontSize="13" />
-                        <TextBlock Text="Scan Registry" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        <FontIcon Glyph="&#xE721;" FontSize="12" />
+                        <TextBlock Text="Scan Registry" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button Click="OnRepairClick" Style="{StaticResource VibrantPrimaryButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="36" Padding="16,0">
+                <Button Click="OnRepairClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="16,0">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE74D;" FontSize="13" Foreground="White" />
-                        <TextBlock Text="Clean Selected" VerticalAlignment="Center" FontSize="12.5" FontWeight="Bold" />
+                        <FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="White" />
+                        <TextBlock Text="Clean Selected" VerticalAlignment="Center" FontSize="12" FontWeight="Bold" />
                     </StackPanel>
                 </Button>
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="1" ColumnSpacing="20">
+        <!-- ==================== 1. 3-CARD STAT RIBBON ==================== -->
+        <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LeftCol" Width="*" />
-                <ColumnDefinition x:Name="RightCol" Width="380" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left: Registry Cleaner & Tools -->
-            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-                <StackPanel Spacing="16">
+            <!-- Card 0: Detected Issues -->
+            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#20F59E0B" BorderBrush="#50F59E0B" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xEDA2;" FontSize="16" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Detected Inconsistencies" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="{x:Bind ViewModel.Issues.Count, Mode=OneWay}" FontSize="15" FontWeight="ExtraBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Text="Issues Found" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 1: Safety Backups Available -->
+            <Border x:Name="StatCard2" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE727;" FontSize="16" Foreground="{ThemeResource AppBadgeGoodFg}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Safety Snapshots Created" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="{x:Bind ViewModel.Backups.Count, Mode=OneWay}" FontSize="15" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeGoodFg}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Text="Restorable Hives" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 2: Scan Status Engine -->
+            <Border x:Name="StatCard3" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xEB42;" FontSize="16" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Registry Engine Status" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="13" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 2. MAIN WORKSPACE ==================== -->
+        <Grid Grid.Row="2" ColumnSpacing="16" RowSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftCol" Width="*" />
+                <ColumnDefinition x:Name="RightCol" Width="360" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Registry Cleaner & Quick Utilities -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Spacing="14">
 
                     <!-- Registry Cleaner Scan Card -->
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16">
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
                         <StackPanel Spacing="12">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -72,28 +192,28 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                    <FontIcon Glyph="&#xEDA2;" FontSize="16" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
-                                    <TextBlock Text="Registry Issues" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" />
+                                    <FontIcon Glyph="&#xEDA2;" FontSize="15" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" />
+                                    <TextBlock Text="Registry Issues &amp; Invalid References" FontSize="13.5" FontWeight="Bold" VerticalAlignment="Center" />
                                 </StackPanel>
-                                <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
                             </Grid>
 
                             <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
 
                             <!-- Issues List -->
-                            <ListView ItemsSource="{x:Bind ViewModel.Issues, Mode=OneWay}" SelectionMode="None" MaxHeight="280">
+                            <ListView ItemsSource="{x:Bind ViewModel.Issues, Mode=OneWay}" SelectionMode="None" MaxHeight="300" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="models:RegistryIssue">
-                                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" Padding="6,8">
+                                        <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="10,8" Margin="0,0,0,4">
                                             <Grid ColumnSpacing="10">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" MinWidth="0" />
-                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                                                     <TextBlock Text="{x:Bind Title}" FontWeight="Bold" FontSize="12" />
-                                                    <TextBlock Text="{x:Bind KeyPath}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{x:Bind KeyPath}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </Grid>
                                         </Border>
@@ -103,48 +223,56 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Open Registry Editor -->
-                    <Border Style="{StaticResource NeonGlowBorderStyle}" Padding="16,14">
-                        <Grid ColumnSpacing="16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Width="36" Height="36" CornerRadius="10" Background="#15EDA20E">
-                                <FontIcon Glyph="&#xEDA2;" FontSize="16" Foreground="#FFEDA20E"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                <TextBlock Text="Registry Editor (regedit)" FontWeight="Bold" FontSize="13.5"/>
-                            </StackPanel>
-                            <Button Grid.Column="2" Content="Open →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" VerticalAlignment="Center" Click="OnOpenRegeditClick" CornerRadius="6" Padding="14,6" FontSize="12"/>
-                        </Grid>
-                    </Border>
+                    <!-- Tools Row: Registry Editor & System Restore -->
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Open System Restore -->
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
-                        <Grid ColumnSpacing="16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Width="36" Height="36" CornerRadius="10" Background="#158B5CF6">
-                                <FontIcon Glyph="&#xE7A7;" FontSize="16" Foreground="#FF8B5CF6"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                <TextBlock Text="System Restore (rstrui)" FontWeight="Bold" FontSize="13.5"/>
-                            </StackPanel>
-                            <Button Grid.Column="2" Content="Open →" VerticalAlignment="Center" Click="OnOpenSystemRestoreClick" CornerRadius="6" Padding="14,6" FontSize="12"/>
-                        </Grid>
-                    </Border>
+                        <!-- Open Registry Editor -->
+                        <Border Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1">
+                                    <FontIcon Glyph="&#xEDA2;" FontSize="14" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                    <TextBlock Text="Registry Editor" FontWeight="Bold" FontSize="12.5"/>
+                                    <TextBlock Text="regedit.exe" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <Button Grid.Column="2" Content="Open →" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Click="OnOpenRegeditClick" CornerRadius="6" Padding="10,4" FontSize="11.5"/>
+                            </Grid>
+                        </Border>
 
+                        <!-- Open System Restore -->
+                        <Border Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1">
+                                    <FontIcon Glyph="&#xE7A7;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                    <TextBlock Text="System Restore" FontWeight="Bold" FontSize="12.5"/>
+                                    <TextBlock Text="rstrui.exe" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <Button Grid.Column="2" Content="Open →" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Click="OnOpenSystemRestoreClick" CornerRadius="6" Padding="10,4" FontSize="11.5"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
                 </StackPanel>
             </ScrollViewer>
 
-
-            <!-- Right: Backup & Restore -->
-            <Border x:Name="RightPanel" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="20" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}">
+            <!-- Right: Backup & Restore Deck -->
+            <Border x:Name="RightPanel" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="18,14">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -152,29 +280,28 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Text="Registry Backup &amp; Restore" FontSize="16" FontWeight="Bold" Margin="0,0,0,12" />
+                    <TextBlock Grid.Row="0" Text="Registry Backup &amp; Restore" FontSize="14" FontWeight="Bold" Margin="0,0,0,10" />
                     
-                    <Button Grid.Row="1" Content="Create Full Backup" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Margin="0,0,0,20" Click="OnCreateBackupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
+                    <Button Grid.Row="1" Content="Create Full Safety Backup" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Height="34" CornerRadius="8" Margin="0,0,0,14" Click="OnCreateBackupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" FontWeight="Bold" FontSize="12"/>
 
                     <Grid Grid.Row="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="Backup History" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,0,10" />
+                        <TextBlock Grid.Row="0" Text="Backup History" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,0,8" />
                         
-                        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Backups, Mode=OneWay}" SelectionMode="None">
+                        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Backups, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:RegistryBackupItem">
-                                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" Padding="8,10">
+                                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="8,6" Margin="0,0,0,4">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <StackPanel Spacing="2">
-                                                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5" />
-                                                <TextBlock Text="{x:Bind FilePath}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                            <StackPanel Spacing="1">
+                                                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12" />
+                                                <TextBlock Text="{x:Bind FilePath}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                             </StackPanel>
                                         </Grid>
                                     </Border>
@@ -187,36 +314,34 @@
         </Grid>
 
         <!-- Loading Overlay Indicator — smooth fade in/out -->
-        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="2" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="3" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.Resources>
                 <Storyboard x:Name="FadeInLoading">
-                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.25">
                         <DoubleAnimation.EasingFunction>
                             <CubicEase EasingMode="EaseOut"/>
                         </DoubleAnimation.EasingFunction>
                     </DoubleAnimation>
                 </Storyboard>
                 <Storyboard x:Name="FadeOutLoading" Completed="FadeOutLoading_Completed">
-                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.3">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.25">
                         <DoubleAnimation.EasingFunction>
                             <CubicEase EasingMode="EaseOut"/>
                         </DoubleAnimation.EasingFunction>
                     </DoubleAnimation>
                 </Storyboard>
             </Grid.Resources>
-            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
-                <StackPanel Spacing="14" HorizontalAlignment="Center">
-                    <!-- Glowing Registry Badge -->
-                    <Grid Width="60" Height="60" HorizontalAlignment="Center">
-                        <Border Width="60" Height="60" CornerRadius="18" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
-                            <FontIcon Glyph="&#xEB42;" FontSize="22" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="32,22" HorizontalAlignment="Center" VerticalAlignment="Center" Width="340">
+                <StackPanel Spacing="12" HorizontalAlignment="Center">
+                    <Grid Width="54" Height="54" HorizontalAlignment="Center">
+                        <Border Width="54" Height="54" CornerRadius="16" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
+                            <FontIcon Glyph="&#xEB42;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </Grid>
 
-                    <TextBlock Text="Processing Registry Operation..." FontSize="14" FontWeight="Bold" TextAlignment="Center" />
+                    <TextBlock Text="Processing Registry Operation..." FontSize="13.5" FontWeight="Bold" TextAlignment="Center" />
 
-                    <!-- Linear Progress Bar -->
-                    <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1" Width="260">
+                    <Border Background="#1AFFFFFF" CornerRadius="4" Height="6" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1" Width="240">
                         <ProgressBar IsIndeterminate="True" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch"/>
                     </Border>
                 </StackPanel>
@@ -224,5 +349,3 @@
         </Grid>
     </Grid>
 </Page>
-
-

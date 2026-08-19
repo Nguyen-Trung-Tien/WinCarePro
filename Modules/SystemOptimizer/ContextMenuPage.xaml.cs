@@ -6,6 +6,8 @@ using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Shared.Components;
+using WinCarePro.Services;
+using WinCarePro.Shared.Animations;
 
 namespace WinCarePro.Views;
 
@@ -28,7 +30,11 @@ public sealed partial class ContextMenuPage : Page
             }
         };
 
-        this.Loaded += (s, e) => UpdateLoadingOverlayState();
+        this.Loaded += (s, e) =>
+        {
+            TranslationManager.Instance.Translate(this);
+            UpdateLoadingOverlayState();
+        };
     }
 
     private void UpdateLoadingOverlayState()
@@ -57,6 +63,7 @@ public sealed partial class ContextMenuPage : Page
     private async void OnScanClick(object sender, RoutedEventArgs e)
     {
         var btn = ScanBtn ?? (sender as Button);
+        if (btn != null) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, ScanRing, ScanText, null,
             "Scanning Context Menus...", "Scan Context Menus",
@@ -64,7 +71,7 @@ public sealed partial class ContextMenuPage : Page
             {
                 await ViewModel.ScanAsync();
             },
-            minDurationMs: 1200);
+            minDurationMs: 1000);
     }
 
     private async void OnItemToggled(object sender, RoutedEventArgs e)

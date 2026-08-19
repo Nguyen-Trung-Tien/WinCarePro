@@ -42,6 +42,7 @@ namespace WinCarePro.Modules.GamingTurbo
                 ProcCountText.Text = $"{_viewModel.OptimizedProcessesCount} {processLabel}";
                 ButtonText.Text = _viewModel.IsTurboActive ? TranslationManager.Instance.T("DISABLE TURBO") : TranslationManager.Instance.T("ENABLE TURBO NOW");
                 ActivePresetLabel.Text = _viewModel.ActivePresetName;
+                UpdatePresetButtonStyles(_viewModel.ActivePresetName);
 
                 if (_viewModel.IsTurboActive)
                 {
@@ -60,6 +61,19 @@ namespace WinCarePro.Modules.GamingTurbo
                     TurboPulseRing.Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11));
                 }
             };
+        }
+
+        private void UpdatePresetButtonStyles(string activePreset)
+        {
+            var activeStyle = Application.Current.Resources["ActivePresetChipButtonStyle"] as Style;
+            var inactiveStyle = Application.Current.Resources["InactivePresetChipButtonStyle"] as Style;
+
+            if (activeStyle == null || inactiveStyle == null) return;
+
+            if (PresetBtnFps != null) PresetBtnFps.Style = (activePreset == "Competitive FPS") ? activeStyle : inactiveStyle;
+            if (PresetBtnRpg != null) PresetBtnRpg.Style = (activePreset == "Open-World RPG") ? activeStyle : inactiveStyle;
+            if (PresetBtnRts != null) PresetBtnRts.Style = (activePreset == "Simulators & RTS") ? activeStyle : inactiveStyle;
+            if (PresetBtnVr != null) PresetBtnVr.Style = (activePreset == "VR / Max Quality") ? activeStyle : inactiveStyle;
         }
 
         private async void OnToggleTurboClick(object sender, RoutedEventArgs e)
@@ -96,6 +110,7 @@ namespace WinCarePro.Modules.GamingTurbo
             {
                 FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 250);
                 _viewModel.ApplyPreset(preset);
+                UpdatePresetButtonStyles(preset);
                 
                 if (App.MainWindowInstance is MainWindow mw)
                 {

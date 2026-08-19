@@ -1250,6 +1250,22 @@ public partial class TranslationManager
         // --- Exit Overlay & Power off ---
         _translations["Shutting Down"] = "Đang tắt ứng dụng";
         _translations["Closing database connections and freeing resources..."] = "Đang đóng kết nối cơ sở dữ liệu và giải phóng tài nguyên...";
+        _translations["Securing database, flushing memory caches & closing services..."] = "Đang bảo vệ cơ sở dữ liệu, xóa bộ đệm & đóng các dịch vụ...";
+        _translations["Saving session state & active modules..."] = "Đang lưu trạng thái phiên làm việc & các phân hệ...";
+        _translations["Flushing SQLite WAL checkpoint & memory pools..."] = "Đang đồng bộ SQLite WAL checkpoint & vùng nhớ đệm...";
+        _translations["Disposing telemetry engines & system monitors..."] = "Đang giải phóng bộ máy đo lường & giám sát hệ thống...";
+        _translations["All resources secured. Goodbye!"] = "Tất cả tài nguyên đã được bảo vệ. Tạm biệt!";
+        _translations["Session Terminated"] = "Phiên làm việc đã kết thúc";
+        _translations["Finalizing shutdown..."] = "Đang hoàn tất tắt ứng dụng...";
+        _translations["Power Options"] = "Tùy chọn nguồn";
+        _translations["WinCare Pro Session"] = "Phiên làm việc WinCare Pro";
+        _translations["Power & Exit Options"] = "Tùy chọn nguồn & Thoát";
+        _translations["Shut Down WinCare Pro"] = "Tắt WinCare Pro";
+        _translations["Save state & close completely"] = "Lưu trạng thái & đóng hoàn toàn";
+        _translations["Minimize to Tray"] = "Thu nhỏ xuống khay hệ thống";
+        _translations["Keep active in background"] = "Tiếp tục chạy nền";
+        _translations["WinCare Pro Running"] = "WinCare Pro Đang Chạy";
+        _translations["Application is minimized to the system tray."] = "Ứng dụng đã được thu nhỏ xuống khay hệ thống.";
 
         // --- Notifications Page & Pivot Headers ---
         _translations["Notifications & Activity Log"] = "Thông báo & Nhật ký hoạt động";
@@ -2959,6 +2975,38 @@ public partial class TranslationManager
         // --- Memory card / Working Set ---
         _translations["Working set & Trạng thái Standby"] = "Bộ nhớ Working Set & Bộ nhớ Chờ (Standby)";
         _translations["Working set & Standby state"] = "Bộ nhớ Working Set & Bộ nhớ Chờ (Standby)";
+
+        // --- Standardized Subtitles & System Badges (Evolution 4.2.0) ---
+        _translations["Analyze and purge system cache, temporary files, and debris."] = "Phân tích và dọn dẹp bộ nhớ đệm, tệp tạm thời và dữ liệu rác.";
+        _translations["Intelligent diagnostics, bottleneck detection & automated optimization."] = "Chẩn đoán thông minh, phát hiện nghẽn cổ chai & tối ưu hóa tự động.";
+        _translations["Monitor drive S.M.A.R.T telemetry, analyze storage, and find duplicate files."] = "Theo dõi S.M.A.R.T ổ đĩa, phân tích dung lượng và tìm tệp trùng lặp.";
+        _translations["Scan invalid registry entries, repair keys, and manage safety backups."] = "Quét các mục registry không hợp lệ, sửa khóa và quản lý bản sao lưu an toàn.";
+        _translations["Hardware trust monitoring, credential safety, and telemetry privacy."] = "Giám sát độ tin cậy phần cứng, an toàn xác thực và quyền riêng tư.";
+        _translations["Prioritize CPU thread scheduling, release background RAM & minimize latency."] = "Ưu tiên luồng CPU, giải phóng RAM nền & giảm thiểu độ trễ tối đa.";
+        _translations["Optimize kernel responsiveness, process scheduling, and memory caching."] = "Tối ưu độ phản hồi nhân Kernel, lập lịch tiến trình và bộ đệm bộ nhớ.";
+        _translations["Manage startup applications, background services, and boot velocity."] = "Quản lý ứng dụng khởi động, dịch vụ chạy nền và tốc độ boot hệ thống.";
+        _translations["Network telemetry, DNS benchmarking, and TCP/IP connectivity repairs."] = "Đo lường mạng, kiểm tra tốc độ DNS và sửa lỗi kết nối TCP/IP.";
+        _translations["Cleanly uninstall applications, system packages, and remove leftover data."] = "Gỡ cài đặt triệt để ứng dụng, gói phần mềm và xóa dữ liệu tàn dư.";
+        _translations["Update installed applications and system packages via WinGet."] = "Cập nhật ứng dụng đã cài đặt và các gói hệ thống qua WinGet.";
+        _translations["System telemetry alerts, diagnostic logs & operation records."] = "Cảnh báo đo lường hệ thống, nhật ký chẩn đoán & lịch sử vận hành.";
+        _translations["Comprehensive documentation, step-by-step feature guides, and best practices."] = "Tài liệu toàn diện, hướng dẫn tính năng chi tiết và quy chuẩn an toàn.";
+        _translations["S.M.A.R.T Shield Active"] = "Khiên S.M.A.R.T Hoạt Động";
+        _translations["Registry Integrity Guard"] = "Bảo Vệ Tính Toàn Vẹn Registry";
+        _translations["Neural Core Engine"] = "Lõi Nơ-ron AI";
+        _translations["Boot Optimizer Active"] = "Tối Ưu Khởi Động Đang Bật";
+        _translations["Ultra Low-Latency Mode"] = "Chế Độ Độ Trễ Cực Thấp";
+        _translations["100% Safe Guidelines"] = "Hướng Dẫn An Toàn 100%";
+        _translations["15 Core Modules"] = "15 Module Cốt Lõi";
+        _translations["Notifications & Activity Log"] = "Thông Báo & Nhật Ký Hoạt Động";
+        _translations["Active Profile:"] = "Hồ Sơ Đang Bật:";
+        _translations["Competitive FPS"] = "FPS Cạnh Tranh";
+        _translations["Operations Today:"] = "Tác Vụ Hôm Nay:";
+        _translations["🛡️ Sentinel Active"] = "🛡️ Vệ Binh Đang Hoạt Động";
+        _translations["All clear"] = "Tất cả an toàn";
+        _translations["All clear! No active system alerts."] = "Tuyệt vời! Không có cảnh báo hệ thống nào.";
+        _translations["No activity logs found."] = "Không tìm thấy nhật ký hoạt động nào.";
+        _translations["Search alerts by title or description..."] = "Tìm kiếm cảnh báo theo tiêu đề hoặc mô tả...";
+        _translations["Search logs by action or status..."] = "Tìm kiếm nhật ký theo tác vụ hoặc trạng thái...";
 
         _reverseTranslations.Clear();
         foreach (var kvp in _translations)

@@ -73,6 +73,12 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Header & Presets -->
             <RowDefinition Height="Auto" /> <!-- 1. 4-Deck Stat Ribbon -->
@@ -99,7 +105,7 @@
                     </Border>
                     <StackPanel Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="System Optimizer &amp; Performance" Style="{StaticResource PageHeaderTitleStyle}" />
-                        <TextBlock Text="Kernel response tuning, high-speed RAM working set purger, latency reduction, and gaming acceleration." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                        <TextBlock Text="Optimize kernel responsiveness, process scheduling, and memory caching." Style="{StaticResource PageHeaderSubtitleStyle}" />
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

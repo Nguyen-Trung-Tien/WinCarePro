@@ -45,7 +45,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Predictive neural diagnostics, automated bottleneck detection &amp; smart PC optimization." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Intelligent diagnostics, bottleneck detection &amp; automated optimization." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">

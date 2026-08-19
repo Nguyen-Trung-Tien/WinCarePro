@@ -81,7 +81,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Real-time kernel diagnostics, hardware monitors, predictive storage telemetry &amp; automated background care." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                <TextBlock Text="Real-time hardware telemetry, kernel diagnostics, and AI system care." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
         </Grid>
 
@@ -110,7 +110,7 @@
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
-                            <TextBlock Text="Live telemetry, predictive disk sustainability, RAM working set purge &amp; AI diagnostics." 
+                            <TextBlock Text="Active background monitoring, memory management, and AI diagnostics." 
                                        FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
 

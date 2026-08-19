@@ -49,6 +49,7 @@ public sealed partial class UpdaterPage : Page
     private async void OnScanUpdatesClick(object sender, RoutedEventArgs e)
     {
         var btn = ScanUpdatesBtn ?? (sender as Button);
+        if (btn != null) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, ScanUpdatesRing, ScanUpdatesText, null,
             "Scanning Updates...", "Scan Updates",
@@ -62,6 +63,7 @@ public sealed partial class UpdaterPage : Page
     private async void OnUpdateAllClick(object sender, RoutedEventArgs e)
     {
         var btn = UpdateAllBtn ?? (sender as Button);
+        if (btn != null) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, UpdateAllRing, UpdateAllText, null,
             "Updating All...", "Update All",
@@ -75,6 +77,7 @@ public sealed partial class UpdaterPage : Page
     private async void OnUpdateSelectedClick(object sender, RoutedEventArgs e)
     {
         var btn = UpdateSelectedBtn ?? (sender as Button);
+        if (btn != null) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, UpdateSelectedRing, UpdateSelectedText, null,
             "Updating Selected...", "Update Selected",

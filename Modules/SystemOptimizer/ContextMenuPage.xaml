@@ -68,7 +68,7 @@
                 </Border>
                 <StackPanel Spacing="2" VerticalAlignment="Center">
                     <TextBlock Text="Context Menu Manager" Style="{StaticResource PageHeaderTitleStyle}" />
-                    <TextBlock Text="Clean up shell extensions, declutter right-click menus, and accelerate Windows File Explorer." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                    <TextBlock Text="Manage shell extensions and declutter right-click menus." Style="{StaticResource PageHeaderSubtitleStyle}" />
                 </StackPanel>
             </StackPanel>
 
@@ -238,10 +238,7 @@
                         <TextBlock Text="Shell Guidelines" FontSize="13" FontWeight="Bold" />
                     </StackPanel>
                     
-                    <TextBlock Text="Installed software (such as archivers, cloud drives, editors) inject shell extensions into Windows right-click menus."
-                               TextWrapping="Wrap" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="16" />
-
-                    <TextBlock Text="Disabling unused shell extensions significantly reduces context menu popup delay and eliminates Explorer freeze."
+                    <TextBlock Text="Disabling unused shell extensions removes right-click popup delay and prevents File Explorer freezes."
                                TextWrapping="Wrap" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="16" />
 
                     <!-- Safe Mechanism Note -->
@@ -251,7 +248,7 @@
                                 <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="#FF10B981" VerticalAlignment="Center" />
                                 <TextBlock Text="Safe Non-Destructive Mod" FontWeight="Bold" FontSize="11.5" Foreground="#FF10B981" VerticalAlignment="Center" />
                             </StackPanel>
-                            <TextBlock Text="WinCare Pro does not delete registry keys. Disabled keys are cleanly prefixed with '-' so you can instantly re-enable them anytime."
+                            <TextBlock Text="Disabled keys are safely prefixed with '-' rather than deleted, allowing instant restoration anytime."
                                        TextWrapping="Wrap" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="15" />
                         </StackPanel>
                     </Border>

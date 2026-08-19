@@ -67,7 +67,7 @@
                 </Border>
                 <StackPanel Spacing="2" VerticalAlignment="Center">
                     <TextBlock Text="Network Center &amp; Diagnostics" Style="{StaticResource PageHeaderTitleStyle}"/>
-                    <TextBlock Text="Real-time network telemetry, low-latency DNS optimizer, socket traffic &amp; TCP/IP repair." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                    <TextBlock Text="Network telemetry, DNS benchmarking, and TCP/IP connectivity repairs." Style="{StaticResource PageHeaderSubtitleStyle}"/>
                 </StackPanel>
                 
                 <!-- Live Internet Connection Status Pill -->

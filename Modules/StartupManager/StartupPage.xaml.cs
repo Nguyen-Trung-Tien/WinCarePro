@@ -58,7 +58,11 @@ public sealed partial class StartupPage : Page
             }
         };
 
-        this.Loaded += (s, e) => UpdateLoadingOverlayState();
+        this.Loaded += (s, e) =>
+        {
+            TranslationManager.Instance.Translate(this);
+            UpdateLoadingOverlayState();
+        };
 
         this.SizeChanged += (s, e) =>
         {
@@ -73,6 +77,7 @@ public sealed partial class StartupPage : Page
     private async void OnReloadStartupClick(object sender, RoutedEventArgs e)
     {
         var btn = ScanButton ?? (sender as Button);
+        if (btn != null) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, ScanSystemRing, ScanSystemText, ScanSystemIcon,
             "Scanning System...", "Scan System",
@@ -85,6 +90,7 @@ public sealed partial class StartupPage : Page
 
     private void OnOpenServicesMscClick(object sender, RoutedEventArgs e)
     {
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
             Process.Start(new ProcessStartInfo("services.msc") { UseShellExecute = true });
@@ -94,6 +100,7 @@ public sealed partial class StartupPage : Page
 
     private void OnOpenTaskMgrServicesClick(object sender, RoutedEventArgs e)
     {
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
             Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true });
@@ -104,6 +111,7 @@ public sealed partial class StartupPage : Page
     private async void OnQuickOptimizeClick(object sender, RoutedEventArgs e)
     {
         var btn = QuickOptimizeBtn ?? (sender as Button);
+        if (btn != null) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, BoostSpeedRing, BoostSpeedText, null,
             "Boosting Boot Speed...", "Boost Boot Speed",

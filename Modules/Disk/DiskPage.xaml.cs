@@ -5,6 +5,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
+using WinCarePro.Services;
+using WinCarePro.Shared.Animations;
 
 namespace WinCarePro.Views;
 
@@ -18,6 +20,7 @@ public sealed partial class DiskPage : Page
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = App.Services.GetRequiredService<DiskViewModel>();
         this.DataContext = ViewModel;
+        this.Loaded += (s, e) => TranslationManager.Instance.Translate(this);
         this.Unloaded += (s, e) => ViewModel.Cleanup();
     }
 
@@ -35,6 +38,7 @@ public sealed partial class DiskPage : Page
 
     private async void OnBrowseFolderClick(object sender, RoutedEventArgs e)
     {
+        if (sender is Button btn) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
             var folderPicker = new Windows.Storage.Pickers.FolderPicker();
@@ -54,16 +58,19 @@ public sealed partial class DiskPage : Page
 
     private async void OnAnalyzeClick(object sender, RoutedEventArgs e)
     {
+        if (sender is Button btn) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
         await ViewModel.AnalyzeStorageAsync();
     }
 
     private async void OnAnalyzeSpaceClick(object sender, RoutedEventArgs e)
     {
+        if (sender is Button btn) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
         await ViewModel.AnalyzeStorageAsync();
     }
 
     private async void OnGoUpDirectoryClick(object sender, RoutedEventArgs e)
     {
+        if (sender is Button btn) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
             var parent = System.IO.Directory.GetParent(ViewModel.StorageScanPath);
@@ -78,6 +85,7 @@ public sealed partial class DiskPage : Page
 
     private async void OnScanDuplicatesClick(object sender, RoutedEventArgs e)
     {
+        if (sender is Button btn) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
         await ViewModel.FindDuplicatesAsync();
     }
 

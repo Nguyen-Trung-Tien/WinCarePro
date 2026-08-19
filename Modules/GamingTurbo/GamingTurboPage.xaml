@@ -11,7 +11,7 @@
 
     <Page.Resources>
         <Storyboard x:Name="TurboGlowAnimation" AutoReverse="True" RepeatBehavior="Forever">
-            <DoubleAnimation Storyboard.TargetName="TurboReactorGlow" Storyboard.TargetProperty="Opacity" From="0.08" To="0.35" Duration="0:0:1.8">
+            <DoubleAnimation Storyboard.TargetName="TurboReactorGlow" Storyboard.TargetProperty="Opacity" From="0.10" To="0.45" Duration="0:0:1.6">
                 <DoubleAnimation.EasingFunction>
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
@@ -19,14 +19,66 @@
         </Storyboard>
     </Page.Resources>
 
-    <Grid Padding="24,20" HorizontalAlignment="Stretch">
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 1000px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1000" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+
+                <!-- Medium Layout: Viewport Width between 720px and 1000px -->
+                <VisualState x:Name="MediumState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TelemetryTile2.(Grid.Row)" Value="1" />
+                        <Setter Target="TelemetryTile2.(Grid.Column)" Value="0" />
+                        <Setter Target="TelemetryTile3.(Grid.Row)" Value="1" />
+                        <Setter Target="TelemetryTile3.(Grid.Column)" Value="1" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <!-- Narrow Layout: Viewport Width < 720px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TelemetryTile1.(Grid.Row)" Value="1" />
+                        <Setter Target="TelemetryTile1.(Grid.Column)" Value="0" />
+                        <Setter Target="TelemetryTile2.(Grid.Row)" Value="2" />
+                        <Setter Target="TelemetryTile2.(Grid.Column)" Value="0" />
+                        <Setter Target="TelemetryTile3.(Grid.Row)" Value="3" />
+                        <Setter Target="TelemetryTile3.(Grid.Column)" Value="0" />
+                        <Setter Target="TuningPresetsCard.(Grid.Row)" Value="0" />
+                        <Setter Target="TuningPresetsCard.(Grid.Column)" Value="0" />
+                        <Setter Target="TuningPresetsCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="KernelTweaksCard.(Grid.Row)" Value="1" />
+                        <Setter Target="KernelTweaksCard.(Grid.Column)" Value="0" />
+                        <Setter Target="KernelTweaksCard.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="KernelTweaksCard.Margin" Value="0,12,0,0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,18">
+        <Grid Grid.Row="0" Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -37,23 +89,23 @@
                     <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource GamingTurboGradient}">
                         <FontIcon Glyph="&#xE785;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <TextBlock Text="Gaming Turbo" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="Gaming Turbo Engine" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
                     <Border Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeWarningFg}"/>
-                            <TextBlock Text="Ultra Low-Latency Engine" FontSize="11" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeWarningFg}"/>
+                            <TextBlock Text="Ultra Low-Latency Mode" FontSize="11" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeWarningFg}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Boost gaming FPS, reduce latency, and optimize CPU priority." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Prioritize CPU thread scheduling, release background RAM &amp; minimize latency." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
-            <!-- Quick Tuning Presets -->
+            <!-- Active Profile Indicator Pill -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,6">
+                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,6">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE785;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                        <TextBlock Text="Preset:" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock Text="Active Profile:" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock x:Name="ActivePresetLabel" Text="Competitive FPS" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                     </StackPanel>
                 </Border>
@@ -62,10 +114,10 @@
 
         <!-- Main Gaming Dashboard -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Spacing="16">
+            <StackPanel Spacing="14">
 
                 <!-- 1. Hero Turbo Reactor Banner Card -->
-                <Border Style="{StaticResource AuraGlassCardStyle}" Padding="22">
+                <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -74,8 +126,8 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Glowing Reactor Orb -->
-                        <Grid Grid.Column="0" Width="130" Height="130" Margin="0,0,24,0">
-                            <Ellipse x:Name="TurboReactorGlow" Width="124" Height="124" Opacity="0.2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Grid Grid.Column="0" Width="120" Height="120" Margin="0,0,20,0">
+                            <Ellipse x:Name="TurboReactorGlow" Width="118" Height="118" Opacity="0.2" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Ellipse.Fill>
                                     <RadialGradientBrush>
                                         <GradientStop Color="#FFF59E0B" Offset="0" />
@@ -84,40 +136,40 @@
                                     </RadialGradientBrush>
                                 </Ellipse.Fill>
                             </Ellipse>
-                            <Ellipse Width="110" Height="110" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="4" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.3"/>
-                            <ProgressRing x:Name="TurboPulseRing" Value="100" Width="114" Height="114" Foreground="{ThemeResource AppBadgeWarningFg}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Ellipse Width="104" Height="104" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="3.5" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.3"/>
+                            <ProgressRing x:Name="TurboPulseRing" Value="100" Width="108" Height="108" Foreground="{ThemeResource AppBadgeWarningFg}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
-                                <FontIcon Glyph="&#xEA3B;" FontSize="28" Foreground="{ThemeResource AppBadgeWarningFg}" HorizontalAlignment="Center"/>
-                                <TextBlock Text="TURBO 2.0" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="15"/>
+                                <FontIcon Glyph="&#xEA3B;" FontSize="26" Foreground="{ThemeResource AppBadgeWarningFg}" HorizontalAlignment="Center"/>
+                                <TextBlock Text="TURBO 2.0" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="12"/>
                             </StackPanel>
                         </Grid>
 
                         <!-- Status & Mode Description -->
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="8">
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="10">
-                                <TextBlock Text="Gaming Turbo Engine" FontSize="21" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                <Border x:Name="TurboStatusPill" Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3">
+                                <TextBlock Text="Kernel Game Optimizer" FontSize="19" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <Border x:Name="TurboStatusPill" Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" CornerRadius="6" Padding="8,2">
                                     <TextBlock x:Name="TurboStatusPillText" Text="Standby" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeWarningFg}"/>
                                 </Border>
                             </StackPanel>
                             <TextBlock x:Name="StatusMessageText" Text="Gaming Turbo 2.0 is in Standby mode. Ready to boost FPS &amp; latency." 
-                                       FontSize="13.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="20"/>
+                                       FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="18"/>
                             
-                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
-                                <Border Background="#1510B981" BorderBrush="#4010B981" BorderThickness="1" CornerRadius="6" Padding="8,3">
+                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,2,0,0">
+                                <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,2">
                                     <StackPanel Orientation="Horizontal" Spacing="4">
-                                        <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="#FF10B981"/>
-                                        <TextBlock Text="Hardware Acceleration Ready" FontSize="11" FontWeight="SemiBold" Foreground="#FF10B981"/>
+                                        <FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                        <TextBlock Text="Hardware Latency Vector Ready" FontSize="10.5" FontWeight="SemiBold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
                         </StackPanel>
 
                         <!-- Big Turbo Action Button -->
-                        <Button x:Name="TurboToggleButton" Grid.Column="2" Click="OnToggleTurboClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="44" Padding="24,0" VerticalAlignment="Center" Margin="16,0,0,0">
+                        <Button x:Name="TurboToggleButton" Grid.Column="2" Click="OnToggleTurboClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="42" Padding="20,0" VerticalAlignment="Center" Margin="14,0,0,0">
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon Glyph="&#xEA3B;" FontSize="16"/>
-                                <TextBlock x:Name="ButtonText" Text="ENABLE TURBO NOW" FontSize="13.5" FontWeight="Bold"/>
+                                <FontIcon Glyph="&#xEA3B;" FontSize="15"/>
+                                <TextBlock x:Name="ButtonText" Text="ENABLE TURBO NOW" FontSize="13" FontWeight="Bold"/>
                             </StackPanel>
                         </Button>
                     </Grid>
@@ -133,74 +185,74 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Stat 1: Freed RAM -->
-                    <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,12">
-                        <StackPanel Spacing="6">
+                    <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
+                        <StackPanel Spacing="4">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <Border Width="26" Height="26" CornerRadius="6" Background="#153B82F6">
-                                    <FontIcon Glyph="&#xE950;" FontSize="12" Foreground="#FF3B82F6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <Border Width="24" Height="24" CornerRadius="6" Background="#153B82F6">
+                                    <FontIcon Glyph="&#xE950;" FontSize="11" Foreground="#FF3B82F6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Border>
-                                <TextBlock Text="Purged RAM" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Purged RAM" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock x:Name="FreedRamText" Text="0 MB" FontSize="18" FontWeight="ExtraBold" Foreground="#FF3B82F6"/>
-                            <TextBlock Text="Standby list &amp; working sets" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock x:Name="FreedRamText" Text="0 MB" FontSize="17" FontWeight="ExtraBold" Foreground="#FF3B82F6" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Text="Working sets &amp; standby cache" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Stat 2: Optimized Processes -->
-                    <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,12">
-                        <StackPanel Spacing="6">
+                    <Border x:Name="TelemetryTile1" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
+                        <StackPanel Spacing="4">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <Border Width="26" Height="26" CornerRadius="6" Background="#158B5CF6">
-                                    <FontIcon Glyph="&#xE9D9;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <Border Width="24" Height="24" CornerRadius="6" Background="#158B5CF6">
+                                    <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Border>
-                                <TextBlock Text="Background Apps" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Background Apps" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock x:Name="ProcCountText" Text="0 Processes" FontSize="18" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                            <TextBlock Text="Throttled background loads" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock x:Name="ProcCountText" Text="0 Processes" FontSize="17" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Text="Throttled background loads" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Stat 3: Power Mode -->
-                    <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}" Padding="14,12">
-                        <StackPanel Spacing="6">
+                    <Border x:Name="TelemetryTile2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
+                        <StackPanel Spacing="4">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <Border Width="26" Height="26" CornerRadius="6" Background="#1510B981">
-                                    <FontIcon Glyph="&#xE7E8;" FontSize="12" Foreground="#FF10B981" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <Border Width="24" Height="24" CornerRadius="6" Background="{ThemeResource AppBadgeGoodBg}">
+                                    <FontIcon Glyph="&#xE7E8;" FontSize="11" Foreground="{ThemeResource AppBadgeGoodFg}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Border>
-                                <TextBlock Text="Power Plan" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Power Plan" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="Ultimate Power" FontSize="18" FontWeight="ExtraBold" Foreground="#FF10B981"/>
-                            <TextBlock Text="Zero CPU core parking" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="Ultimate Power" FontSize="17" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                            <TextBlock Text="Zero CPU core parking" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Stat 4: Network Latency Vector -->
-                    <Border Grid.Column="3" Style="{StaticResource QuickStatCardStyle}" Padding="14,12">
-                        <StackPanel Spacing="6">
+                    <Border x:Name="TelemetryTile3" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
+                        <StackPanel Spacing="4">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <Border Width="26" Height="26" CornerRadius="6" Background="#15F59E0B">
-                                    <FontIcon Glyph="&#xE774;" FontSize="12" Foreground="#FFF59E0B" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <Border Width="24" Height="24" CornerRadius="6" Background="#15F59E0B">
+                                    <FontIcon Glyph="&#xE774;" FontSize="11" Foreground="#FFF59E0B" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Border>
-                                <TextBlock Text="TCP Packet Pacing" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="TCP Packet Pacing" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBlock Text="NoDelay (0ms Jitter)" FontSize="18" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
-                            <TextBlock Text="Optimized gaming sockets" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="NoDelay (0ms)" FontSize="17" FontWeight="ExtraBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Text="Gaming socket prioritization" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
                 </Grid>
 
                 <!-- 3. Tuning Profiles & Optimization Switches Deck -->
-                <Grid ColumnSpacing="16">
+                <Grid ColumnSpacing="14" RowSpacing="14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
                     <!-- Left Card: Tuning Profile Selector -->
-                    <Border Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="18">
-                        <StackPanel Spacing="12">
-                            <TextBlock Text="Gaming Profile Presets" FontSize="15" FontWeight="Bold"/>
-                            <TextBlock Text="Select a tailored profile for your current game genre to apply specific CPU scheduling and memory allocation." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                    <Border x:Name="TuningPresetsCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Gaming Profile Presets" FontSize="14" FontWeight="Bold"/>
+                            <TextBlock Text="Select a tailored profile for your current game genre to apply specific CPU scheduling and memory allocation." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                             
                             <Grid ColumnSpacing="8" RowSpacing="8" Margin="0,4,0,0">
                                 <Grid.ColumnDefinitions>
@@ -212,31 +264,31 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Button Grid.Row="0" Grid.Column="0" Click="OnPresetClick" Tag="Competitive FPS" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" Padding="8,10" CornerRadius="8">
+                                <Button x:Name="PresetBtnFps" Grid.Row="0" Grid.Column="0" Click="OnPresetClick" Tag="Competitive FPS" Style="{StaticResource ActivePresetChipButtonStyle}" HorizontalAlignment="Stretch" Padding="8,8" CornerRadius="8">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <FontIcon Glyph="&#xE7FC;" FontSize="13"/>
-                                        <TextBlock Text="Competitive FPS" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <FontIcon Glyph="&#xE7FC;" FontSize="12"/>
+                                        <TextBlock Text="Competitive FPS" FontSize="11.5"/>
                                     </StackPanel>
                                 </Button>
 
-                                <Button Grid.Row="0" Grid.Column="1" Click="OnPresetClick" Tag="Open-World RPG" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Padding="8,10" CornerRadius="8">
+                                <Button x:Name="PresetBtnRpg" Grid.Row="0" Grid.Column="1" Click="OnPresetClick" Tag="Open-World RPG" Style="{StaticResource InactivePresetChipButtonStyle}" HorizontalAlignment="Stretch" Padding="8,8" CornerRadius="8">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <FontIcon Glyph="&#xE785;" FontSize="13"/>
-                                        <TextBlock Text="Open-World RPG" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <FontIcon Glyph="&#xE785;" FontSize="12"/>
+                                        <TextBlock Text="Open-World RPG" FontSize="11.5"/>
                                     </StackPanel>
                                 </Button>
 
-                                <Button Grid.Row="1" Grid.Column="0" Click="OnPresetClick" Tag="Simulators &amp; RTS" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Padding="8,10" CornerRadius="8">
+                                <Button x:Name="PresetBtnRts" Grid.Row="1" Grid.Column="0" Click="OnPresetClick" Tag="Simulators &amp; RTS" Style="{StaticResource InactivePresetChipButtonStyle}" HorizontalAlignment="Stretch" Padding="8,8" CornerRadius="8">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <FontIcon Glyph="&#xEC50;" FontSize="13"/>
-                                        <TextBlock Text="Simulators &amp; RTS" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <FontIcon Glyph="&#xEC50;" FontSize="12"/>
+                                        <TextBlock Text="Simulators &amp; RTS" FontSize="11.5"/>
                                     </StackPanel>
                                 </Button>
 
-                                <Button Grid.Row="1" Grid.Column="1" Click="OnPresetClick" Tag="VR / Max Quality" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Padding="8,10" CornerRadius="8">
+                                <Button x:Name="PresetBtnVr" Grid.Row="1" Grid.Column="1" Click="OnPresetClick" Tag="VR / Max Quality" Style="{StaticResource InactivePresetChipButtonStyle}" HorizontalAlignment="Stretch" Padding="8,8" CornerRadius="8">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <FontIcon Glyph="&#xE9D9;" FontSize="13"/>
-                                        <TextBlock Text="VR / Max Quality" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <FontIcon Glyph="&#xE9D9;" FontSize="12"/>
+                                        <TextBlock Text="VR / Max Quality" FontSize="11.5"/>
                                     </StackPanel>
                                 </Button>
                             </Grid>
@@ -244,14 +296,14 @@
                     </Border>
 
                     <!-- Right Card: Low-Level Gaming Tweaks -->
-                    <Border Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="18">
-                        <StackPanel Spacing="10">
-                            <TextBlock Text="Kernel &amp; Latency Tweaks" FontSize="15" FontWeight="Bold"/>
+                    <Border x:Name="KernelTweaksCard" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Kernel &amp; Latency Tweaks" FontSize="14" FontWeight="Bold"/>
 
-                            <components:LoadingToggleSwitch HeaderText="Foreground Game Process High-Priority" IsOn="True" />
-                            <components:LoadingToggleSwitch HeaderText="Flush Windows Standby List Cache" IsOn="True" />
-                            <components:LoadingToggleSwitch HeaderText="TCP NoDelay (Disable Nagle's Algorithm for Gaming)" IsOn="True" />
-                            <components:LoadingToggleSwitch HeaderText="Suspend Windows Update &amp; Telemetry during Gaming" IsOn="True" />
+                            <components:LoadingToggleSwitch HeaderText="Foreground Game Process High-Priority" IsOn="True" MinLoadingDurationMs="300"/>
+                            <components:LoadingToggleSwitch HeaderText="Flush Windows Standby List Cache" IsOn="True" MinLoadingDurationMs="300"/>
+                            <components:LoadingToggleSwitch HeaderText="TCP NoDelay (Disable Nagle's Algorithm for Gaming)" IsOn="True" MinLoadingDurationMs="300"/>
+                            <components:LoadingToggleSwitch HeaderText="Suspend Windows Update &amp; Telemetry during Gaming" IsOn="True" MinLoadingDurationMs="300"/>
                         </StackPanel>
                     </Border>
                 </Grid>

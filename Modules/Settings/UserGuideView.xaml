@@ -10,14 +10,9 @@
     <StackPanel Spacing="20">
         <!-- ==================== 1. HERO KNOWLEDGE DECK ==================== -->
         <Border Style="{StaticResource ElevatedGlassCardStyle}" Padding="22,18">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
+            <StackPanel Spacing="14">
                 <!-- Top Row: Title + Version Badge + Stats -->
-                <Grid Grid.Row="0" Margin="0,0,0,16">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -54,57 +49,59 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- Bottom Row: Search Box & Category Filters -->
-                <Grid Grid.Row="1" ColumnSpacing="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="280"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <!-- Search Input Box -->
+                <AutoSuggestBox x:Name="GuideSearchBox" 
+                                PlaceholderText="Search guide (e.g., RAM, DNS, SFC, game, junk)..."
+                                QueryIcon="Find"
+                                CornerRadius="8"
+                                Height="36"
+                                HorizontalAlignment="Stretch"
+                                TextChanged="OnGuideSearchTextChanged"/>
 
-                    <!-- Real-time Search Box -->
-                    <AutoSuggestBox x:Name="GuideSearchBox" 
-                                    Grid.Column="0"
-                                    PlaceholderText="Search guide (e.g., RAM, DNS, SFC, game, junk)..."
-                                    QueryIcon="Find"
-                                    CornerRadius="10"
-                                    Height="36"
-                                    VerticalAlignment="Center"
-                                    TextChanged="OnGuideSearchTextChanged"/>
+                <!-- Category Filter Segmented Deck (Responsive 5-Column Grid, Zero Horizontal Scrolling!) -->
+                <Border Background="{ThemeResource ControlFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="9" Padding="4">
+                    <Grid ColumnSpacing="6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Category Filter Segmented Chips -->
-                    <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled">
-                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Button x:Name="FilterBtnAll" Click="OnCategoryFilterClick" Tag="All" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="8">
-                                <TextBlock Text="All Modules" FontSize="11.5" FontWeight="SemiBold"/>
-                            </Button>
-                            <Button x:Name="FilterBtnCare" Click="OnCategoryFilterClick" Tag="Care" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="8">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xEA99;" FontSize="12" Foreground="Orange"/>
-                                    <TextBlock Text="Care &amp; Clean" FontSize="11.5" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                            <Button x:Name="FilterBtnTuning" Click="OnCategoryFilterClick" Tag="Tuning" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="8">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE7FC;" FontSize="12" Foreground="#FFF59E0B"/>
-                                    <TextBlock Text="Tuning &amp; Gaming" FontSize="11.5" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                            <Button x:Name="FilterBtnSecurity" Click="OnCategoryFilterClick" Tag="Security" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="8">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE90F;" FontSize="12" Foreground="Teal"/>
-                                    <TextBlock Text="Security &amp; Repair" FontSize="11.5" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                            <Button x:Name="FilterBtnSystem" Click="OnCategoryFilterClick" Tag="System" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="8">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE713;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                    <TextBlock Text="System &amp; Tools" FontSize="11.5" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </ScrollViewer>
-                </Grid>
-            </Grid>
+                        <Button x:Name="FilterBtnAll" Grid.Column="0" Click="OnCategoryFilterClick" Tag="All" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Xem tất cả 15 phân hệ hướng dẫn">
+                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE80F;" FontSize="11" Foreground="White"/>
+                                <TextBlock Text="All Modules" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="FilterBtnCare" Grid.Column="1" Click="OnCategoryFilterClick" Tag="Care" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Chăm sóc &amp; Dọn dẹp hệ thống">
+                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xEA99;" FontSize="11" Foreground="Orange"/>
+                                <TextBlock Text="Care" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="FilterBtnTuning" Grid.Column="2" Click="OnCategoryFilterClick" Tag="Tuning" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Tối ưu hóa hiệu năng &amp; Chơi game">
+                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE7FC;" FontSize="11" Foreground="#FFF59E0B"/>
+                                <TextBlock Text="Tuning" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="FilterBtnSecurity" Grid.Column="3" Click="OnCategoryFilterClick" Tag="Security" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Bảo mật, Quyền riêng tư &amp; Sửa lỗi Windows">
+                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE90F;" FontSize="11" Foreground="Teal"/>
+                                <TextBlock Text="Security" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="FilterBtnSystem" Grid.Column="4" Click="OnCategoryFilterClick" Tag="System" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Công cụ hệ thống &amp; Quản lý Windows">
+                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE713;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="System" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
+            </StackPanel>
         </Border>
 
         <!-- Search Status / Empty State Notification -->

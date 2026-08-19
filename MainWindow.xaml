@@ -77,7 +77,7 @@
                         <Border Background="{ThemeResource AppCpuChipBg}" BorderBrush="{ThemeResource AppCpuChipBorder}" BorderThickness="1" CornerRadius="12" Padding="8,3">
                             <StackPanel Orientation="Horizontal" Spacing="4">
                                 <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="CpuChipText" Text="CPU" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="CpuChipText" Text="CPU" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                             </StackPanel>
                         </Border>
                     </Button>
@@ -86,7 +86,7 @@
                         <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="12" Padding="8,3">
                             <StackPanel Orientation="Horizontal" Spacing="4">
                                 <FontIcon Glyph="&#xE7F1;" FontSize="11" Foreground="{ThemeResource AppRamChipFg}" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="RamChipText" Text="RAM" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppRamChipFg}" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="RamChipText" Text="RAM" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppRamChipFg}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                             </StackPanel>
                         </Border>
                     </Button>
@@ -95,7 +95,7 @@
                 <!-- Live Clock -->
                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,8,0">
                     <FontIcon Glyph="&#xE787;" FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="ClockText" Text="--:--" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display"/>
+                    <TextBlock x:Name="ClockText" Text="--:--" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                 </StackPanel>
 
                 <!-- Separator -->

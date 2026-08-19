@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using WinCarePro.Services;
+using WinCarePro.Shared.Animations;
 
 namespace WinCarePro.Modules.GamingTurbo
 {
@@ -63,6 +64,15 @@ namespace WinCarePro.Modules.GamingTurbo
 
         private async void OnToggleTurboClick(object sender, RoutedEventArgs e)
         {
+            if (sender is UIElement elem)
+            {
+                FluidAnimationHelper.ApplyGlowSparkBurst(elem, 1.08f, 380);
+            }
+            if (TurboPulseRing != null)
+            {
+                FluidAnimationHelper.ApplyGlowSparkBurst(TurboPulseRing, 1.12f, 400);
+            }
+
             await _viewModel.ToggleTurboCommand.ExecuteAsync(null);
             
             if (App.MainWindowInstance is MainWindow mw)
@@ -84,6 +94,7 @@ namespace WinCarePro.Modules.GamingTurbo
         {
             if (sender is Button btn && btn.Tag is string preset)
             {
+                FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 250);
                 _viewModel.ApplyPreset(preset);
                 
                 if (App.MainWindowInstance is MainWindow mw)

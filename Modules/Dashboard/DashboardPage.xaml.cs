@@ -585,11 +585,19 @@ public sealed partial class DashboardPage : Page
 
     private async void OnBoostRamClick(object sender, RoutedEventArgs e)
     {
+        if (sender is UIElement elem)
+        {
+            FluidAnimationHelper.ApplyGlowSparkBurst(elem, 1.08f, 350);
+        }
         await ViewModel.BoostRamAsync();
     }
 
     private async void OnCleanDiskClick(object sender, RoutedEventArgs e)
     {
+        if (sender is UIElement elem)
+        {
+            FluidAnimationHelper.ApplyGlowSparkBurst(elem, 1.08f, 350);
+        }
         await ViewModel.CleanDiskJunkAsync();
     }
 

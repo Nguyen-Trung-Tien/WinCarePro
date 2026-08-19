@@ -7,6 +7,7 @@ using WinCarePro.Models;
 using WinCarePro.Services.Contracts;
 
 using WinCarePro.Core.Helpers;
+using WinCarePro.Shared.Animations;
 
 namespace WinCarePro.Views;
 
@@ -75,6 +76,7 @@ public sealed partial class JunkPage : Page
     private async void OnScanJunkClick(object sender, RoutedEventArgs e)
     {
         var btn = ScanJunkBtn ?? (sender as Button);
+        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 300);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, ScanJunkRing, ScanJunkText, ScanJunkIcon,
             "Scanning Debris...", "Scan Directories",
@@ -90,6 +92,7 @@ public sealed partial class JunkPage : Page
     private async void OnCleanJunkClick(object sender, RoutedEventArgs e)
     {
         var btn = CleanJunkBtn ?? (sender as Button);
+        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.07f, 350);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, CleanJunkRing, CleanJunkText, CleanJunkIcon,
             "Cleaning Debris...", "Clean Now",
@@ -142,6 +145,11 @@ public sealed partial class JunkPage : Page
     public bool CanClean(bool isCleaning, int count)
     {
         return !isCleaning && count > 0;
+    }
+
+    public Visibility GetDeckVisibility(bool isCleaning, int count)
+    {
+        return (!isCleaning && count > 0) ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public bool GetProgressRingActive(bool scanning, bool cleaning)

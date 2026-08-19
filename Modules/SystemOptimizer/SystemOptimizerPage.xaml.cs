@@ -7,6 +7,7 @@ using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Shared.Animations;
 
 namespace WinCarePro.Views;
 
@@ -61,6 +62,7 @@ public sealed partial class SystemOptimizerPage : Page
     private async void OnSmartTuneClick(object sender, RoutedEventArgs e)
     {
         var btn = SmartTuneBtn ?? (sender as Button);
+        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
         int applied = 0;
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, null, null, null,
@@ -81,6 +83,7 @@ public sealed partial class SystemOptimizerPage : Page
     private async void OnGamingProfileClick(object sender, RoutedEventArgs e)
     {
         var btn = GamingProfileBtn ?? (sender as Button);
+        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
         int applied = 0;
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, null, null, null,
@@ -101,6 +104,7 @@ public sealed partial class SystemOptimizerPage : Page
     private async void OnPrivacyProfileClick(object sender, RoutedEventArgs e)
     {
         var btn = PrivacyProfileBtn ?? (sender as Button);
+        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
         int applied = 0;
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, null, null, null,
@@ -121,6 +125,7 @@ public sealed partial class SystemOptimizerPage : Page
     private async void OnApplyTweaksClick(object sender, RoutedEventArgs e)
     {
         var btn = ApplyTweaksBtn ?? (sender as Button);
+        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
         int applied = 0;
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, ApplyTweaksRing, ApplyTweaksText, ApplyTweaksIcon,

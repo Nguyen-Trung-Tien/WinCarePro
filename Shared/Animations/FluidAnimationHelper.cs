@@ -512,5 +512,181 @@ namespace WinCarePro.Shared.Animations
 
             visual.StartAnimation("Scale", scaleAnim);
         }
+
+        // ============================================================
+        // 12. GLOW SPARK BURST ANIMATION (Master Micro-Interaction)
+        // ============================================================
+
+        /// <summary>
+        /// Triggers an exhilarating radial spark pulse & haptic-like scale burst on a button or card
+        /// when an action like Boost, Clean Now, or Turbo Mode is activated.
+        /// </summary>
+        public static void ApplyGlowSparkBurst(UIElement element, float peakScale = 1.06f, int durationMs = 380)
+        {
+            if (element == null) return;
+
+            ElementCompositionPreview.SetIsTranslationEnabled(element, true);
+            Visual visual = ElementCompositionPreview.GetElementVisual(element);
+            Compositor compositor = visual.Compositor;
+
+            if (element is FrameworkElement fe)
+            {
+                visual.CenterPoint = new Vector3((float)fe.ActualWidth / 2f, (float)fe.ActualHeight / 2f, 0);
+            }
+
+            // Keyframe Scale animation: 1.0 -> peakScale -> 0.98 -> 1.0
+            Vector3KeyFrameAnimation burstScale = compositor.CreateVector3KeyFrameAnimation();
+            burstScale.InsertKeyFrame(0.0f, new Vector3(1.0f, 1.0f, 1.0f));
+            burstScale.InsertKeyFrame(0.35f, new Vector3(peakScale, peakScale, 1.0f),
+                compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+            burstScale.InsertKeyFrame(0.7f, new Vector3(0.98f, 0.98f, 1.0f),
+                compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0.0f), new Vector2(0.6f, 1.0f)));
+            burstScale.InsertKeyFrame(1.0f, new Vector3(1.0f, 1.0f, 1.0f),
+                compositor.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.8f), new Vector2(0.3f, 1.0f)));
+            burstScale.Duration = TimeSpan.FromMilliseconds(durationMs);
+
+            visual.StartAnimation("Scale", burstScale);
+        }
+
+        // ============================================================
+        // 13. FLOATING ACTION DECK ANIMATION (Sticky Bottom Toolbar)
+        // ============================================================
+
+        /// <summary>
+        /// Smoothly slides and fades a floating action deck into or out of view.
+        /// </summary>
+        public static void AnimateFloatingDeck(UIElement deckElement, bool isVisible, float slideDistanceY = 36, int durationMs = 300)
+        {
+            if (deckElement == null) return;
+
+            ElementCompositionPreview.SetIsTranslationEnabled(deckElement, true);
+            Visual visual = ElementCompositionPreview.GetElementVisual(deckElement);
+            Compositor compositor = visual.Compositor;
+
+            if (isVisible)
+            {
+                deckElement.Visibility = Visibility.Visible;
+                visual.Properties.InsertVector3("Translation", new Vector3(0, slideDistanceY, 0));
+                visual.Opacity = 0.0f;
+
+                SpringVector3NaturalMotionAnimation springSlide = compositor.CreateSpringVector3Animation();
+                springSlide.Target = "Translation";
+                springSlide.FinalValue = new Vector3(0, 0, 0);
+                springSlide.DampingRatio = 0.76f;
+                springSlide.Period = TimeSpan.FromMilliseconds(durationMs);
+
+                ScalarKeyFrameAnimation fadeIn = compositor.CreateScalarKeyFrameAnimation();
+                fadeIn.InsertKeyFrame(0.0f, 0.0f);
+                fadeIn.InsertKeyFrame(1.0f, 1.0f, compositor.CreateCubicBezierEasingFunction(
+                    new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+                fadeIn.Duration = TimeSpan.FromMilliseconds((int)(durationMs * 0.8));
+
+                visual.StartAnimation("Translation", springSlide);
+                visual.StartAnimation("Opacity", fadeIn);
+            }
+            else
+            {
+                Vector3KeyFrameAnimation slideDown = compositor.CreateVector3KeyFrameAnimation();
+                slideDown.InsertKeyFrame(0.0f, new Vector3(0, 0, 0));
+                slideDown.InsertKeyFrame(1.0f, new Vector3(0, slideDistanceY, 0),
+                    compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0.0f), new Vector2(1.0f, 1.0f)));
+                slideDown.Duration = TimeSpan.FromMilliseconds(durationMs);
+
+                ScalarKeyFrameAnimation fadeOut = compositor.CreateScalarKeyFrameAnimation();
+                fadeOut.InsertKeyFrame(0.0f, 1.0f);
+                fadeOut.InsertKeyFrame(1.0f, 0.0f, compositor.CreateCubicBezierEasingFunction(
+                    new Vector2(0.4f, 0.0f), new Vector2(1.0f, 1.0f)));
+                fadeOut.Duration = TimeSpan.FromMilliseconds(durationMs);
+
+                visual.StartAnimation("Translation", slideDown);
+                visual.StartAnimation("Opacity", fadeOut);
+
+                DispatcherQueue? dq = (deckElement as FrameworkElement)?.DispatcherQueue;
+                if (dq != null)
+                {
+                    DispatcherQueueTimer timer = dq.CreateTimer();
+                    timer.Interval = TimeSpan.FromMilliseconds(durationMs + 20);
+                    timer.IsRepeating = false;
+                    timer.Tick += (s, e) =>
+                    {
+                        deckElement.Visibility = Visibility.Collapsed;
+                        timer.Stop();
+                    };
+                    timer.Start();
+                }
+            }
+        }
+
+        // ============================================================
+        // 14. NUMBER FLOAT COUNT-UP ANIMATION
+        // ============================================================
+
+        /// <summary>
+        /// Animates a TextBlock showing floating point numerical changes (e.g., "1.25 GB" -> "5.80 GB").
+        /// </summary>
+        public static void AnimateNumberFloat(TextBlock textBlock, double from, double to, string format = "0.00", string suffix = "", int durationMs = 700)
+        {
+            if (textBlock == null) return;
+
+            DispatcherQueue dispatcherQueue = textBlock.DispatcherQueue;
+            if (dispatcherQueue == null) return;
+
+            int frameCount = 45;
+            double intervalMs = (double)durationMs / frameCount;
+
+            int currentFrame = 0;
+            DispatcherQueueTimer timer = dispatcherQueue.CreateTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(Math.Max(16, intervalMs));
+            timer.IsRepeating = true;
+
+            timer.Tick += (s, e) =>
+            {
+                currentFrame++;
+                double progress = (double)currentFrame / frameCount;
+                double easedProgress = 1.0 - Math.Pow(1.0 - progress, 3); // Cubic ease out
+                double currentVal = from + ((to - from) * easedProgress);
+
+                textBlock.Text = $"{currentVal.ToString(format)}{suffix}";
+
+                if (currentFrame >= frameCount)
+                {
+                    textBlock.Text = $"{to.ToString(format)}{suffix}";
+                    timer.Stop();
+                }
+            };
+
+            textBlock.Text = $"{from.ToString(format)}{suffix}";
+            timer.Start();
+        }
+
+        // ============================================================
+        // 15. SELECTION PULSE MICRO-INTERACTION
+        // ============================================================
+
+        /// <summary>
+        /// Subtle pop-in scale animation when an item checkbox or toggle switch is clicked.
+        /// </summary>
+        public static void AnimateSelectionPulse(UIElement element)
+        {
+            if (element == null) return;
+
+            Visual visual = ElementCompositionPreview.GetElementVisual(element);
+            Compositor compositor = visual.Compositor;
+
+            if (element is FrameworkElement fe)
+            {
+                visual.CenterPoint = new Vector3((float)fe.ActualWidth / 2f, (float)fe.ActualHeight / 2f, 0);
+            }
+
+            Vector3KeyFrameAnimation popAnim = compositor.CreateVector3KeyFrameAnimation();
+            popAnim.InsertKeyFrame(0.0f, new Vector3(1.0f, 1.0f, 1.0f));
+            popAnim.InsertKeyFrame(0.4f, new Vector3(1.04f, 1.04f, 1.0f),
+                compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+            popAnim.InsertKeyFrame(1.0f, new Vector3(1.0f, 1.0f, 1.0f),
+                compositor.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.8f), new Vector2(0.3f, 1.0f)));
+            popAnim.Duration = TimeSpan.FromMilliseconds(220);
+
+            visual.StartAnimation("Scale", popAnim);
+        }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
+using WinCarePro.Services;
 using WinCarePro.Services.Contracts;
 
 using WinCarePro.Core.Helpers;
@@ -39,7 +40,18 @@ public sealed partial class JunkPage : Page
             }
         };
 
-        this.Loaded += (s, e) => UpdateProgressOverlayState();
+        this.Loaded += (s, e) =>
+        {
+            UpdateProgressOverlayState();
+            TranslationManager.Instance.Translate(this);
+        };
+
+        var langHandler = new EventHandler((s, e) =>
+        {
+            this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
+        });
+        TranslationManager.Instance.LanguageChanged += langHandler;
+        this.Unloaded += (s, e) => TranslationManager.Instance.LanguageChanged -= langHandler;
 
         this.SizeChanged += (s, e) =>
         {

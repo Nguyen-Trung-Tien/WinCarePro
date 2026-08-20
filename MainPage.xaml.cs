@@ -161,6 +161,20 @@ public sealed partial class MainPage : Page
         NavigateToPage("notification");
     }
 
+    public void NavigateToUserGuide()
+    {
+        NavView.SelectedItem = NavView.SettingsItem;
+        if (ContentFrame.Content is SettingsPage settingsPage)
+        {
+            settingsPage.SelectSection(10);
+        }
+        else
+        {
+            ContentFrame.Navigate(typeof(SettingsPage), 10);
+            UpdateHeader();
+        }
+    }
+
     private void LoadAnimationsConfiguration()
     {
         try

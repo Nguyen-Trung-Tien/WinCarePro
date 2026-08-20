@@ -101,13 +101,18 @@
                 <!-- Separator -->
                 <Border Width="1" Height="20" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="4,0" VerticalAlignment="Center" Opacity="0.5"/>
 
-                 <!-- Theme Switcher -->
-                <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ThemeButton_Click">
+                 <!-- User Guide / Help Button '?' -->
+                <Button x:Name="UserGuideButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="UserGuideButton_Click" ToolTipService.ToolTip="User Guide &amp; Documentation">
+                    <FontIcon Glyph="&#xE897;" FontSize="15" />
+                </Button>
+
+                <!-- Theme Switcher -->
+                <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="ThemeButton_Click" ToolTipService.ToolTip="Toggle Theme">
                     <FontIcon x:Name="ThemeIcon" Glyph="&#xE706;" FontSize="15" />
                 </Button>
                 
                 <!-- Notification Bell -->
-                <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="NotificationButton_Click">
+                <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" Click="NotificationButton_Click" ToolTipService.ToolTip="Notifications">
                     <Grid>
                         <FontIcon Glyph="&#xEA8F;" FontSize="15" />
                         <!-- Red dot badge -->

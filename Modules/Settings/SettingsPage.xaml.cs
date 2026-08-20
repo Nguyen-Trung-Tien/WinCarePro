@@ -45,6 +45,10 @@ public sealed partial class SettingsPage : Page
             SettingsService.Instance.SettingsChanged -= OnSettingsChangedExternally;
             SettingsService.Instance.SettingsChanged += OnSettingsChangedExternally;
 
+            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+            TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+            TranslationManager.Instance.Translate(this);
+
             // Sync with current theme on load
             bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
             ApplyThemeCardSelection(isDark);
@@ -59,7 +63,39 @@ public sealed partial class SettingsPage : Page
         {
             ThemeManager.Instance.ThemeChanged -= OnThemeChangedExternally;
             SettingsService.Instance.SettingsChanged -= OnSettingsChangedExternally;
+            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         };
+    }
+
+    public void SelectSection(int index)
+    {
+        if (index >= 0 && index < SettingsNavList.Items.Count)
+        {
+            SettingsNavList.SelectedIndex = index;
+        }
+    }
+
+    protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        if (e.Parameter is int sectionIndex)
+        {
+            SelectSection(sectionIndex);
+        }
+        else if (e.Parameter is string sectionName)
+        {
+            if (sectionName.Equals("UserGuide", StringComparison.OrdinalIgnoreCase) ||
+                sectionName.Equals("Guide", StringComparison.OrdinalIgnoreCase) ||
+                sectionName.Equals("Help", StringComparison.OrdinalIgnoreCase))
+            {
+                SelectSection(10);
+            }
+        }
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
     }
 
     private void LoadSettingsToUI()

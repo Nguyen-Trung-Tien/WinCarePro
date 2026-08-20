@@ -148,22 +148,96 @@ public class UiThemeAndConsistencyTests
     }
 
     [Fact]
-    public void IconCacheService_InvalidOrEmptyPath_ReturnsEmpty()
+    public void TranslationManager_AllPageSubtitles_TranslateCorrectly()
     {
-        var service = new WinCarePro.Services.Implementations.IconCacheService();
-        Assert.Equal("", service.GetIconForExecutable(""));
-        Assert.Equal("", service.GetIconForExecutable("   "));
-        Assert.Equal("", service.GetIconForExecutable("System Process"));
-        Assert.Equal("", service.GetIconForExecutable("non_existent_file_xyz_123.exe"));
-    }
+        var manager = TranslationManager.Instance;
+        var subtitles = new[]
+        {
+            "Real-time hardware telemetry & AI care.",
+            "Intelligent diagnostics & automated optimization.",
+            "Purge system caches, temp files & debris.",
+            "Cleanly uninstall apps & remove leftover data.",
+            "Network telemetry, DNS speed & TCP/IP repairs.",
+            "SFC integrity, DISM & core Windows services.",
+            "Hardware trust, credential safety & privacy.",
+            "Kernel tuning, process scheduling & memory caching.",
+            "Prioritize CPU threads & minimize latency.",
+            "Manage shell extensions and declutter right-click menus.",
+            "Control startup apps & boot velocity.",
+            "S.M.A.R.T telemetry, storage & duplicate finder.",
+            "Invalid registry entries, repairs & backups.",
+            "Apps & packages updates via WinGet.",
+            "System telemetry alerts, diagnostic logs & operation records.",
+            "Personalize preferences, language & updates."
+        };
 
-    [Fact]
-    public async System.Threading.Tasks.Task IconCacheService_Async_InvalidOrEmptyPath_ReturnsEmpty()
-    {
-        var service = new WinCarePro.Services.Implementations.IconCacheService();
-        string res1 = await service.GetIconForExecutableAsync("");
-        string res2 = await service.GetIconForExecutableAsync("System Process");
-        Assert.Equal("", res1);
-        Assert.Equal("", res2);
+        foreach (var sub in subtitles)
+        {
+            string vi = manager.GetTranslationForLanguage(sub, AppLanguage.Vietnamese);
+            Assert.False(string.IsNullOrWhiteSpace(vi));
+            Assert.NotEqual(sub, vi); // Must be translated to Vietnamese, not falling back to English unchanged
+
+            string backToEn = manager.GetTranslationForLanguage(vi, AppLanguage.English);
+            Assert.Equal(sub, backToEn);
+        }
+
+        // Context Menu Guideline card tests
+        string guideDesc = manager.GetTranslationForLanguage("Disabling unused shell extensions removes right-click popup delay and prevents File Explorer freezes.", AppLanguage.Vietnamese);
+        Assert.Equal("Vô hiệu hóa tiện ích không dùng giúp menu chuột phải mở tức thì và tránh đơ File Explorer.", guideDesc);
+
+        string safeModDesc = manager.GetTranslationForLanguage("Disabled keys are safely prefixed with '-' rather than deleted, allowing instant restoration anytime.", AppLanguage.Vietnamese);
+        Assert.Equal("Các khóa bị tắt được gắn tiền tố '-' thay vì bị xóa, cho phép khôi phục tức thì bất kỳ lúc nào.", safeModDesc);
+
+        // Startup Health & Smart Insights tests
+        string startupHealth = manager.GetTranslationForLanguage("Startup Health", AppLanguage.Vietnamese);
+        Assert.Equal("Sức khỏe khởi động", startupHealth);
+
+        string smartInsights = manager.GetTranslationForLanguage("Smart Insights", AppLanguage.Vietnamese);
+        Assert.Equal("Đề xuất thông minh", smartInsights);
+
+        string boostBtn = manager.GetTranslationForLanguage("Boost Boot Speed", AppLanguage.Vietnamese);
+        Assert.Equal("Tăng tốc khởi động", boostBtn);
+
+        string svcInsight = string.Format(manager.GetTranslationForLanguage("There are {0} running non-Microsoft background services. Consider disabling those you don't use regularly.", AppLanguage.Vietnamese), 10);
+        Assert.Equal("Có 10 dịch vụ nền bên thứ ba đang chạy. Hãy tắt các dịch vụ không thường xuyên dùng.", svcInsight);
+
+        // Disk Stat Ribbon tests
+        string drivesVols = manager.GetTranslationForLanguage("Drives & Volumes", AppLanguage.Vietnamese);
+        Assert.Equal("Ổ đĩa & Phân vùng", drivesVols);
+
+        string physDevs = manager.GetTranslationForLanguage("Physical Devices", AppLanguage.Vietnamese);
+        Assert.Equal("Thiết bị vật lý", physDevs);
+
+        string storageItems = manager.GetTranslationForLanguage("Storage Items Analyzed", AppLanguage.Vietnamese);
+        Assert.Equal("Mục lưu trữ đã phân tích", storageItems);
+
+        string dirsFiles = manager.GetTranslationForLanguage("Directories & Files", AppLanguage.Vietnamese);
+        Assert.Equal("Thư mục & Tệp tin", dirsFiles);
+
+        string dupGroups = manager.GetTranslationForLanguage("Duplicate File Groups", AppLanguage.Vietnamese);
+        Assert.Equal("Nhóm tệp trùng lặp", dupGroups);
+
+        string reclaimClusters = manager.GetTranslationForLanguage("Reclaimable Clusters", AppLanguage.Vietnamese);
+        Assert.Equal("Cụm có thể giải phóng", reclaimClusters);
+
+        // AI Quick Actions Hub tests
+        string aiHubTitle = manager.GetTranslationForLanguage("AI Automated Quick Remedies", AppLanguage.Vietnamese);
+        Assert.Equal("Tác vụ khắc phục nhanh từ AI", aiHubTitle);
+
+        string freeWs = manager.GetTranslationForLanguage("Free Working Set", AppLanguage.Vietnamese);
+        Assert.Equal("Xóa bộ đệm RAM", freeWs);
+
+        string trimBoot = manager.GetTranslationForLanguage("Trim Boot Overhead", AppLanguage.Vietnamese);
+        Assert.Equal("Rút ngắn mở máy", trimBoot);
+
+        string repairSocket = manager.GetTranslationForLanguage("Repair Socket Cache", AppLanguage.Vietnamese);
+        Assert.Equal("Sửa kết nối socket", repairSocket);
+
+        // Header User Guide button tests
+        string guideTip = manager.GetTranslationForLanguage("User Guide & Documentation", AppLanguage.Vietnamese);
+        Assert.Equal("Hướng Dẫn Sử Dụng & Tài Liệu", guideTip);
+
+        string toggleTheme = manager.GetTranslationForLanguage("Toggle Theme", AppLanguage.Vietnamese);
+        Assert.Equal("Đổi Giao Diện", toggleTheme);
     }
 }

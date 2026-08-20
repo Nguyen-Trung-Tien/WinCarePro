@@ -768,6 +768,10 @@ public class LogEntry
     public DateTime CreatedAt { get; set; }
     public string CreatedAtFormatted => CreatedAt.ToString("yyyy-MM-dd HH:mm:ss");
 
+    public string DisplayAction => Services.TranslationManager.Instance.T(Action);
+    public string DisplayModule => Services.TranslationManager.Instance.T(Module);
+    public string DisplayStatus => Services.TranslationManager.Instance.T(Status);
+
     public Microsoft.UI.Xaml.Media.Brush StatusBrush => GetStatusBrush(Status);
     public Microsoft.UI.Xaml.Media.Brush StatusTintBrush => GetStatusTintBrush(Status);
     public string StatusGlyph => GetStatusGlyph(Status);

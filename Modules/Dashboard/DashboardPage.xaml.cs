@@ -306,6 +306,10 @@ public sealed partial class DashboardPage : Page
     private void OnExtendedLayerPanelLoaded(object sender, RoutedEventArgs e)
     {
         UpdateResponsiveLayout(this.ActualWidth);
+        if (sender is FrameworkElement fe)
+        {
+            TranslationManager.Instance.Translate(fe);
+        }
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -640,6 +644,7 @@ public sealed partial class DashboardPage : Page
         {
             DeepLayerPanel.Visibility = Visibility.Visible;
             ViewModel.RefreshActionLogs();
+            TranslationManager.Instance.Translate(DeepLayerPanel);
         }
     }
 

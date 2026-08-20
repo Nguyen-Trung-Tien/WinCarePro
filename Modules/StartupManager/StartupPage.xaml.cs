@@ -64,6 +64,13 @@ public sealed partial class StartupPage : Page
             UpdateLoadingOverlayState();
         };
 
+        var langHandler = new EventHandler((s, e) =>
+        {
+            this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
+        });
+        TranslationManager.Instance.LanguageChanged += langHandler;
+        this.Unloaded += (s, e) => TranslationManager.Instance.LanguageChanged -= langHandler;
+
         this.SizeChanged += (s, e) =>
         {
             bool isWide = e.NewSize.Width >= 800;

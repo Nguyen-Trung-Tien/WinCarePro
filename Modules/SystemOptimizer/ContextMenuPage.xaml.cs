@@ -35,6 +35,13 @@ public sealed partial class ContextMenuPage : Page
             TranslationManager.Instance.Translate(this);
             UpdateLoadingOverlayState();
         };
+
+        var langHandler = new EventHandler((s, e) =>
+        {
+            this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
+        });
+        TranslationManager.Instance.LanguageChanged += langHandler;
+        this.Unloaded += (s, e) => TranslationManager.Instance.LanguageChanged -= langHandler;
     }
 
     private void UpdateLoadingOverlayState()

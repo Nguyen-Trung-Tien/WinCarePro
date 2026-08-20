@@ -217,6 +217,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
             {
                 if (_isDisposed) return;
                 StatusText = "Ready".T();
+                CalculateOptimizationScore();
                 ApplyFilters();
             });
         };

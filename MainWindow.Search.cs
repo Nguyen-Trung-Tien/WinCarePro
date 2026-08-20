@@ -148,6 +148,14 @@ public sealed partial class MainWindow : Window
         public int Score { get; set; }
     }
 
+    private void UserGuideButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (RootFrame.Content is MainPage mainPage)
+        {
+            mainPage.NavigateToUserGuide();
+        }
+    }
+
     private void NotificationButton_Click(object sender, RoutedEventArgs e)
     {
         if (RootFrame.Content is MainPage mainPage)

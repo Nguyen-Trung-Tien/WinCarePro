@@ -748,7 +748,7 @@
                                             </Grid.ColumnDefinitions>
                                             <TextBlock Text="Category" FontWeight="Bold" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                             <TextBlock Grid.Column="1" Text="Check Name" FontWeight="Bold" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            <TextBlock Grid.Column="2" Text="Description" FontWeight="Bold" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Grid.Column="2" Text="Description" FontWeight="Bold" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                             <TextBlock Grid.Column="3" Text="Status" FontWeight="Bold" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Left" />
                                         </Grid>
                                     </DataTemplate>
@@ -762,14 +762,14 @@
                                                 <ColumnDefinition Width="4*" />
                                                 <ColumnDefinition Width="1.5*" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{Binding Category}" VerticalAlignment="Center" FontSize="12.5" TextWrapping="Wrap" />
-                                            <TextBlock Grid.Column="1" Text="{Binding CheckName}" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold" TextWrapping="Wrap" />
-                                            <TextBlock Grid.Column="2" Text="{Binding Description}" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,16,0" LineHeight="16"/>
+                                            <TextBlock Text="{Binding DisplayCategory}" VerticalAlignment="Center" FontSize="12.5" TextWrapping="Wrap" />
+                                            <TextBlock Grid.Column="1" Text="{Binding DisplayCheckName}" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                            <TextBlock Grid.Column="2" Text="{Binding DisplayDescription}" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,0,16,0" LineHeight="16"/>
                                             <Grid Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left">
                                                 <Border Background="{Binding StatusBadgeBg}" CornerRadius="6" Padding="10,5" Visibility="{Binding StatusBadgeVisibility}">
                                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                                         <FontIcon Glyph="{Binding StatusIcon}" Foreground="{Binding StatusColor}" FontSize="11" VerticalAlignment="Center" />
-                                                        <TextBlock Text="{Binding StatusLabel}" Foreground="{Binding StatusColor}" FontWeight="Bold" FontSize="11" VerticalAlignment="Center" />
+                                                        <TextBlock Text="{Binding DisplayStatusLabel}" Foreground="{Binding StatusColor}" FontWeight="Bold" FontSize="11" VerticalAlignment="Center" />
                                                     </StackPanel>
                                                 </Border>
                                                 <Button Content="Fix Now" Style="{StaticResource DefaultButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Padding="12,5" Height="28" CornerRadius="6" FontSize="11" FontWeight="Bold" Visibility="{Binding FixButtonVisibility}" Click="OnFixItemClick" />
@@ -811,15 +811,15 @@
                                             </Border>
                                             
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="{Binding Action}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                                <TextBlock Text="{Binding DisplayAction}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
                                                 <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="4" Padding="6,2" HorizontalAlignment="Left">
-                                                    <TextBlock Text="{Binding Module}" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding DisplayModule}" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}" FontWeight="SemiBold" />
                                                 </Border>
                                             </StackPanel>
                                             
                                             <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="2">
                                                 <TextBlock Text="{Binding CreatedAtFormatted}" FontFamily="Consolas" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Right"/>
-                                                <TextBlock Text="{Binding Status}" FontSize="11" Foreground="MediumSeaGreen" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                                <TextBlock Text="{Binding DisplayStatus}" FontSize="11" Foreground="MediumSeaGreen" FontWeight="Bold" HorizontalAlignment="Right"/>
                                             </StackPanel>
                                         </Grid>
                                     </DataTemplate>
@@ -832,7 +832,6 @@
         </ScrollViewer>
     </Grid>
 </Page>
-
 
 
 

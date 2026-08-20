@@ -16,6 +16,11 @@ public class DiagnosticResult
     public string StatusLabel => IsHealthy ? "PASSED" : "ATTENTION";
     public string StatusIcon => IsHealthy ? "\uE73E" : "\uE783";
 
+    public string DisplayCheckName => Services.TranslationManager.Instance.T(CheckName);
+    public string DisplayCategory => Services.TranslationManager.Instance.T(Category);
+    public string DisplayDescription => Services.TranslationManager.Instance.T(Description);
+    public string DisplayStatusLabel => Services.TranslationManager.Instance.T(StatusLabel);
+
     [System.Text.Json.Serialization.JsonIgnore]
     public Visibility StatusBadgeVisibility => IsHealthy ? Visibility.Visible : Visibility.Collapsed;
 

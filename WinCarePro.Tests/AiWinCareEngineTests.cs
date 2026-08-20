@@ -57,19 +57,28 @@ public class AiWinCareEngineTests
     }
 
     [Fact]
-    public async Task SmartFixService_CleanJunkAction_ShouldExecuteSuccessfully()
+    public async Task AiWinCareEngine_AnalyzeSystemHealthAsync_ShouldReturnValidReport()
     {
-        // Arrange
-        var fixService = new SmartFixService();
-        bool progressCalled = false;
-
         // Act
-        await fixService.ExecuteFixAsync("CleanJunk", p =>
-        {
-            progressCalled = true;
-        });
+        var report = await Modules.AiAssistant.AiWinCareEngine.AnalyzeSystemHealthAsync();
 
         // Assert
-        Assert.True(progressCalled);
+        Assert.NotNull(report);
+        Assert.InRange(report.OverallScore, 20, 100);
+        Assert.False(string.IsNullOrWhiteSpace(report.HealthStatus));
+        Assert.False(string.IsNullOrWhiteSpace(report.SummaryText));
+        Assert.NotNull(report.Recommendations);
+    }
+
+    [Fact]
+    public async Task AiWinCareEngine_ExecuteSmartRemedyBatchAsync_ShouldExecuteSafely()
+    {
+        // Act
+        var remedyResult = await Modules.AiAssistant.AiWinCareEngine.ExecuteSmartRemedyBatchAsync();
+
+        // Assert
+        Assert.NotNull(remedyResult);
+        Assert.True(remedyResult.FixedActionsCount > 0);
+        Assert.NotEmpty(remedyResult.ActionLogs);
     }
 }

@@ -21,7 +21,17 @@ public sealed partial class DiskPage : Page
         ViewModel = App.Services.GetRequiredService<DiskViewModel>();
         this.DataContext = ViewModel;
         this.Loaded += (s, e) => TranslationManager.Instance.Translate(this);
-        this.Unloaded += (s, e) => ViewModel.Cleanup();
+
+        var langHandler = new EventHandler((s, e) =>
+        {
+            this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
+        });
+        TranslationManager.Instance.LanguageChanged += langHandler;
+        this.Unloaded += (s, e) =>
+        {
+            TranslationManager.Instance.LanguageChanged -= langHandler;
+            ViewModel.Cleanup();
+        };
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)

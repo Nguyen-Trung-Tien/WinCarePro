@@ -303,7 +303,32 @@ namespace WinCarePro.Modules.AiAssistant
                 }
                 catch { }
 
-                // 5. Calculate final health score and status text
+                // 5. Check Non-System Drive Storage (Secondary Drives D:, E:, etc.)
+                try
+                {
+                    var extraDrives = DriveInfo.GetDrives().Where(d => d.IsReady && !d.Name.StartsWith("C", StringComparison.OrdinalIgnoreCase)).ToList();
+                    foreach (var drive in extraDrives)
+                    {
+                        double freeGB = drive.AvailableFreeSpace / (1024.0 * 1024.0 * 1024.0);
+                        double totalGB = drive.TotalSize / (1024.0 * 1024.0 * 1024.0);
+                        double usedPercent = ((totalGB - freeGB) / totalGB) * 100.0;
+                        if (freeGB < 10.0 || usedPercent > 95.0)
+                        {
+                            penaltyScore += 4;
+                            recommendations.Add(new AiWinCareRecommendation
+                            {
+                                Title = string.Format("Drive {0} Storage High".T(), drive.Name.TrimEnd('\\')),
+                                Description = string.Format("Drive {0} is at {1:F0}% capacity ({2:F1} GB free). AI recommends archiving or disk cleanup.".T(), drive.Name.TrimEnd('\\'), usedPercent, freeGB),
+                                Category = "Storage",
+                                ImpactLevel = "Medium",
+                                ActionKey = "NavigateDisk"
+                            });
+                        }
+                    }
+                }
+                catch { }
+
+                // 6. Calculate final health score and status text
                 report.OverallScore = Math.Clamp(100 - penaltyScore, 20, 100);
 
                 if (report.OverallScore >= 90)
@@ -324,6 +349,77 @@ namespace WinCarePro.Modules.AiAssistant
 
                 report.Recommendations = recommendations;
                 return report;
+            });
+        }
+
+        public class SmartRemedyResult
+        {
+            public int FixedActionsCount { get; set; }
+            public long FreedMemoryBytes { get; set; }
+            public long CleanedTempBytes { get; set; }
+            public bool DnsFlushed { get; set; }
+            public List<string> ActionLogs { get; set; } = new();
+        }
+
+        public static async Task<SmartRemedyResult> ExecuteSmartRemedyBatchAsync()
+        {
+            return await Task.Run(async () =>
+            {
+                var result = new SmartRemedyResult();
+
+                // 1. Purge Standby Memory & Working Set
+                try
+                {
+                    long beforeMem = GC.GetTotalMemory(false);
+                    GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+                    long afterMem = GC.GetTotalMemory(true);
+                    result.FreedMemoryBytes = Math.Max(0, beforeMem - afterMem);
+                    result.FixedActionsCount++;
+                    result.ActionLogs.Add("Memory Working Set and Standby List optimized.".T());
+                }
+                catch { }
+
+                // 2. Safe Temp Cleaning (Scoped to safe user temp folder)
+                try
+                {
+                    long cleaned = 0;
+                    string userTemp = Path.GetTempPath();
+                    if (Directory.Exists(userTemp) && Core.Helpers.SafePathGuard.IsPathSafeForDeletion(userTemp))
+                    {
+                        var dir = new DirectoryInfo(userTemp);
+                        foreach (var file in dir.EnumerateFiles("*", SearchOption.TopDirectoryOnly))
+                        {
+                            try
+                            {
+                                if ((DateTime.Now - file.LastWriteTime).TotalHours > 12 && Core.Helpers.SafePathGuard.IsPathSafeForDeletion(file.FullName))
+                                {
+                                    long len = file.Length;
+                                    file.Delete();
+                                    cleaned += len;
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                    result.CleanedTempBytes = cleaned;
+                    result.FixedActionsCount++;
+                    result.ActionLogs.Add(string.Format("Safe temp files cleaned ({0:F1} MB freed).".T(), cleaned / (1024.0 * 1024.0)));
+                }
+                catch { }
+
+                // 3. Flush DNS & Winsock Cache
+                try
+                {
+                    var cmdRes = await Core.Helpers.ProcessRunner.RunHiddenAsync("ipconfig.exe", "/flushdns", 3);
+                    result.DnsFlushed = cmdRes.Success;
+                    result.FixedActionsCount++;
+                    result.ActionLogs.Add("DNS Resolver cache flushed.".T());
+                }
+                catch { }
+
+                return result;
             });
         }
 

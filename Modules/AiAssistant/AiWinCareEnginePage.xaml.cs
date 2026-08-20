@@ -85,6 +85,9 @@ namespace WinCarePro.Modules.AiAssistant
                 await RunOnUIAsync(() =>
                 {
                     StatusTitleText.Text = $"{TranslationManager.Instance.T("Status")}: {TranslationManager.Instance.T("Analyzing...")}";
+                    if (AiSkeletonLoadingDeck != null) AiSkeletonLoadingDeck.Visibility = Visibility.Visible;
+                    if (RecommendationsListView != null) RecommendationsListView.Visibility = Visibility.Collapsed;
+                    if (EmptyStateCard != null) EmptyStateCard.Visibility = Visibility.Collapsed;
                 });
                 
                 var report = await AiWinCareEngine.AnalyzeSystemHealthAsync();
@@ -98,14 +101,46 @@ namespace WinCarePro.Modules.AiAssistant
                     PredictiveStorageText.Text = report.PredictiveStorageDaysText;
                     PredictiveBootText.Text = report.PredictiveBootTimeSavingsText;
                     AiLastScanText.Text = $"{TranslationManager.Instance.T("Neural Scan: Active & Calibrated")} ({DateTime.Now:HH:mm:ss})";
-                    RecommendationsListView.ItemsSource = report.Recommendations;
+                    
+                    if (AiSkeletonLoadingDeck != null) AiSkeletonLoadingDeck.Visibility = Visibility.Collapsed;
 
                     bool hasRecommendations = report.Recommendations != null && report.Recommendations.Count > 0;
+                    RecommendationsListView.ItemsSource = report.Recommendations;
                     EmptyStateCard.Visibility = hasRecommendations ? Visibility.Collapsed : Visibility.Visible;
                     RecommendationsListView.Visibility = hasRecommendations ? Visibility.Visible : Visibility.Collapsed;
                 });
             }
-            catch { }
+            catch 
+            {
+                await RunOnUIAsync(() =>
+                {
+                    if (AiSkeletonLoadingDeck != null) AiSkeletonLoadingDeck.Visibility = Visibility.Collapsed;
+                    if (RecommendationsListView != null) RecommendationsListView.Visibility = Visibility.Visible;
+                });
+            }
+        }
+
+        private async void OnAutoRemedyAllClick(object sender, RoutedEventArgs e)
+        {
+            var btn = AutoRemedyAllBtn ?? (sender as Button);
+            await UiLoadingHelper.ExecuteWithLoadingAsync(
+                btn, AutoRemedyProgressRing, AutoRemedyText, AutoRemedyIcon,
+                "Remediating All...", "1-Click Smart Remedy",
+                async () =>
+                {
+                    var result = await AiWinCareEngine.ExecuteSmartRemedyBatchAsync();
+                    await RunAiScanAsync();
+
+                    await RunOnUIAsync(() =>
+                    {
+                        if (App.MainWindowInstance is MainWindow mw)
+                        {
+                            string details = $"Resolved {result.FixedActionsCount} areas. Freed {result.CleanedTempBytes / (1024.0 * 1024.0):F1} MB temp cache and optimized memory working set.".T();
+                            mw.ShowToastFromDb("Smart Remedy Applied".T(), details, "Success");
+                        }
+                    });
+                },
+                minDurationMs: 800);
         }
 
         private async void OnRunAiScanClick(object sender, RoutedEventArgs e)
@@ -118,7 +153,7 @@ namespace WinCarePro.Modules.AiAssistant
                 {
                     await RunAiScanAsync();
                 },
-                minDurationMs: 400);
+                minDurationMs: 500);
 
             await RunOnUIAsync(() =>
             {

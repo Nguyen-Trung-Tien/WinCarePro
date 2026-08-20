@@ -789,12 +789,23 @@
                 </Setter>
             </Style>
 
-            <!-- Shimmer Skeleton Loading Style -->
+            <!-- Shimmer Skeleton Loading Style with Active Composition Pulse -->
             <Style x:Key="ShimmerSkeletonStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Opacity" Value="0.6" />
+                <Setter Property="Opacity" Value="0.65" />
+                <Setter Property="helpers:AnimationHelper.IsShimmering" Value="True" />
+            </Style>
+
+            <!-- Staggered Entrance Card Style -->
+            <Style x:Key="StaggeredEntranceCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="helpers:AnimationHelper.HoverScale" Value="1.012" />
+                <Setter Property="helpers:AnimationHelper.PressedScale" Value="0.988" />
             </Style>
 
             <!-- Active Preset Profile Chip Button Style (Glowing Neon Pill) -->

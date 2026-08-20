@@ -20,7 +20,12 @@ public class ServiceSafetyService
         "DcomLaunch",    // DCOM Server Process Launcher
         "SamSs",         // Security Accounts Manager
         "LSM",           // Local Session Manager
-        "StateRepository"// State Repository Service
+        "StateRepository",// State Repository Service
+        "gpsvc",         // Group Policy Client
+        "ProfSvc",       // User Profile Service
+        "BFE",           // Base Filtering Engine
+        "BrokerInfrastructure", // Background Tasks Infrastructure
+        "SystemEventsBroker"    // System Events Broker
     };
 
     private static readonly HashSet<string> SecurityRelatedServices = new(StringComparer.OrdinalIgnoreCase)

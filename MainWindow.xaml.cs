@@ -596,6 +596,9 @@ public sealed partial class MainWindow : Window
         this.AppWindow.Hide();
         InitializeTrayIcon();
 
+        // Immediately reclaim background working set memory
+        Task.Run(() => TrimProcessMemory());
+
         var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
         notificationService?.ShowToast("WinCare Pro Running", "Application is minimized to the system tray.", Services.Contracts.NotificationSeverity.Info);
     }

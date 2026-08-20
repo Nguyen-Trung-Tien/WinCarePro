@@ -138,7 +138,7 @@ public static class SafePathGuard
                 }
             }
 
-            // Check if file is critical system file
+            // Check if file is critical system or credential store file
             string fileName = Path.GetFileName(fullPath);
             if (fileName.Equals("pagefile.sys", StringComparison.OrdinalIgnoreCase) ||
                 fileName.Equals("hiberfil.sys", StringComparison.OrdinalIgnoreCase) ||
@@ -148,8 +148,13 @@ public static class SafePathGuard
                 fileName.Equals("SYSTEM", StringComparison.OrdinalIgnoreCase) ||
                 fileName.Equals("SECURITY", StringComparison.OrdinalIgnoreCase) ||
                 fileName.Equals("SOFTWARE", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("DEFAULT", StringComparison.OrdinalIgnoreCase) ||
                 fileName.Equals("BCD", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("BOOTSECT.BAK", StringComparison.OrdinalIgnoreCase))
+                fileName.Equals("BOOTSECT.BAK", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("Login Data", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("Login Data For Account", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("Web Data", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("Local State", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }

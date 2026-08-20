@@ -97,6 +97,28 @@ public static class AnimationHelper
     public static double GetEntranceDelay(DependencyObject obj) => (double)obj.GetValue(EntranceDelayProperty);
     public static void SetEntranceDelay(DependencyObject obj, double value) => obj.SetValue(EntranceDelayProperty, value);
 
+    // ==========================================
+    // 3b. Attached Property: StaggerIndex
+    //    Convenience index multiplier for staggered entrance (e.g. index 0 -> 0ms, 1 -> 45ms, 2 -> 90ms)
+    // ==========================================
+    public static readonly DependencyProperty StaggerIndexProperty =
+        DependencyProperty.RegisterAttached(
+            "StaggerIndex",
+            typeof(int),
+            typeof(AnimationHelper),
+            new PropertyMetadata(-1, OnStaggerIndexChanged));
+
+    public static int GetStaggerIndex(DependencyObject obj) => (int)obj.GetValue(StaggerIndexProperty);
+    public static void SetStaggerIndex(DependencyObject obj, int value) => obj.SetValue(StaggerIndexProperty, value);
+
+    private static void OnStaggerIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement element && e.NewValue is int index && index >= 0)
+        {
+            SetEntranceDelay(element, index * 45.0);
+        }
+    }
+
     private static void OnEntranceDelayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element && e.NewValue is double delayMs && delayMs >= 0)

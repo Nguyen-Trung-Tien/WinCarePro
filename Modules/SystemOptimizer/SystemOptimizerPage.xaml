@@ -122,7 +122,7 @@
                     </Border>
                     <StackPanel Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="System Optimizer &amp; Performance" Style="{StaticResource PageHeaderTitleStyle}" />
-                        <TextBlock Text="Optimize kernel responsiveness, process scheduling, and memory caching." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                        <TextBlock Text="Kernel tuning, process scheduling &amp; memory caching." Style="{StaticResource PageHeaderSubtitleStyle}" />
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

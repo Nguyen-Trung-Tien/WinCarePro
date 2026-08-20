@@ -50,7 +50,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Manage startup applications, background services, and boot velocity." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Control startup apps &amp; boot velocity." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
         </Grid>
 

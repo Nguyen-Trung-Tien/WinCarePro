@@ -97,7 +97,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Prioritize CPU thread scheduling, release background RAM &amp; minimize latency." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Prioritize CPU threads &amp; minimize latency." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
             <!-- Active Profile Indicator Pill -->

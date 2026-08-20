@@ -96,7 +96,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Cleanly uninstall applications, system packages, and remove leftover data." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Cleanly uninstall apps &amp; remove leftover data." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
             <!-- Right: Async Scan Action Button -->

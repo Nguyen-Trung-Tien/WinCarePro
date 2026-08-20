@@ -76,7 +76,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Intelligent diagnostics, bottleneck detection &amp; automated optimization." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Intelligent diagnostics &amp; automated optimization." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
             <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">

@@ -78,7 +78,7 @@
                     </Border>
                     <StackPanel Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="Registry Center &amp; Optimizer" Style="{StaticResource PageHeaderTitleStyle}" />
-                        <TextBlock Text="Scan invalid registry entries, repair keys, and manage safety backups." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                        <TextBlock Text="Invalid registry entries, repairs &amp; backups." Style="{StaticResource PageHeaderSubtitleStyle}" />
                     </StackPanel>
                     <!-- Integrity Guard Pill -->
                     <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center" Margin="6,0,0,0">

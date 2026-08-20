@@ -78,7 +78,7 @@
                 </Border>
                 <StackPanel Spacing="2" VerticalAlignment="Center">
                     <TextBlock Text="Security &amp; Privacy Shield" Style="{StaticResource PageHeaderTitleStyle}" />
-                    <TextBlock Text="Hardware trust monitoring, credential safety, and telemetry privacy." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                    <TextBlock Text="Hardware trust, credential safety &amp; privacy." Style="{StaticResource PageHeaderSubtitleStyle}" />
                 </StackPanel>
             </StackPanel>
 
@@ -176,7 +176,7 @@
                         <FontIcon Glyph="&#xE950;" FontSize="16" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <TextBlock Text="Hardware Platform Trust" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="Hardware Trust" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         <TextBlock Text="{x:Bind ViewModel.TpmStatusText, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextWrapping="Wrap" />
                     </StackPanel>
                 </Grid>
@@ -198,7 +198,7 @@
                         <StackPanel Spacing="16" HorizontalAlignment="Stretch">
 
                             <!-- Section Title: Core Management Tools -->
-                            <TextBlock Text="Security &amp; Diagnostic Management Tools" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,0,-4"/>
+                            <TextBlock Text="Management Tools" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,0,-4"/>
 
                             <!-- 2x2 Grid of Core Security & Diagnostic Tools -->
                             <Grid ColumnSpacing="12" RowSpacing="12">
@@ -211,7 +211,7 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Tool 1: Windows Defender Security -->
+                                <!-- Tool 1: Windows Security -->
                                 <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
                                     <Grid ColumnSpacing="14">
                                         <Grid.ColumnDefinitions>
@@ -223,8 +223,8 @@
                                             <FontIcon Glyph="&#xE73A;" FontSize="20" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                                            <TextBlock Text="Windows Defender Security" FontWeight="Bold" FontSize="13"/>
-                                            <TextBlock Text="Virus &amp; threat protection, firewall, account safety." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Windows Security" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="Threat protection &amp; firewall." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenWindowsSecurityClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
                                     </Grid>
@@ -242,8 +242,8 @@
                                             <FontIcon Glyph="&#xE7EF;" FontSize="20" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                                            <TextBlock Text="System Info (msinfo32)" FontWeight="Bold" FontSize="13"/>
-                                            <TextBlock Text="Complete inventory: CPU, GPU, RAM, BIOS, drivers." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="System Info" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="Hardware, BIOS &amp; drivers." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenMsinfoClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
                                     </Grid>
@@ -261,8 +261,8 @@
                                             <FontIcon Glyph="&#xE895;" FontSize="20" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                                            <TextBlock Text="Windows Update Manager" FontWeight="Bold" FontSize="13"/>
-                                            <TextBlock Text="Driver updates, Windows patches &amp; security fixes." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Windows Update" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="Patches &amp; security updates." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenWindowsUpdateClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
                                     </Grid>
@@ -280,8 +280,8 @@
                                             <FontIcon Glyph="&#xE9D9;" FontSize="20" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                                            <TextBlock Text="Task Manager Monitor" FontWeight="Bold" FontSize="13"/>
-                                            <TextBlock Text="Monitor process RAM/CPU load and end tasks." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Task Manager" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="CPU/RAM load &amp; processes." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenTaskManagerClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
                                     </Grid>
@@ -289,7 +289,7 @@
                             </Grid>
 
                             <!-- Section Title: Advanced Management Consoles -->
-                            <TextBlock Text="Advanced Windows Management Consoles" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,4,0,-6"/>
+                            <TextBlock Text="Management Consoles" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,4,0,-6"/>
 
                             <!-- 2x2 Grid of Advanced Consoles -->
                             <Grid ColumnSpacing="12" RowSpacing="12">
@@ -314,8 +314,8 @@
                                             <FontIcon Glyph="&#xE83D;" FontSize="20" Foreground="#FF06B6D4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                                            <TextBlock Text="Advanced Firewall Rules (wf.msc)" FontWeight="Bold" FontSize="13"/>
-                                            <TextBlock Text="Inbound and outbound network packet filtering rules." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Firewall Rules" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="Inbound &amp; outbound rules." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenFirewallClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
                                     </Grid>
@@ -333,8 +333,8 @@
                                             <FontIcon Glyph="&#xE7BA;" FontSize="20" Foreground="#FFEC4899" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                                            <TextBlock Text="Event Viewer Logs (eventvwr.msc)" FontWeight="Bold" FontSize="13"/>
-                                            <TextBlock Text="Inspect audit failure events and system security logs." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Event Viewer" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="Audit events &amp; system logs." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenEventViewerClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
                                     </Grid>
@@ -352,8 +352,8 @@
                                             <FontIcon Glyph="&#xE713;" FontSize="20" Foreground="#FF6366F1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                                            <TextBlock Text="Services Manager (services.msc)" FontWeight="Bold" FontSize="13"/>
-                                            <TextBlock Text="Manage background Windows services and daemon startup states." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Windows Services" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="Background services control." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenServicesClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
                                     </Grid>
@@ -371,8 +371,8 @@
                                             <FontIcon Glyph="&#xE946;" FontSize="20" Foreground="#FF14B8A6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                                            <TextBlock Text="Registry Editor (regedit.exe)" FontWeight="Bold" FontSize="13"/>
-                                            <TextBlock Text="Inspect and modify system configuration hives (HKLM/HKCU)." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="Registry Editor" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="System configuration hives &amp; keys." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
                                         <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenRegistryEditorClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
                                     </Grid>
@@ -381,7 +381,7 @@
 
                             <!-- Active Security Alerts & Audits Section -->
                             <StackPanel Spacing="8">
-                                <TextBlock Text="Security Alerts &amp; Diagnostic Audits" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock Text="Security Alerts" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                 
                                 <ListView ItemsSource="{x:Bind ViewModel.SecurityAlerts, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                                     <ListView.ItemTemplate>
@@ -421,7 +421,7 @@
 
                             <!-- Left: Privacy Controls & Anti-Telemetry Toggles -->
                             <StackPanel x:Name="PrivLeftPanel" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Spacing="10">
-                                <TextBlock Text="System Telemetry &amp; Privacy Policies" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,0,4"/>
+                                <TextBlock Text="Telemetry &amp; Privacy" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Margin="0,0,0,4"/>
 
                                 <!-- Diagnostic Telemetry -->
                                 <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
@@ -431,8 +431,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel VerticalAlignment="Center" Margin="0,0,16,0" Spacing="2">
-                                            <TextBlock Text="Diagnostic Telemetry Data Collection" FontWeight="Bold" FontSize="12.5" />
-                                            <TextBlock Text="Allow Windows to send detailed diagnostic and performance data to Microsoft." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                            <TextBlock Text="Diagnostic Telemetry" FontWeight="Bold" FontSize="12.5" />
+                                            <TextBlock Text="Send diagnostic data to Microsoft." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                         </StackPanel>
                                         <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.TelemetryEnabled, Mode=TwoWay}" Toggled="OnTelemetryToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
                                     </Grid>
@@ -446,8 +446,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel VerticalAlignment="Center" Margin="0,0,16,0" Spacing="2">
-                                            <TextBlock Text="Personalized Advertising Identifier" FontWeight="Bold" FontSize="12.5" />
-                                            <TextBlock Text="Allow Store applications to track your behavior and deliver targeted ads." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                            <TextBlock Text="Advertising ID" FontWeight="Bold" FontSize="12.5" />
+                                            <TextBlock Text="App tracking &amp; targeted ads." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                         </StackPanel>
                                         <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.AdvertisingIdEnabled, Mode=TwoWay}" Toggled="OnAdvertisingIdToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
                                     </Grid>
@@ -461,8 +461,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel VerticalAlignment="Center" Margin="0,0,16,0" Spacing="2">
-                                            <TextBlock Text="Windows Clipboard History" FontWeight="Bold" FontSize="12.5" />
-                                            <TextBlock Text="Saves multiple copied items to clipboard for later use. Disable to prevent caching copied credentials." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                            <TextBlock Text="Clipboard History" FontWeight="Bold" FontSize="12.5" />
+                                            <TextBlock Text="Cache copied items and credentials." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                         </StackPanel>
                                         <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.ClipboardHistoryEnabled, Mode=TwoWay}" Toggled="OnClipboardToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
                                     </Grid>
@@ -476,8 +476,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel VerticalAlignment="Center" Margin="0,0,16,0" Spacing="2">
-                                            <TextBlock Text="Personalization &amp; Typing Input Tracking" FontWeight="Bold" FontSize="12.5" />
-                                            <TextBlock Text="Restrict Windows from logging typing history and personalization telemetry." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                            <TextBlock Text="Input &amp; Typing Tracking" FontWeight="Bold" FontSize="12.5" />
+                                            <TextBlock Text="Log typing history &amp; input telemetry." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                         </StackPanel>
                                         <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.InputTrackingEnabled, Mode=TwoWay}" Toggled="OnInputTrackingToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
                                     </Grid>
@@ -494,19 +494,19 @@
                                             </Border>
                                             <TextBlock Text="Clear Activity Traces" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" />
                                         </StackPanel>
-                                        <TextBlock Text="Manually erase cached system activity logs, recent shortcuts, and clipboard history files:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                        <TextBlock Text="Erase cached activity logs and history:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
 
                                         <Button x:Name="WipeClipboardBtn" Click="OnClearClipboardClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" HorizontalAlignment="Stretch" Padding="12,8" FontSize="11.5">
                                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                                 <ProgressRing x:Name="WipeClipboardRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
-                                                <TextBlock x:Name="WipeClipboardText" Text="Wipe Clipboard Cache"/>
+                                                <TextBlock x:Name="WipeClipboardText" Text="Wipe Clipboard"/>
                                             </StackPanel>
                                         </Button>
 
                                         <Button x:Name="ClearRecentBtn" Click="OnClearRecentClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" HorizontalAlignment="Stretch" Padding="12,8" FontSize="11.5">
                                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                                 <ProgressRing x:Name="ClearRecentRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
-                                                <TextBlock x:Name="ClearRecentText" Text="Clear Recent Files &amp; Run History"/>
+                                                <TextBlock x:Name="ClearRecentText" Text="Clear Recent Files &amp; History"/>
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>

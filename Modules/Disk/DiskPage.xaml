@@ -98,7 +98,7 @@
                     </Border>
                     <StackPanel Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="Disk &amp; Storage Center" Style="{StaticResource PageHeaderTitleStyle}" />
-                        <TextBlock Text="Monitor drive S.M.A.R.T telemetry, analyze storage, and find duplicate files." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                        <TextBlock Text="S.M.A.R.T telemetry, storage &amp; duplicate finder." Style="{StaticResource PageHeaderSubtitleStyle}" />
                     </StackPanel>
                     <!-- S.M.A.R.T Shield Pill -->
                     <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center" Margin="6,0,0,0">

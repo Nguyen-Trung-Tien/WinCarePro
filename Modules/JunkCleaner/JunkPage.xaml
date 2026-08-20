@@ -78,7 +78,7 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
-                    <TextBlock Text="Analyze and purge system cache, temporary files, and debris." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                    <TextBlock Text="Purge system caches, temp files &amp; debris." Style="{StaticResource PageHeaderSubtitleStyle}"/>
                 </StackPanel>
 
                 <!-- Right: Scan & Clean Actions -->

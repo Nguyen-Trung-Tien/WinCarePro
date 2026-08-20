@@ -60,37 +60,46 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Title & Status Chips Inline -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
+            <!-- Title & Status Chips with Responsive Grid -->
+            <Grid Grid.Column="0" ColumnSpacing="12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <Border Grid.Column="0" Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}" VerticalAlignment="Center">
                     <FontIcon Glyph="&#xE701;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
-                <StackPanel Spacing="2" VerticalAlignment="Center">
+                <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
                     <TextBlock Text="Network Center &amp; Diagnostics" Style="{StaticResource PageHeaderTitleStyle}"/>
-                    <TextBlock Text="Network telemetry, DNS benchmarking, and TCP/IP connectivity repairs." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                    <TextBlock Text="Network telemetry, DNS benchmarking, and TCP/IP connectivity repairs." Style="{StaticResource PageHeaderSubtitleStyle}" TextTrimming="CharacterEllipsis"/>
                 </StackPanel>
                 
-                <!-- Live Internet Connection Status Pill -->
-                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center" Margin="8,0,0,0">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <Ellipse Width="7" Height="7" Fill="#FF10B981"/>
-                        <TextBlock Text="{x:Bind ViewModel.InternetStatus, Mode=OneWay}" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                    </StackPanel>
-                </Border>
+                <!-- Status Pills -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <!-- Live Internet Connection Status Pill -->
+                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Ellipse Width="7" Height="7" Fill="#FF10B981"/>
+                            <TextBlock Text="{x:Bind ViewModel.InternetStatus, Mode=OneWay}" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                        </StackPanel>
+                    </Border>
 
-                <!-- Public IP Pill with Quick Copy -->
-                <Button Click="OnCopyPublicIpClick" Style="{StaticResource DefaultButtonStyle}" Padding="10,4" CornerRadius="8" ToolTipService.ToolTip="Click to copy Public IP">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE774;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                        <TextBlock Text="IP:" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock Text="{x:Bind ViewModel.PublicIpAddress, Mode=OneWay}" FontSize="11" FontWeight="SemiBold"/>
-                        <FontIcon Glyph="&#xE8C8;" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
+                    <!-- Public IP Pill with Quick Copy -->
+                    <Button Click="OnCopyPublicIpClick" Style="{StaticResource DefaultButtonStyle}" Padding="10,4" CornerRadius="8" ToolTipService.ToolTip="Click to copy Public IP">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE774;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="IP:" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="{x:Bind ViewModel.PublicIpAddress, Mode=OneWay}" FontSize="11" FontWeight="SemiBold"/>
+                            <FontIcon Glyph="&#xE8C8;" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
 
             <!-- Quick Auto-Diagnose Button -->
-            <Button x:Name="RefreshBtn" Grid.Column="1" Click="OnRefreshClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="16,0" VerticalAlignment="Center">
+            <Button x:Name="RefreshBtn" Grid.Column="1" Click="OnRefreshClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="36" Padding="16,0" VerticalAlignment="Center" Margin="12,0,0,0">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                     <FontIcon Glyph="&#xE72C;" FontSize="12" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>

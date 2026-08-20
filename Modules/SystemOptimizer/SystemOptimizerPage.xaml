@@ -13,17 +13,17 @@
     <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 1080px -->
+                <!-- Wide Layout: Viewport Width >= 1280px -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1080" />
+                        <AdaptiveTrigger MinWindowWidth="1280" />
                     </VisualState.StateTriggers>
                 </VisualState>
 
-                <!-- Medium Layout: Viewport Width between 720px and 1080px -->
+                <!-- Medium Layout: Viewport Width between 768px and 1280px (Default Window Mode) -->
                 <VisualState x:Name="MediumState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720" />
+                        <AdaptiveTrigger MinWindowWidth="768" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="HeaderCol1.Width" Value="0" />
@@ -33,6 +33,15 @@
                         <Setter Target="HeaderButtons.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderButtons.HorizontalAlignment" Value="Left" />
                         <Setter Target="HeaderButtons.Margin" Value="0,10,0,0" />
+                        
+                        <Setter Target="StatCol0.Width" Value="*" />
+                        <Setter Target="StatCol1.Width" Value="*" />
+                        <Setter Target="StatCol2.Width" Value="0" />
+                        <Setter Target="StatCol3.Width" Value="0" />
+                        <Setter Target="StatCard0.(Grid.Row)" Value="0" />
+                        <Setter Target="StatCard0.(Grid.Column)" Value="0" />
+                        <Setter Target="StatCard1.(Grid.Row)" Value="0" />
+                        <Setter Target="StatCard1.(Grid.Column)" Value="1" />
                         <Setter Target="StatCard2.(Grid.Row)" Value="1" />
                         <Setter Target="StatCard2.(Grid.Column)" Value="0" />
                         <Setter Target="StatCard3.(Grid.Row)" Value="1" />
@@ -41,7 +50,7 @@
                     </VisualState.Setters>
                 </VisualState>
 
-                <!-- Narrow Layout: Viewport Width < 720px -->
+                <!-- Narrow Layout: Viewport Width < 768px -->
                 <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
@@ -54,12 +63,20 @@
                         <Setter Target="HeaderButtons.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderButtons.HorizontalAlignment" Value="Left" />
                         <Setter Target="HeaderButtons.Margin" Value="0,10,0,0" />
+                        
+                        <Setter Target="StatCol0.Width" Value="*" />
+                        <Setter Target="StatCol1.Width" Value="0" />
+                        <Setter Target="StatCol2.Width" Value="0" />
+                        <Setter Target="StatCol3.Width" Value="0" />
+                        <Setter Target="StatCard0.(Grid.Row)" Value="0" />
+                        <Setter Target="StatCard0.(Grid.Column)" Value="0" />
                         <Setter Target="StatCard1.(Grid.Row)" Value="1" />
                         <Setter Target="StatCard1.(Grid.Column)" Value="0" />
                         <Setter Target="StatCard2.(Grid.Row)" Value="2" />
                         <Setter Target="StatCard2.(Grid.Column)" Value="0" />
                         <Setter Target="StatCard3.(Grid.Row)" Value="3" />
                         <Setter Target="StatCard3.(Grid.Column)" Value="0" />
+                        
                         <Setter Target="TweaksCard.(Grid.Row)" Value="0" />
                         <Setter Target="TweaksCard.(Grid.Column)" Value="0" />
                         <Setter Target="TweaksCard.(Grid.ColumnSpan)" Value="2" />
@@ -151,16 +168,22 @@
         </Grid>
 
         <!-- ==================== 1. 4-CARD FROSTED STAT RIBBON ==================== -->
-        <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+        <Grid x:Name="StatRibbonGrid" Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="StatRibbonRow0" Height="Auto" />
+                <RowDefinition x:Name="StatRibbonRow1" Height="Auto" />
+                <RowDefinition x:Name="StatRibbonRow2" Height="Auto" />
+                <RowDefinition x:Name="StatRibbonRow3" Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="StatCol0" Width="*" />
+                <ColumnDefinition x:Name="StatCol1" Width="*" />
+                <ColumnDefinition x:Name="StatCol2" Width="*" />
+                <ColumnDefinition x:Name="StatCol3" Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- Card 0: AI Efficiency & Health Score -->
-            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard0" Grid.Row="0" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -191,7 +214,7 @@
             </Border>
 
             <!-- Card 1: System Tweaks Active Ratio -->
-            <Border x:Name="StatCard1" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard1" Grid.Row="0" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -219,7 +242,7 @@
             </Border>
 
             <!-- Card 2: RAM Memory Utilization -->
-            <Border x:Name="StatCard2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard2" Grid.Row="0" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -240,7 +263,7 @@
             </Border>
 
             <!-- Card 3: Gaming Turbo & CPU Mode -->
-            <Border x:Name="StatCard3" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard3" Grid.Row="0" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />

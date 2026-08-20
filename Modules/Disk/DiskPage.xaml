@@ -13,17 +13,17 @@
     <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 1000px -->
+                <!-- Wide Layout: Viewport Width >= 1150px -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1000" />
+                        <AdaptiveTrigger MinWindowWidth="1150" />
                     </VisualState.StateTriggers>
                 </VisualState>
 
-                <!-- Medium Layout: Viewport Width between 720px and 1000px -->
+                <!-- Medium Layout: Viewport Width between 768px and 1150px (Default Window Mode) -->
                 <VisualState x:Name="MediumState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720" />
+                        <AdaptiveTrigger MinWindowWidth="768" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="HeaderCol1.Width" Value="0" />

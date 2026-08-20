@@ -446,7 +446,7 @@
                     </Border>
 
                     <!-- 2. Quick Stats Grid (Clickable navigation cards) -->
-                    <Grid x:Name="QuickStatsGrid" Grid.Row="1" Grid.Column="1" RowSpacing="0" ColumnSpacing="0">
+                    <Grid x:Name="QuickStatsGrid" Grid.Row="2" Grid.Column="1" RowSpacing="0" ColumnSpacing="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />

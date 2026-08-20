@@ -34,12 +34,18 @@
                         <Setter Target="PrivRightPanel.(Grid.Column)" Value="0" />
                         <Setter Target="PrivRightPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="PrivRightPanel.(Grid.RowSpan)" Value="1" />
-                        <Setter Target="StatCard1.(Grid.Row)" Value="1" />
-                        <Setter Target="StatCard1.(Grid.Column)" Value="0" />
-                        <Setter Target="StatCard2.(Grid.Row)" Value="2" />
+                        <Setter Target="StatCol0.Width" Value="*" />
+                        <Setter Target="StatCol1.Width" Value="*" />
+                        <Setter Target="StatCol2.Width" Value="0" />
+                        <Setter Target="StatCol3.Width" Value="0" />
+                        <Setter Target="StatCard0.(Grid.Row)" Value="0" />
+                        <Setter Target="StatCard0.(Grid.Column)" Value="0" />
+                        <Setter Target="StatCard1.(Grid.Row)" Value="0" />
+                        <Setter Target="StatCard1.(Grid.Column)" Value="1" />
+                        <Setter Target="StatCard2.(Grid.Row)" Value="1" />
                         <Setter Target="StatCard2.(Grid.Column)" Value="0" />
-                        <Setter Target="StatCard3.(Grid.Row)" Value="3" />
-                        <Setter Target="StatCard3.(Grid.Column)" Value="0" />
+                        <Setter Target="StatCard3.(Grid.Row)" Value="1" />
+                        <Setter Target="StatCard3.(Grid.Column)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -87,16 +93,20 @@
         </Grid>
 
         <!-- ==================== 1. 4-CARD FROSTED STAT RIBBON ==================== -->
-        <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+        <Grid x:Name="StatRibbonGrid" Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="StatRow0" Height="Auto" />
+                <RowDefinition x:Name="StatRow1" Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="StatCol0" Width="*" />
+                <ColumnDefinition x:Name="StatCol1" Width="*" />
+                <ColumnDefinition x:Name="StatCol2" Width="*" />
+                <ColumnDefinition x:Name="StatCol3" Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- Card 0: Security Health Score -->
-            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard0" Grid.Row="0" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -122,7 +132,7 @@
             </Border>
 
             <!-- Card 1: Firewall Status -->
-            <Border x:Name="StatCard1" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard1" Grid.Row="0" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -139,7 +149,7 @@
             </Border>
 
             <!-- Card 2: Antivirus Protection -->
-            <Border x:Name="StatCard2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard2" Grid.Row="0" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -156,7 +166,7 @@
             </Border>
 
             <!-- Card 3: Hardware Trust -->
-            <Border x:Name="StatCard3" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard3" Grid.Row="0" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />

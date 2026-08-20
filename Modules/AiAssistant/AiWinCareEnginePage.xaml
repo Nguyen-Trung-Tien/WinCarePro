@@ -20,19 +20,50 @@
     </Page.Resources>
 
     <Grid Padding="24,20" HorizontalAlignment="Stretch">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 1050px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1050" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+
+                <!-- Narrow Layout: Viewport Width < 1050px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderCol1.Width" Value="0" />
+                        <Setter Target="HeaderTitlePanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderActionsPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,18">
+        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,18">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="HeaderRow0" Height="Auto" />
+                <RowDefinition x:Name="HeaderRow1" Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition x:Name="HeaderCol0" Width="*"/>
+                <ColumnDefinition x:Name="HeaderCol1" Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Spacing="4">
+            <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                     <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
                         <FontIcon Glyph="&#xE99A;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -48,7 +79,7 @@
                 <TextBlock Text="Intelligent diagnostics, bottleneck detection &amp; automated optimization." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+            <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                 <Button x:Name="ExportReportBtn" Click="OnExportReportClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" Padding="14,0">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE8A7;" FontSize="13"/>

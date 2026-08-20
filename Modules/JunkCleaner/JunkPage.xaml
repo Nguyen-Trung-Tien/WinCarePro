@@ -57,7 +57,7 @@
                     </Grid.ColumnDefinitions>
 
                 <!-- Left: Info & Badges Display -->
-                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                <StackPanel x:Name="HeaderStatsPanel" Grid.Row="0" Grid.Column="0" Spacing="4">
                     <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                         <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
                             <FontIcon Glyph="&#xEA99;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>

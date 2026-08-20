@@ -30,6 +30,14 @@
                         <Setter Target="HeaderButtonsPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderButtonsPanel.Margin" Value="0,12,0,0" />
                         <Setter Target="HeaderButtonsPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="StatCol0.Width" Value="*" />
+                        <Setter Target="StatCol1.Width" Value="*" />
+                        <Setter Target="StatCol2.Width" Value="0" />
+                        <Setter Target="StatCol3.Width" Value="0" />
+                        <Setter Target="StatsGridCol0.(Grid.Row)" Value="0" />
+                        <Setter Target="StatsGridCol0.(Grid.Column)" Value="0" />
+                        <Setter Target="StatsGridCol1.(Grid.Row)" Value="0" />
+                        <Setter Target="StatsGridCol1.(Grid.Column)" Value="1" />
                         <Setter Target="StatsGridCol2.(Grid.Row)" Value="1" />
                         <Setter Target="StatsGridCol2.(Grid.Column)" Value="0" />
                         <Setter Target="StatsGridCol3.(Grid.Row)" Value="1" />
@@ -96,16 +104,20 @@
         </Grid>
 
         <!-- ==================== 1. UNIFIED STAT RIBBON ==================== -->
-        <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+        <Grid x:Name="StatsRibbonGrid" Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="StatRow0" Height="Auto" />
+                <RowDefinition x:Name="StatRow1" Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="StatCol0" Width="*" />
+                <ColumnDefinition x:Name="StatCol1" Width="*" />
+                <ColumnDefinition x:Name="StatCol2" Width="*" />
+                <ColumnDefinition x:Name="StatCol3" Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- Card 1: Core Services Status -->
-            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatsGridCol0" Grid.Row="0" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -125,7 +137,7 @@
             </Border>
 
             <!-- Card 2: Registry Policy Bans -->
-            <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatsGridCol1" Grid.Row="0" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -142,7 +154,7 @@
             </Border>
 
             <!-- Card 3: DNS Query Response -->
-            <Border x:Name="StatsGridCol2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatsGridCol2" Grid.Row="0" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -159,7 +171,7 @@
             </Border>
 
             <!-- Card 4: Security Health Score -->
-            <Border x:Name="StatsGridCol3" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatsGridCol3" Grid.Row="0" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />

@@ -10,20 +10,20 @@
     xmlns:components="using:WinCarePro.Shared.Components"
     mc:Ignorable="d">
 
-    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="20,12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 1280px -->
+                <!-- Wide Layout: Viewport Width >= 1024px (1 neat row of 4 stat cards) -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1280" />
+                        <AdaptiveTrigger MinWindowWidth="1024" />
                     </VisualState.StateTriggers>
                 </VisualState>
 
-                <!-- Medium Layout: Viewport Width between 768px and 1280px (Default Window Mode) -->
+                <!-- Medium Layout: Viewport Width between 720px and 1024px -->
                 <VisualState x:Name="MediumState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="768" />
+                        <AdaptiveTrigger MinWindowWidth="720" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="HeaderCol1.Width" Value="0" />
@@ -32,7 +32,7 @@
                         <Setter Target="HeaderButtons.(Grid.Column)" Value="0" />
                         <Setter Target="HeaderButtons.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderButtons.HorizontalAlignment" Value="Left" />
-                        <Setter Target="HeaderButtons.Margin" Value="0,10,0,0" />
+                        <Setter Target="HeaderButtons.Margin" Value="0,8,0,0" />
                         
                         <Setter Target="StatCol0.Width" Value="*" />
                         <Setter Target="StatCol1.Width" Value="*" />
@@ -46,11 +46,11 @@
                         <Setter Target="StatCard2.(Grid.Column)" Value="0" />
                         <Setter Target="StatCard3.(Grid.Row)" Value="1" />
                         <Setter Target="StatCard3.(Grid.Column)" Value="1" />
-                        <Setter Target="Col1.Width" Value="300" />
+                        <Setter Target="Col1.Width" Value="310" />
                     </VisualState.Setters>
                 </VisualState>
 
-                <!-- Narrow Layout: Viewport Width < 768px -->
+                <!-- Narrow Layout: Viewport Width < 720px -->
                 <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
@@ -62,7 +62,7 @@
                         <Setter Target="HeaderButtons.(Grid.Column)" Value="0" />
                         <Setter Target="HeaderButtons.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderButtons.HorizontalAlignment" Value="Left" />
-                        <Setter Target="HeaderButtons.Margin" Value="0,10,0,0" />
+                        <Setter Target="HeaderButtons.Margin" Value="0,8,0,0" />
                         
                         <Setter Target="StatCol0.Width" Value="*" />
                         <Setter Target="StatCol1.Width" Value="0" />
@@ -104,7 +104,7 @@
         </Grid.RowDefinitions>
 
         <!-- ==================== 0. MODERN HEADER & PRESETS ==================== -->
-        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,14">
+        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,10">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="HeaderRow0" Height="Auto" />
                 <RowDefinition x:Name="HeaderRow1" Height="Auto" />
@@ -137,24 +137,33 @@
                     </StackPanel>
                 </Button>
 
-                <!-- Gaming Profile Preset -->
-                <Button x:Name="GamingProfileBtn" Click="OnGamingProfileClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="12">
+                <!-- Preset Profiles DropDown Menu (Compact & Never Overlaps Title) -->
+                <DropDownButton x:Name="ProfilesDropDownBtn" Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE7FC;" FontSize="12" Foreground="#FFF59E0B" />
-                        <TextBlock Text="Gaming Mode" VerticalAlignment="Center" FontWeight="SemiBold" />
+                        <FontIcon Glyph="&#xE71D;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" />
+                        <TextBlock Text="Profiles" VerticalAlignment="Center" FontWeight="SemiBold" />
                     </StackPanel>
-                </Button>
-
-                <!-- Privacy Shield Preset -->
-                <Button x:Name="PrivacyProfileBtn" Click="OnPrivacyProfileClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="12">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE727;" FontSize="12" Foreground="#FF10B981" />
-                        <TextBlock Text="Privacy Shield" VerticalAlignment="Center" FontWeight="SemiBold" />
-                    </StackPanel>
-                </Button>
-
-                <!-- Restore Defaults -->
-                <Button Content="Defaults" Click="OnRestoreDefaultsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="12" />
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuFlyoutItem Text="Gaming Mode" Click="OnGamingProfileClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE7FC;" Foreground="#FFF59E0B"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Text="Privacy Shield" Click="OnPrivacyProfileClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE727;" Foreground="#FF10B981"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem Text="Restore Defaults" Click="OnRestoreDefaultsClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE777;" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
 
                 <!-- Apply Selected Tweaks -->
                 <Button x:Name="ApplyTweaksBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="Bold" Height="34" CornerRadius="8" Padding="16,0" FontSize="12">
@@ -168,7 +177,7 @@
         </Grid>
 
         <!-- ==================== 1. 4-CARD FROSTED STAT RIBBON ==================== -->
-        <Grid x:Name="StatRibbonGrid" Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+        <Grid x:Name="StatRibbonGrid" Grid.Row="1" Margin="0,0,0,10" ColumnSpacing="10" RowSpacing="8">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="StatRibbonRow0" Height="Auto" />
                 <RowDefinition x:Name="StatRibbonRow1" Height="Auto" />
@@ -283,7 +292,7 @@
         </Grid>
 
         <!-- ==================== 2. MAIN WORKSPACE GRID ==================== -->
-        <Grid Grid.Row="2" ColumnSpacing="16" RowSpacing="16">
+        <Grid Grid.Row="2" ColumnSpacing="12" RowSpacing="12">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" x:Name="Row0" />
                 <RowDefinition Height="Auto" x:Name="Row1" />
@@ -294,7 +303,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Left Pane: Tweaks Management Center -->
-            <Border x:Name="TweaksCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+            <Border x:Name="TweaksCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" /> <!-- Category Filter & Search Bar -->
@@ -303,14 +312,14 @@
                     </Grid.RowDefinitions>
 
                     <!-- Category Segmented Filter & Search Box (Row 0) -->
-                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid Grid.Row="0" Margin="0,0,0,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="220" />
                         </Grid.ColumnDefinitions>
 
                         <!-- Category Segmented Pills (Pivot) -->
-                        <Pivot Grid.Column="0" SelectionChanged="OnPivotSelectionChanged" Margin="0,-6,0,0">
+                        <Pivot Grid.Column="0" SelectionChanged="OnPivotSelectionChanged" Margin="0,-8,0,0">
                             <Pivot.HeaderTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding}" FontSize="13.5" FontWeight="SemiBold" Margin="0,0,6,0" />

@@ -54,7 +54,9 @@ public sealed partial class MainWindow : Window
         }
         else
         {
-            RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 243, 243, 243));
+            // In light mode, provide a rich, crisp Slate-Ice base (#F1F5F9) so pure white cards pop crisply with depth
+            byte lightAlpha = (byte)(50 + (205 * (level / 100.0)));
+            RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(lightAlpha, 241, 245, 249));
         }
     }
 

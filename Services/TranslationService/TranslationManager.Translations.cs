@@ -3163,6 +3163,13 @@ public partial class TranslationManager
         _translations["No activity logs found."] = "Không tìm thấy nhật ký hoạt động nào.";
         _translations["Search alerts by title or description..."] = "Tìm kiếm cảnh báo theo tiêu đề hoặc mô tả...";
         _translations["Search logs by action or status..."] = "Tìm kiếm nhật ký theo tác vụ hoặc trạng thái...";
+        _translations["Smart Auto-Tune"] = "Tự Động Tinh Chỉnh";
+        _translations["Gaming Mode"] = "Chế Độ Game";
+        _translations["Privacy Shield"] = "Khiên Riêng Tư";
+        _translations["Restore Defaults"] = "Khôi Phục Mặc Định";
+        _translations["Apply Tweaks"] = "Áp Dụng Tinh Chỉnh";
+        _translations["Preset Profiles"] = "Hồ Sơ Cấu Hình";
+        _translations["Profiles"] = "Hồ Sơ";
 
         _reverseTranslations.Clear();
         foreach (var kvp in _translations)

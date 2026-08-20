@@ -9,17 +9,17 @@
     xmlns:vm="using:WinCarePro.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="20,12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 1080px -->
+                <!-- Wide Layout: Viewport Width >= 1024px (1 single neat row for stats & toolbar) -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1080" />
+                        <AdaptiveTrigger MinWindowWidth="1024" />
                     </VisualState.StateTriggers>
                 </VisualState>
 
-                <!-- Medium Layout: Viewport Width between 720px and 1080px -->
+                <!-- Medium Layout: Viewport Width between 720px and 1024px -->
                 <VisualState x:Name="MediumState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="720" />
@@ -31,7 +31,7 @@
                         <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
                         <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
+                        <Setter Target="HeaderActionsPanel.Margin" Value="0,8,0,0" />
 
                         <!-- Stats Grid Stacking to 2x2 layout -->
                         <Setter Target="StatsCol2.Width" Value="0" />
@@ -41,7 +41,16 @@
                         <Setter Target="StatCard4.(Grid.Row)" Value="1" />
                         <Setter Target="StatCard4.(Grid.Column)" Value="1" />
 
-                        <Setter Target="ToolbarCol0.Width" Value="240" />
+                        <!-- Toolbar 2-Row Layout -->
+                        <Setter Target="SearchBox.(Grid.Row)" Value="1" />
+                        <Setter Target="SearchBox.(Grid.Column)" Value="0" />
+                        <Setter Target="SearchBox.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="SearchBox.Margin" Value="0,8,0,0" />
+
+                        <Setter Target="EngineStack.(Grid.Row)" Value="1" />
+                        <Setter Target="EngineStack.(Grid.Column)" Value="2" />
+                        <Setter Target="EngineStack.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="EngineStack.Margin" Value="10,8,0,0" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -58,7 +67,7 @@
                         <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
                         <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
+                        <Setter Target="HeaderActionsPanel.Margin" Value="0,8,0,0" />
 
                         <!-- Stats Grid Stacking to 1x4 layout -->
                         <Setter Target="StatsCol1.Width" Value="0" />
@@ -72,26 +81,25 @@
                         <Setter Target="StatCard4.(Grid.Column)" Value="0" />
 
                         <!-- Toolbar Stacking -->
-                        <Setter Target="ToolbarCol0.Width" Value="*" />
-                        <Setter Target="ToolbarCol1.Width" Value="0" />
-                        <Setter Target="ToolbarCol2.Width" Value="0" />
+                        <Setter Target="StatusFilterStack.(Grid.Row)" Value="0" />
+                        <Setter Target="StatusFilterStack.(Grid.ColumnSpan)" Value="4" />
+                        
+                        <Setter Target="SearchBox.(Grid.Row)" Value="1" />
+                        <Setter Target="SearchBox.(Grid.Column)" Value="0" />
                         <Setter Target="SearchBox.(Grid.ColumnSpan)" Value="4" />
                         <Setter Target="SearchBox.Width" Value="NaN" />
                         <Setter Target="SearchBox.HorizontalAlignment" Value="Stretch" />
+                        <Setter Target="SearchBox.Margin" Value="0,8,0,0" />
                         
-                        <Setter Target="EngineStack.(Grid.Row)" Value="1" />
+                        <Setter Target="EngineStack.(Grid.Row)" Value="2" />
                         <Setter Target="EngineStack.(Grid.Column)" Value="0" />
                         <Setter Target="EngineStack.(Grid.ColumnSpan)" Value="4" />
                         <Setter Target="EngineStack.Margin" Value="0,8,0,0" />
                         
-                        <Setter Target="SelectionStack.(Grid.Row)" Value="2" />
+                        <Setter Target="SelectionStack.(Grid.Row)" Value="3" />
                         <Setter Target="SelectionStack.(Grid.Column)" Value="0" />
                         <Setter Target="SelectionStack.(Grid.ColumnSpan)" Value="4" />
                         <Setter Target="SelectionStack.Margin" Value="0,8,0,0" />
-
-                        <Setter Target="StatusFilterStack.(Grid.Row)" Value="3" />
-                        <Setter Target="StatusFilterStack.(Grid.ColumnSpan)" Value="4" />
-                        <Setter Target="StatusFilterStack.Margin" Value="0,8,0,0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -111,7 +119,7 @@
         </Grid.RowDefinitions>
 
         <!-- ==================== 0. MODERN HEADER ==================== -->
-        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,14">
+        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,10">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="HeaderRow0" Height="Auto" />
                 <RowDefinition x:Name="HeaderRow1" Height="Auto" />
@@ -174,7 +182,7 @@
         </Grid>
 
         <!-- ==================== 1. 4-CARD STAT RIBBON ==================== -->
-        <Grid x:Name="StatsGrid" Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+        <Grid x:Name="StatsGrid" Grid.Row="1" Margin="0,0,0,10" ColumnSpacing="10" RowSpacing="8">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="StatsRow0" Height="Auto" />
                 <RowDefinition x:Name="StatsRow1" Height="Auto" />
@@ -195,14 +203,14 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8" Background="#20F59E0B" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE787;" FontSize="20" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="#20F59E0B" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE787;" FontSize="18" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Pending Updates" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="20" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
-                            <TextBlock Text="packages" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                            <TextBlock Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                            <TextBlock Text="packages" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -215,14 +223,14 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8" Background="#2010B981" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE73E;" FontSize="20" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="#2010B981" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE73E;" FontSize="18" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Up-to-Date Packages" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Bind ViewModel.CompletedCount, Mode=OneWay}" FontSize="20" FontWeight="ExtraBold" Foreground="#FF10B981"/>
-                            <TextBlock Text="installed" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                            <TextBlock Text="{x:Bind ViewModel.CompletedCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                            <TextBlock Text="installed" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -235,12 +243,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="8" Background="#208B5CF6" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE945;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="#208B5CF6" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE945;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Active Package Engine" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.ActiveEngineName, Mode=OneWay}" FontSize="13" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{x:Bind ViewModel.ActiveEngineName, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind ViewModel.ActiveEngineName, Mode=OneWay}"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -252,20 +260,20 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <ProgressRing Value="{x:Bind ViewModel.SystemHealthScore, Mode=OneWay}" IsActive="True" IsIndeterminate="False" Width="38" Height="38" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" />
+                    <Grid Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <ProgressRing Value="{x:Bind ViewModel.SystemHealthScore, Mode=OneWay}" IsActive="True" IsIndeterminate="False" Width="36" Height="36" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" />
                         <TextBlock Text="{x:Bind GetSecurityRatingText(ViewModel.PendingUpdatesCount), Mode=OneWay}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Grid>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="System Update Health" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.SystemHealthStatus, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{x:Bind ViewModel.SystemHealthStatus, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                 </Grid>
             </Border>
         </Grid>
 
         <!-- ==================== 2. TOOLBAR & STATUS FILTER TABS ==================== -->
-        <Grid x:Name="ToolbarGrid" Grid.Row="2" Margin="0,0,0,12" RowSpacing="8">
+        <Grid x:Name="ToolbarGrid" Grid.Row="2" Margin="0,0,0,10" RowSpacing="6">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="ToolbarRow0" Height="Auto" />
                 <RowDefinition x:Name="ToolbarRow1" Height="Auto" />
@@ -273,32 +281,14 @@
                 <RowDefinition x:Name="ToolbarRow3" Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="ToolbarCol0" Width="280" />
-                <ColumnDefinition x:Name="ToolbarCol1" Width="Auto" />
+                <ColumnDefinition x:Name="ToolbarCol0" Width="Auto" />
+                <ColumnDefinition x:Name="ToolbarCol1" Width="*" />
                 <ColumnDefinition x:Name="ToolbarCol2" Width="Auto" />
-                <ColumnDefinition x:Name="ToolbarCol3" Width="*" />
+                <ColumnDefinition x:Name="ToolbarCol3" Width="Auto" />
             </Grid.ColumnDefinitions>
-            
-            <!-- Search Box -->
-            <TextBox x:Name="SearchBox" Grid.Column="0" PlaceholderText="Search package name or ID..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="8" Height="34" VerticalAlignment="Center"/>
 
-            <!-- Engine Selector -->
-            <StackPanel x:Name="EngineStack" Grid.Column="1" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
-                <TextBlock Text="Engine:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                <ComboBox SelectedValue="{x:Bind ViewModel.UpdateEngine, Mode=TwoWay}" SelectedValuePath="Tag" Width="220" Height="34" CornerRadius="8" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
-                    <ComboBoxItem Content="Windows Package Manager" Tag="winget"/>
-                    <ComboBoxItem Content="Direct Downloader" Tag="direct"/>
-                </ComboBox>
-            </StackPanel>
-
-            <!-- Multi Selection Controls -->
-            <StackPanel x:Name="SelectionStack" Grid.Column="2" Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="8">
-                <Button Content="Select All" Click="OnSelectAllClick" FontSize="11.5" Height="34" CornerRadius="8" Padding="12,0"/>
-                <Button Content="Deselect All" Click="OnDeselectAllClick" FontSize="11.5" Height="34" CornerRadius="8" Padding="12,0"/>
-            </StackPanel>
-
-            <!-- Status Filter Tabs Row -->
-            <StackPanel x:Name="StatusFilterStack" Grid.Row="1" Grid.ColumnSpan="4" Orientation="Horizontal" Spacing="6" Margin="0,8,0,0">
+            <!-- Status Filter Tabs (Column 0 Left) -->
+            <StackPanel x:Name="StatusFilterStack" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                 <ToggleButton Content="All" IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'All'), Mode=OneWay}" Click="OnFilterAllClick" CornerRadius="8" Padding="12,5" FontSize="11.5" FontWeight="SemiBold"/>
                 
                 <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Pending'), Mode=OneWay}" Click="OnFilterPendingClick" CornerRadius="8" Padding="12,5" FontSize="11.5" FontWeight="SemiBold">
@@ -327,6 +317,24 @@
                         </Border>
                     </StackPanel>
                 </ToggleButton>
+            </StackPanel>
+            
+            <!-- Search Box (Column 1/2 Right) -->
+            <TextBox x:Name="SearchBox" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Width="220" PlaceholderText="Search package name or ID..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="8" Height="34" VerticalAlignment="Center"/>
+
+            <!-- Engine Selector (Column 2 Right) -->
+            <StackPanel x:Name="EngineStack" Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
+                <TextBlock Text="Engine:" VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                <ComboBox SelectedValue="{x:Bind ViewModel.UpdateEngine, Mode=TwoWay}" SelectedValuePath="Tag" Width="200" Height="34" CornerRadius="8" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
+                    <ComboBoxItem Content="Windows Package Manager" Tag="winget"/>
+                    <ComboBoxItem Content="Direct Downloader" Tag="direct"/>
+                </ComboBox>
+            </StackPanel>
+
+            <!-- Multi Selection Controls (Column 3 Right) -->
+            <StackPanel x:Name="SelectionStack" Grid.Row="0" Grid.Column="3" Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center" Spacing="6">
+                <Button Content="Select All" Click="OnSelectAllClick" FontSize="11.5" Height="34" CornerRadius="8" Padding="10,0"/>
+                <Button Content="Deselect All" Click="OnDeselectAllClick" FontSize="11.5" Height="34" CornerRadius="8" Padding="10,0"/>
             </StackPanel>
         </Grid>
 

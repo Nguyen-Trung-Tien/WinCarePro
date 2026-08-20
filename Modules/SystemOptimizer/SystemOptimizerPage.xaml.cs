@@ -90,17 +90,24 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnGamingProfileClick(object sender, RoutedEventArgs e)
     {
-        var btn = GamingProfileBtn ?? (sender as Button);
+        var btn = (sender as Button) ?? (sender as FrameworkElement) ?? SmartTuneBtn;
         if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
         int applied = 0;
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, null, null, null,
-            "Activating Gaming...", "Gaming Mode",
-            async () =>
-            {
-                applied = await ViewModel.ApplyGamingProfileAsync();
-            },
-            minDurationMs: 800);
+        if (sender is Button b)
+        {
+            await UiLoadingHelper.ExecuteWithLoadingAsync(
+                b, null, null, null,
+                "Activating Gaming...", "Gaming Mode",
+                async () =>
+                {
+                    applied = await ViewModel.ApplyGamingProfileAsync();
+                },
+                minDurationMs: 800);
+        }
+        else
+        {
+            applied = await ViewModel.ApplyGamingProfileAsync();
+        }
 
         if (App.MainWindowInstance is MainWindow mw)
         {
@@ -111,17 +118,24 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnPrivacyProfileClick(object sender, RoutedEventArgs e)
     {
-        var btn = PrivacyProfileBtn ?? (sender as Button);
+        var btn = (sender as Button) ?? (sender as FrameworkElement) ?? SmartTuneBtn;
         if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
         int applied = 0;
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, null, null, null,
-            "Hardening Privacy...", "Privacy Shield",
-            async () =>
-            {
-                applied = await ViewModel.ApplyPrivacyProfileAsync();
-            },
-            minDurationMs: 800);
+        if (sender is Button b)
+        {
+            await UiLoadingHelper.ExecuteWithLoadingAsync(
+                b, null, null, null,
+                "Hardening Privacy...", "Privacy Shield",
+                async () =>
+                {
+                    applied = await ViewModel.ApplyPrivacyProfileAsync();
+                },
+                minDurationMs: 800);
+        }
+        else
+        {
+            applied = await ViewModel.ApplyPrivacyProfileAsync();
+        }
 
         if (App.MainWindowInstance is MainWindow mw)
         {

@@ -63,12 +63,12 @@
         </Grid.RowDefinitions>
 
         <!-- Page Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,12">
+        <Grid Grid.Row="0" Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Spacing="4">
+            <StackPanel Grid.Column="0" Spacing="3">
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                     <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="10" Padding="8">
                         <FontIcon Glyph="&#xE80F;" FontSize="18" Foreground="White" />
@@ -80,65 +80,37 @@
                             <TextBlock Text="Live Telemetry" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}" />
                         </StackPanel>
                     </Border>
+                    <Border Background="#1510B981" BorderBrush="#4010B981" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Ellipse Width="6" Height="6" Fill="#FF10B981"/>
+                            <TextBlock Text="Kernel Engine Active" FontSize="11" FontWeight="Bold" Foreground="#FF10B981"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
                 <TextBlock Text="Real-time hardware telemetry &amp; AI care." Style="{StaticResource PageHeaderSubtitleStyle}" />
+            </StackPanel>
+
+            <!-- Fast Action Navigation Deck in Header Top Right -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Click="OnLaunchGamingTurboClick" Style="{StaticResource DefaultButtonStyle}" Height="34" Padding="12,0" VerticalAlignment="Center" CornerRadius="8">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE7FC;" FontSize="12" Foreground="#FFF59E0B"/>
+                        <TextBlock Text="System Turbo" FontSize="11.5" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Click="OnLaunchDesktopWidgetClick" Style="{StaticResource DefaultButtonStyle}" Height="34" Padding="12,0" VerticalAlignment="Center" CornerRadius="8">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE8A7;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                        <TextBlock Text="Widget HUD" FontSize="11.5" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Grid>
 
         <!-- Main Scrollable Content -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Spacing="12">
-                
-                <!-- ULTRA-PREMIUM EVOLUTION BANNER -->
-                <Border Style="{StaticResource AuraGlassCardStyle}" Margin="6,0,6,0" Padding="14,10">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
-                                    <TextBlock Text="PRO AI" FontSize="10" FontWeight="ExtraBold" Foreground="White"/>
-                                </Border>
-                                <TextBlock Text="WinCare Pro Evolution Suite" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
-                                <Border Background="#1510B981" BorderBrush="#4010B981" BorderThickness="1" CornerRadius="6" Padding="6,1.5" VerticalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal" Spacing="4">
-                                        <Ellipse Width="6" Height="6" Fill="#FF10B981"/>
-                                        <TextBlock Text="Kernel Engine" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
-                                    </StackPanel>
-                                </Border>
-                            </StackPanel>
-                            <TextBlock Text="Kernel telemetry &amp; intelligent system care." 
-                                       FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
-                        </StackPanel>
-
-                        <!-- Fast Action Navigation Deck -->
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="12,0,0,0">
-                            <Button Click="OnLaunchAiWinCareEngineClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="12,0" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE99A;" FontSize="12"/>
-                                    <TextBlock Text="AI WinCare Engine" FontSize="11.5" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-
-                            <Button Click="OnLaunchGamingTurboClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="12,0" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE7FC;" FontSize="12"/>
-                                    <TextBlock Text="System Turbo" FontSize="11.5" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-
-                            <Button Click="OnLaunchDesktopWidgetClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="12,0" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE8A7;" FontSize="12"/>
-                                    <TextBlock Text="Widget HUD" FontSize="11.5" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-                </Border>
+            <StackPanel Spacing="10">
 
                 <!-- Main Content Grid combining Core and Extended layers -->
                 <Grid x:Name="MainContentGrid" ColumnSpacing="0" RowSpacing="0" Padding="0">
@@ -159,7 +131,7 @@
                     </Grid.ColumnDefinitions>
                     
                     <!-- Left Side Column 0: System Health Overview Hero -->
-                    <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource NeonGlowBorderStyle}" Margin="6" Padding="18,16">
+                    <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource NeonGlowBorderStyle}" Margin="6" Padding="16,14" MinHeight="185">
                         <Grid x:Name="HealthGaugeGrid">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="HealthGaugeRow0" Height="Auto" />
@@ -170,9 +142,9 @@
                                 <ColumnDefinition x:Name="HealthGaugeCol1" Width="*" />
                             </Grid.ColumnDefinitions>
                             
-                             <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="136" Height="136" Margin="0,0,18,0">
+                             <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="128" Height="128" Margin="0,0,16,0" VerticalAlignment="Center">
                                 <!-- Glowing background circle with pulse animation -->
-                                <Ellipse x:Name="GlowEllipse" Width="128" Height="128" Opacity="0.12" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Ellipse x:Name="GlowEllipse" Width="122" Height="122" Opacity="0.12" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Ellipse.Fill>
                                         <RadialGradientBrush>
                                             <GradientStop Color="#FF8B5CF6" Offset="0" />
@@ -181,24 +153,22 @@
                                         </RadialGradientBrush>
                                     </Ellipse.Fill>
                                 </Ellipse>
-                                <Ellipse Width="114" Height="114" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="5" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.25"/>
-                                <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}" Width="120" Height="120" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <Ellipse Width="108" Height="108" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="5" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.25"/>
+                                <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}" Width="114" Height="114" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="32" FontWeight="ExtraBold" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" CharacterSpacing="-25" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                    <TextBlock Text="HEALTH SCORE" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="18"/>
+                                    <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="30" FontWeight="ExtraBold" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" CharacterSpacing="-25" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                    <TextBlock Text="HEALTH SCORE" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="16"/>
                                 </StackPanel>
                             </Grid>
 
-                            <StackPanel x:Name="GaugeDescPanel" Grid.Column="1" VerticalAlignment="Center" Spacing="6">
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="System Health Overview" FontSize="18" FontWeight="Bold" TextWrapping="Wrap" />
-                                </StackPanel>
-                                <Border Background="{x:Bind GetHealthScoreBadgeBackground(ViewModel.HealthScore), Mode=OneWay}" HorizontalAlignment="Left" Padding="10,4" CornerRadius="6">
-                                    <TextBlock Text="{x:Bind GetStatusText(ViewModel.HealthScore), Mode=OneWay}" FontSize="11.5" FontWeight="Bold" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" TextWrapping="Wrap" />
+                            <StackPanel x:Name="GaugeDescPanel" Grid.Column="1" VerticalAlignment="Center" Spacing="5">
+                                <TextBlock Text="System Health Overview" FontSize="16.5" FontWeight="Bold" TextWrapping="Wrap" />
+                                <Border Background="{x:Bind GetHealthScoreBadgeBackground(ViewModel.HealthScore), Mode=OneWay}" HorizontalAlignment="Left" Padding="9,3" CornerRadius="6">
+                                    <TextBlock Text="{x:Bind GetStatusText(ViewModel.HealthScore), Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" TextWrapping="Wrap" />
                                 </Border>
-                                <TextBlock Text="{x:Bind ViewModel.HealthBreakdownText, Mode=OneWay}" TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="17" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{x:Bind ViewModel.HealthBreakdownText, Mode=OneWay}" TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="16" MaxLines="2" TextTrimming="CharacterEllipsis"/>
                                 
-                                <Grid x:Name="GaugeActionButtonsGrid" Margin="0,6,0,0">
+                                <Grid x:Name="GaugeActionButtonsGrid" Margin="0,4,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
@@ -209,11 +179,11 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
-                                    <Button x:Name="ScanSystemBtn" Grid.Row="0" Grid.Column="0" Content="Scan System" Style="{StaticResource DefaultButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Padding="18,7" CornerRadius="6" FontWeight="Bold" Margin="0,0,8,4"/>
+                                    <Button x:Name="ScanSystemBtn" Grid.Row="0" Grid.Column="0" Content="Scan System" Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Height="32" Padding="14,0" CornerRadius="6" FontWeight="Bold" Margin="0,0,8,0"/>
                                     
                                     <!-- Split Button for Tiered Optimization -->
-                                    <SplitButton x:Name="OptimizeSplitBtn" Grid.Row="0" Grid.Column="1" Content="Optimize System" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Margin="0,0,8,4"
-                                                 CornerRadius="6" FontWeight="Bold">
+                                    <SplitButton x:Name="OptimizeSplitBtn" Grid.Row="0" Grid.Column="1" Content="Optimize System" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Margin="0,0,8,0"
+                                                 CornerRadius="6" FontWeight="Bold" Height="32">
                                         <SplitButton.Resources>
                                             <SolidColorBrush x:Key="SplitButtonButtonBackground" Color="#FF8B5CF6" />
                                             <SolidColorBrush x:Key="SplitButtonButtonBackgroundPointerOver" Color="#FF7C3AED" />
@@ -243,21 +213,21 @@
                                         </SplitButton.Flyout>
                                     </SplitButton>
                                     
-                                    <ProgressRing x:Name="GaugeActionProgressRing" Grid.Row="0" Grid.Column="2" IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,0,4" />
+                                    <ProgressRing x:Name="GaugeActionProgressRing" Grid.Row="0" Grid.Column="2" IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="18" Height="18" VerticalAlignment="Center" />
                                 </Grid>
                                 
                                 <StackPanel Visibility="{x:Bind GetProgressVisibility(ViewModel.IsScanning), Mode=OneWay}" Spacing="4" Margin="0,2,0,0">
-                                    <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="5" Foreground="{StaticResource PrimaryAccentGradient}" CornerRadius="2.5" />
+                                    <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="4" Foreground="{StaticResource PrimaryAccentGradient}" CornerRadius="2" />
                                 </StackPanel>
                                 
-                                <TextBlock Text="{x:Bind ViewModel.ScanStatus, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,2,0,0"/>
+                                <TextBlock Text="{x:Bind ViewModel.ScanStatus, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,1,0,0" FontSize="11"/>
                             </StackPanel>
                         </Grid>
                     </Border>
 
                     <!-- Right Side Row 0 Column 1: WinCare AI Engine Card -->
-                    <Border x:Name="AiWinCareEngineEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource AiWinCareEngineCardStyle}" Margin="6" Padding="18,16">
-                        <StackPanel Spacing="10">
+                    <Border x:Name="AiWinCareEngineEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource AiWinCareEngineCardStyle}" Margin="6" Padding="16,14" MinHeight="185">
+                        <StackPanel Spacing="8">
                             <!-- AI Header Row -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -265,28 +235,28 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Column="0" Spacing="4">
+                                <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <Border Background="{StaticResource AiWinCareEngineGradient}" CornerRadius="6" Padding="6,3">
-                                            <FontIcon Glyph="&#xE99A;" FontSize="12" Foreground="White"/>
+                                        <Border Background="{StaticResource AiWinCareEngineGradient}" CornerRadius="6" Padding="6,2.5">
+                                            <FontIcon Glyph="&#xE99A;" FontSize="11" Foreground="White"/>
                                         </Border>
-                                        <TextBlock Text="AI WinCare Engine" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="AI Assistant" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
                                         <Border Background="#2510B981" BorderBrush="#6010B981" BorderThickness="1" CornerRadius="6" Padding="5,1" VerticalAlignment="Center">
                                             <TextBlock Text="Active" FontSize="9" FontWeight="ExtraBold" Foreground="#FF10B981"/>
                                         </Border>
                                     </StackPanel>
-                                    <TextBlock x:Name="AiSummaryText" Text="{x:Bind ViewModel.AiSummaryText, Mode=OneWay}" FontSize="11.5" 
+                                    <TextBlock x:Name="AiSummaryText" Text="{x:Bind ViewModel.AiSummaryText, Mode=OneWay}" FontSize="11" 
                                                Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxLines="2" TextWrapping="Wrap"/>
                                 </StackPanel>
 
                                 <!-- AI Score Mini Ring -->
-                                <Grid Grid.Column="1" Width="54" Height="54" Margin="10,0,0,0" VerticalAlignment="Center">
+                                <Grid Grid.Column="1" Width="50" Height="50" Margin="8,0,0,0" VerticalAlignment="Center">
                                     <Ellipse Stroke="{StaticResource PrimaryAccentGradient}" StrokeThickness="3.5" Opacity="0.25"/>
-                                    <ProgressRing Value="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" Width="50" Height="50" 
+                                    <ProgressRing Value="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" Width="46" Height="46" 
                                                   Foreground="{StaticResource PrimaryAccentBrush}" Background="Transparent" IsIndeterminate="False"/>
                                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <TextBlock x:Name="AiScoreText" Text="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" 
-                                                   FontSize="16" FontWeight="ExtraBold" HorizontalAlignment="Center" 
+                                                   FontSize="15" FontWeight="ExtraBold" HorizontalAlignment="Center" 
                                                    Foreground="{StaticResource PrimaryAccentBrush}"/>
                                         <TextBlock Text="AI Score" FontSize="7" FontWeight="Bold" 
                                                    Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
@@ -294,64 +264,61 @@
                                 </Grid>
                             </Grid>
 
-                            <!-- Predictive Insights Chips (inline) -->
+                            <!-- Predictive Insights Chips (inline 2-column balanced) -->
                             <Grid ColumnSpacing="8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="10,8" MinHeight="0">
+                                <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="10,6" MinHeight="0">
                                     <StackPanel Spacing="1">
                                         <StackPanel Orientation="Horizontal" Spacing="4">
                                             <FontIcon Glyph="&#xE7F1;" FontSize="10" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                             <TextBlock Text="Storage Outlook" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                         </StackPanel>
-                                        <TextBlock Text="{x:Bind ViewModel.AiPredictiveStorageText, Mode=OneWay}" FontSize="13" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                                        <TextBlock Text="{x:Bind ViewModel.AiPredictiveStorageText, Mode=OneWay}" FontSize="12.5" FontWeight="ExtraBold" Foreground="#FF10B981"/>
                                     </StackPanel>
                                 </Border>
 
-                                <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="10,8" MinHeight="0">
+                                <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="10,6" MinHeight="0">
                                     <StackPanel Spacing="1">
                                         <StackPanel Orientation="Horizontal" Spacing="4">
                                             <FontIcon Glyph="&#xE7B5;" FontSize="10" Foreground="#FFF59E0B"/>
                                             <TextBlock Text="Boot Speed" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                         </StackPanel>
-                                        <TextBlock Text="{x:Bind ViewModel.AiPredictiveBootText, Mode=OneWay}" FontSize="13" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                                        <TextBlock Text="{x:Bind ViewModel.AiPredictiveBootText, Mode=OneWay}" FontSize="12.5" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
                                     </StackPanel>
                                 </Border>
+                            </Grid>
 
-                                <!-- AI Scan Button -->
-                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                                    <Button Click="OnEmbeddedAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                            <!-- Bottom AI Recommendation & Scan Strip -->
+                            <Border x:Name="TopAiRecommendationCard" Style="{StaticResource GlassmorphismCardStyle}" Padding="10,8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Width="28" Height="28" CornerRadius="6" Background="{ThemeResource AppStatChipBackground}" Margin="0,0,8,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE99A;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1" Margin="0,0,8,0">
+                                        <TextBlock x:Name="TopRecommendationTitle" Text="Run AI Scan for insights" FontWeight="Bold" FontSize="11" 
+                                                   Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock x:Name="TopRecommendationDesc" Text="Click 'AI Scan' to analyze system health." FontSize="10" 
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxLines="1"/>
+                                    </StackPanel>
+
+                                    <!-- AI Scan Button on Far Right -->
+                                    <Button Grid.Column="2" Click="OnEmbeddedAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="30" Padding="12,0" CornerRadius="6" VerticalAlignment="Center">
                                         <StackPanel Orientation="Horizontal" Spacing="4">
                                             <FontIcon Glyph="&#xE721;" FontSize="11"/>
                                             <TextBlock Text="AI Scan" FontSize="11" FontWeight="SemiBold"/>
                                         </StackPanel>
                                     </Button>
-                                </StackPanel>
-                            </Grid>
-
-                            <!-- Top AI Recommendation Card (compact) -->
-                            <Border x:Name="TopAiRecommendationCard" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10" 
-                                    Visibility="{x:Bind GetBoolVisibility(ViewModel.HasAiScanned), Mode=OneWay}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border Grid.Column="0" Width="30" Height="30" CornerRadius="6" Background="{ThemeResource AppStatChipBackground}" Margin="0,0,10,0" VerticalAlignment="Center">
-                                        <FontIcon Glyph="&#xE99A;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                                        <TextBlock x:Name="TopRecommendationTitle" Text="Run AI Scan for insights" FontWeight="Bold" FontSize="11.5" 
-                                                   Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock x:Name="TopRecommendationDesc" Text="Click 'AI Scan' to analyze system health." FontSize="10.5" 
-                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxLines="2" TextWrapping="Wrap"/>
-                                    </StackPanel>
                                 </Grid>
                             </Border>
                         </StackPanel>

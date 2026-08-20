@@ -80,9 +80,9 @@
                         <Setter Target="TweaksCard.(Grid.Row)" Value="0" />
                         <Setter Target="TweaksCard.(Grid.Column)" Value="0" />
                         <Setter Target="TweaksCard.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="RightPanelGrid.(Grid.Row)" Value="1" />
-                        <Setter Target="RightPanelGrid.(Grid.Column)" Value="0" />
-                        <Setter Target="RightPanelGrid.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="RightPanelScroll.(Grid.Row)" Value="1" />
+                        <Setter Target="RightPanelScroll.(Grid.Column)" Value="0" />
+                        <Setter Target="RightPanelScroll.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="Col1.Width" Value="Auto" />
                         <Setter Target="Row1.Height" Value="*" />
                     </VisualState.Setters>
@@ -417,207 +417,187 @@
                 </Grid>
             </Border>
 
-            <!-- Right Pane: Perfectly Balanced & Equal-Height 3-Deck Control Grid -->
-            <Grid x:Name="RightPanelGrid" Grid.Column="1" Grid.Row="0" RowSpacing="12" VerticalAlignment="Stretch">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" /> <!-- 1. RAM Booster 2.0 Card -->
-                    <RowDefinition Height="*" /> <!-- 2. Monitored Services Card -->
-                    <RowDefinition Height="*" /> <!-- 3. Kernel & Latency Engine Profile Card -->
-                </Grid.RowDefinitions>
-
-                <!-- 1. RAM Booster 2.0 Card -->
-                <Border x:Name="RamBoosterCard" Grid.Row="0" Style="{StaticResource NeonGlowBorderStyle}" Padding="14,11" VerticalAlignment="Stretch">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" /> <!-- Header -->
-                            <RowDefinition Height="*" />    <!-- Gauge & Metrics -->
-                            <RowDefinition Height="Auto" /> <!-- Action Button -->
-                        </Grid.RowDefinitions>
-
-                        <!-- Header -->
-                        <Grid Grid.Row="0" Margin="0,0,0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Border Width="28" Height="28" Background="#253B82F6" CornerRadius="14" Grid.Column="0">
-                                <FontIcon Glyph="&#xE968;" FontSize="13" Foreground="#FF3B82F6" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                            </Border>
-                            <TextBlock Grid.Column="1" Text="RAM Booster 2.0" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
-                            <ToggleSwitch Grid.Column="2" IsOn="{x:Bind ViewModel.AutoBoostEnabled, Mode=TwoWay}" VerticalAlignment="Center" OffContent="" OnContent="" MinWidth="0" HorizontalAlignment="Right" ToolTipService.ToolTip="Auto-purges RAM when load exceeds 85%" />
-                        </Grid>
-
-                        <!-- RAM Gauge & Metrics Breakdown -->
-                        <Border Grid.Row="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="10" Padding="10,6" VerticalAlignment="Center" Margin="0,0,0,8">
-                            <Grid ColumnSpacing="10">
+            <!-- Right Pane: Ergonomic Scrollable 3-Deck Control Stack -->
+            <ScrollViewer x:Name="RightPanelScroll" Grid.Column="1" Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,2,0">
+                <StackPanel x:Name="RightPanelGrid" Spacing="12">
+                    
+                    <!-- 1. RAM Booster 2.0 Card -->
+                    <Border x:Name="RamBoosterCard" Style="{StaticResource NeonGlowBorderStyle}" Padding="14,12">
+                        <StackPanel Spacing="8">
+                            <!-- Header -->
+                            <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" Background="#253B82F6" CornerRadius="14" Grid.Column="0">
+                                    <FontIcon Glyph="&#xE968;" FontSize="13" Foreground="#FF3B82F6" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="RAM Booster 2.0" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                <ToggleSwitch Grid.Column="2" IsOn="{x:Bind ViewModel.AutoBoostEnabled, Mode=TwoWay}" VerticalAlignment="Center" OffContent="" OnContent="" MinWidth="0" HorizontalAlignment="Right" ToolTipService.ToolTip="Auto-purges RAM when load exceeds 85%" />
+                            </Grid>
 
-                                <!-- Gauge Ring -->
-                                <Grid Width="46" Height="46" Grid.Column="0" VerticalAlignment="Center">
-                                    <ProgressRing Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" 
-                                                  Minimum="0" Maximum="100" 
-                                                  Width="44" Height="44" 
-                                                  Background="{ThemeResource ControlStrokeColorDefaultBrush}" 
-                                                  Foreground="{ThemeResource SystemAccentColor}"
-                                                  IsIndeterminate="False"/>
-                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <TextBlock Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
-                                        <TextBlock Text="RAM" FontSize="7" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
-                                    </StackPanel>
-                                </Grid>
-
-                                <!-- Detailed metrics -->
-                                <Grid Grid.Column="1" RowSpacing="2" VerticalAlignment="Center">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
+                            <!-- RAM Gauge & Metrics Breakdown -->
+                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="10" Padding="12,8">
+                                <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Total:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.TotalRamText, Mode=OneWay}" FontSize="10" FontWeight="Bold" />
+                                    <!-- Gauge Ring -->
+                                    <Grid Width="46" Height="46" Grid.Column="0" VerticalAlignment="Center">
+                                        <ProgressRing Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" 
+                                                      Minimum="0" Maximum="100" 
+                                                      Width="44" Height="44" 
+                                                      Background="{ThemeResource ControlStrokeColorDefaultBrush}" 
+                                                      Foreground="{ThemeResource SystemAccentColor}"
+                                                      IsIndeterminate="False"/>
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" />
+                                            <TextBlock Text="RAM" FontSize="7" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
+                                        </StackPanel>
+                                    </Grid>
 
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Used:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.UsedRamText, Mode=OneWay}" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" />
-
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Available:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.AvailableRamText, Mode=OneWay}" FontSize="10" FontWeight="Bold" Foreground="#FF10B981" />
-                                </Grid>
-                            </Grid>
-                        </Border>
-
-                        <!-- Action Button -->
-                        <Button Grid.Row="2" x:Name="BoostRamBtn" Click="OnBoostRamClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBoosting), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Stretch" CornerRadius="8" Padding="12,6" FontWeight="Bold">
-                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                <ProgressRing x:Name="BoostRamRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="White" VerticalAlignment="Center"/>
-                                <FontIcon x:Name="BoostRamIcon" Glyph="&#xF0AF;" FontSize="11" Foreground="White" />
-                                <TextBlock x:Name="BoostRamText" Text="Purge RAM Cache" FontSize="11.5" VerticalAlignment="Center" FontWeight="Bold" />
-                            </StackPanel>
-                        </Button>
-                    </Grid>
-                </Border>
-
-                <!-- 2. Background Services Monitor Card -->
-                <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,11" VerticalAlignment="Stretch">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" /> <!-- Header -->
-                            <RowDefinition Height="*" />    <!-- Services List -->
-                        </Grid.RowDefinitions>
-
-                        <!-- Header -->
-                        <Grid Grid.Row="0" Margin="0,0,0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Border Width="28" Height="28" Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="14" Grid.Column="0">
-                                <FontIcon Glyph="&#xE713;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                            </Border>
-                            <TextBlock Grid.Column="1" Text="Monitored Services" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
-                            <Border Grid.Column="2" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1" VerticalAlignment="Center">
-                                <TextBlock Text="Active" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
-                            </Border>
-                        </Grid>
-
-                        <!-- Services Items Control -->
-                        <ItemsControl Grid.Row="1" ItemsSource="{x:Bind ViewModel.BackgroundServices, Mode=OneWay}" VerticalAlignment="Center">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate x:DataType="viewmodels:ServiceStatusItem">
-                                    <Grid Padding="0,2.5" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                                    <!-- Detailed metrics -->
+                                    <Grid Grid.Column="1" RowSpacing="3" VerticalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <FontIcon Glyph="{x:Bind StatusGlyph}" Foreground="{x:Bind StatusColor}" FontSize="10" Margin="0,0,6,0" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Column="1" Text="{x:Bind DisplayName}" FontSize="10" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                                        <Border Grid.Column="2" CornerRadius="4" Padding="5,1" VerticalAlignment="Center" Background="{x:Bind StatusColor}">
-                                            <TextBlock Text="{x:Bind Status}" FontSize="7.5" FontWeight="Bold" Foreground="White" />
-                                        </Border>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Total:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.TotalRamText, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Used:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.UsedRamText, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Available:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.AvailableRamText, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
                                     </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </Grid>
-                </Border>
-
-                <!-- 3. Kernel & Latency Engine Profile Card -->
-                <Border Grid.Row="2" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,11" VerticalAlignment="Stretch">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" /> <!-- Header -->
-                            <RowDefinition Height="*" />    <!-- Specs Grid -->
-                            <RowDefinition Height="Auto" /> <!-- Action Button -->
-                        </Grid.RowDefinitions>
-
-                        <!-- Header -->
-                        <Grid Grid.Row="0" Margin="0,0,0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Border Width="28" Height="28" Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="14" Grid.Column="0">
-                                <FontIcon Glyph="&#xE9D9;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                            </Border>
-                            <TextBlock Grid.Column="1" Text="Kernel &amp; Latency Tuning" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
-                            <Border Grid.Column="2" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1" VerticalAlignment="Center">
-                                <TextBlock Text="Optimized" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
-                            </Border>
-                        </Grid>
-
-                        <!-- Profile Specs Grid -->
-                        <Grid Grid.Row="1" RowSpacing="4" VerticalAlignment="Center" Margin="0,0,0,8">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Multimedia Scheduling -->
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Multimedia Scheduling:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                            <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
-                                <TextBlock Text="{x:Bind ViewModel.MultimediaSchedulingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                </Grid>
                             </Border>
 
-                            <!-- Network Throttling -->
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Network Packet Rate:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                            <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
-                                <TextBlock Text="{x:Bind ViewModel.NetworkThrottlingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
-                            </Border>
+                            <!-- Action Button -->
+                            <Button x:Name="BoostRamBtn" Click="OnBoostRamClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBoosting), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Stretch" CornerRadius="8" Height="34" Padding="12,0" FontWeight="Bold">
+                                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                    <ProgressRing x:Name="BoostRamRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="White" VerticalAlignment="Center"/>
+                                    <FontIcon x:Name="BoostRamIcon" Glyph="&#xF0AF;" FontSize="11" Foreground="White" />
+                                    <TextBlock x:Name="BoostRamText" Text="Purge RAM Cache" FontSize="11.5" VerticalAlignment="Center" FontWeight="Bold" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Border>
 
-                            <!-- Kernel Paging -->
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Kernel RAM Resident:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                            <Border Grid.Row="2" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
-                                <TextBlock Text="{x:Bind ViewModel.KernelPagingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
-                            </Border>
-                        </Grid>
+                    <!-- 2. Background Services Monitor Card -->
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
+                        <StackPanel Spacing="8">
+                            <!-- Header -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="14" Grid.Column="0">
+                                    <FontIcon Glyph="&#xE713;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="Monitored Services" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                <Border Grid.Column="2" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="6,1.5" VerticalAlignment="Center">
+                                    <TextBlock Text="Active" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                </Border>
+                            </Grid>
 
-                        <!-- 1-Click Clean Delivery Cache Action -->
-                        <Button Grid.Row="2" x:Name="CleanCacheBtn" Click="OnCleanDeliveryCacheClick" IsEnabled="{x:Bind IsNot(ViewModel.IsCleaningCache), Mode=OneWay}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="12,6" FontSize="11" FontWeight="Bold">
-                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                <ProgressRing x:Name="CleanCacheRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
-                                <FontIcon x:Name="CleanCacheIcon" Glyph="&#xE74D;" FontSize="11" Foreground="{ThemeResource SystemAccentColor}" />
-                                <TextBlock x:Name="CleanCacheText" Text="Purge Delivery Cache" FontSize="11.5" VerticalAlignment="Center" FontWeight="SemiBold" />
-                            </StackPanel>
-                        </Button>
-                    </Grid>
-                </Border>
-            </Grid>
+                            <!-- Services Items Control -->
+                            <ItemsControl ItemsSource="{x:Bind ViewModel.BackgroundServices, Mode=OneWay}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="viewmodels:ServiceStatusItem">
+                                        <Grid Padding="0,3" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <FontIcon Glyph="{x:Bind StatusGlyph}" Foreground="{x:Bind StatusColor}" FontSize="10" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="1" Text="{x:Bind DisplayName}" FontSize="10" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                            <Border Grid.Column="2" CornerRadius="4" Padding="5,1" VerticalAlignment="Center" Background="{x:Bind StatusColor}">
+                                                <TextBlock Text="{x:Bind Status}" FontSize="7.5" FontWeight="Bold" Foreground="White" />
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 3. Kernel & Latency Engine Profile Card -->
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
+                        <StackPanel Spacing="8">
+                            <!-- Header -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="14" Grid.Column="0">
+                                    <FontIcon Glyph="&#xE9D9;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="Kernel &amp; Latency Tuning" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                <Border Grid.Column="2" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="6,1.5" VerticalAlignment="Center">
+                                    <TextBlock Text="Optimized" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                </Border>
+                            </Grid>
+
+                            <!-- Profile Specs Grid -->
+                            <Grid RowSpacing="4" Margin="0,2,0,4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Multimedia Scheduling -->
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Multimedia Scheduling:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                                <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
+                                    <TextBlock Text="{x:Bind ViewModel.MultimediaSchedulingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                </Border>
+
+                                <!-- Network Throttling -->
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Network Packet Rate:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                                <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
+                                    <TextBlock Text="{x:Bind ViewModel.NetworkThrottlingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                </Border>
+
+                                <!-- Kernel Paging -->
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Kernel RAM Resident:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                                <Border Grid.Row="2" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
+                                    <TextBlock Text="{x:Bind ViewModel.KernelPagingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                </Border>
+                            </Grid>
+
+                            <!-- 1-Click Clean Delivery Cache Action -->
+                            <Button x:Name="CleanCacheBtn" Click="OnCleanDeliveryCacheClick" IsEnabled="{x:Bind IsNot(ViewModel.IsCleaningCache), Mode=OneWay}" HorizontalAlignment="Stretch" CornerRadius="8" Height="32" Padding="12,0" FontSize="11" FontWeight="Bold">
+                                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                    <ProgressRing x:Name="CleanCacheRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
+                                    <FontIcon x:Name="CleanCacheIcon" Glyph="&#xE74D;" FontSize="11" Foreground="{ThemeResource SystemAccentColor}" />
+                                    <TextBlock x:Name="CleanCacheText" Text="Purge Delivery Cache" FontSize="11.5" VerticalAlignment="Center" FontWeight="SemiBold" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
 
         <!-- ==================== 3. STATUS BAR FOOTER ==================== -->

@@ -255,10 +255,10 @@
                                 <Grid Width="320" HorizontalAlignment="Left">
                                     <TextBlock Text="Mica / Acrylic Background Transparency Level" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     <Border Background="{ThemeResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" HorizontalAlignment="Right">
-                                        <TextBlock x:Name="TransparencyValueLabel" Text="80%" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                        <TextBlock x:Name="TransparencyValueLabel" Text="10%" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                                     </Border>
                                 </Grid>
-                                <Slider x:Name="TransparencySlider" ValueChanged="OnTransparencyChanged" Minimum="10" Maximum="100" Value="80" Width="320" HorizontalAlignment="Left"/>
+                                <Slider x:Name="TransparencySlider" ValueChanged="OnTransparencyChanged" Minimum="10" Maximum="100" Value="10" Width="320" HorizontalAlignment="Left"/>
                             </StackPanel>
 
                             <components:LoadingToggleSwitch x:Name="EnableAnimationsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Enable UI fluid translation and hover animations" />

@@ -13,7 +13,7 @@ namespace WinCarePro;
 public sealed partial class MainWindow : Window
 {
     private string? _downloadedSetupPath = null;
-    public double CurrentTransparencyLevel { get; private set; } = 80.0;
+    public double CurrentTransparencyLevel { get; private set; } = 10.0;
 
     private void LoadThemeConfiguration()
     {

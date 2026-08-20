@@ -17,7 +17,7 @@ public class SettingsProfile
 
     // Appearance
     public string AccentColor { get; set; } = "Default"; // Default, Green, Purple, Pink, Amber
-    public double TransparencyLevel { get; set; } = 80.0;
+    public double TransparencyLevel { get; set; } = 10.0;
     public bool EnableAnimations { get; set; } = true;
 
     // Auto Maintenance

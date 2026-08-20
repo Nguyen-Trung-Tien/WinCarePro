@@ -185,6 +185,6 @@ public class SettingsAndStateTests
         // Assert
         Assert.Equal("Dark", service.CurrentSettings.Theme);
         Assert.Equal("Default", service.CurrentSettings.AccentColor);
-        Assert.Equal(80.0, service.CurrentSettings.TransparencyLevel);
+        Assert.Equal(10.0, service.CurrentSettings.TransparencyLevel);
     }
 }

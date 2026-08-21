@@ -108,9 +108,8 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+            GC.Collect(2, GCCollectionMode.Optimized, true, true);
             GC.WaitForPendingFinalizers();
-            GC.Collect(2, GCCollectionMode.Aggressive, true, true);
             EmptyWorkingSet(System.Diagnostics.Process.GetCurrentProcess().Handle);
         }
         catch { }
@@ -229,12 +228,10 @@ public sealed partial class MainWindow : Window
         IntPtr hMenu = CreatePopupMenu();
         if (hMenu == IntPtr.Zero) return;
 
+        uint cmd = 0;
         try
         {
-            uint cmd = 0;
-            try
-            {
-                string openText = "🚀 Open WinCare Pro".T();
+            string openText = "🚀 Open WinCare Pro".T();
             string scanText = "🔍 Scan System Diagnostics".T();
             string ramText = "⚡ Optimize Memory (RAM)".T();
             string junkText = "🧹 Clean Junk Files".T();
@@ -266,12 +263,13 @@ public sealed partial class MainWindow : Window
         }
         finally
         {
-            if (hMenu != IntPtr.Zero)
-            {
-                DestroyMenu(hMenu);
-            }
+            // Always destroy the menu handle to prevent GDI resource leak
+            DestroyMenu(hMenu);
         }
 
+        // Process selected command after menu is destroyed
+        try
+        {
             if (cmd == ID_TRAY_OPEN)
             {
                 this.AppWindow.Show();

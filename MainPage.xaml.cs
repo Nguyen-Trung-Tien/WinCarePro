@@ -231,60 +231,31 @@ public sealed partial class MainPage : Page
     {
         try
         {
-            if (ContentFrame.Content is Views.DashboardPage dbPage)
+            var content = ContentFrame.Content;
+            if (content == null) return;
+
+            // Handle pages with specific cleanup methods first
+            switch (content)
             {
-                dbPage.ViewModel?.Dispose();
-            }
-            else if (ContentFrame.Content is Views.NetworkPage netPage)
-            {
-                netPage.ViewModel?.Cleanup();
-            }
-            else if (ContentFrame.Content is Views.DiskPage diskPage)
-            {
-                diskPage.ViewModel?.Cleanup();
-            }
-            else if (ContentFrame.Content is Views.JunkPage junkPage)
-            {
-                junkPage.ViewModel?.Cleanup();
-            }
-            else if (ContentFrame.Content is Views.SystemOptimizerPage optPage)
-            {
-                optPage.ViewModel?.Dispose();
-            }
-            else if (ContentFrame.Content is Views.SecurityPage secPage)
-            {
-                if (secPage.DataContext is IDisposable dispSec) dispSec.Dispose();
-            }
-            else if (ContentFrame.Content is Views.StartupPage startupPage)
-            {
-                if (startupPage.DataContext is IDisposable disp) disp.Dispose();
-            }
-            else if (ContentFrame.Content is Views.UpdaterPage updaterPage)
-            {
-                if (updaterPage.DataContext is IDisposable disp) disp.Dispose();
-            }
-            else if (ContentFrame.Content is Views.UninstallPage uninstPage)
-            {
-                if (uninstPage.DataContext is IDisposable disp) disp.Dispose();
-            }
-            else if (ContentFrame.Content is Views.RepairPage repairPage)
-            {
-                if (repairPage.DataContext is IDisposable disp) disp.Dispose();
-            }
-            else if (ContentFrame.Content is Views.RegistryPage regPage)
-            {
-                if (regPage.DataContext is IDisposable disp) disp.Dispose();
-            }
-            else if (ContentFrame.Content is Modules.AiAssistant.AiWinCareEnginePage aiPage)
-            {
-                if (aiPage.DataContext is IDisposable disp) disp.Dispose();
-            }
-            else if (ContentFrame.Content is Modules.GamingTurbo.GamingTurboPage gtPage)
-            {
-                if (gtPage.DataContext is IDisposable disp) disp.Dispose();
+                case Views.DashboardPage dbPage:
+                    dbPage.ViewModel?.Dispose();
+                    return; // Already disposed, skip generic check
+                case Views.NetworkPage netPage:
+                    netPage.ViewModel?.Cleanup();
+                    return;
+                case Views.DiskPage diskPage:
+                    diskPage.ViewModel?.Cleanup();
+                    return;
+                case Views.JunkPage junkPage:
+                    junkPage.ViewModel?.Cleanup();
+                    return;
+                case Views.SystemOptimizerPage optPage:
+                    optPage.ViewModel?.Dispose();
+                    return;
             }
 
-            if (ContentFrame.Content is Page page && page.DataContext is IDisposable disposable)
+            // Generic IDisposable cleanup for all other pages
+            if (content is Page page && page.DataContext is IDisposable disposable)
             {
                 disposable.Dispose();
             }

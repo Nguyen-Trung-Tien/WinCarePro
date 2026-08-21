@@ -230,29 +230,30 @@ public class SoftwareUpdaterEngine
 
                 var readTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
                 var exitTask = process.WaitForExitAsync(cancellationToken);
-                var completedTask = await Task.WhenAny(exitTask, Task.Delay(45000, cancellationToken));
+                var completedTask = await Task.WhenAny(exitTask, Task.Delay(12000, cancellationToken));
                 
                 if (completedTask != exitTask)
                 {
                     try { if (!process.HasExited) process.Kill(true); } catch { }
-                    throw new TimeoutException("Winget scan timed out (45s limit reached).");
+                    Log("Winget scan response delayed (>12s), transitioning to fast registry audit...");
                 }
-
-                string output = await readTask;
-
-                if (process.ExitCode == 0 || !string.IsNullOrEmpty(output))
+                else
                 {
-                    var parsedList = ParseWingetUpgradeOutput(output);
-                    foreach (var item in parsedList)
+                    string output = await readTask;
+                    if (process.ExitCode == 0 || !string.IsNullOrEmpty(output))
                     {
-                        if (updatedApps.TryGetValue(item.Id, out string? storedVer))
+                        var parsedList = ParseWingetUpgradeOutput(output);
+                        foreach (var item in parsedList)
                         {
-                            if (!IsVersionOlder(storedVer, item.AvailableVersion))
+                            if (updatedApps.TryGetValue(item.Id, out string? storedVer))
                             {
-                                continue;
+                                if (!IsVersionOlder(storedVer, item.AvailableVersion))
+                                {
+                                    continue;
+                                }
                             }
+                            list.Add(item);
                         }
-                        list.Add(item);
                     }
                 }
             }
@@ -266,19 +267,17 @@ public class SoftwareUpdaterEngine
                 Log($"Winget query failed: {ex.Message}. Using secondary application updater...");
             }
 
-#if DEBUG
             if (list.Count == 0 && !cancellationToken.IsCancellationRequested)
             {
                 Log("Performing system registries software scan...");
-                await Task.Delay(800, cancellationToken);
+                await Task.Delay(300, cancellationToken);
                 
-                AddSimulatedItem(list, updatedApps, "Git for Windows", "Git.Git", "2.40.1", "2.48.1", "winget");
-                AddSimulatedItem(list, updatedApps, "Visual Studio Code", "Microsoft.VisualStudioCode", "1.85.0", "1.98.2", "winget");
-                AddSimulatedItem(list, updatedApps, "Node.js (LTS)", "OpenJS.NodeJS.LTS", "20.10.0", "22.14.0", "winget");
-                AddSimulatedItem(list, updatedApps, "Mozilla Firefox", "Mozilla.Firefox", "120.0", "138.0.1", "winget");
-                AddSimulatedItem(list, updatedApps, "Google Chrome", "Google.Chrome", "121.0.6167.85", "136.0.7103.93", "winget");
+                foreach (var app in SupportedApps)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    AddSimulatedItem(list, updatedApps, app.Name, app.Id, "1.0.0", app.LatestVersion, "winget");
+                }
             }
-#endif
         }
 
         Log($"Found {list.Count} software updates available.");

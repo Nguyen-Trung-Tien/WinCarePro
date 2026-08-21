@@ -40,6 +40,9 @@ namespace WinCarePro.Modules.GamingTurbo
         [ObservableProperty]
         private string _activePresetName = "Competitive FPS";
 
+        // Track original power plan GUID for restoration on deactivation
+        private string? _originalPowerPlanGuid;
+
         public GamingTurboViewModel()
         {
             _langHandler = (s, e) => RefreshLocalizedMessages();
@@ -79,6 +82,9 @@ namespace WinCarePro.Modules.GamingTurbo
                 // Activate Gaming Turbo
                 IsTurboActive = true;
                 GameStatusMessage = "⚡ Gaming Turbo ACTIVE! Quenching background apps & allocating high-priority CPU...".T();
+
+                // Save current power plan for restoration
+                await SaveCurrentPowerPlanAsync();
 
                 var freedBytes = await Task.Run(() =>
                 {
@@ -142,20 +148,25 @@ namespace WinCarePro.Modules.GamingTurbo
                     return totalFreed;
                 });
 
-                // Force GC Collect
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
+                // Apply preset-specific tuning
+                await ApplyPresetTuningAsync(ActivePresetName);
 
-                double freedMB = Math.Max(120, freedBytes / (1024.0 * 1024.0));
+                double freedMB = freedBytes / (1024.0 * 1024.0);
                 RamFreedText = $"{freedMB:N0} MB";
                 string statusFormat = "🚀 Hyper-Turbo Activated! Freed {0:N0} MB RAM across {1} background processes.".T();
                 GameStatusMessage = string.Format(statusFormat, freedMB, OptimizedProcessesCount);
+
+                Database.DbManager.LogAction($"Gaming Turbo activated: Freed {freedMB:N0} MB, optimized {OptimizedProcessesCount} processes", "Gaming Turbo", "Success");
             }
             else
             {
-                // Deactivate Gaming Turbo
+                // Deactivate Gaming Turbo — restore original settings
                 IsTurboActive = false;
+
+                await RestoreOriginalSettingsAsync();
+
                 GameStatusMessage = "Gaming Turbo is OFF. System resources restored to standard desktop profile.".T();
+                Database.DbManager.LogAction("Gaming Turbo deactivated, system profile restored.", "Gaming Turbo", "Success");
             }
         }
 
@@ -164,6 +175,63 @@ namespace WinCarePro.Modules.GamingTurbo
         {
             ActivePresetName = preset;
             GameStatusMessage = $"Applied preset: {preset}. Optimal tuning profile calibrated.".T();
+
+            // If turbo is already active, re-apply tuning with new preset
+            if (IsTurboActive)
+            {
+                _ = ApplyPresetTuningAsync(preset);
+            }
+        }
+
+        /// <summary>
+        /// Saves the current active power plan GUID for later restoration.
+        /// </summary>
+        private async Task SaveCurrentPowerPlanAsync()
+        {
+            try
+            {
+                var result = await ProcessRunner.RunAsync("powercfg.exe", "/getactivescheme", TimeSpan.FromSeconds(5));
+                if (result.Success && !string.IsNullOrEmpty(result.Output))
+                {
+                    // Output format: "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)"
+                    var match = System.Text.RegularExpressions.Regex.Match(result.Output, @"([0-9a-fA-F\-]{36})");
+                    if (match.Success)
+                    {
+                        _originalPowerPlanGuid = match.Groups[1].Value;
+                    }
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Applies preset-specific system tuning (power plan, timer resolution).
+        /// </summary>
+        private async Task ApplyPresetTuningAsync(string presetName)
+        {
+            try
+            {
+                // Switch to High Performance power plan for all gaming presets
+                // GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c = High Performance
+                await ProcessRunner.RunAsync("powercfg.exe", "/setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c", TimeSpan.FromSeconds(5));
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Restores the original power plan and system settings when turbo is deactivated.
+        /// </summary>
+        private async Task RestoreOriginalSettingsAsync()
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(_originalPowerPlanGuid))
+                {
+                    await ProcessRunner.RunAsync("powercfg.exe", $"/setactive {_originalPowerPlanGuid}", TimeSpan.FromSeconds(5));
+                    _originalPowerPlanGuid = null;
+                }
+            }
+            catch { }
         }
 
         public void Dispose()

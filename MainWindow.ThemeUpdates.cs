@@ -68,13 +68,15 @@ public sealed partial class MainWindow : Window
             client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
             
             string response;
-            // Check for local update.json in app directory (for offline/dev testing)
+#if DEBUG
+            // Local update.json ONLY allowed in DEBUG builds for development testing
             string localUpdatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "update.json");
             if (File.Exists(localUpdatePath))
             {
                 response = File.ReadAllText(localUpdatePath);
             }
             else
+#endif
             {
                 string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
                 client.Timeout = TimeSpan.FromSeconds(10);
@@ -88,16 +90,19 @@ public sealed partial class MainWindow : Window
             
             string remoteVerStr;
             string downloadUrl;
+            string expectedHash = "";
 
             if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
             {
                 remoteVerStr = betaVerProp.GetString() ?? "2.0.0";
                 downloadUrl = root.TryGetProperty("beta_url", out var betaUrlProp) ? betaUrlProp.GetString() ?? "" : "";
+                expectedHash = root.TryGetProperty("beta_sha256", out var betaHashProp) ? betaHashProp.GetString() ?? "" : "";
             }
             else
             {
                 remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
                 downloadUrl = root.GetProperty("url").GetString() ?? "";
+                expectedHash = root.TryGetProperty("sha256", out var hashProp) ? hashProp.GetString() ?? "" : "";
             }
             
             var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(3, 4, 9, 0);
@@ -116,7 +121,7 @@ public sealed partial class MainWindow : Window
 
                 if (autoInstall)
                 {
-                    _ = DownloadBackgroundUpdateAsync(downloadUrl, remoteVerStr, autoInstall: true);
+                    _ = DownloadBackgroundUpdateAsync(downloadUrl, remoteVerStr, expectedHash, autoInstall: true);
                 }
                 else
                 {
@@ -127,10 +132,14 @@ public sealed partial class MainWindow : Window
         catch { }
     }
 
-    private async Task DownloadBackgroundUpdateAsync(string downloadUrl, string remoteVerStr, bool autoInstall = false)
+    private string _expectedUpdateHash = "";
+
+    private async Task DownloadBackgroundUpdateAsync(string downloadUrl, string remoteVerStr, string expectedHash = "", bool autoInstall = false)
     {
         if (string.IsNullOrEmpty(downloadUrl)) return;
         
+        _expectedUpdateHash = expectedHash;
+
         try
         {
             using var client = new System.Net.Http.HttpClient();
@@ -155,6 +164,30 @@ public sealed partial class MainWindow : Window
                 await fileStream.WriteAsync(buffer, 0, read);
             }
             fileStream.Close();
+
+            // SECURITY v4.2: Verify SHA-256 hash of downloaded file before accepting
+            if (!string.IsNullOrEmpty(expectedHash))
+            {
+                string actualHash = Infrastructure.Security.CryptoHelper.ComputeFileHash(setupFilePath);
+                if (!string.Equals(actualHash, expectedHash, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Hash mismatch — delete the compromised file immediately
+                    try { File.Delete(setupFilePath); } catch { }
+                    DbManager.LogAction(
+                        $"Update v{remoteVerStr} REJECTED: SHA-256 hash mismatch. Expected: {expectedHash}, Actual: {actualHash}. File deleted for security.",
+                        "Software Updater", "Failed");
+                    
+                    this.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        DbManager.AddNotification(
+                            "Update Security Alert".T(),
+                            "Downloaded update failed integrity check and was rejected. The file may have been tampered with.".T(),
+                            "Error");
+                    });
+                    return;
+                }
+                DbManager.LogAction($"Update v{remoteVerStr} hash verified successfully.", "Software Updater", "Success");
+            }
 
             _downloadedSetupPath = setupFilePath;
 
@@ -231,6 +264,19 @@ public sealed partial class MainWindow : Window
             var service = App.Services.GetService<Services.Contracts.INotificationService>();
             service?.ShowError("Installer Not Found".T(), "The downloaded update installer could not be found. Please check again.");
             return;
+        }
+
+        // SECURITY v4.2: Re-verify file integrity before execution
+        if (!string.IsNullOrEmpty(_expectedUpdateHash))
+        {
+            if (!Infrastructure.Security.CryptoHelper.VerifyFileIntegrity(_downloadedSetupPath, _expectedUpdateHash))
+            {
+                var service = App.Services.GetService<Services.Contracts.INotificationService>();
+                service?.ShowError("Security Alert".T(), "Installer integrity verification failed. The file may have been modified after download.");
+                try { File.Delete(_downloadedSetupPath); } catch { }
+                DbManager.LogAction("Update installer rejected: hash mismatch on pre-execution verify.", "Software Updater", "Failed");
+                return;
+            }
         }
 
         try

@@ -650,10 +650,19 @@ public class JunkCleanerEngine
 
     private JunkCategory GetRecycleBinCategory()
     {
-        var info = new SHQUERYRBINFO { cbSize = Marshal.SizeOf(typeof(SHQUERYRBINFO)) };
-        int hr = SHQueryRecycleBin(null, ref info);
-        long size = hr == 0 ? info.i64Size : 0;
-        long count = hr == 0 ? info.i64NumItems : 0;
+        long size = 0;
+        long count = 0;
+        try
+        {
+            var info = new SHQUERYRBINFO { cbSize = Marshal.SizeOf(typeof(SHQUERYRBINFO)) };
+            int hr = SHQueryRecycleBin(null, ref info);
+            if (hr == 0)
+            {
+                size = Math.Max(0, info.i64Size);
+                count = Math.Max(0, info.i64NumItems);
+            }
+        }
+        catch { }
 
         return new JunkCategory
         {
@@ -663,7 +672,7 @@ public class JunkCleanerEngine
             SizeBytes = size,
             CleanableBytes = size,
             LockedBytes = 0,
-            FileCount = (int)count,
+            FileCount = (int)Math.Min(int.MaxValue, count),
             IsSelected = true,
             IconGlyph = "\uEB7E",
             IconColor = "#FFEF4444",

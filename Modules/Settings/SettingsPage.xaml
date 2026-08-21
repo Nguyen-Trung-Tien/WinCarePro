@@ -482,37 +482,49 @@
 
                             <StackPanel Spacing="16">
                             <!-- Card Header with version and trigger -->
-                            <Grid>
+                            <Grid ColumnSpacing="12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Left: Version & Status -->
-                                <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <Grid Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,0,0,4">
                                         <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
                                             <TextBlock Text="v4.2.0" FontSize="11" FontWeight="Bold" Foreground="White"/>
                                         </Border>
-                                        <TextBlock Text="WinCare Pro Distribution Channel" FontSize="14" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                        <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
-                                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                                <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
-                                                <TextBlock x:Name="UpdateChannelBadgeText" Text="CDN Connected" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                        <TextBlock Text="WinCare Pro Distribution Channel" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <Border x:Name="UpdateChannelBadgeBorder" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
+                                            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                                <Ellipse x:Name="UpdateChannelBadgeDot" Width="5.5" Height="5.5" Fill="{ThemeResource AppBadgeGoodFg}"/>
+                                                <TextBlock x:Name="UpdateChannelBadgeText" Text="CDN Connected" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
                                             </StackPanel>
                                         </Border>
                                     </StackPanel>
-                                    <TextBlock x:Name="UpdateStatusLabel" Text="System is up to date with the latest security and optimization definitions." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                </StackPanel>
+                                    <TextBlock Grid.Row="1" x:Name="UpdateStatusLabel" Text="System is up to date with the latest security and optimization definitions." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+                                </Grid>
 
-                                <!-- Right: Action Button -->
-                                <Button x:Name="CheckUpdatesBtn" Grid.Column="1" Click="OnCheckUpdatesClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" Padding="14,0" VerticalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
-                                        <FontIcon x:Name="CheckUpdatesIcon" Glyph="&#xE72C;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                        <TextBlock x:Name="CheckUpdatesText" Text="Check for Updates" FontSize="12" FontWeight="SemiBold"/>
-                                    </StackPanel>
-                                </Button>
+                                <!-- Right: Action Buttons (Compact & Sleek) -->
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                    <Button x:Name="CancelUpdatesBtn" Click="OnCancelUpdateClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" Padding="8,0" CornerRadius="6" ToolTipService.ToolTip="Cancel current update operation" Visibility="Collapsed">
+                                        <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE711;" FontSize="10.5" Foreground="#FFEF4444"/>
+                                            <TextBlock Text="Cancel" FontSize="11" FontWeight="SemiBold" Foreground="#FFEF4444"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button x:Name="CheckUpdatesBtn" Click="OnCheckUpdatesClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
+                                            <FontIcon x:Name="CheckUpdatesIcon" Glyph="&#xE72C;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                            <TextBlock x:Name="CheckUpdatesText" Text="Check for Updates" FontSize="11.5" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
                             </Grid>
 
                             <!-- Live % Data Stream Bar & Readout -->

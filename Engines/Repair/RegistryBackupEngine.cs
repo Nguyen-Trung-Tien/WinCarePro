@@ -114,6 +114,19 @@ public class RegistryBackupEngine
         catch { }
     }
 
+    private static bool SafeFileExists(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return false;
+        try
+        {
+            return File.Exists(path);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private string CleanCommandPath(string cmd)
     {
         if (string.IsNullOrEmpty(cmd)) return "";
@@ -137,7 +150,7 @@ public class RegistryBackupEngine
             for (int i = 0; i < parts.Length; i++)
             {
                 currentPath = string.IsNullOrEmpty(currentPath) ? parts[i] : currentPath + " " + parts[i];
-                if (currentPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && File.Exists(currentPath))
+                if (currentPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && SafeFileExists(currentPath))
                 {
                     return currentPath;
                 }

@@ -21,6 +21,35 @@ namespace WinCarePro.Shared.Animations
     public static class FluidAnimationHelper
     {
         // ============================================================
+        // 0. UTILITY: SAFE CENTER POINT (Prevents layout race condition)
+        // ============================================================
+
+        /// <summary>
+        /// Safely sets the CenterPoint of a visual to the center of its element.
+        /// Handles the case where ActualWidth/Height may be 0 if element hasn't been laid out yet.
+        /// </summary>
+        public static void SafeSetCenterPoint(UIElement element, Visual visual)
+        {
+            if (element is FrameworkElement fe)
+            {
+                if (fe.ActualWidth > 0 && fe.ActualHeight > 0)
+                {
+                    visual.CenterPoint = new Vector3((float)fe.ActualWidth / 2f, (float)fe.ActualHeight / 2f, 0);
+                }
+                else
+                {
+                    // Element hasn't been laid out yet — defer CenterPoint until SizeChanged fires
+                    void handler(object s, SizeChangedEventArgs args)
+                    {
+                        visual.CenterPoint = new Vector3((float)args.NewSize.Width / 2f, (float)args.NewSize.Height / 2f, 0);
+                        fe.SizeChanged -= handler; // One-shot: detach after first layout
+                    }
+                    fe.SizeChanged += handler;
+                }
+            }
+        }
+
+        // ============================================================
         // 1. SPRING ENTRANCE ANIMATION (existing, refined)
         // ============================================================
 
@@ -78,8 +107,8 @@ namespace WinCarePro.Shared.Animations
                 Visual visual = ElementCompositionPreview.GetElementVisual(element);
                 Compositor compositor = visual.Compositor;
 
-                // Center point for scaling
-                visual.CenterPoint = new Vector3((float)element.ActualWidth / 2f, (float)element.ActualHeight / 2f, 0);
+                // Use safe center point to prevent (0,0) when element not yet laid out
+                SafeSetCenterPoint(element, visual);
 
                 SpringVector3NaturalMotionAnimation scaleAnim = compositor.CreateSpringVector3Animation();
                 scaleAnim.Target = "Scale";
@@ -660,35 +689,48 @@ namespace WinCarePro.Shared.Animations
         }
 
         // ============================================================
-        // 16. GLOW SPARK BURST & REACTOR ANIMATION (NEW v4.0.0)
+        // 16. RIPPLE PRESS ANIMATION (Premium button click feedback)
         // ============================================================
 
         /// <summary>
-        /// Applies an intense spark & spring burst scale animation on click (ideal for Turbo / Boost / Clean buttons).
+        /// Applies a subtle scale-down press feedback followed by springy release.
+        /// Attach to PointerPressed/Released for premium button feel.
         /// </summary>
-        public static void ApplyGlowSparkBurst(UIElement element)
+        public static void ApplyRipplePress(UIElement element)
         {
             if (element == null) return;
 
-            Visual visual = ElementCompositionPreview.GetElementVisual(element);
-            Compositor compositor = visual.Compositor;
-
             if (element is FrameworkElement fe)
             {
-                visual.CenterPoint = new Vector3((float)fe.ActualWidth / 2f, (float)fe.ActualHeight / 2f, 0);
+                fe.PointerPressed += (s, e) =>
+                {
+                    Visual visual = ElementCompositionPreview.GetElementVisual(element);
+                    Compositor compositor = visual.Compositor;
+                    SafeSetCenterPoint(element, visual);
+
+                    // Quick press-down scale
+                    Vector3KeyFrameAnimation pressAnim = compositor.CreateVector3KeyFrameAnimation();
+                    pressAnim.InsertKeyFrame(0.0f, new Vector3(1.0f, 1.0f, 1.0f));
+                    pressAnim.InsertKeyFrame(1.0f, new Vector3(0.96f, 0.96f, 1.0f),
+                        compositor.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.8f), new Vector2(0.3f, 1.0f)));
+                    pressAnim.Duration = TimeSpan.FromMilliseconds(100);
+                    visual.StartAnimation("Scale", pressAnim);
+                };
+
+                fe.PointerReleased += (s, e) =>
+                {
+                    Visual visual = ElementCompositionPreview.GetElementVisual(element);
+                    Compositor compositor = visual.Compositor;
+
+                    // Springy release back to normal
+                    SpringVector3NaturalMotionAnimation releaseAnim = compositor.CreateSpringVector3Animation();
+                    releaseAnim.Target = "Scale";
+                    releaseAnim.FinalValue = new Vector3(1.0f, 1.0f, 1.0f);
+                    releaseAnim.DampingRatio = 0.55f;
+                    releaseAnim.Period = TimeSpan.FromMilliseconds(200);
+                    visual.StartAnimation("Scale", releaseAnim);
+                };
             }
-
-            Vector3KeyFrameAnimation burstAnim = compositor.CreateVector3KeyFrameAnimation();
-            burstAnim.InsertKeyFrame(0.0f, new Vector3(1.0f, 1.0f, 1.0f));
-            burstAnim.InsertKeyFrame(0.2f, new Vector3(0.90f, 0.90f, 1.0f),
-                compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
-            burstAnim.InsertKeyFrame(0.5f, new Vector3(1.10f, 1.10f, 1.0f),
-                compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
-            burstAnim.InsertKeyFrame(1.0f, new Vector3(1.0f, 1.0f, 1.0f),
-                compositor.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.8f), new Vector2(0.3f, 1.0f)));
-            burstAnim.Duration = TimeSpan.FromMilliseconds(450);
-
-            visual.StartAnimation("Scale", burstAnim);
         }
 
         /// <summary>

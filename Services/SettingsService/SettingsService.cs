@@ -9,7 +9,7 @@ using WinCarePro.Services.Contracts;
 
 namespace WinCarePro.Services.Implementations;
 
-public class SettingsService : ISettingsService
+public class SettingsService : ISettingsService, IDisposable
 {
     private static SettingsService? _instance;
     public static SettingsService Instance => _instance ??= new SettingsService();
@@ -17,7 +17,9 @@ public class SettingsService : ISettingsService
     private SettingsProfile _currentSettings = new();
     private readonly object _lock = new();
     private Timer? _debounceTimer;
-    private readonly int _debounceMs = 300;
+    private readonly int _debounceMs = 500; // Increased from 300ms for better batching
+    private long _settingsVersion = 0; // Thread-safe version counter for race prevention
+    private bool _disposed;
 
     public SettingsProfile CurrentSettings
     {
@@ -127,8 +129,8 @@ public class SettingsService : ISettingsService
                 {
                     _currentSettings = profile;
                 }
-                SettingsChanged?.Invoke(this, new SettingsChangedEventArgs(_currentSettings, "Import"));
-                QueuePersistSettings(_currentSettings);
+                SettingsChanged?.Invoke(this, new SettingsChangedEventArgs(CloneSettings(profile), "Import"));
+                QueuePersistSettings(CloneSettings(profile));
                 return true;
             }
         }
@@ -141,12 +143,19 @@ public class SettingsService : ISettingsService
 
     private void QueuePersistSettings(SettingsProfile snapshot)
     {
+        // Increment version atomically — only the latest version will actually persist
+        long version = Interlocked.Increment(ref _settingsVersion);
+
         lock (_lock)
         {
             _debounceTimer?.Dispose();
             _debounceTimer = new Timer(_ =>
             {
-                PersistToDatabase(snapshot);
+                // Only persist if no newer version has been queued since this timer was set
+                if (Interlocked.Read(ref _settingsVersion) == version)
+                {
+                    PersistToDatabase(snapshot);
+                }
             }, null, _debounceMs, Timeout.Infinite);
         }
     }
@@ -176,4 +185,17 @@ public class SettingsService : ISettingsService
             return new SettingsProfile();
         }
     }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+
+        lock (_lock)
+        {
+            _debounceTimer?.Dispose();
+            _debounceTimer = null;
+        }
+    }
 }
+

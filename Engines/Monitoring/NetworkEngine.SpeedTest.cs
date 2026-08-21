@@ -11,12 +11,17 @@ public partial class NetworkEngine
 {
     private static readonly HttpClient SpeedTestHttpClient = new HttpClient(new SocketsHttpHandler
     {
-        ConnectTimeout = TimeSpan.FromSeconds(3),
+        ConnectTimeout = TimeSpan.FromSeconds(5),
         PooledConnectionLifetime = TimeSpan.FromMinutes(2),
         EnableMultipleHttp2Connections = true
     })
     {
-        Timeout = TimeSpan.FromSeconds(6)
+        Timeout = TimeSpan.FromSeconds(10),
+        DefaultRequestHeaders =
+        {
+            { "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 WinCarePro/3.5" },
+            { "Accept", "*/*" }
+        }
     };
 
     // Primary High-Speed Edge Endpoints (Cloudflare CDN - Low latency global edge nodes)
@@ -24,18 +29,20 @@ public partial class NetworkEngine
     {
         "https://speed.cloudflare.com/__down?bytes=25000000",
         "https://speed.cloudflare.com/__down?bytes=10000000",
-        "https://speedtest.tele2.net/10MB.zip"
+        "https://speedtest.tele2.net/10MB.zip",
+        "https://proof.ovh.net/files/10Mb.dat"
     };
 
     private static readonly string[] UploadEndpoints = new[]
     {
         "https://speed.cloudflare.com/__up",
-        "https://httpbin.org/post"
+        "https://httpbin.org/post",
+        "https://postman-echo.com/post"
     };
 
     private static async Task<string> SelectFastEndpointAsync(string[] endpoints, bool isPost = false)
     {
-        using var cts = new CancellationTokenSource(800);
+        using var cts = new CancellationTokenSource(2500);
         var tasks = new List<Task<(string url, bool ok)>>();
 
         foreach (var url in endpoints)

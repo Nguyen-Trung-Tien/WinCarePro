@@ -49,12 +49,25 @@ public sealed partial class SettingsPage : Page
             TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
             TranslationManager.Instance.Translate(this);
 
+            // Ensure cancel update button is collapsed in default/idle state
+            if (CancelUpdatesBtn != null)
+            {
+                CancelUpdatesBtn.Visibility = Visibility.Collapsed;
+            }
+
             // Sync with current theme on load
             bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
             ApplyThemeCardSelection(isDark);
 
             string currentAccent = SettingsService.Instance.CurrentSettings.AccentColor ?? "Default";
             ApplyAccentColorSelection(currentAccent);
+
+            // Real-time network connectivity monitoring
+            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= OnNetworkStatusChanged;
+            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged += OnNetworkStatusChanged;
+            System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged -= OnNetworkAvailabilityChanged;
+            System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged += OnNetworkAvailabilityChanged;
+            _ = RefreshNetworkBadgeStateAsync();
 
             try { PulsingUpdateGlowAnimation?.Begin(); } catch {}
         };
@@ -64,6 +77,8 @@ public sealed partial class SettingsPage : Page
             ThemeManager.Instance.ThemeChanged -= OnThemeChangedExternally;
             SettingsService.Instance.SettingsChanged -= OnSettingsChangedExternally;
             TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= OnNetworkStatusChanged;
+            System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged -= OnNetworkAvailabilityChanged;
         };
     }
 
@@ -793,14 +808,176 @@ public sealed partial class SettingsPage : Page
         }
     }
 
+    private CancellationTokenSource? _updateCts;
+
+    private void OnNetworkStatusChanged(object? sender, EventArgs e)
+    {
+        _ = RefreshNetworkBadgeStateAsync();
+    }
+
+    private void OnNetworkAvailabilityChanged(object? sender, System.Net.NetworkInformation.NetworkAvailabilityEventArgs e)
+    {
+        _ = RefreshNetworkBadgeStateAsync();
+    }
+
+    private async Task RefreshNetworkBadgeStateAsync()
+    {
+        bool isOnline = await CheckInternetAccessAsync(1200);
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            if (isOnline)
+            {
+                SetUpdateBadgeState("CDN Connected".T(), "Online");
+            }
+            else
+            {
+                SetUpdateBadgeState("Offline".T(), "Offline");
+                if (UpdateProgressBar.Value == 100)
+                {
+                    UpdateDataRateText.Text = "Offline".T();
+                }
+            }
+        });
+    }
+
+    private void SetUpdateBadgeState(string text, string state)
+    {
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            if (UpdateChannelBadgeText == null) return;
+            UpdateChannelBadgeText.Text = text;
+            
+            if (state == "Online")
+            {
+                var green = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                var greenBg = new SolidColorBrush(Windows.UI.Color.FromArgb(38, 16, 185, 129));
+                var greenBorder = new SolidColorBrush(Windows.UI.Color.FromArgb(70, 16, 185, 129));
+                if (UpdateChannelBadgeDot != null) UpdateChannelBadgeDot.Fill = green;
+                UpdateChannelBadgeText.Foreground = green;
+                if (UpdateChannelBadgeBorder != null)
+                {
+                    UpdateChannelBadgeBorder.Background = greenBg;
+                    UpdateChannelBadgeBorder.BorderBrush = greenBorder;
+                }
+            }
+            else if (state == "Syncing")
+            {
+                var blue = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 99, 102, 241));
+                var blueBg = new SolidColorBrush(Windows.UI.Color.FromArgb(38, 99, 102, 241));
+                var blueBorder = new SolidColorBrush(Windows.UI.Color.FromArgb(70, 99, 102, 241));
+                if (UpdateChannelBadgeDot != null) UpdateChannelBadgeDot.Fill = blue;
+                UpdateChannelBadgeText.Foreground = blue;
+                if (UpdateChannelBadgeBorder != null)
+                {
+                    UpdateChannelBadgeBorder.Background = blueBg;
+                    UpdateChannelBadgeBorder.BorderBrush = blueBorder;
+                }
+            }
+            else // Offline or Error
+            {
+                var red = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68));
+                var redBg = new SolidColorBrush(Windows.UI.Color.FromArgb(38, 239, 68, 68));
+                var redBorder = new SolidColorBrush(Windows.UI.Color.FromArgb(70, 239, 68, 68));
+                if (UpdateChannelBadgeDot != null) UpdateChannelBadgeDot.Fill = red;
+                UpdateChannelBadgeText.Foreground = red;
+                if (UpdateChannelBadgeBorder != null)
+                {
+                    UpdateChannelBadgeBorder.Background = redBg;
+                    UpdateChannelBadgeBorder.BorderBrush = redBorder;
+                }
+            }
+        });
+    }
+
+    private static async Task<bool> CheckInternetAccessAsync(int timeoutMs = 1500)
+    {
+        try
+        {
+            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                return false;
+
+            using var cts = new CancellationTokenSource(timeoutMs);
+            using var client = new HttpClient { Timeout = TimeSpan.FromMilliseconds(timeoutMs) };
+            using var resp = await client.GetAsync("https://1.1.1.1/cdn-cgi/trace", HttpCompletionOption.ResponseHeadersRead, cts.Token);
+            return resp.IsSuccessStatusCode;
+        }
+        catch
+        {
+            try
+            {
+                using var ping = new System.Net.NetworkInformation.Ping();
+                var reply = await ping.SendPingAsync("8.8.8.8", 1000);
+                return reply.Status == System.Net.NetworkInformation.IPStatus.Success;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+
+    private static bool IsNetworkAvailable()
+    {
+        try
+        {
+            return System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
+        }
+        catch
+        {
+            return true;
+        }
+    }
+
+    private void OnCancelUpdateClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            _updateCts?.Cancel();
+            UpdateStatusLabel.Text = "Update operation cancelled by user.".T();
+            UpdateProgressStepLabel.Text = "Cancelled".T();
+            UpdateDataRateText.Text = "Idle".T();
+            UpdateProgressBar.Value = 0;
+            UpdatePercentText.Text = "0%";
+            UpdateDetailsText.Text = "Operation cancelled. Ready for new update check.".T();
+            _ = RefreshNetworkBadgeStateAsync();
+            CancelUpdatesBtn.Visibility = Visibility.Collapsed;
+            CheckUpdatesBtn.IsEnabled = true;
+            UpdateProgressRing.IsActive = false;
+            UpdateProgressRing.Visibility = Visibility.Collapsed;
+        }
+        catch { }
+    }
+
     private async void OnCheckUpdatesClick(object sender, RoutedEventArgs e)
     {
         var btn = CheckUpdatesBtn ?? (sender as Button);
+        
+        bool hasInternet = await CheckInternetAccessAsync(1200);
+        if (!hasInternet)
+        {
+            UpdateStatusLabel.Text = "No internet connection detected. Please verify your network and try again.".T();
+            UpdateProgressStepLabel.Text = "No Connection".T();
+            UpdateDataRateText.Text = "Offline".T();
+            UpdateProgressBar.Value = 0;
+            UpdatePercentText.Text = "0%";
+            UpdateDetailsText.Text = "Unable to connect to network. Verify Wi-Fi or Ethernet adapter status.".T();
+            SetUpdateBadgeState("Offline".T(), "Offline");
+            App.MainWindowInstance?.ShowToastNotification("Update Failed".T(), "No internet connection available to reach update servers.".T(), "Critical");
+            return;
+        }
+
+        _updateCts?.Cancel();
+        _updateCts?.Dispose();
+        _updateCts = new CancellationTokenSource();
+        var token = _updateCts.Token;
+
+        CancelUpdatesBtn.Visibility = Visibility.Visible;
         UpdateProgressBar.Value = 10;
         UpdatePercentText.Text = "10%";
         UpdateProgressStepLabel.Text = "Connecting to CDN Repository...".T();
         UpdateDataRateText.Text = "Scanning".T();
         UpdateDetailsText.Text = "Negotiating HTTPS connection with distribution server...".T();
+        SetUpdateBadgeState("Connecting...".T(), "Syncing");
 
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, UpdateProgressRing, CheckUpdatesText, CheckUpdatesIcon,
@@ -809,6 +986,8 @@ public sealed partial class SettingsPage : Page
             {
                 try
                 {
+                    token.ThrowIfCancellationRequested();
+
                     DispatcherQueue.TryEnqueue(() =>
                     {
                         UpdateProgressBar.Value = 45;
@@ -816,29 +995,81 @@ public sealed partial class SettingsPage : Page
                         UpdateProgressStepLabel.Text = "Auditing Remote Version Manifest...".T();
                     });
 
-                    await Task.Delay(250);
-                    await CheckForUpdatesInternalAsync();
+                    await Task.Delay(250, token);
+                    await CheckForUpdatesInternalAsync(token);
+                }
+                catch (OperationCanceledException)
+                {
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        UpdateStatusLabel.Text = "Update check cancelled.".T();
+                        UpdateProgressStepLabel.Text = "Cancelled".T();
+                        UpdateDataRateText.Text = "Idle".T();
+                        UpdateProgressBar.Value = 0;
+                        UpdatePercentText.Text = "0%";
+                        UpdateDetailsText.Text = "Check cancelled by user.".T();
+                        SetUpdateBadgeState("Ready".T(), "Online");
+                    });
+                }
+                catch (HttpRequestException httpEx)
+                {
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        UpdateStatusLabel.Text = "Unable to reach update server. Check internet connection or DNS settings.".T();
+                        UpdateProgressStepLabel.Text = "Connection Failed".T();
+                        UpdateDataRateText.Text = "Error".T();
+                        UpdateProgressBar.Value = 0;
+                        UpdatePercentText.Text = "0%";
+                        UpdateDetailsText.Text = string.Format("Network unreachable: {0}".T(), httpEx.Message);
+                        SetUpdateBadgeState("Disconnected".T(), "Offline");
+                    });
                 }
                 catch (FileNotFoundException fnfEx)
                 {
-                    UpdateStatusLabel.Text = string.Format("Network library unavailable: {0}".T(), fnfEx.FileName ?? fnfEx.Message);
-                    UpdateProgressStepLabel.Text = "Check Failed".T();
-                    UpdateDataRateText.Text = "Error".T();
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        UpdateStatusLabel.Text = string.Format("Network library unavailable: {0}".T(), fnfEx.FileName ?? fnfEx.Message);
+                        UpdateProgressStepLabel.Text = "Check Failed".T();
+                        UpdateDataRateText.Text = "Error".T();
+                        UpdateProgressBar.Value = 0;
+                        UpdatePercentText.Text = "0%";
+                        UpdateDetailsText.Text = "Missing system libraries required for download.".T();
+                        SetUpdateBadgeState("Error".T(), "Offline");
+                    });
                 }
                 catch (Exception ex)
                 {
-                    UpdateStatusLabel.Text = string.Format("Failed to check for updates: {0}".T(), ex.Message);
-                    UpdateProgressStepLabel.Text = "Check Failed".T();
-                    UpdateDataRateText.Text = "Error".T();
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        UpdateStatusLabel.Text = string.Format("Failed to check for updates: {0}".T(), ex.Message);
+                        UpdateProgressStepLabel.Text = "Check Failed".T();
+                        UpdateDataRateText.Text = "Error".T();
+                        UpdateProgressBar.Value = 0;
+                        UpdatePercentText.Text = "0%";
+                        UpdateDetailsText.Text = "An unexpected error occurred during update audit.".T();
+                        SetUpdateBadgeState("Error".T(), "Offline");
+                    });
+                }
+                finally
+                {
+                    DispatcherQueue.TryEnqueue(() =>
+                    {
+                        CancelUpdatesBtn.Visibility = Visibility.Collapsed;
+                    });
                 }
             },
             minDurationMs: 1000);
     }
 
-    private async Task CheckForUpdatesInternalAsync()
+    private async Task CheckForUpdatesInternalAsync(CancellationToken token)
     {
         string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
-        string response = await _httpClient.GetStringAsync(jsonUrl);
+        
+        using var request = new HttpRequestMessage(HttpMethod.Get, jsonUrl);
+        using var httpResponse = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, token);
+        httpResponse.EnsureSuccessStatusCode();
+
+        string response = await httpResponse.Content.ReadAsStringAsync(token);
         
         bool betaEnabled = SettingsService.Instance.CurrentSettings.BetaUpdates;
 
@@ -914,53 +1145,75 @@ public sealed partial class SettingsPage : Page
     {
         if (string.IsNullOrEmpty(downloadUrl)) return;
 
+        if (!IsNetworkAvailable() && !downloadUrl.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
+        {
+            UpdateStatusLabel.Text = "Cannot start download: No active internet connection.".T();
+            UpdateProgressStepLabel.Text = "Network Offline".T();
+            return;
+        }
+
+        _updateCts?.Cancel();
+        _updateCts?.Dispose();
+        _updateCts = new CancellationTokenSource();
+        var token = _updateCts.Token;
+
         CheckUpdatesBtn.IsEnabled = false;
+        CancelUpdatesBtn.Visibility = Visibility.Visible;
         UpdateStatusLabel.Text = "Downloading update installer payload...".T();
         UpdateProgressStepLabel.Text = "Downloading Binary Package...".T();
         UpdateProgressBar.Value = 0;
         UpdatePercentText.Text = "0%";
         UpdateDataRateText.Text = "0 KB/s";
 
+        string tempFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");
+        string setupFilePath = Path.Combine(tempFolder, "WinCarePro_Setup.exe");
+        string partialTempFile = setupFilePath + ".download";
+
         try
         {
-            string tempFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");
             if (!Directory.Exists(tempFolder))
             {
                 Directory.CreateDirectory(tempFolder);
             }
-            string setupFilePath = Path.Combine(tempFolder, "WinCarePro_Setup.exe");
 
             if (downloadUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || downloadUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
             {
-                using var response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+                using var response = await _httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead, token);
                 response.EnsureSuccessStatusCode();
 
                 long? totalBytes = response.Content.Headers.ContentLength;
-                using var contentStream = await response.Content.ReadAsStreamAsync();
-                using var fileStream = new FileStream(setupFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
-                var buffer = new byte[8192];
-                long totalRead = 0;
-                int read;
-                
-                while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                using var contentStream = await response.Content.ReadAsStreamAsync(token);
+                using (var fileStream = new FileStream(partialTempFile, FileMode.Create, FileAccess.Write, FileShare.None, 16384, true))
                 {
-                    await fileStream.WriteAsync(buffer, 0, read);
-                    totalRead += read;
+                    var buffer = new byte[16384];
+                    long totalRead = 0;
+                    int read;
+                    var lastUiUpdate = DateTime.UtcNow;
                     
-                    if (totalBytes.HasValue && totalBytes.Value > 0)
+                    while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length, token)) > 0)
                     {
-                        double progress = (double)totalRead / totalBytes.Value * 100.0;
-                        DispatcherQueue.TryEnqueue(() =>
+                        await fileStream.WriteAsync(buffer, 0, read, token);
+                        totalRead += read;
+                        
+                        if ((DateTime.UtcNow - lastUiUpdate).TotalMilliseconds > 100 && totalBytes.HasValue && totalBytes.Value > 0)
                         {
-                            UpdateProgressBar.Value = progress;
-                            UpdatePercentText.Text = string.Format("{0}%", progress.ToString("F0"));
-                            UpdateStatusLabel.Text = string.Format("Downloading update payload... {0}%".T(), progress.ToString("F0"));
-                            UpdateDetailsText.Text = string.Format("{0:F1} MB of {1:F1} MB downloaded", (double)totalRead / (1024 * 1024), (double)totalBytes.Value / (1024 * 1024));
-                            UpdateDataRateText.Text = "Downloading".T();
-                        });
+                            lastUiUpdate = DateTime.UtcNow;
+                            double progress = (double)totalRead / totalBytes.Value * 100.0;
+                            DispatcherQueue.TryEnqueue(() =>
+                            {
+                                UpdateProgressBar.Value = progress;
+                                UpdatePercentText.Text = string.Format("{0}%", progress.ToString("F0"));
+                                UpdateStatusLabel.Text = string.Format("Downloading update payload... {0}%".T(), progress.ToString("F0"));
+                                UpdateDetailsText.Text = string.Format("{0:F1} MB of {1:F1} MB downloaded", (double)totalRead / (1024 * 1024), (double)totalBytes.Value / (1024 * 1024));
+                                UpdateDataRateText.Text = "Downloading".T();
+                            });
+                        }
                     }
                 }
-                fileStream.Close();
+
+                // Safely commit completed download file
+                if (File.Exists(setupFilePath)) File.Delete(setupFilePath);
+                File.Move(partialTempFile, setupFilePath);
             }
             else
             {
@@ -968,7 +1221,7 @@ public sealed partial class SettingsPage : Page
                 string localPath = downloadUrl.Replace("file:///", "").Replace("file://", "").Replace("/", "\\");
                 if (File.Exists(localPath))
                 {
-                    await Task.Run(() => File.Copy(localPath, setupFilePath, true));
+                    await Task.Run(() => File.Copy(localPath, setupFilePath, true), token);
                     DispatcherQueue.TryEnqueue(() =>
                     {
                         UpdateProgressBar.Value = 100;
@@ -986,7 +1239,7 @@ public sealed partial class SettingsPage : Page
             // Verify digital signature of the downloaded update installer
             UpdateStatusLabel.Text = "Verifying digital signature...".T();
             UpdateProgressStepLabel.Text = "Verifying Cryptographic Signature...".T();
-            bool isSignatureValid = await Task.Run(() => VerifyDigitalSignature(setupFilePath));
+            bool isSignatureValid = await Task.Run(() => VerifyDigitalSignature(setupFilePath), token);
             if (!isSignatureValid)
             {
 #if DEBUG
@@ -1005,13 +1258,13 @@ public sealed partial class SettingsPage : Page
                 {
                     UpdateStatusLabel.Text = "Creating System Restore Point...".T();
                     var regEng = new Engines.RegistryBackupEngine();
-                    await Task.Run(() => regEng.CreateSystemRestorePoint("Before WinCare Pro Update".T()));
+                    await Task.Run(() => regEng.CreateSystemRestorePoint("Before WinCare Pro Update".T()), token);
                 }
             }
             catch { }
 
             UpdateStatusLabel.Text = "Launching installer...".T();
-            await Task.Delay(1000);
+            await Task.Delay(1000, token);
 
             Process.Start(new ProcessStartInfo
             {
@@ -1019,14 +1272,34 @@ public sealed partial class SettingsPage : Page
                 Arguments = "/SILENT /SP- /NOICONS /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS",
                 UseShellExecute = true
             });
-
-            Application.Current.Exit();
+        }
+        catch (OperationCanceledException)
+        {
+            try { if (File.Exists(partialTempFile)) File.Delete(partialTempFile); } catch { }
+            UpdateStatusLabel.Text = "Download cancelled.".T();
+            UpdateProgressStepLabel.Text = "Cancelled".T();
+            UpdateDataRateText.Text = "Idle".T();
+        }
+        catch (HttpRequestException httpEx)
+        {
+            try { if (File.Exists(partialTempFile)) File.Delete(partialTempFile); } catch { }
+            UpdateStatusLabel.Text = string.Format("Network connection lost during download: {0}".T(), httpEx.Message);
+            UpdateProgressStepLabel.Text = "Connection Lost".T();
+            UpdateDataRateText.Text = "Failed".T();
+            App.MainWindowInstance?.ShowToastNotification("Download Failed".T(), "Network disconnected while downloading the update file.".T(), "Critical");
         }
         catch (Exception ex)
         {
-            UpdateStatusLabel.Text = string.Format("Download failed: {0}".T(), ex.Message);
-            UpdateProgressBar.Visibility = Visibility.Collapsed;
+            try { if (File.Exists(partialTempFile)) File.Delete(partialTempFile); } catch { }
+            UpdateStatusLabel.Text = string.Format("Download error: {0}".T(), ex.Message);
+            UpdateProgressStepLabel.Text = "Download Error".T();
+            UpdateDataRateText.Text = "Failed".T();
+            App.MainWindowInstance?.ShowToastNotification("Download Error".T(), ex.Message, "Critical");
+        }
+        finally
+        {
             CheckUpdatesBtn.IsEnabled = true;
+            CancelUpdatesBtn.Visibility = Visibility.Collapsed;
         }
     }
 

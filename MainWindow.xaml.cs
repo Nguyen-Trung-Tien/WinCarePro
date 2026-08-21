@@ -26,6 +26,7 @@ public sealed partial class MainWindow : Window
 
     private IntPtr _hwnd = IntPtr.Zero;
     private bool _forceClose = false;
+    private Microsoft.UI.Xaml.DispatcherTimer? _clockTimer;
 
     public MainWindow()
     {
@@ -261,15 +262,18 @@ public sealed partial class MainWindow : Window
         // Update clock immediately
         ClockText.Text = DateTime.Now.ToString("HH:mm");
 
+        // Stop any previous timer to prevent duplicates
+        _clockTimer?.Stop();
+
         // Create a DispatcherTimer for periodic clock and telemetry updates
-        var timer = new Microsoft.UI.Xaml.DispatcherTimer();
-        timer.Interval = TimeSpan.FromSeconds(2);
-        timer.Tick += (s, e) =>
+        _clockTimer = new Microsoft.UI.Xaml.DispatcherTimer();
+        _clockTimer.Interval = TimeSpan.FromSeconds(2);
+        _clockTimer.Tick += (s, e) =>
         {
             ClockText.Text = DateTime.Now.ToString("HH:mm");
             UpdateTitleBarTelemetry();
         };
-        timer.Start();
+        _clockTimer.Start();
     }
 
     private ulong _hudPrevIdleTime;
@@ -366,6 +370,10 @@ public sealed partial class MainWindow : Window
 
     private void MainWindow_Closed(object sender, WindowEventArgs args)
     {
+        // Stop clock/telemetry timer to prevent background Task.Run leaks
+        _clockTimer?.Stop();
+        _clockTimer = null;
+
         ThemeManager.Instance.UnregisterWindow(this);
         TranslationManager.Instance.UnregisterWindow(this);
         CleanupTrayIcon();

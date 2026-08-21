@@ -253,7 +253,17 @@ public partial class DashboardViewModel
             await Task.Run(async () =>
             {
                 // 1. Scan Junk files
-                var junkCats = await _junkEngine.ScanJunkAsync(scanToken).ConfigureAwait(false);
+                List<JunkCategory> junkCats = new();
+                try
+                {
+                    junkCats = await _junkEngine.ScanJunkAsync(scanToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) { throw; }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Warning: Junk scan fallback: " + ex.Message);
+                }
+
                 _scannedJunkCategories = junkCats;
                 _junkSizeBytes = junkCats.Sum(x => x.SizeBytes);
                 _dispatcherQueue?.TryEnqueue(() =>
@@ -262,28 +272,40 @@ public partial class DashboardViewModel
                     ScanProgress = 30;
                     ScanStatus = "Status: Scanning Registry Issues...".T();
                 });
-                await Task.Delay(300, scanToken).ConfigureAwait(false);
+                await Task.Delay(250, scanToken).ConfigureAwait(false);
 
                 // 2. Scan Registry (synchronous method — runs safely on thread pool)
                 scanToken.ThrowIfCancellationRequested();
-                var regIssues = _registryEngine.ScanRegistryIssues();
-                scanToken.ThrowIfCancellationRequested();
+                List<RegistryIssue> regIssues = new();
+                try
+                {
+                    regIssues = _registryEngine.ScanRegistryIssues();
+                }
+                catch (OperationCanceledException) { throw; }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Warning: Registry scan fallback: " + ex.Message);
+                }
+
                 _scannedRegistryIssues = regIssues;
                 _dispatcherQueue?.TryEnqueue(() =>
                 {
                     ScanProgress = 55;
                     ScanStatus = "Status: Checking Available Software Updates...".T();
                 });
-                await Task.Delay(300, scanToken).ConfigureAwait(false);
+                await Task.Delay(250, scanToken).ConfigureAwait(false);
 
                 // 3. Scan Software Updates
                 List<SoftwareUpdateInfo> updates = new();
                 try
                 {
-                    updates = await _updaterEngine.ScanUpdatesAsync().ConfigureAwait(false);
+                    updates = await _updaterEngine.ScanUpdatesAsync(cancellationToken: scanToken).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException) { throw; }
-                catch { }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Warning: Software updates scan fallback: " + ex.Message);
+                }
 
                 scanToken.ThrowIfCancellationRequested();
                 _dispatcherQueue?.TryEnqueue(() =>
@@ -292,16 +314,38 @@ public partial class DashboardViewModel
                     ScanProgress = 75;
                     ScanStatus = "Status: Evaluating Connection and Security Status...".T();
                 });
-                await Task.Delay(300, scanToken).ConfigureAwait(false);
+                await Task.Delay(250, scanToken).ConfigureAwait(false);
 
                 // 4. Scan Security and Network
-                var netEngine = new NetworkEngine();
-                var (pingLoss, avgLatency, _) = await netEngine.AnalyzePingQualityAsync().ConfigureAwait(false);
+                double avgLatency = 15.0;
+                double pingLoss = 0.0;
+                try
+                {
+                    var netEngine = new NetworkEngine();
+                    var pingResult = await netEngine.AnalyzePingQualityAsync().ConfigureAwait(false);
+                    avgLatency = pingResult.avgLatencyMs;
+                    pingLoss = pingResult.packetLossPercent;
+                }
+                catch (OperationCanceledException) { throw; }
+                catch { }
                 scanToken.ThrowIfCancellationRequested();
 
-                var startupApps = _startupEngine.GetStartupEntries();
+                List<StartupEntry> startupApps = new();
+                try
+                {
+                    startupApps = _startupEngine.GetStartupEntries();
+                }
+                catch (OperationCanceledException) { throw; }
+                catch { }
                 scanToken.ThrowIfCancellationRequested();
-                var securityAudits = _securityEngine.RunSecurityAudits(startupApps);
+
+                List<string> securityAudits = new();
+                try
+                {
+                    securityAudits = _securityEngine.RunSecurityAudits(startupApps);
+                }
+                catch (OperationCanceledException) { throw; }
+                catch { }
                 scanToken.ThrowIfCancellationRequested();
 
                 _dispatcherQueue?.TryEnqueue(() =>
@@ -309,7 +353,7 @@ public partial class DashboardViewModel
                     ScanProgress = 90;
                     ScanStatus = "Status: Calculating System Health Index...".T();
                 });
-                await Task.Delay(300, scanToken).ConfigureAwait(false);
+                await Task.Delay(250, scanToken).ConfigureAwait(false);
 
                 // 5. Evaluate AI Health Score
                 int servicesCount = 50;
@@ -325,14 +369,19 @@ public partial class DashboardViewModel
                 {
                     var drives = DriveInfo.GetDrives().Where(d => d.IsReady && d.DriveType == DriveType.Fixed);
                     var cDrive = drives.FirstOrDefault(d => d.Name.StartsWith("C", StringComparison.OrdinalIgnoreCase)) ?? drives.FirstOrDefault();
-                    if (cDrive != null)
+                    if (cDrive != null && cDrive.TotalSize > 0)
                     {
                         freeSpacePercent = ((double)cDrive.AvailableFreeSpace / cDrive.TotalSize) * 100.0;
                     }
                 }
                 catch { }
 
-                double cpuTemp = _hardwareEngine.GetCpuTemperature(currentCpuUsage);
+                double cpuTemp = 45.0;
+                try
+                {
+                    cpuTemp = _hardwareEngine.GetCpuTemperature(currentCpuUsage);
+                }
+                catch { }
                 scanToken.ThrowIfCancellationRequested();
 
                 bool isExplorerOptimized = true;
@@ -345,6 +394,15 @@ public partial class DashboardViewModel
                     {
                         isExplorerOptimized = false;
                     }
+                }
+                catch { }
+
+                double ssdHealth = 100;
+                bool isThrottling = false;
+                try
+                {
+                    ssdHealth = _hardwareEngine.GetSsdHealthPercent();
+                    isThrottling = _hardwareEngine.IsCpuThrottling(currentCpuUsage);
                 }
                 catch { }
 
@@ -362,11 +420,10 @@ public partial class DashboardViewModel
                     servicesCount: servicesCount,
                     diskActiveTime: currentDiskUsage,
                     freeSpacePercent: freeSpacePercent,
-                    ssdHealthPercent: _hardwareEngine.GetSsdHealthPercent(),
-                    isThrottling: _hardwareEngine.IsCpuThrottling(currentCpuUsage),
+                    ssdHealthPercent: ssdHealth,
+                    isThrottling: isThrottling,
                     isExplorerOptimized: isExplorerOptimized
                 ).ConfigureAwait(false);
-
 
                 _dispatcherQueue?.TryEnqueue(() =>
                 {

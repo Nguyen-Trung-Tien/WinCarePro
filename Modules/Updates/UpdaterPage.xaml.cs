@@ -184,4 +184,63 @@ public sealed partial class UpdaterPage : Page
     }
 
     public bool IsNot(bool val) => !val;
+
+    private async void OnBackupDriversClick(object sender, RoutedEventArgs e)
+    {
+        var result = await ViewModel.BackupDriversAsync();
+        var dialog = new ContentDialog
+        {
+            Title = result.Success ? "Driver Backup Completed" : "Driver Backup Alert",
+            Content = result.Message + (result.Success ? $"\n\nSaved Location: {result.BackupPath}" : ""),
+            CloseButtonText = "OK",
+            XamlRoot = this.XamlRoot
+        };
+        await dialog.ShowAsync();
+    }
+
+    private async void OnRestoreDriversClick(object sender, RoutedEventArgs e)
+    {
+        string defaultDir = System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            "WinCarePro_DriverBackups");
+
+        if (!System.IO.Directory.Exists(defaultDir))
+        {
+            var noDirDialog = new ContentDialog
+            {
+                Title = "Restore Drivers",
+                Content = "No driver backup directory found at default location:\n" + defaultDir,
+                CloseButtonText = "Close",
+                XamlRoot = this.XamlRoot
+            };
+            await noDirDialog.ShowAsync();
+            return;
+        }
+
+        var subDirs = System.IO.Directory.GetDirectories(defaultDir);
+        string targetDir = subDirs.Length > 0 ? subDirs.OrderByDescending(d => d).First() : defaultDir;
+
+        var confirmDialog = new ContentDialog
+        {
+            Title = "Restore Hardware Drivers",
+            Content = $"Are you sure you want to restore drivers from the latest backup folder?\n\n{targetDir}",
+            PrimaryButtonText = "Restore Now",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = this.XamlRoot
+        };
+
+        if (await confirmDialog.ShowAsync() == ContentDialogResult.Primary)
+        {
+            var result = await ViewModel.RestoreDriversAsync(targetDir);
+            var resultDialog = new ContentDialog
+            {
+                Title = result.Success ? "Restore Complete" : "Restore Result",
+                Content = result.Message,
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+            await resultDialog.ShowAsync();
+        }
+    }
 }

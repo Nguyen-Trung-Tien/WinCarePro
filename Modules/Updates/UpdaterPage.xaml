@@ -178,6 +178,28 @@
                         <TextBlock x:Name="UpdateAllText" Text="Update All" VerticalAlignment="Center" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
+
+                <!-- Driver Backup & Restore DropDown Button -->
+                <DropDownButton x:Name="DriverToolsBtn" Style="{StaticResource DefaultButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="12,0" FontSize="12">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE7F1;" FontSize="12" Foreground="#FF10B981" />
+                        <TextBlock Text="Driver Shield" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuFlyoutItem Text="Backup OEM Drivers (Safe Export)" Click="OnBackupDriversClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE792;" Foreground="#FF10B981" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Text="Restore Drivers From Backup..." Click="OnRestoreDriversClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE777;" Foreground="#FF3B82F6" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
             </StackPanel>
         </Grid>
 

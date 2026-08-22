@@ -541,4 +541,60 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
             _dispatcherQueue?.TryEnqueue(UpdateStatistics);
         }
     }
+
+    private readonly HardwareDriverEngine _driverEngine = App.Services?.GetService<HardwareDriverEngine>() ?? new();
+
+    public async Task<DriverBackupResult> BackupDriversAsync(string? customPath = null)
+    {
+        if (IsBusy) return new DriverBackupResult { Success = false, Message = "Engine is currently busy." };
+        IsBusy = true;
+        ProgressMessage = "Initializing OEM hardware driver backup (pnputil)...".T();
+        ProgressPercent = 5;
+
+        try
+        {
+            var progress = new Progress<int>(p => ProgressPercent = p);
+            var result = await _driverEngine.BackupThirdPartyDriversAsync(customPath, progress);
+
+            ProgressPercent = 100;
+            ProgressMessage = result.Message;
+            return result;
+        }
+        catch (Exception ex)
+        {
+            ProgressMessage = "Driver backup error: " + ex.Message;
+            return new DriverBackupResult { Success = false, Message = ex.Message };
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task<DriverBackupResult> RestoreDriversAsync(string sourcePath)
+    {
+        if (IsBusy) return new DriverBackupResult { Success = false, Message = "Engine is currently busy." };
+        IsBusy = true;
+        ProgressMessage = "Restoring hardware drivers from backup folder...".T();
+        ProgressPercent = 5;
+
+        try
+        {
+            var progress = new Progress<int>(p => ProgressPercent = p);
+            var result = await _driverEngine.RestoreDriversFromBackupAsync(sourcePath, progress);
+
+            ProgressPercent = 100;
+            ProgressMessage = result.Message;
+            return result;
+        }
+        catch (Exception ex)
+        {
+            ProgressMessage = "Driver restore error: " + ex.Message;
+            return new DriverBackupResult { Success = false, Message = ex.Message };
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 }

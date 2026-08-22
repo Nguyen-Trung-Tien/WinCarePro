@@ -231,6 +231,11 @@ public sealed partial class JunkPage : Page
         return hasLockingApps ? Visibility.Visible : Visibility.Collapsed;
     }
 
+    public Visibility GetCelebrationVisibility(bool isCelebrationActive)
+    {
+        return isCelebrationActive ? Visibility.Visible : Visibility.Collapsed;
+    }
+
     public Visibility GetLockedSizeVisibility(long lockedBytes)
     {
         return lockedBytes > 0 ? Visibility.Visible : Visibility.Collapsed;

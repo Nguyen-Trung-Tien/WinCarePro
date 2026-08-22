@@ -82,6 +82,20 @@ public class JunkViewModel : ViewModelBase, IDisposable
         set => SetPropertyOnUI(() => _totalLockedSize, v => _totalLockedSize = v, value);
     }
 
+    private bool _isCelebrationActive;
+    public bool IsCelebrationActive
+    {
+        get => _isCelebrationActive;
+        set => SetPropertyOnUI(() => _isCelebrationActive, v => _isCelebrationActive = v, value);
+    }
+
+    private string _cleanedReclaimedSummary = "";
+    public string CleanedReclaimedSummary
+    {
+        get => _cleanedReclaimedSummary;
+        set => SetPropertyOnUI(() => _cleanedReclaimedSummary, v => _cleanedReclaimedSummary = v, value);
+    }
+
     private bool _hasLockingApps;
     public bool HasLockingApps
     {
@@ -228,6 +242,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
         var token = _scanCts.Token;
 
         IsScanning = true;
+        IsCelebrationActive = false;
         ProgressPercent = 0;
         lock (_logBuffer) { _logBuffer.Clear(); }
         LiveLogs = "";
@@ -344,6 +359,8 @@ public class JunkViewModel : ViewModelBase, IDisposable
                 LockingAppsText = "";
                 ActiveLockingApps.Clear();
                 IsCleaning = false;
+                IsCelebrationActive = true;
+                CleanedReclaimedSummary = cleanedFormatted;
             });
 
             // Show dialog on UI thread separately to avoid async void lambda

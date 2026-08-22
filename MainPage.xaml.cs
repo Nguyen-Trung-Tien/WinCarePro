@@ -100,10 +100,22 @@ public sealed partial class MainPage : Page
 
     public void NavigateToPageExternal(string tag)
     {
-        if (tag.Equals("Settings", StringComparison.OrdinalIgnoreCase))
+        if (tag.StartsWith("Settings", StringComparison.OrdinalIgnoreCase))
         {
+            int sectionIndex = 0;
+            var parts = tag.Split(':');
+            if (parts.Length > 1 && int.TryParse(parts[1], out int idx))
+            {
+                sectionIndex = idx;
+            }
+
             NavView.SelectedItem = NavView.SettingsItem;
             NavigateToPage("Settings");
+
+            if (ContentFrame.Content is SettingsPage settingsPage)
+            {
+                settingsPage.SelectSection(sectionIndex);
+            }
             return;
         }
 

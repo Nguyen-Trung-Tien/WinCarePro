@@ -3294,6 +3294,31 @@ public partial class TranslationManager
         _translations["Instant Bilingual Engine (Vietnamese / English)"] = "Động Cơ Song Ngữ Tức Thì (Việt / Anh)";
         _translations["Zero-latency UI localization switching with 100% standardized dictionaries across the suite."] = "Chuyển đổi ngôn ngữ không độ trễ với bộ từ điển chuẩn hóa 100% trên toàn hệ thống.";
 
+        // --- Settings Search & Navigation ---
+        _translations["Find a setting..."] = "Tìm kiếm cài đặt...";
+        _translations["Settings: General & Language"] = "Cài Đặt: Cấu Hình Chung & Ngôn Ngữ";
+        _translations["Application startup, system tray behavior, and instant language selection."] = "Khởi động ứng dụng, khay hệ thống và tùy chọn ngôn ngữ tức thì.";
+        _translations["Settings: Appearance & Theme"] = "Cài Đặt: Giao Diện & Chủ Đề";
+        _translations["Custom theme mode, accent color palettes, acrylic transparency, and fluid UI."] = "Chế độ giao diện sáng/tối, bảng màu điểm nhấn, hiệu ứng mica/acrylic và giao diện mượt mà.";
+        _translations["Settings: Auto Maintenance"] = "Cài Đặt: Tự Động Bảo Trì";
+        _translations["Background auto cleanup intervals, smart optimization triggers, and silent maintenance."] = "Chu kỳ tự động dọn dẹp nền, kích hoạt tối ưu thông minh và bảo trì ngầm.";
+        _translations["Settings: Telemetry & Alert Policy"] = "Cài Đặt: Giám Sát & Thông Báo";
+        _translations["System monitoring threshold limits, critical hardware notifications, and alerts."] = "Ngưỡng giới hạn giám sát hệ thống, thông báo phần cứng trọng yếu và cảnh báo.";
+        _translations["Settings: Safety & Rollback"] = "Cài Đặt: An Toàn & Khôi Phục";
+        _translations["Windows Restore Points creation, registry backup snapshots, and transactional safety."] = "Tạo Điểm Khôi Phục Windows, bản sao lưu registry và an toàn giao dịch.";
+        _translations["Settings: Database & Storage"] = "Cài Đặt: Cơ Sở Dữ Liệu & Bộ Nhớ";
+        _translations["Local database optimization, WAL log maintenance, and cache storage size management."] = "Tối ưu hóa cơ sở dữ liệu nội bộ, bảo trì nhật ký WAL và quản lý dung lượng bộ nhớ đệm.";
+        _translations["Settings: Software Updates"] = "Cài Đặt: Cập Nhật Phần Mềm";
+        _translations["CDN distribution channel, automated update polling, and release updates."] = "Kênh phân phối phát hành, tự động kiểm tra bản cập nhật và cài đặt phiên bản mới.";
+        _translations["Settings: Advanced & Developer Workbench"] = "Cài Đặt: Nâng Cao & Bàn Làm Việc Kỹ Sư";
+        _translations["Process working set RAM trimmer, forced GC collection, environment inspector, and audit logs."] = "Dọn bộ nhớ RAM Working Set, ép thu gom GC, kiểm tra môi trường và nhật ký kiểm toán.";
+        _translations["Settings: Backup & Reset"] = "Cài Đặt: Sao Lưu & Đặt Lại";
+        _translations["Export and import application configuration profiles, or reset settings to defaults."] = "Xuất và nhập hồ sơ cấu hình ứng dụng, hoặc khôi phục cài đặt về mặc định.";
+        _translations["Settings: About & Developer"] = "Cài Đặt: Thông Tin & Tác Giả";
+        _translations["System architecture, Lead Developer portfolio, zero-telemetry guarantee pledge, and what's new."] = "Kiến trúc hệ thống, thông tin Tác giả, cam kết quyền riêng tư và nhật ký nâng cấp.";
+        _translations["Settings: Feature Guide & Manual"] = "Cài Đặt: Sổ Tay & Hướng Dẫn";
+        _translations["Comprehensive step-by-step visual handbook and safety guidelines for all 15 modules."] = "Sổ tay hướng dẫn từng bước trực quan và các quy chuẩn an toàn cho cả 15 module.";
+
         _reverseTranslations.Clear();
         foreach (var kvp in _translations)
         {

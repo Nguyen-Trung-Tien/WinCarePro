@@ -105,6 +105,7 @@ public sealed partial class SettingsPage : Page
         if (index >= 0 && index < SettingsNavList.Items.Count)
         {
             SettingsNavList.SelectedIndex = index;
+            SettingsNavList.ScrollIntoView(SettingsNavList.Items[index]);
         }
     }
 
@@ -1828,4 +1829,126 @@ public sealed partial class SettingsPage : Page
     {
         return selectedIndex == targetIndex ? Visibility.Visible : Visibility.Collapsed;
     }
+
+    #region In-Settings Quick Search Engine
+
+    public class SettingsSearchItem
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public int SectionIndex { get; set; }
+        public string Keywords { get; set; } = string.Empty;
+        public string IconGlyph { get; set; } = string.Empty;
+    }
+
+    private List<SettingsSearchItem> _settingsSearchRegistry = new();
+
+    private void PopulateSettingsSearchRegistry()
+    {
+        _settingsSearchRegistry = new List<SettingsSearchItem>
+        {
+            new SettingsSearchItem { Title = "General Configuration".T(), Description = "Application startup, system tray behavior, and instant language selection.".T(), SectionIndex = 0, Keywords = "language ngon ngu tieng viet tieng anh english startup khoi dong minimize thu nho tray he thong general config cai dat chung", IconGlyph = "\uE713" },
+            new SettingsSearchItem { Title = "Appearance & Theme".T(), Description = "Custom theme mode, accent color palettes, acrylic transparency, and fluid UI.".T(), SectionIndex = 1, Keywords = "theme dark mode light mode acrylic mica color accent palette mau chu de giao dien gradient tuy bien", IconGlyph = "\uE790" },
+            new SettingsSearchItem { Title = "Auto Maintenance".T(), Description = "Background auto cleanup intervals, smart optimization triggers, and silent maintenance.".T(), SectionIndex = 2, Keywords = "auto maintenance tu dong bao tri don rac auto clean schedule lich trinh silent mode", IconGlyph = "\uE812" },
+            new SettingsSearchItem { Title = "Telemetry & Alert Policy".T(), Description = "System monitoring threshold limits, critical hardware notifications, and alerts.".T(), SectionIndex = 3, Keywords = "telemetry alerts thong bao canh bao cpu threshold ram smart privacy nguong giam sat", IconGlyph = "\uEA8F" },
+            new SettingsSearchItem { Title = "Safety & Rollback".T(), Description = "Windows Restore Points creation, registry backup snapshots, and transactional safety.".T(), SectionIndex = 4, Keywords = "safety rollback restore point diem khoi phuc registry backup snapshot sao luu an toan", IconGlyph = "\uE727" },
+            new SettingsSearchItem { Title = "Database & Storage".T(), Description = "Local database optimization, WAL log maintenance, and cache storage size management.".T(), SectionIndex = 5, Keywords = "database storage sqlite vacuum wal co so du lieu don dep logs nhat ky storage size", IconGlyph = "\uE7F1" },
+            new SettingsSearchItem { Title = "Software Updates".T(), Description = "CDN distribution channel, automated update polling, and release updates.".T(), SectionIndex = 6, Keywords = "update software cap nhat phan mem cdn channel beta auto check kiem tra cap nhat changelog", IconGlyph = "\uE75C" },
+            new SettingsSearchItem { Title = "Advanced & Developer Workbench".T(), Description = "Process working set RAM trimmer, forced GC collection, environment inspector, and audit logs.".T(), SectionIndex = 7, Keywords = "developer workbench trim ram force gc inspect clr audit logs sandbox debug plugin go loi nha phat trien don ram", IconGlyph = "\uE7B4" },
+            new SettingsSearchItem { Title = "Backup & Reset".T(), Description = "Export and import application configuration profiles, or reset settings to defaults.".T(), SectionIndex = 8, Keywords = "backup reset restore defaults sao luu khoi phuc mac dinh dat lai export import cau hinh", IconGlyph = "\uE8AC" },
+            new SettingsSearchItem { Title = "About & Developer".T(), Description = "System architecture, Lead Developer portfolio, zero-telemetry guarantee pledge, and what's new.".T(), SectionIndex = 9, Keywords = "about developer thong tin tac gia nguyen trung tien portfolio privacy pledge cam ket rieng tu whats new phien ban", IconGlyph = "\uE946" },
+            new SettingsSearchItem { Title = "Feature Guide & Manual".T(), Description = "Comprehensive step-by-step visual handbook and safety guidelines for all 15 modules.".T(), SectionIndex = 10, Keywords = "user guide manual huong dan su dung handbook document so tay huong dan chi tiet", IconGlyph = "\uE897" }
+        };
+    }
+
+    private static string RemoveDiacritics(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return string.Empty;
+        string normalizedString = text.Normalize(System.Text.NormalizationForm.FormD);
+        var stringBuilder = new System.Text.StringBuilder();
+        foreach (char c in normalizedString)
+        {
+            var unicodeCategory = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c);
+            if (unicodeCategory != System.Globalization.UnicodeCategory.NonSpacingMark)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+        return stringBuilder.ToString().Normalize(System.Text.NormalizationForm.FormC).ToLower();
+    }
+
+    private void OnSettingsSearchTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+        {
+            string rawQuery = sender.Text.Trim();
+            if (string.IsNullOrEmpty(rawQuery))
+            {
+                sender.ItemsSource = null;
+                return;
+            }
+
+            if (_settingsSearchRegistry.Count == 0)
+            {
+                PopulateSettingsSearchRegistry();
+            }
+
+            string cleanQuery = RemoveDiacritics(rawQuery);
+            var results = new List<(SettingsSearchItem item, int score)>();
+
+            foreach (var item in _settingsSearchRegistry)
+            {
+                string cleanTitle = RemoveDiacritics(item.Title);
+                string cleanDesc = RemoveDiacritics(item.Description);
+                string cleanKeywords = RemoveDiacritics(item.Keywords);
+
+                int score = 0;
+                if (cleanTitle.Equals(cleanQuery, StringComparison.OrdinalIgnoreCase)) score = 100;
+                else if (cleanTitle.StartsWith(cleanQuery, StringComparison.OrdinalIgnoreCase)) score = 80;
+                else if (cleanTitle.Contains(cleanQuery, StringComparison.OrdinalIgnoreCase)) score = 60;
+                else if (cleanKeywords.Contains(cleanQuery, StringComparison.OrdinalIgnoreCase)) score = 40;
+                else if (cleanDesc.Contains(cleanQuery, StringComparison.OrdinalIgnoreCase)) score = 20;
+
+                if (score > 0) results.Add((item, score));
+            }
+
+            sender.ItemsSource = results.OrderByDescending(x => x.score).Select(x => x.item).ToList();
+        }
+    }
+
+    private void OnSettingsSearchSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+    {
+        if (args.SelectedItem is SettingsSearchItem item)
+        {
+            SelectSection(item.SectionIndex);
+        }
+    }
+
+    private void OnSettingsSearchQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        if (args.ChosenSuggestion is SettingsSearchItem item)
+        {
+            SelectSection(item.SectionIndex);
+            return;
+        }
+
+        string rawQuery = sender.Text.Trim();
+        if (string.IsNullOrEmpty(rawQuery)) return;
+
+        if (_settingsSearchRegistry.Count == 0)
+        {
+            PopulateSettingsSearchRegistry();
+        }
+
+        string cleanQuery = RemoveDiacritics(rawQuery);
+        var match = _settingsSearchRegistry
+            .FirstOrDefault(x => RemoveDiacritics(x.Title).Contains(cleanQuery) || RemoveDiacritics(x.Keywords).Contains(cleanQuery));
+
+        if (match != null)
+        {
+            SelectSection(match.SectionIndex);
+        }
+    }
+
+    #endregion
 }

@@ -58,4 +58,28 @@ public class SecurityAndSanitizationTests
         var issues = backupEngine.ScanRegistryIssues();
         Assert.NotNull(issues);
     }
+
+    [Theory]
+    [InlineData("cmd.exe & calc.exe", true)]
+    [InlineData("test | dir", true)]
+    [InlineData("arg; whoami", true)]
+    [InlineData("normal_argument_value", false)]
+    [InlineData("C:\\Windows\\System32\\notepad.exe", false)]
+    public void InputSanitizer_ContainsDangerousShellCharacters_ValidatesCorrectly(string input, bool expectedDangerous)
+    {
+        bool isDangerous = Infrastructure.Security.InputSanitizer.ContainsDangerousShellCharacters(input);
+        Assert.Equal(expectedDangerous, isDangerous);
+    }
+
+    [Theory]
+    [InlineData("report/../../secret.txt", "secret.txt")]
+    [InlineData("wincare:test*<>.log", "wincare_test___.log")]
+    [InlineData("", "wincare_report")]
+    [InlineData(null, "wincare_report")]
+    public void InputSanitizer_SanitizeFileName_StripsInvalidChars(string? raw, string expected)
+    {
+        string sanitized = Infrastructure.Security.InputSanitizer.SanitizeFileName(raw);
+        Assert.Equal(expected, sanitized);
+    }
 }
+

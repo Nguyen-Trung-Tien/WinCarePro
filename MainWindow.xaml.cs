@@ -224,6 +224,15 @@ public sealed partial class MainWindow : Window
             var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(4, 1, 0, 0);
             CheckAndShowChangelog(currentVersion);
 
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await Modules.GamingTurbo.GamingTurboViewModel.CheckAndPerformAutoRecoveryAsync();
+                }
+                catch { }
+            });
+
             _ = Task.Run(() =>
             {
                 try

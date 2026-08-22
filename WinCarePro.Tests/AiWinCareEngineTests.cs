@@ -81,4 +81,37 @@ public class AiWinCareEngineTests
         Assert.True(remedyResult.FixedActionsCount > 0);
         Assert.NotEmpty(remedyResult.ActionLogs);
     }
+
+    [Theory]
+    [InlineData("máy bị tràn ram", "NavigateOptimizer")]
+    [InlineData("dọn rác ổ đĩa", "NavigateJunkCleaner")]
+    [InlineData("ổ c bị đầy dung lượng", "NavigateDisk")]
+    [InlineData("chơi game bị lag drop fps", "NavigateGamingTurbo")]
+    [InlineData("mạng wifi bị chậm ping cao", "NavigateNetwork")]
+    [InlineData("khởi động win chậm", "NavigateStartup")]
+    [InlineData("lỗi hệ thống sfc", "NavigateRepair")]
+    public void AiWinCareEngine_GetOfflineDiagnosticAdvice_ShouldRouteCorrectly(string query, string expectedActionKey)
+    {
+        // Act
+        var advice = Modules.AiAssistant.AiWinCareEngine.GetOfflineDiagnosticAdvice(query);
+
+        // Assert
+        Assert.NotNull(advice);
+        Assert.False(string.IsNullOrWhiteSpace(advice.Title));
+        Assert.False(string.IsNullOrWhiteSpace(advice.Diagnosis));
+        Assert.False(string.IsNullOrWhiteSpace(advice.Solution));
+        Assert.Equal(expectedActionKey, advice.RecommendedActionKey);
+    }
+
+    [Fact]
+    public void AiWinCareEngine_GetOfflineDiagnosticAdvice_EmptyQuery_ReturnsReadyState()
+    {
+        // Act
+        var advice = Modules.AiAssistant.AiWinCareEngine.GetOfflineDiagnosticAdvice("");
+
+        // Assert
+        Assert.NotNull(advice);
+        Assert.Equal("None", advice.RecommendedActionKey);
+    }
 }
+

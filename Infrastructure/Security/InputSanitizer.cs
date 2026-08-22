@@ -68,4 +68,38 @@ public static class InputSanitizer
         string sanitized = argument.Replace("\"", "\\\"").Replace("\0", string.Empty);
         return $"\"{sanitized}\"";
     }
+
+    /// <summary>
+    /// Checks if a command argument contains potentially dangerous shell meta-characters
+    /// (e.g. command chaining, redirection, or pipe operators).
+    /// </summary>
+    public static bool ContainsDangerousShellCharacters(string? argument)
+    {
+        if (string.IsNullOrEmpty(argument))
+            return false;
+
+        // Shell delimiters, command separators, and stream redirections
+        char[] dangerousChars = { '&', '|', ';', '`', '$', '<', '>', '\n', '\r', '\0' };
+        return argument.IndexOfAny(dangerousChars) >= 0;
+    }
+
+    /// <summary>
+    /// Sanitizes a file name string to remove illegal file name characters and path traversal segments.
+    /// </summary>
+    public static string SanitizeFileName(string? rawFileName, string fallback = "wincare_report")
+    {
+        if (string.IsNullOrWhiteSpace(rawFileName))
+            return fallback;
+
+        string sanitized = Path.GetFileName(rawFileName.Trim());
+        char[] invalidChars = Path.GetInvalidFileNameChars();
+        foreach (char c in invalidChars)
+        {
+            sanitized = sanitized.Replace(c, '_');
+        }
+
+        // Prevent traversal remnants
+        sanitized = sanitized.Replace("..", "").Replace("/", "").Replace("\\", "");
+        return string.IsNullOrWhiteSpace(sanitized) ? fallback : sanitized;
+    }
 }

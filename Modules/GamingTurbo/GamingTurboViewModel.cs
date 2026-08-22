@@ -85,6 +85,7 @@ namespace WinCarePro.Modules.GamingTurbo
 
                 // Save current power plan for restoration
                 await SaveCurrentPowerPlanAsync();
+                PersistActiveTurboState();
 
                 var freedBytes = await Task.Run(() =>
                 {
@@ -231,6 +232,69 @@ namespace WinCarePro.Modules.GamingTurbo
 
                 await ProcessRunner.RunAsync("powercfg.exe", $"/setactive {targetGuid}", TimeSpan.FromSeconds(5));
                 _originalPowerPlanGuid = null;
+                ClearActiveTurboState();
+            }
+            catch { }
+        }
+
+        private static readonly string StateFile = System.IO.Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            @"WinCarePro\gaming_turbo_active.state"
+        );
+
+        private void PersistActiveTurboState()
+        {
+            try
+            {
+                var dir = System.IO.Path.GetDirectoryName(StateFile);
+                if (!string.IsNullOrEmpty(dir) && !System.IO.Directory.Exists(dir))
+                {
+                    System.IO.Directory.CreateDirectory(dir);
+                }
+                System.IO.File.WriteAllText(StateFile, _originalPowerPlanGuid ?? "381b4222-f694-41f0-9685-ff5bb260df2e");
+            }
+            catch { }
+        }
+
+        private void ClearActiveTurboState()
+        {
+            try
+            {
+                if (System.IO.File.Exists(StateFile))
+                {
+                    System.IO.File.Delete(StateFile);
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Checks if Gaming Turbo was left active due to an unexpected system shutdown or crash,
+        /// and automatically restores the standard Windows power plan.
+        /// </summary>
+        public static async Task CheckAndPerformAutoRecoveryAsync()
+        {
+            try
+            {
+                if (System.IO.File.Exists(StateFile))
+                {
+                    string targetGuid = "381b4222-f694-41f0-9685-ff5bb260df2e";
+                    try
+                    {
+                        string saved = System.IO.File.ReadAllText(StateFile).Trim();
+                        if (!string.IsNullOrEmpty(saved) && saved.Length == 36)
+                        {
+                            targetGuid = saved;
+                        }
+                    }
+                    catch { }
+
+                    await ProcessRunner.RunAsync("powercfg.exe", $"/setactive {targetGuid}", TimeSpan.FromSeconds(5));
+                    
+                    try { System.IO.File.Delete(StateFile); } catch { }
+
+                    Database.DbManager.LogAction("Gaming Turbo Auto-Recovery restored standard power profile following unclean shutdown", "Gaming Turbo", "Success");
+                }
             }
             catch { }
         }
@@ -241,3 +305,4 @@ namespace WinCarePro.Modules.GamingTurbo
         }
     }
 }
+

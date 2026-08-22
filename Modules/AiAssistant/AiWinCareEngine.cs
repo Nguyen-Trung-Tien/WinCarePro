@@ -425,6 +425,136 @@ namespace WinCarePro.Modules.AiAssistant
         private static long _cachedTempSize = -1;
         private static DateTime _lastTempScan = DateTime.MinValue;
 
+        public class OfflineDiagnosticAnswer
+        {
+            public string Title { get; set; } = string.Empty;
+            public string Diagnosis { get; set; } = string.Empty;
+            public string Solution { get; set; } = string.Empty;
+            public string RecommendedActionKey { get; set; } = "None";
+            public string ActionButtonText { get; set; } = "Fix Now";
+        }
+
+        /// <summary>
+        /// Provides instant rule-based diagnostic answers and 1-click remediation workflows
+        /// when running in offline mode or when cloud AI is unreachable.
+        /// </summary>
+        public static OfflineDiagnosticAnswer GetOfflineDiagnosticAdvice(string userQuery)
+        {
+            if (string.IsNullOrWhiteSpace(userQuery))
+            {
+                return new OfflineDiagnosticAnswer
+                {
+                    Title = "WinCare AI Assistant Ready".T(),
+                    Diagnosis = "Please enter your question, issue, or error symptom.".T(),
+                    Solution = "You can ask about system lag, disk space, network connection, gaming FPS, or startup apps.".T(),
+                    RecommendedActionKey = "None"
+                };
+            }
+
+            string q = userQuery.ToLowerInvariant();
+
+            // 1. RAM / Memory
+            if (q.Contains("ram") || q.Contains("bộ nhớ") || q.Contains("memory") || q.Contains("tràn ram") || q.Contains("đơ"))
+            {
+                return new OfflineDiagnosticAnswer
+                {
+                    Title = "Memory Optimization & Standby Purge".T(),
+                    Diagnosis = "High memory working set or bloated standby cache can cause sudden UI freezes and stuttering.".T(),
+                    Solution = "Run RAM Booster to flush standby lists and reclaim unused physical RAM working sets.".T(),
+                    RecommendedActionKey = "NavigateOptimizer",
+                    ActionButtonText = "Open Optimizer".T()
+                };
+            }
+
+            // 2. Junk / Temp / Cache
+            if (q.Contains("rác") || q.Contains("junk") || q.Contains("temp") || q.Contains("cache") || q.Contains("dọn dẹp") || q.Contains("clean"))
+            {
+                return new OfflineDiagnosticAnswer
+                {
+                    Title = "Junk & Temp Cache Cleanup".T(),
+                    Diagnosis = "Accumulated Windows temp files, browser caches, and system logs take up space and slow down IO.".T(),
+                    Solution = "Use Junk Cleaner for a comprehensive scan across Windows, browsers, logs, and installer caches.".T(),
+                    RecommendedActionKey = "NavigateJunkCleaner",
+                    ActionButtonText = "Clean Junk Now".T()
+                };
+            }
+
+            // 3. Disk / Storage / Drive C Full
+            if (q.Contains("ổ c") || q.Contains("đầy ổ") || q.Contains("disk") || q.Contains("dung lượng") || q.Contains("storage") || q.Contains("space"))
+            {
+                return new OfflineDiagnosticAnswer
+                {
+                    Title = "Disk Space Recovery & Analysis".T(),
+                    Diagnosis = "Drive C is filling up, potentially due to large system files, Hibernation file, Windows.old or temp dumps.".T(),
+                    Solution = "Navigate to Disk Analyzer to locate large files and run System Component Store (WinSxS) cleanup.".T(),
+                    RecommendedActionKey = "NavigateDisk",
+                    ActionButtonText = "Open Disk Center".T()
+                };
+            }
+
+            // 4. Network / DNS / Internet (Prioritize network connection queries)
+            if (q.Contains("mạng") || q.Contains("dns") || q.Contains("wifi") || q.Contains("internet") || q.Contains("rớt mạng") || q.Contains("ping"))
+            {
+                return new OfflineDiagnosticAnswer
+                {
+                    Title = "Network Health & DNS Optimization".T(),
+                    Diagnosis = "DNS latency or corrupted Winsock cache can cause slow web browsing and packet loss.".T(),
+                    Solution = "Switch to Ultra-Fast DNS (Cloudflare 1.1.1.1 / Google 8.8.8.8) and flush the DNS resolver cache.".T(),
+                    RecommendedActionKey = "NavigateNetwork",
+                    ActionButtonText = "Open Network Center".T()
+                };
+            }
+
+            // 5. Gaming / FPS / Latency
+            if (q.Contains("game") || q.Contains("fps") || q.Contains("lag") || q.Contains("giật") || q.Contains("turbo"))
+            {
+                return new OfflineDiagnosticAnswer
+                {
+                    Title = "Gaming Turbo & FPS Optimization".T(),
+                    Diagnosis = "Background services, Windows updates, and CPU core parking reduce in-game FPS and cause micro-stutter.".T(),
+                    Solution = "Activate Gaming Turbo 2.0 to allocate maximum CPU priority and engage Ultimate High Performance mode.".T(),
+                    RecommendedActionKey = "NavigateGamingTurbo",
+                    ActionButtonText = "Enable Turbo".T()
+                };
+            }
+
+            // 6. Startup / Slow Boot
+            if (q.Contains("khởi động") || q.Contains("boot") || q.Contains("chậm") || q.Contains("startup") || q.Contains("mở máy"))
+            {
+                return new OfflineDiagnosticAnswer
+                {
+                    Title = "Startup Boot Acceleration".T(),
+                    Diagnosis = "Too many background apps launching at startup dramatically increases Windows boot time and disk IO.".T(),
+                    Solution = "Disable high-impact startup apps and delay non-essential startup services.".T(),
+                    RecommendedActionKey = "NavigateStartup",
+                    ActionButtonText = "Manage Startup".T()
+                };
+            }
+
+            // 7. System Repair / Windows Error / SFC / DISM
+            if (q.Contains("lỗi") || q.Contains("repair") || q.Contains("sửa") || q.Contains("sfc") || q.Contains("dism") || q.Contains("update") || q.Contains("spooler") || q.Contains("máy in"))
+            {
+                return new OfflineDiagnosticAnswer
+                {
+                    Title = "System Health & Component Repair".T(),
+                    Diagnosis = "Corrupted system files or stuck Windows background services can trigger unpredictable errors.".T(),
+                    Solution = "Run 1-Click System Repair to verify system file integrity with SFC/DISM and reset corrupted services.".T(),
+                    RecommendedActionKey = "NavigateRepair",
+                    ActionButtonText = "Open System Repair".T()
+                };
+            }
+
+            // Default General Fallback
+            return new OfflineDiagnosticAnswer
+            {
+                Title = "WinCare Diagnostic Recommendation".T(),
+                Diagnosis = string.Format("Analysis for '{0}': System baseline analyzed.".T(), userQuery),
+                Solution = "Run One-Click Smart Remedy or AI Diagnostics to optimize system performance and clean cache.".T(),
+                RecommendedActionKey = "NavigateOptimizer",
+                ActionButtonText = "Run Optimization".T()
+            };
+        }
+
         private static long GetDirectorySizeBytesSafely(string dirPath)
         {
             if (_cachedTempSize >= 0 && (DateTime.Now - _lastTempScan).TotalSeconds < 60)
@@ -463,3 +593,4 @@ namespace WinCarePro.Modules.AiAssistant
         }
     }
 }
+

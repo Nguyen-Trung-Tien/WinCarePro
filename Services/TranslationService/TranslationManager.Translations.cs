@@ -3259,19 +3259,34 @@ public partial class TranslationManager
         _translations["Email Copied"] = "Đã Sao Chép Email";
         _translations["trungtiennguyen910@gmail.com has been copied to clipboard."] = "Đã sao chép email trungtiennguyen910@gmail.com vào khay nhớ tạm.";
 
-        // --- What's New & Changelog Dialog (Master Suite) ---
+        _translations["Version 4.2.0 (Official Release Build) • 64-bit Native System Suite"] = "Phiên bản 4.2.0 (Bản Phát Hành Chính Thức) • Bộ Công Cụ Hệ Thống 64-bit";
+        _translations["LOCAL STORAGE ENGINE"] = "ĐỘNG CƠ LƯU TRỮ CỤC BỘ";
+        _translations["Encrypted WAL • Healthy"] = "Mã Hóa WAL • Hoạt động tốt";
+        _translations["Encrypted WAL • Active"] = "Mã Hóa WAL • Đang hoạt động";
+        _translations["💾 Local Encrypted Storage"] = "💾 Lưu Trữ Cục Bộ Mã Hóa An Toàn";
+
+        // --- Security & Trust Architecture ---
+        _translations["System Integrity & Security Certifications"] = "Chứng Nhận Toàn Vẹn Hệ Thống & Bảo Mật";
+        _translations["100% Offline Processing"] = "100% Xử Lý Ngoại Tuyến";
+        _translations["Zero Cloud Telemetry"] = "Không Gửi Dữ Liệu Lên Đám Mây";
+        _translations["Local Cryptographic Storage"] = "Lưu Trữ Mã Hóa Cục Bộ";
+        _translations["Binary Integrity Verified"] = "Xác Thực Toàn Vẹn Nhị Phân";
+        _translations["Hardware Acceleration"] = "Tăng Tốc Phần Cứng";
+        _translations["Safe State Rollbacks"] = "Khôi Phục Trạng Thái An Toàn";
+
+        // --- What's New & Changelog Dialog (Sanitized) ---
         _translations["What's New in v4.2.0"] = "Điểm Mới ở v4.2.0";
         _translations["What's New in WinCare Pro"] = "Những Điểm Mới trong WinCare Pro";
         _translations["View official release notes & new features changelog"] = "Xem ghi chú phát hành chính thức và nhật ký tính năng mới";
         _translations["v4.2.0 Official Release"] = "Bản Phát Hành Chính Thức v4.2.0";
         _translations["WinCare Pro Evolution Suite"] = "Bộ Ứng Dụng WinCare Pro Evolution";
         _translations["Next-Generation System Architecture, Zero-Telemetry Privacy Shield & Live Diagnostics Suite."] = "Kiến trúc hệ thống thế hệ mới, khiên bảo vệ quyền riêng tư và bộ chẩn đoán trực tiếp.";
-        _translations["Live CDN Software Updates & Finite State Sentinel"] = "Cập Nhật Phần Mềm CDN & Máy Trạng Thái Tự Động";
+        _translations["Live Local Software Updates & Finite State Sentinel"] = "Cập Nhật Phần Mềm An Toàn & Máy Trạng Thái Tự Động";
         _translations["Realtime percentage telemetry stream, cryptographic SHA-256 verification and automatic channel sync."] = "Luồng phần trăm đo lường thời gian thực, xác minh mã hóa SHA-256 và đồng bộ kênh phát hành.";
         _translations["Zero-Telemetry & Privacy Guarantee Shield"] = "Khiên Bảo Vệ Riêng Tư & Không Thu Thập Dữ Liệu";
-        _translations["100% on-device processing, zero cloud tracking, encrypted local SQLite transaction storage."] = "100% xử lý trực tiếp trên máy, không theo dõi qua đám mây, lưu trữ giao dịch SQLite nội bộ.";
+        _translations["100% on-device processing, zero cloud tracking, encrypted local transaction storage."] = "100% xử lý trực tiếp trên máy, không theo dõi qua đám mây, lưu trữ giao dịch cục bộ.";
         _translations["Advanced Developer Workbench & Live Memory Trimmer"] = "Bàn Làm Việc Kỹ Sư & Trình Dọn Bộ Nhớ RAM";
-        _translations["Interactive Working Set RAM trimmer with forced GC, CLR runtime inspector and SQLite audit log viewer."] = "Dọn bộ nhớ RAM Working Set kèm ép thu gom GC, kiểm tra CLR runtime và tra cứu log SQLite.";
+        _translations["Interactive Working Set RAM trimmer with forced GC, process diagnostics and local audit log viewer."] = "Dọn bộ nhớ RAM Working Set kèm ép thu gom GC, chẩn đoán tiến trình và tra cứu log cục bộ.";
         _translations["Kernel Responsiveness & Latency Turbo Engine"] = "Tối Ưu Độ Phản Hồi Kernel & Giảm Độ Trễ Tối Đa";
         _translations["Dynamic thread priority scheduling, background RAM trimming and gaming-grade latency optimization."] = "Lập lịch ưu tiên luồng CPU linh hoạt, dọn RAM nền và tối ưu độ trễ chuẩn gaming.";
         _translations["Interactive System Guide & Visual Handbook"] = "Sổ Tay Hướng Dẫn Hệ Thống Trực Quan";

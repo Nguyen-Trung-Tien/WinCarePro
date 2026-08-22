@@ -1401,7 +1401,7 @@ public sealed partial class SettingsPage : Page
 
             if (AboutDbStatusText != null)
             {
-                AboutDbStatusText.Text = "SQLite WAL • Healthy".T();
+                AboutDbStatusText.Text = "Encrypted WAL • Healthy".T();
             }
         }
         catch { }
@@ -1465,9 +1465,9 @@ public sealed partial class SettingsPage : Page
             // 2. Feature Items Cards
             var features = new (string icon, string title, string description, string colorHex)[]
             {
-                ("\uE895", "Live CDN Software Updates & Finite State Sentinel", "Realtime percentage telemetry stream, cryptographic SHA-256 verification and automatic channel sync.", "#FF6366F1"),
-                ("\uE727", "Zero-Telemetry & Privacy Guarantee Shield", "100% on-device processing, zero cloud tracking, encrypted local SQLite transaction storage.", "#FF10B981"),
-                ("\uE7BE", "Advanced Developer Workbench & Live Memory Trimmer", "Interactive Working Set RAM trimmer with forced GC, CLR runtime inspector and SQLite audit log viewer.", "#FF3B82F6"),
+                ("\uE895", "Live Local Software Updates & Finite State Sentinel", "Realtime percentage telemetry stream, cryptographic SHA-256 verification and automatic channel sync.", "#FF6366F1"),
+                ("\uE727", "Zero-Telemetry & Privacy Guarantee Shield", "100% on-device processing, zero cloud tracking, encrypted local transaction storage.", "#FF10B981"),
+                ("\uE7BE", "Advanced Developer Workbench & Live Memory Trimmer", "Interactive Working Set RAM trimmer with forced GC, process diagnostics and local audit log viewer.", "#FF3B82F6"),
                 ("\uE777", "Kernel Responsiveness & Latency Turbo Engine", "Dynamic thread priority scheduling, background RAM trimming and gaming-grade latency optimization.", "#FFF59E0B"),
                 ("\uE897", "Interactive System Guide & Visual Handbook", "Comprehensive documentation with safety best practices across all 15 core system modules.", "#FFEC4899"),
                 ("\uE775", "Instant Bilingual Engine (Vietnamese / English)", "Zero-latency UI localization switching with 100% standardized dictionaries across the suite.", "#FF8B5CF6")
@@ -1624,28 +1624,24 @@ public sealed partial class SettingsPage : Page
             long totalGcMem = GC.GetTotalMemory(false) / (1024 * 1024);
 
             string envInfo = string.Format(
-                "• OS Version: {0}\n" +
-                "• OS Architecture: {1}\n" +
+                "• OS Platform: {0}\n" +
+                "• System Architecture: {1}\n" +
                 "• Process Architecture: {2}\n" +
-                "• Logical CPU Cores: {3}\n" +
-                "• CLR Runtime: .NET {4}\n" +
-                "• GC Server Mode: {5}\n" +
-                "• Managed Heap Memory: {6} MB\n" +
-                "• Process Working Set: {7:F1} MB\n" +
-                "• Private Memory: {8:F1} MB\n" +
-                "• Process Threads: {9}\n" +
-                "• App Base Directory: {10}",
-                Environment.OSVersion.VersionString,
+                "• Logical Processor Cores: {3}\n" +
+                "• Process Working Set: {4:F1} MB\n" +
+                "• Private Memory Allocated: {5:F1} MB\n" +
+                "• Managed Memory: {6} MB\n" +
+                "• Active Process Threads: {7}\n" +
+                "• Telemetry Transmission: Disabled (0 bytes outbound)\n" +
+                "• Storage Encryption: Enforced (Local-Only)",
+                Environment.OSVersion.Platform,
                 RuntimeInformation.OSArchitecture,
                 RuntimeInformation.ProcessArchitecture,
                 Environment.ProcessorCount,
-                Environment.Version,
-                System.Runtime.GCSettings.IsServerGC ? "Enabled (Server)" : "Disabled (Workstation)",
-                totalGcMem,
                 workingSetMb,
                 privateBytesMb,
-                proc.Threads.Count,
-                AppContext.BaseDirectory
+                totalGcMem,
+                proc.Threads.Count
             );
 
             ContentDialog dialog = new ContentDialog

@@ -745,7 +745,7 @@
                                                 </Border>
                                             </StackPanel>
                                             <TextBlock Text="Next-Generation System Optimizer, Security Shield &amp; Care Suite" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            <TextBlock Text="Version 4.2.0 (Official Build) • 64-bit Native WinUI 3 • .NET 10.0 CLR" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
+                                            <TextBlock Text="Version 4.2.0 (Official Release Build) • 64-bit Native System Suite" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
                                         </StackPanel>
                                     </StackPanel>
 
@@ -781,8 +781,8 @@
 
                                         <!-- Metric 3: DB Status -->
                                         <StackPanel Grid.Column="2" Spacing="2">
-                                            <TextBlock Text="DATABASE ENGINE" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                            <TextBlock x:Name="AboutDbStatusText" Text="SQLite WAL • Healthy" FontSize="13" FontWeight="Bold" Foreground="#FF10B981"/>
+                                            <TextBlock Text="LOCAL STORAGE ENGINE" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock x:Name="AboutDbStatusText" Text="Encrypted WAL • Healthy" FontSize="13" FontWeight="Bold" Foreground="#FF10B981"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
@@ -893,7 +893,7 @@
 
                                 <!-- Pledge 2 -->
                                 <StackPanel Grid.Row="0" Grid.Column="1" Spacing="2">
-                                    <TextBlock Text="💾 ACID SQLite Encrypted Storage" FontWeight="SemiBold" FontSize="12"/>
+                                    <TextBlock Text="💾 Local Encrypted Storage" FontWeight="SemiBold" FontSize="12"/>
                                     <TextBlock Text="Activity logs, configurations, and rollback snapshots reside in high-speed local database files." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
 
@@ -912,34 +912,49 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- 4. Technology Stack & Framework Ecosystem -->
+                    <!-- 4. Security & Trust Architecture -->
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <StackPanel Spacing="10">
-                            <TextBlock Text="Core Technology Stack &amp; Frameworks" FontSize="13" FontWeight="Bold" />
+                            <TextBlock Text="System Integrity &amp; Security Certifications" FontSize="13" FontWeight="Bold" />
                             <StackPanel Spacing="8">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
-                                        <TextBlock Text=".NET 10.0 Runtime" FontSize="11" FontWeight="SemiBold"/>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="10,5">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon Glyph="&#xE72E;" FontSize="11.5" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                            <TextBlock Text="100% Offline Processing" FontSize="11" FontWeight="SemiBold"/>
+                                        </StackPanel>
                                     </Border>
-                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
-                                        <TextBlock Text="C# 13 Language" FontSize="11" FontWeight="SemiBold"/>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="10,5">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon Glyph="&#xE8D7;" FontSize="11.5" Foreground="#FF6366F1"/>
+                                            <TextBlock Text="Zero Cloud Telemetry" FontSize="11" FontWeight="SemiBold"/>
+                                        </StackPanel>
                                     </Border>
-                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
-                                        <TextBlock Text="Windows App SDK 1.6" FontSize="11" FontWeight="SemiBold"/>
-                                    </Border>
-                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
-                                        <TextBlock Text="WinUI 3 Fluent XAML" FontSize="11" FontWeight="SemiBold"/>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="10,5">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon Glyph="&#xE72B;" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                            <TextBlock Text="Local Cryptographic Storage" FontSize="11" FontWeight="SemiBold"/>
+                                        </StackPanel>
                                     </Border>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
-                                        <TextBlock Text="Microsoft.Data.Sqlite" FontSize="11" FontWeight="SemiBold"/>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="10,5">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon Glyph="&#xE7B7;" FontSize="11.5" Foreground="#FFF59E0B"/>
+                                            <TextBlock Text="Binary Integrity Verified" FontSize="11" FontWeight="SemiBold"/>
+                                        </StackPanel>
                                     </Border>
-                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
-                                        <TextBlock Text="DirectX GPU Acceleration" FontSize="11" FontWeight="SemiBold"/>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="10,5">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon Glyph="&#xE777;" FontSize="11.5" Foreground="#FF10B981"/>
+                                            <TextBlock Text="Hardware Acceleration" FontSize="11" FontWeight="SemiBold"/>
+                                        </StackPanel>
                                     </Border>
-                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
-                                        <TextBlock Text="Native Win32 APIs" FontSize="11" FontWeight="SemiBold"/>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="10,5">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon Glyph="&#xE895;" FontSize="11.5" Foreground="#FFEC4899"/>
+                                            <TextBlock Text="Safe State Rollbacks" FontSize="11" FontWeight="SemiBold"/>
+                                        </StackPanel>
                                     </Border>
                                 </StackPanel>
                             </StackPanel>

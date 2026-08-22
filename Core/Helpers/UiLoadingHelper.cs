@@ -26,7 +26,8 @@ public static class UiLoadingHelper
         string loadingText,
         string originalText,
         Func<Task> action,
-        int minDurationMs = 400)
+        int minDurationMs = 400,
+        bool restoreIsEnabled = true)
     {
         // Debounce: prevent rapid multi-clicking re-entrancy
         if (button != null)
@@ -99,7 +100,10 @@ public static class UiLoadingHelper
                 if (button != null)
                 {
                     button.MinWidth = originalMinWidth;
-                    button.IsEnabled = true;
+                    if (restoreIsEnabled)
+                    {
+                        button.IsEnabled = true;
+                    }
                 }
             });
 

@@ -683,6 +683,262 @@
                 </Setter>
             </Style>
 
+            <!-- Cleaner Hero Green Button Style (Emerald Purge Button - High Contrast Active / Crisp Muted Disabled) -->
+            <Style x:Key="CleanerHeroGreenButtonStyle" TargetType="Button">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FF10B981" Offset="0" />
+                            <GradientStop Color="#FF059669" Offset="1" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="20,9" />
+                <Setter Property="BorderThickness" Value="1.2" />
+                <Setter Property="BorderBrush" Value="#4010B981" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
+                                </Grid.RenderTransform>
+
+                                <Border x:Name="GlowHalo" 
+                                        CornerRadius="{TemplateBinding CornerRadius}" 
+                                        Opacity="0.0" 
+                                        Margin="-3,-2,-3,-2">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#8010B981" Offset="0" />
+                                            <GradientStop Color="#80059669" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+
+                                <Border x:Name="MainButtonBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                    <Grid>
+                                        <Border Height="1.2" VerticalAlignment="Top" CornerRadius="10,10,0,0" Opacity="0.5">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="#00FFFFFF" Offset="0"/>
+                                                    <GradientStop Color="#FFFFFFFF" Offset="0.5"/>
+                                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+
+                                        <ContentPresenter x:Name="ContentPresenter"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            Padding="{TemplateBinding Padding}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    </Grid>
+                                </Border>
+
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition To="PointerOver" GeneratedDuration="0:0:0.18">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.04" Duration="0:0:0.18"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.04" Duration="0:0:0.18"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="-1.5" Duration="0:0:0.18"/>
+                                                    <DoubleAnimation Storyboard.TargetName="GlowHalo" Storyboard.TargetProperty="Opacity" To="0.55" Duration="0:0:0.18"/>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition To="Pressed" GeneratedDuration="0:0:0.1">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="0.96" Duration="0:0:0.1"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="0.96" Duration="0:0:0.1"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="1.0" Duration="0:0:0.1"/>
+                                                    <DoubleAnimation Storyboard.TargetName="GlowHalo" Storyboard.TargetProperty="Opacity" To="0.2" Duration="0:0:0.1"/>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition To="Normal" GeneratedDuration="0:0:0.25">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.25"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.25"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.25"/>
+                                                    <DoubleAnimation Storyboard.TargetName="GlowHalo" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.25"/>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                        </VisualStateGroup.Transitions>
+
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Target="ButtonScaleTransform.ScaleX" Value="1.04" />
+                                                <Setter Target="ButtonScaleTransform.ScaleY" Value="1.04" />
+                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="-1.5" />
+                                                <Setter Target="GlowHalo.Opacity" Value="0.55" />
+                                                <Setter Target="MainButtonBorder.BorderBrush" Value="#FF6EE7B7" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Target="ButtonScaleTransform.ScaleX" Value="0.96" />
+                                                <Setter Target="ButtonScaleTransform.ScaleY" Value="0.96" />
+                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="1.0" />
+                                                <Setter Target="GlowHalo.Opacity" Value="0.2" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Target="MainButtonBorder.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                                <Setter Target="MainButtonBorder.BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                                                <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource TextFillColorDisabledBrush}" />
+                                                <Setter Target="GlowHalo.Opacity" Value="0.0" />
+                                                <Setter Target="RootButtonGrid.Opacity" Value="0.6" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Cleaner Hero Scan Button Style (Violet-Blue Scan Button) -->
+            <Style x:Key="CleanerHeroScanButtonStyle" TargetType="Button">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FF7C3AED" Offset="0" />
+                            <GradientStop Color="#FF2563EB" Offset="1" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="20,9" />
+                <Setter Property="BorderThickness" Value="1.2" />
+                <Setter Property="BorderBrush" Value="#407C3AED" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
+                                </Grid.RenderTransform>
+
+                                <Border x:Name="GlowHalo" 
+                                        CornerRadius="{TemplateBinding CornerRadius}" 
+                                        Opacity="0.0" 
+                                        Margin="-3,-2,-3,-2">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#807C3AED" Offset="0" />
+                                            <GradientStop Color="#802563EB" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+
+                                <Border x:Name="MainButtonBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                    <Grid>
+                                        <Border Height="1.2" VerticalAlignment="Top" CornerRadius="10,10,0,0" Opacity="0.5">
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="#00FFFFFF" Offset="0"/>
+                                                    <GradientStop Color="#FFFFFFFF" Offset="0.5"/>
+                                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+
+                                        <ContentPresenter x:Name="ContentPresenter"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            Padding="{TemplateBinding Padding}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    </Grid>
+                                </Border>
+
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualStateGroup.Transitions>
+                                            <VisualTransition To="PointerOver" GeneratedDuration="0:0:0.18">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.04" Duration="0:0:0.18"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.04" Duration="0:0:0.18"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="-1.5" Duration="0:0:0.18"/>
+                                                    <DoubleAnimation Storyboard.TargetName="GlowHalo" Storyboard.TargetProperty="Opacity" To="0.55" Duration="0:0:0.18"/>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition To="Pressed" GeneratedDuration="0:0:0.1">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="0.96" Duration="0:0:0.1"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="0.96" Duration="0:0:0.1"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="1.0" Duration="0:0:0.1"/>
+                                                    <DoubleAnimation Storyboard.TargetName="GlowHalo" Storyboard.TargetProperty="Opacity" To="0.2" Duration="0:0:0.1"/>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                            <VisualTransition To="Normal" GeneratedDuration="0:0:0.25">
+                                                <Storyboard>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.25"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.25"/>
+                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.25"/>
+                                                    <DoubleAnimation Storyboard.TargetName="GlowHalo" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.25"/>
+                                                </Storyboard>
+                                            </VisualTransition>
+                                        </VisualStateGroup.Transitions>
+
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="PointerOver">
+                                            <VisualState.Setters>
+                                                <Setter Target="ButtonScaleTransform.ScaleX" Value="1.04" />
+                                                <Setter Target="ButtonScaleTransform.ScaleY" Value="1.04" />
+                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="-1.5" />
+                                                <Setter Target="GlowHalo.Opacity" Value="0.55" />
+                                                <Setter Target="MainButtonBorder.BorderBrush" Value="#FFA78BFA" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Target="ButtonScaleTransform.ScaleX" Value="0.96" />
+                                                <Setter Target="ButtonScaleTransform.ScaleY" Value="0.96" />
+                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="1.0" />
+                                                <Setter Target="GlowHalo.Opacity" Value="0.2" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Target="MainButtonBorder.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                                <Setter Target="MainButtonBorder.BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                                                <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource TextFillColorDisabledBrush}" />
+                                                <Setter Target="GlowHalo.Opacity" Value="0.0" />
+                                                <Setter Target="RootButtonGrid.Opacity" Value="0.6" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!-- Standard Secondary Button Style (Glassmorphism Pill Button) -->
             <Style x:Key="StandardSecondaryButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />

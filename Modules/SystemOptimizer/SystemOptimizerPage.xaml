@@ -379,6 +379,11 @@
 
                     <!-- Tweaks Virtualized List (Row 2) -->
                     <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.FilteredTweaks, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:SystemTweak">
                                 <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="12,9" Margin="0,0,0,4">

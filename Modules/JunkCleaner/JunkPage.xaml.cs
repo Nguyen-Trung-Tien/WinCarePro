@@ -96,7 +96,7 @@ public sealed partial class JunkPage : Page
             {
                 await ViewModel.ScanAsync();
             },
-            minDurationMs: 400);
+            minDurationMs: 1200);
 
         ViewModel.FinalizeScan();
     }
@@ -137,7 +137,8 @@ public sealed partial class JunkPage : Page
                 }
                 await ViewModel.CleanAsync();
             },
-            minDurationMs: 400);
+            minDurationMs: 1200,
+            restoreIsEnabled: false);
 
         ViewModel.FinalizeClean();
     }
@@ -164,9 +165,40 @@ public sealed partial class JunkPage : Page
 
     public bool IsNot(bool val) => !val;
 
-    public bool CanClean(bool isCleaning, int count)
+    public bool CanClean(bool isCleaning, int count, long totalCleanableBytes)
     {
-        return !isCleaning && count > 0;
+        return !isCleaning && count > 0 && totalCleanableBytes > 0;
+    }
+
+    public Style GetScanButtonStyle(bool hasCleanableJunk)
+    {
+        string key = hasCleanableJunk ? "StandardSecondaryButtonStyle" : "CleanerHeroScanButtonStyle";
+        return (Application.Current?.Resources[key] as Style) ?? (Application.Current?.Resources["CleanerHeroScanButtonStyle"] as Style)!;
+    }
+
+    public Style GetCleanButtonStyle(bool hasCleanableJunk)
+    {
+        return (Application.Current?.Resources["CleanerHeroGreenButtonStyle"] as Style)!;
+    }
+
+    public Visibility GetCleanButtonVisibility(bool hasCleanableJunk)
+    {
+        return hasCleanableJunk ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    public string GetScanButtonText(bool hasCleanableJunk)
+    {
+        return hasCleanableJunk ? "Re-Scan System".T() : "Scan Directories".T();
+    }
+
+    public string GetCleanButtonText(bool hasCleanableJunk)
+    {
+        return hasCleanableJunk ? "Clean Now".T() : "Clean Now".T();
+    }
+
+    public string GetSummaryHintText(bool hasCleanableJunk)
+    {
+        return hasCleanableJunk ? "Ready to Clean — Click 'Clean Now'".T() : "Click 'Scan Directories' to Begin".T();
     }
 
     public Visibility GetDeckVisibility(bool isCleaning, int count)

@@ -62,6 +62,19 @@ public class JunkViewModel : ViewModelBase, IDisposable
         set => SetPropertyOnUI(() => _totalJunkSize, v => _totalJunkSize = v, value);
     }
 
+    private long _totalCleanableBytes;
+    public long TotalCleanableBytes
+    {
+        get => _totalCleanableBytes;
+        set
+        {
+            SetPropertyOnUI(() => _totalCleanableBytes, v => _totalCleanableBytes = v, value);
+            OnPropertyChanged(nameof(HasCleanableJunk));
+        }
+    }
+
+    public bool HasCleanableJunk => TotalCleanableBytes > 0 && Categories.Count > 0;
+
     private string _totalLockedSize = "0.0 B";
     public string TotalLockedSize
     {
@@ -229,6 +242,17 @@ public class JunkViewModel : ViewModelBase, IDisposable
             
             token.ThrowIfCancellationRequested();
             
+            if (ProgressPercent < 100)
+            {
+                int current = ProgressPercent;
+                for (int p = current + 20; p <= 100; p += 20)
+                {
+                    int targetPct = Math.Min(100, p);
+                    await RunOnUIActionAsync(() => ProgressPercent = targetPct);
+                    await Task.Delay(35);
+                }
+            }
+
             await RunOnUIActionAsync(() =>
             {
                 foreach (var cat in results)
@@ -305,15 +329,17 @@ public class JunkViewModel : ViewModelBase, IDisposable
 
             await RunOnUIActionAsync(() =>
             {
-                if (!hasLockedFiles)
-                {
-                    ProgressMessage = string.Format("Cleanup complete. Reclaimed {0} MB.".T(), (cleanedBytes / 1024.0 / 1024.0).ToString("F2"));
-                }
+                ProgressPercent = 100;
+                ProgressMessage = string.Format("✓ Cleanup complete! Reclaimed {0}.".T(), cleanedFormatted);
+            });
 
+            await Task.Delay(800);
+
+            await RunOnUIActionAsync(() =>
+            {
                 Categories.Clear();
                 SelectedCategory = null;
-                TotalJunkSize = "0.0 B";
-                TotalLockedSize = "0.0 B";
+                UpdateTotalSize();
                 HasLockingApps = false;
                 LockingAppsText = "";
                 ActiveLockingApps.Clear();
@@ -355,6 +381,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
     {
         long cleanable = Categories.Where(x => x.IsSelected).Sum(x => x.CleanableBytes);
         long locked = Categories.Where(x => x.IsSelected).Sum(x => x.LockedBytes);
+        TotalCleanableBytes = cleanable;
         TotalJunkSize = FormatHelper.FormatBytes(cleanable);
         TotalLockedSize = FormatHelper.FormatBytes(locked);
     }

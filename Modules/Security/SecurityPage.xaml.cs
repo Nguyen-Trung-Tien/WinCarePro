@@ -68,56 +68,46 @@ public sealed partial class SecurityPage : Page
 
     // ==================== SECURITY CENTER: SHORTCUTS & LAUNCHERS ====================
 
+    private void SafeLaunchProcess(string target)
+    {
+        try
+        {
+            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri(target))
+            {
+                Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
+            }
+        }
+        catch { }
+    }
+
     private void OnOpenWindowsSecurityClick(object sender, RoutedEventArgs e)
     {
         try 
         { 
-            Process.Start(new ProcessStartInfo("windowsdefender:") { UseShellExecute = true }); 
+            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri("windowsdefender:"))
+                Process.Start(new ProcessStartInfo("windowsdefender:") { UseShellExecute = true }); 
+            else
+                SafeLaunchProcess("ms-settings:windowsdefender");
         }
         catch 
         { 
-            try 
-            { 
-                Process.Start(new ProcessStartInfo("ms-settings:windowsdefender") { UseShellExecute = true }); 
-            } 
-            catch { }
+            SafeLaunchProcess("ms-settings:windowsdefender");
         }
     }
 
-    private void OnOpenMsinfoClick(object sender, RoutedEventArgs e)
-    {
-        try { Process.Start(new ProcessStartInfo("msinfo32.exe") { UseShellExecute = true }); } catch { }
-    }
+    private void OnOpenMsinfoClick(object sender, RoutedEventArgs e) => SafeLaunchProcess("msinfo32.exe");
 
-    private void OnOpenWindowsUpdateClick(object sender, RoutedEventArgs e)
-    {
-        try { Process.Start(new ProcessStartInfo("ms-settings:windowsupdate") { UseShellExecute = true }); } catch { }
-    }
+    private void OnOpenWindowsUpdateClick(object sender, RoutedEventArgs e) => SafeLaunchProcess("ms-settings:windowsupdate");
 
-    private void OnOpenTaskManagerClick(object sender, RoutedEventArgs e)
-    {
-        try { Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true }); } catch { }
-    }
+    private void OnOpenTaskManagerClick(object sender, RoutedEventArgs e) => SafeLaunchProcess("taskmgr.exe");
 
-    private void OnOpenFirewallClick(object sender, RoutedEventArgs e)
-    {
-        try { Process.Start(new ProcessStartInfo("wf.msc") { UseShellExecute = true }); } catch { }
-    }
+    private void OnOpenFirewallClick(object sender, RoutedEventArgs e) => SafeLaunchProcess("wf.msc");
 
-    private void OnOpenEventViewerClick(object sender, RoutedEventArgs e)
-    {
-        try { Process.Start(new ProcessStartInfo("eventvwr.msc") { UseShellExecute = true }); } catch { }
-    }
+    private void OnOpenEventViewerClick(object sender, RoutedEventArgs e) => SafeLaunchProcess("eventvwr.msc");
 
-    private void OnOpenServicesClick(object sender, RoutedEventArgs e)
-    {
-        try { Process.Start(new ProcessStartInfo("services.msc") { UseShellExecute = true }); } catch { }
-    }
+    private void OnOpenServicesClick(object sender, RoutedEventArgs e) => SafeLaunchProcess("services.msc");
 
-    private void OnOpenRegistryEditorClick(object sender, RoutedEventArgs e)
-    {
-        try { Process.Start(new ProcessStartInfo("regedit.exe") { UseShellExecute = true }); } catch { }
-    }
+    private void OnOpenRegistryEditorClick(object sender, RoutedEventArgs e) => SafeLaunchProcess("regedit.exe");
 
     private async void OnScanSecurityClick(object sender, RoutedEventArgs e)
     {

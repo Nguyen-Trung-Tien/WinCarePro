@@ -407,6 +407,7 @@ public class JunkCleanerEngine
             {
                 if (!cat.IsSelected) continue;
 
+                ProgressMessage?.Invoke($"Sweeping {cat.Name}...");
                 Log($"Cleaning category: {cat.Name}...");
                 long cleaned = 0;
 
@@ -492,7 +493,10 @@ public class JunkCleanerEngine
                 totalCleanedBytes += cleaned;
                 Log($"Cleaned {cat.Name}: Reclaimed {FormatSize(cleaned)}");
                 currentProgress += increment;
-                ProgressChanged?.Invoke((int)currentProgress);
+                ProgressChanged?.Invoke(Math.Min(100, (int)currentProgress));
+
+                // Add realistic category pacing for fast SSDs
+                await Task.Delay(180);
             }
 
             ProgressChanged?.Invoke(100);

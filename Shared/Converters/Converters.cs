@@ -60,7 +60,7 @@ public class StatusToBrushConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        throw new NotImplementedException();
+        return Microsoft.UI.Xaml.DependencyProperty.UnsetValue;
     }
 }
 
@@ -109,7 +109,7 @@ public class HexToBrushConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        throw new NotImplementedException();
+        return Microsoft.UI.Xaml.DependencyProperty.UnsetValue;
     }
 }
 

@@ -62,7 +62,8 @@ public sealed partial class RegistryPage : Page
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
-            Process.Start(new ProcessStartInfo("regedit.exe") { UseShellExecute = true });
+            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri("regedit.exe"))
+                Process.Start(new ProcessStartInfo("regedit.exe") { UseShellExecute = true });
         }
         catch { }
     }
@@ -73,7 +74,8 @@ public sealed partial class RegistryPage : Page
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
-            Process.Start(new ProcessStartInfo("rstrui.exe") { UseShellExecute = true });
+            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri("rstrui.exe"))
+                Process.Start(new ProcessStartInfo("rstrui.exe") { UseShellExecute = true });
         }
         catch { }
     }

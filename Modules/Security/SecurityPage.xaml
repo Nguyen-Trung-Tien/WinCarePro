@@ -384,6 +384,11 @@
                                 <TextBlock Text="Security Alerts" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                 
                                 <ListView ItemsSource="{x:Bind ViewModel.SecurityAlerts, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <ItemsStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
                                     <ListView.ItemTemplate>
                                         <DataTemplate x:DataType="x:String">
                                             <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="12,8" Margin="0,0,0,4">

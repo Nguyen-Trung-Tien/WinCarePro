@@ -100,7 +100,8 @@ public sealed partial class StartupPage : Page
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
-            Process.Start(new ProcessStartInfo("services.msc") { UseShellExecute = true });
+            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri("services.msc"))
+                Process.Start(new ProcessStartInfo("services.msc") { UseShellExecute = true });
         }
         catch { }
     }
@@ -110,7 +111,8 @@ public sealed partial class StartupPage : Page
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
-            Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true });
+            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri("taskmgr.exe"))
+                Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true });
         }
         catch { }
     }

@@ -154,7 +154,13 @@ public static class SafePathGuard
                 fileName.Equals("Login Data", StringComparison.OrdinalIgnoreCase) ||
                 fileName.Equals("Login Data For Account", StringComparison.OrdinalIgnoreCase) ||
                 fileName.Equals("Web Data", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("Local State", StringComparison.OrdinalIgnoreCase))
+                fileName.Equals("Local State", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("Cookies", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("Cookies-journal", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("key4.db", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("logins.json", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("cert9.db", StringComparison.OrdinalIgnoreCase) ||
+                fileName.Equals("Vault.dat", StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }

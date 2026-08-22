@@ -11,6 +11,7 @@ namespace WinCarePro.Infrastructure.Security;
 public static class InputSanitizer
 {
     private static readonly string[] AllowedUriSchemes = { "https", "http", "windowsdefender", "ms-settings" };
+    private static readonly string[] AllowedSystemTools = { "regedit.exe", "services.msc", "taskmgr.exe", "msinfo32.exe", "eventvwr.msc", "wf.msc", "rstrui.exe", "explorer.exe" };
 
     /// <summary>
     /// Validates whether a URI or protocol launch string is safe to execute.
@@ -22,9 +23,10 @@ public static class InputSanitizer
 
         uriString = uriString.Trim();
 
-        // Check for recognized prefix protocols
+        // Check for recognized prefix protocols or safe system executables
         if (uriString.StartsWith("windowsdefender:", StringComparison.OrdinalIgnoreCase) ||
-            uriString.StartsWith("ms-settings:", StringComparison.OrdinalIgnoreCase))
+            uriString.StartsWith("ms-settings:", StringComparison.OrdinalIgnoreCase) ||
+            AllowedSystemTools.Contains(Path.GetFileName(uriString), StringComparer.OrdinalIgnoreCase))
         {
             return true;
         }

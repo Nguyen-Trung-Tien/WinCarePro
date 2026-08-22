@@ -198,9 +198,10 @@ public partial class NetworkViewModel
         {
             var proc = System.Diagnostics.Process.GetProcessById(pid);
             string? exePath = proc.MainModule?.FileName;
-            if (!string.IsNullOrEmpty(exePath) && System.IO.File.Exists(exePath))
+            if (!string.IsNullOrEmpty(exePath) && WinCarePro.Infrastructure.Security.InputSanitizer.IsValidLocalPath(exePath))
             {
-                System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{exePath}\"");
+                string safeArg = $"/select,{WinCarePro.Infrastructure.Security.InputSanitizer.EscapeCommandLineArgument(exePath)}";
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", safeArg) { UseShellExecute = true });
             }
         }
         catch (Exception ex)

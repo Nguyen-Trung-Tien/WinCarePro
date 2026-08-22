@@ -14,8 +14,23 @@
     NavigationCacheMode="Required">
 
     <Page.Resources>
-        <Storyboard x:Name="PulsingRadarGlow" AutoReverse="True" RepeatBehavior="Forever">
-            <DoubleAnimation Storyboard.TargetName="GlowEllipse" Storyboard.TargetProperty="Opacity" From="0.04" To="0.28" Duration="0:0:2.2">
+        <Storyboard x:Name="Asc19RadarRotation" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="RadarRingTransform" Storyboard.TargetProperty="Angle" From="0" To="360" Duration="0:0:6" />
+            <DoubleAnimation Storyboard.TargetName="RadarOuterRingTransform" Storyboard.TargetProperty="Angle" From="360" To="0" Duration="0:0:10" />
+            <DoubleAnimation Storyboard.TargetName="RadarSweepTransform" Storyboard.TargetProperty="Angle" From="0" To="360" Duration="0:0:3.5" />
+        </Storyboard>
+        <Storyboard x:Name="Asc19AuraBreathing" AutoReverse="True" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="GlowEllipse" Storyboard.TargetProperty="Opacity" From="0.15" To="0.55" Duration="0:0:1.8">
+                <DoubleAnimation.EasingFunction>
+                    <SineEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="AuraWave" Storyboard.TargetProperty="Opacity" From="0.08" To="0.40" Duration="0:0:2.2">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="RadarCoreAura" Storyboard.TargetProperty="Opacity" From="0.20" To="0.70" Duration="0:0:1.4">
                 <DoubleAnimation.EasingFunction>
                     <SineEase EasingMode="EaseInOut"/>
                 </DoubleAnimation.EasingFunction>
@@ -130,8 +145,9 @@
                         <ColumnDefinition x:Name="RightCol" Width="1*" />
                     </Grid.ColumnDefinitions>
                     
-                    <!-- Left Side Column 0: System Health Overview Hero -->
-                    <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource NeonGlowBorderStyle}" Margin="6" Padding="16,14" MinHeight="185">
+                    <!-- Left Side Column 0: System Health Overview Hero (Advanced SystemCare 19 Style) -->
+                    <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource NeonGlowBorderStyle}" Margin="6" Padding="16,14" MinHeight="185"
+                            helpers:AnimationHelper.HoverScale="1.012" helpers:AnimationHelper.PressedScale="0.988" helpers:AnimationHelper.StaggerIndex="0">
                         <Grid x:Name="HealthGaugeGrid">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="HealthGaugeRow0" Height="Auto" />
@@ -142,21 +158,73 @@
                                 <ColumnDefinition x:Name="HealthGaugeCol1" Width="*" />
                             </Grid.ColumnDefinitions>
                             
-                             <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="128" Height="128" Margin="0,0,16,0" VerticalAlignment="Center">
-                                <!-- Glowing background circle with pulse animation -->
-                                <Ellipse x:Name="GlowEllipse" Width="122" Height="122" Opacity="0.12" HorizontalAlignment="Center" VerticalAlignment="Center">
+                             <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="144" Height="144" Margin="0,0,16,0" VerticalAlignment="Center">
+                                <!-- ASC 19 Layer 1: Outer Ambient Radiant Nebula -->
+                                <Ellipse x:Name="AuraWave" Width="142" Height="142" Opacity="0.18" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Ellipse.Fill>
                                         <RadialGradientBrush>
-                                            <GradientStop Color="#FF8B5CF6" Offset="0" />
-                                            <GradientStop Color="#FF06B6D4" Offset="0.6" />
+                                            <GradientStop Color="#6000F2FE" Offset="0"/>
+                                            <GradientStop Color="#408B5CF6" Offset="0.5"/>
+                                            <GradientStop Color="Transparent" Offset="1"/>
+                                        </RadialGradientBrush>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+
+                                <!-- ASC 19 Layer 2: Core Pulsing Aurora -->
+                                <Ellipse x:Name="GlowEllipse" Width="128" Height="128" Opacity="0.30" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Ellipse.Fill>
+                                        <RadialGradientBrush>
+                                            <GradientStop Color="#908B5CF6" Offset="0" />
+                                            <GradientStop Color="#4506B6D4" Offset="0.55" />
                                             <GradientStop Color="Transparent" Offset="1" />
                                         </RadialGradientBrush>
                                     </Ellipse.Fill>
                                 </Ellipse>
+
+                                <!-- ASC 19 Layer 3: Dynamic Core Glow Aura -->
+                                <Ellipse x:Name="RadarCoreAura" Width="96" Height="96" Opacity="0.35" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Ellipse.Fill>
+                                        <RadialGradientBrush>
+                                            <GradientStop Color="#8000F2FE" Offset="0" />
+                                            <GradientStop Color="#308B5CF6" Offset="0.6" />
+                                            <GradientStop Color="Transparent" Offset="1" />
+                                        </RadialGradientBrush>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+
+                                <!-- ASC 19 Outer Counter-Rotating Segmented Tech Ring -->
+                                <Grid Width="136" Height="136" RenderTransformOrigin="0.5,0.5">
+                                    <Grid.RenderTransform>
+                                        <RotateTransform x:Name="RadarOuterRingTransform" Angle="0"/>
+                                    </Grid.RenderTransform>
+                                    <Ellipse Width="134" Height="134" Stroke="{StaticResource Asc19ReactorGradient}" StrokeThickness="1.5" StrokeDashArray="2 8 4 6" Opacity="0.6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- ASC 19 Inner Clockwise Spinning Cyber Radar Ring -->
+                                <Grid Width="124" Height="124" RenderTransformOrigin="0.5,0.5">
+                                    <Grid.RenderTransform>
+                                        <RotateTransform x:Name="RadarRingTransform" Angle="0"/>
+                                    </Grid.RenderTransform>
+                                    <Ellipse Width="122" Height="122" Stroke="{StaticResource CyberAccentGradient}" StrokeThickness="2.2" StrokeDashArray="6 3 1 3" Opacity="0.85" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- ASC 19 Radar Holographic Sweep Arm -->
+                                <Grid Width="118" Height="118" RenderTransformOrigin="0.5,0.5">
+                                    <Grid.RenderTransform>
+                                        <RotateTransform x:Name="RadarSweepTransform" Angle="0"/>
+                                    </Grid.RenderTransform>
+                                    <Rectangle Width="2" Height="56" VerticalAlignment="Top" HorizontalAlignment="Center" Fill="{StaticResource Asc19RadarSweepBrush}" Opacity="0.85" RadiusX="1" RadiusY="1"/>
+                                </Grid>
+
+                                <!-- Inner Background Track Ring -->
                                 <Ellipse Width="108" Height="108" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="5" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.25"/>
+
+                                <!-- ASC 19 Main Health Progress Ring -->
                                 <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}" Width="114" Height="114" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                                <!-- Centerpiece Typography HUD -->
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="30" FontWeight="ExtraBold" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" CharacterSpacing="-25" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                    <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="32" FontWeight="ExtraBold" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" CharacterSpacing="-25" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     <TextBlock Text="HEALTH SCORE" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="16"/>
                                 </StackPanel>
                             </Grid>
@@ -179,7 +247,8 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
-                                    <Button x:Name="ScanSystemBtn" Grid.Row="0" Grid.Column="0" Content="Scan System" Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Height="32" Padding="14,0" CornerRadius="6" FontWeight="Bold" Margin="0,0,8,0"/>
+                                    <Button x:Name="ScanSystemBtn" Grid.Row="0" Grid.Column="0" Content="Scan System" Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Height="32" Padding="14,0" CornerRadius="6" FontWeight="Bold" Margin="0,0,8,0"
+                                            helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96"/>
                                     
                                     <!-- Split Button for Tiered Optimization -->
                                     <SplitButton x:Name="OptimizeSplitBtn" Grid.Row="0" Grid.Column="1" Content="Optimize System" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Margin="0,0,8,0"
@@ -226,7 +295,8 @@
                     </Border>
 
                     <!-- Right Side Row 0 Column 1: WinCare AI Engine Card -->
-                    <Border x:Name="AiWinCareEngineEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource AiWinCareEngineCardStyle}" Margin="6" Padding="16,14" MinHeight="185">
+                    <Border x:Name="AiWinCareEngineEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource AiWinCareEngineCardStyle}" Margin="6" Padding="16,14" MinHeight="185"
+                            helpers:AnimationHelper.HoverScale="1.012" helpers:AnimationHelper.PressedScale="0.988" helpers:AnimationHelper.StaggerIndex="1">
                         <StackPanel Spacing="8">
                             <!-- AI Header Row -->
                             <Grid>
@@ -337,7 +407,8 @@
                         
                         <!-- CPU Card with overload indicator border glow -->
                         <Border x:Name="CpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14"
-                                BorderBrush="{x:Bind GetCpuCardBorderBrush(ViewModel.CpuUsage), Mode=OneWay}">
+                                BorderBrush="{x:Bind GetCpuCardBorderBrush(ViewModel.CpuUsage), Mode=OneWay}"
+                                helpers:AnimationHelper.HoverScale="1.018" helpers:AnimationHelper.PressedScale="0.982" helpers:AnimationHelper.StaggerIndex="2">
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -368,7 +439,8 @@
 
                         <!-- RAM Card with overload indicator background glow/pulse -->
                         <Border x:Name="RamCard" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14"
-                                Background="{x:Bind GetRamCardBackground(ViewModel.RamUsage), Mode=OneWay}">
+                                Background="{x:Bind GetRamCardBackground(ViewModel.RamUsage), Mode=OneWay}"
+                                helpers:AnimationHelper.HoverScale="1.018" helpers:AnimationHelper.PressedScale="0.982" helpers:AnimationHelper.StaggerIndex="3">
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -393,7 +465,8 @@
                                         <FontIcon Glyph="&#xE950;" FontSize="12" Foreground="{StaticResource RamAccentBrush}" VerticalAlignment="Center"/>
                                         <TextBlock Text="{x:Bind ViewModel.RamCapacityFormatted, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     </StackPanel>
-                                    <Button Grid.Column="1" Content="Boost" Style="{StaticResource DefaultButtonStyle}" Padding="12,4" Height="28" CornerRadius="6" FontSize="11" FontWeight="Bold" Click="OnBoostRamClick" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" />
+                                    <Button Grid.Column="1" Content="Boost" Style="{StaticResource DefaultButtonStyle}" Padding="12,4" Height="28" CornerRadius="6" FontSize="11" FontWeight="Bold" Click="OnBoostRamClick" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}"
+                                            helpers:AnimationHelper.HoverScale="1.06" helpers:AnimationHelper.PressedScale="0.94"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -402,7 +475,8 @@
                     <!-- Right Side Column 1 -->
                     
                     <!-- 1. Bottleneck Advisor widget (Placed on Row 1 Column 1) -->
-                    <Border x:Name="BottleneckCard" Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14">
+                    <Border x:Name="BottleneckCard" Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14"
+                            helpers:AnimationHelper.HoverScale="1.018" helpers:AnimationHelper.PressedScale="0.982" helpers:AnimationHelper.StaggerIndex="4">
                         <StackPanel Spacing="8">
                             <TextBlock Text="Bottleneck Detection" FontSize="15" FontWeight="Bold"/>
                             <Border Background="{x:Bind GetBottleneckBadgeBg(ViewModel.HasBottleneck), Mode=OneWay}" CornerRadius="6" Padding="10,4" HorizontalAlignment="Left">
@@ -423,7 +497,8 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                          <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatUptimeClick">
+                          <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatUptimeClick"
+                                  helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96">
                             <Border Style="{StaticResource QuickStatCardStyle}" Margin="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="56" Padding="10,8">
                                 <StackPanel Spacing="3" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -435,7 +510,8 @@
                             </Border>
                         </Button>
 
-                        <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatNetworkClick">
+                        <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatNetworkClick"
+                                helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96">
                             <Border Style="{StaticResource QuickStatCardStyle}" Margin="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="56" Padding="10,8">
                                 <StackPanel Spacing="3" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -447,7 +523,8 @@
                             </Border>
                         </Button>
 
-                        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatJunkClick">
+                        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatJunkClick"
+                                helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96">
                             <Border Style="{StaticResource QuickStatCardStyle}" Margin="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="56" Padding="10,8">
                                 <StackPanel Spacing="3" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -459,7 +536,8 @@
                             </Border>
                         </Button>
 
-                        <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatAppsClick">
+                        <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatAppsClick"
+                                helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96">
                             <Border Style="{StaticResource QuickStatCardStyle}" Margin="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="56" Padding="10,8">
                                 <StackPanel Spacing="3" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -484,7 +562,8 @@
                         </Grid.ColumnDefinitions>
                         
                         <!-- GPU Card -->
-                        <Border x:Name="GpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14">
+                        <Border x:Name="GpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14"
+                                helpers:AnimationHelper.HoverScale="1.018" helpers:AnimationHelper.PressedScale="0.982" helpers:AnimationHelper.StaggerIndex="5">
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>

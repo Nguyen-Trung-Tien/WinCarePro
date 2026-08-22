@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Management;
 using System.Linq;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using WinCarePro.Models;
 using WinCarePro.Core.Helpers;
 
@@ -10,6 +11,24 @@ namespace WinCarePro.Engines;
 
 public class HardwareDriverEngine
 {
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MEMORYSTATUSEX
+    {
+        public uint dwLength;
+        public uint dwMemoryLoad;
+        public ulong ullTotalPhys;
+        public ulong ullAvailPhys;
+        public ulong ullTotalPageFile;
+        public ulong ullAvailPageFile;
+        public ulong ullTotalVirtual;
+        public ulong ullAvailVirtual;
+        public ulong ullAvailExtendedVirtual;
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
+
     private HardwareSpecs? _cachedSpecs;
     private DateTime _specsCacheTime = DateTime.MinValue;
 
@@ -37,31 +56,63 @@ public class HardwareDriverEngine
 
         specs.SystemUptime = uptimeStr;
 
-        // CPU specs
+        // CPU specs with Registry & Environment native fallback
+        string fallbackCpuModel = "Intel Core / AMD Ryzen Processor";
+        string fallbackCpuSpeed = "2.5 GHz";
+        try
+        {
+            using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
+            if (key != null)
+            {
+                string? procName = key.GetValue("ProcessorNameString")?.ToString();
+                if (!string.IsNullOrWhiteSpace(procName))
+                {
+                    fallbackCpuModel = procName.Trim();
+                }
+                object? mhz = key.GetValue("~MHz");
+                if (mhz is int mhzVal && mhzVal > 0)
+                {
+                    fallbackCpuSpeed = $"{mhzVal / 1000.0:F1} GHz";
+                }
+            }
+        }
+        catch { }
+
         var cpuList = WmiHelper.Query("SELECT Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed FROM Win32_Processor", obj => new
         {
-            Model = obj["Name"]?.ToString()?.Trim() ?? "Unknown CPU",
+            Model = obj["Name"]?.ToString()?.Trim() ?? fallbackCpuModel,
             Cores = Convert.ToInt32(obj["NumberOfCores"]),
             Threads = Convert.ToInt32(obj["NumberOfLogicalProcessors"]),
-            Speed = $"{Convert.ToDouble(obj["MaxClockSpeed"]) / 1000.0:F1} GHz"
+            Speed = obj["MaxClockSpeed"] != null ? $"{Convert.ToDouble(obj["MaxClockSpeed"]) / 1000.0:F1} GHz" : fallbackCpuSpeed
         });
 
-        if (cpuList.Count > 0)
+        if (cpuList.Count > 0 && !string.IsNullOrWhiteSpace(cpuList[0].Model) && cpuList[0].Model != "Unknown CPU")
         {
             specs.CpuModel = cpuList[0].Model;
-            specs.CpuCores = cpuList[0].Cores;
-            specs.CpuThreads = cpuList[0].Threads;
+            specs.CpuCores = cpuList[0].Cores > 0 ? cpuList[0].Cores : Math.Max(1, Environment.ProcessorCount / 2);
+            specs.CpuThreads = cpuList[0].Threads > 0 ? cpuList[0].Threads : Environment.ProcessorCount;
             specs.CpuSpeed = cpuList[0].Speed;
         }
         else
         {
-            specs.CpuModel = "Intel Core / AMD Ryzen Processor";
-            specs.CpuCores = Environment.ProcessorCount / 2;
+            specs.CpuModel = fallbackCpuModel;
+            specs.CpuCores = Math.Max(1, Environment.ProcessorCount / 2);
             specs.CpuThreads = Environment.ProcessorCount;
-            specs.CpuSpeed = "2.5 GHz";
+            specs.CpuSpeed = fallbackCpuSpeed;
         }
 
-        // RAM specs
+        // RAM specs with Win32 GlobalMemoryStatusEx native fallback
+        double fallbackRamGb = 16.0;
+        try
+        {
+            var memStatus = new MEMORYSTATUSEX { dwLength = (uint)System.Runtime.InteropServices.Marshal.SizeOf<MEMORYSTATUSEX>() };
+            if (GlobalMemoryStatusEx(ref memStatus) && memStatus.ullTotalPhys > 0)
+            {
+                fallbackRamGb = Math.Round(memStatus.ullTotalPhys / (1024.0 * 1024.0 * 1024.0), 1);
+            }
+        }
+        catch { }
+
         var ramList = WmiHelper.Query("SELECT Capacity, Speed FROM Win32_PhysicalMemory", obj => new
         {
             Capacity = Convert.ToDouble(obj["Capacity"]),
@@ -75,14 +126,14 @@ public class HardwareDriverEngine
             foreach (var ram in ramList)
             {
                 totalCapacity += ram.Capacity;
-                speed = ram.Speed;
+                if (!string.IsNullOrEmpty(ram.Speed)) speed = ram.Speed;
             }
-            specs.RamCapacityGb = totalCapacity / 1024.0 / 1024.0 / 1024.0;
-            specs.RamSpeed = string.IsNullOrEmpty(speed) ? "" : $"{speed} MHz";
+            specs.RamCapacityGb = totalCapacity > 0 ? (totalCapacity / 1024.0 / 1024.0 / 1024.0) : fallbackRamGb;
+            specs.RamSpeed = string.IsNullOrEmpty(speed) ? "3200 MHz" : $"{speed} MHz";
         }
         else
         {
-            specs.RamCapacityGb = 16.0; // safe fallback
+            specs.RamCapacityGb = fallbackRamGb;
             specs.RamSpeed = "3200 MHz";
         }
 

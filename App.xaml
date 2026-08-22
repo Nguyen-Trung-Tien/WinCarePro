@@ -165,6 +165,32 @@
             <SolidColorBrush x:Key="GpuTrackBrush" Color="#208B5CF6" />
             <SolidColorBrush x:Key="DiskTrackBrush" Color="#2010B981" />
 
+            <!-- ASC 19 Cyber Reactor & Radar Brushes -->
+            <LinearGradientBrush x:Key="Asc19ReactorGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FF00F2FE" Offset="0" />
+                <GradientStop Color="#FF4FACFE" Offset="0.35" />
+                <GradientStop Color="#FF8B5CF6" Offset="0.7" />
+                <GradientStop Color="#FF00E676" Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="Asc19RadarSweepBrush" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#D000F2FE" Offset="0" />
+                <GradientStop Color="#4000F2FE" Offset="0.4" />
+                <GradientStop Color="#0000F2FE" Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="Asc19EmeraldGlowBrush" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FF10B981" Offset="0" />
+                <GradientStop Color="#FF059669" Offset="0.6" />
+                <GradientStop Color="#FF047857" Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="Asc19AmberTurboBrush" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FFF59E0B" Offset="0" />
+                <GradientStop Color="#FFEF4444" Offset="0.5" />
+                <GradientStop Color="#FFF97316" Offset="1" />
+            </LinearGradientBrush>
+
             <!-- Card Containers Styling — Soft, Balanced & Modern -->
             <Style x:Key="ModernCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
@@ -238,14 +264,12 @@
                 <Setter Property="CornerRadius" Value="16" />
             </Style>
 
-            <!-- v4.2.0 Master — Interactive Fluid Card with Motion Scaling -->
+            <!-- v4.2.0 Master — Interactive Fluid Card with Motion Styling -->
             <Style x:Key="FluidInteractiveCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="14" />
-                <Setter Property="helpers:AnimationHelper.HoverScale" Value="1.015" />
-                <Setter Property="helpers:AnimationHelper.PressedScale" Value="0.985" />
             </Style>
 
             <!-- v4.2.0 Master — Celebration & System Optimal Micro-interaction Badges -->
@@ -262,6 +286,19 @@
                 <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeGoodBorder}" />
                 <Setter Property="BorderThickness" Value="1.5" />
                 <Setter Property="CornerRadius" Value="16" />
+            </Style>
+
+            <!-- v4.2.0 Master — Cyber Shimmer & Radiant Glow Cards -->
+            <Style x:Key="CyberPulseGlowCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource CyberGlassBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1.2" />
+                <Setter Property="CornerRadius" Value="16" />
+            </Style>
+
+            <Style x:Key="MasterInteractiveButtonStyle" TargetType="Button">
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="FontWeight" Value="SemiBold" />
             </Style>
 
             <Style x:Key="DarkTerminalStyle" TargetType="TextBox">
@@ -1067,7 +1104,6 @@
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Opacity" Value="0.65" />
-                <Setter Property="helpers:AnimationHelper.IsShimmering" Value="True" />
             </Style>
 
             <!-- Staggered Entrance Card Style -->
@@ -1076,8 +1112,6 @@
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="14" />
-                <Setter Property="helpers:AnimationHelper.HoverScale" Value="1.012" />
-                <Setter Property="helpers:AnimationHelper.PressedScale" Value="0.988" />
             </Style>
 
             <!-- Active Preset Profile Chip Button Style (Glowing Neon Pill) -->

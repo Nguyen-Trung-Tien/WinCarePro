@@ -26,10 +26,11 @@ public sealed partial class DashboardPage : Page
             ViewModel.DispatcherQueue = this.DispatcherQueue;
             DataContext = ViewModel;
             
-            // Start glowing sweep animation
+            // Start ASC 19 cyber radar rotation and glowing ripple animations
             try
             {
-                PulsingRadarGlow.Begin();
+                Asc19RadarRotation.Begin();
+                Asc19AuraBreathing.Begin();
             }
             catch { }
 

@@ -669,7 +669,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
                 key.SetValue("LastKey", fullPath);
             }
             
-            System.Diagnostics.Process.Start("regedit.exe");
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("regedit.exe") { UseShellExecute = true });
         }
         catch (Exception ex)
         {

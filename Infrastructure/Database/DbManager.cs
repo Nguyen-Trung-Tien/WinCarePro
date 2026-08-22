@@ -639,10 +639,7 @@ public class DbManager
         if (string.IsNullOrEmpty(plainText)) return string.Empty;
         try
         {
-            byte[] plainBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            byte[] cipherBytes = System.Security.Cryptography.ProtectedData.Protect(
-                plainBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
-            return Convert.ToBase64String(cipherBytes);
+            return Infrastructure.Security.CryptoHelper.ProtectString(plainText);
         }
         catch (Exception ex)
         {
@@ -657,10 +654,7 @@ public class DbManager
         if (string.IsNullOrEmpty(cipherText)) return string.Empty;
         try
         {
-            byte[] cipherBytes = Convert.FromBase64String(cipherText);
-            byte[] plainBytes = System.Security.Cryptography.ProtectedData.Unprotect(
-                cipherBytes, null, System.Security.Cryptography.DataProtectionScope.CurrentUser);
-            return System.Text.Encoding.UTF8.GetString(plainBytes);
+            return Infrastructure.Security.CryptoHelper.UnprotectString(cipherText);
         }
         catch (Exception ex)
         {

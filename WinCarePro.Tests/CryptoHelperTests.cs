@@ -28,11 +28,11 @@ public class CryptoHelperTests
     }
 
     [Fact]
-    public void UnprotectString_InvalidBase64_ReturnsInputGracefully()
+    public void UnprotectString_InvalidBase64_ReturnsEmptyGracefully()
     {
         string invalid = "Not_A_Valid_Base64_Encrypted_String";
         string result = CryptoHelper.UnprotectString(invalid);
-        Assert.Equal(invalid, result);
+        Assert.Equal(string.Empty, result);
     }
 
     [Fact]

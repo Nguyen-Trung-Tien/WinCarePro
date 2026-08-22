@@ -135,32 +135,39 @@ namespace WinCarePro.Shared.Animations
         }
 
         // ============================================================
-        // 3. CONNECTED ANIMATION HELPERS (existing)
+        // 3. CONNECTED ANIMATION HELPERS (Modern Composition Transition)
         // ============================================================
 
         /// <summary>
-        /// Prepares a ConnectedAnimation service transition key.
+        /// Prepares a smooth composition fade transition for target element.
         /// </summary>
         public static void PrepareConnectedAnimation(string key, UIElement sourceElement)
         {
             if (string.IsNullOrEmpty(key) || sourceElement == null) return;
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate(key, sourceElement);
+            try
+            {
+                // Soft prepare visual state
+                Visual visual = ElementCompositionPreview.GetElementVisual(sourceElement);
+                visual.Opacity = 1.0f;
+            }
+            catch { }
         }
 
         /// <summary>
-        /// Plays a ConnectedAnimation on the target element in destination view.
+        /// Plays a smooth entrance animation on the target element in destination view.
         /// </summary>
         public static bool TryStartConnectedAnimation(string key, UIElement targetElement)
         {
             if (string.IsNullOrEmpty(key) || targetElement == null) return false;
-
-            ConnectedAnimation animation = ConnectedAnimationService.GetForCurrentView().GetAnimation(key);
-            if (animation != null)
+            try
             {
-                animation.Configuration = new BasicConnectedAnimationConfiguration();
-                return animation.TryStart(targetElement);
+                ApplySpringEntranceAnimation(targetElement, 30);
+                return true;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
 
         // ============================================================
@@ -178,6 +185,21 @@ namespace WinCarePro.Shared.Animations
         {
             if (elements == null || elements.Count == 0) return;
 
+            // Accessibility: If reduced motion is preferred, render elements immediately
+            if (!ReducedMotionHelper.AreAnimationsEnabled)
+            {
+                foreach (var el in elements)
+                {
+                    if (el != null)
+                    {
+                        Visual v = ElementCompositionPreview.GetElementVisual(el);
+                        v.Opacity = 1.0f;
+                        v.Properties.InsertVector3("Translation", Vector3.Zero);
+                    }
+                }
+                return;
+            }
+
             for (int i = 0; i < elements.Count; i++)
             {
                 UIElement element = elements[i];
@@ -186,6 +208,8 @@ namespace WinCarePro.Shared.Animations
                 ElementCompositionPreview.SetIsTranslationEnabled(element, true);
                 Visual visual = ElementCompositionPreview.GetElementVisual(element);
                 Compositor compositor = visual.Compositor;
+
+                SafeSetCenterPoint(element, visual);
 
                 // Set initial state via Translation
                 visual.Properties.InsertVector3("Translation", new Vector3(0, slideDistanceY, 0));
@@ -219,11 +243,6 @@ namespace WinCarePro.Shared.Animations
                 scaleAnim.Duration = TimeSpan.FromMilliseconds(400);
                 scaleAnim.DelayTime = TimeSpan.FromMilliseconds(delay);
                 scaleAnim.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-
-                if (element is FrameworkElement fe)
-                {
-                    visual.CenterPoint = new Vector3((float)fe.ActualWidth / 2f, (float)fe.ActualHeight / 2f, 0);
-                }
 
                 visual.StartAnimation("Translation", springTranslation);
                 visual.StartAnimation("Opacity", opacityAnim);
@@ -371,11 +390,8 @@ namespace WinCarePro.Shared.Animations
             Visual visual = ElementCompositionPreview.GetElementVisual(element);
             Compositor compositor = visual.Compositor;
 
-            // Center point for scaling
-            if (element is FrameworkElement fe)
-            {
-                visual.CenterPoint = new Vector3((float)fe.ActualWidth / 2f, (float)fe.ActualHeight / 2f, 0);
-            }
+            // Safe Center point for scaling
+            SafeSetCenterPoint(element, visual);
 
             // Spring scale animation for natural morph feel
             SpringVector3NaturalMotionAnimation morphScale = compositor.CreateSpringVector3Animation();
@@ -528,10 +544,7 @@ namespace WinCarePro.Shared.Animations
             Visual visual = ElementCompositionPreview.GetElementVisual(element);
             Compositor compositor = visual.Compositor;
 
-            if (element is FrameworkElement fe)
-            {
-                visual.CenterPoint = new Vector3((float)fe.ActualWidth / 2f, (float)fe.ActualHeight / 2f, 0);
-            }
+            SafeSetCenterPoint(element, visual);
 
             SpringVector3NaturalMotionAnimation scaleAnim = compositor.CreateSpringVector3Animation();
             scaleAnim.Target = "Scale";
@@ -558,10 +571,7 @@ namespace WinCarePro.Shared.Animations
             Visual visual = ElementCompositionPreview.GetElementVisual(element);
             Compositor compositor = visual.Compositor;
 
-            if (element is FrameworkElement fe)
-            {
-                visual.CenterPoint = new Vector3((float)fe.ActualWidth / 2f, (float)fe.ActualHeight / 2f, 0);
-            }
+            SafeSetCenterPoint(element, visual);
 
             // Keyframe Scale animation: 1.0 -> peakScale -> 0.98 -> 1.0
             Vector3KeyFrameAnimation burstScale = compositor.CreateVector3KeyFrameAnimation();

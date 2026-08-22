@@ -281,8 +281,14 @@ public sealed partial class MainWindow : Window
     private ulong _hudPrevUserTime;
     private bool _hudHasPrevTimes = false;
 
+    private int _isTelemetrySampling = 0;
+
     private void UpdateTitleBarTelemetry()
     {
+        // Concurrency guard: Skip sampling if a previous sample is still running
+        if (Interlocked.CompareExchange(ref _isTelemetrySampling, 1, 0) != 0)
+            return;
+
         Task.Run(() =>
         {
             try
@@ -332,6 +338,10 @@ public sealed partial class MainWindow : Window
                 });
             }
             catch { }
+            finally
+            {
+                Interlocked.Exchange(ref _isTelemetrySampling, 0);
+            }
         });
     }
 

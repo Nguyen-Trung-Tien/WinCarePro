@@ -195,14 +195,25 @@ namespace WinCarePro.Modules.AiAssistant
                 }
                 catch { }
 
-                // 2. Predictive Boot Time Overhead Profiling (Dự đoán khởi động chậm)
+                // 2. Predictive Boot Time Overhead Profiling & Memory Working Set (Single-Pass Process Scan)
                 try
                 {
                     int processCount = 0;
-                    foreach (var p in Process.GetProcesses())
+                    long totalWorkingSet = 0;
+
+                    var processes = Process.GetProcesses();
+                    foreach (var p in processes)
                     {
-                        try { processCount++; }
-                        finally { try { p.Dispose(); } catch { } }
+                        try
+                        {
+                            processCount++;
+                            totalWorkingSet += p.WorkingSet64;
+                        }
+                        catch { }
+                        finally
+                        {
+                            try { p.Dispose(); } catch { }
+                        }
                     }
 
                     double potentialBootTimeSavingsSeconds = Math.Round(processCount * 0.02, 1);
@@ -230,6 +241,20 @@ namespace WinCarePro.Modules.AiAssistant
                             Category = "Performance",
                             ImpactLevel = "Low",
                             ActionKey = "NavigateStartup"
+                        });
+                    }
+
+                    long totalRamMB = totalWorkingSet / (1024 * 1024);
+                    if (totalRamMB > 12000) // High active process RAM usage (> 12GB)
+                    {
+                        penaltyScore += 8;
+                        recommendations.Add(new AiWinCareRecommendation
+                        {
+                            Title = "High Memory Pressure".T(),
+                            Description = $"Active process working set is currently using {totalRamMB:N0} MB. Optimization can release standby cache.".T(),
+                            Category = "Performance",
+                            ImpactLevel = "Medium",
+                            ActionKey = "NavigateOptimizer"
                         });
                     }
                 }
@@ -272,32 +297,6 @@ namespace WinCarePro.Modules.AiAssistant
                             Category = "Junk",
                             ImpactLevel = "Medium",
                             ActionKey = "NavigateJunkCleaner"
-                        });
-                    }
-                }
-                catch { }
-
-                // 4. Memory Working Set Check
-                try
-                {
-                    long totalWorkingSet = 0;
-                    var processes = Process.GetProcesses();
-                    foreach (var p in processes)
-                    {
-                        try { totalWorkingSet += p.WorkingSet64; } catch { }
-                        finally { try { p.Dispose(); } catch { } }
-                    }
-                    long totalRamMB = totalWorkingSet / (1024 * 1024);
-                    if (totalRamMB > 12000) // High active process RAM usage (> 12GB)
-                    {
-                        penaltyScore += 8;
-                        recommendations.Add(new AiWinCareRecommendation
-                        {
-                            Title = "High Memory Pressure".T(),
-                            Description = $"Active process working set is currently using {totalRamMB:N0} MB. Optimization can release standby cache.".T(),
-                            Category = "Performance",
-                            ImpactLevel = "Medium",
-                            ActionKey = "NavigateOptimizer"
                         });
                     }
                 }

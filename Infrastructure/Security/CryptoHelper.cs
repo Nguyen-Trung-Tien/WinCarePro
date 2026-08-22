@@ -50,8 +50,15 @@ public static class CryptoHelper
         try
         {
             byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
-            byte[] encryptedBytes = ProtectedData.Protect(plainBytes, Entropy, DataProtectionScope.CurrentUser);
-            return Convert.ToBase64String(encryptedBytes);
+            try
+            {
+                byte[] encryptedBytes = ProtectedData.Protect(plainBytes, Entropy, DataProtectionScope.CurrentUser);
+                return Convert.ToBase64String(encryptedBytes);
+            }
+            finally
+            {
+                Array.Clear(plainBytes, 0, plainBytes.Length);
+            }
         }
         catch (CryptographicException)
         {
@@ -66,31 +73,70 @@ public static class CryptoHelper
 
     /// <summary>
     /// Decrypts a DPAPI-encrypted base64 string for the current logged-in Windows user.
-    /// Attempts DPAPI first, then AES-GCM fallback. Never returns raw ciphertext.
+    /// Attempts DPAPI (with machine entropy), then legacy DPAPI (without entropy), then AES-GCM fallback.
+    /// NEVER returns raw ciphertext on decryption failure — throws CryptographicException or returns string.Empty.
     /// </summary>
     public static string UnprotectString(string encryptedBase64)
     {
-        if (string.IsNullOrEmpty(encryptedBase64))
+        if (string.IsNullOrWhiteSpace(encryptedBase64))
             return string.Empty;
 
-        // Try DPAPI first
-        try
+        // 1. Try AES-GCM fallback first if prefix matches
+        if (encryptedBase64.StartsWith("AES:", StringComparison.Ordinal))
         {
-            byte[] encryptedBytes = Convert.FromBase64String(encryptedBase64);
-            byte[] plainBytes = ProtectedData.Unprotect(encryptedBytes, Entropy, DataProtectionScope.CurrentUser);
-            return Encoding.UTF8.GetString(plainBytes);
-        }
-        catch
-        {
-            // Try AES-GCM fallback decryption
             try
             {
                 return AesGcmDecrypt(encryptedBase64);
             }
+            catch (Exception ex)
+            {
+                throw new CryptographicException($"Failed to decrypt AES-GCM payload: {ex.Message}", ex);
+            }
+        }
+
+        byte[]? encryptedBytes = null;
+        try
+        {
+            encryptedBytes = Convert.FromBase64String(encryptedBase64);
+        }
+        catch
+        {
+            // If not valid base64, return empty instead of leaking corrupted ciphertext
+            return string.Empty;
+        }
+
+        // 2. Try DPAPI with machine-derived entropy (primary v4.2 scheme)
+        try
+        {
+            byte[] plainBytes = ProtectedData.Unprotect(encryptedBytes, Entropy, DataProtectionScope.CurrentUser);
+            try
+            {
+                return Encoding.UTF8.GetString(plainBytes);
+            }
+            finally
+            {
+                Array.Clear(plainBytes, 0, plainBytes.Length);
+            }
+        }
+        catch
+        {
+            // 3. Try Legacy DPAPI without entropy (backwards compatibility with older snapshots/settings)
+            try
+            {
+                byte[] plainBytes = ProtectedData.Unprotect(encryptedBytes, null, DataProtectionScope.CurrentUser);
+                try
+                {
+                    return Encoding.UTF8.GetString(plainBytes);
+                }
+                finally
+                {
+                    Array.Clear(plainBytes, 0, plainBytes.Length);
+                }
+            }
             catch
             {
-                // Return original string gracefully if it was unencrypted/plain text or corrupted
-                return encryptedBase64;
+                // Decryption genuinely failed. Never return raw ciphertext.
+                return string.Empty;
             }
         }
     }

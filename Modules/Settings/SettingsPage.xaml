@@ -143,7 +143,7 @@
         </Border>
 
         <!-- Content Area -->
-        <ScrollViewer x:Name="ContentScrollViewer" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Padding="20,0,0,0" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer x:Name="ContentScrollViewer" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Padding="20,0,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <Grid>
                 <!-- Section 0: General Configuration -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 0), Mode=OneWay}">
@@ -481,49 +481,54 @@
                             <Ellipse x:Name="UpdateCardGlow" Fill="{StaticResource PrimaryAccentGradient}" Opacity="0.18" HorizontalAlignment="Right" VerticalAlignment="Top" Width="260" Height="160" Margin="0,-40,-40,0" IsHitTestVisible="False"/>
 
                             <StackPanel Spacing="16">
-                            <!-- Card Header with version and trigger -->
-                            <Grid ColumnSpacing="12">
+                            <!-- Card Header with version, status badge and action triggers -->
+                            <Grid ColumnSpacing="16" RowSpacing="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Left: Version & Status -->
-                                <Grid Grid.Column="0" Margin="0,0,8,0" VerticalAlignment="Center">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,0,0,4">
-                                        <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
-                                            <TextBlock Text="v4.2.0" FontSize="11" FontWeight="Bold" Foreground="White"/>
-                                        </Border>
-                                        <TextBlock Text="WinCare Pro Distribution Channel" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
-                                        <Border x:Name="UpdateChannelBadgeBorder" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
-                                            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                                                <Ellipse x:Name="UpdateChannelBadgeDot" Width="5.5" Height="5.5" Fill="{ThemeResource AppBadgeGoodFg}"/>
-                                                <TextBlock x:Name="UpdateChannelBadgeText" Text="CDN Connected" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </StackPanel>
-                                    <TextBlock Grid.Row="1" x:Name="UpdateStatusLabel" Text="System is up to date with the latest security and optimization definitions." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
-                                </Grid>
+                                <!-- Top Left: Version & Title -->
+                                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
+                                        <TextBlock Text="v4.2.0" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                    </Border>
+                                    <TextBlock Text="WinCare Pro Distribution Channel" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                </StackPanel>
 
-                                <!-- Right: Action Buttons (Compact & Sleek) -->
-                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <!-- Top Right: Action Buttons (Compact & Sleek) -->
+                                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Right">
                                     <Button x:Name="CancelUpdatesBtn" Click="OnCancelUpdateClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" Padding="8,0" CornerRadius="6" ToolTipService.ToolTip="Cancel current update operation" Visibility="Collapsed">
                                         <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE711;" FontSize="10.5" Foreground="#FFEF4444"/>
                                             <TextBlock Text="Cancel" FontSize="11" FontWeight="SemiBold" Foreground="#FFEF4444"/>
                                         </StackPanel>
                                     </Button>
-                                    <Button x:Name="CheckUpdatesBtn" Click="OnCheckUpdatesClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                                    <Button x:Name="CheckUpdatesBtn" Click="OnCheckUpdatesClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" Padding="14,0" CornerRadius="6">
                                         <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
                                             <FontIcon x:Name="CheckUpdatesIcon" Glyph="&#xE72C;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                             <TextBlock x:Name="CheckUpdatesText" Text="Check for Updates" FontSize="11.5" FontWeight="SemiBold"/>
                                         </StackPanel>
                                     </Button>
+                                </StackPanel>
+
+                                <!-- Bottom Row: Status Badge, Detailed Message & Timestamp -->
+                                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="4">
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <Border x:Name="UpdateChannelBadgeBorder" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
+                                            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                                <Ellipse x:Name="UpdateChannelBadgeDot" Width="5.5" Height="5.5" Fill="{ThemeResource AppBadgeGoodFg}"/>
+                                                <TextBlock x:Name="UpdateChannelBadgeText" Text="CDN Connected" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <TextBlock x:Name="UpdateStatusLabel" Text="System is up to date with the latest security and optimization definitions." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="UpdateLastCheckedLabel" Text="Last Checked: Just now" FontSize="10.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </Grid>
 
@@ -566,13 +571,14 @@
                     </Border>
                 </StackPanel>
 
-                <!-- Section 7: Advanced Developer Configurations -->
+                <!-- Section 7: Advanced & Developer Workbench -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 7), Mode=OneWay}">
                     <StackPanel Spacing="4">
-                        <TextBlock Text="Advanced &amp; Sandbox Options" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Developer debugging flags, verified plugin manager, and experimental modules." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="Advanced &amp; Developer Workbench" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                        <TextBlock Text="Developer debugging flags, live diagnostic suite, memory trimmer, and sandbox runtime." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                     </StackPanel>
                     
+                    <!-- Diagnostic Traces & Sandbox Switches -->
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <components:LoadingToggleSwitch x:Name="EnableVerboseLogsToggle" Toggled="OnSettingsChanged" HeaderText="Enable verbose debug log trace files" />
@@ -588,6 +594,75 @@
                             <MenuFlyoutSeparator />
 
                             <components:LoadingToggleSwitch x:Name="EnableExperimentalAiToggle" Toggled="OnSettingsChanged" HeaderText="Enable experimental AI diagnostics auto-remediations (Pre-release)" ToolTipService.ToolTip="Uses heuristic rules to automatically attempt fixing found system issues without user confirmation." />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Live Developer Diagnostics Suite -->
+                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="22">
+                        <StackPanel Spacing="16">
+                            <StackPanel Spacing="4">
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE7BE;" FontSize="15" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                    <TextBlock Text="Live Developer Diagnostics &amp; Memory Control" FontSize="14" FontWeight="Bold" />
+                                </StackPanel>
+                                <TextBlock Text="Execute low-level memory trimming, inspect process runtime parameters, and view SQLite audit records." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            </StackPanel>
+
+                            <!-- Developer Action Buttons Grid -->
+                            <Grid ColumnSpacing="12" RowSpacing="12">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Button 1: Inspect Environment -->
+                                <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnInspectEnvironmentClick">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <FontIcon Glyph="&#xE7F8;" FontSize="14" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Text="Inspect System Environment" FontWeight="SemiBold" FontSize="12"/>
+                                            <TextBlock Text="View OS, CLR, CPU &amp; GC mode" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Button 2: Trim Working Set -->
+                                <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnTrimWorkingSetClick">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <FontIcon Glyph="&#xE74D;" FontSize="14" Foreground="#FF10B981"/>
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Text="Trim RAM &amp; Force GC" FontWeight="SemiBold" FontSize="12"/>
+                                            <TextBlock Text="Flush process working set" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Button 3: View Audit Logs -->
+                                <Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnViewAuditLogsClick">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <FontIcon Glyph="&#xE81C;" FontSize="14" Foreground="#FF6366F1"/>
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Text="View SQLite Audit Logs" FontWeight="SemiBold" FontSize="12"/>
+                                            <TextBlock Text="Inspect recent system events" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Button 4: Export Diagnostic Bundle -->
+                                <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnExportDiagnosticsClick">
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                        <FontIcon Glyph="&#xE898;" FontSize="14" Foreground="#FFF59E0B"/>
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Text="Export Diagnostics (JSON)" FontWeight="SemiBold" FontSize="12"/>
+                                            <TextBlock Text="Sanitized bundle for debugging" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -641,53 +716,232 @@
                 <!-- Section 9: About & Developer Info -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 9), Mode=OneWay}">
                     <StackPanel Spacing="4">
-                        <TextBlock Text="About WinCare Pro" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Software build specifications, developer contact, and open-source repository." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="About WinCare Pro &amp; Engineering Team" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                        <TextBlock Text="Software architecture, lead developer portfolio, zero-telemetry privacy pledge, and open-source ecosystem." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                     </StackPanel>
                     
+                    <!-- 1. Hero Identity & Live Telemetry Card -->
+                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="24">
+                        <Grid>
+                            <Ellipse Fill="{StaticResource PrimaryAccentGradient}" Opacity="0.16" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" Height="180" Margin="0,-40,-40,0" IsHitTestVisible="False"/>
+
+                            <StackPanel Spacing="20">
+                                <!-- Logo, Name, Version Tag & What's New Action -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="18" VerticalAlignment="Center">
+                                        <Border Width="68" Height="68" Background="{ThemeResource SubtleFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="20" VerticalAlignment="Center">
+                                            <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center" Spacing="3">
+                                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                                <TextBlock Text="WinCare Pro" FontSize="22" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" />
+                                                <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="8,2" VerticalAlignment="Center">
+                                                    <TextBlock Text="Evolution Suite" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                                </Border>
+                                            </StackPanel>
+                                            <TextBlock Text="Next-Generation System Optimizer, Security Shield &amp; Care Suite" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                            <TextBlock Text="Version 4.2.0 (Official Build) • 64-bit Native WinUI 3 • .NET 10.0 CLR" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Single Unified What's New Entry Point -->
+                                    <Button Grid.Column="1" Click="OnViewChangelogClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="14,8" VerticalAlignment="Center" ToolTipService.ToolTip="View official release notes &amp; new features changelog">
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE789;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                            <TextBlock Text="What's New in v4.2.0" FontSize="12" FontWeight="SemiBold"/>
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+
+                                <!-- Live Process Telemetry Readout Grid -->
+                                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="12" Padding="16,12">
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Metric 1: Process RAM -->
+                                        <StackPanel Grid.Column="0" Spacing="2">
+                                            <TextBlock Text="PROCESS WORKING SET" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock x:Name="AboutMemoryText" Text="Loading..." FontSize="13" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                        </StackPanel>
+
+                                        <!-- Metric 2: Uptime -->
+                                        <StackPanel Grid.Column="1" Spacing="2">
+                                            <TextBlock Text="ACTIVE SESSION UPTIME" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock x:Name="AboutUptimeText" Text="00:00:00" FontSize="13" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                        </StackPanel>
+
+                                        <!-- Metric 3: DB Status -->
+                                        <StackPanel Grid.Column="2" Spacing="2">
+                                            <TextBlock Text="DATABASE ENGINE" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock x:Name="AboutDbStatusText" Text="SQLite WAL • Healthy" FontSize="13" FontWeight="Bold" Foreground="#FF10B981"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- 2. Lead Systems Architect & Developer Portfolio Card -->
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="24">
                         <StackPanel Spacing="18">
-                            <!-- Logo and name -->
-                            <StackPanel Orientation="Horizontal" Spacing="16">
-                                <Border Width="64" Height="64" Background="{ThemeResource SubtleFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="18" VerticalAlignment="Center">
-                                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="44" Height="44" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
-                                </Border>
-                                <StackPanel VerticalAlignment="Center" Spacing="2">
-                                    <TextBlock Text="WinCare Pro" FontSize="20" FontWeight="ExtraBold" />
-                                    <TextBlock Text="System Optimizer, Security Shield &amp; Care Suite" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="Version 4.2.0 (Evolution Suite Release)" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
-                                </StackPanel>
-                            </StackPanel>
-
-                            <MenuFlyoutSeparator />
-
-                            <!-- Developer info -->
-                            <Grid RowSpacing="12" ColumnSpacing="16">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
+                            <!-- Developer Header with Avatar & Title -->
+                            <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="130" />
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Author row -->
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Lead Developer:" FontWeight="SemiBold" FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Row="0" Grid.Column="1" Text="Nguyen Trung Tien" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                                <Border Grid.Column="0" Width="56" Height="56" CornerRadius="28" Background="{StaticResource CyberAccentGradient}" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE77B;" FontSize="24" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
 
-                                <!-- Contact row -->
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Contact Support:" FontWeight="SemiBold" FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
-                                <HyperlinkButton Grid.Row="1" Grid.Column="1" Content="trungtiennguyen910@gmail.com" NavigateUri="mailto:trungtiennguyen910@gmail.com" Padding="0" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <TextBlock Text="Nguyen Trung Tien" FontSize="16" FontWeight="ExtraBold"/>
+                                        <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,1">
+                                            <TextBlock Text="Lead Systems Architect" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                        </Border>
+                                    </StackPanel>
+                                    <TextBlock Text="Principal Software Engineer • Creator &amp; Maintainer of WinCare Pro" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="trungtiennguyen910@gmail.com" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold"/>
+                                </StackPanel>
                             </Grid>
 
                             <MenuFlyoutSeparator />
 
-                            <!-- Code repository -->
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Source Code Repository &amp; Feedback" FontSize="13" FontWeight="Bold" />
-                                <TextBlock Text="Contributions, bug reports, and feature requests are welcome on GitHub." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <HyperlinkButton Content="https://github.com/Nguyen-Trung-Tien/WinCarePro" NavigateUri="https://github.com/Nguyen-Trung-Tien/WinCarePro" Padding="0" Margin="0,2,0,0"/>
+                            <!-- Interactive Developer Action Chips (Symmetrical 2x2 Grid) -->
+                            <StackPanel Spacing="10">
+                                <TextBlock Text="Quick Contacts &amp; Developer Links" FontSize="12.5" FontWeight="Bold"/>
+                                <Grid ColumnSpacing="10" RowSpacing="8">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Email Developer -->
+                                    <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Click="OnEmailDeveloperClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="12,8">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <FontIcon Glyph="&#xE715;" FontSize="12.5" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                            <TextBlock Text="Email Developer" FontSize="11.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </Button>
+
+                                    <!-- Copy Contact Email -->
+                                    <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Click="OnCopyEmailClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="12,8">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <FontIcon Glyph="&#xE8C8;" FontSize="12.5" Foreground="#FF10B981"/>
+                                            <TextBlock Text="Copy Contact Email" FontSize="11.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </Button>
+
+                                    <!-- GitHub Repository -->
+                                    <Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Click="OnOpenGitHubClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="12,8">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <FontIcon Glyph="&#xE8A7;" FontSize="12.5" Foreground="#FF6366F1"/>
+                                            <TextBlock Text="GitHub Repository" FontSize="11.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </Button>
+
+                                    <!-- Report Bug / Issue -->
+                                    <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Click="OnReportIssueClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="12,8">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <FontIcon Glyph="&#xE7BA;" FontSize="12.5" Foreground="#FFF59E0B"/>
+                                            <TextBlock Text="Report Bug / Issue" FontSize="11.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 3. Security & Zero-Telemetry Privacy Pledge Card -->
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
+                        <StackPanel Spacing="14">
+                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE727;" FontSize="16" Foreground="#FF10B981"/>
+                                <TextBlock Text="Zero-Telemetry &amp; Privacy Guarantee Pledge" FontSize="13.5" FontWeight="Bold" />
+                            </StackPanel>
+                            
+                            <Grid ColumnSpacing="16" RowSpacing="12">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Pledge 1 -->
+                                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="2">
+                                    <TextBlock Text="🔒 100% On-Device Processing" FontWeight="SemiBold" FontSize="12"/>
+                                    <TextBlock Text="All diagnostics, system scans, and cleanups execute locally with zero cloud telemetry transmission." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+
+                                <!-- Pledge 2 -->
+                                <StackPanel Grid.Row="0" Grid.Column="1" Spacing="2">
+                                    <TextBlock Text="💾 ACID SQLite Encrypted Storage" FontWeight="SemiBold" FontSize="12"/>
+                                    <TextBlock Text="Activity logs, configurations, and rollback snapshots reside in high-speed local database files." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+
+                                <!-- Pledge 3 -->
+                                <StackPanel Grid.Row="1" Grid.Column="0" Spacing="2">
+                                    <TextBlock Text="🛡️ Cryptographic Payload Audit" FontWeight="SemiBold" FontSize="12"/>
+                                    <TextBlock Text="Update payloads are audited for valid PE headers, file integrity, and digital certificate validation." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+
+                                <!-- Pledge 4 -->
+                                <StackPanel Grid.Row="1" Grid.Column="1" Spacing="2">
+                                    <TextBlock Text="⏪ Transactional Safety Rollbacks" FontWeight="SemiBold" FontSize="12"/>
+                                    <TextBlock Text="Integrates Windows System Restore Points and registry backup snapshots prior to modifications." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 4. Technology Stack & Framework Ecosystem -->
+                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Core Technology Stack &amp; Frameworks" FontSize="13" FontWeight="Bold" />
+                            <StackPanel Spacing="8">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
+                                        <TextBlock Text=".NET 10.0 Runtime" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
+                                        <TextBlock Text="C# 13 Language" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
+                                        <TextBlock Text="Windows App SDK 1.6" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
+                                        <TextBlock Text="WinUI 3 Fluent XAML" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
+                                        <TextBlock Text="Microsoft.Data.Sqlite" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
+                                        <TextBlock Text="DirectX GPU Acceleration" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+                                    <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,4">
+                                        <TextBlock Text="Native Win32 APIs" FontSize="11" FontWeight="SemiBold"/>
+                                    </Border>
+                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
                     </Border>

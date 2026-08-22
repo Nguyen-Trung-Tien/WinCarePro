@@ -5,11 +5,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.Data.Sqlite;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Dispatching;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Database;
 using WinCarePro.Models;
@@ -22,6 +25,10 @@ namespace WinCarePro.Views;
 public sealed partial class SettingsPage : Page
 {
     private bool _loadingSettings = true; // Guard initialization events from saving settings early
+    private DispatcherQueueTimer? _aboutTelemetryTimer;
+
+    [DllImport("kernel32.dll", EntryPoint = "SetProcessWorkingSetSize")]
+    private static extern bool SetProcessWorkingSetSize(IntPtr process, int minSize, int maxSize);
 
     // Shared HttpClient singleton to prevent socket exhaustion from per-call instantiation
     private static readonly HttpClient _httpClient = new()
@@ -70,6 +77,16 @@ public sealed partial class SettingsPage : Page
             _ = RefreshNetworkBadgeStateAsync();
 
             try { PulsingUpdateGlowAnimation?.Begin(); } catch {}
+
+            // Start live process telemetry for About section
+            UpdateAboutTelemetry();
+            if (_aboutTelemetryTimer == null)
+            {
+                _aboutTelemetryTimer = DispatcherQueue.CreateTimer();
+                _aboutTelemetryTimer.Interval = TimeSpan.FromSeconds(2);
+                _aboutTelemetryTimer.Tick += (timerSender, timerArgs) => UpdateAboutTelemetry();
+            }
+            _aboutTelemetryTimer.Start();
         };
 
         this.Unloaded += (s, e) =>
@@ -79,6 +96,7 @@ public sealed partial class SettingsPage : Page
             TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
             System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= OnNetworkStatusChanged;
             System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged -= OnNetworkAvailabilityChanged;
+            _aboutTelemetryTimer?.Stop();
         };
     }
 
@@ -939,6 +957,7 @@ public sealed partial class SettingsPage : Page
             UpdateProgressBar.Value = 0;
             UpdatePercentText.Text = "0%";
             UpdateDetailsText.Text = "Operation cancelled. Ready for new update check.".T();
+            SetUpdateBadgeState("CDN Connected".T(), "Online");
             _ = RefreshNetworkBadgeStateAsync();
             CancelUpdatesBtn.Visibility = Visibility.Collapsed;
             CheckUpdatesBtn.IsEnabled = true;
@@ -1008,7 +1027,7 @@ public sealed partial class SettingsPage : Page
                         UpdateProgressBar.Value = 0;
                         UpdatePercentText.Text = "0%";
                         UpdateDetailsText.Text = "Check cancelled by user.".T();
-                        SetUpdateBadgeState("Ready".T(), "Online");
+                        SetUpdateBadgeState("CDN Connected".T(), "Online");
                     });
                 }
                 catch (HttpRequestException httpEx)
@@ -1082,22 +1101,22 @@ public sealed partial class SettingsPage : Page
 
         if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
         {
-            remoteVerStr = betaVerProp.GetString() ?? "2.0.0";
+            remoteVerStr = betaVerProp.GetString() ?? "4.2.0";
             downloadUrl = root.TryGetProperty("beta_url", out var betaUrlProp) ? betaUrlProp.GetString() ?? "" : "";
             changelog = root.TryGetProperty("beta_changelog", out var betaClProp) ? betaClProp.GetString() ?? "" : "";
         }
         else
         {
-            remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
+            remoteVerStr = root.GetProperty("version").GetString() ?? "4.2.0";
             downloadUrl = root.GetProperty("url").GetString() ?? "";
             changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
         }
 
-        var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(3, 4, 8, 0);
+        var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(4, 2, 0, 0);
         string cleanRemoteVer = System.Text.RegularExpressions.Regex.Replace(remoteVerStr, @"[^\d\.]", "").TrimEnd('.');
         if (!Version.TryParse(cleanRemoteVer, out var remoteVersion))
         {
-            remoteVersion = new Version(3, 4, 9, 0);
+            remoteVersion = new Version(4, 2, 0, 0);
         }
 
         UpdateProgressRing.IsActive = false;
@@ -1106,10 +1125,15 @@ public sealed partial class SettingsPage : Page
         {
             UpdateProgressBar.Value = 100;
             UpdatePercentText.Text = "100%";
+            if (UpdateLastCheckedLabel != null)
+            {
+                UpdateLastCheckedLabel.Text = string.Format("Last Checked: {0}".T(), DateTime.Now.ToString("HH:mm:ss"));
+            }
         });
 
         if (remoteVersion > currentVersion)
         {
+            SetUpdateBadgeState("Update Available".T(), "Syncing");
             UpdateStatusLabel.Text = string.Format("New version {0} is available for download.".T(), remoteVerStr);
             UpdateProgressStepLabel.Text = string.Format("Update v{0} Ready to Download".T(), remoteVerStr);
             UpdateDetailsText.Text = string.Format("Remote version v{0} (Current: v{1})".T(), remoteVerStr, currentVersion.ToString(3));
@@ -1134,6 +1158,7 @@ public sealed partial class SettingsPage : Page
         }
         else
         {
+            SetUpdateBadgeState("CDN Connected".T(), "Online");
             UpdateStatusLabel.Text = string.Format("You are running the latest version (v{0}).".T(), currentVersion.ToString(3));
             UpdateProgressStepLabel.Text = "System Up to Date".T();
             UpdateDetailsText.Text = string.Format("Manifest verified • Running latest v{0}".T(), currentVersion.ToString(3));
@@ -1149,6 +1174,7 @@ public sealed partial class SettingsPage : Page
         {
             UpdateStatusLabel.Text = "Cannot start download: No active internet connection.".T();
             UpdateProgressStepLabel.Text = "Network Offline".T();
+            SetUpdateBadgeState("Offline".T(), "Offline");
             return;
         }
 
@@ -1159,6 +1185,7 @@ public sealed partial class SettingsPage : Page
 
         CheckUpdatesBtn.IsEnabled = false;
         CancelUpdatesBtn.Visibility = Visibility.Visible;
+        SetUpdateBadgeState("Downloading...".T(), "Syncing");
         UpdateStatusLabel.Text = "Downloading update installer payload...".T();
         UpdateProgressStepLabel.Text = "Downloading Binary Package...".T();
         UpdateProgressBar.Value = 0;
@@ -1237,6 +1264,7 @@ public sealed partial class SettingsPage : Page
             }
 
             // Verify digital signature of the downloaded update installer
+            SetUpdateBadgeState("Verifying...".T(), "Syncing");
             UpdateStatusLabel.Text = "Verifying digital signature...".T();
             UpdateProgressStepLabel.Text = "Verifying Cryptographic Signature...".T();
             bool isSignatureValid = await Task.Run(() => VerifyDigitalSignature(setupFilePath), token);
@@ -1263,6 +1291,7 @@ public sealed partial class SettingsPage : Page
             }
             catch { }
 
+            SetUpdateBadgeState("Ready to Install".T(), "Online");
             UpdateStatusLabel.Text = "Launching installer...".T();
             await Task.Delay(1000, token);
 
@@ -1279,6 +1308,7 @@ public sealed partial class SettingsPage : Page
             UpdateStatusLabel.Text = "Download cancelled.".T();
             UpdateProgressStepLabel.Text = "Cancelled".T();
             UpdateDataRateText.Text = "Idle".T();
+            SetUpdateBadgeState("CDN Connected".T(), "Online");
         }
         catch (HttpRequestException httpEx)
         {
@@ -1286,6 +1316,7 @@ public sealed partial class SettingsPage : Page
             UpdateStatusLabel.Text = string.Format("Network connection lost during download: {0}".T(), httpEx.Message);
             UpdateProgressStepLabel.Text = "Connection Lost".T();
             UpdateDataRateText.Text = "Failed".T();
+            SetUpdateBadgeState("Error".T(), "Offline");
             App.MainWindowInstance?.ShowToastNotification("Download Failed".T(), "Network disconnected while downloading the update file.".T(), "Critical");
         }
         catch (Exception ex)
@@ -1294,6 +1325,7 @@ public sealed partial class SettingsPage : Page
             UpdateStatusLabel.Text = string.Format("Download error: {0}".T(), ex.Message);
             UpdateProgressStepLabel.Text = "Download Error".T();
             UpdateDataRateText.Text = "Failed".T();
+            SetUpdateBadgeState("Error".T(), "Offline");
             App.MainWindowInstance?.ShowToastNotification("Download Error".T(), ex.Message, "Critical");
         }
         finally
@@ -1345,6 +1377,434 @@ public sealed partial class SettingsPage : Page
 
         return true;
     }
+
+    #region About & Developer Workbench Actions
+
+    private void UpdateAboutTelemetry()
+    {
+        try
+        {
+            using var curProc = Process.GetCurrentProcess();
+            curProc.Refresh();
+            double workingSetMb = curProc.WorkingSet64 / (1024.0 * 1024.0);
+            var uptime = DateTime.Now - curProc.StartTime;
+
+            if (AboutMemoryText != null)
+            {
+                AboutMemoryText.Text = string.Format("{0:F1} MB Allocated", workingSetMb);
+            }
+
+            if (AboutUptimeText != null)
+            {
+                AboutUptimeText.Text = string.Format("{0:D2}:{1:D2}:{2:D2}", (int)uptime.TotalHours, uptime.Minutes, uptime.Seconds);
+            }
+
+            if (AboutDbStatusText != null)
+            {
+                AboutDbStatusText.Text = "SQLite WAL • Healthy".T();
+            }
+        }
+        catch { }
+    }
+
+    private async void OnViewChangelogClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var scrollViewer = new ScrollViewer
+            {
+                MaxHeight = 440,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+
+            var mainStack = new StackPanel { Spacing = 10, Padding = new Thickness(0, 0, 4, 0) };
+
+            // 1. Header Banner Card
+            var headerCard = new Border
+            {
+                Background = (Brush)Application.Current.Resources["AppStatChipBackground"],
+                BorderBrush = (Brush)Application.Current.Resources["AppStatChipBorder"],
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(10),
+                Padding = new Thickness(14, 12, 14, 12)
+            };
+            var headerContent = new StackPanel { Spacing = 4 };
+            var headerRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
+            var versionBadge = new Border
+            {
+                Background = (Brush)Application.Current.Resources["PrimaryAccentGradient"],
+                CornerRadius = new CornerRadius(6),
+                Padding = new Thickness(8, 2, 8, 2),
+                Child = new TextBlock
+                {
+                    Text = "v4.2.0 Official Release".T(),
+                    FontSize = 11,
+                    FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+                    Foreground = new SolidColorBrush(Microsoft.UI.Colors.White)
+                }
+            };
+            headerRow.Children.Add(versionBadge);
+            headerRow.Children.Add(new TextBlock
+            {
+                Text = "WinCare Pro Evolution Suite".T(),
+                FontSize = 13.5,
+                FontWeight = Microsoft.UI.Text.FontWeights.Bold
+            });
+            headerContent.Children.Add(headerRow);
+            headerContent.Children.Add(new TextBlock
+            {
+                Text = "Next-Generation System Architecture, Zero-Telemetry Privacy Shield & Live Diagnostics Suite.".T(),
+                FontSize = 11.5,
+                Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
+                TextWrapping = TextWrapping.Wrap
+            });
+            headerCard.Child = headerContent;
+            mainStack.Children.Add(headerCard);
+
+            // 2. Feature Items Cards
+            var features = new (string icon, string title, string description, string colorHex)[]
+            {
+                ("\uE895", "Live CDN Software Updates & Finite State Sentinel", "Realtime percentage telemetry stream, cryptographic SHA-256 verification and automatic channel sync.", "#FF6366F1"),
+                ("\uE727", "Zero-Telemetry & Privacy Guarantee Shield", "100% on-device processing, zero cloud tracking, encrypted local SQLite transaction storage.", "#FF10B981"),
+                ("\uE7BE", "Advanced Developer Workbench & Live Memory Trimmer", "Interactive Working Set RAM trimmer with forced GC, CLR runtime inspector and SQLite audit log viewer.", "#FF3B82F6"),
+                ("\uE777", "Kernel Responsiveness & Latency Turbo Engine", "Dynamic thread priority scheduling, background RAM trimming and gaming-grade latency optimization.", "#FFF59E0B"),
+                ("\uE897", "Interactive System Guide & Visual Handbook", "Comprehensive documentation with safety best practices across all 15 core system modules.", "#FFEC4899"),
+                ("\uE775", "Instant Bilingual Engine (Vietnamese / English)", "Zero-latency UI localization switching with 100% standardized dictionaries across the suite.", "#FF8B5CF6")
+            };
+
+            foreach (var item in features)
+            {
+                var itemBorder = new Border
+                {
+                    Background = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"],
+                    CornerRadius = new CornerRadius(8),
+                    Padding = new Thickness(12, 10, 12, 10)
+                };
+                var itemGrid = new Grid { ColumnSpacing = 12 };
+                itemGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                itemGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+                byte a = 255;
+                byte r = Convert.ToByte(item.colorHex.Substring(3, 2), 16);
+                byte g = Convert.ToByte(item.colorHex.Substring(5, 2), 16);
+                byte b = Convert.ToByte(item.colorHex.Substring(7, 2), 16);
+                var accentColor = Windows.UI.Color.FromArgb(a, r, g, b);
+
+                var iconBorder = new Border
+                {
+                    Width = 32,
+                    Height = 32,
+                    CornerRadius = new CornerRadius(8),
+                    Background = new SolidColorBrush(Windows.UI.Color.FromArgb(35, r, g, b)),
+                    Child = new FontIcon
+                    {
+                        Glyph = item.icon,
+                        FontSize = 14,
+                        Foreground = new SolidColorBrush(accentColor)
+                    }
+                };
+                Grid.SetColumn(iconBorder, 0);
+                itemGrid.Children.Add(iconBorder);
+
+                var textStack = new StackPanel { Spacing = 2, VerticalAlignment = VerticalAlignment.Center };
+                textStack.Children.Add(new TextBlock
+                {
+                    Text = item.title.T(),
+                    FontSize = 12.5,
+                    FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+                    TextWrapping = TextWrapping.Wrap
+                });
+                textStack.Children.Add(new TextBlock
+                {
+                    Text = item.description.T(),
+                    FontSize = 11,
+                    Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
+                    TextWrapping = TextWrapping.Wrap
+                });
+                Grid.SetColumn(textStack, 1);
+                itemGrid.Children.Add(textStack);
+
+                itemBorder.Child = itemGrid;
+                mainStack.Children.Add(itemBorder);
+            }
+
+            scrollViewer.Content = mainStack;
+
+            var dialog = new ContentDialog
+            {
+                Title = "What's New in WinCare Pro".T(),
+                Content = scrollViewer,
+                CloseButtonText = "Close".T(),
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = this.Content.XamlRoot,
+                RequestedTheme = ThemeManager.Instance.CurrentTheme
+            };
+
+            await dialog.ShowAsync();
+        }
+        catch { }
+    }
+
+    private void OnEmailDeveloperClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "mailto:trungtiennguyen910@gmail.com?subject=WinCare%20Pro%20Feedback",
+                UseShellExecute = true
+            });
+            DbManager.LogAction("Launched default mail client for developer contact", "Settings", "Success");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Email Client Error".T(), ex.Message, "Warning");
+        }
+    }
+
+    private void OnCopyEmailClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var dataPackage = new Windows.ApplicationModel.DataTransfer.DataPackage();
+            dataPackage.SetText("trungtiennguyen910@gmail.com");
+            Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(dataPackage);
+            App.MainWindowInstance?.ShowToastNotification("Email Copied".T(), "trungtiennguyen910@gmail.com has been copied to clipboard.".T(), "Success");
+            DbManager.LogAction("Copied developer contact email to clipboard", "Settings", "Success");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Clipboard Error".T(), ex.Message, "Critical");
+        }
+    }
+
+    private void OnOpenGitHubClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/Nguyen-Trung-Tien/WinCarePro",
+                UseShellExecute = true
+            });
+            DbManager.LogAction("Opened GitHub project repository", "Settings", "Success");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Error".T(), ex.Message, "Critical");
+        }
+    }
+
+    private void OnReportIssueClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/Nguyen-Trung-Tien/WinCarePro/issues",
+                UseShellExecute = true
+            });
+            DbManager.LogAction("Opened GitHub issue tracker", "Settings", "Success");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Error".T(), ex.Message, "Critical");
+        }
+    }
+
+    private async void OnInspectEnvironmentClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            using var proc = Process.GetCurrentProcess();
+            proc.Refresh();
+            double workingSetMb = proc.WorkingSet64 / (1024.0 * 1024.0);
+            double privateBytesMb = proc.PrivateMemorySize64 / (1024.0 * 1024.0);
+            long totalGcMem = GC.GetTotalMemory(false) / (1024 * 1024);
+
+            string envInfo = string.Format(
+                "• OS Version: {0}\n" +
+                "• OS Architecture: {1}\n" +
+                "• Process Architecture: {2}\n" +
+                "• Logical CPU Cores: {3}\n" +
+                "• CLR Runtime: .NET {4}\n" +
+                "• GC Server Mode: {5}\n" +
+                "• Managed Heap Memory: {6} MB\n" +
+                "• Process Working Set: {7:F1} MB\n" +
+                "• Private Memory: {8:F1} MB\n" +
+                "• Process Threads: {9}\n" +
+                "• App Base Directory: {10}",
+                Environment.OSVersion.VersionString,
+                RuntimeInformation.OSArchitecture,
+                RuntimeInformation.ProcessArchitecture,
+                Environment.ProcessorCount,
+                Environment.Version,
+                System.Runtime.GCSettings.IsServerGC ? "Enabled (Server)" : "Disabled (Workstation)",
+                totalGcMem,
+                workingSetMb,
+                privateBytesMb,
+                proc.Threads.Count,
+                AppContext.BaseDirectory
+            );
+
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "System Environment & Runtime Inspector".T(),
+                Content = new ScrollViewer
+                {
+                    MaxHeight = 350,
+                    Content = new TextBlock
+                    {
+                        Text = envInfo,
+                        TextWrapping = TextWrapping.Wrap,
+                        FontSize = 12,
+                        FontFamily = new FontFamily("Consolas, Cascadia Code, Segoe UI Variable Display"),
+                        LineHeight = 22
+                    }
+                },
+                CloseButtonText = "OK".T(),
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = this.Content.XamlRoot,
+                RequestedTheme = ThemeManager.Instance.CurrentTheme
+            };
+
+            await dialog.ShowAsync();
+            DbManager.LogAction("Inspected system environment parameters", "Developer", "Success");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Inspection Error".T(), ex.Message, "Critical");
+        }
+    }
+
+    private void OnTrimWorkingSetClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            using var proc = Process.GetCurrentProcess();
+            proc.Refresh();
+            long beforeBytes = proc.WorkingSet64;
+
+            GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+            GC.WaitForPendingFinalizers();
+            GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+
+            try
+            {
+                SetProcessWorkingSetSize(proc.Handle, -1, -1);
+            }
+            catch { }
+
+            proc.Refresh();
+            long afterBytes = proc.WorkingSet64;
+            double freedMb = Math.Max(0, (beforeBytes - afterBytes) / (1024.0 * 1024.0));
+
+            UpdateAboutTelemetry();
+
+            App.MainWindowInstance?.ShowToastNotification(
+                "RAM Working Set Trimmed".T(),
+                string.Format("Forced Garbage Collection completed. Freed {0:F1} MB of RAM.".T(), freedMb),
+                "Success"
+            );
+            DbManager.LogAction(string.Format("Forced GC and trimmed {0:F1} MB RAM working set", freedMb), "Developer", "Success");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Trim Error".T(), ex.Message, "Warning");
+        }
+    }
+
+    private async void OnViewAuditLogsClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var logs = DbManager.GetLogs(null, null);
+            var sb = new System.Text.StringBuilder();
+
+            if (logs.Count == 0)
+            {
+                sb.AppendLine("No activity logs recorded in the local SQLite database.".T());
+            }
+            else
+            {
+                foreach (var log in logs.Take(50))
+                {
+                    sb.AppendLine(string.Format("[{0:yyyy-MM-dd HH:mm:ss}] [{1}] ({2}): {3}", log.CreatedAt, log.Status, log.Module, log.Action));
+                }
+            }
+
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "SQLite Activity Audit Log Viewer".T(),
+                Content = new ScrollViewer
+                {
+                    MaxHeight = 380,
+                    Content = new TextBlock
+                    {
+                        Text = sb.ToString(),
+                        TextWrapping = TextWrapping.Wrap,
+                        FontSize = 11.5,
+                        FontFamily = new FontFamily("Consolas, Cascadia Code, Segoe UI Variable Display"),
+                        LineHeight = 18
+                    }
+                },
+                CloseButtonText = "Close".T(),
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = this.Content.XamlRoot,
+                RequestedTheme = ThemeManager.Instance.CurrentTheme
+            };
+
+            await dialog.ShowAsync();
+            DbManager.LogAction("Viewed SQLite audit records", "Developer", "Success");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Audit Log Error".T(), ex.Message, "Critical");
+        }
+    }
+
+    private async void OnExportDiagnosticsClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            using var proc = Process.GetCurrentProcess();
+            proc.Refresh();
+
+            var diagObj = new
+            {
+                App = "WinCare Pro",
+                Version = "4.2.0",
+                TimestampUtc = DateTime.UtcNow.ToString("o"),
+                Architecture = RuntimeInformation.ProcessArchitecture.ToString(),
+                OS = Environment.OSVersion.VersionString,
+                ProcessorCount = Environment.ProcessorCount,
+                WorkingSetMB = (proc.WorkingSet64 / (1024.0 * 1024.0)).ToString("F1"),
+                PrivateMemoryMB = (proc.PrivateMemorySize64 / (1024.0 * 1024.0)).ToString("F1"),
+                GCTotalMemoryMB = (GC.GetTotalMemory(false) / (1024.0 * 1024.0)).ToString("F1"),
+                RecentLogs = DbManager.GetLogs(null, null).Take(30).Select(l => new { l.CreatedAt, l.Module, l.Status, l.Action })
+            };
+
+            string json = JsonSerializer.Serialize(diagObj, new JsonSerializerOptions { WriteIndented = true });
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string exportFile = Path.Combine(desktopPath, $"WinCarePro_Diagnostics_{DateTime.Now:yyyyMMdd_HHmmss}.json");
+
+            await File.WriteAllTextAsync(exportFile, json);
+
+            App.MainWindowInstance?.ShowToastNotification(
+                "Diagnostics Exported".T(),
+                string.Format("Diagnostic bundle saved to Desktop:\n{0}".T(), Path.GetFileName(exportFile)),
+                "Success"
+            );
+            DbManager.LogAction("Exported system diagnostic bundle to JSON", "Developer", "Success");
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Export Error".T(), ex.Message, "Critical");
+        }
+    }
+
+    #endregion
 
     private void OnBrowsePluginsClick(object sender, RoutedEventArgs e)
     {

@@ -352,14 +352,18 @@
                             <TextBlock Text="Notification Center Policy" FontSize="13.5" FontWeight="Bold" />
                             <components:LoadingToggleSwitch x:Name="ShowNotificationsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Show dynamic in-app Toast Notifications" />
                             
-                            <StackPanel Spacing="8">
-                                <Grid Width="320" HorizontalAlignment="Left">
-                                    <TextBlock Text="PC Health Rating Severity Trigger Limit" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                    <Border Background="{ThemeResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" HorizontalAlignment="Right">
+                            <StackPanel Spacing="8" MaxWidth="460" HorizontalAlignment="Left">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="PC Health Rating Severity Trigger Limit" TextWrapping="Wrap" FontSize="12.5" VerticalAlignment="Center" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <Border Grid.Column="1" Background="{ThemeResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
                                         <TextBlock x:Name="NotificationThresholdLabel" Text="10%" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                                     </Border>
                                 </Grid>
-                                <Slider x:Name="NotificationThresholdSlider" ValueChanged="OnNotificationThresholdSliderChanged" Minimum="5" Maximum="30" Value="10" StepFrequency="1" Width="320" HorizontalAlignment="Left"/>
+                                <Slider x:Name="NotificationThresholdSlider" ValueChanged="OnNotificationThresholdSliderChanged" Minimum="5" Maximum="30" Value="10" StepFrequency="1" HorizontalAlignment="Stretch"/>
                             </StackPanel>
 
                             <components:LoadingToggleSwitch x:Name="NotifyOnLowHealthToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Notify when system overall health score drops below threshold" />
@@ -921,27 +925,27 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Pledge 1 -->
-                                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="2">
-                                    <TextBlock Text="🔒 100% On-Device Processing" FontWeight="SemiBold" FontSize="12"/>
-                                    <TextBlock Text="All diagnostics, system scans, and cleanups execute locally with zero cloud telemetry transmission." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
+                                    <TextBlock Text="🔒 100% On-Device Processing" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="All diagnostics, system scans, and cleanups execute locally with zero cloud telemetry transmission." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                 </StackPanel>
 
                                 <!-- Pledge 2 -->
-                                <StackPanel Grid.Row="0" Grid.Column="1" Spacing="2">
-                                    <TextBlock Text="💾 Local Encrypted Storage" FontWeight="SemiBold" FontSize="12"/>
-                                    <TextBlock Text="Activity logs, configurations, and rollback snapshots reside in high-speed local database files." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
+                                    <TextBlock Text="💾 Local Encrypted Storage" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Activity logs, configurations, and rollback snapshots reside in high-speed local database files." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                 </StackPanel>
 
                                 <!-- Pledge 3 -->
-                                <StackPanel Grid.Row="1" Grid.Column="0" Spacing="2">
-                                    <TextBlock Text="🛡️ Cryptographic Payload Audit" FontWeight="SemiBold" FontSize="12"/>
-                                    <TextBlock Text="Update payloads are audited for valid PE headers, file integrity, and digital certificate validation." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
+                                    <TextBlock Text="🛡️ Cryptographic Payload Audit" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Update payloads are audited for valid PE headers, file integrity, and digital certificate validation." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                 </StackPanel>
 
                                 <!-- Pledge 4 -->
-                                <StackPanel Grid.Row="1" Grid.Column="1" Spacing="2">
-                                    <TextBlock Text="⏪ Transactional Safety Rollbacks" FontWeight="SemiBold" FontSize="12"/>
-                                    <TextBlock Text="Integrates Windows System Restore Points and registry backup snapshots prior to modifications." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
+                                    <TextBlock Text="⏪ Transactional Safety Rollbacks" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Integrates Windows System Restore Points and registry backup snapshots prior to modifications." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>

@@ -225,11 +225,12 @@ namespace WinCarePro.Modules.GamingTurbo
         {
             try
             {
-                if (!string.IsNullOrEmpty(_originalPowerPlanGuid))
-                {
-                    await ProcessRunner.RunAsync("powercfg.exe", $"/setactive {_originalPowerPlanGuid}", TimeSpan.FromSeconds(5));
-                    _originalPowerPlanGuid = null;
-                }
+                string targetGuid = !string.IsNullOrEmpty(_originalPowerPlanGuid)
+                    ? _originalPowerPlanGuid
+                    : "381b4222-f694-41f0-9685-ff5bb260df2e"; // Windows Default Balanced Scheme GUID
+
+                await ProcessRunner.RunAsync("powercfg.exe", $"/setactive {targetGuid}", TimeSpan.FromSeconds(5));
+                _originalPowerPlanGuid = null;
             }
             catch { }
         }

@@ -633,14 +633,14 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     {
         if (SelectedApp == null) return;
         string path = SelectedApp.InstallLocation;
-        if (string.IsNullOrEmpty(path) || !System.IO.Directory.Exists(path)) return;
+        if (string.IsNullOrEmpty(path) || !WinCarePro.Infrastructure.Security.InputSanitizer.IsValidLocalPath(path)) return;
         
         try
         {
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
                 FileName = "explorer.exe",
-                Arguments = $"\"{path}\"",
+                Arguments = WinCarePro.Infrastructure.Security.InputSanitizer.EscapeCommandLineArgument(path),
                 UseShellExecute = true
             });
         }
@@ -684,11 +684,14 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         {
             string query = Uri.EscapeDataString($"{SelectedApp.DisplayName} {SelectedApp.Publisher}");
             string url = $"https://www.google.com/search?q={query}";
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri(url))
             {
-                FileName = url,
-                UseShellExecute = true
-            });
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
         }
         catch (Exception ex)
         {

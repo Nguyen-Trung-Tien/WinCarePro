@@ -12,6 +12,12 @@ namespace WinCarePro.Engines;
 
 public class SoftwareUpdaterEngine
 {
+    private static readonly System.Net.Http.HttpClient _httpClient = new()
+    {
+        Timeout = TimeSpan.FromMinutes(10),
+        DefaultRequestHeaders = { { "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) WinCarePro/4.2" } }
+    };
+
     public event Action<string>? OutputReceived;
     public event Action<string, int, string>? ItemProgressChanged; // (appId, percent, statusText)
     private void Log(string msg) => OutputReceived?.Invoke($"[{DateTime.Now:HH:mm:ss}] {msg}");
@@ -618,10 +624,8 @@ public class SoftwareUpdaterEngine
             string filePath = Path.Combine(tempDir, fileName);
 
             Log($"Downloading installer from: {app.DownloadUrl}");
-            using (var httpClient = new System.Net.Http.HttpClient())
+            using (var response = await _httpClient.GetAsync(app.DownloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken))
             {
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
-                using var response = await httpClient.GetAsync(app.DownloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken);
                 response.EnsureSuccessStatusCode();
 
                 long? totalBytes = response.Content.Headers.ContentLength;

@@ -136,6 +136,8 @@ namespace WinCarePro.Modules.DesktopWidget
         private long _lastBytesReceived = 0;
         private long _lastBytesSent = 0;
         private DateTime _lastNetworkCheckTime = DateTime.Now;
+        private int _cachedProcessCount = 0;
+        private int _processCountTickCounter = 0;
 
         private static readonly SolidColorBrush GreenBrush = new(Windows.UI.Color.FromArgb(255, 16, 185, 129));
         private static readonly SolidColorBrush AmberBrush = new(Windows.UI.Color.FromArgb(255, 245, 158, 11));
@@ -192,17 +194,6 @@ namespace WinCarePro.Modules.DesktopWidget
                 }
             }
             catch { }
-
-            this.Closed += (s, e) =>
-            {
-                if (hwnd != IntPtr.Zero && _subclassProc != null)
-                {
-                    RemoveWindowSubclass(hwnd, _subclassProc, 101);
-                }
-                ThemeManager.Instance.UnregisterWindow(this);
-                TranslationManager.Instance.UnregisterWindow(this);
-                _currentInstance = null;
-            };
 
             // Register with ThemeManager and TranslationManager for centralized synchronization
             ThemeManager.Instance.RegisterWindow(this);
@@ -263,15 +254,26 @@ namespace WinCarePro.Modules.DesktopWidget
                 if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE74C";
             };
 
-            // Window closed cleanup & state saving
+            // Window closed: unified resource cleanup, unhooking and state saving
             this.Closed += (s, e) =>
             {
                 _timer.Stop();
                 _timer.Tick -= Timer_Tick;
                 _badgeResetTimer.Stop();
+
+                if (hwnd != IntPtr.Zero && _subclassProc != null)
+                {
+                    RemoveWindowSubclass(hwnd, _subclassProc, 101);
+                }
+
                 ThemeManager.Instance.ThemeChanged -= _themeHandler;
+                ThemeManager.Instance.UnregisterWindow(this);
+
                 TranslationManager.Instance.LanguageChanged -= _langHandler;
+                TranslationManager.Instance.UnregisterWindow(this);
+
                 SaveStateConfig();
+                _currentInstance = null;
             };
 
             UpdateStats();
@@ -500,8 +502,19 @@ namespace WinCarePro.Modules.DesktopWidget
                 double cpuVal = GetCpuUsage();
                 CpuText.Text = $"{cpuVal:F0}%";
                 CpuProgressBar.Value = cpuVal;
-                int procCount = Process.GetProcesses().Length;
-                CpuDetailText.Text = $"{procCount} Processes";
+
+                if (_cachedProcessCount == 0 || ++_processCountTickCounter >= 4)
+                {
+                    _processCountTickCounter = 0;
+                    try
+                    {
+                        var procs = Process.GetProcesses();
+                        _cachedProcessCount = procs.Length;
+                        foreach (var p in procs) { try { p.Dispose(); } catch { } }
+                    }
+                    catch { }
+                }
+                CpuDetailText.Text = $"{_cachedProcessCount} Processes";
 
                 var cpuBrush = GetHealthBrush(cpuVal);
                 CpuText.Foreground = cpuBrush;

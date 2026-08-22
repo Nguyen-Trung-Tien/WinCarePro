@@ -12,6 +12,12 @@ namespace WinCarePro;
 
 public sealed partial class MainWindow : Window
 {
+    private static readonly System.Net.Http.HttpClient _updateHttpClient = new()
+    {
+        Timeout = TimeSpan.FromMinutes(10),
+        DefaultRequestHeaders = { { "User-Agent", "Mozilla/5.0 (compatible; WinCareProUpdater/1.0)" } }
+    };
+
     private string? _downloadedSetupPath = null;
     public double CurrentTransparencyLevel { get; private set; } = 10.0;
 
@@ -64,9 +70,6 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            using var client = new System.Net.Http.HttpClient();
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
-            
             string response;
 #if DEBUG
             // Local update.json ONLY allowed in DEBUG builds for development testing
@@ -79,8 +82,10 @@ public sealed partial class MainWindow : Window
 #endif
             {
                 string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
-                client.Timeout = TimeSpan.FromSeconds(10);
-                response = await client.GetStringAsync(jsonUrl);
+                using var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(10));
+                using var resp = await _updateHttpClient.GetAsync(jsonUrl, cts.Token);
+                resp.EnsureSuccessStatusCode();
+                response = await resp.Content.ReadAsStringAsync(cts.Token);
             }
             
             bool betaEnabled = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.BetaUpdates;
@@ -142,10 +147,7 @@ public sealed partial class MainWindow : Window
 
         try
         {
-            using var client = new System.Net.Http.HttpClient();
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; WinCareProUpdater/1.0)");
-            
-            using var response = await client.GetAsync(downloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead);
+            using var response = await _updateHttpClient.GetAsync(downloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
 
             string tempFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");

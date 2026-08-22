@@ -239,6 +239,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
     {
         _isDisposed = true;
         CancelOperations();
+        try { _operationCts?.Dispose(); } catch { }
+        _operationCts = null;
         _searchDebounceTimer?.Stop();
         _updaterEngine.OutputReceived -= OnOutputReceived;
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
@@ -251,7 +253,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
     {
         if (_operationCts != null && !_operationCts.IsCancellationRequested)
         {
-            _operationCts.Cancel();
+            try { _operationCts.Cancel(); } catch { }
             ProgressMessage = "Operation cancelled by user.".T();
         }
     }
@@ -260,6 +262,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
     {
         if (IsBusy) return;
         IsBusy = true;
+        try { _operationCts?.Dispose(); } catch { }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
 
@@ -391,6 +394,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         if (selected.Count == 0 || IsBusy) return;
 
         IsBusy = true;
+        try { _operationCts?.Dispose(); } catch { }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
         ProgressPercent = 0;
@@ -445,6 +449,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         if (IsBusy || app == null || app.UpdateStatus == SoftwareUpdateInfo.StatusCompleted || app.UpdateStatus == SoftwareUpdateInfo.StatusUpdating) return;
 
         IsBusy = true;
+        try { _operationCts?.Dispose(); } catch { }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
 
@@ -487,6 +492,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         if (pending.Count == 0) return;
 
         IsBusy = true;
+        try { _operationCts?.Dispose(); } catch { }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
         ProgressPercent = 0;

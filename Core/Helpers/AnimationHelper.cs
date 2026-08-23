@@ -330,12 +330,6 @@ public static class AnimationHelper
         {
             var state = GetOrCreateState(element);
             state.IsPointerOver = true;
-
-            // Lift card ZIndex on hover to prevent layout lines or neighbor overlays from clipping it
-            Canvas.SetZIndex(element, 10);
-
-            double scale = GetHoverScale(element);
-            AnimateScale(element, (float)scale, 250);
         }
     }
 
@@ -348,8 +342,7 @@ public static class AnimationHelper
 
             if (!state.IsPressed)
             {
-                Canvas.SetZIndex(element, 0);
-                AnimateScale(element, 1.0f, 250);
+                AnimateScale(element, 1.0f, 150);
             }
         }
     }

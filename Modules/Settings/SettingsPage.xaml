@@ -517,7 +517,8 @@
                     </StackPanel>
                     
                     <!-- 1. Live Update Data Progress & Status Card -->
-                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20">
+                    <Border Style="{StaticResource Holographic3DCardStyle}" Padding="20"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="14">
                         <Grid>
                             <!-- Ambient Pulsing Glow Reactor -->
                             <Ellipse x:Name="UpdateCardGlow" Fill="{StaticResource PrimaryAccentGradient}" Opacity="0.18" HorizontalAlignment="Right" VerticalAlignment="Top" Width="260" Height="160" Margin="0,-40,-40,0" IsHitTestVisible="False"/>
@@ -763,7 +764,8 @@
                     </StackPanel>
                     
                     <!-- 1. Hero Identity & Live Telemetry Card -->
-                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="24">
+                    <Border Style="{StaticResource Holographic3DCardStyle}" Padding="24"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="14">
                         <Grid>
                             <Ellipse Fill="{StaticResource PrimaryAccentGradient}" Opacity="0.16" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" Height="180" Margin="0,-40,-40,0" IsHitTestVisible="False"/>
 
@@ -833,7 +835,8 @@
                     </Border>
 
                     <!-- 2. Lead Systems Architect & Developer Portfolio Card -->
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="24">
+                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="24"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="10">
                         <StackPanel Spacing="18">
                             <!-- Developer Header with Avatar & Title -->
                             <Grid ColumnSpacing="16">

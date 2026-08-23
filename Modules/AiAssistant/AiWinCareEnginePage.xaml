@@ -108,7 +108,7 @@
             <StackPanel Spacing="16">
                 
                 <!-- 1. AI Overall Score & Neural Overview Hero Card -->
-                <Border Style="{StaticResource AuraGlassCardStyle}" Padding="22"
+                <Border x:Name="AiHeroCard" Style="{StaticResource Holographic3DCardStyle}" Padding="22"
                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="14">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -411,7 +411,8 @@
                 <ListView x:Name="RecommendationsListView" SelectionMode="None">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Border Style="{StaticResource GlassmorphismCardStyle}" Margin="0,0,0,10" Padding="16">
+                            <Border Style="{StaticResource Tilt3DCardStyle}" Margin="0,0,0,10" Padding="16"
+                                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -419,7 +420,8 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Border Grid.Column="0" Width="44" Height="44" CornerRadius="10" Background="{ThemeResource AppStatChipBackground}" Margin="0,0,16,0" VerticalAlignment="Center">
+                                    <!-- Category Icon with 3D Elevation -->
+                                    <Border Grid.Column="0" Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1.2" Margin="0,0,16,0" VerticalAlignment="Center">
                                         <FontIcon Glyph="{Binding CategoryIconGlyph}" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 

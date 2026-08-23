@@ -71,6 +71,13 @@ public sealed partial class SystemOptimizerPage : Page
     {
         var btn = SmartTuneBtn ?? (sender as Button);
         if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
+
+        try
+        {
+            if (TweaksCard != null) WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(TweaksCard, Windows.UI.Color.FromArgb(220, 139, 92, 246));
+        }
+        catch { }
+
         int applied = 0;
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, null, null, null,
@@ -80,6 +87,22 @@ public sealed partial class SystemOptimizerPage : Page
                 applied = await ViewModel.ApplySmartAutoTuneAsync();
             },
             minDurationMs: 800);
+
+        try
+        {
+            if (TweaksCard != null)
+            {
+                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
+                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+            }
+            var statCards = new System.Collections.Generic.List<FrameworkElement>();
+            if (StatCard0 != null) statCards.Add(StatCard0);
+            if (StatCard1 != null) statCards.Add(StatCard1);
+            if (StatCard2 != null) statCards.Add(StatCard2);
+            if (StatCard3 != null) statCards.Add(StatCard3);
+            WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DCascadeWave(statCards, 60);
+        }
+        catch { }
 
         if (App.MainWindowInstance is MainWindow mw)
         {
@@ -92,6 +115,13 @@ public sealed partial class SystemOptimizerPage : Page
     {
         var btn = (sender as Button) ?? (sender as FrameworkElement) ?? SmartTuneBtn;
         if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
+
+        try
+        {
+            if (TweaksCard != null) WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(TweaksCard, Windows.UI.Color.FromArgb(220, 245, 158, 11));
+        }
+        catch { }
+
         int applied = 0;
         if (sender is Button b)
         {
@@ -109,6 +139,17 @@ public sealed partial class SystemOptimizerPage : Page
             applied = await ViewModel.ApplyGamingProfileAsync();
         }
 
+        try
+        {
+            if (TweaksCard != null)
+            {
+                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
+                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 245, 158, 11));
+            }
+            if (StatCard3 != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(StatCard3, Windows.UI.Color.FromArgb(255, 245, 158, 11));
+        }
+        catch { }
+
         if (App.MainWindowInstance is MainWindow mw)
         {
             mw.ShowToastFromDb("Gaming Profile Active".T(), 
@@ -120,6 +161,13 @@ public sealed partial class SystemOptimizerPage : Page
     {
         var btn = (sender as Button) ?? (sender as FrameworkElement) ?? SmartTuneBtn;
         if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
+
+        try
+        {
+            if (TweaksCard != null) WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(TweaksCard, Windows.UI.Color.FromArgb(220, 16, 185, 129));
+        }
+        catch { }
+
         int applied = 0;
         if (sender is Button b)
         {
@@ -137,6 +185,16 @@ public sealed partial class SystemOptimizerPage : Page
             applied = await ViewModel.ApplyPrivacyProfileAsync();
         }
 
+        try
+        {
+            if (TweaksCard != null)
+            {
+                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
+                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+            }
+        }
+        catch { }
+
         if (App.MainWindowInstance is MainWindow mw)
         {
             mw.ShowToastFromDb("Privacy Shield Active".T(), 
@@ -148,6 +206,13 @@ public sealed partial class SystemOptimizerPage : Page
     {
         var btn = ApplyTweaksBtn ?? (sender as Button);
         if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
+
+        try
+        {
+            if (TweaksCard != null) WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(TweaksCard, Windows.UI.Color.FromArgb(220, 139, 92, 246));
+        }
+        catch { }
+
         int applied = 0;
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, ApplyTweaksRing, ApplyTweaksText, ApplyTweaksIcon,
@@ -157,6 +222,17 @@ public sealed partial class SystemOptimizerPage : Page
                 applied = await ViewModel.ApplySelectedAsync();
             },
             minDurationMs: 1000);
+
+        try
+        {
+            if (TweaksCard != null)
+            {
+                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
+                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+            }
+            if (StatCard1 != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(StatCard1);
+        }
+        catch { }
 
         string msg = applied > 0 
             ? string.Format("Successfully applied {0} Windows system tweaks and purged memory cache for maximum responsiveness.".T(), applied)

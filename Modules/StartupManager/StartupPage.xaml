@@ -190,43 +190,49 @@
                             </ListView.HeaderTemplate>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:StartupEntry">
-                                    <Grid Padding="8,8" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="3.2*" />
-                                            <ColumnDefinition Width="{Binding ElementName=PageRoot, Path=PublisherColWidth}" />
-                                            <ColumnDefinition Width="{Binding ElementName=PageRoot, Path=ImpactColWidth}" />
-                                            <ColumnDefinition Width="1.2*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <!-- Application details -->
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Grid Width="30" Height="30" Margin="0,0,10,0">
-                                                <Image Source="{x:Bind IconImageSource, Mode=OneWay}" Width="30" Height="30" Stretch="Uniform" Visibility="{x:Bind HasIcon, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"/>
-                                                <FontIcon Glyph="&#xE71D;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}" Visibility="{x:Bind HasIcon, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"/>
-                                            </Grid>
-                                            <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5"/>
-                                                <TextBlock Text="{x:Bind Path}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" MaxWidth="320" ToolTipService.ToolTip="{x:Bind Path}" />
+                                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="10,8" Margin="0,0,0,4"
+                                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="3.2*" />
+                                                <ColumnDefinition Width="{Binding ElementName=PageRoot, Path=PublisherColWidth}" />
+                                                <ColumnDefinition Width="{Binding ElementName=PageRoot, Path=ImpactColWidth}" />
+                                                <ColumnDefinition Width="1.2*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <!-- Application details -->
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <!-- App Icon with 3D Elevation -->
+                                                <Border Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                                                    <Grid>
+                                                        <Image Source="{x:Bind IconImageSource, Mode=OneWay}" Width="24" Height="24" Stretch="Uniform" Visibility="{x:Bind HasIcon, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        <FontIcon Glyph="&#xE71D;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}" Visibility="{x:Bind HasIcon, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Grid>
+                                                </Border>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5"/>
+                                                    <TextBlock Text="{x:Bind Path}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" MaxWidth="320" ToolTipService.ToolTip="{x:Bind Path}" />
+                                                </StackPanel>
                                             </StackPanel>
-                                        </StackPanel>
 
-                                        <!-- Publisher -->
-                                        <TextBlock Grid.Column="1" Text="{x:Bind Publisher}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}"/>
+                                            <!-- Publisher -->
+                                            <TextBlock Grid.Column="1" Text="{x:Bind Publisher}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}"/>
 
-                                        <!-- Impact Badge -->
-                                        <Border Grid.Column="2" Background="{x:Bind ImpactBgBrush, Mode=OneWay}" CornerRadius="6" Padding="8,4" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}">
-                                            <TextBlock Text="{x:Bind StartupImpact}" FontSize="10.5" FontWeight="Bold" Foreground="{x:Bind ImpactFgBrush, Mode=OneWay}"/>
-                                        </Border>
+                                            <!-- Impact Badge -->
+                                            <Border Grid.Column="2" Background="{x:Bind ImpactBgBrush, Mode=OneWay}" CornerRadius="6" Padding="8,4" VerticalAlignment="Center" HorizontalAlignment="Left" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}">
+                                                <TextBlock Text="{x:Bind StartupImpact}" FontSize="10.5" FontWeight="Bold" Foreground="{x:Bind ImpactFgBrush, Mode=OneWay}"/>
+                                            </Border>
 
-                                        <!-- State Switch -->
-                                        <ToggleSwitch Grid.Column="3" IsOn="{x:Bind IsEnabled, Mode=OneWay}" Toggled="OnStartupToggled" CornerRadius="4" MinWidth="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,16,0"/>
+                                            <!-- State Switch -->
+                                            <ToggleSwitch Grid.Column="3" IsOn="{x:Bind IsEnabled, Mode=OneWay}" Toggled="OnStartupToggled" CornerRadius="4" MinWidth="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,16,0"/>
 
-                                        <!-- Action (Delete) -->
-                                        <Button Grid.Column="4" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="32" Height="32" Click="OnDeleteStartupClick" VerticalAlignment="Center" ToolTipService.ToolTip="Permanently delete from startup">
-                                            <FontIcon Glyph="&#xE74D;" FontSize="13.5" Foreground="#FFEF4444" />
-                                        </Button>
-                                    </Grid>
+                                            <!-- Action (Delete) -->
+                                            <Button Grid.Column="4" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="32" Height="32" Click="OnDeleteStartupClick" VerticalAlignment="Center" ToolTipService.ToolTip="Permanently delete from startup">
+                                                <FontIcon Glyph="&#xE74D;" FontSize="13.5" Foreground="#FFEF4444" />
+                                            </Button>
+                                        </Grid>
+                                    </Border>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
@@ -248,7 +254,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Card 1: Services Manager (services.msc) -->
-                                <Border Grid.Column="0" Style="{StaticResource NeonGlowBorderStyle}" Padding="24">
+                                <Border Grid.Column="0" Style="{StaticResource Tilt3DCardStyle}" Padding="24"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="12">
                                     <Grid RowSpacing="16">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
@@ -257,8 +264,8 @@
                                         </Grid.RowDefinitions>
                                         
                                         <StackPanel Orientation="Horizontal" Spacing="14">
-                                            <Border Width="48" Height="48" CornerRadius="12" Background="#203B82F6">
-                                                <FontIcon Glyph="&#xE713;" FontSize="22" Foreground="#FF3B82F6"/>
+                                            <Border Width="48" Height="48" CornerRadius="12" Background="#203B82F6" BorderBrush="#353B82F6" BorderThickness="1.2">
+                                                <FontIcon Glyph="&#xE713;" FontSize="22" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel VerticalAlignment="Center" Spacing="2">
                                                 <TextBlock Text="Services Manager" FontWeight="Bold" FontSize="16"/>
@@ -273,7 +280,8 @@
                                 </Border>
 
                                 <!-- Card 2: Task Manager Services View -->
-                                <Border Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="24">
+                                <Border Grid.Column="1" Style="{StaticResource Tilt3DCardStyle}" Padding="24"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="12">
                                     <Grid RowSpacing="16">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
@@ -282,8 +290,8 @@
                                         </Grid.RowDefinitions>
                                         
                                         <StackPanel Orientation="Horizontal" Spacing="14">
-                                            <Border Width="48" Height="48" CornerRadius="12" Background="#20F59E0B">
-                                                <FontIcon Glyph="&#xE9D9;" FontSize="22" Foreground="#FFF59E0B"/>
+                                            <Border Width="48" Height="48" CornerRadius="12" Background="#20F59E0B" BorderBrush="#35F59E0B" BorderThickness="1.2">
+                                                <FontIcon Glyph="&#xE9D9;" FontSize="22" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel VerticalAlignment="Center" Spacing="2">
                                                 <TextBlock Text="Task Manager Services" FontWeight="Bold" FontSize="16"/>

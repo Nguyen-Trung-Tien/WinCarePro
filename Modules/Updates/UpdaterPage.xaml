@@ -404,7 +404,8 @@
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:SoftwareUpdateInfo">
-                            <Border Background="{x:Bind CardBackgroundBrush, Mode=OneWay}" BorderBrush="{x:Bind CardBorderBrush, Mode=OneWay}" BorderThickness="1.5" CornerRadius="10" Padding="16,12" Margin="0,3">
+                            <Border Background="{x:Bind CardBackgroundBrush, Mode=OneWay}" BorderBrush="{x:Bind CardBorderBrush, Mode=OneWay}" BorderThickness="1.5" CornerRadius="10" Padding="16,12" Margin="0,3"
+                                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />

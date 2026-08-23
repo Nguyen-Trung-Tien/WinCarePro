@@ -190,8 +190,9 @@
                         <ListView ItemsSource="{x:Bind ViewModel.FilteredItems, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:ContextMenuItem">
-                                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="12,9" Margin="0,0,0,4">
-                                        <Grid ColumnSpacing="12">
+                                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="12,9" Margin="0,0,0,4"
+                                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
+                                        <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
@@ -199,19 +200,19 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
-                                            <!-- Type Icon Badge -->
-                                            <Border Grid.Column="0" Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" VerticalAlignment="Center">
+                                            <!-- Type Icon Badge with 3D Elevation -->
+                                            <Border Grid.Column="0" Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1.2" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xE7C5;" FontSize="14" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                             </Border>
 
                                             <!-- Details -->
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,10,0">
                                                 <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
                                                 <TextBlock Text="{x:Bind RegistryPath}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
                                             </StackPanel>
 
                                             <!-- Type Tag Badge -->
-                                            <Border Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                                            <Border Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" VerticalAlignment="Center" Margin="0,0,10,0">
                                                 <TextBlock Text="{x:Bind Type}" FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                             </Border>
 
@@ -234,8 +235,9 @@
                 </Grid>
             </Border>
 
-            <!-- Right: Details & Guidelines Panel -->
-            <Border x:Name="RightPanel" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+            <!-- Right: Details & Guidelines Panel with 3D Depth -->
+            <Border x:Name="RightPanel" Grid.Column="1" Style="{StaticResource SpatialDepthCardStyle}" Padding="16,14"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="10">
                 <StackPanel Spacing="14">
                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" />

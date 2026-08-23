@@ -62,20 +62,20 @@ public static class Animation3DHelper
             "MaxTiltAngle",
             typeof(double),
             typeof(Animation3DHelper),
-            new PropertyMetadata(7.0));
+            new PropertyMetadata(0.0));
 
     public static double GetMaxTiltAngle(DependencyObject obj) => (double)obj.GetValue(MaxTiltAngleProperty);
     public static void SetMaxTiltAngle(DependencyObject obj, double value) => obj.SetValue(MaxTiltAngleProperty, value);
 
     // =========================================================================
-    // 3. Attached Property: DepthZ (Spatial elevation on hover)
+    // 3. Attached Property: DepthZ (Spatial elevation)
     // =========================================================================
     public static readonly DependencyProperty DepthZProperty =
         DependencyProperty.RegisterAttached(
             "DepthZ",
             typeof(double),
             typeof(Animation3DHelper),
-            new PropertyMetadata(16.0));
+            new PropertyMetadata(0.0));
 
     public static double GetDepthZ(DependencyObject obj) => (double)obj.GetValue(DepthZProperty);
     public static void SetDepthZ(DependencyObject obj, double value) => obj.SetValue(DepthZProperty, value);
@@ -88,7 +88,7 @@ public static class Animation3DHelper
             "HoverScale",
             typeof(double),
             typeof(Animation3DHelper),
-            new PropertyMetadata(1.025));
+            new PropertyMetadata(1.0));
 
     public static double GetHoverScale(DependencyObject obj) => (double)obj.GetValue(HoverScaleProperty);
     public static void SetHoverScale(DependencyObject obj, double value) => obj.SetValue(HoverScaleProperty, value);
@@ -136,7 +136,7 @@ public static class Animation3DHelper
             }
             else
             {
-                Reset3DTransform(element, 200);
+                Reset3DTransform(element, 0);
             }
         }
     }
@@ -160,33 +160,12 @@ public static class Animation3DHelper
 
     private static void Element_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        if (sender is FrameworkElement element)
-        {
-            var state = GetOrCreateState(element);
-            state.IsPointerOver = true;
-            Canvas.SetZIndex(element, 20);
-            UpdateCenterPoint(element);
-
-            var pt = e.GetCurrentPoint(element).Position;
-            Apply3DTilt(element, (float)pt.X, (float)pt.Y, 200);
-        }
+        // Hover protrusion disabled per user preference
     }
 
     private static void Element_PointerMoved(object sender, PointerRoutedEventArgs e)
     {
-        if (sender is FrameworkElement element)
-        {
-            var state = GetOrCreateState(element);
-            if (!state.IsPointerOver) return;
-
-            // Throttle to 60/120Hz smooth movement
-            var now = DateTime.UtcNow;
-            if ((now - state.LastMoveTime).TotalMilliseconds < 12) return;
-            state.LastMoveTime = now;
-
-            var pt = e.GetCurrentPoint(element).Position;
-            Apply3DTilt(element, (float)pt.X, (float)pt.Y, 120);
-        }
+        // Hover protrusion disabled per user preference
     }
 
     private static void Element_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -196,9 +175,7 @@ public static class Animation3DHelper
             var state = GetOrCreateState(element);
             state.IsPointerOver = false;
             state.IsPressed = false;
-
-            Canvas.SetZIndex(element, 0);
-            Reset3DTransform(element, 350);
+            Reset3DTransform(element, 200);
         }
     }
 
@@ -220,17 +197,7 @@ public static class Animation3DHelper
         {
             var state = GetOrCreateState(element);
             state.IsPressed = false;
-
-            if (state.IsPointerOver)
-            {
-                var pt = e.GetCurrentPoint(element).Position;
-                Apply3DTilt(element, (float)pt.X, (float)pt.Y, 220);
-            }
-            else
-            {
-                Canvas.SetZIndex(element, 0);
-                Reset3DTransform(element, 300);
-            }
+            Reset3DTransform(element, 200);
         }
     }
 
@@ -259,58 +226,7 @@ public static class Animation3DHelper
 
     private static void Apply3DTilt(FrameworkElement element, float cursorX, float cursorY, double durationMs)
     {
-        try
-        {
-            var w = (float)element.ActualWidth;
-            var h = (float)element.ActualHeight;
-            if (w <= 0 || h <= 0) return;
-
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            if (visual == null) return;
-            var compositor = visual.Compositor;
-
-            UpdateCenterPoint(element);
-
-            // Normalized coordinates [-1.0 .. +1.0]
-            float nx = Math.Clamp(((cursorX - (w / 2f)) / (w / 2f)), -1.0f, 1.0f);
-            float ny = Math.Clamp(((cursorY - (h / 2f)) / (h / 2f)), -1.0f, 1.0f);
-
-            double maxTiltDeg = GetMaxTiltAngle(element);
-            double depthZ = GetDepthZ(element);
-            double scaleVal = GetHoverScale(element);
-            bool isMagnetic = GetIsMagneticEnabled(element);
-
-            // Calculate rotation axis perpendicular to tilt vector
-            // ny tilts around X-axis (tilt vector is (1, 0, 0)), nx tilts around Y-axis (tilt vector is (0, 1, 0))
-            float rotX = -ny * (float)maxTiltDeg;
-            float rotY = nx * (float)maxTiltDeg;
-
-            float totalAngle = MathF.Sqrt((rotX * rotX) + (rotY * rotY));
-            if (totalAngle > 0.001f)
-            {
-                visual.RotationAxis = new Vector3(rotX / totalAngle, rotY / totalAngle, 0.0f);
-            }
-
-            var rotAnim = compositor.CreateScalarKeyFrameAnimation();
-            rotAnim.Duration = TimeSpan.FromMilliseconds(durationMs);
-            var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.12f, 0.88f), new Vector2(0.24f, 1.0f));
-            rotAnim.InsertKeyFrame(1.0f, totalAngle, easing);
-            visual.StartAnimation("RotationAngleInDegrees", rotAnim);
-
-            // Scale & Translation
-            var scaleAnim = compositor.CreateVector3KeyFrameAnimation();
-            scaleAnim.Duration = TimeSpan.FromMilliseconds(durationMs);
-            scaleAnim.InsertKeyFrame(1.0f, new Vector3((float)scaleVal, (float)scaleVal, 1.0f), easing);
-            visual.StartAnimation("Scale", scaleAnim);
-
-            float magX = isMagnetic ? (nx * 5.0f) : 0.0f;
-            float magY = isMagnetic ? (ny * 5.0f) : 0.0f;
-            var transAnim = compositor.CreateVector3KeyFrameAnimation();
-            transAnim.Duration = TimeSpan.FromMilliseconds(durationMs);
-            transAnim.InsertKeyFrame(1.0f, new Vector3(magX, magY, (float)depthZ), easing);
-            visual.StartAnimation("Translation", transAnim);
-        }
-        catch { }
+        // Hover protrusion disabled per user preference
     }
 
     private static void Apply3DDepression(FrameworkElement element, float cursorX, float cursorY, double durationMs)
@@ -399,5 +315,206 @@ public static class Animation3DHelper
             visual.StartAnimation("Translation", transAnim);
         }
         catch { }
+    }
+
+    // =========================================================================
+    // 6. 3D SYSTEM SCANNING EFFECT (Ultra-Smooth Holographic Ambient Scan Beam)
+    // =========================================================================
+
+    private static readonly Dictionary<FrameworkElement, SpriteVisual> _activeScanVisuals = new();
+
+    /// <summary>
+    /// Starts a smooth, hardware-accelerated Holographic Ambient Scan Beam across a UI element.
+    /// The host card remains firmly stable (no jitter, shaking or strobing).
+    /// </summary>
+    public static void Start3DScanEffect(FrameworkElement element, Windows.UI.Color? beamColor = null)
+    {
+        try
+        {
+            if (element == null) return;
+            var hostVisual = ElementCompositionPreview.GetElementVisual(element);
+            if (hostVisual == null) return;
+            var compositor = hostVisual.Compositor;
+
+            float w = (float)Math.Max(element.ActualWidth, 120);
+            float h = (float)Math.Max(element.ActualHeight, 120);
+
+            Stop3DScanEffect(element); // Clear previous if active
+
+            var scanVisual = compositor.CreateSpriteVisual();
+            scanVisual.Size = new Vector2(w, Math.Min(64, h * 0.3f));
+            scanVisual.CenterPoint = new Vector3(w / 2f, scanVisual.Size.Y / 2f, 0);
+
+            var color = beamColor ?? Windows.UI.Color.FromArgb(120, 0, 242, 254);
+            var transparent = Windows.UI.Color.FromArgb(0, color.R, color.G, color.B);
+
+            var gradientBrush = compositor.CreateLinearGradientBrush();
+            gradientBrush.StartPoint = new Vector2(0.5f, 0.0f);
+            gradientBrush.EndPoint = new Vector2(0.5f, 1.0f);
+
+            var stop0 = compositor.CreateColorGradientStop(0.0f, transparent);
+            var stop1 = compositor.CreateColorGradientStop(0.5f, color);
+            var stop2 = compositor.CreateColorGradientStop(1.0f, transparent);
+
+            gradientBrush.ColorStops.Add(stop0);
+            gradientBrush.ColorStops.Add(stop1);
+            gradientBrush.ColorStops.Add(stop2);
+
+            scanVisual.Brush = gradientBrush;
+            scanVisual.Opacity = 0.55f;
+
+            // Smooth, slow, elegant sine sweep without strobing
+            var sineEasing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.42f, 0.0f), new Vector2(0.58f, 1.0f));
+            var sweepAnim = compositor.CreateVector3KeyFrameAnimation();
+            sweepAnim.Duration = TimeSpan.FromMilliseconds(3000);
+            sweepAnim.IterationBehavior = AnimationIterationBehavior.Forever;
+            sweepAnim.InsertKeyFrame(0.0f, new Vector3(0, -scanVisual.Size.Y, 0), sineEasing);
+            sweepAnim.InsertKeyFrame(0.5f, new Vector3(0, h, 0), sineEasing);
+            sweepAnim.InsertKeyFrame(1.0f, new Vector3(0, -scanVisual.Size.Y, 0), sineEasing);
+            scanVisual.StartAnimation("Offset", sweepAnim);
+
+            ElementCompositionPreview.SetElementChildVisual(element, scanVisual);
+            _activeScanVisuals[element] = scanVisual;
+        }
+        catch { }
+    }
+
+    /// <summary>
+    /// Smoothly fades out and stops the Holographic Scan Beam without flickering.
+    /// </summary>
+    public static void Stop3DScanEffect(FrameworkElement element)
+    {
+        try
+        {
+            if (element == null) return;
+
+            if (_activeScanVisuals.TryGetValue(element, out var scanVisual))
+            {
+                _activeScanVisuals.Remove(element);
+                var compositor = scanVisual.Compositor;
+
+                // Soft fade out over 250ms
+                var fadeAnim = compositor.CreateScalarKeyFrameAnimation();
+                fadeAnim.Duration = TimeSpan.FromMilliseconds(250);
+                fadeAnim.InsertKeyFrame(1.0f, 0.0f);
+                scanVisual.StartAnimation("Opacity", fadeAnim);
+
+                var cleanupTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(260) };
+                cleanupTimer.Tick += (s, e) =>
+                {
+                    cleanupTimer.Stop();
+                    try
+                    {
+                        ElementCompositionPreview.SetElementChildVisual(element, null);
+                        scanVisual.Dispose();
+                    }
+                    catch { }
+                };
+                cleanupTimer.Start();
+            }
+        }
+        catch { }
+    }
+
+    // =========================================================================
+    // 7. 3D SYSTEM OPTIMIZATION EFFECT (Refined, Non-Jarring Tactile Glow Pulse)
+    // =========================================================================
+
+    /// <summary>
+    /// Triggers a smooth, elegant pulse and soft ambient aura upon system optimization completion.
+    /// Free of aggressive screen shaking or violent flashing.
+    /// </summary>
+    public static void Trigger3DOptimizeBurst(FrameworkElement element, Windows.UI.Color? auraColor = null)
+    {
+        try
+        {
+            if (element == null) return;
+            var hostVisual = ElementCompositionPreview.GetElementVisual(element);
+            if (hostVisual == null) return;
+            var compositor = hostVisual.Compositor;
+
+            UpdateCenterPoint(element);
+
+            // Subtle, luxurious micro-scale pulse (1.0 -> 1.012 -> 1.0)
+            var smoothEasing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.8f), new Vector2(0.3f, 1.0f));
+            var scaleAnim = compositor.CreateVector3KeyFrameAnimation();
+            scaleAnim.Duration = TimeSpan.FromMilliseconds(400);
+            scaleAnim.InsertKeyFrame(0.0f, new Vector3(1.0f, 1.0f, 1.0f));
+            scaleAnim.InsertKeyFrame(0.4f, new Vector3(1.012f, 1.012f, 1.0f), smoothEasing);
+            scaleAnim.InsertKeyFrame(1.0f, new Vector3(1.0f, 1.0f, 1.0f), smoothEasing);
+            hostVisual.StartAnimation("Scale", scaleAnim);
+
+            // Soft Ambient Aura Ring
+            float w = (float)Math.Max(element.ActualWidth, 100);
+            float h = (float)Math.Max(element.ActualHeight, 100);
+
+            var shockwave = compositor.CreateSpriteVisual();
+            shockwave.Size = new Vector2(w, h);
+            shockwave.CenterPoint = new Vector3(w / 2f, h / 2f, 0);
+
+            var color = auraColor ?? Windows.UI.Color.FromArgb(90, 16, 185, 129); // Soft Emerald
+            var transparent = Windows.UI.Color.FromArgb(0, color.R, color.G, color.B);
+
+            var gradientBrush = compositor.CreateLinearGradientBrush();
+            gradientBrush.StartPoint = new Vector2(0.0f, 0.0f);
+            gradientBrush.EndPoint = new Vector2(1.0f, 1.0f);
+
+            gradientBrush.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, transparent));
+            gradientBrush.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, color));
+            gradientBrush.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, transparent));
+
+            shockwave.Brush = gradientBrush;
+
+            var waveScaleAnim = compositor.CreateVector3KeyFrameAnimation();
+            waveScaleAnim.Duration = TimeSpan.FromMilliseconds(500);
+            waveScaleAnim.InsertKeyFrame(0.0f, new Vector3(0.9f, 0.9f, 1.0f));
+            waveScaleAnim.InsertKeyFrame(1.0f, new Vector3(1.15f, 1.15f, 1.0f), smoothEasing);
+            shockwave.StartAnimation("Scale", waveScaleAnim);
+
+            var waveOpacityAnim = compositor.CreateScalarKeyFrameAnimation();
+            waveOpacityAnim.Duration = TimeSpan.FromMilliseconds(500);
+            waveOpacityAnim.InsertKeyFrame(0.0f, 0.45f);
+            waveOpacityAnim.InsertKeyFrame(1.0f, 0.0f, smoothEasing);
+            shockwave.StartAnimation("Opacity", waveOpacityAnim);
+
+            ElementCompositionPreview.SetElementChildVisual(element, shockwave);
+
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(520) };
+            timer.Tick += (s, e) =>
+            {
+                timer.Stop();
+                try
+                {
+                    ElementCompositionPreview.SetElementChildVisual(element, null);
+                    shockwave.Dispose();
+                }
+                catch { }
+            };
+            timer.Start();
+        }
+        catch { }
+    }
+
+    /// <summary>
+    /// Cascades a gentle sequential pulse across multiple items without jarring jumps.
+    /// </summary>
+    public static void Trigger3DCascadeWave(System.Collections.Generic.IEnumerable<FrameworkElement> elements, double delayStepMs = 45)
+    {
+        double currentDelay = 0;
+        foreach (var el in elements)
+        {
+            if (el != null)
+            {
+                var delayTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(Math.Max(currentDelay, 1)) };
+                var target = el;
+                delayTimer.Tick += (s, e) =>
+                {
+                    delayTimer.Stop();
+                    Trigger3DOptimizeBurst(target);
+                };
+                delayTimer.Start();
+                currentDelay += delayStepMs;
+            }
+        }
     }
 }

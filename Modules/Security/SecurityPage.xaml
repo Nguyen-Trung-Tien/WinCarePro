@@ -216,14 +216,15 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Tool 1: Windows Security -->
-                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource Tilt3DCardStyle}" Padding="16,14"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
                                     <Grid ColumnSpacing="14">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#1510B981" VerticalAlignment="Center">
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1.2" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE73A;" FontSize="20" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
@@ -235,14 +236,15 @@
                                 </Border>
 
                                 <!-- Tool 2: System Information (msinfo32) -->
-                                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                                <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Tilt3DCardStyle}" Padding="16,14"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
                                     <Grid ColumnSpacing="14">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#153B82F6" VerticalAlignment="Center">
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="#153B82F6" BorderBrush="#353B82F6" BorderThickness="1.2" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE7EF;" FontSize="20" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
@@ -254,14 +256,15 @@
                                 </Border>
 
                                 <!-- Tool 3: Windows Update Manager -->
-                                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource Tilt3DCardStyle}" Padding="16,14"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
                                     <Grid ColumnSpacing="14">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#158B5CF6" VerticalAlignment="Center">
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="#158B5CF6" BorderBrush="#358B5CF6" BorderThickness="1.2" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE895;" FontSize="20" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
@@ -273,14 +276,15 @@
                                 </Border>
 
                                 <!-- Tool 4: Task Manager Monitor -->
-                                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource Tilt3DCardStyle}" Padding="16,14"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
                                     <Grid ColumnSpacing="14">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#15F59E0B" VerticalAlignment="Center">
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="#15F59E0B" BorderBrush="#35F59E0B" BorderThickness="1.2" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE9D9;" FontSize="20" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">

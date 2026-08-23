@@ -391,7 +391,8 @@
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:SystemTweak">
-                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="12,9" Margin="0,0,0,4">
+                                <Border Style="{StaticResource Tilt3DCardStyle}" Padding="12,9" Margin="0,0,0,4"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />  <!-- 0: CheckBox -->
@@ -404,8 +405,8 @@
                                         <!-- CheckBox -->
                                         <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,8,0" MinWidth="0" />
                                         
-                                        <!-- Category Icon -->
-                                        <Border Grid.Column="1" Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                                        <!-- Category Icon with 3D Elevation -->
+                                        <Border Grid.Column="1" Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1.2" Margin="0,0,10,0" VerticalAlignment="Center">
                                             <FontIcon Glyph="{x:Bind IconGlyph}" Foreground="{ThemeResource SystemAccentColor}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
                                         

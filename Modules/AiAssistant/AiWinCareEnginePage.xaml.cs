@@ -85,9 +85,6 @@ namespace WinCarePro.Modules.AiAssistant
                 await RunOnUIAsync(() =>
                 {
                     StatusTitleText.Text = $"{TranslationManager.Instance.T("Status")}: {TranslationManager.Instance.T("Analyzing...")}";
-                    if (AiSkeletonLoadingDeck != null) AiSkeletonLoadingDeck.Visibility = Visibility.Visible;
-                    if (RecommendationsListView != null) RecommendationsListView.Visibility = Visibility.Collapsed;
-                    if (EmptyStateCard != null) EmptyStateCard.Visibility = Visibility.Collapsed;
                 });
                 
                 var report = await AiWinCareEngine.AnalyzeSystemHealthAsync();
@@ -123,6 +120,7 @@ namespace WinCarePro.Modules.AiAssistant
         private async void OnAutoRemedyAllClick(object sender, RoutedEventArgs e)
         {
             var btn = AutoRemedyAllBtn ?? (sender as Button);
+
             await UiLoadingHelper.ExecuteWithLoadingAsync(
                 btn, AutoRemedyProgressRing, AutoRemedyText, AutoRemedyIcon,
                 "Remediating All...", "1-Click Smart Remedy",

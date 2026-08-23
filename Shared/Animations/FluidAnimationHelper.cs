@@ -98,40 +98,9 @@ namespace WinCarePro.Shared.Animations
         /// <summary>
         /// Applies a 3D depth tilt &amp; elevation scale micro-interaction on mouse pointer hover.
         /// </summary>
-        public static void EnableHoverDepthEffect(FrameworkElement element, float maxScale = 1.025f)
+        public static void EnableHoverDepthEffect(FrameworkElement element, float maxScale = 1.0f)
         {
-            if (element == null) return;
-
-            element.PointerEntered += (s, e) =>
-            {
-                Visual visual = ElementCompositionPreview.GetElementVisual(element);
-                Compositor compositor = visual.Compositor;
-
-                // Use safe center point to prevent (0,0) when element not yet laid out
-                SafeSetCenterPoint(element, visual);
-
-                SpringVector3NaturalMotionAnimation scaleAnim = compositor.CreateSpringVector3Animation();
-                scaleAnim.Target = "Scale";
-                scaleAnim.FinalValue = new Vector3(maxScale, maxScale, 1.0f);
-                scaleAnim.DampingRatio = 0.8f;
-                scaleAnim.Period = TimeSpan.FromMilliseconds(200);
-
-                visual.StartAnimation("Scale", scaleAnim);
-            };
-
-            element.PointerExited += (s, e) =>
-            {
-                Visual visual = ElementCompositionPreview.GetElementVisual(element);
-                Compositor compositor = visual.Compositor;
-
-                SpringVector3NaturalMotionAnimation scaleAnim = compositor.CreateSpringVector3Animation();
-                scaleAnim.Target = "Scale";
-                scaleAnim.FinalValue = new Vector3(1.0f, 1.0f, 1.0f);
-                scaleAnim.DampingRatio = 0.85f;
-                scaleAnim.Period = TimeSpan.FromMilliseconds(250);
-
-                visual.StartAnimation("Scale", scaleAnim);
-            };
+            // Hover bulging disabled per user preference
         }
 
         // ============================================================

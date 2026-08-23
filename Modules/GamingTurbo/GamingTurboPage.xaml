@@ -117,8 +117,8 @@
             <StackPanel Spacing="14">
 
                 <!-- 1. Hero Turbo Reactor Banner Card -->
-                <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20"
-                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="14">
+                <Border Style="{StaticResource Holographic3DCardStyle}" Padding="20"
+                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="18">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>

@@ -267,7 +267,8 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Left: Applications List Card -->
-                <Border x:Name="LeftListBorder" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="12">
+                <Border x:Name="LeftListBorder" Grid.Column="0" Style="{StaticResource Tilt3DCardStyle}" Padding="12"
+                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8">
                     <Grid>
                         <ListView Visibility="{x:Bind GetListViewVisibility(ViewModel.IsBusy), Mode=OneWay}" ItemsSource="{x:Bind ViewModel.FilteredApps, Mode=OneWay}" SelectedItem="{x:Bind ViewModel.SelectedApp, Mode=TwoWay}" SelectionMode="Single">
                             <ListView.ItemsPanel>
@@ -386,7 +387,8 @@
                 </Border>
 
                 <!-- Right: Selected Application Details Panel -->
-                <Border x:Name="DetailPanelBorder" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="16,0,0,0" Padding="20" Visibility="{x:Bind DetailsPaneVisibility, Mode=OneWay}">
+                <Border x:Name="DetailPanelBorder" Grid.Column="1" Style="{StaticResource SpatialDepthCardStyle}" Margin="16,0,0,0" Padding="20" Visibility="{x:Bind DetailsPaneVisibility, Mode=OneWay}"
+                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="10">
                     <Grid>
                         <!-- State 1: Visible when SelectedApp is not null -->
                         <Grid Visibility="{x:Bind GetDetailsVisibility(ViewModel.SelectedApp), Mode=OneWay}">

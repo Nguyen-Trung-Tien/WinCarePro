@@ -212,8 +212,8 @@
                     <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Drives, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Border Style="{StaticResource GlassmorphismCardStyle}" Margin="0,0,0,8" Padding="16,14"
-                                        helpers:AnimationHelper.HoverScale="1.012" helpers:AnimationHelper.PressedScale="0.988">
+                                <Border Style="{StaticResource Tilt3DCardStyle}" Margin="0,0,0,8" Padding="16,14"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
                                     <Grid ColumnSpacing="14">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
@@ -221,8 +221,8 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
 
-                                        <!-- Drive Icon Badge -->
-                                        <Border Grid.Column="0" Width="42" Height="42" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="12" VerticalAlignment="Center">
+                                        <!-- Drive Icon Badge with 3D Elevation -->
+                                        <Border Grid.Column="0" Width="42" Height="42" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" CornerRadius="12" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
 

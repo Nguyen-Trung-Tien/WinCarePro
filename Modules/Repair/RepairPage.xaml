@@ -359,10 +359,11 @@
             <ScrollViewer x:Name="SectionSfcDism" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
                 <StackPanel Spacing="16">
                     <!-- SFC Component Verification & Repair -->
-                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20">
+                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="20"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
                         <StackPanel Spacing="14">
                             <StackPanel Orientation="Horizontal" Spacing="10">
-                                <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="10" Padding="8">
+                                <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" CornerRadius="10" Padding="8">
                                     <FontIcon Glyph="&#xE9F5;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" />
                                 </Border>
                                 <StackPanel VerticalAlignment="Center">
@@ -395,10 +396,11 @@
                     </Border>
 
                     <!-- DISM Image Servicing & Component Store Management -->
-                    <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20">
+                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="20"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
                         <StackPanel Spacing="14">
                             <StackPanel Orientation="Horizontal" Spacing="10">
-                                <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="10" Padding="8">
+                                <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" CornerRadius="10" Padding="8">
                                     <FontIcon Glyph="&#xE8B9;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" />
                                 </Border>
                                 <StackPanel VerticalAlignment="Center">

@@ -234,7 +234,8 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Left: Prominent Cyber Speedometer & Live Telemetry -->
-                    <Border x:Name="SpeedGridLeft" Grid.Row="0" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+                    <Border x:Name="SpeedGridLeft" Grid.Row="0" Grid.Column="0" Style="{StaticResource Tilt3DCardStyle}" Padding="20"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/> <!-- 0: Header with View History Button -->

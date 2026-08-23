@@ -199,7 +199,6 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <Grid Grid.Column="0" Width="40" Height="40" Margin="0,0,10,0" VerticalAlignment="Center">
@@ -217,10 +216,6 @@
                             <TextBlock Text="{x:Bind ViewModel.EfficiencyGradeText, Mode=OneWay}" FontSize="10" FontWeight="ExtraBold" Foreground="{x:Bind ViewModel.EfficiencyGradeBadgeFg, Mode=OneWay}" />
                         </Border>
                     </StackPanel>
-
-                    <Button Grid.Column="2" x:Name="RunAiScanBtn" Click="OnRunAiScanClick" Style="{StaticResource TransparentWrapperButtonStyle}" ToolTipService.ToolTip="Run AI Performance Diagnostics" VerticalAlignment="Center" Width="30" Height="30" CornerRadius="15">
-                        <FontIcon x:Name="AiScanIcon" Glyph="&#xE721;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" />
-                    </Button>
                 </Grid>
             </Border>
 
@@ -260,18 +255,21 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#203B82F6" BorderBrush="#503B82F6" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE7F1;" FontSize="16" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Memory In Use" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.RamUsageText, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Memory In Use" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="#FF3B82F6" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        </Grid>
+                        <ProgressBar Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="#FF3B82F6" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
                     </StackPanel>
-                    <Button Grid.Column="2" x:Name="QuickBoostBtn" Click="OnBoostRamClick" Style="{StaticResource TransparentWrapperButtonStyle}" ToolTipService.ToolTip="1-Click RAM Flush" VerticalAlignment="Center" Width="30" Height="30" CornerRadius="15">
-                        <FontIcon Glyph="&#xF0AF;" FontSize="13" Foreground="#FF3B82F6" />
-                    </Button>
                 </Grid>
             </Border>
 

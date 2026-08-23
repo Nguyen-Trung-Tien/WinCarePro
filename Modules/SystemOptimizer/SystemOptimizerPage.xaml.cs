@@ -257,15 +257,7 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnRunAiScanClick(object sender, RoutedEventArgs e)
     {
-        var btn = RunAiScanBtn ?? (sender as Button);
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, null, null, AiScanIcon,
-            "Scanning...", "Scan",
-            async () =>
-            {
-                await ViewModel.RunAiScanAsync();
-            },
-            minDurationMs: 500);
+        await ViewModel.RunAiScanAsync();
 
         if (App.MainWindowInstance is MainWindow mw)
         {

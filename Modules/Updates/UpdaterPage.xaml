@@ -145,14 +145,6 @@
 
             <!-- Right: Action Buttons -->
             <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <!-- Cancel Button (Visible when busy) -->
-                <Button x:Name="CancelBtn" Click="OnCancelClick" Visibility="{x:Bind ViewModel.CanCancel, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" CornerRadius="8" Padding="12,7" FontSize="12">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE711;" FontSize="12" Foreground="#FFEF4444" />
-                        <TextBlock Text="Cancel" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FFEF4444" />
-                    </StackPanel>
-                </Button>
-
                 <!-- Scan Updates Button -->
                 <Button x:Name="ScanUpdatesBtn" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,7" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">

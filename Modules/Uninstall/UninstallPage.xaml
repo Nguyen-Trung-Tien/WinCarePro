@@ -112,7 +112,8 @@
         </Grid>
 
         <!-- 1. Unified Stat Ribbon Deck (Harmonized with StartupPage & SystemOptimizer) -->
-        <Border Grid.Row="1" Margin="0,0,0,16" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,12">
+        <Border Grid.Row="1" Margin="0,0,0,16" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,12"
+                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="14">
             <Grid x:Name="TopStatsGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
@@ -196,7 +197,8 @@
         </Border>
 
         <!-- 2. Search & Filters Bar (Harmonized with StartupPage & JunkPage) -->
-        <Border Grid.Row="2" Margin="0,0,0,16" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10">
+        <Border Grid.Row="2" Margin="0,0,0,16" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10"
+                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="10">
             <Grid x:Name="FiltersGrid" RowSpacing="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />

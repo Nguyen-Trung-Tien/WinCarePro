@@ -301,6 +301,37 @@
                 <Setter Property="FontWeight" Value="SemiBold" />
             </Style>
 
+            <!-- v4.3.0 Spatial 3D Interaction & Depth Styles -->
+            <Style x:Key="Tilt3DCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1.2" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="Padding" Value="16" />
+            </Style>
+
+            <Style x:Key="Holographic3DCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource CyberAccentGradient}" />
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="CornerRadius" Value="18" />
+                <Setter Property="Padding" Value="18" />
+            </Style>
+
+            <Style x:Key="SpatialDepthCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppSecondaryCardBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardSubtleBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="Padding" Value="14" />
+            </Style>
+
+            <Style x:Key="Magnetic3DButtonStyle" TargetType="Button">
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Padding" Value="16,10" />
+            </Style>
+
             <Style x:Key="DarkTerminalStyle" TargetType="TextBox">
                 <Setter Property="Background" Value="{ThemeResource AppTerminalBackground}" />
                 <Setter Property="Foreground" Value="{ThemeResource AppTerminalForeground}" />

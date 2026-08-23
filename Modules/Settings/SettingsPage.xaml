@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:WinCarePro.Views"
     xmlns:components="using:WinCarePro.Shared.Components"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -224,7 +225,8 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 
-                                <Border x:Name="LightThemeCard" Grid.Column="0" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" PointerPressed="OnLightModeCardClick" Style="{StaticResource QuickStatCardStyle}">
+                                <Border x:Name="LightThemeCard" Grid.Column="0" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" PointerPressed="OnLightModeCardClick" Style="{StaticResource QuickStatCardStyle}"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="12">
                                     <StackPanel Orientation="Horizontal" Spacing="12">
                                         <Border Width="36" Height="36" CornerRadius="18" Background="#20F59E0B" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE706;" FontSize="18" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
@@ -236,7 +238,8 @@
                                     </StackPanel>
                                 </Border>
                                 
-                                <Border x:Name="DarkThemeCard" Grid.Column="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" PointerPressed="OnDarkModeCardClick" Style="{StaticResource QuickStatCardStyle}">
+                                <Border x:Name="DarkThemeCard" Grid.Column="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" PointerPressed="OnDarkModeCardClick" Style="{StaticResource QuickStatCardStyle}"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="12">
                                     <StackPanel Orientation="Horizontal" Spacing="12">
                                         <Border Width="36" Height="36" CornerRadius="18" Background="#208B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE708;" FontSize="18" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center" />

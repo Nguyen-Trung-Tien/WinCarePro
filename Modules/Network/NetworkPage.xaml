@@ -146,7 +146,8 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Card 1: Latency / Ping -->
-                    <Border Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,10">
+                    <Border Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,10"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -164,7 +165,8 @@
                     </Border>
 
                     <!-- Card 2: Jitter -->
-                    <Border Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,10">
+                    <Border Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,10"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -182,7 +184,8 @@
                     </Border>
 
                     <!-- Card 3: Packet Loss -->
-                    <Border Grid.Column="2" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,10">
+                    <Border Grid.Column="2" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,10"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -200,7 +203,8 @@
                     </Border>
 
                     <!-- Card 4: Connection Quality Rating -->
-                    <Border Grid.Column="3" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,10">
+                    <Border Grid.Column="3" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,10"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>

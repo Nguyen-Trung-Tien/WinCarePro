@@ -106,7 +106,8 @@
             </Grid.ColumnDefinitions>
 
             <!-- Card 0: Security Health Score -->
-            <Border x:Name="StatCard0" Grid.Row="0" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard0" Grid.Row="0" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -132,7 +133,8 @@
             </Border>
 
             <!-- Card 1: Firewall Status -->
-            <Border x:Name="StatCard1" Grid.Row="0" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard1" Grid.Row="0" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -149,7 +151,8 @@
             </Border>
 
             <!-- Card 2: Antivirus Protection -->
-            <Border x:Name="StatCard2" Grid.Row="0" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard2" Grid.Row="0" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -166,7 +169,8 @@
             </Border>
 
             <!-- Card 3: Hardware Trust -->
-            <Border x:Name="StatCard3" Grid.Row="0" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard3" Grid.Row="0" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />

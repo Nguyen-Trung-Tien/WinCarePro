@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WinCarePro.Models"
     xmlns:vm="using:WinCarePro.ViewModels"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
     <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -115,7 +116,8 @@
             </Grid.ColumnDefinitions>
 
             <!-- Card 0: Detected Issues -->
-            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -135,7 +137,8 @@
             </Border>
 
             <!-- Card 1: Safety Backups Available -->
-            <Border x:Name="StatCard2" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard2" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -155,7 +158,8 @@
             </Border>
 
             <!-- Card 2: Scan Status Engine -->
-            <Border x:Name="StatCard3" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard3" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />

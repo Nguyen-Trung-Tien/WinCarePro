@@ -117,7 +117,8 @@
             <StackPanel Spacing="14">
 
                 <!-- 1. Hero Turbo Reactor Banner Card -->
-                <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20">
+                <Border Style="{StaticResource AuraGlassCardStyle}" Padding="20"
+                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="14">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -185,7 +186,8 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Stat 1: Freed RAM -->
-                    <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
+                    <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="4">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <Border Width="24" Height="24" CornerRadius="6" Background="#153B82F6">
@@ -199,7 +201,8 @@
                     </Border>
 
                     <!-- Stat 2: Optimized Processes -->
-                    <Border x:Name="TelemetryTile1" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
+                    <Border x:Name="TelemetryTile1" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="4">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <Border Width="24" Height="24" CornerRadius="6" Background="#158B5CF6">
@@ -213,7 +216,8 @@
                     </Border>
 
                     <!-- Stat 3: Power Mode -->
-                    <Border x:Name="TelemetryTile2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
+                    <Border x:Name="TelemetryTile2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}" Padding="14,10"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="4">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <Border Width="24" Height="24" CornerRadius="6" Background="{ThemeResource AppBadgeGoodBg}">
@@ -227,7 +231,8 @@
                     </Border>
 
                     <!-- Stat 4: Network Latency Vector -->
-                    <Border x:Name="TelemetryTile3" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
+                    <Border x:Name="TelemetryTile3" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}" Padding="14,10"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="4">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <Border Width="24" Height="24" CornerRadius="6" Background="#15F59E0B">
@@ -249,7 +254,8 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Left Card: Tuning Profile Selector -->
-                    <Border x:Name="TuningPresetsCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                    <Border x:Name="TuningPresetsCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.0" helpers:Animation3DHelper.DepthZ="14">
                         <StackPanel Spacing="10">
                             <TextBlock Text="Gaming Profile Presets" FontSize="14" FontWeight="Bold"/>
                             <TextBlock Text="Select a tailored profile for your current game genre to apply specific CPU scheduling and memory allocation." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
@@ -296,7 +302,8 @@
                     </Border>
 
                     <!-- Right Card: Low-Level Gaming Tweaks -->
-                    <Border x:Name="KernelTweaksCard" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                    <Border x:Name="KernelTweaksCard" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.0" helpers:Animation3DHelper.DepthZ="14">
                         <StackPanel Spacing="8">
                             <TextBlock Text="Kernel &amp; Latency Tweaks" FontSize="14" FontWeight="Bold"/>
 

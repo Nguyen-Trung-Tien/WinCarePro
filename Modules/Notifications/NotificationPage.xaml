@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:WinCarePro.Views"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -39,7 +40,8 @@
             </StackPanel>
 
             <!-- Center/Right: Segmented Tabs in a sleek compact pill deck -->
-            <Border Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,0" Style="{StaticResource AuraGlassCardStyle}" Padding="3" CornerRadius="10">
+            <Border Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,0" Style="{StaticResource AuraGlassCardStyle}" Padding="3" CornerRadius="10"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
                 <StackPanel Orientation="Horizontal" Spacing="4">
                     <Button x:Name="BtnTabAlerts" Click="OnTabAlertsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="30" Padding="12,0" CornerRadius="8">
                         <StackPanel Orientation="Horizontal" Spacing="6">
@@ -67,7 +69,8 @@
         </Grid>
 
         <!-- Compact Inline Telemetry Ribbon (Takes only 34px height!) -->
-        <Border Grid.Row="1" Margin="0,0,0,10" Style="{StaticResource ModernCardStyle}" Padding="12,6" CornerRadius="10">
+        <Border Grid.Row="1" Margin="0,0,0,10" Style="{StaticResource ModernCardStyle}" Padding="12,6" CornerRadius="10"
+                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>

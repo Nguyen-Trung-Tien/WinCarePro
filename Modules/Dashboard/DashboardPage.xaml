@@ -147,6 +147,7 @@
                     
                     <!-- Left Side Column 0: System Health Overview Hero (Advanced SystemCare 19 Style) -->
                     <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource NeonGlowBorderStyle}" Margin="6" Padding="16,14" MinHeight="185"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.5" helpers:Animation3DHelper.DepthZ="14"
                             helpers:AnimationHelper.HoverScale="1.012" helpers:AnimationHelper.PressedScale="0.988" helpers:AnimationHelper.StaggerIndex="0">
                         <Grid x:Name="HealthGaugeGrid">
                             <Grid.RowDefinitions>
@@ -296,6 +297,7 @@
 
                     <!-- Right Side Row 0 Column 1: WinCare AI Engine Card -->
                     <Border x:Name="AiWinCareEngineEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource AiWinCareEngineCardStyle}" Margin="6" Padding="16,14" MinHeight="185"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.5" helpers:Animation3DHelper.DepthZ="14"
                             helpers:AnimationHelper.HoverScale="1.012" helpers:AnimationHelper.PressedScale="0.988" helpers:AnimationHelper.StaggerIndex="1">
                         <StackPanel Spacing="8">
                             <!-- AI Header Row -->
@@ -408,6 +410,7 @@
                         <!-- CPU Card with overload indicator border glow -->
                         <Border x:Name="CpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14"
                                 BorderBrush="{x:Bind GetCpuCardBorderBrush(ViewModel.CpuUsage), Mode=OneWay}"
+                                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16"
                                 helpers:AnimationHelper.HoverScale="1.018" helpers:AnimationHelper.PressedScale="0.982" helpers:AnimationHelper.StaggerIndex="2">
                             <StackPanel>
                                 <Grid>
@@ -440,6 +443,7 @@
                         <!-- RAM Card with overload indicator background glow/pulse -->
                         <Border x:Name="RamCard" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14"
                                 Background="{x:Bind GetRamCardBackground(ViewModel.RamUsage), Mode=OneWay}"
+                                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16"
                                 helpers:AnimationHelper.HoverScale="1.018" helpers:AnimationHelper.PressedScale="0.982" helpers:AnimationHelper.StaggerIndex="3">
                             <StackPanel>
                                 <Grid>
@@ -476,6 +480,7 @@
                     
                     <!-- 1. Bottleneck Advisor widget (Placed on Row 1 Column 1) -->
                     <Border x:Name="BottleneckCard" Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16"
                             helpers:AnimationHelper.HoverScale="1.018" helpers:AnimationHelper.PressedScale="0.982" helpers:AnimationHelper.StaggerIndex="4">
                         <StackPanel Spacing="8">
                             <TextBlock Text="Bottleneck Detection" FontSize="15" FontWeight="Bold"/>
@@ -563,6 +568,7 @@
                         
                         <!-- GPU Card -->
                         <Border x:Name="GpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14"
+                                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16"
                                 helpers:AnimationHelper.HoverScale="1.018" helpers:AnimationHelper.PressedScale="0.982" helpers:AnimationHelper.StaggerIndex="5">
                             <StackPanel>
                                 <Grid>
@@ -594,6 +600,7 @@
 
                         <!-- Storage Card with warning state glow -->
                         <Border x:Name="DiskCard" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14"
+                                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16"
                                 BorderBrush="{x:Bind GetDiskCardBorderBrush(ViewModel.DiskUsage), Mode=OneWay}">
                             <StackPanel>
                                 <Grid>

@@ -108,7 +108,8 @@
             <StackPanel Spacing="16">
                 
                 <!-- 1. AI Overall Score & Neural Overview Hero Card -->
-                <Border Style="{StaticResource AuraGlassCardStyle}" Padding="22">
+                <Border Style="{StaticResource AuraGlassCardStyle}" Padding="22"
+                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="14">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -171,7 +172,8 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Pillar 1: Storage Outlook -->
-                    <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,12">
+                    <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,12"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <Border Width="26" Height="26" CornerRadius="6" Background="#153B82F6">
@@ -185,7 +187,8 @@
                     </Border>
 
                     <!-- Pillar 2: Boot Acceleration -->
-                    <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,12">
+                    <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,12"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <Border Width="26" Height="26" CornerRadius="6" Background="#15F59E0B">
@@ -199,7 +202,8 @@
                     </Border>
 
                     <!-- Pillar 3: Memory Pressure Index -->
-                    <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}" Padding="14,12">
+                    <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}" Padding="14,12"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <Border Width="26" Height="26" CornerRadius="6" Background="#158B5CF6">
@@ -213,7 +217,8 @@
                     </Border>
 
                     <!-- Pillar 4: System Telemetry Vector -->
-                    <Border Grid.Column="3" Style="{StaticResource QuickStatCardStyle}" Padding="14,12">
+                    <Border Grid.Column="3" Style="{StaticResource QuickStatCardStyle}" Padding="14,12"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <Border Width="26" Height="26" CornerRadius="6" Background="#1510B981">

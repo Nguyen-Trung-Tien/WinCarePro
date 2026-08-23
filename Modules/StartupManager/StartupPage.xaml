@@ -56,7 +56,8 @@
 
         <!-- 1. High-End Dashboard Section -->
         <!-- 1. High-End Dashboard Section (Unified Stat Ribbon Layout) -->
-        <Border Grid.Row="1" Margin="0,0,0,18" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,12">
+        <Border Grid.Row="1" Margin="0,0,0,18" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,12"
+                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="14">
             <Grid x:Name="TopGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
@@ -129,7 +130,8 @@
         </Border>
 
         <!-- 2. Filter & Actions Toolbar -->
-        <Border Grid.Row="2" Margin="0,0,0,14" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,8">
+        <Border Grid.Row="2" Margin="0,0,0,14" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,8"
+                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="260" />

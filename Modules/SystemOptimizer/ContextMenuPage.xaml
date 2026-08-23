@@ -8,6 +8,7 @@
     xmlns:models="using:WinCarePro.Models"
     xmlns:viewmodels="using:WinCarePro.ViewModels"
     xmlns:components="using:WinCarePro.Shared.Components"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
     <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -91,7 +92,8 @@
             </Grid.ColumnDefinitions>
 
             <!-- Card 0: Total Handlers -->
-            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -108,7 +110,8 @@
             </Border>
 
             <!-- Card 1: Active & Enabled -->
-            <Border x:Name="StatCard1" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard1" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -125,7 +128,8 @@
             </Border>
 
             <!-- Card 2: Disabled & Optimized -->
-            <Border x:Name="StatCard2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatCard2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />

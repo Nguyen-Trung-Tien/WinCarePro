@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:WinCarePro.ViewModels"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
     <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -117,7 +118,8 @@
             </Grid.ColumnDefinitions>
 
             <!-- Card 1: Core Services Status -->
-            <Border x:Name="StatsGridCol0" Grid.Row="0" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatsGridCol0" Grid.Row="0" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -137,7 +139,8 @@
             </Border>
 
             <!-- Card 2: Registry Policy Bans -->
-            <Border x:Name="StatsGridCol1" Grid.Row="0" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatsGridCol1" Grid.Row="0" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -154,7 +157,8 @@
             </Border>
 
             <!-- Card 3: DNS Query Response -->
-            <Border x:Name="StatsGridCol2" Grid.Row="0" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatsGridCol2" Grid.Row="0" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -171,7 +175,8 @@
             </Border>
 
             <!-- Card 4: Security Health Score -->
-            <Border x:Name="StatsGridCol3" Grid.Row="0" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}">
+            <Border x:Name="StatsGridCol3" Grid.Row="0" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />

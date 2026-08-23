@@ -14,6 +14,16 @@ public static class SafePathGuard
 {
     private static readonly HashSet<string> BlacklistedExactPaths = new(StringComparer.OrdinalIgnoreCase);
     private static readonly List<string> BlacklistedPathPrefixes = new();
+    private static readonly HashSet<string> ProtectedSensitiveFileNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "pagefile.sys", "hiberfil.sys", "swapfile.sys", "NTUSER.DAT",
+        "SAM", "SYSTEM", "SECURITY", "SOFTWARE", "DEFAULT",
+        "BCD", "BOOTSECT.BAK", "BitLocker.tpm",
+        "Login Data", "Login Data For Account", "Web Data", "Local State",
+        "Cookies", "Cookies-journal", "key4.db", "logins.json", "cert9.db",
+        "Vault.dat", "credentials", "id_rsa", "id_ed25519", "known_hosts",
+        "token.json", "client_secret.json", "azureProfile.json"
+    };
 
     static SafePathGuard()
     {
@@ -140,27 +150,7 @@ public static class SafePathGuard
 
             // Check if file is critical system or credential store file
             string fileName = Path.GetFileName(fullPath);
-            if (fileName.Equals("pagefile.sys", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("hiberfil.sys", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("swapfile.sys", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("NTUSER.DAT", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("SAM", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("SYSTEM", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("SECURITY", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("SOFTWARE", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("DEFAULT", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("BCD", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("BOOTSECT.BAK", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("Login Data", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("Login Data For Account", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("Web Data", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("Local State", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("Cookies", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("Cookies-journal", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("key4.db", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("logins.json", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("cert9.db", StringComparison.OrdinalIgnoreCase) ||
-                fileName.Equals("Vault.dat", StringComparison.OrdinalIgnoreCase))
+            if (ProtectedSensitiveFileNames.Contains(fileName))
             {
                 return false;
             }

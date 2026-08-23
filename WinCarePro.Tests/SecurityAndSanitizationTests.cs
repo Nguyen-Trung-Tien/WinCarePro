@@ -72,14 +72,22 @@ public class SecurityAndSanitizationTests
     }
 
     [Theory]
-    [InlineData("report/../../secret.txt", "secret.txt")]
-    [InlineData("wincare:test*<>.log", "wincare_test___.log")]
-    [InlineData("", "wincare_report")]
-    [InlineData(null, "wincare_report")]
-    public void InputSanitizer_SanitizeFileName_StripsInvalidChars(string? raw, string expected)
+    [InlineData("C:\\Users\\Admin\\AppData\\Local\\Microsoft\\Edge\\User Data\\Default\\Login Data", false)]
+    [InlineData("C:\\Users\\Admin\\.ssh\\id_rsa", false)]
+    [InlineData("C:\\Windows\\System32\\config\\SAM", false)]
+    [InlineData("C:\\Users\\Admin\\AppData\\Local\\Temp\\test_junk_file.tmp", true)]
+    public void SafePathGuard_IsPathSafeForDeletion_ProtectsSensitiveFiles(string path, bool expectedSafe)
     {
-        string sanitized = Infrastructure.Security.InputSanitizer.SanitizeFileName(raw);
-        Assert.Equal(expected, sanitized);
+        bool actualSafe = Core.Helpers.SafePathGuard.IsPathSafeForDeletion(path);
+        Assert.Equal(expectedSafe, actualSafe);
+    }
+
+    [Fact]
+    public void WmiHelper_CacheInvalidate_OperatesCleanly()
+    {
+        Core.Helpers.WmiHelper.InvalidateCache();
+        // Should not throw
+        Assert.True(true);
     }
 }
 

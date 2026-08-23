@@ -241,7 +241,7 @@ public class RegistryBackupEngine
         try
         {
             // 1. We export HKCU hive (user settings) which is safe and easy, and does not require exclusive locks
-            var result = await ProcessRunner.RunAsync("reg.exe", $"export HKCU \"{backupFile}\" /y", TimeSpan.FromSeconds(10));
+            var result = await ProcessRunner.RunAsync("reg.exe", new[] { "export", "HKCU", backupFile, "/y" }, TimeSpan.FromSeconds(10));
             bool success = result.ExitCode == 0;
 
             // 2. Export key HKLM paths we modify and append them to the backup file
@@ -257,7 +257,7 @@ public class RegistryBackupEngine
                 string tempFile = Path.Combine(BackupFolder, $"temp_{Guid.NewGuid():N}.reg");
                 try
                 {
-                    var resultHklm = await ProcessRunner.RunAsync("reg.exe", $"export \"{path}\" \"{tempFile}\" /y", TimeSpan.FromSeconds(10));
+                    var resultHklm = await ProcessRunner.RunAsync("reg.exe", new[] { "export", path, tempFile, "/y" }, TimeSpan.FromSeconds(10));
                     if (resultHklm.ExitCode == 0 && File.Exists(tempFile))
                     {
                         var lines = await File.ReadAllLinesAsync(tempFile, System.Text.Encoding.Unicode);
@@ -308,8 +308,7 @@ public class RegistryBackupEngine
                 return false;
             }
 
-            string safeFilePath = ProcessRunner.SanitizeArgument(filePath);
-            var result = await ProcessRunner.RunAsync("reg.exe", $"import {safeFilePath}", TimeSpan.FromSeconds(15));
+            var result = await ProcessRunner.RunAsync("reg.exe", new[] { "import", filePath }, TimeSpan.FromSeconds(15));
             bool success = result.ExitCode == 0;
             Database.DbManager.LogAction($"Restored Registry Backup: {Path.GetFileName(filePath)}", "Registry Tools", success ? "Success" : "Failed");
             return success;

@@ -206,6 +206,18 @@ public static class ProcessRunner
     }
 
     /// <summary>
+    /// Fast helper to execute short-lived commands with structured arguments without throwing exceptions on non-zero exit code.
+    /// </summary>
+    public static Task<ProcessResult> RunHiddenAsync(
+        string fileName,
+        System.Collections.Generic.IEnumerable<string> argumentList,
+        int timeoutSeconds = 5,
+        CancellationToken cancellationToken = default)
+    {
+        return RunAsync(fileName, argumentList, TimeSpan.FromSeconds(timeoutSeconds), null, null, null, cancellationToken);
+    }
+
+    /// <summary>
     /// Fast helper to execute short-lived commands without throwing exceptions on non-zero exit code.
     /// </summary>
     public static Task<ProcessResult> RunHiddenAsync(

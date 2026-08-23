@@ -21,8 +21,8 @@ public static class SafePathGuard
         "BCD", "BOOTSECT.BAK", "BitLocker.tpm",
         "Login Data", "Login Data For Account", "Web Data", "Local State",
         "Cookies", "Cookies-journal", "key4.db", "logins.json", "cert9.db",
-        "Vault.dat", "credentials", "id_rsa", "id_ed25519", "known_hosts",
-        "token.json", "client_secret.json", "azureProfile.json"
+        "Vault.dat", "credentials", "id_rsa", "id_ed25519", "id_ecdsa", "id_dsa", "known_hosts",
+        "token.json", "client_secret.json", "azureProfile.json", ".env", "private_key.pem", "keepass.kdbx"
     };
 
     static SafePathGuard()

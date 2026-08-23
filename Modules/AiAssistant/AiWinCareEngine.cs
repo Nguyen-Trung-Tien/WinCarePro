@@ -411,7 +411,7 @@ namespace WinCarePro.Modules.AiAssistant
                 // 3. Flush DNS & Winsock Cache
                 try
                 {
-                    var cmdRes = await Core.Helpers.ProcessRunner.RunHiddenAsync("ipconfig.exe", "/flushdns", 3);
+                    var cmdRes = await Core.Helpers.ProcessRunner.RunHiddenAsync("ipconfig.exe", new[] { "/flushdns" }, 3);
                     result.DnsFlushed = cmdRes.Success;
                     result.FixedActionsCount++;
                     result.ActionLogs.Add("DNS Resolver cache flushed.".T());
@@ -422,8 +422,7 @@ namespace WinCarePro.Modules.AiAssistant
             });
         }
 
-        private static long _cachedTempSize = -1;
-        private static DateTime _lastTempScan = DateTime.MinValue;
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (long Size, DateTime Timestamp)> _dirSizeCache = new(StringComparer.OrdinalIgnoreCase);
 
         public class OfflineDiagnosticAnswer
         {
@@ -557,9 +556,9 @@ namespace WinCarePro.Modules.AiAssistant
 
         private static long GetDirectorySizeBytesSafely(string dirPath)
         {
-            if (_cachedTempSize >= 0 && (DateTime.Now - _lastTempScan).TotalSeconds < 60)
+            if (_dirSizeCache.TryGetValue(dirPath, out var cached) && (DateTime.Now - cached.Timestamp).TotalSeconds < 60)
             {
-                return _cachedTempSize;
+                return cached.Size;
             }
 
             long size = 0;
@@ -585,8 +584,7 @@ namespace WinCarePro.Modules.AiAssistant
                     catch { }
                 }
 
-                _cachedTempSize = size;
-                _lastTempScan = DateTime.Now;
+                _dirSizeCache[dirPath] = (size, DateTime.Now);
             }
             catch { }
             return size;

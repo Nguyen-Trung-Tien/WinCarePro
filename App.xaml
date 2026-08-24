@@ -264,7 +264,7 @@
                 <Setter Property="CornerRadius" Value="16" />
             </Style>
 
-            <!-- v4.2.0 Master — Interactive Fluid Card with Motion Styling -->
+            <!-- v4.3.0 Master — Interactive Fluid Card with Motion Styling -->
             <Style x:Key="FluidInteractiveCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
@@ -272,7 +272,7 @@
                 <Setter Property="CornerRadius" Value="14" />
             </Style>
 
-            <!-- v4.2.0 Master — Celebration & System Optimal Micro-interaction Badges -->
+            <!-- v4.3.0 Master — Celebration & System Optimal Micro-interaction Badges -->
             <Style x:Key="AuraCelebrationBadgeStyle" TargetType="Border">
                 <Setter Property="Background" Value="#2510B981" />
                 <Setter Property="BorderBrush" Value="#8010B981" />
@@ -288,7 +288,7 @@
                 <Setter Property="CornerRadius" Value="16" />
             </Style>
 
-            <!-- v4.2.0 Master — Cyber Shimmer & Radiant Glow Cards -->
+            <!-- v4.3.0 Master — Cyber Shimmer & Radiant Glow Cards -->
             <Style x:Key="CyberPulseGlowCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{StaticResource CyberGlassBorderBrush}" />

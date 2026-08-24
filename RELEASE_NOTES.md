@@ -2,45 +2,64 @@
 
 ---
 
-## 🚀 WinCare Pro v4.2.0 — Hệ Thống Đa Ngôn Ngữ Tự Động, Trình Hướng Dẫn UserGuide, Tiện Ích Desktop HUD & Phân Hệ Tối Ưu Hệ Thống
+## 🚀 WinCare Pro v4.3.0 — Trí Tuệ Nhân Tạo AI Diagnostics, Lõi Bảo Vệ SafePathGuard, Quản Lý Driver & Trình Cập Nhật Phần Mềm
 
-> **Phát hành:** 19/08/2026 · **Loại:** Bản nâng cấp Chức năng & Trải nghiệm Người dùng (Feature & User Experience Evolution)
+> **Phát hành:** 24/08/2026 · **Loại:** Bản Nâng Cấp Tính Năng & Trí Tuệ Hệ Thống Thế Hệ Mới (Next-Gen Intelligence & Core Features Suite)
 
-Bản cập nhật **v4.2.0** mang đến những bước tiến quan trọng về trải nghiệm người dùng, khả năng tối ưu hóa hệ thống và tính tiện dụng của WinCare Pro. Phiên bản này ra mắt hệ thống **Tự động Đa ngôn ngữ (Anh - Việt)** tức thì, **Trình hướng dẫn sử dụng trực quan (UserGuide)**, tiện ích **Desktop HUD Widget** giám sát tài nguyên thời gian thực, bộ công cụ **Tăng tốc Chơi Game (Gaming Turbo)** & **Tối ưu Hệ thống (System Optimizer)**, phân hệ **Gỡ cài đặt phần mềm tận gốc (Uninstaller)**, cùng giao diện **Menu Nguồn Điện** và **Thông báo Toast** thế hệ mới.
+Bản cập nhật **v4.3.0** đánh dấu bước nhảy vọt toàn diện của WinCare Pro về trí thông minh nhân tạo, khả năng tự động hóa, mức độ an toàn bảo mật và trải nghiệm thị giác. Phiên bản này trang bị động cơ **Chẩn đoán AI WinCare Engine & Phân tích Dự đoán (Predictive Analysis)**, lõi phòng vệ dữ liệu **SafePathGuard & InputSanitizer**, phân hệ **Quản lý & Chẩn đoán Driver Phần cứng**, bộ công cụ **Cập nhật Phần mềm Tự động (Software Updater)**, động cơ **Hoạt ảnh 3D & Chuyển cảnh mượt mà 120 FPS**, cùng tính năng **Tìm kiếm Cài đặt Siêu Tốc (Granular Search)** và quản lý hộp thoại hiện đại.
 
 ---
 
-### ✨ Các tính năng & chức năng nổi bật trong phiên bản v4.2.0 (Key User Features)
+### ✨ Các Tính Năng & Chức Năng Nổi Bật trong v4.3.0 (Key User Features)
 
-* **🌐 Hệ Thống Tự Động Đa Ngôn Ngữ (Auto Multi-Language Localization System):**
-  * Hỗ trợ chuyển đổi ngôn ngữ tức thì giữa **Tiếng Việt** và **Tiếng Anh** trên toàn bộ giao diện ứng dụng mà không cần khởi động lại.
-  * Tự động quét và dịch thuật danh mục công cụ, thẻ thông số, nút bấm, cửa sổ thông báo và tài liệu hướng dẫn.
+* **🧠 Động Cơ Chẩn Đoán AI & Phân Tích Dự Đoán Thông Minh (AI WinCare Diagnostics & Predictive Engine):**
+  * Tự động quét và đánh giá toàn diện sức khỏe hệ thống theo thời gian thực bằng thuật toán Heuristic.
+  * Phân tích và dự báo sớm nguy cơ cạn kiệt dung lượng ổ đĩa lưu trữ, áp lực bộ nhớ RAM và các vấn đề phần cứng tiềm ẩn.
+  * Chấm điểm sức khỏe hệ thống trực quan và cung cấp tính năng **Sửa Nhanh AI (AI Quick Fix)** tự động khắc phục sự cố chỉ với một cú nhấp chuột.
+  * Hỗ trợ xuất báo cáo chẩn đoán sức khỏe chi tiết ra màn hình chính dạng tệp tin JSON/TXT để theo dõi hoặc gửi trợ giúp kỹ thuật.
 
-* **📖 Trình Hướng Dẫn Sử Dụng Tương Tác Trực Quan (Interactive User Guide System):**
-  * Tích hợp phân hệ hướng dẫn người dùng trực quan ngay trong phần Cài đặt (`UserGuideView`).
-  * Cung cấp tài liệu chi tiết, các bước thao tác mẫu, hướng dẫn sử dụng tính năng và quy tắc an toàn khi dọn dẹp hệ thống.
+* **🛡️ Lõi Phòng Vệ Dữ Liệu & Bảo Vệ Hệ Thống (SafePathGuard & InputSanitizer Security Core):**
+  * Tích hợp cơ chế phòng thủ `SafePathGuard` ngăn chặn mọi thao tác vô tình xóa nhầm tập tin hệ thống cốt lõi và dữ liệu cá nhân quan trọng của người dùng.
+  * Hệ thống lọc và chuẩn hóa dữ liệu `InputSanitizer` bảo vệ an toàn tối đa cho hệ điều hành khi thực thi các tác vụ bảo trì.
+  * Tích hợp nhật ký kiểm toán `AuditLogService` lưu trữ SQLite cục bộ, cho phép người dùng tra cứu toàn bộ lịch sử hoạt động một cách minh bạch.
 
-* **🖥️ Tiện Ích Desktop HUD Widget & Giám Sát Telemetry Thời Gian Thực:**
-  * Cửa sổ nổi mini mờ kính Aura Glass hiển thị chỉ số CPU, RAM, Network I/O thời gian thực ngay trên màn hình Desktop.
-  * Hỗ trợ chế độ thu nhỏ (Compact Mode) tiện lợi và cơ chế hoạt động đơn thể (Single-Instance) an toàn tuyệt đối.
+* **🔧 Phân Hệ Quản Lý & Chẩn Đoán Driver Phần Cứng (Hardware Driver Diagnostics & Manager):**
+  * Quét và hiển thị chi tiết thông tin, phiên bản và trạng thái của toàn bộ trình điều khiển (Driver) linh kiện phần cứng (CPU, GPU, Bo mạch chủ, Card âm thanh, Mạng,...).
+  * Kiểm tra và cảnh báo sớm các driver bị thiếu, lỗi thời hoặc hoạt động bất thường.
+  * Cung cấp tính năng sao lưu (Backup) driver an toàn giúp người dùng dễ dàng khôi phục lại trạng thái ổn định khi cần.
 
-* **⚡ Phân Hệ Tăng Tốc Chơi Game (Gaming Turbo) & Tối Ưu Hệ Thống (System Optimizer):**
-  * Tự động giải phóng dung lượng RAM, tạm dừng các tiến trình ngầm không cần thiết để ưu tiên tài nguyên phần cứng cho các tựa game và ứng dụng nặng.
-  * Tối ưu hóa cấu hình hệ thống giúp máy tính vận hành mượt mà và duy trì độ ổn định cao.
+* **📦 Phân Hệ Quản Lý & Cập Nhật Phần Mềm Tự Động (Third-Party Software Updater):**
+  * Tự động quét và phát hiện nhanh chóng các phần mềm đã cài đặt trên máy tính có phiên bản mới cần cập nhật.
+  * Cho phép người dùng tùy chọn cập nhật từng phần mềm riêng lẻ hoặc bấm **Cập nhật tất cả (Update All)** chỉ với 1 chạm.
+  * Cơ chế tải và cài đặt an toàn, tự động kiểm tra tính toàn vẹn gói cài trước khi cập nhật.
 
-* **🔋 Menu Nguồn Điện Nhanh & Tiến Trình Thoát Ứng Dụng Hiện Đại:**
-  * Tích hợp tùy chọn nguồn điện nhanh (Tắt máy, Khởi động lại, Chế độ ngủ) trực tiếp tại nút thoát ứng dụng với giao diện Flyout bắt mắt.
-  * Cửa sổ tiến trình thoát ứng dụng thiết kế mượt mà, đảm bảo lưu trạng thái và dọn dẹp tài nguyên trước khi đóng.
+* **💫 Động Cơ Hoạt Ảnh 3D & Chuyển Cảnh Mượt Mà 120 FPS (High-Performance 3D & Fluid Composition):**
+  * Tích hợp engine biến đổi không gian 3D (`Animation3DHelper`) được tăng tốc bằng phần cứng GPU, mang lại chiều sâu thị giác sống động cho các thẻ thông số và bảng điều khiển.
+  * Chuyển cảnh trang siêu mượt chuẩn 120 FPS với hiệu ứng lướt trượt mượt mà, hiệu ứng tải khung xương lấp lánh (Shimmer Skeleton Loading) và hiệu ứng xuất hiện phân tầng (Staggered Entrance).
 
-* **🔔 Hệ Thống Thông Báo Toast Nổi Trực Quan (Toast Notification System):**
-  * Cung cấp các thông báo dạng Toast nổi hiện đại, cập nhật nhanh kết quả sau khi dọn dẹp rác, tối ưu RAM hoặc khi hệ thống chạm ngưỡng cảnh báo tài nguyên.
+* **🔍 Tìm Kiếm Cài Đặt Siêu Tốc & Quản Lý Hồ Sơ Người Dùng (Granular Settings Search & Profiles):**
+  * Thanh tìm kiếm cài đặt thông minh ngay trên trang Cài đặt: gõ từ khóa để chuyển ngay tới tùy chọn hoặc tính năng mong muốn mà không cần duyệt menu.
+  * Quản lý hồ sơ người dùng cá nhân (User Profile), tùy chỉnh độ trong suốt kính mờ Aura Glass của ứng dụng theo sở thích.
+  * Tích hợp công cụ xem thông số môi trường hệ thống (Environment Inspector) và nút dọn bộ nhớ RAM tức thì (Working Set Trimmer).
 
-* **🗑️ Phân Hệ Gỡ Cài Đặt Ứng Dụng Tận Gốc (Uninstaller Suite):**
-  * Quản lý danh sách phần mềm đã cài đặt trên Windows, cho phép tìm kiếm nhanh và gỡ bỏ tận gốc các ứng dụng thừa.
-  * Tự động tìm kiếm và quét sạch các tệp rác, thư mục thừa và khóa Registry còn sót lại sau khi gỡ cài đặt.
+* **💬 Quản Lý Hộp Thoại Hiện Đại & Song Ngữ Tức Thì Chuẩn Hóa:**
+  * Hệ thống hộp thoại thông báo, xác nhận và thông tin cập nhật thiết kế mới theo ngôn ngữ Fluent Design bo góc hiện đại.
+  * Nâng cấp bộ từ điển song ngữ (Tiếng Việt - English) đồng bộ 100% cho tất cả các tính năng, công cụ và thông số trong toàn bộ ứng dụng.
 
-* **🎨 Giao Diện Aura Glassmorphic Fluent 2.0 & Hiệu Ứng Visual Modern:**
-  * Thiết kế giao diện cao cấp với hiệu ứng mờ Mica/Acrylic, chip hiển thị thông số hệ thống độc đáo (`TelemetryChipButtonStyle`) và hiệu ứng chuyển động mượt mà 120 FPS.
+---
+
+### 📋 Nhật Ký Thay Đổi Chức Năng (Feature Changes Log)
+
+| Phân hệ / Module | Chức năng mới & Thay đổi nâng cấp |
+| :--- | :--- |
+| **Trợ lý AI WinCare** | Bổ sung động cơ phân tích dự đoán lưu trữ, chẩn đoán sức khỏe Heuristic tự động, chấm điểm tối ưu và sửa nhanh 1-chạm. |
+| **Driver & Phần cứng** | Ra mắt giao diện quản lý driver phần cứng, kiểm tra sức khỏe linh kiện và hỗ trợ sao lưu driver an toàn. |
+| **Cập nhật Phần mềm** | Tích hợp trang quét phiên bản mới của các ứng dụng bên thứ ba, hỗ trợ cập nhật đơn lẻ hoặc cập nhật đồng loạt. |
+| **Bảo mật & An toàn** | Bổ sung khiên phòng vệ `SafePathGuard` chống xóa nhầm tệp hệ thống, chuẩn hóa dữ liệu an toàn và lưu nhật ký kiểm toán SQLite. |
+| **Giao diện & Hiệu ứng** | Bổ sung hiệu ứng chiều sâu 3D GPU, chuyển cảnh mượt 120 FPS, hiệu ứng shimmer loading và các thẻ hiển thị thông số thông minh. |
+| **Cài đặt & Tìm kiếm** | Thêm thanh tìm kiếm cài đặt chi tiết theo từ khóa, quản lý hồ sơ người dùng, điều chỉnh độ trong suốt và dọn nhanh bộ nhớ RAM. |
+| **Hộp thoại & Đa ngôn ngữ** | Thiết kế lại hộp thoại thông báo hiện đại, đồng bộ hóa 100% từ điển Việt - Anh trên toàn bộ các trang chức năng. |
+| **Dọn dẹp & Registry** | Tăng tốc độ quét dọn rác hệ thống, nâng cấp cơ chế sao lưu tự động Registry đảm bảo hoàn tác an toàn tuyệt đối. |
 
 ---
 

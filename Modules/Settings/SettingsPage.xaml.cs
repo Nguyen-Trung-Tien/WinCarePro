@@ -1099,18 +1099,18 @@ public sealed partial class SettingsPage : Page
 
         if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
         {
-            remoteVerStr = betaVerProp.GetString() ?? "4.2.0";
+            remoteVerStr = betaVerProp.GetString() ?? "4.3.0";
             downloadUrl = root.TryGetProperty("beta_url", out var betaUrlProp) ? betaUrlProp.GetString() ?? "" : "";
             changelog = root.TryGetProperty("beta_changelog", out var betaClProp) ? betaClProp.GetString() ?? "" : "";
         }
         else
         {
-            remoteVerStr = root.GetProperty("version").GetString() ?? "4.2.0";
+            remoteVerStr = root.GetProperty("version").GetString() ?? "4.3.0";
             downloadUrl = root.GetProperty("url").GetString() ?? "";
             changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
         }
 
-        var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(4, 2, 0, 0);
+        var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(4, 3, 0, 0);
         string cleanRemoteVer = System.Text.RegularExpressions.Regex.Replace(remoteVerStr, @"[^\d\.]", "").TrimEnd('.');
         if (!Version.TryParse(cleanRemoteVer, out var remoteVersion))
         {
@@ -1436,7 +1436,7 @@ public sealed partial class SettingsPage : Page
                 Padding = new Thickness(8, 2, 8, 2),
                 Child = new TextBlock
                 {
-                    Text = "v4.2.0 Official Release".T(),
+                    Text = "v4.3.0 Official Release".T(),
                     FontSize = 11,
                     FontWeight = Microsoft.UI.Text.FontWeights.Bold,
                     Foreground = new SolidColorBrush(Microsoft.UI.Colors.White)
@@ -1445,14 +1445,14 @@ public sealed partial class SettingsPage : Page
             headerRow.Children.Add(versionBadge);
             headerRow.Children.Add(new TextBlock
             {
-                Text = "WinCare Pro Evolution Suite".T(),
+                Text = "WinCare Pro Next-Gen Intelligence Suite".T(),
                 FontSize = 13.5,
                 FontWeight = Microsoft.UI.Text.FontWeights.Bold
             });
             headerContent.Children.Add(headerRow);
             headerContent.Children.Add(new TextBlock
             {
-                Text = "Next-Generation System Architecture, Zero-Telemetry Privacy Shield & Live Diagnostics Suite.".T(),
+                Text = "Embedded AI Diagnostic Engine, SafePathGuard Defense Core, Hardware Driver Manager & 3D Fluid Transitions.".T(),
                 FontSize = 11.5,
                 Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
                 TextWrapping = TextWrapping.Wrap
@@ -1463,12 +1463,12 @@ public sealed partial class SettingsPage : Page
             // 2. Feature Items Cards
             var features = new (string icon, string title, string description, string colorHex)[]
             {
-                ("\uE895", "Live Local Software Updates & Finite State Sentinel", "Realtime percentage telemetry stream, cryptographic SHA-256 verification and automatic channel sync.", "#FF6366F1"),
-                ("\uE727", "Zero-Telemetry & Privacy Guarantee Shield", "100% on-device processing, zero cloud tracking, encrypted local transaction storage.", "#FF10B981"),
-                ("\uE7BE", "Advanced Developer Workbench & Live Memory Trimmer", "Interactive Working Set RAM trimmer with forced GC, process diagnostics and local audit log viewer.", "#FF3B82F6"),
-                ("\uE777", "Kernel Responsiveness & Latency Turbo Engine", "Dynamic thread priority scheduling, background RAM trimming and gaming-grade latency optimization.", "#FFF59E0B"),
-                ("\uE897", "Interactive System Guide & Visual Handbook", "Comprehensive documentation with safety best practices across all 15 core system modules.", "#FFEC4899"),
-                ("\uE775", "Instant Bilingual Engine (Vietnamese / English)", "Zero-latency UI localization switching with 100% standardized dictionaries across the suite.", "#FF8B5CF6")
+                ("\uE946", "Embedded AI WinCare Diagnostics & Predictive Engine", "Realtime heuristic system analysis, predictive hardware forecasting, automated health scoring and one-click smart remedies.", "#FF6366F1"),
+                ("\uE727", "SafePathGuard & InputSanitizer Defense Core", "Multi-layered filesystem protection, path traversal defenses, secure input validation, and local SQLite audit logging.", "#FF10B981"),
+                ("\uE9A6", "Hardware Driver Diagnostics & Backup Manager", "Deep hardware component telemetry, automated driver health inspection, device state auditing and reliable rollback snapshots.", "#FF3B82F6"),
+                ("\uE895", "Integrated Third-Party Software Updater", "Automated detection of outdated local applications, cryptographic SHA-256 package validation and batch update orchestration.", "#FFF59E0B"),
+                ("\uE790", "High-Performance 3D & Fluid Composition Engine", "GPU-accelerated 3D transforms, silky-smooth 120 FPS page transitions, skeleton shimmers and adaptive responsive layouts.", "#FFEC4899"),
+                ("\uE775", "Granular Settings Search & Instant Bilingual Engine", "Zero-latency full-text settings discovery and instant UI translation switching between Vietnamese and English.", "#FF8B5CF6")
             };
 
             foreach (var item in features)
@@ -1768,7 +1768,7 @@ public sealed partial class SettingsPage : Page
             var diagObj = new
             {
                 App = "WinCare Pro",
-                Version = "4.2.0",
+                Version = "4.3.0",
                 TimestampUtc = DateTime.UtcNow.ToString("o"),
                 Architecture = RuntimeInformation.ProcessArchitecture.ToString(),
                 OS = Environment.OSVersion.VersionString,

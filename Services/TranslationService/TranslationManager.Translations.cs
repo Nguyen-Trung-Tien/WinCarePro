@@ -2059,7 +2059,7 @@ public partial class TranslationManager
         _translations["Diagnostics Trace Log Reader"] = "Trình đọc nhật ký theo dõi chẩn đoán";
         _translations["Real-time application framework execution events."] = "Các sự kiện thực thi framework ứng dụng theo thời gian thực.";
         _translations["System Optimizer & Security Shield"] = "Tối ưu hóa hệ thống & Khiên bảo mật";
-        _translations["Version 4.2.0 (Stable Release)"] = "Phiên bản 4.2.0 (Bản ổn định)";
+        _translations["Version 4.3.0 (Stable Release)"] = "Phiên bản 4.3.0 (Bản ổn định)";
         _translations["Check for Updates Now"] = "Kiểm tra cập nhật ngay";
         _translations["Purge SQLite Activity History Logs"] = "Xóa nhật ký hoạt động SQLite";
         _translations["Wipe Saved Diagnostic Report Files"] = "Xóa tệp báo cáo chẩn đoán đã lưu";
@@ -2125,7 +2125,7 @@ public partial class TranslationManager
         _translations["Tiếng Việt"] = "Tiếng Việt";
         _translations["v3.4.0"] = "v3.4.0";
         _translations["v3.4.1"] = "v3.4.1";
-        _translations["v4.2.0"] = "v4.2.0";
+        _translations["v4.3.0"] = "v4.3.0";
         _translations["TXT"] = "TXT";
         _translations["JSON"] = "JSON";
         _translations["CSV"] = "CSV";
@@ -2628,7 +2628,7 @@ public partial class TranslationManager
         _translations["About WinCare Pro"] = "Thông tin về WinCare Pro";
         _translations["Software build specifications, developer contact, and open-source repository."] = "Thông số bản dựng phần mềm, liên hệ nhà phát triển và kho mã nguồn mở.";
         _translations["System Optimizer, Security Shield & Care Suite"] = "Bộ Tối Ưu Hệ Thống, Lá Chắn Bảo Mật & Chăm Sóc Toàn Diện";
-        _translations["Version 4.2.0 (Evolution Suite Release)"] = "Phiên bản 4.2.0 (Bản phát hành Evolution Suite)";
+        _translations["Version 4.3.0 (Next-Gen Intelligence Release)"] = "Phiên bản 4.3.0 (Bản phát hành Next-Gen Intelligence)";
         _translations["Lead Developer:"] = "Nhà phát triển chính:";
         _translations["Contact Support:"] = "Liên hệ hỗ trợ:";
         _translations["Source Code Repository & Feedback"] = "Kho Mã Nguồn & Đóng Góp Ý Kiến";
@@ -3161,7 +3161,7 @@ public partial class TranslationManager
         _translations["Working set & Trạng thái Standby"] = "Bộ nhớ Working Set & Bộ nhớ Chờ (Standby)";
         _translations["Working set & Standby state"] = "Bộ nhớ Working Set & Bộ nhớ Chờ (Standby)";
 
-        // --- Standardized Subtitles & System Badges (Evolution 4.2.0) ---
+        // --- Standardized Subtitles & System Badges (Next-Gen Intelligence 4.3.0) ---
         _translations["Analyze and purge system cache, temporary files, and debris."] = "Phân tích và dọn dẹp bộ nhớ đệm, tệp tạm thời và dữ liệu rác.";
         _translations["Intelligent diagnostics, bottleneck detection & automated optimization."] = "Chẩn đoán thông minh, phát hiện nghẽn cổ chai & tối ưu hóa tự động.";
         _translations["Monitor drive S.M.A.R.T telemetry, analyze storage, and find duplicate files."] = "Theo dõi S.M.A.R.T ổ đĩa, phân tích dung lượng và tìm tệp trùng lặp.";
@@ -3232,7 +3232,7 @@ public partial class TranslationManager
         _translations["About WinCare Pro & Engineering Team"] = "Giới Thiệu WinCare Pro & Đội Ngũ Kỹ Sư";
         _translations["Software architecture, lead developer portfolio, zero-telemetry privacy pledge, and open-source ecosystem."] = "Kiến trúc phần mềm, hồ sơ nhà phát triển chính, cam kết quyền riêng tư và hệ sinh thái mã nguồn mở.";
         _translations["Next-Generation System Optimizer, Security Shield & Care Suite"] = "Bộ Công Cụ Tối Ưu, Bảo Vệ & Chăm Sóc Hệ Thống Thế Hệ Mới";
-        _translations["Version 4.2.0 (Official Build) • 64-bit Native WinUI 3 • .NET 10.0 CLR"] = "Phiên bản 4.2.0 (Bản Chính Thức) • WinUI 3 Bản Quyền 64-bit • .NET 10.0 CLR";
+        _translations["Version 4.3.0 (Official Build) • 64-bit Native WinUI 3 • .NET 10.0 CLR"] = "Phiên bản 4.3.0 (Bản Chính Thức) • WinUI 3 Bản Quyền 64-bit • .NET 10.0 CLR";
         _translations["PROCESS WORKING SET"] = "BỘ NHỚ LÀM VIỆC (WORKING SET)";
         _translations["ACTIVE SESSION UPTIME"] = "THỜI GIAN HOẠT ĐỘNG PHIÊN";
         _translations["DATABASE ENGINE"] = "ĐỘNG CƠ CƠ SỞ DỮ LIỆU";
@@ -3259,7 +3259,7 @@ public partial class TranslationManager
         _translations["Email Copied"] = "Đã Sao Chép Email";
         _translations["trungtiennguyen910@gmail.com has been copied to clipboard."] = "Đã sao chép email trungtiennguyen910@gmail.com vào khay nhớ tạm.";
 
-        _translations["Version 4.2.0 (Official Release Build) • 64-bit Native System Suite"] = "Phiên bản 4.2.0 (Bản Phát Hành Chính Thức) • Bộ Công Cụ Hệ Thống 64-bit";
+        _translations["Version 4.3.0 (Official Release Build) • 64-bit Native System Suite"] = "Phiên bản 4.3.0 (Bản Phát Hành Chính Thức) • Bộ Công Cụ Hệ Thống 64-bit";
         _translations["LOCAL STORAGE ENGINE"] = "ĐỘNG CƠ LƯU TRỮ CỤC BỘ";
         _translations["Encrypted WAL • Healthy"] = "Mã Hóa WAL • Hoạt động tốt";
         _translations["Encrypted WAL • Active"] = "Mã Hóa WAL • Đang hoạt động";
@@ -3275,24 +3275,24 @@ public partial class TranslationManager
         _translations["Safe State Rollbacks"] = "Khôi Phục Trạng Thái An Toàn";
 
         // --- What's New & Changelog Dialog (Sanitized) ---
-        _translations["What's New in v4.2.0"] = "Điểm Mới ở v4.2.0";
+        _translations["What's New in v4.3.0"] = "Điểm Mới ở v4.3.0";
         _translations["What's New in WinCare Pro"] = "Những Điểm Mới trong WinCare Pro";
         _translations["View official release notes & new features changelog"] = "Xem ghi chú phát hành chính thức và nhật ký tính năng mới";
-        _translations["v4.2.0 Official Release"] = "Bản Phát Hành Chính Thức v4.2.0";
-        _translations["WinCare Pro Evolution Suite"] = "Bộ Ứng Dụng WinCare Pro Evolution";
-        _translations["Next-Generation System Architecture, Zero-Telemetry Privacy Shield & Live Diagnostics Suite."] = "Kiến trúc hệ thống thế hệ mới, khiên bảo vệ quyền riêng tư và bộ chẩn đoán trực tiếp.";
-        _translations["Live Local Software Updates & Finite State Sentinel"] = "Cập Nhật Phần Mềm An Toàn & Máy Trạng Thái Tự Động";
-        _translations["Realtime percentage telemetry stream, cryptographic SHA-256 verification and automatic channel sync."] = "Luồng phần trăm đo lường thời gian thực, xác minh mã hóa SHA-256 và đồng bộ kênh phát hành.";
-        _translations["Zero-Telemetry & Privacy Guarantee Shield"] = "Khiên Bảo Vệ Riêng Tư & Không Thu Thập Dữ Liệu";
-        _translations["100% on-device processing, zero cloud tracking, encrypted local transaction storage."] = "100% xử lý trực tiếp trên máy, không theo dõi qua đám mây, lưu trữ giao dịch cục bộ.";
-        _translations["Advanced Developer Workbench & Live Memory Trimmer"] = "Bàn Làm Việc Kỹ Sư & Trình Dọn Bộ Nhớ RAM";
-        _translations["Interactive Working Set RAM trimmer with forced GC, process diagnostics and local audit log viewer."] = "Dọn bộ nhớ RAM Working Set kèm ép thu gom GC, chẩn đoán tiến trình và tra cứu log cục bộ.";
-        _translations["Kernel Responsiveness & Latency Turbo Engine"] = "Tối Ưu Độ Phản Hồi Kernel & Giảm Độ Trễ Tối Đa";
-        _translations["Dynamic thread priority scheduling, background RAM trimming and gaming-grade latency optimization."] = "Lập lịch ưu tiên luồng CPU linh hoạt, dọn RAM nền và tối ưu độ trễ chuẩn gaming.";
-        _translations["Interactive System Guide & Visual Handbook"] = "Sổ Tay Hướng Dẫn Hệ Thống Trực Quan";
-        _translations["Comprehensive documentation with safety best practices across all 15 core system modules."] = "Tài liệu toàn diện kèm các quy chuẩn an toàn tối đa cho cả 15 module cốt lõi.";
-        _translations["Instant Bilingual Engine (Vietnamese / English)"] = "Động Cơ Song Ngữ Tức Thì (Việt / Anh)";
-        _translations["Zero-latency UI localization switching with 100% standardized dictionaries across the suite."] = "Chuyển đổi ngôn ngữ không độ trễ với bộ từ điển chuẩn hóa 100% trên toàn hệ thống.";
+        _translations["v4.3.0 Official Release"] = "Bản Phát Hành Chính Thức v4.3.0";
+        _translations["WinCare Pro Next-Gen Intelligence Suite"] = "Bộ Ứng Dụng WinCare Pro Trí Tuệ Thế Hệ Mới";
+        _translations["Embedded AI Diagnostic Engine, SafePathGuard Defense Core, Hardware Driver Manager & 3D Fluid Transitions."] = "Động cơ chẩn đoán AI nhúng, lõi bảo vệ SafePathGuard, trình quản lý driver phần cứng và chuyển cảnh 3D mượt mà.";
+        _translations["Embedded AI WinCare Diagnostics & Predictive Engine"] = "Chẩn Đoán AI WinCare & Động Cơ Phân Tích Dự Đoán";
+        _translations["Realtime heuristic system analysis, predictive hardware forecasting, automated health scoring and one-click smart remedies."] = "Phân tích chẩn đoán Heuristic thời gian thực, dự báo phần cứng, chấm điểm sức khỏe và đề xuất sửa nhanh một chạm.";
+        _translations["SafePathGuard & InputSanitizer Defense Core"] = "Lõi Phòng Thủ SafePathGuard & InputSanitizer";
+        _translations["Multi-layered filesystem protection, path traversal defenses, secure input validation, and local SQLite audit logging."] = "Bảo vệ hệ thống tệp đa lớp, chống xâm nhập đường dẫn, lọc an toàn đầu vào và ghi log kiểm toán SQLite cục bộ.";
+        _translations["Hardware Driver Diagnostics & Backup Manager"] = "Chẩn Đoán & Trình Quản Lý Sao Lưu Driver Phần Cứng";
+        _translations["Deep hardware component telemetry, automated driver health inspection, device state auditing and reliable rollback snapshots."] = "Đo lường linh kiện phần cứng chi tiết, kiểm tra sức khỏe driver tự động, kiểm toán thiết bị và tạo điểm sao lưu an toàn.";
+        _translations["Integrated Third-Party Software Updater"] = "Trình Cập Nhật Phần Mềm Bên Thứ Ba Tích Hợp";
+        _translations["Automated detection of outdated local applications, cryptographic SHA-256 package validation and batch update orchestration."] = "Tự động phát hiện ứng dụng lỗi thời trên máy, xác thực mã hóa SHA-256 và điều phối cập nhật hàng loạt.";
+        _translations["High-Performance 3D & Fluid Composition Engine"] = "Động Cơ Hoạt Ảnh 3D & Chuyển Cảnh Fluid Hiệu Suất Cao";
+        _translations["GPU-accelerated 3D transforms, silky-smooth 120 FPS page transitions, skeleton shimmers and adaptive responsive layouts."] = "Tăng tốc biến đổi 3D bằng GPU, chuyển cảnh trang siêu mượt 120 FPS, hiệu ứng shimmer và bố cục tự co giãn.";
+        _translations["Granular Settings Search & Instant Bilingual Engine"] = "Tìm Kiếm Cài Đặt Chi Tiết & Động Cơ Song Ngữ Tức Thì";
+        _translations["Zero-latency full-text settings discovery and instant UI translation switching between Vietnamese and English."] = "Khám phá cài đặt toàn văn không độ trễ và chuyển đổi ngôn ngữ tức thì giữa Tiếng Việt và Tiếng Anh.";
 
         // --- Settings Search & Navigation ---
         _translations["Find a setting..."] = "Tìm kiếm cài đặt...";

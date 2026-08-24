@@ -538,7 +538,7 @@
                                 <!-- Top Left: Version & Title -->
                                 <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                     <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
-                                        <TextBlock Text="v4.2.0" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                        <TextBlock Text="v4.3.0" FontSize="11" FontWeight="Bold" Foreground="White"/>
                                     </Border>
                                     <TextBlock Text="WinCare Pro Distribution Channel" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                 </StackPanel>
@@ -789,7 +789,7 @@
                                                 </Border>
                                             </StackPanel>
                                             <TextBlock Text="Next-Generation System Optimizer, Security Shield &amp; Care Suite" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            <TextBlock Text="Version 4.2.0 (Official Release Build) • 64-bit Native System Suite" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
+                                            <TextBlock Text="Version 4.3.0 (Official Release Build) • 64-bit Native System Suite" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
                                         </StackPanel>
                                     </StackPanel>
 
@@ -797,7 +797,7 @@
                                     <Button Grid.Column="1" Click="OnViewChangelogClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="14,8" VerticalAlignment="Center" ToolTipService.ToolTip="View official release notes &amp; new features changelog">
                                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE789;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}"/>
-                                            <TextBlock Text="What's New in v4.2.0" FontSize="12" FontWeight="SemiBold"/>
+                                            <TextBlock Text="What's New in v4.3.0" FontSize="12" FontWeight="SemiBold"/>
                                         </StackPanel>
                                     </Button>
                                 </Grid>

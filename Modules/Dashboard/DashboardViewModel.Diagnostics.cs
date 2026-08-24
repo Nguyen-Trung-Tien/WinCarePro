@@ -175,6 +175,64 @@ public partial class DashboardViewModel
                     }
                     break;
 
+                case "HTML":
+                case "HTM":
+                    var htmlBuilder = new System.Text.StringBuilder();
+                    string scoreColor = HealthScore >= 80 ? "#10B981" : (HealthScore >= 50 ? "#F59E0B" : "#EF4444");
+                    string scoreBg = HealthScore >= 80 ? "rgba(16, 185, 129, 0.15)" : (HealthScore >= 50 ? "rgba(245, 158, 11, 0.15)" : "rgba(239, 68, 68, 0.15)");
+
+                    htmlBuilder.AppendLine("<!DOCTYPE html>");
+                    htmlBuilder.AppendLine("<html lang=\"en\">");
+                    htmlBuilder.AppendLine("<head>");
+                    htmlBuilder.AppendLine("  <meta charset=\"UTF-8\">");
+                    htmlBuilder.AppendLine("  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
+                    htmlBuilder.AppendLine("  <title>WinCare Pro — System Diagnostics Report</title>");
+                    htmlBuilder.AppendLine("  <style>");
+                    htmlBuilder.AppendLine("    * { box-sizing: border-box; margin: 0; padding: 0; }");
+                    htmlBuilder.AppendLine("    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #0f172a; color: #f8fafc; padding: 32px 16px; line-height: 1.6; }");
+                    htmlBuilder.AppendLine("    .container { max-width: 900px; margin: 0 auto; background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }");
+                    htmlBuilder.AppendLine("    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 24px; margin-bottom: 28px; }");
+                    htmlBuilder.AppendLine("    .title { font-size: 24px; font-weight: 700; background: linear-gradient(135deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }");
+                    htmlBuilder.AppendLine("    .score-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 9999px; font-weight: 700; font-size: 18px; }");
+                    htmlBuilder.AppendLine("    .section-title { font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin: 24px 0 12px 0; }");
+                    htmlBuilder.AppendLine("    .diag-item { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 16px; margin-bottom: 10px; }");
+                    htmlBuilder.AppendLine("    .diag-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }");
+                    htmlBuilder.AppendLine("    .badge-healthy { color: #10B981; background: rgba(16, 185, 129, 0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }");
+                    htmlBuilder.AppendLine("    .badge-warn { color: #F59E0B; background: rgba(245, 158, 11, 0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }");
+                    htmlBuilder.AppendLine("    .footer { text-align: center; margin-top: 32px; font-size: 12px; color: #64748b; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 20px; }");
+                    htmlBuilder.AppendLine("  </style>");
+                    htmlBuilder.AppendLine("</head>");
+                    htmlBuilder.AppendLine("<body>");
+                    htmlBuilder.AppendLine("  <div class=\"container\">");
+                    htmlBuilder.AppendLine("    <div class=\"header\">");
+                    htmlBuilder.AppendLine("      <div>");
+                    htmlBuilder.AppendLine("        <div class=\"title\">🚀 WinCare Pro System Health Report</div>");
+                    htmlBuilder.AppendLine($"        <div style=\"color: #64748b; font-size: 13px; margin-top: 4px;\">Generated on {DateTime.Now:yyyy-MM-dd HH:mm:ss} | User: {System.Net.WebUtility.HtmlEncode(Environment.UserName)}</div>");
+                    htmlBuilder.AppendLine("      </div>");
+                    htmlBuilder.AppendLine($"      <div class=\"score-badge\" style=\"background: {scoreBg}; color: {scoreColor}; border: 1px solid {scoreColor};\">Health Score: {HealthScore}/100</div>");
+                    htmlBuilder.AppendLine("    </div>");
+                    htmlBuilder.AppendLine("    <div class=\"section-title\">Diagnostic Findings & Health Index</div>");
+                    foreach (var item in items)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        string statusClass = item.IsHealthy ? "badge-healthy" : "badge-warn";
+                        string statusText = item.IsHealthy ? "OPTIMIZED" : "ACTION RECOMMENDED";
+                        htmlBuilder.AppendLine("    <div class=\"diag-item\">");
+                        htmlBuilder.AppendLine($"      <div class=\"diag-header\"><strong style=\"font-size: 14px;\">[{System.Net.WebUtility.HtmlEncode(item.Category)}] {System.Net.WebUtility.HtmlEncode(item.CheckName)}</strong><span class=\"{statusClass}\">{statusText}</span></div>");
+                        htmlBuilder.AppendLine($"      <div style=\"font-size: 13px; color: #cbd5e1; margin-top: 4px;\">{System.Net.WebUtility.HtmlEncode(item.Description)}</div>");
+                        htmlBuilder.AppendLine("    </div>");
+                    }
+                    htmlBuilder.AppendLine("    <div class=\"footer\">WinCare Pro Suite • Aura Glassmorphic Architecture • Diagnostics Engine Report</div>");
+                    htmlBuilder.AppendLine("  </div>");
+                    htmlBuilder.AppendLine("</body>");
+                    htmlBuilder.AppendLine("</html>");
+
+                    using (var writer = new StreamWriter(filePath, false, System.Text.Encoding.UTF8, 4096))
+                    {
+                        await writer.WriteAsync(htmlBuilder.ToString());
+                    }
+                    break;
+
                 case "CSV":
                     using (var writer = new StreamWriter(filePath, false, System.Text.Encoding.UTF8, 4096))
                     {

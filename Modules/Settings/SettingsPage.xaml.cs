@@ -440,9 +440,6 @@ public sealed partial class SettingsPage : Page
         
         TranslationManager.Instance.CurrentLanguage = index == 1 ? AppLanguage.Vietnamese : AppLanguage.English;
         
-        // Fast-path cached translation update (Zero visual tree walks)
-        TranslationManager.Instance.ApplyLanguageChange();
-        
         if (App.MainWindowInstance is MainWindow mainWindow)
         {
             if (mainWindow.MainFrame.Content is MainPage mainPage)

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.Services;
+using WinCarePro.Database;
 
 namespace WinCarePro;
 
@@ -149,6 +150,8 @@ public sealed partial class MainWindow : Window
     private const int WM_LBUTTONDBLCLK = 0x0203;
     private const int WM_RBUTTONUP = 0x0205;
     private const int WM_CONTEXTMENU = 0x007B;
+    private const uint WM_QUERYENDSESSION = 0x0011;
+    private const uint WM_ENDSESSION = 0x0016;
 
     private const uint MF_STRING = 0x00000000;
     private const uint MF_SEPARATOR = 0x00000800;
@@ -197,6 +200,32 @@ public sealed partial class MainWindow : Window
             mmi.ptMinTrackSize.y = 600;
 
             Marshal.StructureToPtr(mmi, lParam, false);
+            return IntPtr.Zero;
+        }
+        else if (msg == WM_QUERYENDSESSION)
+        {
+            // Windows is querying whether application is ready to shutdown/restart.
+            // Flush database write-ahead logs and return 1 (TRUE) to allow clean shutdown.
+            try
+            {
+                DbManager.ShutdownDatabase();
+            }
+            catch { }
+            return (IntPtr)1;
+        }
+        else if (msg == WM_ENDSESSION)
+        {
+            if (wParam != IntPtr.Zero) // Session is actually ending
+            {
+                try
+                {
+                    _clockTimer?.Stop();
+                    _clockTimer = null;
+                    CleanupTrayIcon();
+                    DbManager.ShutdownDatabase();
+                }
+                catch { }
+            }
             return IntPtr.Zero;
         }
         else if (msg == WM_TRAYICON)

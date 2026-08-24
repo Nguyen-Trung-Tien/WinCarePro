@@ -94,10 +94,18 @@ public class DialogService : IDialogService
                 Margin = new Thickness(0, 4, 0, 0)
             };
 
+            var scrollViewer = new ScrollViewer
+            {
+                Content = panel,
+                MaxHeight = 440,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+
             var dialog = new ContentDialog
             {
                 Title = "Running Applications Detected".T(),
-                Content = panel,
+                Content = scrollViewer,
                 PrimaryButtonText = "Close Apps & Clean".T(),
                 SecondaryButtonText = "Clean Anyway".T(),
                 CloseButtonText = "Cancel".T(),

@@ -596,9 +596,6 @@ public class DbManager
 
         ExecuteWithConnection(connection =>
         {
-            using var cmd = new SqliteCommand("VACUUM; ANALYZE;", connection);
-            cmd.ExecuteNonQuery();
-
             int retentionDays = 30; // Default fallback
             try
             {
@@ -621,11 +618,33 @@ public class DbManager
             }
             catch { }
 
-            // Auto clean logs older than retentionDays days during weekly maintenance
-            using var cleanCmd = connection.CreateCommand();
-            cleanCmd.CommandText = "DELETE FROM Logs WHERE CreatedAt < @cutoff";
-            cleanCmd.Parameters.AddWithValue("@cutoff", DateTime.Now.AddDays(-retentionDays).ToString("o"));
-            cleanCmd.ExecuteNonQuery();
+            // 1. Auto clean logs older than retentionDays days before compaction
+            try
+            {
+                using var cleanCmd = connection.CreateCommand();
+                cleanCmd.CommandText = "DELETE FROM Logs WHERE CreatedAt < @cutoff";
+                cleanCmd.Parameters.AddWithValue("@cutoff", DateTime.Now.AddDays(-retentionDays).ToString("yyyy-MM-dd HH:mm:ss"));
+                cleanCmd.ExecuteNonQuery();
+            }
+            catch { }
+
+            // 2. Auto clean state snapshots older than 30 days
+            try
+            {
+                using var cleanSnapCmd = connection.CreateCommand();
+                cleanSnapCmd.CommandText = "DELETE FROM StateSnapshots WHERE CreatedAt < @cutoff";
+                cleanSnapCmd.Parameters.AddWithValue("@cutoff", DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd HH:mm:ss"));
+                cleanSnapCmd.ExecuteNonQuery();
+            }
+            catch { }
+
+            // 3. Reclaim freed disk space, defragment tables, and truncate WAL logs
+            try
+            {
+                using var cmd = new SqliteCommand("PRAGMA optimize; VACUUM; ANALYZE; PRAGMA wal_checkpoint(TRUNCATE);", connection);
+                cmd.ExecuteNonQuery();
+            }
+            catch { }
         });
 
         // Log the completion of database maintenance to schedule the next run in 7 days

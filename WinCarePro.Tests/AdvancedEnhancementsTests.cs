@@ -59,4 +59,21 @@ public class AdvancedEnhancementsTests
         Assert.NotNull(result);
         Assert.NotEmpty(result);
     }
+
+    [Fact]
+    public void IconCacheService_GetIcon_HandlesNullOrMissingPathsSafely()
+    {
+        // Arrange
+        var iconService = new IconCacheService();
+
+        // Act
+        string emptyResult = iconService.GetIconForExecutable("");
+        string systemProcResult = iconService.GetIconForExecutable("System Process");
+        string nonExistentResult = iconService.GetIconForExecutable("C:\\NonExistentPath\\FakeApp.exe");
+
+        // Assert
+        Assert.Equal("", emptyResult);
+        Assert.Equal("", systemProcResult);
+        Assert.Equal("", nonExistentResult);
+    }
 }

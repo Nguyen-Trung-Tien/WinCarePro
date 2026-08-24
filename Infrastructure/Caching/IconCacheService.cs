@@ -8,8 +8,10 @@ namespace WinCarePro.Services.Implementations;
 
 public class IconCacheService
 {
+    private const int MaxMemoryCacheSize = 500;
     private readonly string _cacheDirectory;
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> _memoryCache = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly System.Collections.Concurrent.ConcurrentQueue<string> _cacheKeys = new();
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Task<string>> _activeIconTasks = new();
 
     public IconCacheService()
@@ -28,6 +30,27 @@ public class IconCacheService
             }
         }
         catch { }
+    }
+
+    private static void CacheIcon(string filePath, string iconPath)
+    {
+        if (_memoryCache.Count >= MaxMemoryCacheSize)
+        {
+            // Prune oldest keys when cache exceeds maximum bound
+            while (_memoryCache.Count >= MaxMemoryCacheSize && _cacheKeys.TryDequeue(out var oldKey))
+            {
+                _memoryCache.TryRemove(oldKey, out _);
+            }
+        }
+
+        if (_memoryCache.TryAdd(filePath, iconPath))
+        {
+            _cacheKeys.Enqueue(filePath);
+        }
+        else
+        {
+            _memoryCache[filePath] = iconPath;
+        }
     }
 
     public async Task<string> GetIconForExecutableAsync(string filePath)
@@ -49,7 +72,7 @@ public class IconCacheService
 
             if (File.Exists(destPng))
             {
-                _memoryCache[filePath] = destPng;
+                CacheIcon(filePath, destPng);
                 return destPng;
             }
 
@@ -71,7 +94,7 @@ public class IconCacheService
                             await readStream.CopyToAsync(fileStream);
                         }
                     }
-                    _memoryCache[filePath] = destPng;
+                    CacheIcon(filePath, destPng);
                     return destPng;
                 }
             }
@@ -104,7 +127,7 @@ public class IconCacheService
 
             if (File.Exists(destPng))
             {
-                _memoryCache[filePath] = destPng;
+                CacheIcon(filePath, destPng);
                 return destPng;
             }
 
@@ -116,7 +139,7 @@ public class IconCacheService
                     var result = await GetIconForExecutableAsync(filePath);
                     if (!string.IsNullOrEmpty(result))
                     {
-                        _memoryCache[filePath] = result;
+                        CacheIcon(filePath, result);
                     }
                     return result;
                 }

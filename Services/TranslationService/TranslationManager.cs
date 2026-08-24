@@ -39,6 +39,8 @@ public partial class TranslationManager
 
     private readonly Dictionary<string, string> _translations = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> _reverseTranslations = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> _dynamicRegexCache = new(StringComparer.OrdinalIgnoreCase);
+    private const int MaxDynamicRegexCache = 500;
     private static readonly ConditionalWeakTable<DependencyObject, Dictionary<string, string>> OriginalValues = new();
     private static readonly ConditionalWeakTable<DependencyObject, object> RegisteredControlsMap = new();
     private static readonly object DummyValue = new();
@@ -59,6 +61,15 @@ public partial class TranslationManager
             CurrentLanguage = index == 1 ? AppLanguage.Vietnamese : AppLanguage.English;
         }
         catch { }
+    }
+
+    private static void CacheDynamicTranslation(string key, string translated)
+    {
+        if (_dynamicRegexCache.Count >= MaxDynamicRegexCache)
+        {
+            _dynamicRegexCache.Clear();
+        }
+        _dynamicRegexCache[key] = translated;
     }
 
     private static readonly System.Text.RegularExpressions.Regex DriveUsageRegex = new(@"^Drive ([A-Z]): usage is at (\d+)%\. Estimated storage sustainability is over (\d+) days\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
@@ -97,52 +108,90 @@ public partial class TranslationManager
     public string GetTranslationForLanguage(string key, AppLanguage language)
     {
         if (string.IsNullOrEmpty(key)) return string.Empty;
-        string trimmed = key.Trim();
-        string normalizedLf = trimmed.Replace("\r\n", "\n");
-        string normalizedCrlf = trimmed.Replace("\r\n", "\n").Replace("\n", "\r\n");
 
         if (language == AppLanguage.English)
         {
-            if (_translations.ContainsKey(trimmed) || _translations.ContainsKey(normalizedLf) || _translations.ContainsKey(normalizedCrlf)) return key;
-            if (_reverseTranslations.TryGetValue(trimmed, out var englishKey) ||
-                _reverseTranslations.TryGetValue(normalizedLf, out englishKey) ||
-                _reverseTranslations.TryGetValue(normalizedCrlf, out englishKey))
+            // 1. Direct match (already English key)
+            if (_translations.ContainsKey(key)) return key;
+
+            string trimmed = key.Trim();
+            if (_translations.ContainsKey(trimmed)) return key;
+
+            // 2. Fast reverse lookup (Vietnamese to English)
+            if (_reverseTranslations.TryGetValue(key, out var englishKey) ||
+                _reverseTranslations.TryGetValue(trimmed, out englishKey))
             {
                 return PreserveWhitespace(key, englishKey);
             }
+
+            // 3. Multi-line fallback only if newline character exists
+            if (key.IndexOf('\n') >= 0)
+            {
+                string normalizedLf = trimmed.Replace("\r\n", "\n");
+                if (_reverseTranslations.TryGetValue(normalizedLf, out englishKey))
+                {
+                    return PreserveWhitespace(key, englishKey);
+                }
+            }
+
             return key;
         }
         else // Vietnamese
         {
-            if (_translations.TryGetValue(trimmed, out string? translated) ||
-                _translations.TryGetValue(normalizedLf, out translated) ||
-                _translations.TryGetValue(normalizedCrlf, out translated))
+            // 1. Fast O(1) direct dictionary match (zero allocation)
+            if (_translations.TryGetValue(key, out string? translated))
+            {
+                return translated;
+            }
+
+            string trimmed = key.Trim();
+            if (_translations.TryGetValue(trimmed, out translated))
             {
                 return PreserveWhitespace(key, translated);
+            }
+
+            // 2. Check newline normalization only if string contains newline
+            if (key.IndexOf('\n') >= 0)
+            {
+                string normalizedLf = trimmed.Replace("\r\n", "\n");
+                if (_translations.TryGetValue(normalizedLf, out translated))
+                {
+                    return PreserveWhitespace(key, translated);
+                }
+            }
+
+            // 3. Check O(1) Dynamic Regex Cache
+            if (_dynamicRegexCache.TryGetValue(trimmed, out var cachedDynamic))
+            {
+                return PreserveWhitespace(key, cachedDynamic);
             }
 
             // Dynamic Regex translation for storage sustainability
             if (DriveUsageHealthyRegex.IsMatch(trimmed))
             {
                 string res = DriveUsageHealthyRegex.Replace(trimmed, "Ổ $1: mức sử dụng tốt ở mức $2% ($3 GB trống). Độ bền dung lượng ước tính trên $4 ngày.");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
             if (DriveUsageCritRegex.IsMatch(trimmed))
             {
                 string res = DriveUsageCritRegex.Replace(trimmed, "Ổ $1: dung lượng cực thấp ($2 GB trống, đã dùng $3%). AI khuyến nghị dọn dẹp ổ đĩa ngay.");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
             if (DriveUsageCapRegex.IsMatch(trimmed))
             {
                 string res = DriveUsageCapRegex.Replace(trimmed, "Ổ $1: đang ở mức $2% dung lượng ($3 GB trống). Hãy cân nhắc giải phóng các tệp lớn.");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
             if (DriveUsageRegex.IsMatch(trimmed))
             {
                 string res = DriveUsageRegex.Replace(trimmed, "Ổ $1: đang sử dụng $2%. Ước tính dung lượng bền vững hơn $3 ngày.");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
@@ -150,6 +199,7 @@ public partial class TranslationManager
             if (RamBoostedRegex.IsMatch(trimmed))
             {
                 string res = RamBoostedRegex.Replace(trimmed, "Giải phóng RAM: Đã tối ưu $1 tiến trình, giải phóng $2 bytes");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
@@ -157,6 +207,7 @@ public partial class TranslationManager
             if (CleanedBytesRegex.IsMatch(trimmed))
             {
                 string res = CleanedBytesRegex.Replace(trimmed, "Đã dọn dẹp $1 bytes");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
@@ -164,6 +215,7 @@ public partial class TranslationManager
             if (SystemUpdatedRegex.IsMatch(trimmed))
             {
                 string res = SystemUpdatedRegex.Replace(trimmed, "Hệ thống đã cập nhật lên phiên bản $1");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
@@ -176,13 +228,16 @@ public partial class TranslationManager
                     rest = rest.Substring(4).Trim();
                 }
                 rest = rest.TrimEnd('.', '…').Trim();
-                return PreserveWhitespace(key, $"Đang gỡ cài đặt ứng dụng: {rest}...");
+                string res = $"Đang gỡ cài đặt ứng dụng: {rest}...";
+                CacheDynamicTranslation(trimmed, res);
+                return PreserveWhitespace(key, res);
             }
 
             // Dynamic Regex translation for Cleaned empty directories
             if (CleanedDirsRegex.IsMatch(trimmed))
             {
                 string res = CleanedDirsRegex.Replace(trimmed, "Đã dọn dẹp $1 thư mục rỗng trong $2");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
@@ -190,6 +245,7 @@ public partial class TranslationManager
             if (GamingTurboActiveRegex.IsMatch(trimmed))
             {
                 string res = GamingTurboActiveRegex.Replace(trimmed, "🚀 Gaming Turbo HOẠT ĐỘNG! Đã giải phóng $1 MB RAM trên $2 tiến trình.");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
@@ -199,13 +255,16 @@ public partial class TranslationManager
                 var match = PresetRegex.Match(trimmed);
                 string presetVal = match.Groups[1].Value.Trim();
                 string translatedVal = _translations.TryGetValue(presetVal, out var tVal) ? tVal : presetVal;
-                return PreserveWhitespace(key, $"Cấu hình: {translatedVal}");
+                string res = $"Cấu hình: {translatedVal}";
+                CacheDynamicTranslation(trimmed, res);
+                return PreserveWhitespace(key, res);
             }
 
             // Dynamic Regex for Boot Savings
             if (BootSavingsRegex.IsMatch(trimmed))
             {
                 string res = BootSavingsRegex.Replace(trimmed, "-$1s Khởi Động");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
@@ -213,6 +272,7 @@ public partial class TranslationManager
             if (DaysLeftRegex.IsMatch(trimmed))
             {
                 string res = DaysLeftRegex.Replace(trimmed, "Còn $1 Ngày");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
@@ -228,17 +288,19 @@ public partial class TranslationManager
             if (AiProcessesRegex.IsMatch(trimmed))
             {
                 string res = AiProcessesRegex.Replace(trimmed, "AI phát hiện $1 tiến trình nền đang hoạt động. Tắt các mục khởi động không cần thiết có thể cải thiện thời gian khởi động.");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
             if (BackgroundProcessesActiveRegex.IsMatch(trimmed))
             {
                 string res = BackgroundProcessesActiveRegex.Replace(trimmed, "Có $1 tiến trình nền đang hoạt động. Hệ thống đang vận hành bình thường.");
+                CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
 
             // Fallback for multiline blocks: translate each line individually
-            if (trimmed.Contains('\n'))
+            if (trimmed.IndexOf('\n') >= 0)
             {
                 var lines = trimmed.Split('\n');
                 bool anyTranslated = false;

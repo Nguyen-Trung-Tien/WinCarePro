@@ -95,7 +95,7 @@ public class SecurityPrivacyEngine
 
             try
             {
-                _ = ProcessRunner.RunHiddenAsync("netsh.exe", "advfirewall set allprofiles state on", 3);
+                _ = ProcessRunner.RunHiddenAsync("netsh.exe", new[] { "advfirewall", "set", "allprofiles", "state", "on" }, 3);
             }
             catch { }
             Database.DbManager.LogAction("Firewall: Enabled all firewall profiles", "Security Center", "Success");

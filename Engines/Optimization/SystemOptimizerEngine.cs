@@ -186,6 +186,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE9D9",
             RegistryPath = @"HKCU\Control Panel\Desktop -> MenuShowDelay",
             RecommendedValue = "50",
+            DefaultValue = "400",
+            RequiresRestart = false,
+            RequiresAdmin = false,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MenuShowDelay", "400")
         });
 
@@ -199,6 +203,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE9D9",
             RegistryPath = @"HKCU\Control Panel\Desktop -> AutoEndTasks",
             RecommendedValue = "1",
+            DefaultValue = "0",
+            RequiresRestart = false,
+            RequiresAdmin = false,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "AutoEndTasks", "0")
         });
 
@@ -212,6 +220,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE9D9",
             RegistryPath = @"HKCU\Control Panel\Desktop -> WaitToKillAppTimeout",
             RecommendedValue = "2000",
+            DefaultValue = "20000",
+            RequiresRestart = false,
+            RequiresAdmin = false,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "WaitToKillAppTimeout", "20000")
         });
 
@@ -225,6 +237,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE949",
             RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Control\FileSystem -> NtfsDisableLastAccessUpdate",
             RecommendedValue = "1",
+            DefaultValue = "0",
+            RequiresRestart = true,
+            RequiresAdmin = true,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\FileSystem", "NtfsDisableLastAccessUpdate", "0")
         });
 
@@ -238,6 +254,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE9D9",
             RegistryPath = @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile -> NetworkThrottlingIndex",
             RecommendedValue = "-1",
+            DefaultValue = "10",
+            RequiresRestart = false,
+            RequiresAdmin = true,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "NetworkThrottlingIndex", "10")
         });
 
@@ -251,6 +271,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE9D9",
             RegistryPath = @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile -> SystemResponsiveness",
             RecommendedValue = "0",
+            DefaultValue = "20",
+            RequiresRestart = false,
+            RequiresAdmin = true,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", "20")
         });
 
@@ -264,6 +288,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE7FC",
             RegistryPath = @"HKCU\Software\Microsoft\GameBar -> AllowAutoGameMode",
             RecommendedValue = "1",
+            DefaultValue = "0",
+            RequiresRestart = false,
+            RequiresAdmin = false,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Software\Microsoft\GameBar", "AllowAutoGameMode", "0")
         });
 
@@ -277,6 +305,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE7F1",
             RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers -> HwSchMode",
             RecommendedValue = "2",
+            DefaultValue = "1",
+            RequiresRestart = true,
+            RequiresAdmin = true,
+            RiskLevel = "Medium",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", "1")
         });
 
@@ -290,6 +322,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE727",
             RegistryPath = @"HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection -> AllowTelemetry",
             RecommendedValue = "0",
+            DefaultValue = "1",
+            RequiresRestart = true,
+            RequiresAdmin = true,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\DataCollection", "AllowTelemetry", "1")
         });
 
@@ -303,6 +339,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE727",
             RegistryPath = @"HKLM\SOFTWARE\Policies\Microsoft\Windows\Windows Search -> AllowCortana",
             RecommendedValue = "0",
+            DefaultValue = "1",
+            RequiresRestart = false,
+            RequiresAdmin = true,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCortana", "1")
         });
 
@@ -316,6 +356,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE727",
             RegistryPath = @"HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting -> Disabled",
             RecommendedValue = "1",
+            DefaultValue = "0",
+            RequiresRestart = false,
+            RequiresAdmin = true,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", "0")
         });
 
@@ -329,6 +373,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE949",
             RegistryPath = @"HKLM\SOFTWARE\Microsoft\Windows\Windows Search -> DisableBackoff",
             RecommendedValue = "1",
+            DefaultValue = "0",
+            RequiresRestart = true,
+            RequiresAdmin = true,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Search", "DisableBackoff", "0")
         });
 
@@ -342,6 +390,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE9D9",
             RegistryPath = @"HKCU\Control Panel\Desktop\WindowMetrics -> MinAnimate",
             RecommendedValue = "0",
+            DefaultValue = "1",
+            RequiresRestart = false,
+            RequiresAdmin = false,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop\WindowMetrics", "MinAnimate", "1")
         });
 
@@ -355,6 +407,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE949",
             RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management -> LargeSystemCache",
             RecommendedValue = "1",
+            DefaultValue = "0",
+            RequiresRestart = true,
+            RequiresAdmin = true,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "LargeSystemCache", "0")
         });
 
@@ -368,6 +424,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE9D9",
             RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management -> DisablePagingExecutive",
             RecommendedValue = "1",
+            DefaultValue = "0",
+            RequiresRestart = true,
+            RequiresAdmin = true,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "DisablePagingExecutive", "0")
         });
 
@@ -381,6 +441,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE7FC",
             RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces -> TcpAckFrequency",
             RecommendedValue = "1",
+            DefaultValue = "0",
+            RequiresRestart = true,
+            RequiresAdmin = true,
+            RiskLevel = "Medium",
             CurrentValue = GetTcpAckFrequencyStatus()
         });
 
@@ -394,6 +458,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE7FC",
             RegistryPath = @"HKCU\System\GameConfigStore -> GameDVR_Enabled",
             RecommendedValue = "0",
+            DefaultValue = "1",
+            RequiresRestart = false,
+            RequiresAdmin = false,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"System\GameConfigStore", "GameDVR_Enabled", "1")
         });
 
@@ -407,6 +475,10 @@ public class SystemOptimizerEngine
             IconGlyph = "\uE727",
             RegistryPath = @"HKLM\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors -> DisableLocation",
             RecommendedValue = "1",
+            DefaultValue = "0",
+            RequiresRestart = false,
+            RequiresAdmin = true,
+            RiskLevel = "Low",
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors", "DisableLocation", "0")
         });
 
@@ -474,13 +546,16 @@ public class SystemOptimizerEngine
         return current == recommended;
     }
 
-    public async Task<bool> ApplyTweakAsync(SystemTweak tweak)
+    public async Task<bool> ApplyTweakAsync(SystemTweak tweak, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         return await Task.Run(() =>
         {
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 Log($"Applying optimization: {tweak.Name}...");
+                string originalValue = tweak.CurrentValue;
                 bool success = false;
 
                 switch (tweak.Id)
@@ -543,6 +618,7 @@ public class SystemOptimizerEngine
 
                 if (success)
                 {
+                    Database.DbManager.SaveSnapshot("SystemTweak", tweak.Id, originalValue, tweak.RecommendedValue);
                     tweak.CurrentValue = tweak.RecommendedValue;
                     tweak.IsOptimized = true;
                     Database.DbManager.LogAction($"Applied System Tweak {tweak.Id}", "System Optimizer", "Success");
@@ -554,21 +630,28 @@ public class SystemOptimizerEngine
 
                 return success;
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Log($"Error applying {tweak.Id}: {ex.Message}");
                 return false;
             }
-        });
+        }, cancellationToken);
     }
 
-    public async Task<bool> RevertTweakAsync(SystemTweak tweak)
+    public async Task<bool> RevertTweakAsync(SystemTweak tweak, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         return await Task.Run(() =>
         {
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 Log($"Reverting optimization to default: {tweak.Name}...");
+                string originalValue = tweak.CurrentValue;
                 bool success = false;
 
                 switch (tweak.Id)
@@ -649,6 +732,7 @@ public class SystemOptimizerEngine
 
                 if (success)
                 {
+                    Database.DbManager.SaveSnapshot("SystemTweak", tweak.Id, originalValue, tweak.DefaultValue);
                     tweak.IsOptimized = false;
                     Database.DbManager.LogAction($"Reverted System Tweak {tweak.Id}", "System Optimizer", "Success");
                 }
@@ -659,12 +743,16 @@ public class SystemOptimizerEngine
 
                 return success;
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Log($"Error reverting {tweak.Id}: {ex.Message}");
                 return false;
             }
-        });
+        }, cancellationToken);
     }
 
     private bool SetTcpAckFrequency(int value)

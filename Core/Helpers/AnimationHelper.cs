@@ -23,6 +23,18 @@ public static class AnimationHelper
     {
         return _elementStates.GetValue(element, _ => new PointerState());
     }
+
+    public static bool AreAnimationsEnabled()
+    {
+        try
+        {
+            var uiSettings = new Windows.UI.ViewManagement.UISettings();
+            if (!uiSettings.AnimationsEnabled) return false;
+        }
+        catch { }
+
+        return true;
+    }
     // ==========================================
     // 1. Attached Property: HoverScale
     // ==========================================
@@ -132,6 +144,12 @@ public static class AnimationHelper
     {
         if (sender is FrameworkElement element)
         {
+            element.Loaded -= Element_EntranceLoaded;
+            if (!AreAnimationsEnabled())
+            {
+                return;
+            }
+
             double delayMs = GetEntranceDelay(element);
             ElementCompositionPreview.SetIsTranslationEnabled(element, true);
             var visual = ElementCompositionPreview.GetElementVisual(element);
@@ -408,8 +426,14 @@ public static class AnimationHelper
         {
             var visual = ElementCompositionPreview.GetElementVisual(element);
             if (visual == null) return;
-            var compositor = visual.Compositor;
 
+            if (!AreAnimationsEnabled())
+            {
+                visual.Scale = new Vector3(scaleTo, scaleTo, 1.0f);
+                return;
+            }
+
+            var compositor = visual.Compositor;
             UpdateCenterPoint(element);
 
             var scaleAnimation = compositor.CreateVector3KeyFrameAnimation();

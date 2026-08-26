@@ -18,6 +18,11 @@ public class SystemTweak : INotifyPropertyChanged
     public string IconGlyph { get; set; } = "";
     public string RegistryPath { get; set; } = "";
     public string RecommendedValue { get; set; } = "";
+    public string DefaultValue { get; set; } = "";
+    public bool RequiresRestart { get; set; } = false;
+    public bool RequiresAdmin { get; set; } = true;
+    public bool Reversible { get; set; } = true;
+    public string RiskLevel { get; set; } = "Low"; // Low, Medium, High
 
     private string _currentValue = "";
     public string CurrentValue

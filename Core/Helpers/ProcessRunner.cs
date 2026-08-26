@@ -163,16 +163,22 @@ public static class ProcessRunner
             if (!result.TimedOut)
             {
                 result.ExitCode = process.ExitCode;
+
+                // Allow stream readers to read the final buffered output to EOF
+                var streamReadTasks = Task.WhenAll(outputTask, errorTask);
+                if (await Task.WhenAny(streamReadTasks, Task.Delay(2000)) != streamReadTasks)
+                {
+                    try { cts.Cancel(); } catch { }
+                }
             }
-
-            // Signal stream readers to stop if standard output handle was inherited by a child process
-            try { cts.Cancel(); } catch { }
-
-            // Safely wait for stream readers with a small timeout
-            await Task.WhenAll(
-                Task.WhenAny(outputTask, Task.Delay(1000)),
-                Task.WhenAny(errorTask, Task.Delay(1000))
-            );
+            else
+            {
+                try { cts.Cancel(); } catch { }
+                await Task.WhenAll(
+                    Task.WhenAny(outputTask, Task.Delay(500)),
+                    Task.WhenAny(errorTask, Task.Delay(500))
+                );
+            }
         }
         catch (OperationCanceledException)
         {

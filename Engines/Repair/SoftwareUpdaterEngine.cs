@@ -31,6 +31,7 @@ public class SoftwareUpdaterEngine
         public string DownloadUrl { get; set; } = "";
         public string SilentArguments { get; set; } = "";
         public string FileExtension { get; set; } = ".exe";
+        public string ExpectedPublisher { get; set; } = "";
     }
 
     private static readonly List<AppDefinition> SupportedApps = new()
@@ -43,7 +44,8 @@ public class SoftwareUpdaterEngine
             LatestVersion = "2.48.1",
             DownloadUrl = "https://github.com/git-for-windows/git/releases/download/v2.48.1.windows.1/Git-2.48.1-64-bit.exe",
             SilentArguments = "/VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS",
-            FileExtension = ".exe"
+            FileExtension = ".exe",
+            ExpectedPublisher = "Git Development Community"
         },
         new AppDefinition
         {
@@ -53,7 +55,8 @@ public class SoftwareUpdaterEngine
             LatestVersion = "1.98.2",
             DownloadUrl = "https://update.code.visualstudio.com/latest/win32-x64-user/stable",
             SilentArguments = "/VERYSILENT /MERGETASKS=!runcode /NORESTART",
-            FileExtension = ".exe"
+            FileExtension = ".exe",
+            ExpectedPublisher = "Microsoft Corporation"
         },
         new AppDefinition
         {
@@ -63,7 +66,8 @@ public class SoftwareUpdaterEngine
             LatestVersion = "22.14.0",
             DownloadUrl = "https://nodejs.org/dist/v22.14.0/node-v22.14.0-x64.msi",
             SilentArguments = "/qn /norestart",
-            FileExtension = ".msi"
+            FileExtension = ".msi",
+            ExpectedPublisher = "OpenJS Foundation"
         },
         new AppDefinition
         {
@@ -73,7 +77,8 @@ public class SoftwareUpdaterEngine
             LatestVersion = "138.0.1",
             DownloadUrl = "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=en-US",
             SilentArguments = "/S",
-            FileExtension = ".exe"
+            FileExtension = ".exe",
+            ExpectedPublisher = "Mozilla Corporation"
         },
         new AppDefinition
         {
@@ -83,7 +88,8 @@ public class SoftwareUpdaterEngine
             LatestVersion = "136.0.7103.93",
             DownloadUrl = "https://dl.google.com/tag/s/appguid%3D%7B8A91EB1D-223C-4C1B-87BD-78F4B7E1857A%7D%26iid%3D%7B%7D%26lang%3Den%26browser%3D4%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dtrue%26ap%3Dx64-stable-statsdef_1/update2/installers/ChromeSetup.exe",
             SilentArguments = "/silent /install",
-            FileExtension = ".exe"
+            FileExtension = ".exe",
+            ExpectedPublisher = "Google LLC"
         },
         // v3.0 Nova — 5 new popular apps
         new AppDefinition
@@ -94,7 +100,8 @@ public class SoftwareUpdaterEngine
             LatestVersion = "3.0.21",
             DownloadUrl = "https://get.videolan.org/vlc/3.0.21/win64/vlc-3.0.21-win64.exe",
             SilentArguments = "/S /L=1033",
-            FileExtension = ".exe"
+            FileExtension = ".exe",
+            ExpectedPublisher = "VideoLAN"
         },
         new AppDefinition
         {
@@ -104,7 +111,8 @@ public class SoftwareUpdaterEngine
             LatestVersion = "24.09",
             DownloadUrl = "https://www.7-zip.org/a/7z2409-x64.exe",
             SilentArguments = "/S",
-            FileExtension = ".exe"
+            FileExtension = ".exe",
+            ExpectedPublisher = "Igor Pavlov"
         },
         new AppDefinition
         {
@@ -114,7 +122,8 @@ public class SoftwareUpdaterEngine
             LatestVersion = "8.7.7",
             DownloadUrl = "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.7.7/npp.8.7.7.Installer.x64.exe",
             SilentArguments = "/S",
-            FileExtension = ".exe"
+            FileExtension = ".exe",
+            ExpectedPublisher = "Don HO"
         },
         new AppDefinition
         {
@@ -124,7 +133,8 @@ public class SoftwareUpdaterEngine
             LatestVersion = "3.13.3",
             DownloadUrl = "https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe",
             SilentArguments = "/quiet InstallAllUsers=1 PrependPath=1",
-            FileExtension = ".exe"
+            FileExtension = ".exe",
+            ExpectedPublisher = "Python Software Foundation"
         },
         new AppDefinition
         {
@@ -134,7 +144,8 @@ public class SoftwareUpdaterEngine
             LatestVersion = "7.10",
             DownloadUrl = "https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-710.exe",
             SilentArguments = "/S",
-            FileExtension = ".exe"
+            FileExtension = ".exe",
+            ExpectedPublisher = "win.rar GmbH"
         }
     };
 
@@ -552,19 +563,8 @@ public class SoftwareUpdaterEngine
             
             if (!ok)
             {
-#if DEBUG
-                if (cancellationToken.IsCancellationRequested) throw new OperationCanceledException();
-                Log($"Winget returned error code {process.ExitCode} (likely because application is not installed or already up-to-date). Falling back to simulated upgrade for development environment...");
-                await Task.Delay(1500, cancellationToken);
-                Log($"Successfully updated {appId} (Simulated).");
-                Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
-                Database.DbManager.SaveUpdatedApp(appId, version);
-                ItemProgressChanged?.Invoke(appId, 100, "Completed");
-                return true;
-#else
                 ItemProgressChanged?.Invoke(appId, 0, "Failed");
                 return false;
-#endif
             }
 
             ItemProgressChanged?.Invoke(appId, 100, "Completed");
@@ -580,19 +580,8 @@ public class SoftwareUpdaterEngine
         catch (Exception ex)
         {
             Log($"Failed to run winget upgrade for {appId}: {ex.Message}");
-#if DEBUG
-            if (cancellationToken.IsCancellationRequested) return false;
-            // Simulate updating successful fallback for mock updates in development
-            await Task.Delay(1500, cancellationToken);
-            Log($"Successfully updated {appId} (Simulated).");
-            Database.DbManager.LogAction($"Update Software {appId} (Simulated)", "Software Updater", "Success");
-            Database.DbManager.SaveUpdatedApp(appId, version);
-            ItemProgressChanged?.Invoke(appId, 100, "Completed");
-            return true;
-#else
             ItemProgressChanged?.Invoke(appId, 0, "Failed");
             return false;
-#endif
         }
     }
 
@@ -623,41 +612,61 @@ public class SoftwareUpdaterEngine
             string fileName = $"{app.Id}_setup{app.FileExtension}";
             string filePath = Path.Combine(tempDir, fileName);
 
-            Log($"Downloading installer from: {app.DownloadUrl}");
-            using (var response = await _httpClient.GetAsync(app.DownloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken))
+            int maxAttempts = 3;
+            bool downloaded = false;
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                response.EnsureSuccessStatusCode();
-
-                long? totalBytes = response.Content.Headers.ContentLength;
-                using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-                using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
-
-                var buffer = new byte[8192];
-                long totalRead = 0;
-                int read;
-                int lastReportedPercent = -1;
-
-                while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
+                try
                 {
-                    await fileStream.WriteAsync(buffer, 0, read, cancellationToken);
-                    totalRead += read;
-
-                    if (totalBytes.HasValue && totalBytes.Value > 0)
+                    Log($"Downloading installer from: {app.DownloadUrl} (Attempt {attempt}/{maxAttempts})");
+                    using (var response = await _httpClient.GetAsync(app.DownloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken))
                     {
-                        int percent = (int)((double)totalRead / totalBytes.Value * 100);
-                        if (percent - lastReportedPercent >= 1 || percent == 100)
+                        response.EnsureSuccessStatusCode();
+
+                        long? totalBytes = response.Content.Headers.ContentLength;
+                        using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                        using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+
+                        var buffer = new byte[8192];
+                        long totalRead = 0;
+                        int read;
+                        int lastReportedPercent = -1;
+
+                        while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
                         {
-                            string detail = $"{totalRead / 1024 / 1024} MB / {totalBytes.Value / 1024 / 1024} MB";
-                            string statusText = $"Downloading {percent}% ({detail})";
-                            ItemProgressChanged?.Invoke(appId, percent, statusText);
-                            if (percent - lastReportedPercent >= 10 || percent == 100)
+                            await fileStream.WriteAsync(buffer, 0, read, cancellationToken);
+                            totalRead += read;
+
+                            if (totalBytes.HasValue && totalBytes.Value > 0)
                             {
-                                Log($"Downloading: {percent}% ({detail})");
+                                int percent = (int)((double)totalRead / totalBytes.Value * 100);
+                                if (percent - lastReportedPercent >= 1 || percent == 100)
+                                {
+                                    string detail = $"{totalRead / 1024 / 1024} MB / {totalBytes.Value / 1024 / 1024} MB";
+                                    string statusText = $"Downloading {percent}% ({detail})";
+                                    ItemProgressChanged?.Invoke(appId, percent, statusText);
+                                    if (percent - lastReportedPercent >= 10 || percent == 100)
+                                    {
+                                        Log($"Downloading: {percent}% ({detail})");
+                                    }
+                                    lastReportedPercent = percent;
+                                }
                             }
-                            lastReportedPercent = percent;
                         }
                     }
+                    downloaded = true;
+                    break;
                 }
+                catch (System.Net.Http.HttpRequestException ex) when (attempt < maxAttempts && !cancellationToken.IsCancellationRequested)
+                {
+                    Log($"Download attempt {attempt} failed ({ex.Message}). Retrying in {attempt * 2}s...");
+                    await Task.Delay(attempt * 2000, cancellationToken);
+                }
+            }
+
+            if (!downloaded)
+            {
+                throw new IOException($"Failed to download {app.Name} after {maxAttempts} attempts.");
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -665,13 +674,13 @@ public class SoftwareUpdaterEngine
             Log($"Download completed. Saved to: {filePath}");
             ItemProgressChanged?.Invoke(appId, 100, "Verifying Signature...");
 
-            Log("Verifying digital signature of the downloaded installer...");
-            if (!VerifyDigitalSignature(filePath))
+            Log("Verifying Authenticode digital signature of the downloaded installer...");
+            if (!VerifyDigitalSignature(filePath, app.ExpectedPublisher))
             {
                 try { File.Delete(filePath); } catch {}
-                throw new System.Security.SecurityException("The installer does not have a valid or trusted digital signature.");
+                throw new System.Security.SecurityException("The installer does not have a valid, trusted Authenticode digital signature or publisher mismatch.");
             }
-            Log("Digital signature verification successful. The installer is verified.");
+            Log("Authenticode verification successful. The installer is signed and trusted.");
 
             Log($"Launching installer silently: {app.Name}");
             ItemProgressChanged?.Invoke(appId, 100, "Installing...");
@@ -719,20 +728,12 @@ public class SoftwareUpdaterEngine
 
             if (!success)
             {
-#if DEBUG
-                if (cancellationToken.IsCancellationRequested) return false;
-                Log($"Installer returned exit code {process.ExitCode}. Falling back to simulated upgrade for development environment...");
-                await Task.Delay(1500, cancellationToken);
-                Log($"Successfully updated {appId} (Simulated).");
-                Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
-                Database.DbManager.SaveUpdatedApp(appId, version);
-                return true;
-#else
+                ItemProgressChanged?.Invoke(appId, 0, "Failed");
                 return false;
-#endif
             }
 
             Database.DbManager.SaveUpdatedApp(appId, version);
+            ItemProgressChanged?.Invoke(appId, 100, "Completed");
             return true;
         }
         catch (OperationCanceledException)
@@ -744,57 +745,139 @@ public class SoftwareUpdaterEngine
         catch (Exception ex)
         {
             Log($"Direct update failed for {app.Name}: {ex.Message}");
-#if DEBUG
-            if (cancellationToken.IsCancellationRequested) return false;
-            Log("Falling back to simulated upgrade for development environment...");
-            await Task.Delay(1500, cancellationToken);
-            Log($"Successfully updated {appId} (Simulated).");
-            Database.DbManager.LogAction($"Update Software {appId} (Simulated-Fallback)", "Software Updater", "Success");
-            Database.DbManager.SaveUpdatedApp(appId, version);
-            return true;
-#else
+            ItemProgressChanged?.Invoke(appId, 0, "Failed");
             return false;
-#endif
         }
     }
 
-    private bool VerifyDigitalSignature(string filePath)
+    #region Win32 WinVerifyTrust Authenticode Validation
+
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+    private struct WINTRUST_FILE_INFO
     {
-        if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath)) return false;
-        try
-        {
-#pragma warning disable SYSLIB0057 // Obsolete in .NET 9+ but required for Authenticode signature extraction
-            using var cert = new System.Security.Cryptography.X509Certificates.X509Certificate2(filePath);
-            if (cert != null && !string.IsNullOrEmpty(cert.Subject))
-            {
-                if (cert.Verify() || cert.NotAfter > DateTime.Now)
-                {
-                    return true;
-                }
-            }
-#pragma warning restore SYSLIB0057
-        }
-        catch (Exception ex)
-        {
-            Log($"Authenticode check note for {Path.GetFileName(filePath)}: {ex.Message}");
-        }
-
-        // Fallback for PE binary header validation
-        try
-        {
-            var fi = new FileInfo(filePath);
-            if (fi.Exists && fi.Length > 100 * 1024)
-            {
-                using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                byte[] mzHeader = new byte[2];
-                if (fs.Read(mzHeader, 0, 2) == 2 && mzHeader[0] == 'M' && mzHeader[1] == 'Z')
-                {
-                    return true;
-                }
-            }
-        }
-        catch { }
-
-        return false;
+        public uint cbStruct;
+        [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)]
+        public string pcwszFilePath;
+        public IntPtr hFile;
+        public IntPtr pgKnownSubject;
     }
+
+    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+    private struct WINTRUST_DATA
+    {
+        public uint cbStruct;
+        public IntPtr pPolicyCallbackData;
+        public IntPtr pSIPClientData;
+        public uint dwUIChoice;
+        public uint fdwRevocationChecks;
+        public uint dwUnionChoice;
+        public IntPtr pFile;
+        public uint dwStateAction;
+        public IntPtr hWVTStateData;
+        [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)]
+        public string? pwszURLReference;
+        public uint dwProvFlags;
+        public uint dwUIContext;
+        public IntPtr pSignatureSettings;
+    }
+
+    private const uint WTD_UI_NONE = 2;
+    private const uint WTD_REVOKE_NONE = 0;
+    private const uint WTD_CHOICE_FILE = 1;
+    private const uint WTD_STATEACTION_IGNORE = 0;
+    private const uint WTD_REVOCATION_CHECK_NONE = 0x00000010;
+    private const uint WTD_SAFER_FLAG = 0x00000100;
+
+    private static readonly Guid WINTRUST_ACTION_GENERIC_VERIFY_V2 = new("{00AAC56B-CD44-11d0-8CC2-00C04FC295EE}");
+
+    [System.Runtime.InteropServices.DllImport("wintrust.dll", ExactSpelling = true, SetLastError = false, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+    private static extern int WinVerifyTrust(
+        IntPtr hwnd,
+        [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPStruct)] Guid pgActionID,
+        IntPtr pWVTData
+    );
+
+    public static bool VerifyDigitalSignature(string filePath, string? expectedPublisher = null)
+    {
+        if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath)) return false;
+
+        var fileInfo = new WINTRUST_FILE_INFO
+        {
+            cbStruct = (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(WINTRUST_FILE_INFO)),
+            pcwszFilePath = filePath,
+            hFile = IntPtr.Zero,
+            pgKnownSubject = IntPtr.Zero
+        };
+
+        IntPtr pFileInfo = System.Runtime.InteropServices.Marshal.AllocHGlobal(System.Runtime.InteropServices.Marshal.SizeOf(typeof(WINTRUST_FILE_INFO)));
+        IntPtr pWVTData = System.Runtime.InteropServices.Marshal.AllocHGlobal(System.Runtime.InteropServices.Marshal.SizeOf(typeof(WINTRUST_DATA)));
+
+        try
+        {
+            System.Runtime.InteropServices.Marshal.StructureToPtr(fileInfo, pFileInfo, false);
+
+            var trustData = new WINTRUST_DATA
+            {
+                cbStruct = (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(WINTRUST_DATA)),
+                pPolicyCallbackData = IntPtr.Zero,
+                pSIPClientData = IntPtr.Zero,
+                dwUIChoice = WTD_UI_NONE,
+                fdwRevocationChecks = WTD_REVOKE_NONE,
+                dwUnionChoice = WTD_CHOICE_FILE,
+                pFile = pFileInfo,
+                dwStateAction = WTD_STATEACTION_IGNORE,
+                hWVTStateData = IntPtr.Zero,
+                pwszURLReference = null,
+                dwProvFlags = WTD_REVOCATION_CHECK_NONE | WTD_SAFER_FLAG,
+                dwUIContext = 0,
+                pSignatureSettings = IntPtr.Zero
+            };
+
+            System.Runtime.InteropServices.Marshal.StructureToPtr(trustData, pWVTData, false);
+
+            int result = WinVerifyTrust(IntPtr.Zero, WINTRUST_ACTION_GENERIC_VERIFY_V2, pWVTData);
+            bool isTrustValid = (result == 0); // 0 = ERROR_SUCCESS
+
+            if (!isTrustValid)
+            {
+                return false;
+            }
+
+            // Verify expected publisher if specified
+            if (!string.IsNullOrEmpty(expectedPublisher))
+            {
+                try
+                {
+#pragma warning disable SYSLIB0057
+                    using var cert = new X509Certificate2(filePath);
+                    if (cert == null || string.IsNullOrEmpty(cert.Subject))
+                    {
+                        return false;
+                    }
+                    if (!cert.Subject.Contains(expectedPublisher, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return false;
+                    }
+#pragma warning restore SYSLIB0057
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+        finally
+        {
+            if (pFileInfo != IntPtr.Zero) System.Runtime.InteropServices.Marshal.FreeHGlobal(pFileInfo);
+            if (pWVTData != IntPtr.Zero) System.Runtime.InteropServices.Marshal.FreeHGlobal(pWVTData);
+        }
+    }
+
+    #endregion
 }

@@ -20,26 +20,6 @@ public partial class UninstallEngine
 
         if (app.IsStoreApp)
         {
-            if (app.DisplayName == "Mock Store Game")
-            {
-                string mockPackagesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Packages");
-                if (!Directory.Exists(mockPackagesPath))
-                {
-                    Directory.CreateDirectory(mockPackagesPath);
-                }
-                string fakePackageFolder = Path.Combine(mockPackagesPath, "MockStoreGame_8wekyb3d8bbwe");
-                try
-                {
-                    if (!Directory.Exists(fakePackageFolder))
-                    {
-                        Directory.CreateDirectory(fakePackageFolder);
-                        Directory.CreateDirectory(Path.Combine(fakePackageFolder, "LocalState"));
-                        File.WriteAllText(Path.Combine(fakePackageFolder, "LocalState", "savegame.dat"), new string('s', 1024 * 1024 * 3));
-                    }
-                }
-                catch {}
-            }
-
             string packagesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Packages");
             if (Directory.Exists(packagesPath))
             {
@@ -70,11 +50,6 @@ public partial class UninstallEngine
             ScanShortcutLeftovers(app, leftovers);
             ProgressChanged?.Invoke(100);
             return leftovers;
-        }
-
-        if (app.DisplayName == "Mock Trash App")
-        {
-            SetupMockAppEnvironment(app);
         }
         
         if (!string.IsNullOrWhiteSpace(app.InstallLocation) && Directory.Exists(app.InstallLocation))
@@ -250,40 +225,6 @@ public partial class UninstallEngine
         ScanShortcutLeftovers(app, leftovers);
         ProgressChanged?.Invoke(100);
         return leftovers;
-    }
-    
-    private void SetupMockAppEnvironment(InstalledAppInfo app)
-    {
-        try
-        {
-            if (!Directory.Exists(app.InstallLocation))
-            {
-                Directory.CreateDirectory(app.InstallLocation);
-                File.WriteAllText(Path.Combine(app.InstallLocation, "app.dll"), new string('x', 1024 * 1024 * 5));
-                File.WriteAllText(Path.Combine(app.InstallLocation, "trash_config.ini"), "[Config]\nKey=123\nTempJunk=True");
-            }
-            
-            string appDataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MockTrashApp");
-            if (!Directory.Exists(appDataDir))
-            {
-                Directory.CreateDirectory(appDataDir);
-                File.WriteAllText(Path.Combine(appDataDir, "cache.db"), new string('y', 1024 * 1024 * 8));
-            }
-            
-            string localAppDataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MockTrashApp");
-            if (!Directory.Exists(localAppDataDir))
-            {
-                Directory.CreateDirectory(localAppDataDir);
-                File.WriteAllText(Path.Combine(localAppDataDir, "debug.log"), new string('z', 1024 * 512));
-            }
-            
-            using var key1 = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\MockTrashApp");
-            key1.SetValue("InstallPath", app.InstallLocation);
-            
-            using var key2 = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\TrashySoft\MockTrashApp");
-            key2.SetValue("Version", "4.2.1");
-        }
-        catch {}
     }
     
     public async Task<int> DeleteLeftoversAsync(List<LeftoverItem> items)

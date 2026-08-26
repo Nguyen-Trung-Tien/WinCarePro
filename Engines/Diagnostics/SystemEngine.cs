@@ -179,7 +179,7 @@ public class SystemEngine
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     Log($"Stopping service: {svc}...");
-                    await RunCmdAsync($"net stop {svc} /y", cancellationToken);
+                    await RunDirectAsync("net.exe", new[] { "stop", svc, "/y" }, cancellationToken);
                     await Task.Delay(1000, cancellationToken);
                 }
                 ProgressChanged?.Invoke(40);
@@ -238,7 +238,7 @@ public class SystemEngine
                 foreach (var svc in services)
                 {
                     Log($"Starting service: {svc}...");
-                    await RunCmdAsync($"net start {svc}", cancellationToken);
+                    await RunDirectAsync("net.exe", new[] { "start", svc }, cancellationToken);
                     await Task.Delay(1000, cancellationToken);
                 }
                 ProgressChanged?.Invoke(100);
@@ -290,8 +290,8 @@ public class SystemEngine
                     }
 
                     Log($"Setting service {svc} startup type to Automatic...");
-                    await RunCmdAsync($"sc config {svc} start= auto", cancellationToken);
-                    await RunCmdAsync($"sc start {svc}", cancellationToken);
+                    await RunDirectAsync("sc.exe", new[] { "config", svc, "start=", "auto" }, cancellationToken);
+                    await RunDirectAsync("sc.exe", new[] { "start", svc }, cancellationToken);
                     count++;
                     ProgressChanged?.Invoke(20 + (80 * count / serviceList.Count));
                     await Task.Delay(500, cancellationToken);
@@ -324,17 +324,18 @@ public class SystemEngine
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                Log("Enabling System Restore on drive C:...");
-                await RunCmdAsync("powershell -Command \"Enable-ComputerRestore -Drive 'C:'\"", cancellationToken);
-                ProgressChanged?.Invoke(30);
-                await Task.Delay(500, cancellationToken);
+                Log("Enabling System Restore and creating checkpoint (PowerShell)...");
+                ProgressChanged?.Invoke(40);
 
-                cancellationToken.ThrowIfCancellationRequested();
-                Log("Executing Restore Point checkpoint (PowerShell)...");
-                ProgressChanged?.Invoke(60);
                 var result = await ProcessRunner.RunAsync(
                     "powershell.exe",
-                    "-ExecutionPolicy Bypass -Command \"Checkpoint-Computer -Description 'WinCarePro Pre-Repair Restore Point' -RestorePointType 'MODIFY_SETTINGS' -Confirm:$false\"",
+                    new[]
+                    {
+                        "-NoProfile",
+                        "-NonInteractive",
+                        "-ExecutionPolicy", "Bypass",
+                        "-Command", "Enable-ComputerRestore -Drive 'C:'; Checkpoint-Computer -Description 'WinCarePro Pre-Repair Restore Point' -RestorePointType 'MODIFY_SETTINGS' -Confirm:$false"
+                    },
                     TimeSpan.FromMinutes(10),
                     onOutput: Log,
                     onError: err => Log($"ERROR: {err}"),
@@ -489,32 +490,32 @@ public class SystemEngine
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 Log("1/5 Flushing DNS Cache...");
-                await RunCmdAsync("ipconfig /flushdns", cancellationToken);
+                await RunDirectAsync("ipconfig.exe", new[] { "/flushdns" }, cancellationToken);
                 ProgressChanged?.Invoke(30);
                 await Task.Delay(300, cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
                 Log("2/5 Registering DNS...");
-                await RunCmdAsync("ipconfig /registerdns", cancellationToken);
+                await RunDirectAsync("ipconfig.exe", new[] { "/registerdns" }, cancellationToken);
                 ProgressChanged?.Invoke(50);
                 await Task.Delay(300, cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
                 Log("3/5 Releasing current DHCP lease...");
-                await RunCmdAsync("ipconfig /release", cancellationToken);
+                await RunDirectAsync("ipconfig.exe", new[] { "/release" }, cancellationToken);
                 ProgressChanged?.Invoke(70);
                 await Task.Delay(300, cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
                 Log("4/5 Renewing DHCP network interface configs...");
-                await RunCmdAsync("ipconfig /renew", cancellationToken);
+                await RunDirectAsync("ipconfig.exe", new[] { "/renew" }, cancellationToken);
                 ProgressChanged?.Invoke(85);
                 await Task.Delay(300, cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
                 Log("5/5 Resetting Winsock catalog and IP routes...");
-                await RunCmdAsync("netsh winsock reset", cancellationToken);
-                await RunCmdAsync("netsh int ip reset", cancellationToken);
+                await RunDirectAsync("netsh.exe", new[] { "winsock", "reset" }, cancellationToken);
+                await RunDirectAsync("netsh.exe", new[] { "int", "ip", "reset" }, cancellationToken);
                 ProgressChanged?.Invoke(100);
 
                 Log("Network Stack and local DNS resolvers successfully repaired.");
@@ -534,20 +535,28 @@ public class SystemEngine
         }, cancellationToken);
     }
 
-    private async Task RunCmdAsync(string command, CancellationToken cancellationToken = default)
+    private async Task<bool> RunDirectAsync(string fileName, System.Collections.Generic.IEnumerable<string> arguments, CancellationToken cancellationToken = default)
     {
         try
         {
-            await ProcessRunner.RunAsync(
-                "cmd.exe",
-                $"/c {command}",
-                TimeSpan.FromSeconds(15),
+            var result = await ProcessRunner.RunAsync(
+                fileName,
+                arguments,
+                TimeSpan.FromSeconds(20),
+                onOutput: Log,
+                onError: err => Log($"[{fileName}] {err}"),
                 cancellationToken: cancellationToken
             );
+            return result.ExitCode == 0;
         }
-        catch
+        catch (OperationCanceledException)
         {
-            // Ignore
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Log($"Failed to execute {fileName}: {ex.Message}");
+            return false;
         }
     }
 }

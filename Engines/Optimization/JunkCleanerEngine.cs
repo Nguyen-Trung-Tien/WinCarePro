@@ -426,19 +426,21 @@ public class JunkCleanerEngine
         }, token);
     }
 
-    public async Task<long> CleanJunkAsync(List<JunkCategory> categories)
+    public async Task<long> CleanJunkAsync(List<JunkCategory> categories, CancellationToken token = default)
     {
+        token.ThrowIfCancellationRequested();
         return await Task.Run(async () =>
         {
             Log("Starting Junk cleaning process...");
             long totalCleanedBytes = 0;
             ProgressChanged?.Invoke(5);
 
-            double increment = 95.0 / categories.Count;
+            double increment = 95.0 / Math.Max(1, categories.Count);
             double currentProgress = 5.0;
 
             foreach (var cat in categories)
             {
+                token.ThrowIfCancellationRequested();
                 if (!cat.IsSelected) continue;
 
                 ProgressMessage?.Invoke($"Sweeping {cat.Name}...");
@@ -448,15 +450,15 @@ public class JunkCleanerEngine
                 switch (cat.Type)
                 {
                     case JunkType.UserTemp:
-                        cleaned = await ClearDirectoryAsync(Path.GetTempPath());
+                        cleaned = await ClearDirectoryAsync(Path.GetTempPath(), token);
                         break;
                     case JunkType.WindowsTemp:
                         string winTemp = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "Temp");
-                        cleaned = await ClearDirectoryAsync(winTemp);
+                        cleaned = await ClearDirectoryAsync(winTemp, token);
                         break;
                     case JunkType.UpdateCache:
                         string winUpdate = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "SoftwareDistribution\\Download");
-                        cleaned = await ClearDirectoryAsync(winUpdate);
+                        cleaned = await ClearDirectoryAsync(winUpdate, token);
                         break;
                     case JunkType.RecycleBin:
                         cleaned = cat.SizeBytes;
@@ -464,37 +466,37 @@ public class JunkCleanerEngine
                         Log("Recycle Bin emptied successfully.");
                         break;
                     case JunkType.BrowserCache:
-                        cleaned = await ClearBrowserCachesAsync();
+                        cleaned = await ClearBrowserCachesAsync(token);
                         break;
                     case JunkType.ShaderCache:
                         string shaderCachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"D3DSCache");
-                        cleaned = await ClearDirectoryAsync(shaderCachePath);
+                        cleaned = await ClearDirectoryAsync(shaderCachePath, token);
                         break;
                     case JunkType.SystemLog:
                         string localApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        cleaned += await ClearDirectoryAsync(Path.Combine(localApp, @"Microsoft\Windows\WER"));
-                        cleaned += await ClearDirectoryAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\Windows\WER"));
-                        cleaned += await ClearDirectoryAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"LogFiles"));
-                        cleaned += await ClearDirectoryAsync(Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "Logs"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(localApp, @"Microsoft\Windows\WER"), token);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Microsoft\Windows\WER"), token);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"LogFiles"), token);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "Logs"), token);
                         break;
                     case JunkType.ThumbnailCache:
                         string explorerFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\Windows\Explorer");
-                        cleaned += await ClearFilesMatchingAsync(explorerFolder, "thumbcache_*.db");
-                        cleaned += await ClearFilesMatchingAsync(explorerFolder, "iconcache_*.db");
+                        cleaned += await ClearFilesMatchingAsync(explorerFolder, "thumbcache_*.db", token);
+                        cleaned += await ClearFilesMatchingAsync(explorerFolder, "iconcache_*.db", token);
                         break;
                     case JunkType.DeliveryOptimization:
                         string doPath = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "SoftwareDistribution\\DeliveryOptimization");
-                        cleaned = await ClearDirectoryAsync(doPath);
+                        cleaned = await ClearDirectoryAsync(doPath, token);
                         break;
                     case JunkType.Prefetch:
                         string prefetchPath = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "Prefetch");
-                        cleaned = await ClearDirectoryAsync(prefetchPath);
+                        cleaned = await ClearDirectoryAsync(prefetchPath, token);
                         break;
                     case JunkType.CrashDumps:
                         string minidumpPath = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "Minidump");
-                        cleaned += await ClearDirectoryAsync(minidumpPath);
+                        cleaned += await ClearDirectoryAsync(minidumpPath, token);
                         string memoryDmp = Path.Combine(Environment.GetEnvironmentVariable("SystemRoot") ?? "C:\\Windows", "MEMORY.DMP");
-                        if (File.Exists(memoryDmp))
+                        if (File.Exists(memoryDmp) && IsPathSafeToClean(memoryDmp))
                         {
                             try
                             {
@@ -504,7 +506,7 @@ public class JunkCleanerEngine
                                 cleaned += size;
                                 Log($"Deleted file: MEMORY.DMP ({FormatSize(size)})");
                             }
-                            catch
+                            catch (Exception)
                             {
                                 Log("Skipped locked file: MEMORY.DMP");
                             }
@@ -514,13 +516,13 @@ public class JunkCleanerEngine
                         string appDataR = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                         string userProf = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                         string locApp = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        cleaned += await ClearDirectoryAsync(Path.Combine(appDataR, @"Code\Cache"));
-                        cleaned += await ClearDirectoryAsync(Path.Combine(appDataR, @"Code\CachedData"));
-                        cleaned += await ClearDirectoryAsync(Path.Combine(appDataR, @"Code\CachedExtensionVSIXs"));
-                        cleaned += await ClearDirectoryAsync(Path.Combine(locApp, @"npm-cache"));
-                        cleaned += await ClearDirectoryAsync(Path.Combine(userProf, @".npm\_cacache"));
-                        cleaned += await ClearDirectoryAsync(Path.Combine(locApp, @"pip\cache"));
-                        cleaned += await ClearDirectoryAsync(Path.Combine(locApp, @"NuGet\v3-cache"));
+                        cleaned += await ClearDirectoryAsync(Path.Combine(appDataR, @"Code\Cache"), token);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(appDataR, @"Code\CachedData"), token);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(appDataR, @"Code\CachedExtensionVSIXs"), token);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(locApp, @"npm-cache"), token);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(userProf, @".npm\_cacache"), token);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(locApp, @"pip\cache"), token);
+                        cleaned += await ClearDirectoryAsync(Path.Combine(locApp, @"NuGet\v3-cache"), token);
                         break;
                 }
 
@@ -529,15 +531,14 @@ public class JunkCleanerEngine
                 currentProgress += increment;
                 ProgressChanged?.Invoke(Math.Min(100, (int)currentProgress));
 
-                // Add realistic category pacing for fast SSDs
-                await Task.Delay(180);
+                await Task.Delay(50, token);
             }
 
             ProgressChanged?.Invoke(100);
             Log($"Junk cleaning complete. Cleaned: {FormatSize(totalCleanedBytes)}");
             Database.DbManager.LogAction($"Cleaned {totalCleanedBytes} bytes", "Junk Cleaner", "Success");
             return totalCleanedBytes;
-        });
+        }, token);
     }
 
     public static bool IsPathSafeToClean(string? path)
@@ -546,86 +547,22 @@ public class JunkCleanerEngine
         return WinCarePro.Core.Helpers.SafePathGuard.IsPathSafeForDeletion(path);
     }
 
-    private long ClearDirectoryRecursively(string path)
+    private long ClearDirectoryRecursively(string path, CancellationToken token = default)
     {
         if (!IsPathSafeToClean(path) || !Directory.Exists(path)) return 0;
         long bytesDeleted = 0;
 
-        // Delete files in current directory
+        token.ThrowIfCancellationRequested();
+
+        // 1. Delete files in current directory
         try
         {
             foreach (var file in Directory.GetFiles(path))
             {
+                token.ThrowIfCancellationRequested();
                 try
                 {
-                    var info = new FileInfo(file);
-                    long size = info.Length;
-                    if (info.IsReadOnly)
-                    {
-                        info.IsReadOnly = false;
-                    }
-                    File.Delete(file);
-                    bytesDeleted += size;
-                }
-                catch
-                {
-                    try
-                    {
-                        MoveFileEx(file, null, MOVEFILE_DELAY_UNTIL_REBOOT);
-                    }
-                    catch { }
-                }
-            }
-        }
-        catch { }
-
-        // Recurse into subdirectories
-        try
-        {
-            foreach (var dir in Directory.GetDirectories(path))
-            {
-                try
-                {
-                    var dirInfo = new DirectoryInfo(dir);
-                    if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
-                    {
-                        Directory.Delete(dir, false);
-                        Log($"Deleted directory link: {Path.GetFileName(dir)}");
-                        continue;
-                    }
-                }
-                catch { }
-
-                bytesDeleted += ClearDirectoryRecursively(dir);
-                try
-                {
-                    Directory.Delete(dir, false); // only delete if empty
-                }
-                catch { }
-            }
-        }
-        catch { }
-
-        return bytesDeleted;
-    }
-
-    private async Task<long> ClearDirectoryAsync(string path)
-    {
-        if (!IsPathSafeToClean(path) || !Directory.Exists(path)) return 0;
-        return await Task.Run(() => ClearDirectoryRecursively(path));
-    }
-
-    private async Task<long> ClearFilesMatchingAsync(string path, string searchPattern)
-    {
-        if (!IsPathSafeToClean(path) || !Directory.Exists(path)) return 0;
-        long bytesDeleted = 0;
-        await Task.Run(() =>
-        {
-            try
-            {
-                foreach (var file in Directory.GetFiles(path, searchPattern))
-                {
-                    try
+                    if (IsPathSafeToClean(file))
                     {
                         var info = new FileInfo(file);
                         long size = info.Length;
@@ -636,22 +573,95 @@ public class JunkCleanerEngine
                         File.Delete(file);
                         bytesDeleted += size;
                     }
-                    catch
-                    {
-                        try
-                        {
-                            MoveFileEx(file, null, MOVEFILE_DELAY_UNTIL_REBOOT);
-                        }
-                        catch { }
-                    }
+                }
+                catch (OperationCanceledException) { throw; }
+                catch
+                {
+                    // Locked or permission restricted — safely skipped without modifying reboot queues
                 }
             }
-            catch { }
-        });
+        }
+        catch (OperationCanceledException) { throw; }
+        catch { }
+
+        // 2. Recurse into subdirectories (skipping junctions and symlinks)
+        try
+        {
+            foreach (var dir in Directory.GetDirectories(path))
+            {
+                token.ThrowIfCancellationRequested();
+                try
+                {
+                    var dirInfo = new DirectoryInfo(dir);
+                    if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
+                    {
+                        // Skip junction points completely to avoid traversing into external targets
+                        continue;
+                    }
+                }
+                catch { }
+
+                bytesDeleted += ClearDirectoryRecursively(dir, token);
+                try
+                {
+                    Directory.Delete(dir, false); // only delete if directory is now empty
+                }
+                catch { }
+            }
+        }
+        catch (OperationCanceledException) { throw; }
+        catch { }
+
         return bytesDeleted;
     }
 
-    private async Task<long> ClearBrowserCachesAsync()
+    private async Task<long> ClearDirectoryAsync(string path, CancellationToken token = default)
+    {
+        if (!IsPathSafeToClean(path) || !Directory.Exists(path)) return 0;
+        token.ThrowIfCancellationRequested();
+        return await Task.Run(() => ClearDirectoryRecursively(path, token), token);
+    }
+
+    private async Task<long> ClearFilesMatchingAsync(string path, string searchPattern, CancellationToken token = default)
+    {
+        if (!IsPathSafeToClean(path) || !Directory.Exists(path)) return 0;
+        token.ThrowIfCancellationRequested();
+        long bytesDeleted = 0;
+        await Task.Run(() =>
+        {
+            try
+            {
+                foreach (var file in Directory.GetFiles(path, searchPattern))
+                {
+                    token.ThrowIfCancellationRequested();
+                    try
+                    {
+                        if (IsPathSafeToClean(file))
+                        {
+                            var info = new FileInfo(file);
+                            long size = info.Length;
+                            if (info.IsReadOnly)
+                            {
+                                info.IsReadOnly = false;
+                            }
+                            File.Delete(file);
+                            bytesDeleted += size;
+                        }
+                    }
+                    catch (OperationCanceledException) { throw; }
+                    catch
+                    {
+                        // In-use files safely skipped
+                    }
+                }
+            }
+            catch (OperationCanceledException) { throw; }
+            catch { }
+        }, token);
+        return bytesDeleted;
+    }
+
+    private async Task<long> ClearBrowserCachesAsync(CancellationToken token = default)
     {
         long cleaned = 0;
         string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -666,7 +676,8 @@ public class JunkCleanerEngine
 
         foreach (var cachePath in cachePaths)
         {
-            cleaned += await ClearDirectoryAsync(cachePath);
+            token.ThrowIfCancellationRequested();
+            cleaned += await ClearDirectoryAsync(cachePath, token);
         }
 
         string firefoxProfiles = Path.Combine(localAppData, @"Mozilla\Firefox\Profiles");
@@ -676,10 +687,12 @@ public class JunkCleanerEngine
             {
                 foreach (var profileDir in Directory.GetDirectories(firefoxProfiles))
                 {
+                    token.ThrowIfCancellationRequested();
                     string cache2 = Path.Combine(profileDir, "cache2");
-                    cleaned += await ClearDirectoryAsync(cache2);
+                    cleaned += await ClearDirectoryAsync(cache2, token);
                 }
             }
+            catch (OperationCanceledException) { throw; }
             catch { }
         }
 

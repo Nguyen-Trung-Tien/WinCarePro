@@ -14,6 +14,7 @@ DefaultDirName={commonpf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 PrivilegesRequired=admin
+PrivilegesRequiredOverridesAllowed=commandline
 CloseApplications=force
 CloseApplicationsFilter=*.exe
 RestartApplications=yes

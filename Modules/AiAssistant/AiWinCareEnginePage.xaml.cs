@@ -318,7 +318,7 @@ namespace WinCarePro.Modules.AiAssistant
         {
             try
             {
-                var result = await ProcessRunner.RunHiddenAsync("ipconfig.exe", "/flushdns", 3);
+                var result = await ProcessRunner.RunHiddenAsync("ipconfig.exe", new[] { "/flushdns" }, 3);
                 if (App.MainWindowInstance is MainWindow mw)
                 {
                     if (result.Success)

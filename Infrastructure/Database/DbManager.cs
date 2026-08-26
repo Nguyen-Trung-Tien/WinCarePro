@@ -116,6 +116,89 @@ public class DbManager
 
     private static volatile string? _cachedSettings;
 
+    private const int CurrentSchemaVersion = 2;
+
+    private static void ApplyMigrations(SqliteConnection connection)
+    {
+        long currentVersion = 0;
+        using (var cmd = new SqliteCommand("PRAGMA user_version;", connection))
+        {
+            var res = cmd.ExecuteScalar();
+            if (res != null && long.TryParse(res.ToString(), out long v))
+            {
+                currentVersion = v;
+            }
+        }
+
+        if (currentVersion < 1)
+        {
+            // Initial baseline schema (Version 1)
+            using (var cmd = new SqliteCommand(@"
+                CREATE TABLE IF NOT EXISTS Users (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Username TEXT NOT NULL,
+                    Settings TEXT,
+                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS Logs (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Action TEXT NOT NULL,
+                    Module TEXT NOT NULL,
+                    Status TEXT NOT NULL,
+                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE INDEX IF NOT EXISTS idx_logs_module_createdat ON Logs (Module, CreatedAt DESC);
+                CREATE TABLE IF NOT EXISTS Reports (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ReportName TEXT NOT NULL,
+                    FilePath TEXT NOT NULL,
+                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS UpdatedApps (
+                    AppId TEXT PRIMARY KEY,
+                    Version TEXT NOT NULL,
+                    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS Notifications (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Title TEXT NOT NULL,
+                    Message TEXT NOT NULL,
+                    Level TEXT NOT NULL,
+                    IsRead INTEGER DEFAULT 0,
+                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS StateSnapshots (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Category TEXT NOT NULL,
+                    KeyName TEXT NOT NULL,
+                    OriginalValue TEXT,
+                    NewValue TEXT,
+                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE INDEX IF NOT EXISTS idx_notifications_isread_createdat ON Notifications (IsRead, CreatedAt DESC);
+                PRAGMA user_version = 1;
+            ", connection))
+            {
+                cmd.ExecuteNonQuery();
+            }
+            currentVersion = 1;
+        }
+
+        if (currentVersion < 2)
+        {
+            // Migration to Version 2: Index on StateSnapshots and Logs
+            using (var cmd = new SqliteCommand(@"
+                CREATE INDEX IF NOT EXISTS idx_snapshots_cat_key ON StateSnapshots (Category, KeyName, CreatedAt DESC);
+                CREATE INDEX IF NOT EXISTS idx_logs_createdat ON Logs (CreatedAt DESC);
+                PRAGMA user_version = 2;
+            ", connection))
+            {
+                cmd.ExecuteNonQuery();
+            }
+            currentVersion = 2;
+        }
+    }
+
     public static void InitializeDatabase()
     {
         _cachedSettings = null; // Clear cache on database initialization
@@ -130,101 +213,7 @@ public class DbManager
 
         ExecuteWithConnection(connection =>
         {
-            // Create Users table
-            var createUsersTable = @"
-                CREATE TABLE IF NOT EXISTS Users (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Username TEXT NOT NULL,
-                    Settings TEXT,
-                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-                );";
-            using (var command = new SqliteCommand(createUsersTable, connection))
-            {
-                command.ExecuteNonQuery();
-            }
-
-            // Create Logs table
-            var createLogsTable = @"
-                CREATE TABLE IF NOT EXISTS Logs (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Action TEXT NOT NULL,
-                    Module TEXT NOT NULL,
-                    Status TEXT NOT NULL,
-                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-                );";
-            using (var command = new SqliteCommand(createLogsTable, connection))
-            {
-                command.ExecuteNonQuery();
-            }
-
-            // Create index on Logs (Module, CreatedAt)
-            var createLogsIndex = "CREATE INDEX IF NOT EXISTS idx_logs_module_createdat ON Logs (Module, CreatedAt DESC);";
-            using (var command = new SqliteCommand(createLogsIndex, connection))
-            {
-                command.ExecuteNonQuery();
-            }
-
-            // Create Reports table
-            var createReportsTable = @"
-                CREATE TABLE IF NOT EXISTS Reports (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    ReportName TEXT NOT NULL,
-                    FilePath TEXT NOT NULL,
-                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-                );";
-            using (var command = new SqliteCommand(createReportsTable, connection))
-            {
-                command.ExecuteNonQuery();
-            }
-
-            // Create UpdatedApps table
-            var createUpdatedAppsTable = @"
-                CREATE TABLE IF NOT EXISTS UpdatedApps (
-                    AppId TEXT PRIMARY KEY,
-                    Version TEXT NOT NULL,
-                    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-                );";
-            using (var command = new SqliteCommand(createUpdatedAppsTable, connection))
-            {
-                command.ExecuteNonQuery();
-            }
-
-            // Create Notifications table
-            var createNotificationsTable = @"
-                CREATE TABLE IF NOT EXISTS Notifications (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Title TEXT NOT NULL,
-                    Message TEXT NOT NULL,
-                    Level TEXT NOT NULL,
-                    IsRead INTEGER DEFAULT 0,
-                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-                );";
-            using (var command = new SqliteCommand(createNotificationsTable, connection))
-            {
-                command.ExecuteNonQuery();
-            }
-
-            // Create StateSnapshots table for Undo Rollback
-            var createSnapshotsTable = @"
-                CREATE TABLE IF NOT EXISTS StateSnapshots (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Category TEXT NOT NULL,
-                    KeyName TEXT NOT NULL,
-                    OriginalValue TEXT,
-                    NewValue TEXT,
-                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
-                );";
-            using (var command = new SqliteCommand(createSnapshotsTable, connection))
-            {
-                command.ExecuteNonQuery();
-            }
-
-            // Create index on Notifications (IsRead, CreatedAt)
-            var createNotificationsIndex = "CREATE INDEX IF NOT EXISTS idx_notifications_isread_createdat ON Notifications (IsRead, CreatedAt DESC);";
-            using (var command = new SqliteCommand(createNotificationsIndex, connection))
-            {
-                command.ExecuteNonQuery();
-            }
+            ApplyMigrations(connection);
 
             // Check if default user exists, if not, create one
             var checkUser = "SELECT COUNT(*) FROM Users";
@@ -246,6 +235,25 @@ public class DbManager
 
         // Warmup: Pre-populate settings cache to avoid first cold DB hit on startup
         GetSettings();
+    }
+
+    public static (string? OriginalValue, string? NewValue)? GetLastSnapshot(string category, string keyName)
+    {
+        return ExecuteWithConnection(connection =>
+        {
+            var query = "SELECT OriginalValue, NewValue FROM StateSnapshots WHERE Category = $cat AND KeyName = $key ORDER BY Id DESC LIMIT 1;";
+            using var command = new SqliteCommand(query, connection);
+            command.Parameters.AddWithValue("$cat", category);
+            command.Parameters.AddWithValue("$key", keyName);
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                string? orig = reader.IsDBNull(0) ? null : reader.GetString(0);
+                string? neu = reader.IsDBNull(1) ? null : reader.GetString(1);
+                return ((string?, string?)?)(orig, neu);
+            }
+            return null;
+        });
     }
 
     public static void LogAction(string action, string module, string status)

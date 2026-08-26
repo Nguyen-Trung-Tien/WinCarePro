@@ -9,6 +9,8 @@ echo [1/3] Cleaning previous builds...
 dotnet clean -c Release
 if exist .\PublishOutputFolder rmdir /s /q .\PublishOutputFolder
 if exist .\PublishOutput rmdir /s /q .\PublishOutput
+mkdir .\PublishOutput
+mkdir .\PublishOutputFolder
 
 echo.
 echo [2/3] Publishing project to folder...

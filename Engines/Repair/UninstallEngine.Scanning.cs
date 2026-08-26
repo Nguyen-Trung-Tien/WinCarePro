@@ -213,65 +213,11 @@ public partial class UninstallEngine
             Log($"Error scanning Microsoft Store apps: {ex.Message}");
         }
         
-        // Add simulated entries for development testing
-#if DEBUG
-        appList.Add(new InstalledAppInfo
-        {
-            DisplayName = "Mock Trash App",
-            Publisher = "TrashySoft",
-            Version = "4.2.1",
-            InstallDate = "2026-05-10",
-            InstallLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MockTrashApp"),
-            UninstallString = "cmd.exe /c echo [Mock] Uninstalling Mock Trash App... & timeout /t 2",
-            RegistryKeyName = "MockTrashApp",
-            Hive = "HKCU",
-            RegistryPath = @"SOFTWARE\MockTrashApp",
-            SizeBytes = 128 * 1024 * 1024
-        });
-
-        appList.Add(new InstalledAppInfo
-        {
-            DisplayName = "WinCare Pro Helper Extension",
-            Publisher = "Nguyen-Trung-Tien",
-            Version = "1.0.0",
-            InstallDate = "2026-06-15",
-            InstallLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "WinCareProHelper"),
-            UninstallString = "cmd.exe /c echo [Mock] Uninstalling WinCare Pro Helper Extension... & timeout /t 2",
-            RegistryKeyName = "WinCareProHelper",
-            Hive = "HKCU",
-            RegistryPath = @"SOFTWARE\WinCareProHelper",
-            SizeBytes = 12 * 1024 * 1024
-        });
-
-        appList.Add(new InstalledAppInfo
-        {
-            DisplayName = "Mock Store Game",
-            Publisher = "MockStorePublisher",
-            Version = "1.0.4.0",
-            InstallLocation = "",
-            UninstallString = "MockStoreGame_1.0.4.0_x64__8wekyb3d8bbwe",
-            RegistryKeyName = "MockStoreGame",
-            Hive = "Store",
-            RegistryPath = "",
-            SizeBytes = 0,
-            IsStoreApp = true,
-            IconPath = ""
-        });
-#endif
-        
         return appList.OrderBy(x => x.DisplayName).ToList();
     }
 
     public async Task<bool> UninstallStoreAppAsync(string packageFullName)
     {
-        if (packageFullName.Contains("MockStoreGame"))
-        {
-            Log($"[Mock] Uninstalling Store App Mock Store Game...");
-            await Task.Delay(2000);
-            Log($"[Mock] Successfully uninstalled Microsoft Store package.");
-            return true;
-        }
-
         Log($"Removing Microsoft Store package: {packageFullName}");
         bool uwpSuccess = false;
         try

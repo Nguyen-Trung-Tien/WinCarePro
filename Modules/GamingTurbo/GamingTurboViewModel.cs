@@ -191,7 +191,7 @@ namespace WinCarePro.Modules.GamingTurbo
         {
             try
             {
-                var result = await ProcessRunner.RunAsync("powercfg.exe", "/getactivescheme", TimeSpan.FromSeconds(5));
+                var result = await ProcessRunner.RunAsync("powercfg.exe", new[] { "/getactivescheme" }, TimeSpan.FromSeconds(5));
                 if (result.Success && !string.IsNullOrEmpty(result.Output))
                 {
                     // Output format: "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)"
@@ -214,7 +214,7 @@ namespace WinCarePro.Modules.GamingTurbo
             {
                 // Switch to High Performance power plan for all gaming presets
                 // GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c = High Performance
-                await ProcessRunner.RunAsync("powercfg.exe", "/setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c", TimeSpan.FromSeconds(5));
+                await ProcessRunner.RunAsync("powercfg.exe", new[] { "/setactive", "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c" }, TimeSpan.FromSeconds(5));
             }
             catch { }
         }
@@ -230,7 +230,7 @@ namespace WinCarePro.Modules.GamingTurbo
                     ? _originalPowerPlanGuid
                     : "381b4222-f694-41f0-9685-ff5bb260df2e"; // Windows Default Balanced Scheme GUID
 
-                await ProcessRunner.RunAsync("powercfg.exe", $"/setactive {targetGuid}", TimeSpan.FromSeconds(5));
+                await ProcessRunner.RunAsync("powercfg.exe", new[] { "/setactive", targetGuid }, TimeSpan.FromSeconds(5));
                 _originalPowerPlanGuid = null;
                 ClearActiveTurboState();
             }
@@ -289,7 +289,7 @@ namespace WinCarePro.Modules.GamingTurbo
                     }
                     catch { }
 
-                    await ProcessRunner.RunAsync("powercfg.exe", $"/setactive {targetGuid}", TimeSpan.FromSeconds(5));
+                    await ProcessRunner.RunAsync("powercfg.exe", new[] { "/setactive", targetGuid }, TimeSpan.FromSeconds(5));
                     
                     try { System.IO.File.Delete(StateFile); } catch { }
 

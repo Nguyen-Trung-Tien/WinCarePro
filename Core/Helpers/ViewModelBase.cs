@@ -29,10 +29,16 @@ public class ViewModelBase : ObservableObject
                             OnPropertyChanged(propertyName);
                         }
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Infrastructure.Logging.CrashLogger.LogException($"ViewModelBase.SetPropertyOnUI({propertyName})", ex);
+                    }
                 });
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException($"ViewModelBase.DispatcherEnqueue({propertyName})", ex);
+            }
         }
         else
         {
@@ -41,7 +47,10 @@ public class ViewModelBase : ObservableObject
                 setter(value);
                 OnPropertyChanged(propertyName);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException($"ViewModelBase.SetPropertyDirect({propertyName})", ex);
+            }
         }
     }
 

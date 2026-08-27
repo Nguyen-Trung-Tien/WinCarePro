@@ -58,11 +58,16 @@ public class DbManager
                 }
                 catch (SqliteException ex) when (ex.SqliteErrorCode == 5 || ex.Message.Contains("locked", StringComparison.OrdinalIgnoreCase) || ex.Message.Contains("busy", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (attempt == maxRetries - 1) return defaultValue;
+                    if (attempt == maxRetries - 1)
+                    {
+                        Infrastructure.Logging.CrashLogger.LogException($"DbManager.ExecuteWithConnection (Locked/Busy after {maxRetries} attempts)", ex);
+                        return defaultValue;
+                    }
                     Thread.Sleep(50 * (attempt + 1));
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Infrastructure.Logging.CrashLogger.LogException("DbManager.ExecuteWithConnection", ex);
                     return defaultValue;
                 }
             }
@@ -80,9 +85,10 @@ public class DbManager
                 operation(connection, transaction);
                 transaction.Commit();
             }
-            catch
+            catch (Exception ex)
             {
-                try { transaction.Rollback(); } catch { }
+                Infrastructure.Logging.CrashLogger.LogException("DbManager.ExecuteInTransaction: Rolled back due to error", ex);
+                try { transaction.Rollback(); } catch (Exception rbEx) { Infrastructure.Logging.CrashLogger.LogException("DbManager.TransactionRollback", rbEx); }
                 throw;
             }
         });
@@ -103,11 +109,16 @@ public class DbManager
                 }
                 catch (SqliteException ex) when (ex.SqliteErrorCode == 5 || ex.Message.Contains("locked", StringComparison.OrdinalIgnoreCase) || ex.Message.Contains("busy", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (attempt == maxRetries - 1) return;
+                    if (attempt == maxRetries - 1)
+                    {
+                        Infrastructure.Logging.CrashLogger.LogException($"DbManager.ExecuteWithConnection (Locked/Busy after {maxRetries} attempts)", ex);
+                        return;
+                    }
                     Thread.Sleep(50 * (attempt + 1));
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Infrastructure.Logging.CrashLogger.LogException("DbManager.ExecuteWithConnection(Action)", ex);
                     return;
                 }
             }

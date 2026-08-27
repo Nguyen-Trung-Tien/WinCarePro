@@ -12,7 +12,7 @@ namespace WinCarePro.ViewModels;
 
 public class RegistryViewModel : ViewModelBase
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly DispatcherQueue? _dispatcherQueue;
     private readonly RegistryBackupEngine _engine = App.Services?.GetService<RegistryBackupEngine>() ?? new();
 
     private bool _isBusy;
@@ -41,7 +41,8 @@ public class RegistryViewModel : ViewModelBase
 
     public RegistryViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        DispatcherQueueInstance = _dispatcherQueue;
         LoadBackups();
     }
 
@@ -66,7 +67,7 @@ public class RegistryViewModel : ViewModelBase
         try
         {
             var list = await Task.Run(() => _engine.ScanRegistryIssues());
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 foreach (var issue in list)
                 {
@@ -78,7 +79,10 @@ public class RegistryViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            StatusText = "Scan failed:".T() + " " + ex.Message;
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                StatusText = "Scan failed: ".T() + ex.Message;
+            });
         }
         finally
         {

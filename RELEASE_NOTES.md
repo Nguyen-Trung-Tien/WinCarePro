@@ -2,15 +2,15 @@
 
 ---
 
-## 🚀 WinCare Pro v4.3.0 — Trí Tuệ Nhân Tạo AI Diagnostics, Lõi Bảo Vệ SafePathGuard, Quản Lý Driver & Trình Cập Nhật Phần Mềm
+## 🚀 WinCare Pro v4.5 (Codename: Nova) — Trí Tuệ Nhân Tạo AI Diagnostics, Lõi Bảo Vệ SafePathGuard, Quản Lý Driver & Trình Cập Nhật Phần Mềm
 
-> **Phát hành:** 24/08/2026 · **Loại:** Bản Nâng Cấp Tính Năng & Trí Tuệ Hệ Thống Thế Hệ Mới (Next-Gen Intelligence & Core Features Suite)
+> **Phát hành:** 27/08/2026 · **Loại:** Bản Nâng Cấp Tính Năng & Trí Tuệ Hệ Thống Thế Hệ Mới (Nova Suite)
 
-Bản cập nhật **v4.3.0** đánh dấu bước nhảy vọt toàn diện của WinCare Pro về trí thông minh nhân tạo, khả năng tự động hóa, mức độ an toàn bảo mật và trải nghiệm thị giác. Phiên bản này trang bị động cơ **Chẩn đoán AI WinCare Engine & Phân tích Dự đoán (Predictive Analysis)**, lõi phòng vệ dữ liệu **SafePathGuard & InputSanitizer**, phân hệ **Quản lý & Chẩn đoán Driver Phần cứng**, bộ công cụ **Cập nhật Phần mềm Tự động (Software Updater)**, động cơ **Hoạt ảnh 3D & Chuyển cảnh mượt mà 120 FPS**, cùng tính năng **Tìm kiếm Cài đặt Siêu Tốc (Granular Search)** và quản lý hộp thoại hiện đại.
+Bản cập nhật **v4.5 (Codename: Nova)** đánh dấu bước nhảy vọt toàn diện của WinCare Pro về trí thông minh nhân tạo, khả năng tự động hóa, mức độ an toàn bảo mật và trải nghiệm thị giác. Phiên bản này trang bị động cơ **Chẩn đoán AI WinCare Engine & Phân tích Dự đoán (Predictive Analysis)**, lõi phòng vệ dữ liệu **SafePathGuard & InputSanitizer**, phân hệ **Quản lý & Chẩn đoán Driver Phần cứng**, bộ công cụ **Cập nhật Phần mềm Tự động (Software Updater)**, động cơ **Hoạt ảnh 3D & Chuyển cảnh mượt mà 120 FPS**, cùng tính năng **Tìm kiếm Cài đặt Siêu Tốc (Granular Search)** và quản lý hộp thoại hiện đại.
 
 ---
 
-### ✨ Các Tính Năng & Chức Năng Nổi Bật trong v4.3.0 (Key User Features)
+### ✨ Các Tính Năng & Chức Năng Nổi Bật trong v4.5 (Key User Features)
 
 * **🧠 Động Cơ Chẩn Đoán AI & Phân Tích Dự Đoán Thông Minh (AI WinCare Diagnostics & Predictive Engine):**
   * Tự động quét và đánh giá toàn diện sức khỏe hệ thống theo thời gian thực bằng thuật toán Heuristic.

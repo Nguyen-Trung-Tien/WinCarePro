@@ -1099,18 +1099,18 @@ public sealed partial class SettingsPage : Page
 
         if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
         {
-            remoteVerStr = betaVerProp.GetString() ?? "4.3.0";
+            remoteVerStr = betaVerProp.GetString() ?? "4.5.0";
             downloadUrl = root.TryGetProperty("beta_url", out var betaUrlProp) ? betaUrlProp.GetString() ?? "" : "";
             changelog = root.TryGetProperty("beta_changelog", out var betaClProp) ? betaClProp.GetString() ?? "" : "";
         }
         else
         {
-            remoteVerStr = root.GetProperty("version").GetString() ?? "4.3.0";
+            remoteVerStr = root.GetProperty("version").GetString() ?? "4.5.0";
             downloadUrl = root.GetProperty("url").GetString() ?? "";
             changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
         }
 
-        var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(4, 3, 0, 0);
+        var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(4, 5, 0, 0);
         string cleanRemoteVer = System.Text.RegularExpressions.Regex.Replace(remoteVerStr, @"[^\d\.]", "").TrimEnd('.');
         if (!Version.TryParse(cleanRemoteVer, out var remoteVersion))
         {
@@ -1436,7 +1436,7 @@ public sealed partial class SettingsPage : Page
                 Padding = new Thickness(8, 2, 8, 2),
                 Child = new TextBlock
                 {
-                    Text = "v4.3.0 Official Release".T(),
+                    Text = "v4.5 Nova Release".T(),
                     FontSize = 11,
                     FontWeight = Microsoft.UI.Text.FontWeights.Bold,
                     Foreground = new SolidColorBrush(Microsoft.UI.Colors.White)
@@ -1768,7 +1768,7 @@ public sealed partial class SettingsPage : Page
             var diagObj = new
             {
                 App = "WinCare Pro",
-                Version = "4.3.0",
+                Version = "4.5.0",
                 TimestampUtc = DateTime.UtcNow.ToString("o"),
                 Architecture = RuntimeInformation.ProcessArchitecture.ToString(),
                 OS = Environment.OSVersion.VersionString,

@@ -35,7 +35,7 @@
                 <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="22" Height="22" VerticalAlignment="Center" Stretch="Uniform"/>
                 <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                 <Border Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
-                    <TextBlock Text="v4.3.0" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="v4.5" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 
@@ -224,10 +224,8 @@
                     <TranslateTransform Y="30" />
                 </StackPanel.RenderTransform>
                 
-                <!-- Clean App Logo (No outer circle or clunky ring) -->
-                <Border Width="76" Height="76" CornerRadius="22" Background="#18FFFFFF" BorderBrush="#35FFFFFF" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
-                </Border>
+                <!-- Clean App Logo (Pure Isolated Emblem) -->
+                <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="72" Height="72" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
                 
                 <StackPanel Spacing="6" HorizontalAlignment="Center">
                     <TextBlock x:Name="ExitOverlayTitle" Text="Shutting Down" FontSize="24" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="0.5"/>
@@ -290,12 +288,8 @@
             </Grid>
             
             <StackPanel x:Name="StartupOverlayContent" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24" Width="380">
-                <!-- App Logo with Ambient Pulsing Glow Frame -->
-                <Grid Width="80" Height="80" HorizontalAlignment="Center">
-                    <Border Width="80" Height="80" CornerRadius="24" Background="#15FFFFFF" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
-                        <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="50" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
-                    </Border>
-                </Grid>
+                <!-- App Logo (Pure Isolated Emblem) -->
+                <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="76" Height="76" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
                 
                 <StackPanel Spacing="6" HorizontalAlignment="Center">
                     <TextBlock Text="WinCare Pro" FontSize="26" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="0.5"/>

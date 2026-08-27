@@ -250,15 +250,16 @@ public class RepairViewModel : ViewModelBase, IDisposable
     public ObservableCollection<DiagnosticIssueItem> DiscoveredIssues { get; } = new();
     public ObservableCollection<DiagnosticIssueItem> FilteredDiscoveredIssues { get; } = new();
 
+    private readonly Action<int> _progressChangedHandler;
+
     public RepairViewModel()
     {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        DispatcherQueueInstance = _dispatcherQueue;
 
         _repairEngine.OutputReceived += LogText;
-        if (_dispatcherQueue != null)
-        {
-            _repairEngine.ProgressChanged += Pct => _dispatcherQueue.TryEnqueue(() => RepairProgressPercent = Pct);
-        }
+        _progressChangedHandler = Pct => _dispatcherQueue?.TryEnqueue(() => RepairProgressPercent = Pct);
+        _repairEngine.ProgressChanged += _progressChangedHandler;
 
         _languageChangedHandler = (s, e) =>
         {
@@ -279,6 +280,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
         _isDisposed = true;
         CancelCurrentOperation();
         _repairEngine.OutputReceived -= LogText;
+        _repairEngine.ProgressChanged -= _progressChangedHandler;
         TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 

@@ -456,13 +456,16 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _gameBoostStatus, value);
     }
 
+    private readonly Action<string> _progressHandler;
     private readonly EventHandler _languageChangedHandler;
 
     public SystemOptimizerViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        DispatcherQueueInstance = _dispatcherQueue;
         
-        _optimizerEngine.ProgressMessage += (msg) => Log(msg.T());
+        _progressHandler = (msg) => Log(msg.T());
+        _optimizerEngine.ProgressMessage += _progressHandler;
 
         _languageChangedHandler = (s, e) =>
         {
@@ -964,6 +967,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     public void Dispose()
     {
         _isDisposed = true;
+        _optimizerEngine.ProgressMessage -= _progressHandler;
         TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 }

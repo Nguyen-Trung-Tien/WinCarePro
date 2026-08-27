@@ -14,7 +14,7 @@ namespace WinCarePro.ViewModels;
 
 public class DiskViewModel : ViewModelBase, IDisposable
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly DispatcherQueue? _dispatcherQueue;
     private readonly DiskEngine _engine = App.Services?.GetService<DiskEngine>() ?? new();
     private readonly EventHandler _languageChangedHandler;
     private System.Threading.CancellationTokenSource? _diskCts;
@@ -81,7 +81,8 @@ public class DiskViewModel : ViewModelBase, IDisposable
 
     public DiskViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        DispatcherQueueInstance = _dispatcherQueue;
         // Don't subscribe events in constructor; use SubscribeEvents/UnsubscribeEvents
         // called from DiskPage.OnNavigatedTo/From to avoid double-subscription
 
@@ -115,7 +116,7 @@ public class DiskViewModel : ViewModelBase, IDisposable
 
     private void LogText(string msg)
     {
-        _dispatcherQueue.TryEnqueue(() =>
+        _dispatcherQueue?.TryEnqueue(() =>
         {
             ConsoleOutput += msg + "\n";
         });

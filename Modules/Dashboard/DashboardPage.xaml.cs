@@ -26,7 +26,7 @@ public sealed partial class DashboardPage : Page
             ViewModel.DispatcherQueue = this.DispatcherQueue;
             DataContext = ViewModel;
             
-            // Start ASC 19 cyber radar rotation and glowing ripple animations
+            // Start ASC 19 cyber radar rotation and glowing ripple animations if enabled
             try
             {
                 Asc19RadarRotation.Begin();
@@ -35,7 +35,7 @@ public sealed partial class DashboardPage : Page
             catch { }
 
             // Lazy load the extended layer after initial UI renders to prevent lag
-            await Task.Delay(200);
+            await Task.Delay(100);
             ViewModel.IsExtendedLayerLoaded = true;
             
             // Force responsive update after extended layer is fully initialized
@@ -58,6 +58,17 @@ public sealed partial class DashboardPage : Page
 
             // Translate page content
             TranslationManager.Instance.Translate(this);
+        };
+
+        this.Unloaded += (s, e) =>
+        {
+            // Suspend infinite GPU storyboard loops when navigating away from Dashboard
+            try
+            {
+                Asc19RadarRotation.Stop();
+                Asc19AuraBreathing.Stop();
+            }
+            catch { }
         };
 
         TranslationManager.Instance.LanguageChanged += (s, e) =>

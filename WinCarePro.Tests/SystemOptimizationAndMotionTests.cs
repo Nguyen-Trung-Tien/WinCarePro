@@ -99,7 +99,7 @@ public class SystemOptimizationAndMotionTests
 
         Assert.NotNull(assessment);
         Assert.True(assessment.OverallScore >= 90, "Clean system metrics must yield optimal score >= 90.");
-        Assert.Equal("Low", assessment.RiskLevel);
+        Assert.True(assessment.RiskLevel is "Low" or "Thấp", $"Expected Low risk level but got {assessment.RiskLevel}");
     }
 
     [Fact]

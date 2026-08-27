@@ -162,7 +162,7 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private async Task SmoothTweenProgressAsync(double targetValue, string message, int durationMs = 280)
+    private async Task SmoothTweenProgressAsync(double targetValue, string message, int durationMs = 60)
     {
         if (StartupProgressText != null) StartupProgressText.Text = message.T();
         if (StartupProgressBar == null || StartupProgressPercent == null) return;
@@ -171,8 +171,8 @@ public sealed partial class MainWindow : Window
         double diff = targetValue - startVal;
         if (Math.Abs(diff) < 0.01) return;
 
-        int steps = Math.Max(6, durationMs / 16);
-        int stepDelay = durationMs / steps;
+        int steps = Math.Max(3, durationMs / 16);
+        int stepDelay = Math.Max(8, durationMs / steps);
 
         for (int i = 1; i <= steps; i++)
         {
@@ -194,27 +194,26 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            await SmoothTweenProgressAsync(20, "Initializing core system engine...", 240);
+            await SmoothTweenProgressAsync(25, "Initializing core system engine...", 40);
 
             // 1. Initialize SQLite Database asynchronously
-            await SmoothTweenProgressAsync(45, "Loading database & telemetry store...", 200);
             await Task.Run(() => Database.DbManager.InitializeDatabase());
+            await SmoothTweenProgressAsync(55, "Loading database & telemetry store...", 40);
 
             // 2. Load theme settings and transparency levels from DB
-            await SmoothTweenProgressAsync(70, "Applying visual themes & typography...", 180);
             LoadThemeConfiguration();
+            await SmoothTweenProgressAsync(75, "Applying visual themes & typography...", 40);
 
             // 3. Load language setting and apply translations to window content
-            await SmoothTweenProgressAsync(88, "Applying localized linguistic model...", 180);
             TranslationManager.Instance.LoadLanguageFromSettings();
             TranslationManager.Instance.Translate(this.Content);
+            await SmoothTweenProgressAsync(90, "Applying localized linguistic model...", 40);
 
             // 4. Update notification badge indicator & prepare main view
-            await SmoothTweenProgressAsync(96, "Launching WinCare Pro workspace...", 150);
             UpdateNotificationBadge();
             RootFrame.Navigate(typeof(MainPage));
 
-            await SmoothTweenProgressAsync(100, "Ready!", 150);
+            await SmoothTweenProgressAsync(100, "Ready!", 30);
 
             // 5. Start Clock Ticker & fade out splash overlay smoothly
             StartClockTicker();
@@ -230,7 +229,10 @@ public sealed partial class MainWindow : Window
                 {
                     await Modules.GamingTurbo.GamingTurboViewModel.CheckAndPerformAutoRecoveryAsync();
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("Startup.GamingTurboRecovery", ex);
+                }
             });
 
             _ = Task.Run(() =>
@@ -239,7 +241,10 @@ public sealed partial class MainWindow : Window
                 {
                     Database.DbManager.RunDatabaseMaintenance();
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("Startup.DbMaintenance", ex);
+                }
             });
 
             _ = Task.Run(() =>
@@ -248,7 +253,10 @@ public sealed partial class MainWindow : Window
                 {
                     App.MainDispatcherQueue?.TryEnqueue(() => PopulateSearchRegistry());
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("Startup.SearchRegistry", ex);
+                }
             });
         }
         catch (Exception ex)
@@ -258,6 +266,7 @@ public sealed partial class MainWindow : Window
             RootFrame.Navigate(typeof(MainPage));
             StartClockTicker();
             Database.DbManager.LogAction($"Startup failed: {ex.Message}", "System", "Failed");
+            Infrastructure.Logging.CrashLogger.LogException("MainWindow.InitializeAppAsync", ex);
         }
     }
 

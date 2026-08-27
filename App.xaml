@@ -110,33 +110,31 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
-            <!-- Brand Linear Gradients (Vibrant & Deep Space Neon) -->
+            <!-- Brand Linear Gradients (Modern Fluent Indigo & Azure Blue) -->
             <LinearGradientBrush x:Key="PrimaryAccentGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FFA78BFA" Offset="0" /> <!-- Light Purple -->
-                <GradientStop Color="#FF3B82F6" Offset="0.5" /> <!-- Electric Blue -->
-                <GradientStop Color="#FF22D3EE" Offset="1" /> <!-- Neon Cyan -->
+                <GradientStop Color="#FF4F46E5" Offset="0" /> <!-- Fluent Indigo -->
+                <GradientStop Color="#FF0F6CBD" Offset="1" /> <!-- Microsoft Fluent Blue -->
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="CyberAccentGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FFC084FC" Offset="0" /> <!-- Cyber Pink-Purple -->
-                <GradientStop Color="#FF6366F1" Offset="0.5" /> <!-- Indigo -->
-                <GradientStop Color="#FF06B6D4" Offset="1" /> <!-- Cyber Teal -->
+                <GradientStop Color="#FF2563EB" Offset="0" /> <!-- Royal Azure -->
+                <GradientStop Color="#FF0F6CBD" Offset="1" /> <!-- Fluent Blue -->
             </LinearGradientBrush>
 
-            <SolidColorBrush x:Key="PrimaryAccentBrush" Color="#FF8B5CF6" />
-            <SolidColorBrush x:Key="PrimaryAccentLightBrush" Color="#228B5CF6" />
-            <SolidColorBrush x:Key="PrimaryAccentBorderBrush" Color="#558B5CF6" />
+            <SolidColorBrush x:Key="PrimaryAccentBrush" Color="#FF0F6CBD" />
+            <SolidColorBrush x:Key="PrimaryAccentLightBrush" Color="#180F6CBD" />
+            <SolidColorBrush x:Key="PrimaryAccentBorderBrush" Color="#400F6CBD" />
 
             <LinearGradientBrush x:Key="GlassBorderBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#407F56D9" Offset="0" />
-                <GradientStop Color="#207F56D9" Offset="0.5" />
-                <GradientStop Color="#357F56D9" Offset="1" />
+                <GradientStop Color="#250F6CBD" Offset="0" />
+                <GradientStop Color="#150F6CBD" Offset="0.5" />
+                <GradientStop Color="#250F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="CyberGlassBorderBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#608B5CF6" Offset="0" />
-                <GradientStop Color="#257F56D9" Offset="0.5" />
-                <GradientStop Color="#4006B6D4" Offset="1" />
+                <GradientStop Color="#350F6CBD" Offset="0" />
+                <GradientStop Color="#150F6CBD" Offset="0.5" />
+                <GradientStop Color="#250F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="HealthGoodGradient" StartPoint="0,0" EndPoint="1,0">

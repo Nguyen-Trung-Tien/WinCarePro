@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.5.0] - 2026-08-27 (Nova Release)
+
+### Performance & Modernization
+- **Full Architecture & Safety Modernization:** Standardized `DispatcherQueue` fallback, eliminated silent catches with structured `CrashLogger.LogException`, and prevented event listener leaks across all ViewModels.
+- **Lifecycle-Aware Visuals:** Paused 3D radar animations on Dashboard navigation unloaded to save background CPU/GPU power.
+- **Instantaneous Startup:** Streamlined initialization flow down to ~200ms with parallel database & theme hydration.
+
 ## [4.3.0-RC1] - 2026-08-26 (Release Candidate 1)
 
 ### Added

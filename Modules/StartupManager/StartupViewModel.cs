@@ -16,7 +16,7 @@ namespace WinCarePro.ViewModels;
 
 public class StartupViewModel : ViewModelBase, IDisposable
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly DispatcherQueue? _dispatcherQueue;
     private readonly StartupEngine _startupEngine;
     private readonly IconCacheService _iconCache;
     private readonly ServiceSafetyService _safety;
@@ -194,7 +194,8 @@ public class StartupViewModel : ViewModelBase, IDisposable
 
     public StartupViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        DispatcherQueueInstance = _dispatcherQueue;
 
         try
         {
@@ -355,7 +356,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
 
     private void ApplyFilters()
     {
-        _dispatcherQueue.TryEnqueue(() =>
+        _dispatcherQueue?.TryEnqueue(() =>
         {
             // 1. Filter Startup Apps
             StartupApps.Clear();

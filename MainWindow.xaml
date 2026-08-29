@@ -30,10 +30,10 @@
             <!-- Drag Area Canvas (Acts as window drag region) -->
             <Grid x:Name="AppTitleDragArea" Grid.ColumnSpan="3" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 
-            <!-- Brand (Left) — v3.0 with version badge -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Padding="14,0" VerticalAlignment="Center" Spacing="10" Canvas.ZIndex="10">
-                <Grid Width="40" Height="40" VerticalAlignment="Center">
-                    <Ellipse Width="38" Height="38" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.45">
+            <!-- Brand (Left) — Modern Compact Fluent TitleBar -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Padding="16,0,8,0" VerticalAlignment="Center" Spacing="8" Canvas.ZIndex="10">
+                <Grid Width="28" Height="28" VerticalAlignment="Center">
+                    <Ellipse Width="26" Height="26" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.35">
                         <Ellipse.Fill>
                             <RadialGradientBrush>
                                 <GradientStop Color="#FF38BDF8" Offset="0" />
@@ -42,11 +42,11 @@
                             </RadialGradientBrush>
                         </Ellipse.Fill>
                     </Ellipse>
-                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="38" Height="38" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform"/>
+                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform"/>
                 </Grid>
-                <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
-                <Border Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
-                    <TextBlock Text="v4.5" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <Border Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="5" Padding="5,1.5" VerticalAlignment="Center">
+                    <TextBlock Text="v4.5" FontSize="9.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
                 </Border>
             </StackPanel>
 

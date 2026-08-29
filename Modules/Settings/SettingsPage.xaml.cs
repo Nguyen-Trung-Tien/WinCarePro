@@ -390,6 +390,12 @@ public sealed partial class SettingsPage : Page
         {
             selectedCheck.Visibility = Visibility.Visible;
         }
+
+        if (DevAvatarBorder != null && Application.Current.Resources.TryGetValue("CyberAccentGradient", out var brushObj) && brushObj is Microsoft.UI.Xaml.Media.Brush cyberBrush)
+        {
+            DevAvatarBorder.Background = null;
+            DevAvatarBorder.Background = cyberBrush;
+        }
     }
 
     private async void OnAutoScanToggled(object sender, RoutedEventArgs e)

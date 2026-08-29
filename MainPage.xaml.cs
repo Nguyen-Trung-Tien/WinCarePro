@@ -41,6 +41,13 @@ public sealed partial class MainPage : Page
         var initialTheme = ThemeManager.Instance.CurrentTheme;
         this.RequestedTheme = initialTheme;
         NavView.RequestedTheme = initialTheme;
+
+        // Register to accent color changes to dynamically update user avatar and brand gradients
+        ThemeManager.Instance.AccentChanged += (s, e) =>
+        {
+            UpdateUserAvatarAccent();
+        };
+        UpdateUserAvatarAccent();
         
         // Register to language changes to force translation for this page and current navigated page
         TranslationManager.Instance.LanguageChanged += (s, e) =>
@@ -273,5 +280,22 @@ public sealed partial class MainPage : Page
             }
         }
         catch { }
+    }
+
+    private void UpdateUserAvatarAccent()
+    {
+        DispatcherQueue?.TryEnqueue(() =>
+        {
+            if (Application.Current.Resources.TryGetValue("CyberAccentGradient", out var brushObj) && brushObj is Microsoft.UI.Xaml.Media.Brush cyberBrush)
+            {
+                UserAvatarBorder.Background = null;
+                UserAvatarBorder.Background = cyberBrush;
+            }
+        });
+    }
+
+    private void OnUserProfileClick(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+    {
+        NavigateToPageExternal("settings");
     }
 }

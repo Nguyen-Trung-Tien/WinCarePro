@@ -31,9 +31,20 @@
             <Grid x:Name="AppTitleDragArea" Grid.ColumnSpan="3" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 
             <!-- Brand (Left) — v3.0 with version badge -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Padding="16,0" VerticalAlignment="Center" Spacing="8" Canvas.ZIndex="10">
-                <Image Source="ms-appx:///Assets/Square44x44Logo.scale-200.png" Width="22" Height="22" VerticalAlignment="Center" Stretch="Uniform"/>
-                <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Padding="14,0" VerticalAlignment="Center" Spacing="10" Canvas.ZIndex="10">
+                <Grid Width="40" Height="40" VerticalAlignment="Center">
+                    <Ellipse Width="38" Height="38" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.45">
+                        <Ellipse.Fill>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#FF38BDF8" Offset="0" />
+                                <GradientStop Color="#FF0284C7" Offset="0.6" />
+                                <GradientStop Color="Transparent" Offset="1" />
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="38" Height="38" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform"/>
+                </Grid>
+                <TextBlock Text="WinCare Pro" FontFamily="Segoe UI Variable Display" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
                 <Border Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
                     <TextBlock Text="v4.5" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
                 </Border>
@@ -224,8 +235,19 @@
                     <TranslateTransform Y="30" />
                 </StackPanel.RenderTransform>
                 
-                <!-- Clean App Logo (Pure Isolated Emblem) -->
-                <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="72" Height="72" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+                <!-- Clean App Logo with Radial Aura Glow -->
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="144" Height="144">
+                    <Ellipse Width="140" Height="140" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.4">
+                        <Ellipse.Fill>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#FF0284C7" Offset="0" />
+                                <GradientStop Color="#FFF43F5E" Offset="0.6" />
+                                <GradientStop Color="Transparent" Offset="1" />
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="136" Height="136" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+                </Grid>
                 
                 <StackPanel Spacing="6" HorizontalAlignment="Center">
                     <TextBlock x:Name="ExitOverlayTitle" Text="Shutting Down" FontSize="24" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="0.5"/>
@@ -288,8 +310,19 @@
             </Grid>
             
             <StackPanel x:Name="StartupOverlayContent" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24" Width="380">
-                <!-- App Logo (Pure Isolated Emblem) -->
-                <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="76" Height="76" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+                <!-- App Logo with Neon Blue Aura Glow -->
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="156" Height="156">
+                    <Ellipse Width="150" Height="150" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.45">
+                        <Ellipse.Fill>
+                            <RadialGradientBrush>
+                                <GradientStop Color="#FF38BDF8" Offset="0" />
+                                <GradientStop Color="#FF0284C7" Offset="0.6" />
+                                <GradientStop Color="Transparent" Offset="1" />
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="148" Height="148" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+                </Grid>
                 
                 <StackPanel Spacing="6" HorizontalAlignment="Center">
                     <TextBlock Text="WinCare Pro" FontSize="26" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="0.5"/>

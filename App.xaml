@@ -112,13 +112,15 @@
 
             <!-- Brand Linear Gradients (Modern Fluent Indigo & Azure Blue) -->
             <LinearGradientBrush x:Key="PrimaryAccentGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF4F46E5" Offset="0" /> <!-- Fluent Indigo -->
-                <GradientStop Color="#FF0F6CBD" Offset="1" /> <!-- Microsoft Fluent Blue -->
+                <GradientStop Color="#FF4F46E5" Offset="0" />
+                <GradientStop Color="#FF2563EB" Offset="0.5" />
+                <GradientStop Color="#FF0F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="CyberAccentGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF2563EB" Offset="0" /> <!-- Royal Azure -->
-                <GradientStop Color="#FF0F6CBD" Offset="1" /> <!-- Fluent Blue -->
+                <GradientStop Color="#FF38BDF8" Offset="0" />
+                <GradientStop Color="#FF2563EB" Offset="0.5" />
+                <GradientStop Color="#FF0F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <SolidColorBrush x:Key="PrimaryAccentBrush" Color="#FF0F6CBD" />

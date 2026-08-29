@@ -1,7 +1,7 @@
 # 🚀 WinCare Pro Suite v4.5 (Codename: Nova)
 
 <div align="center">
-  <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(127, 86, 217, 0.35); margin-bottom: 20px;" />
+  <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(0, 120, 212, 0.45); margin-bottom: 20px;" />
 
   <h3>Hệ Thống Tối Ưu Hóa, Dọn Dẹp & Bảo Trì Windows Toàn Diện Thế Hệ Mới</h3>
   <p align="center">

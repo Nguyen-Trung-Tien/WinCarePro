@@ -234,19 +234,35 @@ public class ThemeManager
             }
 
             if (Application.Current.Resources.TryGetValue("PrimaryAccentGradient", out var brushObj) && 
-                brushObj is LinearGradientBrush brush && brush.GradientStops.Count >= 3)
+                brushObj is LinearGradientBrush brush)
             {
-                brush.GradientStops[0].Color = c0;
-                brush.GradientStops[1].Color = c1;
-                brush.GradientStops[2].Color = c2;
+                if (brush.GradientStops.Count >= 3)
+                {
+                    brush.GradientStops[0].Color = c0;
+                    brush.GradientStops[1].Color = c1;
+                    brush.GradientStops[2].Color = c2;
+                }
+                else if (brush.GradientStops.Count == 2)
+                {
+                    brush.GradientStops[0].Color = c0;
+                    brush.GradientStops[1].Color = c2;
+                }
             }
 
             if (Application.Current.Resources.TryGetValue("CyberAccentGradient", out var cyberBrushObj) &&
-                cyberBrushObj is LinearGradientBrush cyberBrush && cyberBrush.GradientStops.Count >= 3)
+                cyberBrushObj is LinearGradientBrush cyberBrush)
             {
-                cyberBrush.GradientStops[0].Color = cyber0;
-                cyberBrush.GradientStops[1].Color = cyber1;
-                cyberBrush.GradientStops[2].Color = cyber2;
+                if (cyberBrush.GradientStops.Count >= 3)
+                {
+                    cyberBrush.GradientStops[0].Color = cyber0;
+                    cyberBrush.GradientStops[1].Color = cyber1;
+                    cyberBrush.GradientStops[2].Color = cyber2;
+                }
+                else if (cyberBrush.GradientStops.Count == 2)
+                {
+                    cyberBrush.GradientStops[0].Color = cyber0;
+                    cyberBrush.GradientStops[1].Color = cyber2;
+                }
             }
 
             if (Application.Current.Resources.TryGetValue("PrimaryAccentBrush", out var solidBrushObj) &&
@@ -265,6 +281,24 @@ public class ThemeManager
                 borderBrushObj is SolidColorBrush borderBrush)
             {
                 borderBrush.Color = Color.FromArgb(isDark ? (byte)80 : (byte)120, c0.R, c0.G, c0.B);
+            }
+
+            if (Application.Current.Resources.TryGetValue("GlassBorderBrush", out var glassBrushObj) &&
+                glassBrushObj is LinearGradientBrush glassBrush && glassBrush.GradientStops.Count >= 2)
+            {
+                glassBrush.GradientStops[0].Color = Color.FromArgb(isDark ? (byte)37 : (byte)50, c0.R, c0.G, c0.B);
+                glassBrush.GradientStops[1].Color = Color.FromArgb(isDark ? (byte)15 : (byte)25, c1.R, c1.G, c1.B);
+                if (glassBrush.GradientStops.Count >= 3)
+                    glassBrush.GradientStops[2].Color = Color.FromArgb(isDark ? (byte)37 : (byte)50, c0.R, c0.G, c0.B);
+            }
+
+            if (Application.Current.Resources.TryGetValue("CyberGlassBorderBrush", out var cyberGlassBrushObj) &&
+                cyberGlassBrushObj is LinearGradientBrush cyberGlassBrush && cyberGlassBrush.GradientStops.Count >= 2)
+            {
+                cyberGlassBrush.GradientStops[0].Color = Color.FromArgb(isDark ? (byte)53 : (byte)65, cyber0.R, cyber0.G, cyber0.B);
+                cyberGlassBrush.GradientStops[1].Color = Color.FromArgb(isDark ? (byte)21 : (byte)30, cyber1.R, cyber1.G, cyber1.B);
+                if (cyberGlassBrush.GradientStops.Count >= 3)
+                    cyberGlassBrush.GradientStops[2].Color = Color.FromArgb(isDark ? (byte)37 : (byte)50, cyber2.R, cyber2.G, cyber2.B);
             }
 
             if (Application.Current.Resources.TryGetValue("NavActiveIndicatorBrush", out var navBrushObj) &&

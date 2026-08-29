@@ -259,9 +259,17 @@
                                 <TextBlock Text="Choose system-wide brand gradient and highlight color tone." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 
                                 <StackPanel Orientation="Horizontal" Spacing="14" x:Name="AccentSelectorPanel" Margin="0,6,0,0">
-                                    <!-- Default Purple -->
-                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Default" Background="Transparent" ToolTipService.ToolTip="Default Indigo-Purple">
-                                        <Ellipse x:Name="AccentDefault" Width="32" Height="32" Fill="#FF7F56D9"/>
+                                    <!-- Default Radiant Azure -->
+                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Default" Background="Transparent" ToolTipService.ToolTip="Radiant Azure (Default)">
+                                        <Ellipse x:Name="AccentDefault" Width="32" Height="32">
+                                            <Ellipse.Fill>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#FF0F6CBD" Offset="0"/>
+                                                    <GradientStop Color="#FF0284C7" Offset="0.5"/>
+                                                    <GradientStop Color="#FF2563EB" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
                                         <FontIcon x:Name="CheckDefault" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
                                     </Grid>
                                     <!-- Green -->

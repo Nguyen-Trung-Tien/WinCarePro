@@ -222,14 +222,17 @@ public class ThemeManager
                     cyber1 = isDark ? Color.FromArgb(255, 245, 158, 11) : Color.FromArgb(255, 234, 88, 12);
                     cyber2 = isDark ? Color.FromArgb(255, 239, 68, 68) : Color.FromArgb(255, 225, 29, 72);
                     break;
-                default: // Default (Purple-Indigo-Blue)
-                    c0 = isDark ? Color.FromArgb(255, 127, 86, 217) : Color.FromArgb(255, 124, 58, 237);
-                    c1 = isDark ? Color.FromArgb(255, 99, 102, 241) : Color.FromArgb(255, 79, 70, 229);
-                    c2 = isDark ? Color.FromArgb(255, 59, 130, 246) : Color.FromArgb(255, 37, 99, 235);
+                case "radian":
+                case "radiant":
+                case "default":
+                default: // Default Radiant (Azure - Cyan - Blue)
+                    c0 = isDark ? Color.FromArgb(255, 15, 108, 189) : Color.FromArgb(255, 2, 132, 199);
+                    c1 = isDark ? Color.FromArgb(255, 2, 132, 199) : Color.FromArgb(255, 14, 165, 233);
+                    c2 = isDark ? Color.FromArgb(255, 37, 99, 235) : Color.FromArgb(255, 30, 64, 175);
 
-                    cyber0 = isDark ? Color.FromArgb(255, 192, 132, 252) : Color.FromArgb(255, 168, 85, 247);
-                    cyber1 = isDark ? Color.FromArgb(255, 99, 102, 241) : Color.FromArgb(255, 99, 102, 241);
-                    cyber2 = isDark ? Color.FromArgb(255, 6, 182, 212) : Color.FromArgb(255, 14, 165, 233);
+                    cyber0 = isDark ? Color.FromArgb(255, 56, 189, 248) : Color.FromArgb(255, 14, 165, 233);
+                    cyber1 = isDark ? Color.FromArgb(255, 2, 132, 199) : Color.FromArgb(255, 2, 132, 199);
+                    cyber2 = isDark ? Color.FromArgb(255, 37, 99, 235) : Color.FromArgb(255, 37, 99, 235);
                     break;
             }
 

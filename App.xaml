@@ -13,50 +13,51 @@
 
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
-                    <!-- Dark Theme Tokens (Deep Space Glass, High Contrast & Cyber Neon) -->
-                    <SolidColorBrush x:Key="AppCardBackground" Color="#E514141F" />
-                    <SolidColorBrush x:Key="AppCardBorder" Color="#408B5CF6" />
-                    <SolidColorBrush x:Key="AppCardSubtleBorder" Color="#25FFFFFF" />
-                    <SolidColorBrush x:Key="AppSecondaryCardBackground" Color="#F01C1C2B" />
-                    <SolidColorBrush x:Key="AppStatChipBackground" Color="#E0222138" />
-                    <SolidColorBrush x:Key="AppStatChipBorder" Color="#508B5CF6" />
-                    <SolidColorBrush x:Key="AppTerminalBackground" Color="#FF0B0B14" />
-                    <SolidColorBrush x:Key="AppTerminalForeground" Color="#FF00F2FE" />
-                    <SolidColorBrush x:Key="AppBadgeGoodBg" Color="#2510B981" />
-                    <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#6010B981" />
+                    <!-- Dark Theme Tokens (Refined Windows 11 Mica Alt & Clean Slate Glass) -->
+                    <SolidColorBrush x:Key="AppCardBackground" Color="#E8141620" />
+                    <SolidColorBrush x:Key="AppCardBorder" Color="#1EFFFFFF" />
+                    <SolidColorBrush x:Key="AppCardSubtleBorder" Color="#14FFFFFF" />
+                    <SolidColorBrush x:Key="AppSecondaryCardBackground" Color="#F0181A26" />
+                    <SolidColorBrush x:Key="AppStatChipBackground" Color="#12FFFFFF" />
+                    <SolidColorBrush x:Key="AppStatChipBorder" Color="#1AFFFFFF" />
+                    <SolidColorBrush x:Key="AppTerminalBackground" Color="#FF0B0E14" />
+                    <SolidColorBrush x:Key="AppTerminalForeground" Color="#FF38BDF8" />
+                    <SolidColorBrush x:Key="AppBadgeGoodBg" Color="#1810B981" />
+                    <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#3510B981" />
                     <SolidColorBrush x:Key="AppBadgeGoodFg" Color="#FF10B981" />
-                    <SolidColorBrush x:Key="AppBadgeWarningBg" Color="#25F59E0B" />
-                    <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#60F59E0B" />
+                    <SolidColorBrush x:Key="AppBadgeWarningBg" Color="#18F59E0B" />
+                    <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#35F59E0B" />
                     <SolidColorBrush x:Key="AppBadgeWarningFg" Color="#FFF59E0B" />
-                    <SolidColorBrush x:Key="AppBadgeCriticalBg" Color="#25EF4444" />
-                    <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#60EF4444" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalBg" Color="#18EF4444" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#35EF4444" />
                     <SolidColorBrush x:Key="AppBadgeCriticalFg" Color="#FFEF4444" />
-                    <SolidColorBrush x:Key="AppBadgeNeutralBg" Color="#208B5CF6" />
-                    <SolidColorBrush x:Key="AppBadgeNeutralBorder" Color="#508B5CF6" />
-                    <SolidColorBrush x:Key="AppBadgeNeutralFg" Color="#FFA78BFA" />
-                    <SolidColorBrush x:Key="AppCpuChipBg" Color="#25F59E0B" />
-                    <SolidColorBrush x:Key="AppCpuChipBorder" Color="#60F59E0B" />
-                    <SolidColorBrush x:Key="AppCpuChipFg" Color="#FFFBF59E" />
-                    <SolidColorBrush x:Key="AppRamChipBg" Color="#253B82F6" />
-                    <SolidColorBrush x:Key="AppRamChipBorder" Color="#603B82F6" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralBg" Color="#140F6CBD" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralBorder" Color="#300F6CBD" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralFg" Color="#FF38BDF8" />
+                    <SolidColorBrush x:Key="AppCpuChipBg" Color="#18F59E0B" />
+                    <SolidColorBrush x:Key="AppCpuChipBorder" Color="#35F59E0B" />
+                    <SolidColorBrush x:Key="AppCpuChipFg" Color="#FFFBBF24" />
+                    <SolidColorBrush x:Key="AppRamChipBg" Color="#180284C7" />
+                    <SolidColorBrush x:Key="AppRamChipBorder" Color="#350284C7" />
                     <SolidColorBrush x:Key="AppRamChipFg" Color="#FF60A5FA" />
                     
                     <!-- System Text & Control Overrides for 100% Seamless Dark Mode Readability & Layout Consistency -->
                     <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#FF94A3B8" />
                     <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#F8FAFC" />
                     <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#94A3B8" />
-                    <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#E514141F" />
-                    <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#F01C1C2B" />
-                    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#D5141424" />
-                    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="#FF0F0E17" />
-                    <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="#308B5CF6" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#E8141620" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#F0181A26" />
+                    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#D012141F" />
+                    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="#FF0D0E15" />
+                    <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="#1EFFFFFF" />
+                    <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="#1AFFFFFF" />
                     
                     <!-- Solid Opaque Flyout & Popup Brushes (Dark Mode) -->
-                    <SolidColorBrush x:Key="AppFlyoutBackground" Color="#FF181826" />
-                    <SolidColorBrush x:Key="AppFlyoutBorder" Color="#508B5CF6" />
-                    <SolidColorBrush x:Key="AppFlyoutItemBackground" Color="#FF222234" />
-                    <SolidColorBrush x:Key="AppFlyoutItemPointerOver" Color="#FF2D2D45" />
-                    <SolidColorBrush x:Key="AppFlyoutItemBorder" Color="#308B5CF6" />
+                    <SolidColorBrush x:Key="AppFlyoutBackground" Color="#FF181A24" />
+                    <SolidColorBrush x:Key="AppFlyoutBorder" Color="#28FFFFFF" />
+                    <SolidColorBrush x:Key="AppFlyoutItemBackground" Color="#FF202330" />
+                    <SolidColorBrush x:Key="AppFlyoutItemPointerOver" Color="#FF282C3D" />
+                    <SolidColorBrush x:Key="AppFlyoutItemBorder" Color="#20FFFFFF" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
                     <!-- Light Theme Tokens (Ultra Premium Modern Slate-Glass, High Definition & Crisp Vibrancy) -->
@@ -67,30 +68,30 @@
                     <SolidColorBrush x:Key="AppStatChipBackground" Color="#F1F5F9" />
                     <SolidColorBrush x:Key="AppStatChipBorder" Color="#CBD5E1" />
                     <SolidColorBrush x:Key="AppTerminalBackground" Color="#0F172A" />
-                    <SolidColorBrush x:Key="AppTerminalForeground" Color="#38BDF8" />
+                    <SolidColorBrush x:Key="AppTerminalForeground" Color="#0284C7" />
                     <SolidColorBrush x:Key="AppBadgeGoodBg" Color="#ECFDF5" />
-                    <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#34D399" />
+                    <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#A7F3D0" />
                     <SolidColorBrush x:Key="AppBadgeGoodFg" Color="#047857" />
                     <SolidColorBrush x:Key="AppBadgeWarningBg" Color="#FFFBEB" />
-                    <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#FBBF24" />
+                    <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#FDE68A" />
                     <SolidColorBrush x:Key="AppBadgeWarningFg" Color="#B45309" />
                     <SolidColorBrush x:Key="AppBadgeCriticalBg" Color="#FEF2F2" />
-                    <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#F87171" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#FECACA" />
                     <SolidColorBrush x:Key="AppBadgeCriticalFg" Color="#DC2626" />
-                    <SolidColorBrush x:Key="AppBadgeNeutralBg" Color="#EEF2FF" />
-                    <SolidColorBrush x:Key="AppBadgeNeutralBorder" Color="#818CF8" />
-                    <SolidColorBrush x:Key="AppBadgeNeutralFg" Color="#4338CA" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralBg" Color="#F0F9FF" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralBorder" Color="#BAE6FD" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralFg" Color="#0369A1" />
                     <SolidColorBrush x:Key="AppCpuChipBg" Color="#FFFBEB" />
-                    <SolidColorBrush x:Key="AppCpuChipBorder" Color="#FBBF24" />
+                    <SolidColorBrush x:Key="AppCpuChipBorder" Color="#FDE68A" />
                     <SolidColorBrush x:Key="AppCpuChipFg" Color="#92400E" />
                     <SolidColorBrush x:Key="AppRamChipBg" Color="#EFF6FF" />
-                    <SolidColorBrush x:Key="AppRamChipBorder" Color="#60A5FA" />
-                    <SolidColorBrush x:Key="AppRamChipFg" Color="#1E40AF" />
+                    <SolidColorBrush x:Key="AppRamChipBorder" Color="#BFDBFE" />
+                    <SolidColorBrush x:Key="AppRamChipFg" Color="#1D4ED8" />
                     
                     <!-- System Text & Control Overrides for Razor-Sharp Legibility & High Definition in Light Mode -->
-                    <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#475569" />
+                    <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#64748B" />
                     <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#0F172A" />
-                    <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#334155" />
+                    <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#475569" />
                     <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#FFFFFFFF" />
                     <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#F8FAFC" />
                     <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#F1F5F9" />
@@ -110,22 +111,22 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
-            <!-- Brand Linear Gradients (Modern Fluent Indigo & Azure Blue) -->
+            <!-- Brand Linear Gradients (Refined Windows 11 Azure & Deep Blue) -->
             <LinearGradientBrush x:Key="PrimaryAccentGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF4F46E5" Offset="0" />
-                <GradientStop Color="#FF2563EB" Offset="0.5" />
-                <GradientStop Color="#FF0F6CBD" Offset="1" />
+                <GradientStop Color="#FF0284C7" Offset="0" />
+                <GradientStop Color="#FF0F6CBD" Offset="0.5" />
+                <GradientStop Color="#FF2563EB" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="CyberAccentGradient" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#FF38BDF8" Offset="0" />
-                <GradientStop Color="#FF2563EB" Offset="0.5" />
+                <GradientStop Color="#FF0284C7" Offset="0.5" />
                 <GradientStop Color="#FF0F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <SolidColorBrush x:Key="PrimaryAccentBrush" Color="#FF0F6CBD" />
-            <SolidColorBrush x:Key="PrimaryAccentLightBrush" Color="#180F6CBD" />
-            <SolidColorBrush x:Key="PrimaryAccentBorderBrush" Color="#400F6CBD" />
+            <SolidColorBrush x:Key="PrimaryAccentLightBrush" Color="#150F6CBD" />
+            <SolidColorBrush x:Key="PrimaryAccentBorderBrush" Color="#300F6CBD" />
 
             <LinearGradientBrush x:Key="GlassBorderBrush" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#250F6CBD" Offset="0" />
@@ -134,18 +135,18 @@
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="CyberGlassBorderBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#350F6CBD" Offset="0" />
+                <GradientStop Color="#300F6CBD" Offset="0" />
                 <GradientStop Color="#150F6CBD" Offset="0.5" />
                 <GradientStop Color="#250F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="HealthGoodGradient" StartPoint="0,0" EndPoint="1,0">
-                <GradientStop Color="#FF34D399" Offset="0" />
+                <GradientStop Color="#FF10B981" Offset="0" />
                 <GradientStop Color="#FF059669" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="HealthWarningGradient" StartPoint="0,0" EndPoint="1,0">
-                <GradientStop Color="#FBFB59E0" Offset="0" />
+                <GradientStop Color="#FFF59E0B" Offset="0" />
                 <GradientStop Color="#FFD97706" Offset="1" />
             </LinearGradientBrush>
 
@@ -156,27 +157,26 @@
 
             <!-- Resource Specific Brushes -->
             <SolidColorBrush x:Key="CpuAccentBrush" Color="#FFF59E0B" />
-            <SolidColorBrush x:Key="RamAccentBrush" Color="#FF3B82F6" />
+            <SolidColorBrush x:Key="RamAccentBrush" Color="#FF0284C7" />
             <SolidColorBrush x:Key="GpuAccentBrush" Color="#FF8B5CF6" />
             <SolidColorBrush x:Key="DiskAccentBrush" Color="#FF10B981" />
 
-            <SolidColorBrush x:Key="CpuTrackBrush" Color="#20F59E0B" />
-            <SolidColorBrush x:Key="RamTrackBrush" Color="#203B82F6" />
-            <SolidColorBrush x:Key="GpuTrackBrush" Color="#208B5CF6" />
-            <SolidColorBrush x:Key="DiskTrackBrush" Color="#2010B981" />
+            <SolidColorBrush x:Key="CpuTrackBrush" Color="#18F59E0B" />
+            <SolidColorBrush x:Key="RamTrackBrush" Color="#180284C7" />
+            <SolidColorBrush x:Key="GpuTrackBrush" Color="#188B5CF6" />
+            <SolidColorBrush x:Key="DiskTrackBrush" Color="#1810B981" />
 
-            <!-- ASC 19 Cyber Reactor & Radar Brushes -->
+            <!-- Clean Modern Health and Accent Brushes -->
             <LinearGradientBrush x:Key="Asc19ReactorGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF00F2FE" Offset="0" />
-                <GradientStop Color="#FF4FACFE" Offset="0.35" />
-                <GradientStop Color="#FF8B5CF6" Offset="0.7" />
-                <GradientStop Color="#FF00E676" Offset="1" />
+                <GradientStop Color="#FF0284C7" Offset="0" />
+                <GradientStop Color="#FF0F6CBD" Offset="0.5" />
+                <GradientStop Color="#FF10B981" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="Asc19RadarSweepBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#D000F2FE" Offset="0" />
-                <GradientStop Color="#4000F2FE" Offset="0.4" />
-                <GradientStop Color="#0000F2FE" Offset="1" />
+                <GradientStop Color="#900284C7" Offset="0" />
+                <GradientStop Color="#300284C7" Offset="0.5" />
+                <GradientStop Color="#000284C7" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="Asc19EmeraldGlowBrush" StartPoint="0,0" EndPoint="1,1">
@@ -187,167 +187,167 @@
 
             <LinearGradientBrush x:Key="Asc19AmberTurboBrush" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#FFF59E0B" Offset="0" />
-                <GradientStop Color="#FFEF4444" Offset="0.5" />
+                <GradientStop Color="#FFEA580C" Offset="0.5" />
                 <GradientStop Color="#FFF97316" Offset="1" />
             </LinearGradientBrush>
 
-            <!-- Card Containers Styling — Soft, Balanced & Modern -->
+            <!-- Card Containers Styling — Clean Windows 11 Fluent Structure -->
             <Style x:Key="ModernCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
 
             <Style x:Key="GradientBorderCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
-                <Setter Property="BorderThickness" Value="1.2" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
 
             <Style x:Key="GlowCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
-                <Setter Property="BorderThickness" Value="1.2" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
 
-            <!-- v3.0 Nova — Glassmorphism Card (frosted glass effect) -->
+            <!-- Fluent Glassmorphism Card -->
             <Style x:Key="GlassmorphismCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
-                <Setter Property="BorderThickness" Value="1.2" />
-                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
 
-            <!-- v3.0 Nova — Quick Stat Card (compact info chip) -->
+            <!-- Quick Stat Card (compact info chip) -->
             <Style x:Key="QuickStatCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="12" />
-                <Setter Property="Padding" Value="14,10" />
-                <Setter Property="MinHeight" Value="54" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="12,8" />
+                <Setter Property="MinHeight" Value="48" />
             </Style>
 
-            <!-- v3.0 Nova — Status Badge Styles -->
+            <!-- Status Badge Styles -->
             <Style x:Key="StatusBadgeGoodStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppBadgeGoodBg}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeGoodBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="12,5" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="Padding" Value="8,3" />
             </Style>
 
             <Style x:Key="StatusBadgeWarningStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppBadgeWarningBg}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeWarningBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="12,5" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="Padding" Value="8,3" />
             </Style>
 
             <Style x:Key="StatusBadgeCriticalStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppBadgeCriticalBg}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeCriticalBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="12,5" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="Padding" Value="8,3" />
             </Style>
 
-            <!-- v3.0 Nova — Accent Neon Glow Border -->
+            <!-- Accent Card Border -->
             <Style x:Key="NeonGlowBorderStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource CyberAccentGradient}" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
 
-            <!-- v4.3.0 Master — Interactive Fluid Card with Motion Styling -->
+            <!-- Interactive Fluent Card -->
             <Style x:Key="FluidInteractiveCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
 
-            <!-- v4.3.0 Master — Celebration & System Optimal Micro-interaction Badges -->
+            <!-- System Optimal Micro-interaction Badges -->
             <Style x:Key="AuraCelebrationBadgeStyle" TargetType="Border">
-                <Setter Property="Background" Value="#2510B981" />
-                <Setter Property="BorderBrush" Value="#8010B981" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="16" />
-                <Setter Property="Padding" Value="16,12" />
+                <Setter Property="Background" Value="{ThemeResource AppBadgeGoodBg}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeGoodBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="12,8" />
             </Style>
 
             <Style x:Key="AuraPulseCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeGoodBorder}" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
 
-            <!-- v4.3.0 Master — Cyber Shimmer & Radiant Glow Cards -->
+            <!-- Fluent Pulse Glow Cards -->
             <Style x:Key="CyberPulseGlowCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource CyberGlassBorderBrush}" />
-                <Setter Property="BorderThickness" Value="1.2" />
-                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
             </Style>
 
             <Style x:Key="MasterInteractiveButtonStyle" TargetType="Button">
-                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="FontWeight" Value="SemiBold" />
             </Style>
 
-            <!-- v4.3.0 Spatial 3D Interaction & Depth Styles -->
+            <!-- Spatial Depth Card Styles -->
             <Style x:Key="Tilt3DCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
-                <Setter Property="BorderThickness" Value="1.2" />
-                <Setter Property="CornerRadius" Value="16" />
-                <Setter Property="Padding" Value="16" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="14" />
             </Style>
 
             <Style x:Key="Holographic3DCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource CyberAccentGradient}" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="18" />
-                <Setter Property="Padding" Value="18" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="14" />
             </Style>
 
             <Style x:Key="SpatialDepthCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppSecondaryCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardSubtleBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="14" />
-                <Setter Property="Padding" Value="14" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="12" />
             </Style>
 
             <Style x:Key="Glass3DCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource GlassBorderBrush}" />
-                <Setter Property="BorderThickness" Value="1.2" />
-                <Setter Property="CornerRadius" Value="16" />
-                <Setter Property="Padding" Value="16" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="14" />
             </Style>
 
             <Style x:Key="Magnetic3DButtonStyle" TargetType="Button">
-                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Padding" Value="16,10" />
+                <Setter Property="Padding" Value="14,8" />
             </Style>
 
-            <!-- 3D Action & Hero Scan Buttons -->
+            <!-- Action & Hero Scan Buttons -->
             <Style x:Key="HeroScan3DButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}" />
                 <Setter Property="Foreground" Value="White" />
-                <Setter Property="CornerRadius" Value="16" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="FontSize" Value="14.5" />
-                <Setter Property="Padding" Value="24,12" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="Padding" Value="18,8" />
                 <Setter Property="BorderThickness" Value="0" />
             </Style>
 
@@ -355,9 +355,9 @@
                 <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Padding" Value="16,9" />
+                <Setter Property="Padding" Value="14,7" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
             </Style>
 
@@ -365,19 +365,19 @@
                 <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="12" />
-                <Setter Property="Padding" Value="12,7" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="10,6" />
             </Style>
 
             <Style x:Key="DarkTerminalStyle" TargetType="TextBox">
                 <Setter Property="Background" Value="{ThemeResource AppTerminalBackground}" />
                 <Setter Property="Foreground" Value="{ThemeResource AppTerminalForeground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
-                <Setter Property="BorderThickness" Value="1.2" />
-                <Setter Property="CornerRadius" Value="12" />
-                <Setter Property="FontFamily" Value="Consolas" />
-                <Setter Property="FontSize" Value="12.5" />
-                <Setter Property="Padding" Value="16" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="FontFamily" Value="Consolas, Cascadia Code, Segoe UI Mono" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Padding" Value="12" />
             </Style>
 
             <!-- Global typography & header standards -->
@@ -593,79 +593,67 @@
                 <Setter Property="CornerRadius" Value="10" />
             </Style>
 
-            <!-- v4.0.0 Aura Glass 2.0 — Breakthrough Evolution Design System -->
-            
-            <!-- Aurora Multi-Color Glow Border (4-point color sweep) -->
-            <LinearGradientBrush x:Key="AuroraGlowBorderBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#608B5CF6" Offset="0" />
-                <GradientStop Color="#4006B6D4" Offset="0.33" />
-                <GradientStop Color="#30F59E0B" Offset="0.66" />
-                <GradientStop Color="#508B5CF6" Offset="1" />
-            </LinearGradientBrush>
+            <!-- Fluent Card Border Brushes -->
+            <SolidColorBrush x:Key="AuroraGlowBorderBrush" Color="#250F6CBD" />
 
             <!-- Navigation Active Indicator Gradient -->
-            <LinearGradientBrush x:Key="NavActiveIndicatorBrush" StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Color="#FF8B5CF6" Offset="0" />
-                <GradientStop Color="#FF3B82F6" Offset="1" />
-            </LinearGradientBrush>
+            <SolidColorBrush x:Key="NavActiveIndicatorBrush" Color="#FF0F6CBD" />
 
-            <!-- Gaming Turbo Neon Gradient -->
+            <!-- Gaming Turbo Gradient -->
             <LinearGradientBrush x:Key="GamingTurboGradient" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#FFF59E0B" Offset="0" />
-                <GradientStop Color="#FFEF4444" Offset="0.5" />
-                <GradientStop Color="#FFF97316" Offset="1" />
+                <GradientStop Color="#FFEA580C" Offset="1" />
             </LinearGradientBrush>
 
             <!-- AI WinCare Engine Gradient -->
             <LinearGradientBrush x:Key="AiWinCareEngineGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF06B6D4" Offset="0" />
-                <GradientStop Color="#FF8B5CF6" Offset="0.5" />
-                <GradientStop Color="#FFC084FC" Offset="1" />
+                <GradientStop Color="#FF0284C7" Offset="0" />
+                <GradientStop Color="#FF0F6CBD" Offset="1" />
             </LinearGradientBrush>
 
-            <!-- Aura Glass Card Style (Premium v4.0.0 — thicker border, larger radius) -->
+            <!-- Aura Glass Card Style -->
             <Style x:Key="AuraGlassCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="18" />
-                <Setter Property="Padding" Value="22" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="16" />
             </Style>
 
-            <!-- Elevated Glass Card Style (Deepest depth, premium hero card) -->
+            <!-- Elevated Glass Card Style -->
             <Style x:Key="ElevatedGlassCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource AuroraGlowBorderBrush}" />
-                <Setter Property="BorderThickness" Value="1.8" />
-                <Setter Property="CornerRadius" Value="20" />
-                <Setter Property="Padding" Value="24" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="16" />
             </Style>
 
-            <!-- Gaming Turbo Card Style (Neon amber glow) -->
+            <!-- Gaming Turbo Card Style -->
             <Style x:Key="GamingTurboCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource GamingTurboGradient}" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="16" />
-                <Setter Property="Padding" Value="20" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="16" />
             </Style>
 
-            <!-- AI WinCare Engine Card Style (Cyan-purple glow) -->
+            <!-- AI WinCare Engine Card Style -->
             <Style x:Key="AiWinCareEngineCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource AiWinCareEngineGradient}" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="16" />
-                <Setter Property="Padding" Value="20" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="16" />
             </Style>
 
-            <!-- Floating Action Deck Style (Sticky Glassmorphism Bottom Action Toolbar) -->
+            <!-- Floating Action Deck Style -->
             <Style x:Key="FloatingActionDeckStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                <Setter Property="BorderBrush" Value="{StaticResource AuroraGlowBorderBrush}" />
-                <Setter Property="BorderThickness" Value="1.5" />
-                <Setter Property="CornerRadius" Value="18" />
-                <Setter Property="Padding" Value="16,10" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="12,8" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Bottom" />
                 <Setter Property="Margin" Value="0,0,0,16" />

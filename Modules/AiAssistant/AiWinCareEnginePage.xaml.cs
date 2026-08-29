@@ -22,11 +22,6 @@ namespace WinCarePro.Modules.AiAssistant
             this.Loaded += (s, e) =>
             {
                 TranslationManager.Instance.Translate(this);
-                try
-                {
-                    AiPulseGlowAnimation?.Begin();
-                }
-                catch { }
             };
 
             _languageChangedHandler = (s, e) =>
@@ -45,11 +40,6 @@ namespace WinCarePro.Modules.AiAssistant
                 {
                     TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
                 }
-                try
-                {
-                    AiPulseGlowAnimation?.Stop();
-                }
-                catch { }
             };
 
             _ = RunAiScanAsync();

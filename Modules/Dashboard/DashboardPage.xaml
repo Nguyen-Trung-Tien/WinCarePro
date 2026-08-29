@@ -13,31 +13,6 @@
     mc:Ignorable="d"
     NavigationCacheMode="Required">
 
-    <Page.Resources>
-        <Storyboard x:Name="Asc19RadarRotation" RepeatBehavior="Forever">
-            <DoubleAnimation Storyboard.TargetName="RadarRingTransform" Storyboard.TargetProperty="Angle" From="0" To="360" Duration="0:0:6" />
-            <DoubleAnimation Storyboard.TargetName="RadarOuterRingTransform" Storyboard.TargetProperty="Angle" From="360" To="0" Duration="0:0:10" />
-            <DoubleAnimation Storyboard.TargetName="RadarSweepTransform" Storyboard.TargetProperty="Angle" From="0" To="360" Duration="0:0:3.5" />
-        </Storyboard>
-        <Storyboard x:Name="Asc19AuraBreathing" AutoReverse="True" RepeatBehavior="Forever">
-            <DoubleAnimation Storyboard.TargetName="GlowEllipse" Storyboard.TargetProperty="Opacity" From="0.15" To="0.55" Duration="0:0:1.8">
-                <DoubleAnimation.EasingFunction>
-                    <SineEase EasingMode="EaseInOut"/>
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-            <DoubleAnimation Storyboard.TargetName="AuraWave" Storyboard.TargetProperty="Opacity" From="0.08" To="0.40" Duration="0:0:2.2">
-                <DoubleAnimation.EasingFunction>
-                    <CircleEase EasingMode="EaseInOut"/>
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-            <DoubleAnimation Storyboard.TargetName="RadarCoreAura" Storyboard.TargetProperty="Opacity" From="0.20" To="0.70" Duration="0:0:1.4">
-                <DoubleAnimation.EasingFunction>
-                    <SineEase EasingMode="EaseInOut"/>
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
-    </Page.Resources>
-
     <Grid Padding="20,16" HorizontalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
@@ -78,43 +53,43 @@
         </Grid.RowDefinitions>
 
         <!-- Page Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,10">
+        <Grid Grid.Row="0" Margin="0,0,0,12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Spacing="3">
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="10" Padding="8">
-                        <FontIcon Glyph="&#xE80F;" FontSize="18" Foreground="White" />
+                    <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="8" Padding="7">
+                        <FontIcon Glyph="&#xE80F;" FontSize="16" Foreground="White" />
                     </Border>
                     <TextBlock Text="System Dashboard" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center" />
-                    <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                    <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="7,2.5" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="5">
                             <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}" />
                             <TextBlock Text="Live Telemetry" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}" />
                         </StackPanel>
                     </Border>
-                    <Border Background="#1510B981" BorderBrush="#4010B981" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                    <Border Background="{ThemeResource AppBadgeNeutralBg}" BorderBrush="{ThemeResource AppBadgeNeutralBorder}" BorderThickness="1" CornerRadius="6" Padding="7,2.5" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
-                            <Ellipse Width="6" Height="6" Fill="#FF10B981"/>
-                            <TextBlock Text="Kernel Engine Active" FontSize="11" FontWeight="Bold" Foreground="#FF10B981"/>
+                            <Ellipse Width="6" Height="6" Fill="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Kernel Engine Active" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Real-time hardware telemetry &amp; AI care." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                <TextBlock Text="Real-time hardware telemetry &amp; intelligent system care." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
 
             <!-- Fast Action Navigation Deck in Header Top Right -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button Click="OnLaunchGamingTurboClick" Style="{StaticResource DefaultButtonStyle}" Height="34" Padding="12,0" VerticalAlignment="Center" CornerRadius="8">
+                <Button Click="OnLaunchGamingTurboClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" Padding="12,0" VerticalAlignment="Center" CornerRadius="6">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE7FC;" FontSize="12" Foreground="#FFF59E0B"/>
                         <TextBlock Text="System Turbo" FontSize="11.5" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
-                <Button Click="OnLaunchDesktopWidgetClick" Style="{StaticResource DefaultButtonStyle}" Height="34" Padding="12,0" VerticalAlignment="Center" CornerRadius="8">
+                <Button Click="OnLaunchDesktopWidgetClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" Padding="12,0" VerticalAlignment="Center" CornerRadius="6">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE8A7;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
                         <TextBlock Text="Widget HUD" FontSize="11.5" FontWeight="SemiBold"/>
@@ -145,10 +120,8 @@
                         <ColumnDefinition x:Name="RightCol" Width="1*" />
                     </Grid.ColumnDefinitions>
                     
-                    <!-- Left Side Column 0: System Health Overview Hero (Advanced SystemCare 19 Style) -->
-                    <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource NeonGlowBorderStyle}" Margin="6" Padding="16,14" MinHeight="185"
-                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.5" helpers:Animation3DHelper.DepthZ="14"
-                            helpers:AnimationHelper.HoverScale="1.012" helpers:AnimationHelper.PressedScale="0.988" helpers:AnimationHelper.StaggerIndex="0">
+                    <!-- Left Side Column 0: System Health Overview Hero Card -->
+                    <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource ModernCardStyle}" Margin="6" Padding="18,16" MinHeight="185">
                         <Grid x:Name="HealthGaugeGrid">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="HealthGaugeRow0" Height="Auto" />
@@ -159,80 +132,24 @@
                                 <ColumnDefinition x:Name="HealthGaugeCol1" Width="*" />
                             </Grid.ColumnDefinitions>
                             
-                             <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="144" Height="144" Margin="0,0,16,0" VerticalAlignment="Center">
-                                <!-- ASC 19 Layer 1: Outer Ambient Radiant Nebula -->
-                                <Ellipse x:Name="AuraWave" Width="142" Height="142" Opacity="0.18" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Ellipse.Fill>
-                                        <RadialGradientBrush>
-                                            <GradientStop Color="#6000F2FE" Offset="0"/>
-                                            <GradientStop Color="#408B5CF6" Offset="0.5"/>
-                                            <GradientStop Color="Transparent" Offset="1"/>
-                                        </RadialGradientBrush>
-                                    </Ellipse.Fill>
-                                </Ellipse>
+                            <!-- Clean High-Definition System Health Gauge -->
+                            <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="130" Height="130" Margin="0,0,18,0" VerticalAlignment="Center">
+                                <!-- Background Track Ring -->
+                                <Ellipse Width="120" Height="120" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="7" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.3"/>
 
-                                <!-- ASC 19 Layer 2: Core Pulsing Aurora -->
-                                <Ellipse x:Name="GlowEllipse" Width="128" Height="128" Opacity="0.30" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Ellipse.Fill>
-                                        <RadialGradientBrush>
-                                            <GradientStop Color="#908B5CF6" Offset="0" />
-                                            <GradientStop Color="#4506B6D4" Offset="0.55" />
-                                            <GradientStop Color="Transparent" Offset="1" />
-                                        </RadialGradientBrush>
-                                    </Ellipse.Fill>
-                                </Ellipse>
-
-                                <!-- ASC 19 Layer 3: Dynamic Core Glow Aura -->
-                                <Ellipse x:Name="RadarCoreAura" Width="96" Height="96" Opacity="0.35" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Ellipse.Fill>
-                                        <RadialGradientBrush>
-                                            <GradientStop Color="#8000F2FE" Offset="0" />
-                                            <GradientStop Color="#308B5CF6" Offset="0.6" />
-                                            <GradientStop Color="Transparent" Offset="1" />
-                                        </RadialGradientBrush>
-                                    </Ellipse.Fill>
-                                </Ellipse>
-
-                                <!-- ASC 19 Outer Counter-Rotating Segmented Tech Ring -->
-                                <Grid Width="136" Height="136" RenderTransformOrigin="0.5,0.5">
-                                    <Grid.RenderTransform>
-                                        <RotateTransform x:Name="RadarOuterRingTransform" Angle="0"/>
-                                    </Grid.RenderTransform>
-                                    <Ellipse Width="134" Height="134" Stroke="{StaticResource Asc19ReactorGradient}" StrokeThickness="1.5" StrokeDashArray="2 8 4 6" Opacity="0.6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-
-                                <!-- ASC 19 Inner Clockwise Spinning Cyber Radar Ring -->
-                                <Grid Width="124" Height="124" RenderTransformOrigin="0.5,0.5">
-                                    <Grid.RenderTransform>
-                                        <RotateTransform x:Name="RadarRingTransform" Angle="0"/>
-                                    </Grid.RenderTransform>
-                                    <Ellipse Width="122" Height="122" Stroke="{StaticResource CyberAccentGradient}" StrokeThickness="2.2" StrokeDashArray="6 3 1 3" Opacity="0.85" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Grid>
-
-                                <!-- ASC 19 Radar Holographic Sweep Arm -->
-                                <Grid Width="118" Height="118" RenderTransformOrigin="0.5,0.5">
-                                    <Grid.RenderTransform>
-                                        <RotateTransform x:Name="RadarSweepTransform" Angle="0"/>
-                                    </Grid.RenderTransform>
-                                    <Rectangle Width="2" Height="56" VerticalAlignment="Top" HorizontalAlignment="Center" Fill="{StaticResource Asc19RadarSweepBrush}" Opacity="0.85" RadiusX="1" RadiusY="1"/>
-                                </Grid>
-
-                                <!-- Inner Background Track Ring -->
-                                <Ellipse Width="108" Height="108" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="5" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.25"/>
-
-                                <!-- ASC 19 Main Health Progress Ring -->
-                                <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}" Width="114" Height="114" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <!-- Main Health Progress Ring -->
+                                <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}" Width="120" Height="120" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                                 <!-- Centerpiece Typography HUD -->
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="32" FontWeight="ExtraBold" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" CharacterSpacing="-25" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                    <TextBlock Text="HEALTH SCORE" FontSize="8" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="16"/>
+                                    <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                    <TextBlock Text="HEALTH SCORE" FontSize="8.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="8"/>
                                 </StackPanel>
                             </Grid>
 
-                            <StackPanel x:Name="GaugeDescPanel" Grid.Column="1" VerticalAlignment="Center" Spacing="5">
-                                <TextBlock Text="System Health Overview" FontSize="16.5" FontWeight="Bold" TextWrapping="Wrap" />
-                                <Border Background="{x:Bind GetHealthScoreBadgeBackground(ViewModel.HealthScore), Mode=OneWay}" HorizontalAlignment="Left" Padding="9,3" CornerRadius="6">
+                            <StackPanel x:Name="GaugeDescPanel" Grid.Column="1" VerticalAlignment="Center" Spacing="6">
+                                <TextBlock Text="System Health Overview" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                <Border Background="{x:Bind GetHealthScoreBadgeBackground(ViewModel.HealthScore), Mode=OneWay}" HorizontalAlignment="Left" Padding="8,3" CornerRadius="6">
                                     <TextBlock Text="{x:Bind GetStatusText(ViewModel.HealthScore), Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" TextWrapping="Wrap" />
                                 </Border>
                                 <TextBlock Text="{x:Bind ViewModel.HealthBreakdownText, Mode=OneWay}" TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="16" MaxLines="2" TextTrimming="CharacterEllipsis"/>
@@ -248,16 +165,16 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
-                                    <Button x:Name="ScanSystemBtn" Grid.Row="0" Grid.Column="0" Content="Scan System" Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Height="32" Padding="14,0" CornerRadius="6" FontWeight="Bold" Margin="0,0,8,0"
-                                            helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96"/>
+                                    <Button x:Name="ScanSystemBtn" Grid.Row="0" Grid.Column="0" Content="Scan System" Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Height="32" Padding="16,0" CornerRadius="6" FontWeight="SemiBold" Margin="0,0,8,0"
+                                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"/>
                                     
                                     <!-- Split Button for Tiered Optimization -->
                                     <SplitButton x:Name="OptimizeSplitBtn" Grid.Row="0" Grid.Column="1" Content="Optimize System" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Margin="0,0,8,0"
-                                                 CornerRadius="6" FontWeight="Bold" Height="32">
+                                                 CornerRadius="6" FontWeight="SemiBold" Height="32">
                                         <SplitButton.Resources>
-                                            <SolidColorBrush x:Key="SplitButtonButtonBackground" Color="#FF8B5CF6" />
-                                            <SolidColorBrush x:Key="SplitButtonButtonBackgroundPointerOver" Color="#FF7C3AED" />
-                                            <SolidColorBrush x:Key="SplitButtonButtonBackgroundPressed" Color="#FF6D28D9" />
+                                            <SolidColorBrush x:Key="SplitButtonButtonBackground" Color="#FF0284C7" />
+                                            <SolidColorBrush x:Key="SplitButtonButtonBackgroundPointerOver" Color="#FF0F6CBD" />
+                                            <SolidColorBrush x:Key="SplitButtonButtonBackgroundPressed" Color="#FF2563EB" />
                                             <SolidColorBrush x:Key="SplitButtonButtonBackgroundDisabled" Color="#FFE0E0E0" />
                                             
                                             <SolidColorBrush x:Key="SplitButtonButtonForeground" Color="White" />
@@ -296,9 +213,7 @@
                     </Border>
 
                     <!-- Right Side Row 0 Column 1: WinCare AI Engine Card -->
-                    <Border x:Name="AiWinCareEngineEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource AiWinCareEngineCardStyle}" Margin="6" Padding="16,14" MinHeight="185"
-                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.5" helpers:Animation3DHelper.DepthZ="14"
-                            helpers:AnimationHelper.HoverScale="1.012" helpers:AnimationHelper.PressedScale="0.988" helpers:AnimationHelper.StaggerIndex="1">
+                    <Border x:Name="AiWinCareEngineEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="6" Padding="18,16" MinHeight="185">
                         <StackPanel Spacing="8">
                             <!-- AI Header Row -->
                             <Grid>
@@ -309,12 +224,12 @@
 
                                 <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
-                                        <Border Background="{StaticResource AiWinCareEngineGradient}" CornerRadius="6" Padding="6,2.5">
+                                        <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2.5">
                                             <FontIcon Glyph="&#xE99A;" FontSize="11" Foreground="White"/>
                                         </Border>
                                         <TextBlock Text="AI Assistant" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
-                                        <Border Background="#2510B981" BorderBrush="#6010B981" BorderThickness="1" CornerRadius="6" Padding="5,1" VerticalAlignment="Center">
-                                            <TextBlock Text="Active" FontSize="9" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                                        <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="5,1" VerticalAlignment="Center">
+                                            <TextBlock Text="Active" FontSize="9" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
                                         </Border>
                                     </StackPanel>
                                     <TextBlock x:Name="AiSummaryText" Text="{x:Bind ViewModel.AiSummaryText, Mode=OneWay}" FontSize="11" 
@@ -322,15 +237,15 @@
                                 </StackPanel>
 
                                 <!-- AI Score Mini Ring -->
-                                <Grid Grid.Column="1" Width="50" Height="50" Margin="8,0,0,0" VerticalAlignment="Center">
-                                    <Ellipse Stroke="{StaticResource PrimaryAccentGradient}" StrokeThickness="3.5" Opacity="0.25"/>
-                                    <ProgressRing Value="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" Width="46" Height="46" 
+                                <Grid Grid.Column="1" Width="48" Height="48" Margin="8,0,0,0" VerticalAlignment="Center">
+                                    <Ellipse Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="3.5" Opacity="0.3"/>
+                                    <ProgressRing Value="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" Width="44" Height="44" 
                                                   Foreground="{StaticResource PrimaryAccentBrush}" Background="Transparent" IsIndeterminate="False"/>
                                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <TextBlock x:Name="AiScoreText" Text="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" 
-                                                   FontSize="15" FontWeight="ExtraBold" HorizontalAlignment="Center" 
-                                                   Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                        <TextBlock Text="AI Score" FontSize="7" FontWeight="Bold" 
+                                                   FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" 
+                                                   Foreground="{StaticResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="AI Score" FontSize="7" FontWeight="SemiBold" 
                                                    Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </Grid>
@@ -349,7 +264,7 @@
                                             <FontIcon Glyph="&#xE7F1;" FontSize="10" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                             <TextBlock Text="Storage Outlook" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                         </StackPanel>
-                                        <TextBlock Text="{x:Bind ViewModel.AiPredictiveStorageText, Mode=OneWay}" FontSize="12.5" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                                        <TextBlock Text="{x:Bind ViewModel.AiPredictiveStorageText, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     </StackPanel>
                                 </Border>
 
@@ -359,13 +274,13 @@
                                             <FontIcon Glyph="&#xE7B5;" FontSize="10" Foreground="#FFF59E0B"/>
                                             <TextBlock Text="Boot Speed" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                         </StackPanel>
-                                        <TextBlock Text="{x:Bind ViewModel.AiPredictiveBootText, Mode=OneWay}" FontSize="12.5" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                                        <TextBlock Text="{x:Bind ViewModel.AiPredictiveBootText, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     </StackPanel>
                                 </Border>
                             </Grid>
 
                             <!-- Bottom AI Recommendation & Scan Strip -->
-                            <Border x:Name="TopAiRecommendationCard" Style="{StaticResource GlassmorphismCardStyle}" Padding="10,8">
+                            <Border x:Name="TopAiRecommendationCard" Style="{StaticResource QuickStatCardStyle}" Padding="10,8">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -373,21 +288,21 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Border Grid.Column="0" Width="28" Height="28" CornerRadius="6" Background="{ThemeResource AppStatChipBackground}" Margin="0,0,8,0" VerticalAlignment="Center">
-                                        <FontIcon Glyph="&#xE99A;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Border Grid.Column="0" Width="26" Height="26" CornerRadius="6" Background="{ThemeResource AppStatChipBackground}" Margin="0,0,8,0" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE99A;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1" Margin="0,0,8,0">
-                                        <TextBlock x:Name="TopRecommendationTitle" Text="Run AI Scan for insights" FontWeight="Bold" FontSize="11" 
+                                        <TextBlock x:Name="TopRecommendationTitle" Text="Run AI Scan for insights" FontWeight="SemiBold" FontSize="11" 
                                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                                         <TextBlock x:Name="TopRecommendationDesc" Text="Click 'AI Scan' to analyze system health." FontSize="10" 
                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxLines="1"/>
                                     </StackPanel>
 
                                     <!-- AI Scan Button on Far Right -->
-                                    <Button Grid.Column="2" Click="OnEmbeddedAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="30" Padding="12,0" CornerRadius="6" VerticalAlignment="Center">
+                                    <Button Grid.Column="2" Click="OnEmbeddedAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="28" Padding="12,0" CornerRadius="6" VerticalAlignment="Center">
                                         <StackPanel Orientation="Horizontal" Spacing="4">
-                                            <FontIcon Glyph="&#xE721;" FontSize="11"/>
+                                            <FontIcon Glyph="&#xE721;" FontSize="10"/>
                                             <TextBlock Text="AI Scan" FontSize="11" FontWeight="SemiBold"/>
                                         </StackPanel>
                                     </Button>
@@ -710,12 +625,12 @@
                     </Border>
                 </Grid>
 
-                <!-- Ultra-Sleek Advanced Details & History Log Toggle Banner Deck -->
-                <Border Background="{ThemeResource AppStatChipBackground}" 
-                        BorderBrush="{StaticResource PrimaryAccentGradient}" 
-                        BorderThickness="1.2" 
-                        CornerRadius="12" 
-                        Padding="14,8" 
+                <!-- Clean Advanced Details & History Log Toggle Banner Deck -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" 
+                        BorderThickness="1" 
+                        CornerRadius="10" 
+                        Padding="14,10" 
                         Margin="6,4,6,4">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -725,11 +640,11 @@
                         </Grid.ColumnDefinitions>
                         
                         <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="36" Height="36" CornerRadius="10" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1">
-                                <FontIcon Glyph="&#xE9D9;" FontSize="16" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Border Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                                <FontIcon Glyph="&#xE9D9;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </Border>
                             <StackPanel VerticalAlignment="Center" Spacing="2">
-                                <TextBlock Text="System Deep Layer Diagnostics" FontWeight="Bold" FontSize="14"/>
+                                <TextBlock Text="System Deep Layer Diagnostics" FontWeight="SemiBold" FontSize="13.5"/>
                                 <TextBlock Text="Detailed audits, itemized discoveries &amp; operation logs" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                         </StackPanel>
@@ -742,9 +657,9 @@
                                       Style="{StaticResource DefaultToggleButtonStyle}" 
                                       Background="{StaticResource PrimaryAccentGradient}" 
                                       Foreground="White" 
-                                      FontWeight="Bold" 
-                                      CornerRadius="8" 
-                                      Padding="18,8" 
+                                      FontWeight="SemiBold" 
+                                      CornerRadius="6" 
+                                      Padding="14,6" 
                                       VerticalAlignment="Center"/>
                     </Grid>
                 </Border>

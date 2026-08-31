@@ -2,7 +2,7 @@
 
 > [🏠 Mục Lục Toàn Bộ 11 Tài Liệu Kỹ Thuật (Docs Hub)](README.md) • [10. Hướng Dẫn Lập Trình Viên Mới](10_DEVELOPER_ONBOARDING_GUIDE.md)
 
-Tài liệu này cung cấp bản tóm tắt nhanh cho các nhà phát triển và kiến trúc sư phần mềm muốn tìm hiểu nhanh về cách hoạt động, kiến trúc thiết kế, và các tiêu chuẩn bảo mật/hiệu năng trong dự án **WinCare Pro Suite v4.5 (Codename: Nova)**. Để xem trọn bộ 11 tài liệu chuyên đề chi tiết, vui lòng truy cập **[Docs Hub (README.md)](README.md)**.
+Tài liệu này cung cấp bản tóm tắt nhanh cho các nhà phát triển và kiến trúc sư phần mềm muốn tìm hiểu nhanh về cách hoạt động, kiến trúc thiết kế, và các tiêu chuẩn bảo mật/hiệu năng trong dự án **WinCare Pro Suite v4.6 (Codename: Nova)**. Để xem trọn bộ 11 tài liệu chuyên đề chi tiết, vui lòng truy cập **[Docs Hub (README.md)](README.md)**.
 
 ---
 

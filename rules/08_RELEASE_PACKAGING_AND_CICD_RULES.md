@@ -37,7 +37,7 @@
 
 ## 🏷️ 3. Quy Chuẩn Đánh Số Phiên Bản (Semantic Versioning 2.0)
 
-Hệ thống tuân thủ định dạng phiên bản: **`MAJOR.MINOR.PATCH`** (Ví dụ: `4.5.0`):
+Hệ thống tuân thủ định dạng phiên bản: **`MAJOR.MINOR.PATCH`** (Ví dụ: `4.6.0`):
 
 - **MAJOR (Số chính):** Khi có thay đổi đột phá về kiến trúc hoặc giao diện thế hệ mới.
 - **MINOR (Số phụ):** Khi bổ sung thêm phân hệ chức năng mới (New Module) hoặc nâng cấp lớn các Engine.
@@ -45,9 +45,9 @@ Hệ thống tuân thủ định dạng phiên bản: **`MAJOR.MINOR.PATCH`** (V
 
 ### Đồng bộ phiên bản:
 Khi nâng phiên bản, phải cập nhật đồng thời ở các vị trí:
-1. `WinCarePro.csproj` (`<Version>4.5.0</Version>`)
-2. `setup.iss` (`#define MyAppVersion "4.5.0"`)
-3. `update.json` (`"version": "4.5.0"`)
+1. `WinCarePro.csproj` (`<Version>4.6.0</Version>`)
+2. `setup.iss` (`#define MyAppVersion "4.6.0"`)
+3. `update.json` (`"version": "4.6.0"`)
 4. `Package.appxmanifest`
 
 ---
@@ -59,7 +59,7 @@ Mọi commit và Pull Request vào nhánh `main` phải vượt qua toàn bộ c
 ```mermaid
 graph LR
     Step1["1. dotnet restore"] --> Step2["2. dotnet build -c Release"]
-    Step2 --> Step3["3. dotnet test (230 Tests Passed)"]
+    Step2 --> Step3["3. dotnet test (227 Tests Passed)"]
     Step3 --> Step4["4. Inno Setup ISCC Compile"]
     Step4 --> Step5["5. Hash SHA-256 & Release Assets"]
 ```

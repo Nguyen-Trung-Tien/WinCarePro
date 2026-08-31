@@ -2,7 +2,7 @@
 
 > [🏠 Main Documentation Hub](README.md) • [01. Detailed System Architecture (Vietnamese)](01_SYSTEM_ARCHITECTURE.md)
 >
-> **Version:** 4.5 Nova (Production Release)  
+> **Version:** 4.6 Nova (Production Release)  
 > **Platform:** Windows 10 (Build 19041+) & Windows 11 (x64)  
 > **Framework:** .NET 10.0 + Windows App SDK (WinUI 3)  
 > **Architecture Standard:** Layered Domain-Driven Architecture with Zero-Trust Security & Thread-Safe Concurrency

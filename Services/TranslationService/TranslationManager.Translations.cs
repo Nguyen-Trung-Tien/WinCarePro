@@ -2059,6 +2059,7 @@ public partial class TranslationManager
         _translations["Diagnostics Trace Log Reader"] = "Trình đọc nhật ký theo dõi chẩn đoán";
         _translations["Real-time application framework execution events."] = "Các sự kiện thực thi framework ứng dụng theo thời gian thực.";
         _translations["System Optimizer & Security Shield"] = "Tối ưu hóa hệ thống & Khiên bảo mật";
+        _translations["Version 4.6.0 (Stable Release)"] = "Phiên bản 4.6.0 (Bản ổn định)";
         _translations["Version 4.5.0 (Stable Release)"] = "Phiên bản 4.5.0 (Bản ổn định)";
         _translations["Version 4.3.0 (Stable Release)"] = "Phiên bản 4.3.0 (Bản ổn định)";
         _translations["Check for Updates Now"] = "Kiểm tra cập nhật ngay";
@@ -3233,6 +3234,7 @@ public partial class TranslationManager
         _translations["About WinCare Pro & Engineering Team"] = "Giới Thiệu WinCare Pro & Đội Ngũ Kỹ Sư";
         _translations["Software architecture, lead developer portfolio, zero-telemetry privacy pledge, and open-source ecosystem."] = "Kiến trúc phần mềm, hồ sơ nhà phát triển chính, cam kết quyền riêng tư và hệ sinh thái mã nguồn mở.";
         _translations["Next-Generation System Optimizer, Security Shield & Care Suite"] = "Bộ Công Cụ Tối Ưu, Bảo Vệ & Chăm Sóc Hệ Thống Thế Hệ Mới";
+        _translations["Version 4.6.0 (Codename: Nova) • 64-bit Native WinUI 3 • .NET 10.0 CLR"] = "Phiên bản 4.6.0 (Codename: Nova) • WinUI 3 Bản Quyền 64-bit • .NET 10.0 CLR";
         _translations["Version 4.5.0 (Codename: Nova) • 64-bit Native WinUI 3 • .NET 10.0 CLR"] = "Phiên bản 4.5.0 (Codename: Nova) • WinUI 3 Bản Quyền 64-bit • .NET 10.0 CLR";
         _translations["Version 4.3.0 (Official Build) • 64-bit Native WinUI 3 • .NET 10.0 CLR"] = "Phiên bản 4.3.0 (Bản Chính Thức) • WinUI 3 Bản Quyền 64-bit • .NET 10.0 CLR";
         _translations["PROCESS WORKING SET"] = "BỘ NHỚ LÀM VIỆC (WORKING SET)";
@@ -3261,6 +3263,7 @@ public partial class TranslationManager
         _translations["Email Copied"] = "Đã Sao Chép Email";
         _translations["trungtiennguyen910@gmail.com has been copied to clipboard."] = "Đã sao chép email trungtiennguyen910@gmail.com vào khay nhớ tạm.";
 
+        _translations["Version 4.6.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.6.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit";
         _translations["Version 4.5.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.5.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit";
         _translations["Version 4.3.0 (Official Release Build) • 64-bit Native System Suite"] = "Phiên bản 4.3.0 (Bản Phát Hành Chính Thức) • Bộ Công Cụ Hệ Thống 64-bit";
         _translations["LOCAL STORAGE ENGINE"] = "ĐỘNG CƠ LƯU TRỮ CỤC BỘ";
@@ -3278,10 +3281,12 @@ public partial class TranslationManager
         _translations["Safe State Rollbacks"] = "Khôi Phục Trạng Thái An Toàn";
 
         // --- What's New & Changelog Dialog (Sanitized) ---
+        _translations["What's New in v4.6"] = "Điểm Mới ở v4.6";
         _translations["What's New in v4.5"] = "Điểm Mới ở v4.5";
         _translations["What's New in v4.3.0"] = "Điểm Mới ở v4.3.0";
         _translations["What's New in WinCare Pro"] = "Những Điểm Mới trong WinCare Pro";
         _translations["View official release notes & new features changelog"] = "Xem ghi chú phát hành chính thức và nhật ký tính năng mới";
+        _translations["v4.6 Nova Release"] = "Bản Phát Hành v4.6 Nova";
         _translations["v4.5 Nova Release"] = "Bản Phát Hành v4.5 Nova";
         _translations["v4.3.0 Official Release"] = "Bản Phát Hành Chính Thức v4.3.0";
         _translations["WinCare Pro Next-Gen Intelligence Suite"] = "Bộ Ứng Dụng WinCare Pro Trí Tuệ Thế Hệ Mới";

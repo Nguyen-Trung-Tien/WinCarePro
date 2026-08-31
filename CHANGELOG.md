@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.6.0] - 2026-08-31 (Nova Suite Official Release)
+
+### Added & Enhanced (User Features)
+- **AI WinCare Diagnostics & Predictive Care:** Embedded heuristic analysis across 8 system dimensions, predictive disk full forecasting, automated 1-click health remedies, and desktop diagnostic export.
+- **SafePathGuard & InputSanitizer Security Core:** System-level protection blocking accidental deletion of Windows system files, credential isolation for browser logins/cookies, and local SQLite audit logging.
+- **Hardware Driver Suite & Backup Manager:** Comprehensive hardware component inspection, missing/outdated driver detection, and 1-click driver backup & restore.
+- **Third-Party Software Updater:** Automatic background version scanning for installed software and 1-click batch updating via verified packages.
+- **Junk Cleaner & Deep App Uninstaller:** Comprehensive temp/cache purging across Windows and modern browsers, plus deep leftover scanner removing orphan AppData files and registry residue.
+- **System Optimizer & Gaming Turbo 2.0:** Instant physical RAM working set recovery, dedicated gaming mode with Ultimate Performance power plan, and safe system responsiveness tweaks.
+- **Network Center Suite:** Real-time speed & latency testing, 1-click secure DNS switching (Cloudflare, Google, AdGuard), and automated TCP/IP network reset tools.
+- **Desktop HUD Mini Widget & Aura Glass 2.0:** Floating desktop hardware monitor, 120 FPS fluid composition, Mica & Acrylic dynamic backdrops, and instant settings search.
+- **Full Bilingual Localization:** 100% synchronized English and Vietnamese dictionary across all pages and dialogs.
+
 ## [4.5.0] - 2026-08-27 (Nova Release)
 
 ### Performance & Modernization

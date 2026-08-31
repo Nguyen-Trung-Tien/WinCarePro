@@ -15,7 +15,7 @@
             <NavigationView.PaneFooter>
                 <StackPanel Padding="0,0,0,12">
                     <!-- User Profile Chip at the bottom — Soft rounded pill -->
-                    <Border x:Name="UserProfileBorder" Margin="6,4,6,4" Padding="6,5" CornerRadius="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" PointerPressed="OnUserProfileClick" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97">
+                    <Border x:Name="UserProfileBorder" Margin="6,4,6,4" Padding="6,5" CornerRadius="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" PointerPressed="OnUserProfileClick">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>

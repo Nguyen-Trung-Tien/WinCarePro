@@ -187,4 +187,55 @@ public class SettingsAndStateTests
         Assert.Equal("Default", service.CurrentSettings.AccentColor);
         Assert.Equal(10.0, service.CurrentSettings.TransparencyLevel);
     }
+
+    [Fact]
+    public void SettingsService_CriticalSettings_PersistImmediatelyToDatabase()
+    {
+        // Arrange
+        var service = SettingsService.Instance;
+        
+        // Act - Theme change
+        service.UpdateSettings(s => s.Theme = "Light", "Theme");
+        string dbJsonTheme = DbManager.GetSettings();
+        var profileTheme = JsonSerializer.Deserialize<SettingsProfile>(dbJsonTheme);
+        Assert.NotNull(profileTheme);
+        Assert.Equal("Light", profileTheme.Theme);
+
+        // Act - Language change
+        service.UpdateSettings(s => s.LanguageIndex = 1, "LanguageIndex");
+        string dbJsonLang = DbManager.GetSettings();
+        var profileLang = JsonSerializer.Deserialize<SettingsProfile>(dbJsonLang);
+        Assert.NotNull(profileLang);
+        Assert.Equal(1, profileLang.LanguageIndex);
+
+        // Act - AccentColor change
+        service.UpdateSettings(s => s.AccentColor = "Purple", "AccentColor");
+        string dbJsonAccent = DbManager.GetSettings();
+        var profileAccent = JsonSerializer.Deserialize<SettingsProfile>(dbJsonAccent);
+        Assert.NotNull(profileAccent);
+        Assert.Equal("Purple", profileAccent.AccentColor);
+
+        // Cleanup
+        service.ResetToDefaults();
+    }
+
+    [Fact]
+    public void SettingsService_FlushPendingSave_FlushesNonCriticalDebouncedSettings()
+    {
+        // Arrange
+        var service = SettingsService.Instance;
+        service.UpdateSettings(s => s.TransparencyLevel = 42.0); // Non-critical setting queued in debounce
+
+        // Act
+        service.FlushPendingSave();
+
+        // Assert
+        string dbJson = DbManager.GetSettings();
+        var profile = JsonSerializer.Deserialize<SettingsProfile>(dbJson);
+        Assert.NotNull(profile);
+        Assert.Equal(42.0, profile.TransparencyLevel);
+
+        // Cleanup
+        service.ResetToDefaults();
+    }
 }

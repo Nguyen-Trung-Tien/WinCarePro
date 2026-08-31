@@ -79,7 +79,27 @@ public class SettingsService : ISettingsService, IDisposable
         }
 
         SettingsChanged?.Invoke(this, new SettingsChangedEventArgs(snapshot, propertyName));
-        QueuePersistSettings(snapshot);
+
+        // Critical user interface preferences (Theme, AccentColor, Language) must persist immediately
+        // to prevent data loss on rapid app shutdown/restart.
+        bool isCriticalSetting = string.Equals(propertyName, "Theme", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(propertyName, "AccentColor", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(propertyName, "LanguageIndex", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(propertyName, "Immediate", StringComparison.OrdinalIgnoreCase);
+
+        if (isCriticalSetting)
+        {
+            lock (_lock)
+            {
+                _debounceTimer?.Dispose();
+                _debounceTimer = null;
+            }
+            PersistToDatabase(snapshot);
+        }
+        else
+        {
+            QueuePersistSettings(snapshot);
+        }
     }
 
     public async Task SaveSettingsAsync(SettingsProfile profile)
@@ -95,6 +115,18 @@ public class SettingsService : ISettingsService, IDisposable
         await Task.Run(() => PersistToDatabase(snapshot));
     }
 
+    public void FlushPendingSave()
+    {
+        SettingsProfile snapshot;
+        lock (_lock)
+        {
+            _debounceTimer?.Dispose();
+            _debounceTimer = null;
+            snapshot = CloneSettings(_currentSettings);
+        }
+        PersistToDatabase(snapshot);
+    }
+
     public void ResetToDefaults()
     {
         var defaultProfile = new SettingsProfile();
@@ -104,7 +136,7 @@ public class SettingsService : ISettingsService, IDisposable
         }
 
         SettingsChanged?.Invoke(this, new SettingsChangedEventArgs(defaultProfile, "Reset"));
-        QueuePersistSettings(defaultProfile);
+        PersistToDatabase(defaultProfile);
     }
 
     public string ExportSettingsJson()
@@ -130,7 +162,7 @@ public class SettingsService : ISettingsService, IDisposable
                     _currentSettings = profile;
                 }
                 SettingsChanged?.Invoke(this, new SettingsChangedEventArgs(CloneSettings(profile), "Import"));
-                QueuePersistSettings(CloneSettings(profile));
+                PersistToDatabase(CloneSettings(profile));
                 return true;
             }
         }
@@ -191,11 +223,7 @@ public class SettingsService : ISettingsService, IDisposable
         if (_disposed) return;
         _disposed = true;
 
-        lock (_lock)
-        {
-            _debounceTimer?.Dispose();
-            _debounceTimer = null;
-        }
+        FlushPendingSave();
     }
 }
 

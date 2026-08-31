@@ -45,8 +45,8 @@ public static class AnimationHelper
             typeof(AnimationHelper),
             new PropertyMetadata(1.0, OnHoverScaleChanged));
 
-    public static double GetHoverScale(DependencyObject obj) => (double)obj.GetValue(HoverScaleProperty);
-    public static void SetHoverScale(DependencyObject obj, double value) => obj.SetValue(HoverScaleProperty, value);
+    public static double GetHoverScale(FrameworkElement element) => (double)element.GetValue(HoverScaleProperty);
+    public static void SetHoverScale(FrameworkElement element, double value) => element.SetValue(HoverScaleProperty, value);
 
     private static void OnHoverScaleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -75,8 +75,8 @@ public static class AnimationHelper
             typeof(AnimationHelper),
             new PropertyMetadata(1.0, OnPressedScaleChanged));
 
-    public static double GetPressedScale(DependencyObject obj) => (double)obj.GetValue(PressedScaleProperty);
-    public static void SetPressedScale(DependencyObject obj, double value) => obj.SetValue(PressedScaleProperty, value);
+    public static double GetPressedScale(FrameworkElement element) => (double)element.GetValue(PressedScaleProperty);
+    public static void SetPressedScale(FrameworkElement element, double value) => element.SetValue(PressedScaleProperty, value);
 
     private static void OnPressedScaleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -106,8 +106,8 @@ public static class AnimationHelper
             typeof(AnimationHelper),
             new PropertyMetadata(-1.0, OnEntranceDelayChanged));
 
-    public static double GetEntranceDelay(DependencyObject obj) => (double)obj.GetValue(EntranceDelayProperty);
-    public static void SetEntranceDelay(DependencyObject obj, double value) => obj.SetValue(EntranceDelayProperty, value);
+    public static double GetEntranceDelay(FrameworkElement element) => (double)element.GetValue(EntranceDelayProperty);
+    public static void SetEntranceDelay(FrameworkElement element, double value) => element.SetValue(EntranceDelayProperty, value);
 
     // ==========================================
     // 3b. Attached Property: StaggerIndex
@@ -120,8 +120,8 @@ public static class AnimationHelper
             typeof(AnimationHelper),
             new PropertyMetadata(-1, OnStaggerIndexChanged));
 
-    public static int GetStaggerIndex(DependencyObject obj) => (int)obj.GetValue(StaggerIndexProperty);
-    public static void SetStaggerIndex(DependencyObject obj, int value) => obj.SetValue(StaggerIndexProperty, value);
+    public static int GetStaggerIndex(FrameworkElement element) => (int)element.GetValue(StaggerIndexProperty);
+    public static void SetStaggerIndex(FrameworkElement element, int value) => element.SetValue(StaggerIndexProperty, value);
 
     private static void OnStaggerIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -200,8 +200,8 @@ public static class AnimationHelper
             typeof(AnimationHelper),
             new PropertyMetadata(false, OnGlowOnFocusChanged));
 
-    public static bool GetGlowOnFocus(DependencyObject obj) => (bool)obj.GetValue(GlowOnFocusProperty);
-    public static void SetGlowOnFocus(DependencyObject obj, bool value) => obj.SetValue(GlowOnFocusProperty, value);
+    public static bool GetGlowOnFocus(FrameworkElement element) => (bool)element.GetValue(GlowOnFocusProperty);
+    public static void SetGlowOnFocus(FrameworkElement element, bool value) => element.SetValue(GlowOnFocusProperty, value);
 
     private static void OnGlowOnFocusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {

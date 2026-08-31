@@ -13,6 +13,8 @@ using Microsoft.UI.Xaml.Media.Animation;
 
 using WinCarePro.Database;
 using WinCarePro.Services;
+using WinCarePro.Services.Contracts;
+using WinCarePro.Services.Implementations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro;
@@ -196,8 +198,8 @@ public sealed partial class MainWindow : Window
         {
             await SmoothTweenProgressAsync(25, "Initializing core system engine...", 40);
 
-            // 1. Initialize SQLite Database asynchronously
-            await Task.Run(() => Database.DbManager.InitializeDatabase());
+            // 1. Ensure database & telemetry store are synchronized
+            await Task.Run(() => SettingsService.Instance.LoadSettings());
             await SmoothTweenProgressAsync(55, "Loading database & telemetry store...", 40);
 
             // 2. Load theme settings and transparency levels from DB
@@ -206,10 +208,7 @@ public sealed partial class MainWindow : Window
 
             // 3. Load language setting and apply translations to window content
             TranslationManager.Instance.LoadLanguageFromSettings();
-            if (TranslationManager.Instance.CurrentLanguage == AppLanguage.Vietnamese)
-            {
-                TranslationManager.Instance.Translate(this.Content);
-            }
+            TranslationManager.Instance.Translate(this.Content);
             await SmoothTweenProgressAsync(90, "Applying localized linguistic model...", 40);
 
             // 4. Update notification badge indicator & prepare main view
@@ -430,6 +429,7 @@ public sealed partial class MainWindow : Window
 
         try
         {
+            WinCarePro.Services.Implementations.SettingsService.Instance.FlushPendingSave();
             DbManager.ShutdownDatabase();
         }
         catch { }
@@ -604,6 +604,7 @@ public sealed partial class MainWindow : Window
         {
             try
             {
+                WinCarePro.Services.Implementations.SettingsService.Instance.FlushPendingSave();
                 DbManager.ShutdownDatabase();
             }
             catch { }

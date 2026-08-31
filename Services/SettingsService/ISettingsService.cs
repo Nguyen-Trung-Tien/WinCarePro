@@ -57,4 +57,9 @@ public interface ISettingsService
     /// Imports and applies a settings profile from a JSON string.
     /// </summary>
     bool ImportSettingsJson(string json);
+
+    /// <summary>
+    /// Synchronously flushes any pending debounced settings writes to persistent database storage.
+    /// </summary>
+    void FlushPendingSave();
 }

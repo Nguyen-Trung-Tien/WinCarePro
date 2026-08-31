@@ -51,8 +51,8 @@ public static class Animation3DHelper
             typeof(Animation3DHelper),
             new PropertyMetadata(false, OnIs3DTiltEnabledChanged));
 
-    public static bool GetIs3DTiltEnabled(DependencyObject obj) => (bool)obj.GetValue(Is3DTiltEnabledProperty);
-    public static void SetIs3DTiltEnabled(DependencyObject obj, bool value) => obj.SetValue(Is3DTiltEnabledProperty, value);
+    public static bool GetIs3DTiltEnabled(FrameworkElement element) => (bool)element.GetValue(Is3DTiltEnabledProperty);
+    public static void SetIs3DTiltEnabled(FrameworkElement element, bool value) => element.SetValue(Is3DTiltEnabledProperty, value);
 
     // =========================================================================
     // 2. Attached Property: MaxTiltAngle (Degrees)
@@ -64,8 +64,8 @@ public static class Animation3DHelper
             typeof(Animation3DHelper),
             new PropertyMetadata(0.0));
 
-    public static double GetMaxTiltAngle(DependencyObject obj) => (double)obj.GetValue(MaxTiltAngleProperty);
-    public static void SetMaxTiltAngle(DependencyObject obj, double value) => obj.SetValue(MaxTiltAngleProperty, value);
+    public static double GetMaxTiltAngle(FrameworkElement element) => (double)element.GetValue(MaxTiltAngleProperty);
+    public static void SetMaxTiltAngle(FrameworkElement element, double value) => element.SetValue(MaxTiltAngleProperty, value);
 
     // =========================================================================
     // 3. Attached Property: DepthZ (Spatial elevation)
@@ -77,8 +77,8 @@ public static class Animation3DHelper
             typeof(Animation3DHelper),
             new PropertyMetadata(0.0));
 
-    public static double GetDepthZ(DependencyObject obj) => (double)obj.GetValue(DepthZProperty);
-    public static void SetDepthZ(DependencyObject obj, double value) => obj.SetValue(DepthZProperty, value);
+    public static double GetDepthZ(FrameworkElement element) => (double)element.GetValue(DepthZProperty);
+    public static void SetDepthZ(FrameworkElement element, double value) => element.SetValue(DepthZProperty, value);
 
     // =========================================================================
     // 4. Attached Property: HoverScale
@@ -90,8 +90,8 @@ public static class Animation3DHelper
             typeof(Animation3DHelper),
             new PropertyMetadata(1.0));
 
-    public static double GetHoverScale(DependencyObject obj) => (double)obj.GetValue(HoverScaleProperty);
-    public static void SetHoverScale(DependencyObject obj, double value) => obj.SetValue(HoverScaleProperty, value);
+    public static double GetHoverScale(FrameworkElement element) => (double)element.GetValue(HoverScaleProperty);
+    public static void SetHoverScale(FrameworkElement element, double value) => element.SetValue(HoverScaleProperty, value);
 
     // =========================================================================
     // 5. Attached Property: IsMagneticEnabled (Pulls element slightly toward cursor)
@@ -103,8 +103,8 @@ public static class Animation3DHelper
             typeof(Animation3DHelper),
             new PropertyMetadata(false));
 
-    public static bool GetIsMagneticEnabled(DependencyObject obj) => (bool)obj.GetValue(IsMagneticEnabledProperty);
-    public static void SetIsMagneticEnabled(DependencyObject obj, bool value) => obj.SetValue(IsMagneticEnabledProperty, value);
+    public static bool GetIsMagneticEnabled(FrameworkElement element) => (bool)element.GetValue(IsMagneticEnabledProperty);
+    public static void SetIsMagneticEnabled(FrameworkElement element, bool value) => element.SetValue(IsMagneticEnabledProperty, value);
 
     // =========================================================================
     // Property Change Callbacks

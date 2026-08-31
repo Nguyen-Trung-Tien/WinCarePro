@@ -268,21 +268,20 @@ public sealed partial class SettingsPage : Page
         double sizeGB = AutoCleanupSlider.Value;
         if (sizeGB <= 0) sizeGB = 5.0;
 
-        string currentTheme = (ThemeManager.Instance.CurrentTheme == ElementTheme.Light) ? "Light" : "Dark";
-
         SettingsService.Instance.UpdateSettings(p =>
         {
-            p.Theme = currentTheme;
             p.AutoScan = AutoScanToggle.IsOn;
             p.ReportFormat = "TXT";
             
-            p.LanguageIndex = LanguageComboBox.SelectedIndex;
+            if (LanguageComboBox.SelectedIndex >= 0)
+            {
+                p.LanguageIndex = LanguageComboBox.SelectedIndex;
+            }
             p.AutoCheckUpdates = AutoUpdateToggle.IsOn;
             p.AutoInstallUpdates = AutoInstallUpdatesToggle.IsOn;
             p.MinimizeToTray = MinimizeToTrayToggle.IsOn;
             p.BetaUpdates = BetaUpdatesToggle.IsOn;
 
-            p.AccentColor = GetSelectedAccentColorTag();
             p.TransparencyLevel = TransparencySlider.Value;
             p.EnableAnimations = EnableAnimationsToggle.IsOn;
 
@@ -336,11 +335,12 @@ public sealed partial class SettingsPage : Page
 
     private string GetSelectedAccentColorTag()
     {
-        if (AccentGreen.Stroke != null) return "Green";
-        if (AccentPurple.Stroke != null) return "Purple";
-        if (AccentPink.Stroke != null) return "Pink";
-        if (AccentAmber.Stroke != null) return "Amber";
-        return "Default";
+        if (AccentGreen?.Stroke != null) return "Green";
+        if (AccentPurple?.Stroke != null) return "Purple";
+        if (AccentPink?.Stroke != null) return "Pink";
+        if (AccentAmber?.Stroke != null) return "Amber";
+        if (AccentDefault?.Stroke != null) return "Default";
+        return SettingsService.Instance.CurrentSettings.AccentColor ?? "Default";
     }
 
     private void ApplyAccentColorSelection(string tag)
@@ -443,6 +443,8 @@ public sealed partial class SettingsPage : Page
         if (_loadingSettings) return;
         
         int index = LanguageComboBox.SelectedIndex;
+        if (index < 0) return;
+
         SettingsService.Instance.UpdateSettings(s => s.LanguageIndex = index, "LanguageIndex");
         
         TranslationManager.Instance.CurrentLanguage = index == 1 ? AppLanguage.Vietnamese : AppLanguage.English;

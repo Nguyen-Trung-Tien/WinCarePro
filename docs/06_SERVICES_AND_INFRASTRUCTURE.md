@@ -1,6 +1,8 @@
 # 🛠️ 06. Tầng Dịch Vụ & Hạ Tầng (Services & Infrastructure)
 
-Tài liệu này cung cấp chi tiết về các dịch vụ nghiệp vụ nền (`Services/`) và các module hạ tầng kỹ thuật (`Infrastructure/`) trong **WinCare Pro Suite v4.3.0**.
+> [⬅️ 05. Tiêu Chuẩn Bảo Mật & An Toàn](05_SECURITY_AND_SAFETY_ARCHITECTURE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 06** • [Trang Kế Tiếp: 07. Hệ Thống Thiết Kế UI/UX Aura Glass ➡️](07_UI_UX_DESIGN_SYSTEM.md)
+
+Tài liệu này cung cấp chi tiết về các dịch vụ nghiệp vụ nền (`Services/`) và các module hạ tầng kỹ thuật (`Infrastructure/`) trong **WinCare Pro Suite v4.5 (Codename: Nova)**.
 
 ---
 
@@ -121,3 +123,7 @@ graph TD
 - **Vị trí tệp:** [Infrastructure/Logging/AuditLogService.cs](file:///d:/WinCare/Infrastructure/Logging/AuditLogService.cs), [Infrastructure/Logging/CrashLogger.cs](file:///d:/WinCare/Infrastructure/Logging/CrashLogger.cs)
 - **`AuditLogService`:** Ghi lại mọi hành động dọn dẹp, tối ưu hóa hoặc sửa lỗi vào CSDL SQLite kèm mã lỗi và thời gian chính xác.
 - **`CrashLogger`:** Bắt toàn bộ các ngoại lệ chưa được xử lý (`AppDomain.CurrentDomain.UnhandledException` và `TaskScheduler.UnobservedTaskException`), tự động ghi tệp nhật ký `%AppData%\WinCarePro\CrashLogs\crash_YYYYMMDD_HHmmss.log` và tạo bản ghi sự cố để lập trình viên dễ dàng debug.
+
+---
+
+> [⬅️ 05. Tiêu Chuẩn Bảo Mật & An Toàn](05_SECURITY_AND_SAFETY_ARCHITECTURE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 06** • [Trang Kế Tiếp: 07. Hệ Thống Thiết Kế UI/UX Aura Glass ➡️](07_UI_UX_DESIGN_SYSTEM.md)

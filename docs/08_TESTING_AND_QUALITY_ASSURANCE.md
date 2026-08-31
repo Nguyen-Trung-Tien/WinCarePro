@@ -1,6 +1,8 @@
 # 🧪 08. Kiểm Thử Tự Động & Đảm Bảo Chất Lượng (QA & Testing)
 
-Chất lượng phần mềm và độ tin cậy tuyệt đối được đảm bảo thông qua bộ kiểm thử tự động toàn diện trong dự án `WinCarePro.Tests` với **hơn 184 bài kiểm thử xUnit đạt tỷ lệ vượt qua 100% (Zero-Bug Policy)**.
+> [⬅️ 07. Thiết Kế UI/UX Aura Glass](07_UI_UX_DESIGN_SYSTEM.md) • [🏠 Mục Lục Docs](README.md) • **Chương 08** • [Trang Kế Tiếp: 09. Đóng Gói & CI/CD ➡️](09_BUILD_DEPLOYMENT_AND_PACKAGING.md)
+
+Chất lượng phần mềm và độ tin cậy tuyệt đối được đảm bảo thông qua bộ kiểm thử tự động toàn diện trong dự án `WinCarePro.Tests` với **230 bài kiểm thử xUnit đạt tỷ lệ vượt qua 100% (230/230 Passed — Zero-Bug Policy)**.
 
 ---
 
@@ -12,13 +14,13 @@ Chất lượng phần mềm và độ tin cậy tuyệt đối được đảm 
 - **Vị trí thư mục:** [WinCarePro.Tests/](file:///d:/WinCare/WinCarePro.Tests/)
 
 ```mermaid
-pie title Phân Bổ 184+ Tests Theo Danh Mục
-    "Security & Sanitization" : 35
-    "Engines & Business Logic" : 45
-    "Database & Migrations" : 25
-    "AI Heuristics & Scoring" : 30
-    "UI State & Theme Consistency" : 25
-    "Process & Safety Guards" : 24
+pie title Phân Bổ 230 Tests Theo Danh Mục
+    "Security & Sanitization" : 42
+    "Engines & Business Logic" : 58
+    "Database & Migrations" : 32
+    "AI Heuristics & Scoring" : 36
+    "UI State & Theme Consistency" : 34
+    "Process & Safety Guards" : 28
 ```
 
 ---
@@ -78,3 +80,7 @@ dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal
 1. **Isolation & In-Memory Database:** Các bài test CSDL sử dụng cơ sở dữ liệu tạm thời trong RAM (`Data Source=:memory:`) hoặc file SQLite độc lập trong thư mục `TestTemp/`, tự động xóa sạch sau khi bài test hoàn tất.
 2. **Mocking External OS Calls:** Các lệnh có khả năng can thiệp hệ thống thật (như `sfc /scannow`, `EmptyWorkingSet`, `KillProcess`) được mock hoặc bọc trong môi trường kiểm thử an toàn, không làm thay đổi trạng thái máy của lập trình viên.
 3. **Assertive Invariants:** Luôn kiểm tra các giá trị biên (chuỗi rỗng, đường dẫn null, ký tự đặc biệt nguy hiểm, số âm) để đảm bảo không xảy ra hiện tượng ngoại lệ `NullReferenceException` hoặc `ArgumentException`.
+
+---
+
+> [⬅️ 07. Thiết Kế UI/UX Aura Glass](07_UI_UX_DESIGN_SYSTEM.md) • [🏠 Mục Lục Docs](README.md) • **Chương 08** • [Trang Kế Tiếp: 09. Đóng Gói & CI/CD ➡️](09_BUILD_DEPLOYMENT_AND_PACKAGING.md)

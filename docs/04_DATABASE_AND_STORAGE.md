@@ -1,6 +1,8 @@
 # 💾 04. Cơ Sở Dữ Liệu & Quản Lý Dữ Liệu (Database & Storage)
 
-Tài liệu này trình bày chi tiết về kiến trúc tầng lưu trữ dữ liệu, cấu hình cơ sở dữ liệu SQLite 3, lược đồ bảng (Schema), chiến lược di chuyển (Migration) và mã hóa an toàn trong **WinCare Pro Suite v4.3.0**.
+> [⬅️ 03. Tầng Động Cơ Nghiệp Vụ](03_ENGINES_AND_BUSINESS_LOGIC.md) • [🏠 Mục Lục Docs](README.md) • **Chương 04** • [Trang Kế Tiếp: 05. Tiêu Chuẩn Bảo Mật & An Toàn ➡️](05_SECURITY_AND_SAFETY_ARCHITECTURE.md)
+
+Tài liệu này trình bày chi tiết về kiến trúc tầng lưu trữ dữ liệu, cấu hình cơ sở dữ liệu SQLite 3, lược đồ bảng (Schema), chiến lược di chuyển (Migration) và mã hóa an toàn trong **WinCare Pro Suite v4.5 (Codename: Nova)**.
 
 ---
 
@@ -207,3 +209,7 @@ public static class CryptoHelper
 ### Ưu điểm của DPAPI:
 1. Không cần lưu trữ khóa mã hóa trong file cấu hình (Khóa được Windows quản lý và bảo vệ theo mật khẩu đăng nhập Windows của user).
 2. Tài khoản người dùng khác hoặc phần mềm lạ chạy dưới user khác không thể giải mã dữ liệu này.
+
+---
+
+> [⬅️ 03. Tầng Động Cơ Nghiệp Vụ](03_ENGINES_AND_BUSINESS_LOGIC.md) • [🏠 Mục Lục Docs](README.md) • **Chương 04** • [Trang Kế Tiếp: 05. Tiêu Chuẩn Bảo Mật & An Toàn ➡️](05_SECURITY_AND_SAFETY_ARCHITECTURE.md)

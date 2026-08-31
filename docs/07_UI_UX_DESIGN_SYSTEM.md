@@ -1,6 +1,8 @@
 # 🎨 07. Hệ Thống Thiết Kế Giao Diện (Aura Glassmorphic Fluent 2.0)
 
-WinCare Pro Suite v4.3.0 được xây dựng trên hệ thống thiết kế độc quyền **Aura Glassmorphic Fluent 2.0**, kết hợp sức mạnh của **WinUI 3 (Windows App SDK 2.2.0)** và **Windows Composition API** nhằm mang lại trải nghiệm thị giác hiện đại, mượt mà và cao cấp bậc nhất trên hệ điều hành Windows.
+> [⬅️ 06. Dịch Vụ Nền & Hạ Tầng](06_SERVICES_AND_INFRASTRUCTURE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 07** • [Trang Kế Tiếp: 08. Kiểm Thử Tự Động & QA ➡️](08_TESTING_AND_QUALITY_ASSURANCE.md)
+
+WinCare Pro Suite v4.5 (Codename: Nova) được xây dựng trên hệ thống thiết kế độc quyền **Aura Glassmorphic Fluent 2.0**, kết hợp sức mạnh của **WinUI 3 (Windows App SDK 2.2.0)** và **Windows Composition API** nhằm mang lại trải nghiệm thị giác hiện đại, mượt mà và cao cấp bậc nhất trên hệ điều hành Windows.
 
 ---
 
@@ -99,3 +101,7 @@ WinCare Pro cung cấp 3 bộ bảng màu thiết kế theo chuẩn WCAG AAA v�
 | **Màu Trạng Thái Tốt** | `#2EA043` (Emerald) | `#1A7F37` (Forest Green) | `#00FF9D` (Neon Lime) |
 | **Màu Cảnh Báo** | `#D29922` (Amber) | `#9A6700` (Warm Ochre) | `#FFD000` (Bright Yellow)|
 | **Màu Nguy Hiểm** | `#F85149` (Coral Red) | `#CF222E` (Crimson) | `#FF0055` (Neon Red) |
+
+---
+
+> [⬅️ 06. Dịch Vụ Nền & Hạ Tầng](06_SERVICES_AND_INFRASTRUCTURE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 07** • [Trang Kế Tiếp: 08. Kiểm Thử Tự Động & QA ➡️](08_TESTING_AND_QUALITY_ASSURANCE.md)

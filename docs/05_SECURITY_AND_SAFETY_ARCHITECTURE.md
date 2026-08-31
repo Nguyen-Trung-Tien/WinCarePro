@@ -1,5 +1,7 @@
 # 🔒 05. Tiêu Chuẩn Bảo Mật & Cơ Chế An Toàn (Security & Safety Architecture)
 
+> [⬅️ 04. CSDL & Lưu Trữ](04_DATABASE_AND_STORAGE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 05** • [Trang Kế Tiếp: 06. Dịch Vụ Nền & Hạ Tầng ➡️](06_SERVICES_AND_INFRASTRUCTURE.md)
+
 WinCare Pro là ứng dụng can thiệp sâu vào hệ điều hành Windows, do đó tiêu chuẩn an toàn **Zero-Bug Hardened** được đặt lên mức ưu tiên cao nhất nhằm loại bỏ triệt để nguy cơ làm hỏng hệ điều hành, rò rỉ dữ liệu hoặc bị lợi dụng tấn công.
 
 ---
@@ -128,3 +130,7 @@ Nếu phát hiện thư mục là Junction Point trỏ tới vị trí khác, đ
   <requestedExecutionLevel level="requireAdministrator" uiAccess="false" />
   ```
 - Đảm bảo toàn bộ quyền can thiệp phần cứng (S.M.A.R.T, SFC, DISM, Registry HKLM, Network Interface Reset) được thực thi mà không gặp lỗi cấp quyền `Access Denied`.
+
+---
+
+> [⬅️ 04. CSDL & Lưu Trữ](04_DATABASE_AND_STORAGE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 05** • [Trang Kế Tiếp: 06. Dịch Vụ Nền & Hạ Tầng ➡️](06_SERVICES_AND_INFRASTRUCTURE.md)

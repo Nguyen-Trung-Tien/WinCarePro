@@ -1,6 +1,8 @@
 # 📦 09. Đóng Gói, Triển Khai & Cập Nhật Tự Động (Build, Packaging & CI/CD)
 
-Tài liệu này hướng dẫn quy trình biên dịch mã nguồn, xuất bản bản phát hành (Publish), đóng gói bộ cài đặt cài qua **Inno Setup**, cấu hình hệ thống cập nhật tự động **Auto-Update**, và thiết lập đường ống tích hợp liên tục **CI/CD**.
+> [⬅️ 08. Kiểm Thử Tự Động & QA](08_TESTING_AND_QUALITY_ASSURANCE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 09** • [Trang Kế Tiếp: 10. Hướng Dẫn Lập Trình Viên Mới ➡️](10_DEVELOPER_ONBOARDING_GUIDE.md)
+
+Tài liệu này hướng dẫn quy trình biên dịch mã nguồn, xuất bản bản phát hành (Publish), đóng gói bộ cài đặt cài qua **Inno Setup**, cấu hình hệ thống cập nhật tự động **Auto-Update**, và thiết lập đường ống tích hợp liên tục **CI/CD** trong **WinCare Pro Suite v4.5 (Codename: Nova)**.
 
 ---
 
@@ -97,7 +99,11 @@ graph LR
     Checkout["1. Checkout Code"] --> SetupDotnet["2. Setup .NET 10 SDK"]
     SetupDotnet --> Restore["3. Restore NuGet Packages"]
     Restore --> Build["4. Compile Release Solution"]
-    Build --> Test["5. Run xUnit 184+ Tests"]
+    Build --> Test["5. Run xUnit 230 Tests"]
     Test --> Pack["6. Package Inno Setup Installer"]
     Pack --> Release["7. Publish Artifacts / GitHub Release"]
 ```
+
+---
+
+> [⬅️ 08. Kiểm Thử Tự Động & QA](08_TESTING_AND_QUALITY_ASSURANCE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 09** • [Trang Kế Tiếp: 10. Hướng Dẫn Lập Trình Viên Mới ➡️](10_DEVELOPER_ONBOARDING_GUIDE.md)

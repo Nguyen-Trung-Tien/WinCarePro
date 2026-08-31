@@ -1,5 +1,7 @@
 # 👨‍💻 10. Hướng Dẫn Dành Cho Lập Trình Viên Mới (Developer Onboarding Guide)
 
+> [⬅️ 09. Đóng Gói & CI/CD](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) • [🏠 Mục Lục Docs](README.md) • **Chương 10** • [Trang Kế Tiếp: 11. Hướng Dẫn Sử Dụng Chi Tiết ➡️](11_USER_MANUAL_VI.md)
+
 Chào mừng bạn tham gia phát triển **WinCare Pro Suite**! Tài liệu này cung cấp hướng dẫn từng bước từ việc thiết lập môi trường đến quy trình xây dựng thêm một tính năng/phân hệ mới theo đúng chuẩn kiến trúc của dự án.
 
 ---
@@ -175,3 +177,7 @@ public async Task BatteryEngine_ShouldParseReportCorrectly()
 - **Xem log kiểm toán:** Mở tệp SQLite `%AppData%\WinCarePro\wincaredb.db` bằng công cụ *DB Browser for SQLite* để xem các bản ghi bảng `Logs`.
 - **Xem Crash Logs:** Xem thư mục `%AppData%\WinCarePro\CrashLogs\` nếu ứng dụng bị đóng đột ngột.
 - **XAML Live Preview:** Sử dụng tính năng XAML Hot Reload và Live Visual Tree trong Visual Studio 2022 để chỉnh sửa màu sắc và khoảng cách Padding trực tiếp trong khi ứng dụng đang chạy.
+
+---
+
+> [⬅️ 09. Đóng Gói & CI/CD](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) • [🏠 Mục Lục Docs](README.md) • **Chương 10** • [Trang Kế Tiếp: 11. Hướng Dẫn Sử Dụng Chi Tiết ➡️](11_USER_MANUAL_VI.md)

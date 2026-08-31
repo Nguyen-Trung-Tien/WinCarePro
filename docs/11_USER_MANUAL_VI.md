@@ -1,6 +1,8 @@
 # 📖 11. Sổ Tay Hướng Dẫn Sử Dụng Người Dùng (User Manual - Tiếng Việt)
 
-Chào mừng bạn đến với **WinCare Pro Suite v4.3.0** — Hệ thống chăm sóc, dọn dẹp, bảo mật và tăng tốc Windows toàn diện thế hệ mới!
+> [⬅️ 10. Hướng Dẫn Lập Trình Viên Mới](10_DEVELOPER_ONBOARDING_GUIDE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 11** • [Về Trang Đầu: 01. Kiến Trúc Tổng Thể ➡️](01_SYSTEM_ARCHITECTURE.md)
+
+Chào mừng bạn đến với **WinCare Pro Suite v4.5 (Codename: Nova)** — Hệ thống chăm sóc, dọn dẹp, bảo mật và tăng tốc Windows toàn diện thế hệ mới!
 
 ---
 
@@ -96,3 +98,7 @@ Chào mừng bạn đến với **WinCare Pro Suite v4.3.0** — Hệ thống ch
 
 **Q3: Tôi có thể khôi phục lại các cài đặt cũ nếu không ưng ý không?**  
 *Trả lời:* Có. Trước mọi thay đổi Registry hoặc tinh chỉnh dịch vụ, WinCare Pro đều tự động tạo một điểm sao lưu (Snapshot / Backup). Bạn chỉ cần vào mục **Lịch Sử & Hoàn Tác (Undo / Snapshots)** để quay lại trạng thái trước đó bất cứ lúc nào.
+
+---
+
+> [⬅️ 10. Hướng Dẫn Lập Trình Viên Mới](10_DEVELOPER_ONBOARDING_GUIDE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 11** • [Về Trang Đầu: 01. Kiến Trúc Tổng Thể ➡️](01_SYSTEM_ARCHITECTURE.md)

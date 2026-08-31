@@ -1,6 +1,8 @@
 # 📐 01. Kiến Trúc Tổng Thể Hệ Thống (System Architecture)
 
-Tài liệu này cung cấp cái nhìn chi tiết và chuyên sâu về kiến trúc phần mềm, nguyên lý thiết kế, cơ chế quản lý luồng dữ liệu và Dependency Injection trong **WinCare Pro Suite v4.3.0**.
+> [🏠 Mục Lục Docs](README.md) • **Chương 01** • [Trang Kế Tiếp: 02. Chi Tiết 16 Phân Hệ ➡️](02_CORE_MODULES_DETAILED.md)
+
+Tài liệu này cung cấp cái nhìn chi tiết và chuyên sâu về kiến trúc phần mềm, nguyên lý thiết kế, cơ chế quản lý luồng dữ liệu và Dependency Injection trong **WinCare Pro Suite v4.5 (Codename: Nova)**.
 
 ---
 
@@ -183,3 +185,7 @@ public abstract class ViewModelBase : ObservableObject
 ```
 
 Nhờ mô hình này, hệ thống ngăn chặn 100% hiện tượng `COMException (0x8001010E: The application called an interface that was marshalled for a different thread)`.
+
+---
+
+> [🏠 Mục Lục Docs](README.md) • **Chương 01** • [Trang Kế Tiếp: 02. Chi Tiết 16 Phân Hệ ➡️](02_CORE_MODULES_DETAILED.md)

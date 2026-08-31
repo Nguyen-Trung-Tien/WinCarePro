@@ -1,5 +1,7 @@
 # ⚙️ 03. Tầng Động Cơ Nghiệp Vụ (Engines & Business Logic)
 
+> [⬅️ 02. Chi Tiết 16 Phân Hệ](02_CORE_MODULES_DETAILED.md) • [🏠 Mục Lục Docs](README.md) • **Chương 03** • [Trang Kế Tiếp: 04. Cơ Sở Dữ Liệu & Lưu Trữ ➡️](04_DATABASE_AND_STORAGE.md)
+
 Tài liệu này đi sâu vào kiến trúc, cấu trúc phương thức, thuật toán và cách hoạt động của toàn bộ các lớp Động cơ (Engines) trong thư mục `Engines/`.
 
 ---
@@ -148,3 +150,7 @@ Engines/
 - **Phương thức chính:**
   - `GetInstalledDriversAsync()`: Truy vấn WMI `Win32_PnPSignedDriver` để lấy danh sách driver thiết bị, phiên bản, ngày phát hành và nhà sản xuất.
   - `BackupDriversAsync(string backupDirectory)`: Sử dụng lệnh `dism.exe /online /export-driver /destination:<path>` để sao lưu toàn bộ driver của bên thứ 3.
+
+---
+
+> [⬅️ 02. Chi Tiết 16 Phân Hệ](02_CORE_MODULES_DETAILED.md) • [🏠 Mục Lục Docs](README.md) • **Chương 03** • [Trang Kế Tiếp: 04. Cơ Sở Dữ Liệu & Lưu Trữ ➡️](04_DATABASE_AND_STORAGE.md)

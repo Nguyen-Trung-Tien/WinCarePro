@@ -163,11 +163,11 @@ dotnet run
 
 ## 🏆 Đảm Bảo Chất Lượng & Kết Quả Kiểm Thử (100% Passed)
 
-Toàn bộ **184/184 Unit Tests** trong bộ kiểm thử `WinCarePro.Tests` đều vượt qua thành công:
+Toàn bộ **230/230 Unit Tests** trong bộ kiểm thử `WinCarePro.Tests` đều vượt qua thành công:
 
 ```text
 Test run for WinCarePro.Tests.dll (.NETCoreApp,Version=v10.0)
-Passed!  - Failed: 0, Passed: 184, Skipped: 0, Total: 184, Duration: 6 s
+Passed!  - Failed: 0, Passed: 230, Skipped: 0, Total: 230, Duration: 10 s
 ```
 
 ---
@@ -177,7 +177,8 @@ Passed!  - Failed: 0, Passed: 184, Skipped: 0, Total: 184, Duration: 6 s
 Dự án được phân phối dưới giấy phép mã nguồn mở. Mọi đóng góp, báo cáo lỗi hoặc đề xuất tính năng mới đều được hoan nghênh qua **GitHub Issues** và **Pull Requests**.
 
 > [!NOTE]
-> * Xem chi tiết kiến trúc kỹ thuật trong **[Tài Liệu Phát Triển (docs/DEVELOPER_GUIDE.md)](file:///d:/WinCare/docs/DEVELOPER_GUIDE.md)**.
+> * Xem trọn bộ 11 tài liệu kỹ thuật & kiến trúc tại **[Trung Tâm Tài Liệu (docs/README.md)](file:///d:/WinCare/docs/README.md)**.
+> * Xem hướng dẫn bắt đầu nhanh cho lập trình viên tại **[Developer Onboarding (docs/10_DEVELOPER_ONBOARDING_GUIDE.md)](file:///d:/WinCare/docs/10_DEVELOPER_ONBOARDING_GUIDE.md)**.
 > * Xem nhật ký thay đổi qua từng phiên bản trong **[Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md)**.
 
 ---

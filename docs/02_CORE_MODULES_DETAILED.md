@@ -1,6 +1,8 @@
 # 🧩 02. Chi Tiết 16 Phân Hệ Chức Năng Cốt Lõi (Core Modules)
 
-Tài liệu này mô tả chi tiết 16 phân hệ tính năng trong **WinCare Pro Suite v4.3.0**, bao gồm giao diện người dùng (View), tầng điều phối (ViewModel), động cơ xử lý (Engine), quyền hạn yêu cầu và mức độ an toàn.
+> [⬅️ 01. Kiến Trúc Tổng Thể](01_SYSTEM_ARCHITECTURE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 02** • [Trang Kế Tiếp: 03. Tầng Động Cơ Nghiệp Vụ ➡️](03_ENGINES_AND_BUSINESS_LOGIC.md)
+
+Tài liệu này mô tả chi tiết 16 phân hệ tính năng trong **WinCare Pro Suite v4.5 (Codename: Nova)**, bao gồm giao diện người dùng (View), tầng điều phối (ViewModel), động cơ xử lý (Engine), quyền hạn yêu cầu và mức độ an toàn.
 
 ---
 
@@ -247,3 +249,7 @@ mindmap
   - **Bộ lập lịch bảo trì tự động (Maintenance Scheduler):** Thiết lập tự động dọn rác, tối ưu RAM và quét bảo mật hàng ngày, hàng tuần hoặc khi máy tính ở trạng thái rảnh rỗi (Idle).
   - **Trung tâm thông báo (Notification Center):** Lưu trữ lịch sử thông báo hành động hệ thống.
 - **Mức độ an toàn:** 100% An toàn.
+
+---
+
+> [⬅️ 01. Kiến Trúc Tổng Thể](01_SYSTEM_ARCHITECTURE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 02** • [Trang Kế Tiếp: 03. Tầng Động Cơ Nghiệp Vụ ➡️](03_ENGINES_AND_BUSINESS_LOGIC.md)

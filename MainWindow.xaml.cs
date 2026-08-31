@@ -206,7 +206,10 @@ public sealed partial class MainWindow : Window
 
             // 3. Load language setting and apply translations to window content
             TranslationManager.Instance.LoadLanguageFromSettings();
-            TranslationManager.Instance.Translate(this.Content);
+            if (TranslationManager.Instance.CurrentLanguage == AppLanguage.Vietnamese)
+            {
+                TranslationManager.Instance.Translate(this.Content);
+            }
             await SmoothTweenProgressAsync(90, "Applying localized linguistic model...", 40);
 
             // 4. Update notification badge indicator & prepare main view

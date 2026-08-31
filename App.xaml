@@ -191,6 +191,33 @@
                 <GradientStop Color="#FFF97316" Offset="1" />
             </LinearGradientBrush>
 
+            <!-- Aura 2.0 Glow & Neon Master Brushes -->
+            <LinearGradientBrush x:Key="AuraNeonPurpleGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FF8B5CF6" Offset="0" />
+                <GradientStop Color="#FF6D28D9" Offset="0.5" />
+                <GradientStop Color="#FF4C1D95" Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="AuraNeonCyanGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FF38BDF8" Offset="0" />
+                <GradientStop Color="#FF0284C7" Offset="0.5" />
+                <GradientStop Color="#FF0369A1" Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="AuraShimmerSweepBrush" StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Color="#00FFFFFF" Offset="0.0" />
+                <GradientStop Color="#15FFFFFF" Offset="0.4" />
+                <GradientStop Color="#30FFFFFF" Offset="0.5" />
+                <GradientStop Color="#15FFFFFF" Offset="0.6" />
+                <GradientStop Color="#00FFFFFF" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="AiInsightBorderGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#608B5CF6" Offset="0" />
+                <GradientStop Color="#3006B6D4" Offset="0.5" />
+                <GradientStop Color="#608B5CF6" Offset="1" />
+            </LinearGradientBrush>
+
             <!-- Card Containers Styling — Clean Windows 11 Fluent Structure -->
             <Style x:Key="ModernCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
@@ -332,6 +359,22 @@
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="10" />
                 <Setter Property="Padding" Value="14" />
+            </Style>
+
+            <Style x:Key="AuraGlassLayerCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="Padding" Value="16" />
+            </Style>
+
+            <Style x:Key="AiSmartInsightCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppSecondaryCardBackground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource AiInsightBorderGradient}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="14,10" />
             </Style>
 
             <Style x:Key="Magnetic3DButtonStyle" TargetType="Button">
@@ -1054,8 +1097,10 @@
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
-                <Setter Property="Padding" Value="16,8" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="14,7" />
+                <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
+                <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -1063,43 +1108,250 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <ContentPresenter x:Name="ContentPresenter"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                Padding="{TemplateBinding Padding}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup x:Name="CommonStates">
-                                        <VisualState x:Name="Normal" />
-                                        <VisualState x:Name="PointerOver">
-                                            <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                <Setter Target="ContentPresenter.BorderBrush" Value="{StaticResource PrimaryAccentBrush}" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Pressed">
-                                            <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.Background" Value="{ThemeResource CardBackgroundFillColorTertiaryBrush}" />
-                                                <Setter Target="ContentPresenter.Opacity" Value="0.8" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Disabled">
-                                            <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.Opacity" Value="0.4" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </ContentPresenter>
+                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
+                                </Grid.RenderTransform>
+                                <ContentPresenter x:Name="ContentPresenter"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    Padding="{TemplateBinding Padding}"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualStateGroup.Transitions>
+                                                <VisualTransition To="PointerOver" GeneratedDuration="0:0:0.15">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.025" Duration="0:0:0.15">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.025" Duration="0:0:0.15">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="-1.0" Duration="0:0:0.15">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </VisualTransition>
+                                                <VisualTransition To="Pressed" GeneratedDuration="0:0:0.1">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="0.97" Duration="0:0:0.1">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="0.97" Duration="0:0:0.1">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="1.0" Duration="0:0:0.1">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </VisualTransition>
+                                                <VisualTransition To="Normal" GeneratedDuration="0:0:0.2">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.2">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </VisualTransition>
+                                            </VisualStateGroup.Transitions>
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="PointerOver">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                                    <Setter Target="ContentPresenter.BorderBrush" Value="{StaticResource PrimaryAccentBrush}" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleX" Value="1.025" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleY" Value="1.025" />
+                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="-1.0" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                                    <Setter Target="ContentPresenter.Opacity" Value="0.85" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleX" Value="0.97" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleY" Value="0.97" />
+                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="1.0" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Disabled">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Opacity" Value="0.45" />
+                                                    <Setter Target="RootButtonGrid.Opacity" Value="0.45" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </ContentPresenter>
+                            </Grid>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+            </Style>
+
+            <!-- Global Default Button Style (Master Unified Secondary Button) -->
+            <Style x:Key="DefaultButtonStyle" TargetType="Button" BasedOn="{StaticResource StandardSecondaryButtonStyle}" />
+
+            <!-- Global Accent Button Style (Master Unified Primary Gradient Button) -->
+            <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource VibrantPrimaryButtonStyle}">
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="16,7" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
+            </Style>
+
+            <!-- Destructive / Danger Action Button Style (Red Glass Glow) -->
+            <Style x:Key="DangerButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{ThemeResource AppBadgeCriticalBg}" />
+                <Setter Property="Foreground" Value="{ThemeResource AppBadgeCriticalFg}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeCriticalBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="14,6" />
+                <Setter Property="FontSize" Value="11.5" />
+                <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
+                                </Grid.RenderTransform>
+                                <ContentPresenter x:Name="ContentPresenter"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    Padding="{TemplateBinding Padding}"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="PointerOver">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Background" Value="#FFEF4444" />
+                                                    <Setter Target="ContentPresenter.Foreground" Value="White" />
+                                                    <Setter Target="ContentPresenter.BorderBrush" Value="#FFDC2626" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleX" Value="1.03" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleY" Value="1.03" />
+                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="-1.0" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Background" Value="#FFDC2626" />
+                                                    <Setter Target="ContentPresenter.Foreground" Value="White" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleX" Value="0.96" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleY" Value="0.96" />
+                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="1.0" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Disabled">
+                                                <VisualState.Setters>
+                                                    <Setter Target="RootButtonGrid.Opacity" Value="0.45" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </ContentPresenter>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Success Action Button Style (Emerald Glass Glow) -->
+            <Style x:Key="SuccessButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{ThemeResource AppBadgeGoodBg}" />
+                <Setter Property="Foreground" Value="{ThemeResource AppBadgeGoodFg}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeGoodBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="14,6" />
+                <Setter Property="FontSize" Value="11.5" />
+                <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
+                                </Grid.RenderTransform>
+                                <ContentPresenter x:Name="ContentPresenter"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    Padding="{TemplateBinding Padding}"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="PointerOver">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Background" Value="#FF10B981" />
+                                                    <Setter Target="ContentPresenter.Foreground" Value="White" />
+                                                    <Setter Target="ContentPresenter.BorderBrush" Value="#FF059669" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleX" Value="1.03" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleY" Value="1.03" />
+                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="-1.0" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Background" Value="#FF059669" />
+                                                    <Setter Target="ContentPresenter.Foreground" Value="White" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleX" Value="0.96" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleY" Value="0.96" />
+                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="1.0" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Disabled">
+                                                <VisualState.Setters>
+                                                    <Setter Target="RootButtonGrid.Opacity" Value="0.45" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </ContentPresenter>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Compact Action Button Style (for items in tables/lists/cards) -->
+            <Style x:Key="CompactActionButtonStyle" TargetType="Button" BasedOn="{StaticResource StandardSecondaryButtonStyle}">
+                <Setter Property="Height" Value="28" />
+                <Setter Property="Padding" Value="10,2" />
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="CornerRadius" Value="6" />
             </Style>
 
             <!-- Power Option Item Button Style (Solid, perfectly contrast in Dark & Light) -->

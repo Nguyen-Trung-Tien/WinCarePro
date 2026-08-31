@@ -19,6 +19,7 @@ using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Services.Implementations;
+using WinCarePro.Shared.Components;
 
 namespace WinCarePro.Views;
 
@@ -1036,7 +1037,7 @@ public sealed partial class SettingsPage : Page
                 }
                 catch (HttpRequestException httpEx)
                 {
-                    DispatcherQueue.TryEnqueue(() =>
+                    DispatcherQueue.TryEnqueue(async () =>
                     {
                         UpdateStatusLabel.Text = "Unable to reach update server. Check internet connection or DNS settings.".T();
                         UpdateProgressStepLabel.Text = "Connection Failed".T();
@@ -1045,11 +1046,23 @@ public sealed partial class SettingsPage : Page
                         UpdatePercentText.Text = "0%";
                         UpdateDetailsText.Text = string.Format("Network unreachable: {0}".T(), httpEx.Message);
                         SetUpdateBadgeState("Disconnected".T(), "Offline");
+
+                        if (this.Content?.XamlRoot != null)
+                        {
+                            var errResult = await UpdateDialogHelper.ShowUpdateErrorAsync(
+                                this.Content.XamlRoot,
+                                ThemeManager.Instance.CurrentTheme,
+                                httpEx.Message);
+                            if (errResult == ContentDialogResult.Primary)
+                            {
+                                OnCheckUpdatesClick(CheckUpdatesBtn ?? (object)this, new RoutedEventArgs());
+                            }
+                        }
                     });
                 }
                 catch (FileNotFoundException fnfEx)
                 {
-                    DispatcherQueue.TryEnqueue(() =>
+                    DispatcherQueue.TryEnqueue(async () =>
                     {
                         UpdateStatusLabel.Text = string.Format("Network library unavailable: {0}".T(), fnfEx.FileName ?? fnfEx.Message);
                         UpdateProgressStepLabel.Text = "Check Failed".T();
@@ -1058,11 +1071,19 @@ public sealed partial class SettingsPage : Page
                         UpdatePercentText.Text = "0%";
                         UpdateDetailsText.Text = "Missing system libraries required for download.".T();
                         SetUpdateBadgeState("Error".T(), "Offline");
+
+                        if (this.Content?.XamlRoot != null)
+                        {
+                            await UpdateDialogHelper.ShowUpdateErrorAsync(
+                                this.Content.XamlRoot,
+                                ThemeManager.Instance.CurrentTheme,
+                                fnfEx.Message);
+                        }
                     });
                 }
                 catch (Exception ex)
                 {
-                    DispatcherQueue.TryEnqueue(() =>
+                    DispatcherQueue.TryEnqueue(async () =>
                     {
                         UpdateStatusLabel.Text = string.Format("Failed to check for updates: {0}".T(), ex.Message);
                         UpdateProgressStepLabel.Text = "Check Failed".T();
@@ -1071,6 +1092,14 @@ public sealed partial class SettingsPage : Page
                         UpdatePercentText.Text = "0%";
                         UpdateDetailsText.Text = "An unexpected error occurred during update audit.".T();
                         SetUpdateBadgeState("Error".T(), "Offline");
+
+                        if (this.Content?.XamlRoot != null)
+                        {
+                            await UpdateDialogHelper.ShowUpdateErrorAsync(
+                                this.Content.XamlRoot,
+                                ThemeManager.Instance.CurrentTheme,
+                                ex.Message);
+                        }
                     });
                 }
                 finally
@@ -1143,21 +1172,20 @@ public sealed partial class SettingsPage : Page
             UpdateDetailsText.Text = string.Format("Remote version v{0} (Current: v{1})".T(), remoteVerStr, currentVersion.ToString(3));
             UpdateDataRateText.Text = "Pending".T();
 
-            ContentDialog updateDialog = new ContentDialog
+            if (this.Content?.XamlRoot != null)
             {
-                Title = "Update Available".T(),
-                Content = string.Format("Version {0} has been released (Current: {1}).\n\nWhat's New:\n{2}\n\nWould you like to download and install this update now?".T(), remoteVerStr, currentVersion.ToString(3), changelog),
-                PrimaryButtonText = "Update Now".T(),
-                CloseButtonText = "Later".T(),
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = this.Content.XamlRoot,
-                RequestedTheme = ThemeManager.Instance.CurrentTheme
-            };
+                var result = await UpdateDialogHelper.ShowUpdateAvailableAsync(
+                    this.Content.XamlRoot,
+                    ThemeManager.Instance.CurrentTheme,
+                    remoteVerStr,
+                    currentVersion.ToString(3),
+                    changelog,
+                    betaEnabled ? "Beta" : "Stable");
 
-            var result = await updateDialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                await DownloadAndInstallUpdateAsync(downloadUrl);
+                if (result == ContentDialogResult.Primary)
+                {
+                    await DownloadAndInstallUpdateAsync(downloadUrl);
+                }
             }
         }
         else
@@ -1167,6 +1195,15 @@ public sealed partial class SettingsPage : Page
             UpdateProgressStepLabel.Text = "System Up to Date".T();
             UpdateDetailsText.Text = string.Format("Manifest verified • Running latest v{0}".T(), currentVersion.ToString(3));
             UpdateDataRateText.Text = "Synced".T();
+
+            if (this.Content?.XamlRoot != null)
+            {
+                await UpdateDialogHelper.ShowUpToDateAsync(
+                    this.Content.XamlRoot,
+                    ThemeManager.Instance.CurrentTheme,
+                    currentVersion.ToString(3),
+                    betaEnabled ? "Beta" : "Stable");
+            }
         }
     }
 

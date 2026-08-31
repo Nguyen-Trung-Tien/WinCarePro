@@ -21,6 +21,18 @@ public class ThemeManager
     public event EventHandler? ThemeChanged;
     public event EventHandler? AccentChanged;
 
+    public Color GetPrimaryAccentColor()
+    {
+        if (Application.Current.Resources.TryGetValue("PrimaryAccentBrush", out var solidBrushObj) &&
+            solidBrushObj is SolidColorBrush solidBrush)
+        {
+            return solidBrush.Color;
+        }
+
+        bool isDark = (CurrentTheme == ElementTheme.Dark);
+        return isDark ? Color.FromArgb(255, 15, 108, 189) : Color.FromArgb(255, 2, 132, 199);
+    }
+
     private ThemeManager() { }
 
     public void RegisterWindow(Window window)

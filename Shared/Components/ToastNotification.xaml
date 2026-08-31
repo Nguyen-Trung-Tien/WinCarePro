@@ -14,15 +14,60 @@
         <Storyboard x:Name="PulseAnimation" RepeatBehavior="Forever" AutoReverse="True">
             <DoubleAnimation Storyboard.TargetName="IconGlowRing"
                              Storyboard.TargetProperty="Opacity"
-                             From="0.8" To="0.25" Duration="0:0:0.9"/>
+                             From="0.85" To="0.3" Duration="0:0:0.9"/>
             <DoubleAnimation Storyboard.TargetName="StatusIcon"
                              Storyboard.TargetProperty="Opacity"
-                             From="1.0" To="0.4" Duration="0:0:0.9"/>
+                             From="1.0" To="0.5" Duration="0:0:0.9"/>
         </Storyboard>
         <Storyboard x:Name="RepeatPulseAnimation">
             <DoubleAnimation Storyboard.TargetName="RepeatBadgeTransform" Storyboard.TargetProperty="ScaleX" From="1.0" To="1.25" Duration="0:0:0.18" AutoReverse="True"/>
             <DoubleAnimation Storyboard.TargetName="RepeatBadgeTransform" Storyboard.TargetProperty="ScaleY" From="1.0" To="1.25" Duration="0:0:0.18" AutoReverse="True"/>
         </Storyboard>
+
+        <!-- Toast Circular Close Button Style -->
+        <Style x:Key="ToastCloseButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid" Background="Transparent" CornerRadius="12">
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background" Value="{ThemeResource AppStatChipBackground}"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Background" Value="{ThemeResource AppStatChipBorder}"/>
+                                            <Setter Target="RootGrid.Opacity" Value="0.8"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootGrid.Opacity" Value="0.3"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Border x:Name="ContainerBorder"
@@ -31,9 +76,20 @@
             BorderThickness="1.2"
             CornerRadius="16"
             Padding="0"
-            Translation="0,4,18">
+            Translation="0,4,24">
         <Grid>
-            <!-- Background Accent Ambient Tint -->
+            <!-- Top Specular Sheen Line -->
+            <Border Height="1" VerticalAlignment="Top" CornerRadius="16,16,0,0" Opacity="0.45">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#00FFFFFF" Offset="0"/>
+                        <GradientStop Color="#FFFFFFFF" Offset="0.5"/>
+                        <GradientStop Color="#00FFFFFF" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <!-- Background Ambient Tint -->
             <Border x:Name="AmbientTintBorder"
                     CornerRadius="16"
                     Opacity="0.08"
@@ -53,13 +109,13 @@
                     <Border x:Name="IconGlowRing"
                             Width="36" Height="36"
                             CornerRadius="12"
-                            Background="#208B5CF6"
-                            BorderBrush="#408B5CF6"
+                            Background="{ThemeResource AppBadgeNeutralBg}"
+                            BorderBrush="{ThemeResource AppBadgeNeutralBorder}"
                             BorderThickness="1"/>
                     <FontIcon x:Name="StatusIcon"
                               Glyph="&#xE946;"
                               FontSize="16"
-                              Foreground="{StaticResource PrimaryAccentBrush}"
+                              Foreground="{ThemeResource AppBadgeNeutralFg}"
                               HorizontalAlignment="Center"
                               VerticalAlignment="Center"/>
                 </Grid>
@@ -105,24 +161,21 @@
                 <Button x:Name="ActionBtn"
                         Grid.Column="2"
                         Margin="2,0,6,0"
-                        Padding="10,5"
+                        Padding="10,4"
                         FontSize="11"
                         FontWeight="Bold"
-                        CornerRadius="8"
+                        CornerRadius="7"
                         VerticalAlignment="Center"
-                        Style="{StaticResource VibrantPrimaryButtonStyle}"
+                        Style="{StaticResource AccentButtonStyle}"
                         Visibility="Collapsed"/>
 
                 <!-- Close Button -->
                 <Button x:Name="CloseBtn"
                         Grid.Column="3"
-                        Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}"
-                        Width="26"
-                        Height="26"
-                        CornerRadius="13"
+                        Style="{StaticResource ToastCloseButtonStyle}"
                         VerticalAlignment="Top"
                         Margin="0,-2,-2,0">
-                    <FontIcon Glyph="&#xE711;" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <FontIcon Glyph="&#xE711;" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </Button>
             </Grid>
 
@@ -131,7 +184,7 @@
                          Minimum="0"
                          Maximum="100"
                          Value="100"
-                         Height="2"
+                         Height="2.5"
                          CornerRadius="0,0,16,16"
                          VerticalAlignment="Bottom"
                          HorizontalAlignment="Stretch"

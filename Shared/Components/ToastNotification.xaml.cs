@@ -5,6 +5,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using Windows.UI;
+using WinCarePro.Services;
 using WinCarePro.Services.Contracts;
 
 namespace WinCarePro.Components;
@@ -22,6 +24,7 @@ public sealed partial class ToastNotification : UserControl
     private int _remainingDurationMs = 5500;
     private int _totalDurationMs = 5500;
     private bool _isPaused = false;
+    private bool _isEventsHooked = false;
 
     public ToastNotification()
     {
@@ -30,11 +33,51 @@ public sealed partial class ToastNotification : UserControl
 
         this.PointerEntered += ToastNotification_PointerEntered;
         this.PointerExited += ToastNotification_PointerExited;
+
+        this.Loaded += ToastNotification_Loaded;
+        this.Unloaded += ToastNotification_Unloaded;
+
+        SyncTheme();
     }
 
     public ToastNotification(string title, string message, string level) : this()
     {
         Update(title, message, level, null, 1);
+    }
+
+    private void ToastNotification_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (!_isEventsHooked)
+        {
+            ThemeManager.Instance.ThemeChanged += OnThemeOrAccentChanged;
+            ThemeManager.Instance.AccentChanged += OnThemeOrAccentChanged;
+            _isEventsHooked = true;
+        }
+        SyncTheme();
+    }
+
+    private void ToastNotification_Unloaded(object sender, RoutedEventArgs e)
+    {
+        if (_isEventsHooked)
+        {
+            ThemeManager.Instance.ThemeChanged -= OnThemeOrAccentChanged;
+            ThemeManager.Instance.AccentChanged -= OnThemeOrAccentChanged;
+            _isEventsHooked = false;
+        }
+    }
+
+    private void OnThemeOrAccentChanged(object? sender, EventArgs e)
+    {
+        this.DispatcherQueue?.TryEnqueue(() =>
+        {
+            SyncTheme();
+            ApplySeverityStyle(SeverityText);
+        });
+    }
+
+    private void SyncTheme()
+    {
+        this.RequestedTheme = ThemeManager.Instance.CurrentTheme;
     }
 
     private void ToastNotification_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -49,6 +92,8 @@ public sealed partial class ToastNotification : UserControl
 
     public void Update(string title, string message, string level, List<NotificationAction>? actions, int repeatCount)
     {
+        SyncTheme();
+
         TitleTextBlock.Text = title;
         TitleText = title;
         CurrentRepeatCount = repeatCount;
@@ -71,7 +116,7 @@ public sealed partial class ToastNotification : UserControl
             RepeatBadge.Visibility = Visibility.Collapsed;
         }
 
-        // Style according to severity level
+        // Style according to severity level and current active theme
         ApplySeverityStyle(level);
 
         // Setup contextual action button
@@ -169,50 +214,139 @@ public sealed partial class ToastNotification : UserControl
 
     private void ApplySeverityStyle(string level)
     {
+        bool isDark = (ThemeManager.Instance.CurrentTheme == ElementTheme.Dark || 
+                      (ThemeManager.Instance.CurrentTheme == ElementTheme.Default && 
+                       this.ActualTheme != ElementTheme.Light));
+
         string glyph = "\uE946"; // Info
-        string hexColor = "#FF8B5CF6"; // Aurora Violet
+        Color fgColor;
+        Color bgColor;
+        Color borderColor;
 
         if (level.Equals("Warning", StringComparison.OrdinalIgnoreCase))
         {
             glyph = "\uE7BA";
-            hexColor = "#FFF59E0B"; // Amber
+            if (isDark)
+            {
+                fgColor = Color.FromArgb(255, 251, 191, 36);   // #FBBF24
+                bgColor = Color.FromArgb(32, 245, 158, 11);    // 12% amber
+                borderColor = Color.FromArgb(68, 245, 158, 11);// 27% amber
+            }
+            else
+            {
+                fgColor = Color.FromArgb(255, 180, 83, 9);     // #B45309
+                bgColor = Color.FromArgb(255, 255, 251, 235);  // #FFFBEB
+                borderColor = Color.FromArgb(255, 253, 230, 138);// #FDE68A
+            }
         }
         else if (level.Equals("Critical", StringComparison.OrdinalIgnoreCase) || level.Equals("Error", StringComparison.OrdinalIgnoreCase))
         {
             glyph = "\uEA39";
-            hexColor = "#FFEF4444"; // Red
+            if (isDark)
+            {
+                fgColor = Color.FromArgb(255, 239, 68, 68);    // #EF4444
+                bgColor = Color.FromArgb(32, 239, 68, 68);     // 12% red
+                borderColor = Color.FromArgb(68, 239, 68, 68); // 27% red
+            }
+            else
+            {
+                fgColor = Color.FromArgb(255, 220, 38, 38);    // #DC2626
+                bgColor = Color.FromArgb(255, 254, 242, 242);  // #FEF2F2
+                borderColor = Color.FromArgb(255, 254, 202, 202);// #FECACA
+            }
         }
-        else if (level.Equals("Success", StringComparison.OrdinalIgnoreCase))
+        else if (level.Equals("Success", StringComparison.OrdinalIgnoreCase) || level.Equals("Info", StringComparison.OrdinalIgnoreCase))
         {
-            glyph = "\uE73E";
-            hexColor = "#FF10B981"; // Emerald
+            // Success uses checkmark glyph \uE73E, Info uses info glyph \uE946
+            glyph = level.Equals("Success", StringComparison.OrdinalIgnoreCase) ? "\uE73E" : "\uE946";
+            
+            var accent = ThemeManager.Instance.GetPrimaryAccentColor();
+            fgColor = accent;
+
+            if (isDark)
+            {
+                bgColor = Color.FromArgb(32, accent.R, accent.G, accent.B);
+                borderColor = Color.FromArgb(70, accent.R, accent.G, accent.B);
+            }
+            else
+            {
+                byte bgR = (byte)Math.Clamp(accent.R + (255 - accent.R) * 0.92, 0, 255);
+                byte bgG = (byte)Math.Clamp(accent.G + (255 - accent.G) * 0.92, 0, 255);
+                byte bgB = (byte)Math.Clamp(accent.B + (255 - accent.B) * 0.92, 0, 255);
+                bgColor = Color.FromArgb(255, bgR, bgG, bgB);
+
+                byte bdrR = (byte)Math.Clamp(accent.R + (255 - accent.R) * 0.65, 0, 255);
+                byte bdrG = (byte)Math.Clamp(accent.G + (255 - accent.G) * 0.65, 0, 255);
+                byte bdrB = (byte)Math.Clamp(accent.B + (255 - accent.B) * 0.65, 0, 255);
+                borderColor = Color.FromArgb(255, bdrR, bdrG, bdrB);
+            }
+        }
+        else // Default / Fallback
+        {
+            glyph = "\uE946";
+            var accent = ThemeManager.Instance.GetPrimaryAccentColor();
+            fgColor = accent;
+            bgColor = isDark ? Color.FromArgb(32, accent.R, accent.G, accent.B) : Color.FromArgb(255, 240, 249, 255);
+            borderColor = isDark ? Color.FromArgb(70, accent.R, accent.G, accent.B) : Color.FromArgb(255, 186, 230, 253);
         }
 
-        byte a = 255;
-        byte r = Convert.ToByte(hexColor.Substring(1, 2), 16);
-        byte g = Convert.ToByte(hexColor.Substring(3, 2), 16);
-        byte b = Convert.ToByte(hexColor.Substring(5, 2), 16);
-
-        var solidColor = Windows.UI.Color.FromArgb(a, r, g, b);
-        var alpha15Color = Windows.UI.Color.FromArgb(38, r, g, b);
-        var alpha35Color = Windows.UI.Color.FromArgb(90, r, g, b);
-
-        var solidBrush = new SolidColorBrush(solidColor);
-        var tintBrush = new SolidColorBrush(alpha15Color);
-        var borderBrush = new SolidColorBrush(alpha35Color);
+        var fgBrush = new SolidColorBrush(fgColor);
+        var bgBrush = new SolidColorBrush(bgColor);
+        var borderBrush = new SolidColorBrush(borderColor);
 
         StatusIcon.Glyph = glyph;
-        StatusIcon.Foreground = solidBrush;
-        IconGlowRing.Background = tintBrush;
+        StatusIcon.Foreground = fgBrush;
+        IconGlowRing.Background = bgBrush;
         IconGlowRing.BorderBrush = borderBrush;
-        AmbientTintBorder.Background = tintBrush;
-        DismissProgressBar.Foreground = solidBrush;
-        RepeatBadge.Background = solidBrush;
+        AmbientTintBorder.Background = bgBrush;
+        RepeatBadge.Background = fgBrush;
+
+        if ((level.Equals("Info", StringComparison.OrdinalIgnoreCase) || level.Equals("Success", StringComparison.OrdinalIgnoreCase)) && 
+            Application.Current.Resources.TryGetValue("PrimaryAccentGradient", out var gradObj) && 
+            gradObj is Brush gradBrush)
+        {
+            DismissProgressBar.Foreground = gradBrush;
+        }
+        else
+        {
+            DismissProgressBar.Foreground = fgBrush;
+        }
+
+        if (Application.Current.Resources.TryGetValue("PrimaryAccentGradient", out var actGradObj) && 
+            actGradObj is Brush actGradBrush)
+        {
+            ActionBtn.Background = actGradBrush;
+        }
+
+        // Container Card Theme Adapting
+        if (isDark)
+        {
+            ContainerBorder.Background = new SolidColorBrush(Color.FromArgb(238, 20, 22, 32)); // #E8141620
+            if (level.Equals("Critical", StringComparison.OrdinalIgnoreCase) || level.Equals("Error", StringComparison.OrdinalIgnoreCase))
+            {
+                ContainerBorder.BorderBrush = fgBrush;
+            }
+            else
+            {
+                ContainerBorder.BorderBrush = new SolidColorBrush(Color.FromArgb(35, 255, 255, 255));
+            }
+        }
+        else
+        {
+            ContainerBorder.Background = new SolidColorBrush(Color.FromArgb(252, 255, 255, 255)); // Crisp Glass White
+            if (level.Equals("Critical", StringComparison.OrdinalIgnoreCase) || level.Equals("Error", StringComparison.OrdinalIgnoreCase))
+            {
+                ContainerBorder.BorderBrush = fgBrush;
+            }
+            else
+            {
+                ContainerBorder.BorderBrush = new SolidColorBrush(Color.FromArgb(255, 226, 232, 240)); // #E2E8F0
+            }
+        }
 
         // Apply critical pulse if needed
         if (level.Equals("Critical", StringComparison.OrdinalIgnoreCase) || level.Equals("Error", StringComparison.OrdinalIgnoreCase))
         {
-            ContainerBorder.BorderBrush = solidBrush;
             try
             {
                 PulseAnimation.Begin();
@@ -221,7 +355,6 @@ public sealed partial class ToastNotification : UserControl
         }
         else
         {
-            ContainerBorder.ClearValue(Border.BorderBrushProperty);
             try
             {
                 PulseAnimation.Stop();
@@ -282,4 +415,5 @@ public sealed partial class ToastNotification : UserControl
         sb.Begin();
     }
 }
+
 

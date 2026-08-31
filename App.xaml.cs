@@ -119,11 +119,37 @@ public partial class App : Application
         {
             MainDispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
 
-            // Initialize DI Container
+            // 1. Initialize SQLite Database synchronously on app entrypoint
+            try
+            {
+                Database.DbManager.InitializeDatabase();
+            }
+            catch (Exception dbEx)
+            {
+                WriteCrashLog("crash_db_init.txt", $"Database initialization error: {dbEx}");
+            }
+
+            // 2. Load user settings into SettingsService before window or services creation
+            try
+            {
+                SettingsService.Instance.LoadSettings();
+                var startupSettings = SettingsService.Instance.CurrentSettings;
+                var startupTheme = (startupSettings.Theme == "Light") ? ElementTheme.Light : ElementTheme.Dark;
+                WinCarePro.Services.ThemeManager.Instance.ApplyTheme(startupTheme);
+                WinCarePro.Services.ThemeManager.Instance.ApplyAccent(startupSettings.AccentColor ?? "Default");
+                WinCarePro.Services.TranslationManager.Instance.CurrentLanguage = (startupSettings.LanguageIndex == 1) ? WinCarePro.Services.AppLanguage.Vietnamese : WinCarePro.Services.AppLanguage.English;
+            }
+            catch (Exception setEx)
+            {
+                WriteCrashLog("crash_settings_init.txt", $"Settings preload error: {setEx}");
+            }
+
+            // 3. Initialize DI Container
             ConfigureServices();
 
             // Check if launched in background mode
-            var commandLineArgs = Environment.GetCommandLineArgs();            if (commandLineArgs.Any(arg => arg.Equals("/background", StringComparison.OrdinalIgnoreCase) || 
+            var commandLineArgs = Environment.GetCommandLineArgs();
+            if (commandLineArgs.Any(arg => arg.Equals("/background", StringComparison.OrdinalIgnoreCase) || 
                                            arg.Equals("-background", StringComparison.OrdinalIgnoreCase)))
             {
                 Task.Run(async () =>

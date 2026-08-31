@@ -10,6 +10,7 @@ public class SettingsProfile
     
     // General & Update policy
     public int LanguageIndex { get; set; } = 0; // 0=English, 1=Tiếng Việt
+    public string LastVersion { get; set; } = "";
     public bool AutoCheckUpdates { get; set; } = true;
     public bool AutoInstallUpdates { get; set; } = false; // Auto download & install in background
     public bool MinimizeToTray { get; set; } = true;

@@ -239,7 +239,7 @@ public class DbManager
                 var insertUser = "INSERT INTO Users (Id, Username, Settings) VALUES (1, $username, $settings) ON CONFLICT(Id) DO NOTHING;";
                 using var command = new SqliteCommand(insertUser, connection);
                 command.Parameters.AddWithValue("$username", Environment.UserName);
-                command.Parameters.AddWithValue("$settings", "{\"Theme\":\"Dark\",\"AutoScan\":false,\"ReportFormat\":\"PDF\"}");
+                command.Parameters.AddWithValue("$settings", "{\"Theme\":\"Dark\",\"LanguageIndex\":0,\"AccentColor\":\"Default\",\"AutoScan\":false,\"ReportFormat\":\"TXT\",\"TransparencyLevel\":10.0,\"EnableAnimations\":true}");
                 command.ExecuteNonQuery();
             }
         });

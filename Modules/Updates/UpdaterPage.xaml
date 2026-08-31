@@ -499,23 +499,25 @@
                 </ListView>
             </Border>
 
-            <!-- Empty State -->
-            <Grid Visibility="{x:Bind IsListEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,48,0,48">
-                <StackPanel Spacing="16" HorizontalAlignment="Center">
-                    <Border Width="80" Height="80" CornerRadius="40" Background="#1E10B981" BorderBrush="#3010B981" BorderThickness="2" HorizontalAlignment="Center">
-                        <FontIcon Glyph="&#xE73E;" FontSize="40" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Spacing="4" HorizontalAlignment="Center">
-                        <TextBlock Text="System is up to date!" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" />
-                        <TextBlock Text="No pending updates found for the selected filter." FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
-                    </StackPanel>
-                    <Button Click="OnScanUpdatesClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Center" Padding="20,10" CornerRadius="8" FontWeight="SemiBold">
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <FontIcon Glyph="&#xE72C;" FontSize="13" Foreground="White" VerticalAlignment="Center"/>
-                            <TextBlock Text="Check Again" VerticalAlignment="Center" FontSize="13.5" Foreground="White" />
+            <!-- Empty State (Aura Glass Synced) -->
+            <Grid Visibility="{x:Bind IsListEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,32,0,32">
+                <Border Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="16" Padding="32,24" MaxWidth="440">
+                    <StackPanel Spacing="14" HorizontalAlignment="Center">
+                        <Border Width="64" Height="64" CornerRadius="32" Background="#1E10B981" BorderBrush="#4010B981" BorderThickness="1.5" HorizontalAlignment="Center">
+                            <FontIcon Glyph="&#xE73E;" FontSize="30" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Spacing="4" HorizontalAlignment="Center">
+                            <TextBlock Text="All Applications Up to Date" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display"/>
+                            <TextBlock Text="No pending software updates detected for the current filter." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
                         </StackPanel>
-                    </Button>
-                </StackPanel>
+                        <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,6" HorizontalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE777;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="WinGet Repository &amp; Direct Channel Synced" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Grid>
     </Grid>

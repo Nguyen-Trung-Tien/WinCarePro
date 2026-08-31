@@ -26,7 +26,8 @@ public sealed partial class MainWindow : Window
         try
         {
             var settings = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
-            ApplyAppTheme(settings.Theme == "Dark");
+            bool isDark = !string.Equals(settings.Theme, "Light", StringComparison.OrdinalIgnoreCase);
+            ApplyAppTheme(isDark);
             App.ApplyAccentColor(settings.AccentColor ?? "Default");
             ApplyTransparency(settings.TransparencyLevel);
 
@@ -344,8 +345,7 @@ public sealed partial class MainWindow : Window
 
             if (versionChanged)
             {
-                string newRaw = MergeSetting(raw, "LastVersion", currentVersion.ToString());
-                Task.Run(() => DbManager.SaveSettings(newRaw));
+                WinCarePro.Services.Implementations.SettingsService.Instance.UpdateSettings(p => p.LastVersion = currentVersion.ToString());
 
                 // Log to Activity Log
                 string logMessage = string.Format("System updated to version {0}".T(), currentVersion.ToString());
@@ -353,24 +353,5 @@ public sealed partial class MainWindow : Window
             }
         }
         catch { }
-    }
-
-    private string MergeSetting(string rawJson, string key, string value)
-    {
-        var dict = new System.Collections.Generic.Dictionary<string, object>();
-        if (!string.IsNullOrEmpty(rawJson))
-        {
-            try
-            {
-                var parsed = JsonSerializer.Deserialize<System.Collections.Generic.Dictionary<string, object>>(rawJson);
-                if (parsed != null)
-                {
-                    dict = parsed;
-                }
-            }
-            catch { }
-        }
-        dict[key] = value;
-        return JsonSerializer.Serialize(dict);
     }
 }

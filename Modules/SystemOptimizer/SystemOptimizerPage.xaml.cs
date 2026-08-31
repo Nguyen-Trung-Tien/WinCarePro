@@ -67,138 +67,46 @@ public sealed partial class SystemOptimizerPage : Page
         ViewModel.UpdateRamAndServices();
     }
 
-    private async void OnSmartTuneClick(object sender, RoutedEventArgs e)
+    private void OnSelectRecommendedProfileClick(object sender, RoutedEventArgs e)
     {
-        var btn = SmartTuneBtn ?? (sender as Button);
-        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
-
-        try
-        {
-            if (TweaksCard != null) WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(TweaksCard, Windows.UI.Color.FromArgb(220, 139, 92, 246));
-        }
-        catch { }
-
-        int applied = 0;
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, null, null, null,
-            "Auto-Tuning...", "Auto-Tune",
-            async () =>
-            {
-                applied = await ViewModel.ApplySmartAutoTuneAsync();
-            },
-            minDurationMs: 800);
-
-        try
-        {
-            if (TweaksCard != null)
-            {
-                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
-                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
-            }
-            var statCards = new System.Collections.Generic.List<FrameworkElement>();
-            if (StatCard0 != null) statCards.Add(StatCard0);
-            if (StatCard1 != null) statCards.Add(StatCard1);
-            if (StatCard2 != null) statCards.Add(StatCard2);
-            if (StatCard3 != null) statCards.Add(StatCard3);
-            WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DCascadeWave(statCards, 60);
-        }
-        catch { }
-
-        if (App.MainWindowInstance is MainWindow mw)
-        {
-            mw.ShowToastFromDb("Smart Auto-Tune Complete".T(), 
-                string.Format("Successfully tuned {0} system settings & optimized RAM.".T(), applied), "Success");
-        }
+        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.06f, 300);
+        int count = ViewModel.SelectPresetProfile("Recommended");
+        HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 6, 182, 212), "Recommended Auto-Tune".T(), count);
     }
 
-    private async void OnGamingProfileClick(object sender, RoutedEventArgs e)
+    private void OnSelectPerformanceProfileClick(object sender, RoutedEventArgs e)
     {
-        var btn = (sender as Button) ?? (sender as FrameworkElement) ?? SmartTuneBtn;
-        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
-
-        try
-        {
-            if (TweaksCard != null) WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(TweaksCard, Windows.UI.Color.FromArgb(220, 245, 158, 11));
-        }
-        catch { }
-
-        int applied = 0;
-        if (sender is Button b)
-        {
-            await UiLoadingHelper.ExecuteWithLoadingAsync(
-                b, null, null, null,
-                "Activating Gaming...", "Gaming Mode",
-                async () =>
-                {
-                    applied = await ViewModel.ApplyGamingProfileAsync();
-                },
-                minDurationMs: 800);
-        }
-        else
-        {
-            applied = await ViewModel.ApplyGamingProfileAsync();
-        }
-
-        try
-        {
-            if (TweaksCard != null)
-            {
-                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
-                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 245, 158, 11));
-            }
-            if (StatCard3 != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(StatCard3, Windows.UI.Color.FromArgb(255, 245, 158, 11));
-        }
-        catch { }
-
-        if (App.MainWindowInstance is MainWindow mw)
-        {
-            mw.ShowToastFromDb("Gaming Profile Active".T(), 
-                string.Format("Gaming Turbo ON, network latency minimized, {0} tweaks applied.".T(), applied), "Success");
-        }
+        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.06f, 300);
+        int count = ViewModel.SelectPresetProfile("Performance");
+        HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 245, 158, 11), "Max Performance".T(), count);
     }
 
-    private async void OnPrivacyProfileClick(object sender, RoutedEventArgs e)
+    private void OnSelectPrivacyProfileClick(object sender, RoutedEventArgs e)
     {
-        var btn = (sender as Button) ?? (sender as FrameworkElement) ?? SmartTuneBtn;
-        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 320);
+        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.06f, 300);
+        int count = ViewModel.SelectPresetProfile("Privacy");
+        HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 16, 185, 129), "Privacy Shield".T(), count);
+    }
 
-        try
-        {
-            if (TweaksCard != null) WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(TweaksCard, Windows.UI.Color.FromArgb(220, 16, 185, 129));
-        }
-        catch { }
-
-        int applied = 0;
-        if (sender is Button b)
-        {
-            await UiLoadingHelper.ExecuteWithLoadingAsync(
-                b, null, null, null,
-                "Hardening Privacy...", "Privacy Shield",
-                async () =>
-                {
-                    applied = await ViewModel.ApplyPrivacyProfileAsync();
-                },
-                minDurationMs: 800);
-        }
-        else
-        {
-            applied = await ViewModel.ApplyPrivacyProfileAsync();
-        }
-
+    private void HighlightPresetSelection(Windows.UI.Color glowColor, string presetName, int count)
+    {
         try
         {
             if (TweaksCard != null)
             {
-                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
-                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, glowColor);
+            }
+            if (ApplyTweaksBtn != null)
+            {
+                FluidAnimationHelper.ApplyGlowSparkBurst(ApplyTweaksBtn, 1.08f, 350);
             }
         }
         catch { }
 
         if (App.MainWindowInstance is MainWindow mw)
         {
-            mw.ShowToastFromDb("Privacy Shield Active".T(), 
-                string.Format("Disabled background telemetry & logs ({0} tweaks applied).".T(), applied), "Success");
+            mw.ShowToastFromDb(string.Format("Preset: {0}".T(), presetName), 
+                string.Format("Selected {0} tweaks. Click 'Apply Tweaks' to proceed.".T(), count), "Info");
         }
     }
 
@@ -330,6 +238,17 @@ public sealed partial class SystemOptimizerPage : Page
         ViewModel.SelectUnoptimizedOnly();
     }
 
+    private void OnMasterSelectAllChanged(object sender, RoutedEventArgs e)
+    {
+        if (sender is CheckBox cb)
+        {
+            if (cb.IsChecked == true)
+                ViewModel.SelectAll();
+            else
+                ViewModel.DeselectAll();
+        }
+    }
+
     private async void OnToggleTweakClick(object sender, RoutedEventArgs e)
     {
         if (sender is Button btn && btn.DataContext is SystemTweak tweak)
@@ -340,17 +259,7 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnCleanDeliveryCacheClick(object sender, RoutedEventArgs e)
     {
-        var btn = CleanCacheBtn ?? (sender as Button);
-        long freed = 0;
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, CleanCacheRing, CleanCacheText, CleanCacheIcon,
-            "Purging Cache...", "Purge Delivery Cache",
-            async () =>
-            {
-                freed = await ViewModel.CleanDeliveryCacheAsync();
-            },
-            minDurationMs: 800);
-
+        long freed = await ViewModel.CleanDeliveryCacheAsync();
         if (App.MainWindowInstance is MainWindow mw && freed > 0)
         {
             double mb = freed / 1024.0 / 1024.0;
@@ -359,29 +268,16 @@ public sealed partial class SystemOptimizerPage : Page
         }
     }
 
-    private async void OnTurboToggled(object sender, RoutedEventArgs e)
+    private async void OnOptimizeRamClick(object sender, RoutedEventArgs e)
     {
-        if (sender is ToggleSwitch ts)
+        if (sender is Button b)
         {
-            if (ts.IsOn != ViewModel.IsTurboActive)
-            {
-                await ViewModel.ToggleGamingTurboAsync();
-            }
+            FluidAnimationHelper.ApplyGlowSparkBurst(b, 1.1f, 300);
+            await ViewModel.OptimizeRamAsync();
         }
-        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        else
         {
-            if (lts.IsOn != ViewModel.IsTurboActive)
-            {
-                lts.IsLoading = true;
-                try
-                {
-                    await ViewModel.ToggleGamingTurboAsync();
-                }
-                finally
-                {
-                    lts.IsLoading = false;
-                }
-            }
+            await ViewModel.OptimizeRamAsync();
         }
     }
 

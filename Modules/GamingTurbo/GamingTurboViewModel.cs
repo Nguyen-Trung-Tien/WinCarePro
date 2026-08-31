@@ -81,83 +81,35 @@ namespace WinCarePro.Modules.GamingTurbo
             {
                 // Activate Gaming Turbo
                 IsTurboActive = true;
-                GameStatusMessage = "⚡ Gaming Turbo ACTIVE! Quenching background apps & allocating high-priority CPU...".T();
+                GameStatusMessage = "⚡ Gaming Turbo ACTIVE! Enabling High Performance power profile & system responsiveness...".T();
 
                 // Save current power plan for restoration
                 await SaveCurrentPowerPlanAsync();
                 PersistActiveTurboState();
 
-                var freedBytes = await Task.Run(() =>
+                // Perform safe memory optimization
+                long freedBytes = await Task.Run(() =>
                 {
-                    long totalFreed = 0;
-                    int count = 0;
-                    var processes = Process.GetProcesses();
-
-                    foreach (var proc in processes)
+                    try
                     {
-                        if (proc.Id <= 4)
-                        {
-                            try { proc.Dispose(); } catch { }
-                            continue;
-                        }
-
-                        IntPtr hProcess = IntPtr.Zero;
-                        try
-                        {
-                            if (proc.ProcessName.Equals("explorer", StringComparison.OrdinalIgnoreCase) ||
-                                proc.ProcessName.Equals("WinCarePro", StringComparison.OrdinalIgnoreCase))
-                            {
-                                continue;
-                            }
-
-                            long before = 0;
-                            try { before = proc.WorkingSet64; } catch { }
-
-                            hProcess = OpenProcess(PROCESS_SET_QUOTA | PROCESS_QUERY_INFORMATION, false, proc.Id);
-                            if (hProcess != IntPtr.Zero)
-                            {
-                                if (EmptyWorkingSet(hProcess))
-                                {
-                                    long after = 0;
-                                    try
-                                    {
-                                        proc.Refresh();
-                                        after = proc.WorkingSet64;
-                                    }
-                                    catch { }
-
-                                    if (before > after)
-                                    {
-                                        totalFreed += (before - after);
-                                    }
-                                    count++;
-                                }
-                            }
-                        }
-                        catch { }
-                        finally
-                        {
-                            if (hProcess != IntPtr.Zero)
-                            {
-                                CloseHandle(hProcess);
-                            }
-                            try { proc.Dispose(); } catch { }
-                        }
+                        GC.Collect(2, GCCollectionMode.Forced, true, true);
+                        GC.WaitForPendingFinalizers();
+                        using var curProc = Process.GetCurrentProcess();
+                        EmptyWorkingSet(curProc.Handle);
                     }
-
-                    OptimizedProcessesCount = count;
-                    return totalFreed;
+                    catch { }
+                    return 0L;
                 });
 
-                // Apply preset-specific tuning
+                // Apply preset-specific tuning (High performance power scheme)
                 await ApplyPresetTuningAsync(ActivePresetName);
 
-                double freedMB = freedBytes / (1024.0 * 1024.0);
-                RamFreedText = $"{freedMB:N0} MB";
-                string statusFormat = "🚀 Hyper-Turbo Activated! Freed {0:N0} MB RAM across {1} background processes.".T();
-                GameStatusMessage = string.Format(statusFormat, freedMB, OptimizedProcessesCount);
+                OptimizedProcessesCount = 1;
+                RamFreedText = "Optimized";
+                string statusFormat = "🚀 Gaming Turbo Activated! High-Performance profile active with preset: {0}.".T();
+                GameStatusMessage = string.Format(statusFormat, ActivePresetName);
 
-                Database.DbManager.LogAction($"Gaming Turbo activated: Freed {freedMB:N0} MB, optimized {OptimizedProcessesCount} processes", "Gaming Turbo", "Success");
+                Database.DbManager.LogAction($"Gaming Turbo activated: High-Performance profile ({ActivePresetName})", "Gaming Turbo", "Success");
             }
             else
             {

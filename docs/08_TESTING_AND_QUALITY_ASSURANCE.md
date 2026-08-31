@@ -2,7 +2,7 @@
 
 > [⬅️ 07. Thiết Kế UI/UX Aura Glass](07_UI_UX_DESIGN_SYSTEM.md) • [🏠 Mục Lục Docs](README.md) • **Chương 08** • [Trang Kế Tiếp: 09. Đóng Gói & CI/CD ➡️](09_BUILD_DEPLOYMENT_AND_PACKAGING.md)
 
-Chất lượng phần mềm và độ tin cậy tuyệt đối được đảm bảo thông qua bộ kiểm thử tự động toàn diện trong dự án `WinCarePro.Tests` với **230 bài kiểm thử xUnit đạt tỷ lệ vượt qua 100% (230/230 Passed — Zero-Bug Policy)**.
+Chất lượng phần mềm và độ tin cậy tuyệt đối được đảm bảo thông qua bộ kiểm thử tự động toàn diện trong dự án `WinCarePro.Tests` với **227 bài kiểm thử xUnit đạt tỷ lệ vượt qua 100% (227/227 Passed — Zero-Bug Policy)**.
 
 ---
 
@@ -14,12 +14,12 @@ Chất lượng phần mềm và độ tin cậy tuyệt đối được đảm 
 - **Vị trí thư mục:** [WinCarePro.Tests/](file:///d:/WinCare/WinCarePro.Tests/)
 
 ```mermaid
-pie title Phân Bổ 230 Tests Theo Danh Mục
+pie title Phân Bổ 227 Tests Theo Danh Mục
     "Security & Sanitization" : 42
     "Engines & Business Logic" : 58
     "Database & Migrations" : 32
     "AI Heuristics & Scoring" : 36
-    "UI State & Theme Consistency" : 34
+    "UI State & Theme Consistency" : 31
     "Process & Safety Guards" : 28
 ```
 

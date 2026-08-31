@@ -168,7 +168,7 @@ public class JunkCleanerEngine
         }
     }
 
-    private JunkCategory ScanPaths(IEnumerable<string> paths, string name, string description, JunkType type, string iconGlyph, string iconColor, string primaryFolder, string searchPattern = "*", bool recursive = true, CancellationToken token = default)
+    private JunkCategory ScanPaths(IEnumerable<string> paths, string name, string description, JunkType type, string iconGlyph, string iconColor, string primaryFolder, string searchPattern = "*", bool recursive = true, CancellationToken token = default, bool isSelected = true)
     {
         long bytes = 0;
         long cleanableBytes = 0;
@@ -212,7 +212,7 @@ public class JunkCleanerEngine
             CleanableBytes = cleanableBytes,
             LockedBytes = lockedBytes,
             FileCount = count,
-            IsSelected = true,
+            IsSelected = isSelected,
             IconGlyph = iconGlyph,
             IconColor = iconColor,
             FolderPath = primaryFolder,
@@ -319,7 +319,7 @@ public class JunkCleanerEngine
             {
                 token.ThrowIfCancellationRequested();
                 string shaderCachePath = Path.Combine(localAppData, @"D3DSCache");
-                var cat = ScanPaths(new[] { shaderCachePath }, "DirectX Shader Cache", "Graphics driver compiled shaders cache for speeding up UI renders.", JunkType.ShaderCache, "\uE7F6", "#FF8B5CF6", shaderCachePath, token: token);
+                var cat = ScanPaths(new[] { shaderCachePath }, "DirectX Shader Cache", "Graphics driver compiled shaders cache. Cleaning may cause temporary frame stutter while shaders recompile.", JunkType.ShaderCache, "\uE7F6", "#FF8B5CF6", shaderCachePath, token: token, isSelected: false);
                 ReportCategoryDone("Shader Cache");
                 return cat;
             }, token);
@@ -376,7 +376,7 @@ public class JunkCleanerEngine
             {
                 token.ThrowIfCancellationRequested();
                 string prefetchPath = Path.Combine(systemRoot, "Prefetch");
-                var cat = ScanPaths(new[] { prefetchPath }, "System Prefetch Files", "System prefetch cache files created to speed up application startup.", JunkType.Prefetch, "\uE8A3", "#FFEAB308", prefetchPath, token: token);
+                var cat = ScanPaths(new[] { prefetchPath }, "System Prefetch Files", "System prefetch cache files created to speed up application startup. Cleaning forces cache rebuild.", JunkType.Prefetch, "\uE8A3", "#FFEAB308", prefetchPath, token: token, isSelected: false);
                 ReportCategoryDone("Prefetch");
                 return cat;
             }, token);

@@ -35,23 +35,12 @@
                         <Setter Target="HeaderActionsPanel.Margin" Value="0,8,0,0" />
 
                         <!-- Stats Grid Stacking to 2x2 layout -->
-                        <Setter Target="StatsCol2.Width" Value="0" />
-                        <Setter Target="StatsCol3.Width" Value="0" />
+                        <Setter Target="StatCol2.Width" Value="0" />
+                        <Setter Target="StatCol3.Width" Value="0" />
+                        <Setter Target="StatCard2.(Grid.Row)" Value="1" />
+                        <Setter Target="StatCard2.(Grid.Column)" Value="0" />
                         <Setter Target="StatCard3.(Grid.Row)" Value="1" />
-                        <Setter Target="StatCard3.(Grid.Column)" Value="0" />
-                        <Setter Target="StatCard4.(Grid.Row)" Value="1" />
-                        <Setter Target="StatCard4.(Grid.Column)" Value="1" />
-
-                        <!-- Toolbar 2-Row Layout -->
-                        <Setter Target="SearchBox.(Grid.Row)" Value="1" />
-                        <Setter Target="SearchBox.(Grid.Column)" Value="0" />
-                        <Setter Target="SearchBox.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="SearchBox.Margin" Value="0,8,0,0" />
-
-                        <Setter Target="EngineStack.(Grid.Row)" Value="1" />
-                        <Setter Target="EngineStack.(Grid.Column)" Value="2" />
-                        <Setter Target="EngineStack.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="EngineStack.Margin" Value="10,8,0,0" />
+                        <Setter Target="StatCard3.(Grid.Column)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -71,36 +60,15 @@
                         <Setter Target="HeaderActionsPanel.Margin" Value="0,8,0,0" />
 
                         <!-- Stats Grid Stacking to 1x4 layout -->
-                        <Setter Target="StatsCol1.Width" Value="0" />
-                        <Setter Target="StatsCol2.Width" Value="0" />
-                        <Setter Target="StatsCol3.Width" Value="0" />
-                        <Setter Target="StatCard2.(Grid.Row)" Value="1" />
+                        <Setter Target="StatCol1.Width" Value="0" />
+                        <Setter Target="StatCol2.Width" Value="0" />
+                        <Setter Target="StatCol3.Width" Value="0" />
+                        <Setter Target="StatCard1.(Grid.Row)" Value="1" />
+                        <Setter Target="StatCard1.(Grid.Column)" Value="0" />
+                        <Setter Target="StatCard2.(Grid.Row)" Value="2" />
                         <Setter Target="StatCard2.(Grid.Column)" Value="0" />
-                        <Setter Target="StatCard3.(Grid.Row)" Value="2" />
+                        <Setter Target="StatCard3.(Grid.Row)" Value="3" />
                         <Setter Target="StatCard3.(Grid.Column)" Value="0" />
-                        <Setter Target="StatCard4.(Grid.Row)" Value="3" />
-                        <Setter Target="StatCard4.(Grid.Column)" Value="0" />
-
-                        <!-- Toolbar Stacking -->
-                        <Setter Target="StatusFilterStack.(Grid.Row)" Value="0" />
-                        <Setter Target="StatusFilterStack.(Grid.ColumnSpan)" Value="4" />
-                        
-                        <Setter Target="SearchBox.(Grid.Row)" Value="1" />
-                        <Setter Target="SearchBox.(Grid.Column)" Value="0" />
-                        <Setter Target="SearchBox.(Grid.ColumnSpan)" Value="4" />
-                        <Setter Target="SearchBox.Width" Value="NaN" />
-                        <Setter Target="SearchBox.HorizontalAlignment" Value="Stretch" />
-                        <Setter Target="SearchBox.Margin" Value="0,8,0,0" />
-                        
-                        <Setter Target="EngineStack.(Grid.Row)" Value="2" />
-                        <Setter Target="EngineStack.(Grid.Column)" Value="0" />
-                        <Setter Target="EngineStack.(Grid.ColumnSpan)" Value="4" />
-                        <Setter Target="EngineStack.Margin" Value="0,8,0,0" />
-                        
-                        <Setter Target="SelectionStack.(Grid.Row)" Value="3" />
-                        <Setter Target="SelectionStack.(Grid.Column)" Value="0" />
-                        <Setter Target="SelectionStack.(Grid.ColumnSpan)" Value="4" />
-                        <Setter Target="SelectionStack.Margin" Value="0,8,0,0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -143,217 +111,161 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- Right: Action Buttons -->
+            <!-- Right: Action Buttons (Scan + Update All + More) -->
+            <!-- Right: Action Buttons (Scan + Update All + More) -->
             <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <!-- Scan Updates Button -->
-                <Button x:Name="ScanUpdatesBtn" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,7" FontSize="12">
+                <!-- Scan Updates Button (Hero CTA) -->
+                <Button x:Name="ScanUpdatesBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <ProgressRing x:Name="ScanUpdatesRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
-                        <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" />
-                        <TextBlock x:Name="ScanUpdatesText" Text="Scan Updates" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <ProgressRing x:Name="ScanUpdatesRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center"/>
+                        <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="White" />
+                        <TextBlock x:Name="ScanUpdatesText" Text="Scan for Updates" VerticalAlignment="Center" FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
 
-                <!-- Update Selected Button -->
-                <Button x:Name="UpdateSelectedBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateSelectedClick" IsEnabled="{x:Bind CanUpdateSelected(ViewModel.HasSelectedUpdates, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12">
+                <!-- Update All Apps Hero Primary CTA (Only visible when there are pending updates) -->
+                <Button x:Name="UpdateAllBtn" Style="{StaticResource AccentButtonStyle}" Background="#FF10B981" Foreground="White" Click="OnUpdateAllClick" Visibility="{x:Bind HasPendingUpdatesVisibility(ViewModel.PendingUpdatesCount, ViewModel.IsBusy), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <ProgressRing x:Name="UpdateSelectedRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center"/>
+                        <ProgressRing x:Name="UpdateAllRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center"/>
                         <FontIcon Glyph="&#xE896;" FontSize="12" Foreground="White" />
-                        <TextBlock x:Name="UpdateSelectedText" Text="Update Selected" FontWeight="Bold"/>
+                        <TextBlock x:Name="UpdateAllText" Text="{x:Bind GetUpdateAllButtonText(ViewModel.PendingUpdatesCount), Mode=OneWay}" FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
-
-                <!-- Update All Button -->
-                <Button x:Name="UpdateAllBtn" Click="OnUpdateAllClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,7" FontSize="12">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <ProgressRing x:Name="UpdateAllRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
-                        <FontIcon Glyph="&#xE777;" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock x:Name="UpdateAllText" Text="Update All" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                    </StackPanel>
-                </Button>
-
-                <!-- Driver Backup & Restore DropDown Button -->
-                <DropDownButton x:Name="DriverToolsBtn" Style="{StaticResource DefaultButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="12,0" FontSize="12">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE7F1;" FontSize="12" Foreground="#FF10B981" />
-                        <TextBlock Text="Driver Shield" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                    </StackPanel>
-                    <DropDownButton.Flyout>
-                        <MenuFlyout Placement="BottomEdgeAlignedRight">
-                            <MenuFlyoutItem Text="Backup OEM Drivers (Safe Export)" Click="OnBackupDriversClick">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE792;" Foreground="#FF10B981" />
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem Text="Restore Drivers From Backup..." Click="OnRestoreDriversClick">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE777;" Foreground="#FF3B82F6" />
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                        </MenuFlyout>
-                    </DropDownButton.Flyout>
-                </DropDownButton>
             </StackPanel>
         </Grid>
 
         <!-- ==================== 1. 4-CARD STAT RIBBON ==================== -->
         <Grid x:Name="StatsGrid" Grid.Row="1" Margin="0,0,0,10" ColumnSpacing="10" RowSpacing="8">
             <Grid.RowDefinitions>
-                <RowDefinition x:Name="StatsRow0" Height="Auto" />
-                <RowDefinition x:Name="StatsRow1" Height="Auto" />
-                <RowDefinition x:Name="StatsRow2" Height="Auto" />
-                <RowDefinition x:Name="StatsRow3" Height="Auto" />
+                <RowDefinition x:Name="StatRow0" Height="Auto" />
+                <RowDefinition x:Name="StatRow1" Height="Auto" />
+                <RowDefinition x:Name="StatRow2" Height="Auto" />
+                <RowDefinition x:Name="StatRow3" Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="StatsCol0" Width="*" />
-                <ColumnDefinition x:Name="StatsCol1" Width="*" />
-                <ColumnDefinition x:Name="StatsCol2" Width="*" />
-                <ColumnDefinition x:Name="StatsCol3" Width="*" />
+                <ColumnDefinition x:Name="StatCol0" Width="*" />
+                <ColumnDefinition x:Name="StatCol1" Width="*" />
+                <ColumnDefinition x:Name="StatCol2" Width="*" />
+                <ColumnDefinition x:Name="StatCol3" Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Card 1: Pending Updates -->
-            <Border x:Name="StatCard1" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}"
+            <!-- Card 0: System App Health Score -->
+            <Border x:Name="StatCard0" Grid.Row="0" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="#20F59E0B" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE787;" FontSize="18" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Pending Updates" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
-                            <TextBlock Text="packages" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-            </Border>
 
-            <!-- Card 2: Completed Updates -->
-            <Border x:Name="StatCard2" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="#2010B981" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE73E;" FontSize="18" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Up-to-Date Packages" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <TextBlock Text="{x:Bind ViewModel.CompletedCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="#FF10B981"/>
-                            <TextBlock Text="installed" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Card 3: Active Engine -->
-            <Border x:Name="StatCard3" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="#208B5CF6" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE945;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Active Package Engine" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.ActiveEngineName, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind ViewModel.ActiveEngineName, Mode=OneWay}"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Card 4: System Update Health Rating -->
-            <Border x:Name="StatCard4" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <ProgressRing Value="{x:Bind ViewModel.SystemHealthScore, Mode=OneWay}" IsActive="True" IsIndeterminate="False" Width="36" Height="36" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" />
-                        <TextBlock Text="{x:Bind GetSecurityRatingText(ViewModel.PendingUpdatesCount), Mode=OneWay}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Grid Grid.Column="0" Width="40" Height="40" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <Ellipse Stroke="{StaticResource PrimaryAccentGradient}" StrokeThickness="3" Opacity="0.25" />
+                        <ProgressRing Value="{x:Bind GetSecurityRating(ViewModel.PendingUpdatesCount), Mode=OneWay}" Width="38" Height="38" 
+                                      Foreground="{StaticResource PrimaryAccentBrush}" Background="Transparent" />
+                        <TextBlock Text="{x:Bind GetSecurityRatingText(ViewModel.PendingUpdatesCount), Mode=OneWay}" 
+                                   FontSize="12" FontWeight="ExtraBold" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Foreground="{StaticResource PrimaryAccentBrush}" />
                     </Grid>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="System Update Health" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.SystemHealthStatus, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{x:Bind GetBrushFromHex(ViewModel.SystemHealthColor), Mode=OneWay}" TextTrimming="CharacterEllipsis"/>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Software Security Index" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <Border Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="6" Padding="6,2" HorizontalAlignment="Left">
+                            <TextBlock Text="{x:Bind ViewModel.SystemHealthStatus, Mode=OneWay}" FontSize="10" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeGoodFg}" />
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 1: Pending Updates Status -->
+            <Border x:Name="StatCard1" Grid.Row="0" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#20F59E0B" BorderBrush="#50F59E0B" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE895;" FontSize="16" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Pending Updates" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="12" FontWeight="ExtraBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        </Grid>
+                        <Border Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="6,1" HorizontalAlignment="Left" Visibility="{x:Bind HasNoPendingUpdatesVisibility(ViewModel.PendingUpdatesCount), Mode=OneWay}">
+                            <TextBlock Text="All Up-to-Date" FontSize="9.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 2: Engine & Channel Mode -->
+            <Border x:Name="StatCard2" Grid.Row="0" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#203B82F6" BorderBrush="#503B82F6" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE896;" FontSize="16" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Package Provider" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.ActiveEngineName, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="#FF3B82F6" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 3: Last Synchronization -->
+            <Border x:Name="StatCard3" Grid.Row="0" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE777;" FontSize="16" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Last Sync Time" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.LastScanTime, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                 </Grid>
             </Border>
         </Grid>
 
-        <!-- ==================== 2. TOOLBAR & STATUS FILTER TABS ==================== -->
-        <Grid x:Name="ToolbarGrid" Grid.Row="2" Margin="0,0,0,10" RowSpacing="6">
-            <Grid.RowDefinitions>
-                <RowDefinition x:Name="ToolbarRow0" Height="Auto" />
-                <RowDefinition x:Name="ToolbarRow1" Height="Auto" />
-                <RowDefinition x:Name="ToolbarRow2" Height="Auto" />
-                <RowDefinition x:Name="ToolbarRow3" Height="Auto" />
-            </Grid.RowDefinitions>
+        <!-- ==================== 2. TOOLBAR & FILTERS ==================== -->
+        <Grid x:Name="ToolbarGrid" Grid.Row="2" Margin="0,0,0,10" Visibility="{x:Bind HasItemsVisibility(ViewModel.TotalFoundCount, ViewModel.IsBusy), Mode=OneWay}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="ToolbarCol0" Width="Auto" />
-                <ColumnDefinition x:Name="ToolbarCol1" Width="*" />
-                <ColumnDefinition x:Name="ToolbarCol2" Width="Auto" />
-                <ColumnDefinition x:Name="ToolbarCol3" Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Status Filter Tabs (Column 0 Left) -->
-            <StackPanel x:Name="StatusFilterStack" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                <ToggleButton Content="All" IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'All'), Mode=OneWay}" Click="OnFilterAllClick" CornerRadius="8" Padding="12,5" FontSize="11.5" FontWeight="SemiBold"/>
-                
-                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Pending'), Mode=OneWay}" Click="OnFilterPendingClick" CornerRadius="8" Padding="12,5" FontSize="11.5" FontWeight="SemiBold">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <TextBlock Text="Pending" />
-                        <Border Background="#35F59E0B" Padding="6,1" CornerRadius="8">
-                            <TextBlock Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="10" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
-                        </Border>
-                    </StackPanel>
-                </ToggleButton>
-
-                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Updating'), Mode=OneWay}" Click="OnFilterUpdatingClick" CornerRadius="8" Padding="12,5" FontSize="11.5" FontWeight="SemiBold">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <TextBlock Text="Updating" />
-                        <Border Background="#353B82F6" Padding="6,1" CornerRadius="8">
-                            <TextBlock Text="{x:Bind ViewModel.UpdatingCount, Mode=OneWay}" FontSize="10" FontWeight="ExtraBold" Foreground="#FF3B82F6"/>
-                        </Border>
-                    </StackPanel>
-                </ToggleButton>
-
-                <ToggleButton IsChecked="{x:Bind IsFilterSelected(ViewModel.SelectedStatusFilter, 'Completed'), Mode=OneWay}" Click="OnFilterCompletedClick" CornerRadius="8" Padding="12,5" FontSize="11.5" FontWeight="SemiBold">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <TextBlock Text="Completed" />
-                        <Border Background="#3510B981" Padding="6,1" CornerRadius="8">
-                            <TextBlock Text="{x:Bind ViewModel.CompletedCount, Mode=OneWay}" FontSize="10" FontWeight="ExtraBold" Foreground="#FF10B981"/>
-                        </Border>
-                    </StackPanel>
-                </ToggleButton>
-            </StackPanel>
+            <!-- Status Segmented Pills (Pivot) -->
+            <Pivot Grid.Column="0" SelectionChanged="OnFilterPivotSelectionChanged" Margin="0,-8,0,0">
+                <Pivot.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" FontSize="13" FontWeight="SemiBold" Margin="0,0,6,0" />
+                    </DataTemplate>
+                </Pivot.HeaderTemplate>
+                <PivotItem Header="All" Tag="All" />
+                <PivotItem Header="Pending" Tag="Pending" />
+                <PivotItem Header="Completed" Tag="Completed" />
+            </Pivot>
             
-            <!-- Search Box (Column 1/2 Right) -->
-            <TextBox x:Name="SearchBox" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Width="220" PlaceholderText="Search package name or ID..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="8" Height="34" VerticalAlignment="Center"/>
-
-            <!-- Engine Selector (Column 2 Right) -->
-            <StackPanel x:Name="EngineStack" Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
-                <TextBlock Text="Engine:" VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                <ComboBox SelectedValue="{x:Bind ViewModel.UpdateEngine, Mode=TwoWay}" SelectedValuePath="Tag" Width="200" Height="34" CornerRadius="8" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
-                    <ComboBoxItem Content="Windows Package Manager" Tag="winget"/>
-                    <ComboBoxItem Content="Direct Downloader" Tag="direct"/>
-                </ComboBox>
-            </StackPanel>
-
-            <!-- Multi Selection Controls (Column 3 Right) -->
-            <StackPanel x:Name="SelectionStack" Grid.Row="0" Grid.Column="3" Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center" Spacing="6">
-                <Button Content="Select All" Click="OnSelectAllClick" FontSize="11.5" Height="34" CornerRadius="8" Padding="10,0"/>
-                <Button Content="Deselect All" Click="OnDeselectAllClick" FontSize="11.5" Height="34" CornerRadius="8" Padding="10,0"/>
+            <!-- Master Selection & Search Box (Right) -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <CheckBox Content="Select All" 
+                          Checked="OnMasterSelectAllChanged" 
+                          Unchecked="OnMasterSelectAllChanged" 
+                          FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <TextBox x:Name="SearchBox" Width="220" PlaceholderText="Search package..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="8" Height="34" VerticalAlignment="Center"/>
             </StackPanel>
         </Grid>
 
@@ -500,17 +412,18 @@
             </Border>
 
             <!-- Empty State (Aura Glass Synced) -->
-            <Grid Visibility="{x:Bind IsListEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,32,0,32">
+            <Grid Visibility="{x:Bind IsListEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20">
                 <Border Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="16" Padding="32,24" MaxWidth="440">
-                    <StackPanel Spacing="14" HorizontalAlignment="Center">
-                        <Border Width="64" Height="64" CornerRadius="32" Background="#1E10B981" BorderBrush="#4010B981" BorderThickness="1.5" HorizontalAlignment="Center">
-                            <FontIcon Glyph="&#xE73E;" FontSize="30" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <StackPanel Spacing="12" HorizontalAlignment="Center">
+                        <Border Width="56" Height="56" CornerRadius="28" Background="#1E10B981" BorderBrush="#4010B981" BorderThickness="1.5" HorizontalAlignment="Center">
+                            <FontIcon Glyph="&#xE73E;" FontSize="26" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-                        <StackPanel Spacing="4" HorizontalAlignment="Center">
-                            <TextBlock Text="All Applications Up to Date" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display"/>
-                            <TextBlock Text="No pending software updates detected for the current filter." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+                        <StackPanel Spacing="3" HorizontalAlignment="Center">
+                            <TextBlock Text="All Applications Up to Date" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display"/>
+                            <TextBlock Text="No pending software updates detected for your system." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
                         </StackPanel>
-                        <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,6" HorizontalAlignment="Center">
+
+                        <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,6" HorizontalAlignment="Center" Margin="0,4,0,0">
                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE777;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                 <TextBlock Text="WinGet Repository &amp; Direct Channel Synced" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>

@@ -86,7 +86,7 @@ public class AiWinCareEngineTests
     [InlineData("máy bị tràn ram", "NavigateOptimizer")]
     [InlineData("dọn rác ổ đĩa", "NavigateJunkCleaner")]
     [InlineData("ổ c bị đầy dung lượng", "NavigateDisk")]
-    [InlineData("chơi game bị lag drop fps", "NavigateGamingTurbo")]
+    [InlineData("chơi game bị lag drop fps", "NavigateOptimizer")]
     [InlineData("mạng wifi bị chậm ping cao", "NavigateNetwork")]
     [InlineData("khởi động win chậm", "NavigateStartup")]
     [InlineData("lỗi hệ thống sfc", "NavigateRepair")]

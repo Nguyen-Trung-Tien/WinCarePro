@@ -120,7 +120,7 @@ public class SystemTweak : INotifyPropertyChanged
             string rec = RecommendedValue;
             try
             {
-                if (Id == "AllowAutoGameMode" || Id == "NtfsDisableLastAccessUpdate" || Id == "AllowTelemetry" || Id == "AllowCortana" || Id == "WerDisabled" || Id == "DisableBackoff" || Id == "LargeSystemCache" || Id == "DisablePagingExecutive" || Id == "TcpAckFrequency" || Id == "DisableLocation")
+                if (Id == "NtfsDisableLastAccessUpdate" || Id == "AllowTelemetry" || Id == "AllowCortana" || Id == "WerDisabled" || Id == "DisableLocation")
                 {
                     cur = cur == "1" ? "Enabled".T() : "Disabled".T();
                     rec = rec == "1" ? "Enabled".T() : "Disabled".T();

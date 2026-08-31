@@ -72,14 +72,6 @@ public class RegistryBackupEngine
         }
         catch { }
 
-#if DEBUG
-        // If no issues found, return a default mock clean report or visual placeholders
-        if (issues.Count == 0)
-        {
-            issues.Add(new RegistryIssue { Section = "Software Reference", KeyPath = @"HKCU\Software\OldDeletedSoftware", ValueName = "InstallPath", ValueData = @"C:\Program Files\OldDeletedSoftware", Description = "Registry path references uninstalled program directory." });
-        }
-#endif
-
         return issues;
     }
 

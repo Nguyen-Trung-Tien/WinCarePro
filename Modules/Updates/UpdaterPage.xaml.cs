@@ -64,28 +64,27 @@ public sealed partial class UpdaterPage : Page
     {
         var btn = UpdateAllBtn ?? (sender as Button);
         if (btn != null) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
+        
+        bool hasSelection = ViewModel.HasSelectedUpdates;
+        string loadingMsg = hasSelection ? "Updating Selected..." : "Updating All...";
+        string idleMsg = "Update All Apps";
+
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, UpdateAllRing, UpdateAllText, null,
-            "Updating All...", "Update All",
+            loadingMsg, idleMsg,
             async () =>
             {
-                await ViewModel.UpdateAllAppsAsync();
+                if (hasSelection)
+                    await ViewModel.UpdateSelectedAppsAsync();
+                else
+                    await ViewModel.UpdateAllAppsAsync();
             },
             minDurationMs: 1200);
     }
 
     private async void OnUpdateSelectedClick(object sender, RoutedEventArgs e)
     {
-        var btn = UpdateSelectedBtn ?? (sender as Button);
-        if (btn != null) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, UpdateSelectedRing, UpdateSelectedText, null,
-            "Updating Selected...", "Update Selected",
-            async () =>
-            {
-                await ViewModel.UpdateSelectedAppsAsync();
-            },
-            minDurationMs: 1200);
+        await ViewModel.UpdateSelectedAppsAsync();
     }
 
     private async void OnUpdateSingleClick(object sender, RoutedEventArgs e)
@@ -109,6 +108,22 @@ public sealed partial class UpdaterPage : Page
     private void OnDeselectAllClick(object sender, RoutedEventArgs e)
     {
         ViewModel.SetAllSelection(false);
+    }
+
+    private void OnMasterSelectAllChanged(object sender, RoutedEventArgs e)
+    {
+        if (sender is CheckBox cb)
+        {
+            ViewModel.SetAllSelection(cb.IsChecked == true);
+        }
+    }
+
+    private void OnFilterPivotSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is Pivot pivot && pivot.SelectedItem is PivotItem item && item.Tag is string tag)
+        {
+            ViewModel.SelectedStatusFilter = tag;
+        }
     }
 
     private void OnFilterAllClick(object sender, RoutedEventArgs e)
@@ -135,9 +150,21 @@ public sealed partial class UpdaterPage : Page
 
     public bool CanUpdateSelected(bool hasSelected, bool isBusy) => hasSelected && !isBusy;
 
+    public Visibility HasItemsVisibility(int count, bool isBusy) => (count > 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
+
     public Visibility IsListNotEmpty(int count, bool isBusy) => (count > 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 
     public Visibility IsListEmpty(int count, bool isBusy) => (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
+
+    public Visibility HasPendingUpdatesVisibility(int pendingCount, bool isBusy) => (pendingCount > 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
+
+    public Visibility HasNoPendingUpdatesVisibility(int pendingCount) => (pendingCount <= 0) ? Visibility.Visible : Visibility.Collapsed;
+
+    public string GetUpdateAllButtonText(int pendingCount)
+    {
+        if (pendingCount <= 0) return "Update All Apps";
+        return $"Update All ({pendingCount})";
+    }
 
     public Brush GetBrushFromHex(string? hex)
     {

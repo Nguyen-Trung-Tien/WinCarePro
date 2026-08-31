@@ -81,10 +81,9 @@ graph TD
   - Iterates non-critical user-space processes via `OpenProcess` (`PROCESS_SET_QUOTA | PROCESS_QUERY_INFORMATION`).
   - Executes `EmptyWorkingSet` via native `psapi.dll` with parallel throttling.
   - Evaluates before/after physical RAM counters via `GlobalMemoryStatusEx`.
-- **System Tweaks (18 Granular Tweaks):**
-  - **Performance:** `MenuShowDelay`, `AutoEndTasks`, `WaitToKillAppTimeout`, `NetworkThrottlingIndex`, `SystemResponsiveness`, `MinAnimate`, `DisablePagingExecutive`.
-  - **Disk & Storage:** `NtfsDisableLastAccessUpdate`, `DisableBackoff`, `LargeSystemCache`.
-  - **Gaming & GPU:** `AllowAutoGameMode`, `HwSchMode` (Hardware Accelerated GPU Scheduling), `TcpAckFrequency`, `GameDVR_Enabled`.
+- **System Tweaks (13 Granular Safe Tweaks):**
+  - **Performance:** `MenuShowDelay`, `AutoEndTasks`, `WaitToKillAppTimeout`, `NetworkThrottlingIndex`, `SystemResponsiveness`, `MinAnimate`, `HwSchMode`, `GameDVR_Enabled`.
+  - **Disk & Storage:** `NtfsDisableLastAccessUpdate`.
   - **Privacy & System Logs:** `AllowTelemetry`, `AllowCortana`, `WerDisabled`, `DisableLocation`.
 - **State Snapshots & Reversibility:** Before applying any tweak, the original state is logged to `DbManager.SaveSnapshot("SystemTweak", tweak.Id, originalValue, recommendedValue)`, enabling atomic 1-click restore.
 
@@ -176,7 +175,7 @@ WinCare Pro includes a comprehensive xUnit test suite (`WinCarePro.Tests`):
 | `NetworkCenterEngineTests` | Network Engine | DNS benchmark, packet parsing, ping telemetry. |
 | `SettingsAndStateTests` | Config & Theme | Theme persistence, user settings caching, JSON serialization. |
 
-- **Test Suite Status:** **219 tests passing (100% success rate, 0 failures, 0 regressions)**.
+- **Test Suite Status:** **227 tests passing (100% success rate, 0 failures, 0 regressions)**.
 
 ---
 

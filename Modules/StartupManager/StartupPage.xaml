@@ -247,61 +247,65 @@
                         <StackPanel Spacing="24" HorizontalAlignment="Stretch">
                             
                             <!-- 2-Column Grid for Management Tool Shortcuts -->
-                            <Grid ColumnSpacing="20" RowSpacing="20" HorizontalAlignment="Stretch">
+                            <Grid ColumnSpacing="14" HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Card 1: Services Manager (services.msc) -->
-                                <Border Grid.Column="0" Style="{StaticResource Tilt3DCardStyle}" Padding="24"
-                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="12">
-                                    <Grid RowSpacing="16">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
+                                <Border Grid.Column="0" Style="{StaticResource Tilt3DCardStyle}" Padding="16,14"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
                                         
-                                        <StackPanel Orientation="Horizontal" Spacing="14">
-                                            <Border Width="48" Height="48" CornerRadius="12" Background="#203B82F6" BorderBrush="#353B82F6" BorderThickness="1.2">
-                                                <FontIcon Glyph="&#xE713;" FontSize="22" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel VerticalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="Services Manager" FontWeight="Bold" FontSize="16"/>
-                                                <TextBlock Text="services.msc" FontSize="11" Foreground="#FF3B82F6" FontWeight="SemiBold"/>
-                                            </StackPanel>
+                                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#203B82F6" BorderBrush="#353B82F6" BorderThickness="1.2" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE713;" FontSize="18" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                            <TextBlock Text="Services Manager" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="services.msc · Configure Windows services startup types" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
                                         </StackPanel>
                                         
-                                        <TextBlock Grid.Row="1" Text="Configure Windows services startup types and background processes." TextWrapping="Wrap" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
-                                        
-                                        <Button Grid.Row="2" Content="Open Services Manager →" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOpenServicesMscClick" CornerRadius="10" Padding="18,10" FontWeight="Bold" HorizontalAlignment="Stretch"/>
+                                        <Button Grid.Column="2" Click="OnOpenServicesMscClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="8" Height="32" Padding="12,0" VerticalAlignment="Center" ToolTipService.ToolTip="Open Windows Services Manager">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="11"/>
+                                                <TextBlock Text="Open" FontSize="11.5" FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Card 2: Task Manager Services View -->
-                                <Border Grid.Column="1" Style="{StaticResource Tilt3DCardStyle}" Padding="24"
-                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="12">
-                                    <Grid RowSpacing="16">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
+                                <Border Grid.Column="1" Style="{StaticResource Tilt3DCardStyle}" Padding="16,14"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
                                         
-                                        <StackPanel Orientation="Horizontal" Spacing="14">
-                                            <Border Width="48" Height="48" CornerRadius="12" Background="#20F59E0B" BorderBrush="#35F59E0B" BorderThickness="1.2">
-                                                <FontIcon Glyph="&#xE9D9;" FontSize="22" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <StackPanel VerticalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="Task Manager Services" FontWeight="Bold" FontSize="16"/>
-                                                <TextBlock Text="taskmgr.exe /Services" FontSize="11" Foreground="#FFF59E0B" FontWeight="SemiBold"/>
-                                            </StackPanel>
+                                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#20F59E0B" BorderBrush="#35F59E0B" BorderThickness="1.2" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE9D9;" FontSize="18" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                            <TextBlock Text="Task Manager Services" FontWeight="Bold" FontSize="13"/>
+                                            <TextBlock Text="taskmgr.exe · Monitor live service PIDs &amp; RAM usage" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
                                         </StackPanel>
                                         
-                                        <TextBlock Grid.Row="1" Text="Monitor live service PIDs and real-time CPU/RAM usage." TextWrapping="Wrap" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="18"/>
-                                        
-                                        <Button Grid.Row="2" Content="Open Task Manager →" Click="OnOpenTaskMgrServicesClick" CornerRadius="10" Padding="18,10" FontWeight="Bold" HorizontalAlignment="Stretch"/>
+                                        <Button Grid.Column="2" Click="OnOpenTaskMgrServicesClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="8" Height="32" Padding="12,0" VerticalAlignment="Center" ToolTipService.ToolTip="Open Task Manager Services View">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="11"/>
+                                                <TextBlock Text="Open" FontSize="11.5" FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
                             </Grid>

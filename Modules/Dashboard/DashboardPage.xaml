@@ -85,7 +85,7 @@
                 <Button Click="OnLaunchGamingTurboClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" Padding="12,0" VerticalAlignment="Center" CornerRadius="6">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE7FC;" FontSize="12" Foreground="#FFF59E0B"/>
-                        <TextBlock Text="System Turbo" FontSize="11.5" FontWeight="SemiBold"/>
+                        <TextBlock Text="System Optimizer" FontSize="11.5" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 

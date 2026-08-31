@@ -41,7 +41,7 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="AI WinCare Engine" Tag="AiWinCareEngine" AutomationProperties.Name="AI WinCare Engine" AutomationProperties.HelpText="Intelligent multi-factor system diagnostics and automated remedies.">
+                <NavigationViewItem Content="Smart Diagnostics" Tag="AiWinCareEngine" AutomationProperties.Name="Smart Diagnostics" AutomationProperties.HelpText="Intelligent multi-factor system diagnostics and automated remedies.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE99A;" Foreground="#FF06B6D4" />
                     </NavigationViewItem.Icon>
@@ -93,21 +93,9 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Gaming Turbo" Tag="GamingTurbo" AutomationProperties.Name="Gaming Turbo" AutomationProperties.HelpText="High performance power scheme and background priority tuning.">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE785;" Foreground="#FFFF4081" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
                 <NavigationViewItem Content="Context Menu" Tag="ContextMenu" AutomationProperties.Name="Context Menu Manager" AutomationProperties.HelpText="Manage and clean Windows Explorer right-click shell extensions.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE8EC;" Foreground="#FFA855F7" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
-                <NavigationViewItem Content="Startup &amp; Services" Tag="Startup" AutomationProperties.Name="Startup &amp; Services" AutomationProperties.HelpText="Manage startup applications and Windows background services.">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7B5;" Foreground="Gold" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 

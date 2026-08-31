@@ -99,7 +99,7 @@ graph LR
     Checkout["1. Checkout Code"] --> SetupDotnet["2. Setup .NET 10 SDK"]
     SetupDotnet --> Restore["3. Restore NuGet Packages"]
     Restore --> Build["4. Compile Release Solution"]
-    Build --> Test["5. Run xUnit 230 Tests"]
+    Build --> Test["5. Run xUnit 227 Tests"]
     Test --> Pack["6. Package Inno Setup Installer"]
     Pack --> Release["7. Publish Artifacts / GitHub Release"]
 ```

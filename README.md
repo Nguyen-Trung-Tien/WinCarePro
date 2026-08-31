@@ -23,7 +23,7 @@
     <img src="https://img.shields.io/badge/Database-SQLite_3_(WAL)-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite 3" />
     <img src="https://img.shields.io/badge/Architecture-Modular_MVVM-008080?style=flat-square" alt="MVVM Pattern" />
     <img src="https://img.shields.io/badge/OS_Support-Windows_10_%2F_11-0078D6?style=flat-square&logo=windows" alt="Windows 10/11" />
-    <img src="https://img.shields.io/badge/Tests-100%25%20Passed%20(230%2F230)-success?style=flat-square&logo=xunit" alt="Tests Passed (230/230)" />
+    <img src="https://img.shields.io/badge/Tests-100%25%20Passed%20(227%2F227)-success?style=flat-square&logo=xunit" alt="Tests Passed (227/227)" />
     <img src="https://img.shields.io/badge/Security-Zero--Bug%20Hardened-green?style=flat-square&logo=shield" alt="Zero-Bug Hardened" />
   </p>
 </div>
@@ -163,11 +163,11 @@ dotnet run
 
 ## 🏆 Đảm Bảo Chất Lượng & Kết Quả Kiểm Thử (100% Passed)
 
-Toàn bộ **230/230 Unit Tests** trong bộ kiểm thử `WinCarePro.Tests` đều vượt qua thành công:
+Toàn bộ **227/227 Unit Tests** trong bộ kiểm thử `WinCarePro.Tests` đều vượt qua thành công:
 
 ```text
 Test run for WinCarePro.Tests.dll (.NETCoreApp,Version=v10.0)
-Passed!  - Failed: 0, Passed: 230, Skipped: 0, Total: 230, Duration: 10 s
+Passed!  - Failed: 0, Passed: 227, Skipped: 0, Total: 227, Duration: 8 s
 ```
 
 ---

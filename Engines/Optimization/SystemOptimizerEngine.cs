@@ -75,101 +75,49 @@ public class SystemOptimizerEngine
     }
 
     /// <summary>
-    /// High-performance multi-threaded memory optimizer.
-    /// Trims process working sets in parallel and purges garbage collection to free maximum RAM cache.
+    /// Safe and legitimate memory maintenance.
+    /// Cleans WinCare process working set, purges managed runtime garbage collection,
+    /// and safely prompts the OS to optimize memory without forcing hard page faults on system apps.
     /// </summary>
     public async Task<(int processesOptimized, long memoryReclaimedBytes)> OptimizeRamAsync()
     {
-        Log("Starting high-performance physical memory (RAM) optimization...");
-        int count = 0;
-        long memoryReclaimed = 0;
-
+        Log("Starting safe system physical memory (RAM) optimization...");
         ulong ramBefore = GetAvailablePhysicalMemory();
+        long selfReclaimed = 0;
 
         await Task.Run(() =>
         {
-            var processes = Process.GetProcesses();
-            var nonCriticalProcesses = new List<Process>();
-
-            foreach (var p in processes)
+            try
             {
-                if (p.Id <= 4)
+                using var curProc = Process.GetCurrentProcess();
+                long wsBefore = curProc.WorkingSet64;
+
+                // 1. Force full Garbage Collection on managed heap
+                GC.Collect(2, GCCollectionMode.Forced, true, true);
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+
+                // 2. Trim WinCarePro's own working set safely
+                EmptyWorkingSet(curProc.Handle);
+
+                curProc.Refresh();
+                long wsAfter = curProc.WorkingSet64;
+                if (wsBefore > wsAfter)
                 {
-                    p.Dispose();
-                    continue;
+                    selfReclaimed = wsBefore - wsAfter;
                 }
-                nonCriticalProcesses.Add(p);
             }
-
-            var optimizedCount = 0;
-            var reclaimedAcc = new ConcurrentBag<long>();
-
-            var parallelOptions = new ParallelOptions
-            {
-                MaxDegreeOfParallelism = Math.Max(2, Environment.ProcessorCount)
-            };
-
-            Parallel.ForEach(nonCriticalProcesses, parallelOptions, proc =>
-            {
-                IntPtr hProcess = IntPtr.Zero;
-                try
-                {
-                    hProcess = OpenProcess(PROCESS_SET_QUOTA | PROCESS_QUERY_INFORMATION, false, proc.Id);
-                    if (hProcess != IntPtr.Zero)
-                    {
-                        long wsBefore = 0;
-                        try { wsBefore = proc.WorkingSet64; } catch { }
-
-                        if (EmptyWorkingSet(hProcess))
-                        {
-                            long wsAfter = 0;
-                            try 
-                            { 
-                                proc.Refresh(); 
-                                wsAfter = proc.WorkingSet64; 
-                            } catch { }
-
-                            if (wsBefore > wsAfter)
-                            {
-                                reclaimedAcc.Add(wsBefore - wsAfter);
-                            }
-                            System.Threading.Interlocked.Increment(ref optimizedCount);
-                        }
-                    }
-                }
-                catch
-                {
-                    // Access denied for protected or system services
-                }
-                finally
-                {
-                    if (hProcess != IntPtr.Zero)
-                    {
-                        CloseHandle(hProcess);
-                    }
-                    proc.Dispose();
-                }
-            });
-
-            count = optimizedCount;
-            memoryReclaimed = reclaimedAcc.Sum();
-
-            // Run garbage collection on managed runtime
-            GC.Collect(2, GCCollectionMode.Forced, true, true);
-            GC.WaitForPendingFinalizers();
+            catch { }
         });
 
         ulong ramAfter = GetAvailablePhysicalMemory();
         long actualDiff = (long)ramAfter - (long)ramBefore;
-        if (actualDiff > memoryReclaimed)
-        {
-            memoryReclaimed = actualDiff;
-        }
+        long memoryReclaimed = Math.Max(selfReclaimed, actualDiff);
 
-        Log($"RAM Optimization complete. Optimized {count} processes. Freed {(memoryReclaimed / 1024.0 / 1024.0):F1} MB.");
-        Database.DbManager.LogAction($"RAM Boosted: Optimized {count} processes, freed {memoryReclaimed} bytes", "System Optimizer", "Success");
+        Log($"RAM Maintenance complete. Freed {(memoryReclaimed / 1024.0 / 1024.0):F1} MB.");
+        Database.DbManager.LogAction($"RAM Optimized: Freed {memoryReclaimed} bytes safely", "System Optimizer", "Success");
 
-        return (count, Math.Max(0, memoryReclaimed));
+        return (1, Math.Max(0, memoryReclaimed));
     }
 
     public List<SystemTweak> GetTweaks()
@@ -278,30 +226,13 @@ public class SystemOptimizerEngine
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", "20")
         });
 
-        // 7. Enable Windows Game Mode
-        list.Add(new SystemTweak
-        {
-            Id = "AllowAutoGameMode",
-            Name = "Enable Windows Game Mode".T(),
-            Description = "Enables Windows Game Mode to prioritize CPU, GPU, and RAM resources for gaming and suspend background updates.".T(),
-            Category = "Gaming & GPU".T(),
-            IconGlyph = "\uE7FC",
-            RegistryPath = @"HKCU\Software\Microsoft\GameBar -> AllowAutoGameMode",
-            RecommendedValue = "1",
-            DefaultValue = "0",
-            RequiresRestart = false,
-            RequiresAdmin = false,
-            RiskLevel = "Low",
-            CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Software\Microsoft\GameBar", "AllowAutoGameMode", "0")
-        });
-
-        // 8. Hardware Accelerated GPU Scheduling (HAGS)
+        // 7. Hardware Accelerated GPU Scheduling (HAGS)
         list.Add(new SystemTweak
         {
             Id = "HwSchMode",
             Name = "Enable Hardware Accelerated GPU Scheduling".T(),
-            Description = "Reduces graphic rendering latency and improves gaming performance by allowing direct GPU memory scheduling.".T(),
-            Category = "Gaming & GPU".T(),
+            Description = "Reduces graphic rendering latency and improves GPU rendering throughput by allowing direct GPU memory scheduling.".T(),
+            Category = "Performance".T(),
             IconGlyph = "\uE7F1",
             RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers -> HwSchMode",
             RecommendedValue = "2",
@@ -312,7 +243,7 @@ public class SystemOptimizerEngine
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", "1")
         });
 
-        // 9. Disable Telemetry & Diagnostic Data
+        // 8. Disable Telemetry & Diagnostic Data
         list.Add(new SystemTweak
         {
             Id = "AllowTelemetry",
@@ -363,24 +294,7 @@ public class SystemOptimizerEngine
             CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", "0")
         });
 
-        // 12. Disable Search Indexer Backoff
-        list.Add(new SystemTweak
-        {
-            Id = "DisableBackoff",
-            Name = "Disable Search Indexer Backoff".T(),
-            Description = "Prevents search indexing from slowing down or backing off when the system is in active use.".T(),
-            Category = "System & Disk".T(),
-            IconGlyph = "\uE949",
-            RegistryPath = @"HKLM\SOFTWARE\Microsoft\Windows\Windows Search -> DisableBackoff",
-            RecommendedValue = "1",
-            DefaultValue = "0",
-            RequiresRestart = true,
-            RequiresAdmin = true,
-            RiskLevel = "Low",
-            CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Search", "DisableBackoff", "0")
-        });
-
-        // 13. Optimize Window Animations
+        // 12. Optimize Window Animations
         list.Add(new SystemTweak
         {
             Id = "MinAnimate",
@@ -397,64 +311,13 @@ public class SystemOptimizerEngine
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop\WindowMetrics", "MinAnimate", "1")
         });
 
-        // 14. Large System Cache (System & Disk)
-        list.Add(new SystemTweak
-        {
-            Id = "LargeSystemCache",
-            Name = "Enable Large System File Cache".T(),
-            Description = "Allocates larger operating system kernel cache for file I/O, boosting disk read/write throughput on SSDs and NVMe.".T(),
-            Category = "System & Disk".T(),
-            IconGlyph = "\uE949",
-            RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management -> LargeSystemCache",
-            RecommendedValue = "1",
-            DefaultValue = "0",
-            RequiresRestart = true,
-            RequiresAdmin = true,
-            RiskLevel = "Low",
-            CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "LargeSystemCache", "0")
-        });
-
-        // 15. Disable Kernel Paging to Disk (Performance)
-        list.Add(new SystemTweak
-        {
-            Id = "DisablePagingExecutive",
-            Name = "Keep Windows Kernel in Physical RAM".T(),
-            Description = "Prevents executive kernel components and drivers from being paged to disk, ensuring instantaneous system responsiveness.".T(),
-            Category = "Performance".T(),
-            IconGlyph = "\uE9D9",
-            RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management -> DisablePagingExecutive",
-            RecommendedValue = "1",
-            DefaultValue = "0",
-            RequiresRestart = true,
-            RequiresAdmin = true,
-            RiskLevel = "Low",
-            CurrentValue = GetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "DisablePagingExecutive", "0")
-        });
-
-        // 16. Ultra Low-Latency Network Packet Acknowledgment (Gaming & Network)
-        list.Add(new SystemTweak
-        {
-            Id = "TcpAckFrequency",
-            Name = "Low-Latency TCP Packet Frequency".T(),
-            Description = "Eliminates TCP ACK packet delay timers, reducing ping and input latency for online gaming and streaming.".T(),
-            Category = "Gaming & GPU".T(),
-            IconGlyph = "\uE7FC",
-            RegistryPath = @"HKLM\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces -> TcpAckFrequency",
-            RecommendedValue = "1",
-            DefaultValue = "0",
-            RequiresRestart = true,
-            RequiresAdmin = true,
-            RiskLevel = "Medium",
-            CurrentValue = GetTcpAckFrequencyStatus()
-        });
-
-        // 17. Disable GameDVR Background Recording Overhead (Gaming & GPU)
+        // 13. Disable GameDVR Background Recording Overhead (Performance)
         list.Add(new SystemTweak
         {
             Id = "GameDVR_Enabled",
             Name = "Disable Xbox GameDVR Recording Overhead".T(),
             Description = "Disables background gameplay recording services to prevent frame drops, stutter, and GPU resource contention.".T(),
-            Category = "Gaming & GPU".T(),
+            Category = "Performance".T(),
             IconGlyph = "\uE7FC",
             RegistryPath = @"HKCU\System\GameConfigStore -> GameDVR_Enabled",
             RecommendedValue = "0",
@@ -465,7 +328,7 @@ public class SystemOptimizerEngine
             CurrentValue = GetRegistryValue(Registry.CurrentUser, @"System\GameConfigStore", "GameDVR_Enabled", "1")
         });
 
-        // 18. Disable Background Location & Sensor Tracking (Privacy & Logs)
+        // 14. Disable Background Location & Sensor Tracking (Privacy & Logs)
         list.Add(new SystemTweak
         {
             Id = "DisableLocation",
@@ -578,9 +441,6 @@ public class SystemOptimizerEngine
                     case "SystemResponsiveness":
                         success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", 0, RegistryValueKind.DWord);
                         break;
-                    case "AllowAutoGameMode":
-                        success = SetRegistryValue(Registry.CurrentUser, @"Software\Microsoft\GameBar", "AllowAutoGameMode", 1, RegistryValueKind.DWord);
-                        break;
                     case "HwSchMode":
                         success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", 2, RegistryValueKind.DWord);
                         break;
@@ -593,20 +453,8 @@ public class SystemOptimizerEngine
                     case "WerDisabled":
                         success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", 1, RegistryValueKind.DWord);
                         break;
-                    case "DisableBackoff":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Search", "DisableBackoff", 1, RegistryValueKind.DWord);
-                        break;
                     case "MinAnimate":
                         success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MinAnimate", "0", RegistryValueKind.String);
-                        break;
-                    case "LargeSystemCache":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "LargeSystemCache", 1, RegistryValueKind.DWord);
-                        break;
-                    case "DisablePagingExecutive":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "DisablePagingExecutive", 1, RegistryValueKind.DWord);
-                        break;
-                    case "TcpAckFrequency":
-                        success = SetTcpAckFrequency(1);
                         break;
                     case "GameDVR_Enabled":
                         success = SetRegistryValue(Registry.CurrentUser, @"System\GameConfigStore", "GameDVR_Enabled", 0, RegistryValueKind.DWord);
@@ -680,10 +528,6 @@ public class SystemOptimizerEngine
                         success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", 20, RegistryValueKind.DWord);
                         tweak.CurrentValue = "20";
                         break;
-                    case "AllowAutoGameMode":
-                        success = DeleteRegistryValue(Registry.CurrentUser, @"Software\Microsoft\GameBar", "AllowAutoGameMode");
-                        tweak.CurrentValue = "0";
-                        break;
                     case "HwSchMode":
                         success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", 1, RegistryValueKind.DWord);
                         tweak.CurrentValue = "1";
@@ -700,25 +544,9 @@ public class SystemOptimizerEngine
                         success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", 0, RegistryValueKind.DWord);
                         tweak.CurrentValue = "0";
                         break;
-                    case "DisableBackoff":
-                        success = DeleteRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Search", "DisableBackoff");
-                        tweak.CurrentValue = "0";
-                        break;
                     case "MinAnimate":
                         success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MinAnimate", "1", RegistryValueKind.String);
                         tweak.CurrentValue = "1";
-                        break;
-                    case "LargeSystemCache":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "LargeSystemCache", 0, RegistryValueKind.DWord);
-                        tweak.CurrentValue = "0";
-                        break;
-                    case "DisablePagingExecutive":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management", "DisablePagingExecutive", 0, RegistryValueKind.DWord);
-                        tweak.CurrentValue = "0";
-                        break;
-                    case "TcpAckFrequency":
-                        success = SetTcpAckFrequency(0);
-                        tweak.CurrentValue = "0";
                         break;
                     case "GameDVR_Enabled":
                         success = SetRegistryValue(Registry.CurrentUser, @"System\GameConfigStore", "GameDVR_Enabled", 1, RegistryValueKind.DWord);
@@ -753,40 +581,6 @@ public class SystemOptimizerEngine
                 return false;
             }
         }, cancellationToken);
-    }
-
-    private bool SetTcpAckFrequency(int value)
-    {
-        try
-        {
-            using var interfacesKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces", true);
-            if (interfacesKey != null)
-            {
-                foreach (var subKeyName in interfacesKey.GetSubKeyNames())
-                {
-                    using var ifKey = interfacesKey.OpenSubKey(subKeyName, true);
-                    if (ifKey != null)
-                    {
-                        if (value > 0)
-                        {
-                            ifKey.SetValue("TcpAckFrequency", 1, RegistryValueKind.DWord);
-                            ifKey.SetValue("TCPNoDelay", 1, RegistryValueKind.DWord);
-                        }
-                        else
-                        {
-                            ifKey.DeleteValue("TcpAckFrequency", false);
-                            ifKey.DeleteValue("TCPNoDelay", false);
-                        }
-                    }
-                }
-                return true;
-            }
-        }
-        catch (Exception ex)
-        {
-            Log($"TcpAckFrequency error: {ex.Message}");
-        }
-        return false;
     }
 
     private bool SetRegistryValue(RegistryKey rootKey, string subKeyPath, string valueName, object value, RegistryValueKind valueKind)

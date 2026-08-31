@@ -187,22 +187,15 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 
         double tweakRatio = (double)OptimizedTweaksCount / Tweaks.Count;
         double ramFactor = Math.Max(0, (100 - RamUsagePercentage) / 100.0);
-        double turboBonus = IsTurboActive ? 5 : 0;
+        double ramBonus = GamingOptimizedProcessesCount > 0 ? 5 : 0;
 
-        int score = (int)Math.Clamp(Math.Round(50 + (tweakRatio * 35) + (ramFactor * 10) + turboBonus), 45, 100);
+        int score = (int)Math.Clamp(Math.Round(50 + (tweakRatio * 35) + (ramFactor * 10) + ramBonus), 45, 100);
         AiHealthScore = score;
     }
 
     // ============================================================
-    // SYSTEM TURBO MODE (PERFORMANCE BOOST)
+    // SYSTEM RAM MAINTENANCE & OPTIMIZATION
     // ============================================================
-
-    private bool _isTurboActive;
-    public bool IsTurboActive
-    {
-        get => _isTurboActive;
-        set => SetProperty(ref _isTurboActive, value);
-    }
 
     private string _gamingRamFreedText = "0 MB";
     public string GamingRamFreedText
@@ -218,36 +211,28 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _gamingOptimizedProcessesCount, value);
     }
 
-    private string _gamingStatusMessage = "Ready. Toggle Turbo Mode for instant RAM purge & CPU gaming priority.".T();
-    public string GamingStatusMessage
+    public async Task OptimizeRamAsync()
     {
-        get => _gamingStatusMessage;
-        set => SetProperty(ref _gamingStatusMessage, value);
-    }
-
-    public async Task ToggleGamingTurboAsync()
-    {
-        if (!IsTurboActive)
+        IsLoading = true;
+        StatusText = "Optimizing RAM...".T();
+        try
         {
-            IsTurboActive = true;
-            GamingStatusMessage = "⚡ Gaming Turbo ACTIVE! Purging RAM & raising CPU responsiveness...".T();
-            StatusText = "Gaming Turbo: Optimizing...".T();
-
             var (procs, reclaimed) = await _optimizerEngine.OptimizeRamAsync();
             double freedMB = reclaimed / (1024.0 * 1024.0);
 
             GamingRamFreedText = $"{freedMB:N0} MB";
             GamingOptimizedProcessesCount = procs;
-            GamingStatusMessage = string.Format("🚀 Turbo ACTIVE! Reclaimed {0} MB RAM on {1} background processes.".T(), freedMB.ToString("N0"), procs);
-            StatusText = string.Format("Gaming Turbo: Freed {0} MB RAM".T(), freedMB.ToString("N0"));
+            StatusText = string.Format("Optimized RAM: Freed {0} MB on {1} processes".T(), freedMB.ToString("N0"), procs);
             RecalculateEfficiencyScore();
+            UpdateRamAndServices();
         }
-        else
+        catch (Exception ex)
         {
-            IsTurboActive = false;
-            GamingStatusMessage = "Gaming Turbo is OFF. System operating in standard balanced mode.".T();
-            StatusText = "Gaming Turbo: Deactivated".T();
-            RecalculateEfficiencyScore();
+            Log($"Error optimizing RAM: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 
@@ -433,27 +418,6 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     {
         // Lightweight debug logging without terminal UI allocations
         System.Diagnostics.Debug.WriteLine($"[SystemOptimizer] {message}");
-    }
-
-    // Game Boost Properties
-    private bool _gameBoostActive;
-    public bool GameBoostActive
-    {
-        get => _gameBoostActive;
-        set
-        {
-            if (SetProperty(ref _gameBoostActive, value))
-            {
-                _ = ToggleGameBoostAsync(value);
-            }
-        }
-    }
-
-    private string _gameBoostStatus = "Inactive. Background services restored.".T();
-    public string GameBoostStatus
-    {
-        get => _gameBoostStatus;
-        set => SetProperty(ref _gameBoostStatus, value);
     }
 
     private readonly Action<string> _progressHandler;
@@ -673,6 +637,51 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     // PRESET PROFILES
     // ============================================================
 
+    public int SelectPresetProfile(string profile)
+    {
+        int count = 0;
+        switch (profile)
+        {
+            case "Recommended":
+                foreach (var t in Tweaks)
+                {
+                    t.IsSelected = (t.Id != "WerDisabled" && t.Id != "DisableLocation");
+                    if (t.IsSelected) count++;
+                }
+                break;
+            case "Performance":
+                foreach (var t in Tweaks)
+                {
+                    t.IsSelected = t.Category.Contains("Performance", StringComparison.OrdinalIgnoreCase) || 
+                                   t.Category.Contains("System", StringComparison.OrdinalIgnoreCase);
+                    if (t.IsSelected) count++;
+                }
+                break;
+            case "Privacy":
+                foreach (var t in Tweaks)
+                {
+                    t.IsSelected = t.Category.Contains("Privacy", StringComparison.OrdinalIgnoreCase) ||
+                                   t.Id == "AllowTelemetry" || t.Id == "AllowCortana" || t.Id == "WerDisabled" || t.Id == "DisableLocation";
+                    if (t.IsSelected) count++;
+                }
+                break;
+            case "All":
+                foreach (var t in Tweaks)
+                {
+                    t.IsSelected = true;
+                    count++;
+                }
+                break;
+            case "None":
+                foreach (var t in Tweaks)
+                {
+                    t.IsSelected = false;
+                }
+                break;
+        }
+        return count;
+    }
+
     public async Task<int> ApplySmartAutoTuneAsync()
     {
         if (IsLoading) return 0;
@@ -691,24 +700,19 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         return applied;
     }
 
-    public async Task<int> ApplyGamingProfileAsync()
+    public async Task<int> ApplyPerformanceProfileAsync()
     {
         if (IsLoading) return 0;
-        Log("Profile: Activating Gaming & Ultra Low Latency Profile...".T());
+        Log("Profile: Activating Performance Profile...".T());
 
-        // Turn on Turbo Mode
-        if (!IsTurboActive)
-        {
-            await ToggleGamingTurboAsync();
-        }
+        await OptimizeRamAsync();
 
-        // Select Gaming & Performance tweaks
+        // Select Performance & System tweaks
         foreach (var t in Tweaks)
         {
-            bool isGamingOrPerf = t.Category.Contains("Gaming", StringComparison.OrdinalIgnoreCase) || 
-                                  t.Category.Contains("Performance", StringComparison.OrdinalIgnoreCase) ||
-                                  t.Id == "TcpAckFrequency" || t.Id == "AllowAutoGameMode" || t.Id == "HwSchMode" || t.Id == "GameDVR_Enabled";
-            t.IsSelected = isGamingOrPerf;
+            bool isPerf = t.Category.Contains("Performance", StringComparison.OrdinalIgnoreCase) || 
+                          t.Category.Contains("System", StringComparison.OrdinalIgnoreCase);
+            t.IsSelected = isPerf;
         }
 
         int applied = await ApplySelectedAsync();
@@ -872,91 +876,6 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         {
             IsLoading = false;
         }
-    }
-
-    private async Task ToggleGameBoostAsync(bool active)
-    {
-        IsLoading = true;
-        string[] targetServices = { "SysMain", "DiagTrack", "WSearch" };
-
-        if (active)
-        {
-            GameBoostStatus = "Activating Game Boost... Halting non-essential services and freeing RAM cache lines.".T();
-            Log("Game Boost: Activating gaming focus engine.".T());
-            await Task.Delay(400);
-
-            await Task.Run(() =>
-            {
-                foreach (var sName in targetServices)
-                {
-                    try
-                    {
-                        Log(string.Format("Game Boost: Querying service status for '{0}'".T(), sName));
-                        using var sc = new ServiceController(sName);
-                        if (sc.Status == ServiceControllerStatus.Running || sc.CanStop)
-                        {
-                            Log(string.Format("Game Boost: Terminating background daemon: {0}".T(), sName));
-                            sc.Stop();
-                            sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(5));
-                            Log(string.Format("Game Boost: Daemon {0} stopped successfully.".T(), sName));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log(string.Format("Game Boost Warning: Could not stop daemon '{0}' ({1}).".T(), sName, ex.Message));
-                    }
-                }
-            });
-
-            var (procs, reclaimed) = await _optimizerEngine.OptimizeRamAsync();
-            double mb = reclaimed / 1024.0 / 1024.0;
-
-            _dispatcherQueue?.TryEnqueue(() =>
-            {
-                GameBoostStatus = "Active. Background services halted. Priorities raised.".T();
-                Log(string.Format("Game Boost: RAM Flush completed. Freed {0} MB.".T(), mb.ToString("F1")));
-                UpdateRamAndServices();
-                Database.DbManager.LogAction("Game Boost Enabled: Suspended background daemons, optimized RAM", "System Optimizer", "Success");
-                Log("Game Boost Engine is now active.".T());
-            });
-        }
-        else
-        {
-            GameBoostStatus = "Deactivating Game Boost... Re-enabling background services.".T();
-            Log("Game Boost: Deactivating gaming focus engine.".T());
-            await Task.Delay(400);
-
-            await Task.Run(() =>
-            {
-                foreach (var sName in targetServices)
-                {
-                    try
-                    {
-                        using var sc = new ServiceController(sName);
-                        if (sc.Status == ServiceControllerStatus.Stopped)
-                        {
-                            Log(string.Format("Game Boost: Restarting service: {0}".T(), sName));
-                            sc.Start();
-                            sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(3));
-                            Log(string.Format("Game Boost: Service {0} is now running.".T(), sName));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log(string.Format("Game Boost Warning: Could not restart service '{0}' ({1}).".T(), sName, ex.Message));
-                    }
-                }
-            });
-
-            _dispatcherQueue?.TryEnqueue(() =>
-            {
-                GameBoostStatus = "Inactive. Background services restored.".T();
-                UpdateRamAndServices();
-                Database.DbManager.LogAction("Game Boost Disabled: Restored services", "System Optimizer", "Success");
-                Log("Game Boost Engine deactivated. System services restored to windows defaults.".T());
-            });
-        }
-        IsLoading = false;
     }
 
     public void Cleanup()

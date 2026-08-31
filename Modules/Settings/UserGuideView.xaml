@@ -43,7 +43,7 @@
                         <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,5">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <FontIcon Glyph="&#xE7BE;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                <TextBlock Text="15 Core Modules" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="14 Core Modules" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
@@ -51,7 +51,7 @@
 
                 <!-- Search Input Box -->
                 <AutoSuggestBox x:Name="GuideSearchBox" 
-                                PlaceholderText="Search guide (e.g., RAM, DNS, SFC, game, junk)..."
+                                PlaceholderText="Search guide (e.g., RAM, DNS, SFC, junk)..."
                                 QueryIcon="Find"
                                 CornerRadius="8"
                                 Height="36"
@@ -69,7 +69,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="FilterBtnAll" Grid.Column="0" Click="OnCategoryFilterClick" Tag="All" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Xem tất cả 15 phân hệ hướng dẫn">
+                        <Button x:Name="FilterBtnAll" Grid.Column="0" Click="OnCategoryFilterClick" Tag="All" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Xem tất cả 14 phân hệ hướng dẫn">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE80F;" FontSize="11" Foreground="White"/>
                                 <TextBlock Text="All Modules" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
@@ -81,7 +81,7 @@
                                 <TextBlock Text="Care" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="FilterBtnTuning" Grid.Column="2" Click="OnCategoryFilterClick" Tag="Tuning" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Tối ưu hóa hiệu năng &amp; Chơi game">
+                        <Button x:Name="FilterBtnTuning" Grid.Column="2" Click="OnCategoryFilterClick" Tag="Tuning" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Tối ưu hóa hiệu năng &amp; Hệ thống">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE7FC;" FontSize="11" Foreground="#FFF59E0B"/>
                                 <TextBlock Text="Tuning" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
@@ -282,7 +282,7 @@
                         <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
                             <StackPanel Spacing="4">
                                 <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="Orange"/>
-                                <TextBlock Text="• Cleans Windows temporary files (%TEMP%, Prefetch, Log files).&#x0a;• Wipes browser caches (Chrome, Edge, Firefox, Brave).&#x0a;• Clears Windows Update download cache and installer artifacts." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="• Cleans Windows temporary files (%TEMP%, Logs, Crash Dumps).&#x0a;• Wipes browser caches (Chrome, Edge, Firefox, Brave).&#x0a;• Safely unchecks Shader Cache &amp; Prefetch by default to prevent frame stutter and maintain fast app launch." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -544,8 +544,8 @@
                 </StackPanel>
             </Border>
 
-            <!-- 8. System Optimizer & Gaming Turbo -->
-            <Border x:Name="Card_Optimizer" Tag="Tuning|All|Optimizer|gaming|turbo|fps" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+            <!-- 8. System Optimizer -->
+            <Border x:Name="Card_Optimizer" Tag="Tuning|All|Optimizer|ram|speed|performance|tuning" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                 <StackPanel Spacing="14">
                     <Grid ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
@@ -553,12 +553,12 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="{StaticResource GamingTurboGradient}" VerticalAlignment="Center">
+                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FFF59E0B" VerticalAlignment="Center">
                             <FontIcon Glyph="&#xE7FC;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="8. System Optimizer &amp; Gaming Turbo 2.0" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Hyper-Turbo Gaming Engine • Latency Minimizer • Registry Acceleration" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="8. System Optimizer" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            <TextBlock Text="Kernel Performance Tuning • UI Responsiveness • RAM Maintenance" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                             <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
@@ -581,13 +581,13 @@
                         <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
                             <StackPanel Spacing="4">
                                 <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="#FFF59E0B"/>
-                                <TextBlock Text="Applies Microsoft-compliant Registry tweaks to optimize CPU scheduling, disable unnecessary services, and reclaim active physical RAM memory." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="Applies safe Microsoft-compliant Registry tweaks to optimize CPU scheduling priority, reduce interface delay, and maintain optimal physical RAM usage." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                         </Border>
                         <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
                             <StackPanel Spacing="4">
                                 <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="#FFF59E0B"/>
-                                <TextBlock Text="• Gaming Turbo 2.0 Mode: Flushes process working sets and prioritizes CPU.&#x0a;• Windows Registry latency tweaks for ultra-responsive performance.&#x0a;• Automatic creation of System Restore Points before applying tweaks." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="• Safe RAM Maintenance: Compares working set footprint and runs garbage collection safely.&#x0a;• Windows UI responsiveness tweaks (Menu Show Delay, Min/Max Animations).&#x0a;• Prioritize active foreground apps and disable telemetry background tracking." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -596,9 +596,9 @@
                         <StackPanel Spacing="6">
                             <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             <StackPanel Spacing="4">
-                                <TextBlock Text="1. Open the [System Optimizer] or [Gaming Turbo] page." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Toggle [Enable Gaming Turbo] for instant gaming acceleration." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Select desired system tweaks and click [Apply Tweaks]." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="1. Open the [System Optimizer] page from the left navigation panel." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="2. Click [Optimize RAM] to perform safe working set maintenance." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="3. Select desired system tweaks and click [Apply Selected Tweaks]." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -667,66 +667,6 @@
             </Border>
 
             <!-- 10. Startup & Services -->
-            <Border x:Name="Card_Startup" Tag="System|All|Startup|boot" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                <StackPanel Spacing="14">
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="Gold" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE7B5;" FontSize="18" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="10. Startup &amp; Services Manager" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Boot Acceleration • Startup Impact Analyzer • Safe Service Control" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="Safe (Recommended)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Startup" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE7B5;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="Gold"/>
-                                <TextBlock Text="Controls software configured to start automatically with Windows and manages background system services to deliver rapid boot times." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="Gold"/>
-                                <TextBlock Text="• Analyzes startup impact on boot performance (High/Medium/Low Impact).&#x0a;• Toggle enable/disable status for background applications.&#x0a;• Built-in Safety Guard protects core Microsoft system services." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Open the [Startup &amp; Services] module." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Review auto-starting items and disable unnecessary High Impact entries." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Click [Boost Boot Speed] to let AI optimize boot sequence." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Border>
-
             <!-- 11. Disk Tools -->
             <Border x:Name="Card_Disk" Tag="Care|All|Disk|ssd|storage" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                 <StackPanel Spacing="14">

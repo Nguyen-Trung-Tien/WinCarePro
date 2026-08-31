@@ -509,11 +509,11 @@ namespace WinCarePro.Modules.AiAssistant
             {
                 return new OfflineDiagnosticAnswer
                 {
-                    Title = "Gaming Turbo & FPS Optimization".T(),
-                    Diagnosis = "Background services, Windows updates, and CPU core parking reduce in-game FPS and cause micro-stutter.".T(),
-                    Solution = "Activate Gaming Turbo 2.0 to allocate maximum CPU priority and engage Ultimate High Performance mode.".T(),
-                    RecommendedActionKey = "NavigateGamingTurbo",
-                    ActionButtonText = "Enable Turbo".T()
+                    Title = "Performance & Latency Optimization".T(),
+                    Diagnosis = "Background services and system latency timers can reduce application responsiveness and cause micro-stutter.".T(),
+                    Solution = "Configure System Optimizer performance tweaks to prioritize active foreground applications.".T(),
+                    RecommendedActionKey = "NavigateOptimizer",
+                    ActionButtonText = "Open Optimizer".T()
                 };
             }
 

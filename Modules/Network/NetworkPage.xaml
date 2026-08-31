@@ -830,15 +830,45 @@
                     <ColumnDefinition x:Name="RepairPaneCol1" Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Left Pane: 12 Symmetrical Tools in 2 Matching 3x2 Cards -->
+                <!-- Left Pane: 1-Click Smart Repair + Modular Tools -->
                 <Grid x:Name="RepairPaneLeft" Grid.Row="0" Grid.Column="0" RowSpacing="12">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/> <!-- 0: Hero 1-Click Auto Repair -->
+                        <RowDefinition Height="Auto"/> <!-- 1: Core Repairs -->
+                        <RowDefinition Height="Auto"/> <!-- 2: Gaming Latency Boost -->
                     </Grid.RowDefinitions>
 
-                    <!-- Section 1: 1-Click TCP/IP & Winsock Repair Suite (6 Tiles, 3x2 Symmetrical Grid) -->
-                    <Border Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                    <!-- Hero Banner: 1-Click Auto Network Repair & Latency Optimization -->
+                    <Border Grid.Row="0" Style="{StaticResource NeonGlowBorderStyle}" Padding="16,14">
+                        <Grid ColumnSpacing="14">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Width="44" Height="44" CornerRadius="12" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE768;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <TextBlock Text="Smart Network Auto-Repair" FontSize="14" FontWeight="ExtraBold"/>
+                                    <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,1.5">
+                                        <TextBlock Text="Recommended" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="Automatically flush DNS, rebuild TCP/IP, renew DHCP leases &amp; optimize throughput in 1 click." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <Button Grid.Column="2" Click="OnRepairClick" Tag="smartrepair" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Height="36" Padding="16,0" CornerRadius="8" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE8FB;" FontSize="12"/>
+                                    <TextBlock Text="Auto Repair All" FontWeight="Bold" FontSize="12"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- Section 1: Core Repairs Suite -->
+                    <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -971,7 +1001,7 @@
                     </Border>
 
                     <!-- Section 2: Gaming & Latency Optimization Suite (6 Tiles, 3x2 Symmetrical Grid) -->
-                    <Border Grid.Row="1" Style="{StaticResource AuraGlassCardStyle}" Padding="16,14">
+                    <Border Grid.Row="2" Style="{StaticResource AuraGlassCardStyle}" Padding="16,14">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>

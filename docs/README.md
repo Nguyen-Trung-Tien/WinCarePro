@@ -64,7 +64,7 @@ graph TD
 | **05** | [**05. Tiêu Chuẩn An Toàn & Bảo Mật**](05_SECURITY_AND_SAFETY_ARCHITECTURE.md) | SafePathGuard chống xóa nhầm, Service Safety Whitelist, ProcessRunner ArgumentList chống Injection. | *Security Engineers* |
 | **06** | [**06. Dịch Vụ Nền & Hạ Tầng Hệ Thống**](06_SERVICES_AND_INFRASTRUCTURE.md) | Background Workers, Theme Studio đa bảng màu, Bộ dịch thuật ngữ đa ngôn ngữ, UndoManager hoàn tác. | *Core Developers* |
 | **07** | [**07. Hệ Thống Thiết Kế UI/UX Aura Glass**](07_UI_UX_DESIGN_SYSTEM.md) | Fluent Design 2.0, Mica Backdrop, Acrylic, Shimmer Skeleton Loader, Composition 120 FPS Motion. | *UI/UX Designers & Devs* |
-| **08** | [**08. Kiểm Thử Tự Động & Đảm Bảo Chất Lượng**](08_TESTING_AND_QUALITY_ASSURANCE.md) | Bộ 230+ Unit Tests xUnit, kiểm thử đa luồng, Mocking, tỷ lệ bao phủ và tiêu chuẩn Zero-Bug. | *QA & Testers* |
+| **08** | [**08. Kiểm Thử Tự Động & Đảm Bảo Chất Lượng**](08_TESTING_AND_QUALITY_ASSURANCE.md) | Bộ 227 Unit Tests xUnit, kiểm thử đa luồng, Mocking, tỷ lệ bao phủ và tiêu chuẩn Zero-Bug. | *QA & Testers* |
 | **09** | [**09. Đóng Gói, Triển Khai & CI/CD**](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) | Biên dịch Self-Contained x64, Đóng gói Inno Setup 6, cấu hình Auto-Update và GitHub Actions CI. | *DevOps, Release Managers* |
 | **10** | [**10. Hướng Dẫn Lập Trình Viên Mới**](10_DEVELOPER_ONBOARDING_GUIDE.md) | Setup môi trường Visual Studio 2022, quy chuẩn code C# 13, hướng dẫn từng bước thêm một Module mới. | *New Developers* |
 | **11** | [**11. Hướng Dẫn Sử Dụng Chi Tiết (Tiếng Việt)**](11_USER_MANUAL_VI.md) | Cẩm nang thao tác dành cho người dùng cuối: Dọn dẹp máy tính, tăng tốc game, khôi phục hệ thống. | *End Users, Support Team* |

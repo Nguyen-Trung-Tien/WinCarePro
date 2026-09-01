@@ -718,17 +718,33 @@ public sealed partial class SettingsPage : Page
 
         if (dark)
         {
-            DarkThemeCard.BorderBrush = accentBrush;
-            DarkThemeCard.BorderThickness = new Thickness(2.0);
-            LightThemeCard.BorderBrush = defaultBorderBrush;
-            LightThemeCard.BorderThickness = new Thickness(1.5);
+            if (DarkThemeCard != null)
+            {
+                DarkThemeCard.BorderBrush = accentBrush;
+                DarkThemeCard.BorderThickness = new Thickness(2.0);
+            }
+            if (LightThemeCard != null)
+            {
+                LightThemeCard.BorderBrush = defaultBorderBrush;
+                LightThemeCard.BorderThickness = new Thickness(1.5);
+            }
+            if (DarkThemeCheck != null) DarkThemeCheck.Visibility = Visibility.Visible;
+            if (LightThemeCheck != null) LightThemeCheck.Visibility = Visibility.Collapsed;
         }
         else
         {
-            LightThemeCard.BorderBrush = accentBrush;
-            LightThemeCard.BorderThickness = new Thickness(2.0);
-            DarkThemeCard.BorderBrush = defaultBorderBrush;
-            DarkThemeCard.BorderThickness = new Thickness(1.5);
+            if (LightThemeCard != null)
+            {
+                LightThemeCard.BorderBrush = accentBrush;
+                LightThemeCard.BorderThickness = new Thickness(2.0);
+            }
+            if (DarkThemeCard != null)
+            {
+                DarkThemeCard.BorderBrush = defaultBorderBrush;
+                DarkThemeCard.BorderThickness = new Thickness(1.5);
+            }
+            if (LightThemeCheck != null) LightThemeCheck.Visibility = Visibility.Visible;
+            if (DarkThemeCheck != null) DarkThemeCheck.Visibility = Visibility.Collapsed;
         }
     }
 

@@ -23,13 +23,13 @@
     <Grid Padding="24,20" HorizontalAlignment="Stretch" x:Name="SettingsRootGrid">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 820px -->
+                <!-- Wide Layout: Viewport Width >= 840px -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="820" />
+                        <AdaptiveTrigger MinWindowWidth="840" />
                     </VisualState.StateTriggers>
                 </VisualState>
-                <!-- Narrow Layout: Viewport Width < 820px -->
+                <!-- Narrow Layout: Viewport Width < 840px -->
                 <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
@@ -61,13 +61,13 @@
             <RowDefinition Height="*" x:Name="Row1" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" x:Name="Col0" /> <!-- Secondary Sidebar -->
+            <ColumnDefinition Width="260" x:Name="Col0" /> <!-- Secondary Sidebar -->
             <ColumnDefinition Width="*" x:Name="Col1" />   <!-- Content Area -->
         </Grid.ColumnDefinitions>
 
         <!-- Vertical Navigation Panel (Secondary Sidebar) -->
         <Border x:Name="SidebarBorder" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,1,0" Padding="0,0,16,0">
-            <Grid RowSpacing="10">
+            <Grid RowSpacing="12">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
@@ -81,8 +81,8 @@
                                 TextChanged="OnSettingsSearchTextChanged"
                                 SuggestionChosen="OnSettingsSearchSuggestionChosen"
                                 QuerySubmitted="OnSettingsSearchQuerySubmitted"
-                                Height="34"
-                                CornerRadius="6"
+                                Height="36"
+                                CornerRadius="8"
                                 HorizontalAlignment="Stretch">
                     <AutoSuggestBox.ItemTemplate>
                         <DataTemplate>
@@ -101,103 +101,151 @@
                     </AutoSuggestBox.ItemTemplate>
                 </AutoSuggestBox>
 
+                <!-- Navigation List -->
                 <ListView x:Name="SettingsNavList" Grid.Row="1" SelectedIndex="0" SelectionChanged="SettingsNavList_SelectionChanged" SelectionMode="Single">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel x:Name="SettingsNavStackPanel" Orientation="Vertical" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE713;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="General Configuration" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE790;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Appearance &amp; Theme" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE812;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Auto Maintenance" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xEA8F;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Telemetry &amp; Alert Policy" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE727;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Safety &amp; Rollback" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE7F1;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Database &amp; Storage" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE75C;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Software Updates" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE7B4;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Advanced &amp; Sandbox" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE8AC;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Backup &amp; Reset" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE946;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="About &amp; Developer" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-                <ListViewItem Height="40" Padding="8,0" CornerRadius="6" Margin="0,1">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <FontIcon Glyph="&#xE897;" FontSize="15" Width="20" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Feature Guide &amp; Manual" VerticalAlignment="Center" FontSize="12.5"/>
-                    </StackPanel>
-                </ListViewItem>
-            </ListView>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel x:Name="SettingsNavStackPanel" Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE713;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="General Configuration" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE790;" FontSize="13" Foreground="#FF06B6D4" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Appearance &amp; Theme" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE812;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Auto Maintenance" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xEA8F;" FontSize="13" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Telemetry &amp; Alert Policy" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Safety &amp; Rollback" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE7F1;" FontSize="13" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Database &amp; Storage" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE75C;" FontSize="13" Foreground="#FFEC4899" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Software Updates" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE7B4;" FontSize="13" Foreground="#FF6366F1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Advanced &amp; Sandbox" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE8AC;" FontSize="13" Foreground="#FFE81123" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Backup &amp; Reset" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE946;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="About &amp; Developer" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE897;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Feature Guide &amp; Manual" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                </ListView>
             </Grid>
         </Border>
 
         <!-- Content Area -->
-        <ScrollViewer x:Name="ContentScrollViewer" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Padding="20,0,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer x:Name="ContentScrollViewer" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Padding="24,0,4,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <Grid>
                 <!-- Section 0: General Configuration -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 0), Mode=OneWay}">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="General Configurations" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Manage startup behaviors, language settings, and window minimization policies." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
+                    <!-- Section Header Banner -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="{ThemeResource PrimaryAccentLightBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE713;" FontSize="18" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="General Configurations" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                                <TextBlock Text="Manage startup behaviors, language settings, and window minimization policies." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                            <TextBlock Text="Core System" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                        </Border>
+                    </Grid>
                     
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Language Selection / Lựa chọn Ngôn ngữ" FontSize="13" FontWeight="SemiBold"/>
-                                <TextBlock Text="Switch instant application UI locale without restarting." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <ComboBox x:Name="LanguageComboBox" SelectedIndex="0" Width="180" CornerRadius="6" SelectionChanged="OnLanguageSelectionChanged" Margin="0,4,0,0">
+                            <!-- Language Selection Row -->
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE775;" FontSize="14" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                        <TextBlock Text="Language Selection / Lựa chọn Ngôn ngữ" FontSize="13.5" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                    <TextBlock Text="Switch instant application UI locale without restarting." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <ComboBox Grid.Column="1" x:Name="LanguageComboBox" SelectedIndex="0" Width="180" CornerRadius="8" SelectionChanged="OnLanguageSelectionChanged" VerticalAlignment="Center">
                                     <ComboBoxItem Content="English"/>
                                     <ComboBoxItem Content="Tiếng Việt"/>
                                 </ComboBox>
-                            </StackPanel>
+                            </Grid>
 
                             <MenuFlyoutSeparator />
 
@@ -209,10 +257,25 @@
 
                 <!-- Section 1: Appearance & Personalization -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 1), Mode=OneWay}">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Appearance &amp; Theme Customization" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Customize color theme modes, accent palettes, acrylic transparency, and fluid animations." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
+                    <!-- Section Header Banner -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="{ThemeResource AppStatusPurpleBackground}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE790;" FontSize="18" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Appearance &amp; Theme Customization" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                                <TextBlock Text="Customize color theme modes, accent palettes, acrylic transparency, and fluid animations." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                            <TextBlock Text="Aura Studio" FontSize="10.5" FontWeight="Bold" Foreground="#FF06B6D4"/>
+                        </Border>
+                    </Grid>
                     
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
@@ -227,41 +290,47 @@
                                 
                                 <Border x:Name="LightThemeCard" Grid.Column="0" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" PointerPressed="OnLightModeCardClick" Style="{StaticResource QuickStatCardStyle}"
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="12">
-                                    <StackPanel Orientation="Horizontal" Spacing="12">
-                                        <Border Width="36" Height="36" CornerRadius="18" Background="{ThemeResource AppStatusWarningBackground}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE706;" FontSize="18" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        </Border>
-                                        <StackPanel VerticalAlignment="Center" Spacing="2">
-                                            <TextBlock Text="Light Theme" FontWeight="Bold" FontSize="13" />
-                                            <TextBlock Text="Clean and bright interface" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <Grid>
+                                        <StackPanel Orientation="Horizontal" Spacing="12">
+                                            <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusWarningBackground}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE706;" FontSize="18" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <StackPanel VerticalAlignment="Center" Spacing="2">
+                                                <TextBlock Text="Light Theme" FontWeight="Bold" FontSize="13" />
+                                                <TextBlock Text="Clean and bright interface" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
+                                        <FontIcon x:Name="LightThemeCheck" Glyph="&#xE73E;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,2,0" Visibility="Collapsed"/>
+                                    </Grid>
                                 </Border>
                                 
                                 <Border x:Name="DarkThemeCard" Grid.Column="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" PointerPressed="OnDarkModeCardClick" Style="{StaticResource QuickStatCardStyle}"
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="12">
-                                    <StackPanel Orientation="Horizontal" Spacing="12">
-                                        <Border Width="36" Height="36" CornerRadius="18" Background="{ThemeResource AppStatusPurpleBackground}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE708;" FontSize="18" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        </Border>
-                                        <StackPanel VerticalAlignment="Center" Spacing="2">
-                                            <TextBlock Text="Dark Theme" FontWeight="Bold" FontSize="13" />
-                                            <TextBlock Text="Deep space &amp; neon dark tones" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <Grid>
+                                        <StackPanel Orientation="Horizontal" Spacing="12">
+                                            <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusPurpleBackground}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE708;" FontSize="18" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <StackPanel VerticalAlignment="Center" Spacing="2">
+                                                <TextBlock Text="Dark Theme" FontWeight="Bold" FontSize="13" />
+                                                <TextBlock Text="Deep space &amp; neon dark tones" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
+                                        <FontIcon x:Name="DarkThemeCheck" Glyph="&#xE73E;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,2,0" Visibility="Visible"/>
+                                    </Grid>
                                 </Border>
                             </Grid>
 
                             <MenuFlyoutSeparator />
 
-                            <StackPanel Spacing="6">
+                            <StackPanel Spacing="8">
                                 <TextBlock Text="Window Accent Colors Palette" FontSize="13.5" FontWeight="Bold" />
                                 <TextBlock Text="Choose system-wide brand gradient and highlight color tone." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 
                                 <StackPanel Orientation="Horizontal" Spacing="14" x:Name="AccentSelectorPanel" Margin="0,6,0,0">
                                     <!-- Default Radiant Azure -->
-                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Default" Background="Transparent" ToolTipService.ToolTip="Radiant Azure (Default)">
-                                        <Ellipse x:Name="AccentDefault" Width="32" Height="32">
+                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Default" Background="Transparent" ToolTipService.ToolTip="Radiant Azure (Default)">
+                                        <Ellipse x:Name="AccentDefault" Width="34" Height="34">
                                             <Ellipse.Fill>
                                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                                     <GradientStop Color="#FF0F6CBD" Offset="0"/>
@@ -273,33 +342,33 @@
                                         <FontIcon x:Name="CheckDefault" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
                                     </Grid>
                                     <!-- Green -->
-                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Green" Background="Transparent" ToolTipService.ToolTip="Emerald Green">
-                                        <Ellipse x:Name="AccentGreen" Width="32" Height="32" Fill="#FF10B981"/>
+                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Green" Background="Transparent" ToolTipService.ToolTip="Emerald Green">
+                                        <Ellipse x:Name="AccentGreen" Width="34" Height="34" Fill="#FF10B981"/>
                                         <FontIcon x:Name="CheckGreen" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
                                     </Grid>
                                     <!-- Purple -->
-                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Purple" Background="Transparent" ToolTipService.ToolTip="Royal Purple">
-                                        <Ellipse x:Name="AccentPurple" Width="32" Height="32" Fill="#FF8B5CF6"/>
+                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Purple" Background="Transparent" ToolTipService.ToolTip="Royal Purple">
+                                        <Ellipse x:Name="AccentPurple" Width="34" Height="34" Fill="#FF8B5CF6"/>
                                         <FontIcon x:Name="CheckPurple" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
                                     </Grid>
                                     <!-- Pink -->
-                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Pink" Background="Transparent" ToolTipService.ToolTip="Cyber Pink">
-                                        <Ellipse x:Name="AccentPink" Width="32" Height="32" Fill="#FFEC4899"/>
+                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Pink" Background="Transparent" ToolTipService.ToolTip="Cyber Pink">
+                                        <Ellipse x:Name="AccentPink" Width="34" Height="34" Fill="#FFEC4899"/>
                                         <FontIcon x:Name="CheckPink" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
                                     </Grid>
                                     <!-- Amber -->
-                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Amber" Background="Transparent" ToolTipService.ToolTip="Amber Gold">
-                                        <Ellipse x:Name="AccentAmber" Width="32" Height="32" Fill="#FFF59E0B"/>
+                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Amber" Background="Transparent" ToolTipService.ToolTip="Amber Gold">
+                                        <Ellipse x:Name="AccentAmber" Width="34" Height="34" Fill="#FFF59E0B"/>
                                         <FontIcon x:Name="CheckAmber" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
                                     </Grid>
                                     <!-- Cyan -->
-                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Cyan" Background="Transparent" ToolTipService.ToolTip="Cyan / Teal">
-                                        <Ellipse x:Name="AccentCyan" Width="32" Height="32" Fill="#FF06B6D4"/>
+                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Cyan" Background="Transparent" ToolTipService.ToolTip="Cyan / Teal">
+                                        <Ellipse x:Name="AccentCyan" Width="34" Height="34" Fill="#FF06B6D4"/>
                                         <FontIcon x:Name="CheckCyan" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
                                     </Grid>
                                     <!-- Cyberpunk Neon -->
-                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Cyberpunk" Background="Transparent" ToolTipService.ToolTip="Cyberpunk Neon">
-                                        <Ellipse x:Name="AccentCyberpunk" Width="32" Height="32">
+                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Cyberpunk" Background="Transparent" ToolTipService.ToolTip="Cyberpunk Neon">
+                                        <Ellipse x:Name="AccentCyberpunk" Width="34" Height="34">
                                             <Ellipse.Fill>
                                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                                     <GradientStop Color="#FF00F2FE" Offset="0"/>
@@ -316,13 +385,13 @@
                             <MenuFlyoutSeparator />
 
                             <StackPanel Spacing="8">
-                                <Grid Width="320" HorizontalAlignment="Left">
+                                <Grid Width="340" HorizontalAlignment="Left">
                                     <TextBlock Text="Mica / Acrylic Background Transparency Level" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     <Border Background="{ThemeResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" HorizontalAlignment="Right">
                                         <TextBlock x:Name="TransparencyValueLabel" Text="10%" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                                     </Border>
                                 </Grid>
-                                <Slider x:Name="TransparencySlider" ValueChanged="OnTransparencyChanged" Minimum="10" Maximum="100" Value="10" Width="320" HorizontalAlignment="Left"/>
+                                <Slider x:Name="TransparencySlider" ValueChanged="OnTransparencyChanged" Minimum="10" Maximum="100" Value="10" Width="340" HorizontalAlignment="Left"/>
                             </StackPanel>
 
                             <components:LoadingToggleSwitch x:Name="EnableAnimationsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Enable UI fluid translation and hover animations" />
@@ -332,21 +401,36 @@
 
                 <!-- Section 2: Auto Maintenance & Scheduler -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 2), Mode=OneWay}">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Auto Maintenance Task Schedulers" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Automate background junk cleaning and intelligent RAM working set flushing." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
+                    <!-- Section Header Banner -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="{ThemeResource AppStatusGoodBackground}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE812;" FontSize="18" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Auto Maintenance Task Schedulers" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                                <TextBlock Text="Automate background junk cleaning and intelligent RAM working set flushing." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                            <TextBlock Text="Automation" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                        </Border>
+                    </Grid>
                     
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <StackPanel Spacing="8">
-                                <Grid Width="320" HorizontalAlignment="Left">
+                                <Grid Width="340" HorizontalAlignment="Left">
                                     <TextBlock Text="Automated Cleanup Trigger Threshold" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     <Border Background="{ThemeResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6,2" HorizontalAlignment="Right">
                                         <TextBlock x:Name="CleanupSizeLabel" Text="5.0 GB" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                                     </Border>
                                 </Grid>
-                                <Slider x:Name="AutoCleanupSlider" ValueChanged="OnAutoCleanupSliderChanged" Minimum="1" Maximum="50" Value="5" StepFrequency="0.5" Width="320" HorizontalAlignment="Left"/>
+                                <Slider x:Name="AutoCleanupSlider" ValueChanged="OnAutoCleanupSliderChanged" Minimum="1" Maximum="50" Value="5" StepFrequency="0.5" Width="340" HorizontalAlignment="Left"/>
                                 <TextBlock Text="WinCare Pro silently cleans junk if accumulated cache exceeds this limit." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
 
@@ -356,32 +440,53 @@
                             
                             <MenuFlyoutSeparator />
 
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Automated Maintenance Schedule Frequency" FontSize="13" FontWeight="SemiBold"/>
-                                <TextBlock Text="Configure Windows Task Scheduler execution interval." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <ComboBox x:Name="MaintenanceFrequencyComboBox" SelectionChanged="OnMaintenanceFrequencyChanged" SelectedIndex="1" Width="180" CornerRadius="6" Margin="0,4,0,0">
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center">
+                                    <TextBlock Text="Automated Maintenance Schedule Frequency" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Configure Windows Task Scheduler execution interval." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <ComboBox Grid.Column="1" x:Name="MaintenanceFrequencyComboBox" SelectionChanged="OnMaintenanceFrequencyChanged" SelectedIndex="1" Width="180" CornerRadius="8" VerticalAlignment="Center">
                                     <ComboBoxItem Content="Daily run"/>
                                     <ComboBoxItem Content="Weekly scan"/>
                                     <ComboBoxItem Content="Monthly execution"/>
                                 </ComboBox>
-                            </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </Border>
                 </StackPanel>
 
                 <!-- Section 3: Telemetry & Alert Policy -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 3), Mode=OneWay}">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Telemetry &amp; Notification Center Policy" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Configure real-time monitoring polling speed, health score alert thresholds, and audio alerts." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
+                    <!-- Section Header Banner -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="{ThemeResource AppStatusWarningBackground}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xEA8F;" FontSize="18" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Telemetry &amp; Notification Center Policy" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                                <TextBlock Text="Configure real-time monitoring polling speed, health score alert thresholds, and audio alerts." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                            <TextBlock Text="Monitoring" FontSize="10.5" FontWeight="Bold" Foreground="#FFF59E0B"/>
+                        </Border>
+                    </Grid>
                     
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <TextBlock Text="Notification Center Policy" FontSize="13.5" FontWeight="Bold" />
                             <components:LoadingToggleSwitch x:Name="ShowNotificationsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Show dynamic in-app Toast Notifications" />
                             
-                            <StackPanel Spacing="8" MaxWidth="460" HorizontalAlignment="Left">
+                            <StackPanel Spacing="8" MaxWidth="480" HorizontalAlignment="Left">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -406,24 +511,38 @@
                         <StackPanel Spacing="18">
                             <TextBlock Text="Hardware Sensors Telemetry" FontSize="13.5" FontWeight="Bold" />
                             
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Sensors Telemetry Update Interval" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <ComboBox x:Name="TelemetryIntervalComboBox" SelectionChanged="OnSettingsChanged" SelectedIndex="1" Width="160" CornerRadius="6">
-                                    <ComboBoxItem Content="0.5 seconds (Fast)"/>
-                                    <ComboBoxItem Content="1.0 seconds (Normal)"/>
-                                    <ComboBoxItem Content="2.0 seconds (Eco)"/>
-                                    <ComboBoxItem Content="5.0 seconds (Low power)"/>
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                    <TextBlock Text="Sensors Telemetry Update Interval" FontSize="12.5" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Polling frequency for hardware temperature and loading rates." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <ComboBox Grid.Column="1" x:Name="TelemetryIntervalComboBox" SelectionChanged="OnSettingsChanged" SelectedIndex="1" Width="180" CornerRadius="8" VerticalAlignment="Center">
+                                    <ComboBoxItem Content="0.5s (High Precision)"/>
+                                    <ComboBoxItem Content="1.0s (Normal Mode)"/>
+                                    <ComboBoxItem Content="2.0s (Eco Mode)"/>
+                                    <ComboBoxItem Content="5.0s (Low Power)"/>
                                 </ComboBox>
-                            </StackPanel>
+                            </Grid>
 
-                            <StackPanel Spacing="6">
-                                <TextBlock Text="Performance History Logging Duration" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <ComboBox x:Name="PerformanceHistoryComboBox" SelectionChanged="OnSettingsChanged" SelectedIndex="0" Width="160" CornerRadius="6">
-                                    <ComboBoxItem Content="7 Days logs"/>
-                                    <ComboBoxItem Content="30 Days logs"/>
-                                    <ComboBoxItem Content="90 Days logs"/>
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                    <TextBlock Text="Performance History Logging Duration" FontSize="12.5" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Retention timeline for diagnostic telemetry history records." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <ComboBox Grid.Column="1" x:Name="PerformanceHistoryComboBox" SelectionChanged="OnSettingsChanged" SelectedIndex="0" Width="180" CornerRadius="8" VerticalAlignment="Center">
+                                    <ComboBoxItem Content="7 Days History"/>
+                                    <ComboBoxItem Content="30 Days History"/>
+                                    <ComboBoxItem Content="90 Days History"/>
                                 </ComboBox>
-                            </StackPanel>
+                            </Grid>
 
                             <components:LoadingToggleSwitch x:Name="EnableHardwareSensorsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Enable continuous low-overhead hardware sensors scanning thread" ToolTipService.ToolTip="Runs a background worker thread to poll CPU/GPU temperature and loading metrics." />
                         </StackPanel>
@@ -432,10 +551,25 @@
 
                 <!-- Section 4: Safety & Rollback -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 4), Mode=OneWay}">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Rollback &amp; Safety Registries" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Configure restore points, registry backups, and modification confirmation levels." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
+                    <!-- Section Header Banner -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="{ThemeResource PrimaryAccentLightBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE727;" FontSize="18" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Rollback &amp; Safety Registries" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                                <TextBlock Text="Configure restore points, registry backups, and modification confirmation levels." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                            <TextBlock Text="Safety Shield" FontSize="10.5" FontWeight="Bold" Foreground="#FF3B82F6"/>
+                        </Border>
+                    </Grid>
                     
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
@@ -445,11 +579,13 @@
                             <MenuFlyoutSeparator />
 
                             <StackPanel Spacing="8">
-                                <TextBlock Text="Modification Confirmation Alerts Level" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <Grid Width="320" HorizontalAlignment="Left">
+                                <TextBlock Text="Modification Confirmation Alerts Level" FontSize="12.5" FontWeight="SemiBold"/>
+                                <Grid Width="340" HorizontalAlignment="Left">
                                     <Slider x:Name="AlertsLevelSlider" ValueChanged="OnSettingsChanged" Minimum="1" Maximum="3" Value="2" TickFrequency="1" SnapsTo="Ticks"/>
                                 </Grid>
-                                <TextBlock Text="Level 2 (Balanced): Prompts confirmation warnings before major file tree and registry mutations." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="8" Padding="12,8" MaxWidth="500" HorizontalAlignment="Left">
+                                    <TextBlock Text="Level 2 (Balanced): Prompts confirmation warnings before major file tree and registry mutations." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </Border>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -457,10 +593,25 @@
 
                 <!-- Section 5: Database & Storage Footprint -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 5), Mode=OneWay}">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Database &amp; Storage Footprint Manager" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Inspect and reclaim storage consumed by diagnostic logs, assessment reports, and update packages." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
+                    <!-- Section Header Banner -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="{ThemeResource AppStatusPurpleBackground}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Database &amp; Storage Footprint Manager" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                                <TextBlock Text="Inspect and reclaim storage consumed by diagnostic logs, assessment reports, and update packages." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                            <TextBlock Text="Storage Engine" FontSize="10.5" FontWeight="Bold" Foreground="#FF8B5CF6"/>
+                        </Border>
+                    </Grid>
                     
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
@@ -469,10 +620,10 @@
                                     <TextBlock Text="Storage Utilization Statistics" FontSize="13.5" FontWeight="Bold" />
                                     <TextBlock Text="Live breakdown of local SQLite logs and temporary cache folders." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
-                                <Button HorizontalAlignment="Right" Click="OnRefreshStorageClick" Style="{StaticResource StandardSecondaryButtonStyle}" Padding="10,6">
+                                <Button HorizontalAlignment="Right" Click="OnRefreshStorageClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="12,7">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="{ThemeResource PrimaryAccentBrush}"/>
-                                        <TextBlock Text="Refresh Stats" FontSize="12"/>
+                                        <TextBlock Text="Refresh Stats" FontSize="12" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
                             </Grid>
@@ -496,7 +647,7 @@
                                 <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14">
                                     <StackPanel Spacing="4">
                                         <StackPanel Orientation="Horizontal" Spacing="6">
-                                            <FontIcon Glyph="&#xE8A5;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                            <FontIcon Glyph="&#xE8A5;" FontSize="13" Foreground="#FF10B981"/>
                                             <TextBlock Text="Reports Files" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </StackPanel>
                                         <TextBlock x:Name="ReportsDbSizeLabel" Text="Calculating..." FontSize="13.5" FontWeight="Bold"/>
@@ -505,7 +656,7 @@
                                 <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}" Padding="14">
                                     <StackPanel Spacing="4">
                                         <StackPanel Orientation="Horizontal" Spacing="6">
-                                            <FontIcon Glyph="&#xE8B7;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                            <FontIcon Glyph="&#xE8B7;" FontSize="13" Foreground="#FFEC4899"/>
                                             <TextBlock Text="Updates Cache" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </StackPanel>
                                         <TextBlock x:Name="CacheDbSizeLabel" Text="Calculating..." FontSize="13.5" FontWeight="Bold"/>
@@ -537,98 +688,113 @@
 
                 <!-- Section 6: Software Updates -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 6), Mode=OneWay}">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Software Update Policies &amp; CDN Stream" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Manage background version checks, live percentage telemetry stream, and automated installer delivery." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
+                    <!-- Section Header Banner -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="{ThemeResource AppStatusPurpleBackground}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE75C;" FontSize="18" Foreground="#FFEC4899" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Software Update Policies &amp; CDN Stream" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                                <TextBlock Text="Manage background version checks, live percentage telemetry stream, and automated installer delivery." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                            <TextBlock Text="Release CDN" FontSize="10.5" FontWeight="Bold" Foreground="#FFEC4899"/>
+                        </Border>
+                    </Grid>
                     
                     <!-- 1. Live Update Data Progress & Status Card -->
-                    <Border Style="{StaticResource Holographic3DCardStyle}" Padding="20"
+                    <Border Style="{StaticResource Holographic3DCardStyle}" Padding="22"
                             helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="14">
                         <Grid>
                             <!-- Ambient Pulsing Glow Reactor -->
                             <Ellipse x:Name="UpdateCardGlow" Fill="{StaticResource PrimaryAccentGradient}" Opacity="0.18" HorizontalAlignment="Right" VerticalAlignment="Top" Width="260" Height="160" Margin="0,-40,-40,0" IsHitTestVisible="False"/>
 
                             <StackPanel Spacing="16">
-                            <!-- Card Header with version, status badge and action triggers -->
-                            <Grid ColumnSpacing="16" RowSpacing="10">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                                <!-- Card Header with version, status badge and action triggers -->
+                                <Grid ColumnSpacing="16" RowSpacing="10">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-                                <!-- Top Left: Version & Title -->
-                                <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                    <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
-                                        <TextBlock Text="v4.6" FontSize="11" FontWeight="Bold" Foreground="White"/>
-                                    </Border>
-                                    <TextBlock Text="WinCare Pro Distribution Channel" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                </StackPanel>
-
-                                <!-- Top Right: Action Buttons (Compact & Sleek) -->
-                                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                    <Button x:Name="CancelUpdatesBtn" Click="OnCancelUpdateClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" Padding="8,0" CornerRadius="6" ToolTipService.ToolTip="Cancel current update operation" Visibility="Collapsed">
-                                        <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE711;" FontSize="10.5" Foreground="#FFEF4444"/>
-                                            <TextBlock Text="Cancel" FontSize="11" FontWeight="SemiBold" Foreground="#FFEF4444"/>
-                                        </StackPanel>
-                                    </Button>
-                                    <Button x:Name="CheckUpdatesBtn" Click="OnCheckUpdatesClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" Padding="14,0" CornerRadius="6">
-                                        <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
-                                            <FontIcon x:Name="CheckUpdatesIcon" Glyph="&#xE72C;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                            <TextBlock x:Name="CheckUpdatesText" Text="Check for Updates" FontSize="11.5" FontWeight="SemiBold"/>
-                                        </StackPanel>
-                                    </Button>
-                                </StackPanel>
-
-                                <!-- Bottom Row: Status Badge, Detailed Message & Timestamp -->
-                                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="4">
-                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                        <Border x:Name="UpdateChannelBadgeBorder" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
-                                            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                                                <Ellipse x:Name="UpdateChannelBadgeDot" Width="5.5" Height="5.5" Fill="{ThemeResource AppBadgeGoodFg}"/>
-                                                <TextBlock x:Name="UpdateChannelBadgeText" Text="CDN Connected" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
-                                            </StackPanel>
+                                    <!-- Top Left: Version & Title -->
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
+                                            <TextBlock Text="v4.6" FontSize="11" FontWeight="Bold" Foreground="White"/>
                                         </Border>
-                                        <TextBlock x:Name="UpdateStatusLabel" Text="System is up to date with the latest security and optimization definitions." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                        <TextBlock Text="WinCare Pro Distribution Channel" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                     </StackPanel>
-                                    <TextBlock x:Name="UpdateLastCheckedLabel" Text="Last Checked: Just now" FontSize="10.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
 
-                            <!-- Live % Data Stream Bar & Readout -->
-                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="12" Padding="16,14">
-                                <StackPanel Spacing="10">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE895;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                            <TextBlock x:Name="UpdateProgressStepLabel" Text="Data Synchronization Status" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                    <!-- Top Right: Action Buttons (Compact & Sleek) -->
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                        <Button x:Name="CancelUpdatesBtn" Click="OnCancelUpdateClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="10,0" CornerRadius="6" ToolTipService.ToolTip="Cancel current update operation" Visibility="Collapsed">
+                                            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE711;" FontSize="11" Foreground="#FFEF4444"/>
+                                                <TextBlock Text="Cancel" FontSize="11.5" FontWeight="SemiBold" Foreground="#FFEF4444"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button x:Name="CheckUpdatesBtn" Click="OnCheckUpdatesClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="8">
+                                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <ProgressRing x:Name="UpdateProgressRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" VerticalAlignment="Center"/>
+                                                <FontIcon x:Name="CheckUpdatesIcon" Glyph="&#xE72C;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock x:Name="CheckUpdatesText" Text="Check for Updates" FontSize="11.5" FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+
+                                    <!-- Bottom Row: Status Badge, Detailed Message & Timestamp -->
+                                    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="4">
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <Border x:Name="UpdateChannelBadgeBorder" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
+                                                <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                                    <Ellipse x:Name="UpdateChannelBadgeDot" Width="5.5" Height="5.5" Fill="{ThemeResource AppBadgeGoodFg}"/>
+                                                    <TextBlock x:Name="UpdateChannelBadgeText" Text="CDN Connected" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                                </StackPanel>
+                                            </Border>
+                                            <TextBlock x:Name="UpdateStatusLabel" Text="System is up to date with the latest security and optimization definitions." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                        <TextBlock Grid.Column="1" x:Name="UpdatePercentText" Text="100%" FontSize="13" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
-                                    </Grid>
+                                        <TextBlock x:Name="UpdateLastCheckedLabel" Text="Last Checked: Just now" FontSize="10.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Grid>
 
-                                    <!-- Modern Data Progress Bar -->
-                                    <ProgressBar x:Name="UpdateProgressBar" Maximum="100" Value="100" Height="8" CornerRadius="4" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Foreground="{StaticResource PrimaryAccentGradient}" />
+                                <!-- Live % Data Stream Bar & Readout -->
+                                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="12" Padding="16,14">
+                                    <StackPanel Spacing="10">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE895;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock x:Name="UpdateProgressStepLabel" Text="Data Synchronization Status" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1" x:Name="UpdatePercentText" Text="100%" FontSize="13" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                        </Grid>
 
-                                    <!-- Bottom Telemetry Detail -->
-                                    <Grid>
-                                        <TextBlock x:Name="UpdateDetailsText" Text="CDN Manifest Sync: Complete • Channel: Stable • Digital Signature: Verified" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        <TextBlock x:Name="UpdateDataRateText" Text="Ready" HorizontalAlignment="Right" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                    </Grid>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </Grid>
-                </Border>
+                                        <!-- Modern Data Progress Bar -->
+                                        <ProgressBar x:Name="UpdateProgressBar" Maximum="100" Value="100" Height="8" CornerRadius="4" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Foreground="{StaticResource PrimaryAccentGradient}" />
+
+                                        <!-- Bottom Telemetry Detail -->
+                                        <Grid>
+                                            <TextBlock x:Name="UpdateDetailsText" Text="CDN Manifest Sync: Complete • Channel: Stable • Digital Signature: Verified" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock x:Name="UpdateDataRateText" Text="Ready" HorizontalAlignment="Right" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
                     
                     <!-- 2. Update Configuration Settings -->
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
@@ -642,10 +808,25 @@
 
                 <!-- Section 7: Advanced & Developer Workbench -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 7), Mode=OneWay}">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Advanced &amp; Developer Workbench" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Developer debugging flags, live diagnostic suite, memory trimmer, and sandbox runtime." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
+                    <!-- Section Header Banner -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE7B4;" FontSize="18" Foreground="#FF6366F1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Advanced &amp; Developer Workbench" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                                <TextBlock Text="Developer debugging flags, live diagnostic suite, memory trimmer, and sandbox runtime." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                            <TextBlock Text="Workbench" FontSize="10.5" FontWeight="Bold" Foreground="#FF6366F1"/>
+                        </Border>
+                    </Grid>
                     
                     <!-- Diagnostic Traces & Sandbox Switches -->
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
@@ -654,11 +835,17 @@
                             
                             <MenuFlyoutSeparator />
 
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Plugin &amp; Sandbox Modules Manager" FontSize="13" FontWeight="Bold" />
-                                <TextBlock Text="No custom external plugins are currently loaded in the sandbox runtime." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <Button Content="Browse Verified Plugins" CornerRadius="6" Click="OnBrowsePluginsClick" Style="{StaticResource StandardSecondaryButtonStyle}" Margin="0,4,0,0"/>
-                            </StackPanel>
+                            <Grid ColumnSpacing="16">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                    <TextBlock Text="Plugin &amp; Sandbox Modules Manager" FontSize="13" FontWeight="Bold" />
+                                    <TextBlock Text="No custom external plugins are currently loaded in the sandbox runtime." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="Browse Verified Plugins" CornerRadius="8" Click="OnBrowsePluginsClick" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center"/>
+                            </Grid>
 
                             <MenuFlyoutSeparator />
 
@@ -689,10 +876,12 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Button 1: Inspect Environment -->
-                                <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnInspectEnvironmentClick">
+                                <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Click="OnInspectEnvironmentClick">
                                     <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <FontIcon Glyph="&#xE7F8;" FontSize="14" Foreground="{ThemeResource PrimaryAccentBrush}"/>
-                                        <StackPanel Spacing="2">
+                                        <Border Width="30" Height="30" CornerRadius="6" Background="{ThemeResource PrimaryAccentLightBrush}">
+                                            <FontIcon Glyph="&#xE7F8;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Spacing="1" VerticalAlignment="Center">
                                             <TextBlock Text="Inspect System Environment" FontWeight="SemiBold" FontSize="12"/>
                                             <TextBlock Text="View OS, CLR, CPU &amp; GC mode" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </StackPanel>
@@ -700,10 +889,12 @@
                                 </Button>
 
                                 <!-- Button 2: Trim Working Set -->
-                                <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnTrimWorkingSetClick">
+                                <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Click="OnTrimWorkingSetClick">
                                     <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <FontIcon Glyph="&#xE74D;" FontSize="14" Foreground="#FF10B981"/>
-                                        <StackPanel Spacing="2">
+                                        <Border Width="30" Height="30" CornerRadius="6" Background="{ThemeResource AppStatusGoodBackground}">
+                                            <FontIcon Glyph="&#xE74D;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Spacing="1" VerticalAlignment="Center">
                                             <TextBlock Text="Trim RAM &amp; Force GC" FontWeight="SemiBold" FontSize="12"/>
                                             <TextBlock Text="Flush process working set" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </StackPanel>
@@ -711,10 +902,12 @@
                                 </Button>
 
                                 <!-- Button 3: View Audit Logs -->
-                                <Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnViewAuditLogsClick">
+                                <Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Click="OnViewAuditLogsClick">
                                     <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <FontIcon Glyph="&#xE81C;" FontSize="14" Foreground="#FF6366F1"/>
-                                        <StackPanel Spacing="2">
+                                        <Border Width="30" Height="30" CornerRadius="6" Background="{ThemeResource AppStatusPurpleBackground}">
+                                            <FontIcon Glyph="&#xE81C;" FontSize="13" Foreground="#FF6366F1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Spacing="1" VerticalAlignment="Center">
                                             <TextBlock Text="View SQLite Audit Logs" FontWeight="SemiBold" FontSize="12"/>
                                             <TextBlock Text="Inspect recent system events" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </StackPanel>
@@ -722,10 +915,12 @@
                                 </Button>
 
                                 <!-- Button 4: Export Diagnostic Bundle -->
-                                <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnExportDiagnosticsClick">
+                                <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Padding="14,10" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Click="OnExportDiagnosticsClick">
                                     <StackPanel Orientation="Horizontal" Spacing="10">
-                                        <FontIcon Glyph="&#xE898;" FontSize="14" Foreground="#FFF59E0B"/>
-                                        <StackPanel Spacing="2">
+                                        <Border Width="30" Height="30" CornerRadius="6" Background="{ThemeResource AppStatusWarningBackground}">
+                                            <FontIcon Glyph="&#xE898;" FontSize="13" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Spacing="1" VerticalAlignment="Center">
                                             <TextBlock Text="Export Diagnostics (JSON)" FontWeight="SemiBold" FontSize="12"/>
                                             <TextBlock Text="Sanitized bundle for debugging" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </StackPanel>
@@ -738,10 +933,25 @@
 
                 <!-- Section 8: Backup & Reset Settings -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 8), Mode=OneWay}">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="Backup &amp; Reset Configurations" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Export configurations to JSON, restore profiles, or revert to pristine factory settings." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
+                    <!-- Section Header Banner -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE8AC;" FontSize="18" Foreground="#FFE81123" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="Backup &amp; Reset Configurations" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                                <TextBlock Text="Export configurations to JSON, restore profiles, or revert to pristine factory settings." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                            <TextBlock Text="Profiles" FontSize="10.5" FontWeight="Bold" Foreground="#FFE81123"/>
+                        </Border>
+                    </Grid>
                     
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
@@ -750,13 +960,13 @@
                                 <TextBlock Text="Save your entire personalization, scheduler, and security preferences to a portable JSON file." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 
                                 <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
-                                    <Button Click="OnExportSettingsClick" Style="{StaticResource StandardSecondaryButtonStyle}">
+                                    <Button Click="OnExportSettingsClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="14,8">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <FontIcon Glyph="&#xE898;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                                             <TextBlock Text="Export Backup (JSON)" FontWeight="SemiBold"/>
                                         </StackPanel>
                                     </Button>
-                                    <Button Click="OnImportSettingsClick" Style="{StaticResource StandardSecondaryButtonStyle}">
+                                    <Button Click="OnImportSettingsClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="14,8">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <FontIcon Glyph="&#xE896;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                                             <TextBlock Text="Import Restore (JSON)" FontWeight="SemiBold"/>
@@ -771,7 +981,7 @@
                                 <TextBlock Text="Factory Reset Preferences" FontSize="13.5" FontWeight="Bold" Foreground="#FFE81123"/>
                                 <TextBlock Text="Reset all settings, theme customizations, schedulers, and thresholds to pristine factory defaults." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 
-                                <Button Click="OnResetDefaultsClick" Foreground="#FFE81123" CornerRadius="8" Padding="14,8" Margin="0,8,0,0" FontWeight="Bold">
+                                <Button Click="OnResetDefaultsClick" Foreground="#FFE81123" CornerRadius="8" Padding="16,8" Margin="0,8,0,0" FontWeight="Bold">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <FontIcon Glyph="&#xE777;" FontSize="13" Foreground="#FFE81123"/>
                                         <TextBlock Text="Reset to Factory Defaults" FontWeight="Bold"/>
@@ -784,10 +994,25 @@
 
                 <!-- Section 9: About & Developer Info -->
                 <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 9), Mode=OneWay}">
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="About WinCare Pro &amp; Engineering Team" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
-                        <TextBlock Text="Software architecture, lead developer portfolio, zero-telemetry privacy pledge, and open-source ecosystem." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                    </StackPanel>
+                    <!-- Section Header Banner -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                            <Border Width="40" Height="40" CornerRadius="10" Background="{ThemeResource PrimaryAccentLightBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE946;" FontSize="18" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Spacing="2" VerticalAlignment="Center">
+                                <TextBlock Text="About WinCare Pro &amp; Engineering Team" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" />
+                                <TextBlock Text="Software architecture, lead developer portfolio, zero-telemetry privacy pledge, and open-source ecosystem." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                            <TextBlock Text="v4.6.0 Nova" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                        </Border>
+                    </Grid>
                     
                     <!-- 1. Hero Identity & Live Telemetry Card -->
                     <Border Style="{StaticResource Holographic3DCardStyle}" Padding="24"
@@ -911,7 +1136,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!-- Email Developer -->
-                                    <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Click="OnEmailDeveloperClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="12,8">
+                                    <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Click="OnEmailDeveloperClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="12,8">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <FontIcon Glyph="&#xE715;" FontSize="12.5" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                                             <TextBlock Text="Email Developer" FontSize="11.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
@@ -919,7 +1144,7 @@
                                     </Button>
 
                                     <!-- Copy Contact Email -->
-                                    <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Click="OnCopyEmailClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="12,8">
+                                    <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Click="OnCopyEmailClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="12,8">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <FontIcon Glyph="&#xE8C8;" FontSize="12.5" Foreground="#FF10B981"/>
                                             <TextBlock Text="Copy Contact Email" FontSize="11.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
@@ -927,7 +1152,7 @@
                                     </Button>
 
                                     <!-- GitHub Repository -->
-                                    <Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Click="OnOpenGitHubClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="12,8">
+                                    <Button Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Click="OnOpenGitHubClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="12,8">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <FontIcon Glyph="&#xE8A7;" FontSize="12.5" Foreground="#FF6366F1"/>
                                             <TextBlock Text="GitHub Repository" FontSize="11.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
@@ -935,7 +1160,7 @@
                                     </Button>
 
                                     <!-- Report Bug / Issue -->
-                                    <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Click="OnReportIssueClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="12,8">
+                                    <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Click="OnReportIssueClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="12,8">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <FontIcon Glyph="&#xE7BA;" FontSize="12.5" Foreground="#FFF59E0B"/>
                                             <TextBlock Text="Report Bug / Issue" FontSize="11.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>

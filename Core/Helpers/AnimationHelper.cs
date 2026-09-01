@@ -26,14 +26,7 @@ public static class AnimationHelper
 
     public static bool AreAnimationsEnabled()
     {
-        try
-        {
-            var uiSettings = new Windows.UI.ViewManagement.UISettings();
-            if (!uiSettings.AnimationsEnabled) return false;
-        }
-        catch { }
-
-        return true;
+        return WinCarePro.Shared.Animations.ReducedMotionHelper.AreAnimationsEnabled;
     }
     // ==========================================
     // 1. Attached Property: HoverScale

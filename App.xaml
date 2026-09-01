@@ -693,12 +693,6 @@
             <!-- Navigation Active Indicator Gradient -->
             <SolidColorBrush x:Key="NavActiveIndicatorBrush" Color="#FF0F6CBD" />
 
-            <!-- Gaming Turbo Gradient -->
-            <LinearGradientBrush x:Key="GamingTurboGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FFF59E0B" Offset="0" />
-                <GradientStop Color="#FFEA580C" Offset="1" />
-            </LinearGradientBrush>
-
             <!-- AI WinCare Engine Gradient -->
             <LinearGradientBrush x:Key="AiWinCareEngineGradient" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#FF0284C7" Offset="0" />
@@ -718,15 +712,6 @@
             <Style x:Key="ElevatedGlassCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
-                <Setter Property="Padding" Value="16" />
-            </Style>
-
-            <!-- Gaming Turbo Card Style -->
-            <Style x:Key="GamingTurboCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="10" />
                 <Setter Property="Padding" Value="16" />

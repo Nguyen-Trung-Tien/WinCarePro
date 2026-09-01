@@ -88,11 +88,10 @@ public sealed partial class DashboardPage : Page
         catch { }
     }
 
-    private void OnLaunchGamingTurboClick(object sender, RoutedEventArgs e)
+    private void OnLaunchOptimizerClick(object sender, RoutedEventArgs e)
     {
         try
         {
-            // v4.0.0 — Gaming Turbo now merged into Optimizer & Gaming Suite
             if (App.MainWindowInstance is MainWindow mw)
             {
                 if (mw.MainFrame.Content is MainPage mp)

@@ -67,47 +67,13 @@
 
         <!-- Vertical Navigation Panel (Secondary Sidebar) -->
         <Border x:Name="SidebarBorder" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,1,0" Padding="0,0,16,0">
-            <Grid RowSpacing="12">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <!-- In-Settings Quick Search Box -->
-                <AutoSuggestBox x:Name="SettingsSearchBox" 
-                                Grid.Row="0"
-                                PlaceholderText="Find a setting..."
-                                QueryIcon="Find"
-                                TextChanged="OnSettingsSearchTextChanged"
-                                SuggestionChosen="OnSettingsSearchSuggestionChosen"
-                                QuerySubmitted="OnSettingsSearchQuerySubmitted"
-                                Height="36"
-                                CornerRadius="8"
-                                HorizontalAlignment="Stretch">
-                    <AutoSuggestBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid ColumnSpacing="10" Padding="4,4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <FontIcon Glyph="{Binding IconGlyph}" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" VerticalAlignment="Center" Grid.Column="0"/>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="{Binding Title}" FontSize="12" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding Description}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </AutoSuggestBox.ItemTemplate>
-                </AutoSuggestBox>
-
-                <!-- Navigation List -->
-                <ListView x:Name="SettingsNavList" Grid.Row="1" SelectedIndex="0" SelectionChanged="SettingsNavList_SelectionChanged" SelectionMode="Single">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsStackPanel x:Name="SettingsNavStackPanel" Orientation="Vertical" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
+            <!-- Navigation List -->
+            <ListView x:Name="SettingsNavList" SelectedIndex="0" SelectionChanged="SettingsNavList_SelectionChanged" SelectionMode="Single">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel x:Name="SettingsNavStackPanel" Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
                     
                     <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
@@ -198,7 +164,6 @@
                         </StackPanel>
                     </ListViewItem>
                 </ListView>
-            </Grid>
         </Border>
 
         <!-- Content Area -->

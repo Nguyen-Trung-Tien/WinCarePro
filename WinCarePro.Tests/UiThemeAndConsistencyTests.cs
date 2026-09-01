@@ -111,10 +111,6 @@ public class UiThemeAndConsistencyTests
     {
         var manager = TranslationManager.Instance;
 
-        string gamingTurbo = manager.GetTranslationForLanguage("🚀 Gaming Turbo ACTIVE! Freed 350 MB RAM across 12 processes.", AppLanguage.Vietnamese);
-        Assert.Contains("Gaming Turbo HOẠT ĐỘNG", gamingTurbo);
-        Assert.Contains("350 MB RAM", gamingTurbo);
-
         string uninstall = manager.GetTranslationForLanguage("Uninstalling app: Google Chrome...", AppLanguage.Vietnamese);
         Assert.Equal("Đang gỡ cài đặt ứng dụng: Google Chrome...", uninstall);
 

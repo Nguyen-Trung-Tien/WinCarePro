@@ -221,22 +221,10 @@ public sealed partial class MainWindow : Window
             StartClockTicker();
             FadeOutStartupOverlay.Begin();
 
-            // 6. Deferred background tasks: Index search registry & database maintenance
+            // 6. Deferred background tasks: Database maintenance
             AppTitleVersionBadge.Text = WinCarePro.Core.AppConstants.DisplayVersion;
             var currentVersion = WinCarePro.Core.AppConstants.CurrentVersion;
             CheckAndShowChangelog(currentVersion);
-
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    await Modules.GamingTurbo.GamingTurboViewModel.CheckAndPerformAutoRecoveryAsync();
-                }
-                catch (Exception ex)
-                {
-                    Infrastructure.Logging.CrashLogger.LogException("Startup.GamingTurboRecovery", ex);
-                }
-            });
 
             _ = Task.Run(() =>
             {

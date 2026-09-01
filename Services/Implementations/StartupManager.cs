@@ -108,23 +108,15 @@ public static class StartupManager
         return success;
     }
 
+    private const string AutoStartTaskName = "WinCareProAutoStart";
+
     private static bool IsTaskSchedulerEnabled()
     {
         try
         {
-            var psi = new ProcessStartInfo("schtasks", $"/Query /TN \"WinCareProAutoStart\"")
-            {
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
-            using var proc = Process.Start(psi);
-            if (proc != null)
-            {
-                proc.WaitForExit();
-                return proc.ExitCode == 0;
-            }
+            using var ts = new Microsoft.Win32.TaskScheduler.TaskService();
+            var task = ts.GetTask(AutoStartTaskName);
+            return task != null && task.Enabled;
         }
         catch { }
         return false;
@@ -135,15 +127,23 @@ public static class StartupManager
         try
         {
             string exePath = Process.GetCurrentProcess().MainModule?.FileName ?? "";
+            if (string.IsNullOrEmpty(exePath) || !File.Exists(exePath))
+            {
+                exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WinCarePro.exe");
+            }
             string args = "/background";
 
-            var psi = new ProcessStartInfo("schtasks", $"/Create /TN \"WinCareProAutoStart\" /TR \"\\\"{exePath}\\\" {args}\" /SC ONLOGON /RL HIGHEST /F")
-            {
-                CreateNoWindow = true,
-                UseShellExecute = false
-            };
-            using var proc = Process.Start(psi);
-            proc?.WaitForExit();
+            using var ts = new Microsoft.Win32.TaskScheduler.TaskService();
+            var td = ts.NewTask();
+            td.RegistrationInfo.Description = "WinCare Pro Automatic Startup Task";
+            td.Principal.RunLevel = Microsoft.Win32.TaskScheduler.TaskRunLevel.Highest;
+            td.Triggers.Add(new Microsoft.Win32.TaskScheduler.LogonTrigger());
+            td.Actions.Add(new Microsoft.Win32.TaskScheduler.ExecAction(exePath, args, null));
+            td.Settings.DisallowStartIfOnBatteries = false;
+            td.Settings.StopIfGoingOnBatteries = false;
+            td.Settings.ExecutionTimeLimit = TimeSpan.Zero;
+
+            ts.RootFolder.RegisterTaskDefinition(AutoStartTaskName, td);
         }
         catch (Exception ex)
         {
@@ -155,13 +155,8 @@ public static class StartupManager
     {
         try
         {
-            var psi = new ProcessStartInfo("schtasks", "/Delete /TN \"WinCareProAutoStart\" /F")
-            {
-                CreateNoWindow = true,
-                UseShellExecute = false
-            };
-            using var proc = Process.Start(psi);
-            proc?.WaitForExit();
+            using var ts = new Microsoft.Win32.TaskScheduler.TaskService();
+            ts.RootFolder.DeleteTask(AutoStartTaskName, false);
         }
         catch { }
     }

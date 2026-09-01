@@ -83,7 +83,6 @@ public partial class TranslationManager
     private static readonly System.Text.RegularExpressions.Regex BackgroundProcessesActiveRegex = new(@"^There are (\d+) background processes active\. System is operating normally\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex UninstallingAppRegex = new(@"^Uninstalling\s+(?:app:\s*)?(.+?)(?:\.\.\.|…)?$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex CleanedDirsRegex = new(@"^Cleaned (\d+) empty directories under (.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-    private static readonly System.Text.RegularExpressions.Regex GamingTurboActiveRegex = new(@"^🚀 Gaming Turbo ACTIVE! Freed ([\d\.,]+) MB RAM across (\d+) processes\.$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex PresetRegex = new(@"^Preset:\s*(.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex BootSavingsRegex = new(@"^-([\d\.,]+)s\s+Boot Time$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex DaysLeftRegex = new(@"^(\d+)\s+Days Left$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
@@ -240,14 +239,6 @@ public partial class TranslationManager
             if (CleanedDirsRegex.IsMatch(trimmed))
             {
                 string res = CleanedDirsRegex.Replace(trimmed, "Đã dọn dẹp $1 thư mục rỗng trong $2");
-                CacheDynamicTranslation(trimmed, res);
-                return PreserveWhitespace(key, res);
-            }
-
-            // Dynamic Regex translation for Gaming Turbo Active
-            if (GamingTurboActiveRegex.IsMatch(trimmed))
-            {
-                string res = GamingTurboActiveRegex.Replace(trimmed, "🚀 Gaming Turbo HOẠT ĐỘNG! Đã giải phóng $1 MB RAM trên $2 tiến trình.");
                 CacheDynamicTranslation(trimmed, res);
                 return PreserveWhitespace(key, res);
             }
@@ -439,7 +430,6 @@ public partial class TranslationManager
             CleanedBytesRegex.IsMatch(trimmed) ||
             SystemUpdatedRegex.IsMatch(trimmed) ||
             CleanedDirsRegex.IsMatch(trimmed) ||
-            GamingTurboActiveRegex.IsMatch(trimmed) ||
             PresetRegex.IsMatch(trimmed) ||
             BootSavingsRegex.IsMatch(trimmed) ||
             DaysLeftRegex.IsMatch(trimmed) ||

@@ -41,6 +41,26 @@
                     <SolidColorBrush x:Key="AppRamChipBorder" Color="#350284C7" />
                     <SolidColorBrush x:Key="AppRamChipFg" Color="#FF60A5FA" />
                     
+                    <!-- Semantic Status Brushes (Dark Mode) -->
+                    <SolidColorBrush x:Key="AppStatusGoodBrush" Color="#FF10B981" />
+                    <SolidColorBrush x:Key="AppStatusGoodBackground" Color="#1810B981" />
+                    <SolidColorBrush x:Key="AppStatusGoodBorder" Color="#3510B981" />
+                    <SolidColorBrush x:Key="AppStatusWarningBrush" Color="#FFF59E0B" />
+                    <SolidColorBrush x:Key="AppStatusWarningBackground" Color="#18F59E0B" />
+                    <SolidColorBrush x:Key="AppStatusWarningBorder" Color="#35F59E0B" />
+                    <SolidColorBrush x:Key="AppStatusDangerBrush" Color="#FFEF4444" />
+                    <SolidColorBrush x:Key="AppStatusDangerBackground" Color="#18EF4444" />
+                    <SolidColorBrush x:Key="AppStatusDangerBorder" Color="#35EF4444" />
+                    <SolidColorBrush x:Key="AppStatusInfoBrush" Color="#FF3B82F6" />
+                    <SolidColorBrush x:Key="AppStatusInfoBackground" Color="#183B82F6" />
+                    <SolidColorBrush x:Key="AppStatusInfoBorder" Color="#353B82F6" />
+                    <SolidColorBrush x:Key="AppStatusPurpleBrush" Color="#FF8B5CF6" />
+                    <SolidColorBrush x:Key="AppStatusPurpleBackground" Color="#188B5CF6" />
+                    <SolidColorBrush x:Key="AppStatusPurpleBorder" Color="#358B5CF6" />
+                    <SolidColorBrush x:Key="AppStatusCyanBrush" Color="#FF06B6D4" />
+                    <SolidColorBrush x:Key="AppStatusCyanBackground" Color="#1806B6D4" />
+                    <SolidColorBrush x:Key="AppStatusCyanBorder" Color="#3506B6D4" />
+
                     <!-- System Text & Control Overrides for 100% Seamless Dark Mode Readability & Layout Consistency -->
                     <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#FF94A3B8" />
                     <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#F8FAFC" />
@@ -87,6 +107,26 @@
                     <SolidColorBrush x:Key="AppRamChipBg" Color="#EFF6FF" />
                     <SolidColorBrush x:Key="AppRamChipBorder" Color="#BFDBFE" />
                     <SolidColorBrush x:Key="AppRamChipFg" Color="#1D4ED8" />
+
+                    <!-- Semantic Status Brushes (Light Mode) -->
+                    <SolidColorBrush x:Key="AppStatusGoodBrush" Color="#FF059669" />
+                    <SolidColorBrush x:Key="AppStatusGoodBackground" Color="#ECFDF5" />
+                    <SolidColorBrush x:Key="AppStatusGoodBorder" Color="#A7F3D0" />
+                    <SolidColorBrush x:Key="AppStatusWarningBrush" Color="#FFD97706" />
+                    <SolidColorBrush x:Key="AppStatusWarningBackground" Color="#FFFBEB" />
+                    <SolidColorBrush x:Key="AppStatusWarningBorder" Color="#FDE68A" />
+                    <SolidColorBrush x:Key="AppStatusDangerBrush" Color="#FFDC2626" />
+                    <SolidColorBrush x:Key="AppStatusDangerBackground" Color="#FEF2F2" />
+                    <SolidColorBrush x:Key="AppStatusDangerBorder" Color="#FECACA" />
+                    <SolidColorBrush x:Key="AppStatusInfoBrush" Color="#FF2563EB" />
+                    <SolidColorBrush x:Key="AppStatusInfoBackground" Color="#EFF6FF" />
+                    <SolidColorBrush x:Key="AppStatusInfoBorder" Color="#BFDBFE" />
+                    <SolidColorBrush x:Key="AppStatusPurpleBrush" Color="#FF7C3AED" />
+                    <SolidColorBrush x:Key="AppStatusPurpleBackground" Color="#F5F3FF" />
+                    <SolidColorBrush x:Key="AppStatusPurpleBorder" Color="#DDD6FE" />
+                    <SolidColorBrush x:Key="AppStatusCyanBrush" Color="#FF0891B2" />
+                    <SolidColorBrush x:Key="AppStatusCyanBackground" Color="#ECFEFF" />
+                    <SolidColorBrush x:Key="AppStatusCyanBorder" Color="#A5F3FC" />
                     
                     <!-- System Text & Control Overrides for Razor-Sharp Legibility & High Definition in Light Mode -->
                     <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#64748B" />

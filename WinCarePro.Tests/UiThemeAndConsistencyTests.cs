@@ -48,6 +48,8 @@ public class UiThemeAndConsistencyTests
     [InlineData("Purple")]
     [InlineData("Pink")]
     [InlineData("Amber")]
+    [InlineData("Cyan")]
+    [InlineData("Cyberpunk")]
     public void ThemeManager_ApplyAccent_ShouldSupportAllPalettes(string accent)
     {
         var manager = ThemeManager.Instance;

@@ -158,8 +158,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#2010B981" BorderBrush="#5010B981" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE73A;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE73A;" FontSize="16" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                         <TextBlock Text="Antivirus Shield" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
@@ -176,8 +176,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#203B82F6" BorderBrush="#503B82F6" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE950;" FontSize="16" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusInfoBackground}" BorderBrush="{ThemeResource AppStatusInfoBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE950;" FontSize="16" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                         <TextBlock Text="Hardware Trust" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
@@ -224,8 +224,8 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1.2" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE73A;" FontSize="20" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1.2" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE73A;" FontSize="20" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                                             <TextBlock Text="Windows Security" FontWeight="Bold" FontSize="13"/>
@@ -235,7 +235,7 @@
                                     </Grid>
                                 </Border>
 
-                                <!-- Tool 2: System Information (msinfo32) -->
+                                <!-- Tool 2: System Information (Msinfo32) -->
                                 <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Tilt3DCardStyle}" Padding="16,14"
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
                                     <Grid ColumnSpacing="14">
@@ -244,8 +244,8 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#153B82F6" BorderBrush="#353B82F6" BorderThickness="1.2" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE7EF;" FontSize="20" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppStatusInfoBackground}" BorderBrush="{ThemeResource AppStatusInfoBorder}" BorderThickness="1.2" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE7EF;" FontSize="20" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                                             <TextBlock Text="System Info" FontWeight="Bold" FontSize="13"/>
@@ -264,8 +264,8 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#158B5CF6" BorderBrush="#358B5CF6" BorderThickness="1.2" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE895;" FontSize="20" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppStatusPurpleBackground}" BorderBrush="{ThemeResource AppStatusPurpleBorder}" BorderThickness="1.2" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE895;" FontSize="20" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                                             <TextBlock Text="Windows Update" FontWeight="Bold" FontSize="13"/>
@@ -284,8 +284,8 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#15F59E0B" BorderBrush="#35F59E0B" BorderThickness="1.2" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE9D9;" FontSize="20" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppStatusWarningBackground}" BorderBrush="{ThemeResource AppStatusWarningBorder}" BorderThickness="1.2" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE9D9;" FontSize="20" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                                             <TextBlock Text="Task Manager" FontWeight="Bold" FontSize="13"/>
@@ -318,8 +318,8 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#1506B6D4" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE83D;" FontSize="20" Foreground="#FF06B6D4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppStatusCyanBackground}" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE83D;" FontSize="20" Foreground="{ThemeResource AppStatusCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                                             <TextBlock Text="Firewall Rules" FontWeight="Bold" FontSize="13"/>
@@ -337,8 +337,8 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#15EC4899" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE7BA;" FontSize="20" Foreground="#FFEC4899" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppStatusPurpleBackground}" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE7BA;" FontSize="20" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                                             <TextBlock Text="Event Viewer" FontWeight="Bold" FontSize="13"/>
@@ -356,8 +356,8 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#156366F1" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE713;" FontSize="20" Foreground="#FF6366F1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppStatusInfoBackground}" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE713;" FontSize="20" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                                             <TextBlock Text="Windows Services" FontWeight="Bold" FontSize="13"/>
@@ -375,8 +375,8 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Width="44" Height="44" CornerRadius="12" Background="#1514B8A6" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE946;" FontSize="20" Foreground="#FF14B8A6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppStatusGoodBackground}" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE946;" FontSize="20" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                                             <TextBlock Text="Registry Editor" FontWeight="Bold" FontSize="13"/>

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Services;
 using WinCarePro.Shared.Animations;
+using WinCarePro.Shared.Components;
 
 namespace WinCarePro.Views;
 
@@ -112,31 +113,22 @@ public sealed partial class DiskPage : Page
 
         if (count == 0)
         {
-            var dialogEmpty = new ContentDialog
-            {
-                Title = "No Items Selected",
-                Content = "Please select at least one duplicate file to delete.",
-                CloseButtonText = "OK",
-                XamlRoot = this.XamlRoot,
-                RequestedTheme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme
-            };
-            await dialogEmpty.ShowAsync();
+            await ResultDialogHelper.ShowWarningAsync(
+                this.XamlRoot,
+                "No Items Selected",
+                "Please select at least one duplicate file to delete.");
             return;
         }
 
-        var dialog = new ContentDialog
-        {
-            Title = "Confirm Duplicate File Deletion",
-            Content = $"Are you sure you want to permanently delete {count} selected duplicate file(s)? This action cannot be undone.",
-            PrimaryButtonText = "Delete Permanently",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Close,
-            XamlRoot = this.XamlRoot,
-            RequestedTheme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme
-        };
+        bool confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            this.XamlRoot,
+            "Confirm Duplicate File Deletion",
+            $"Are you sure you want to permanently delete {count} selected duplicate file(s)? This action cannot be undone.",
+            confirmText: "Delete Permanently",
+            cancelText: "Cancel",
+            isDestructive: true);
 
-        var result = await dialog.ShowAsync();
-        if (result == ContentDialogResult.Primary)
+        if (confirmed)
         {
             await ViewModel.CleanSelectedDuplicatesAsync();
         }

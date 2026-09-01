@@ -73,12 +73,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Width="38" Height="38" CornerRadius="19" Background="#15F59E0B" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE814;" FontSize="16" Foreground="#FFF59E0B" />
+                    <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusWarningBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE814;" FontSize="16" Foreground="{ThemeResource AppStatusWarningBrush}" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                         <TextBlock Text="Last Boot Duration" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.BootTimeFormatted, Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}"/>
+                        <TextBlock Text="{x:Bind ViewModel.BootTimeFormatted, Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                     </StackPanel>
                 </Grid>
 
@@ -263,8 +263,8 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         
-                                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#203B82F6" BorderBrush="#353B82F6" BorderThickness="1.2" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE713;" FontSize="18" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="{ThemeResource AppStatusInfoBackground}" BorderBrush="{ThemeResource AppStatusInfoBorder}" BorderThickness="1.2" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE713;" FontSize="18" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
@@ -284,15 +284,15 @@
                                 <!-- Card 2: Task Manager Services View -->
                                 <Border Grid.Column="1" Style="{StaticResource Tilt3DCardStyle}" Padding="16,14"
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
-                                    <Grid ColumnSpacing="12">
+                                     <Grid ColumnSpacing="12">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         
-                                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#20F59E0B" BorderBrush="#35F59E0B" BorderThickness="1.2" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE9D9;" FontSize="18" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="{ThemeResource AppStatusWarningBackground}" BorderBrush="{ThemeResource AppStatusWarningBorder}" BorderThickness="1.2" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE9D9;" FontSize="18" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
@@ -311,20 +311,20 @@
                             </Grid>
 
                             <!-- Service Safety Protection Notice Banner -->
-                            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20" Background="#0F10B981" BorderBrush="#3010B981" BorderThickness="1" CornerRadius="12">
+                            <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" CornerRadius="12">
                                 <Grid ColumnSpacing="16">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Width="44" Height="44" CornerRadius="22" Background="#2010B981" VerticalAlignment="Center">
-                                        <FontIcon Glyph="&#xE83D;" FontSize="20" Foreground="#FF10B981"/>
+                                    <Border Width="44" Height="44" CornerRadius="22" Background="{ThemeResource AppStatusGoodBackground}" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE83D;" FontSize="20" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                                     </Border>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
                                         <StackPanel Orientation="Horizontal" Spacing="10">
                                             <TextBlock Text="System Services Safety Guard" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                             <Border Style="{StaticResource StatusBadgeGoodStyle}" VerticalAlignment="Center">
-                                                <TextBlock Text="14 Core Services Protected" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
+                                                <TextBlock Text="14 Core Services Protected" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                                             </Border>
                                         </StackPanel>
                                         <TextBlock Text="Protects vital Windows services (WinDefend, RpcSs, EventLog, Dhcp) against accidental termination." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>

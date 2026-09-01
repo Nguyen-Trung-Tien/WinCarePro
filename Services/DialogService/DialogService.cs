@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.Models;
 using WinCarePro.Services.Contracts;
+using WinCarePro.Shared.Components;
 
 namespace WinCarePro.Services.Implementations;
 
@@ -144,86 +145,71 @@ public class DialogService : IDialogService
     {
         if (_xamlRoot == null) return false;
 
-        await _dialogSemaphore.WaitAsync();
-        try
-        {
-            // Allow time for previous dialog's closing transition to complete
-            await Task.Delay(300);
-
-            var dialog = new ContentDialog
-            {
-                Title = "Force Close Application".T(),
-                Content = string.Format("{0} did not close normally. Force close?".T(), appName),
-                PrimaryButtonText = "Force Close".T(),
-                CloseButtonText = "Cancel".T(),
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = _xamlRoot,
-                RequestedTheme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme
-            };
-
-            var result = await dialog.ShowAsync();
-            return result == ContentDialogResult.Primary;
-        }
-        finally
-        {
-            _dialogSemaphore.Release();
-        }
+        return await ResultDialogHelper.ShowConfirmAsync(
+            _xamlRoot,
+            "Force Close Application",
+            string.Format("{0} did not close normally. Force close?".T(), appName),
+            confirmText: "Force Close",
+            cancelText: "Cancel",
+            isDestructive: true);
     }
 
     public async Task ShowMessageAsync(string title, string content)
     {
         if (_xamlRoot == null) return;
 
-        await _dialogSemaphore.WaitAsync();
-        try
-        {
-            // Allow time for previous dialog's closing transition to complete
-            await Task.Delay(300);
-
-            var dialog = new ContentDialog
-            {
-                Title = title,
-                Content = content,
-                CloseButtonText = "OK".T(),
-                XamlRoot = _xamlRoot,
-                RequestedTheme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme
-            };
-
-            await dialog.ShowAsync();
-        }
-        finally
-        {
-            _dialogSemaphore.Release();
-        }
+        await ResultDialogHelper.ShowCustomResultDialogAsync(
+            _xamlRoot,
+            ResultDialogType.Info,
+            title,
+            content,
+            primaryButtonText: "OK");
     }
 
     public async Task<bool> ShowForceUninstallPromptAsync(string appName)
     {
         if (_xamlRoot == null) return false;
 
-        await _dialogSemaphore.WaitAsync();
-        try
-        {
-            // Allow time for previous dialog's closing transition to complete
-            await Task.Delay(300);
+        return await ResultDialogHelper.ShowConfirmAsync(
+            _xamlRoot,
+            "Uninstaller Failed or Cancelled",
+            string.Format("The standard uninstaller for {0} could not be completed. Would you like to perform a Force Uninstall (wipe its residual files and registry entries)?".T(), appName),
+            confirmText: "Force Uninstall",
+            cancelText: "Cancel",
+            isDestructive: true);
+    }
 
-            var dialog = new ContentDialog
-            {
-                Title = "Uninstaller Failed or Cancelled".T(),
-                Content = string.Format("The standard uninstaller for {0} could not be completed. Would you like to perform a Force Uninstall (wipe its residual files and registry entries)?".T(), appName),
-                PrimaryButtonText = "Force Uninstall".T(),
-                CloseButtonText = "Cancel".T(),
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = _xamlRoot,
-                RequestedTheme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme
-            };
+    public async Task<bool> ShowConfirmAsync(string title, string message, string confirmText = "Confirm", string cancelText = "Cancel", bool isDestructive = false)
+    {
+        if (_xamlRoot == null) return false;
 
-            var result = await dialog.ShowAsync();
-            return result == ContentDialogResult.Primary;
-        }
-        finally
-        {
-            _dialogSemaphore.Release();
-        }
+        return await ResultDialogHelper.ShowConfirmAsync(
+            _xamlRoot,
+            title,
+            message,
+            confirmText: confirmText,
+            cancelText: cancelText,
+            isDestructive: isDestructive);
+    }
+
+    public async Task ShowSuccessAsync(string title, string message, string? detailLog = null)
+    {
+        if (_xamlRoot == null) return;
+
+        await ResultDialogHelper.ShowSuccessAsync(_xamlRoot, title, message, detailLog: detailLog);
+    }
+
+    public async Task ShowWarningAsync(string title, string message, string? detailLog = null)
+    {
+        if (_xamlRoot == null) return;
+
+        await ResultDialogHelper.ShowWarningAsync(_xamlRoot, title, message, detailLog: detailLog);
+    }
+
+    public async Task ShowErrorAsync(string title, string message, string? detailLog = null)
+    {
+        if (_xamlRoot == null) return;
+
+        await ResultDialogHelper.ShowErrorAsync(_xamlRoot, title, message, detailLog: detailLog);
     }
 }

@@ -261,8 +261,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#203B82F6" BorderBrush="#503B82F6" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE7F1;" FontSize="16" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusInfoBackground}" BorderBrush="{ThemeResource AppStatusInfoBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE7F1;" FontSize="16" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                         <Grid>
@@ -271,9 +271,9 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="Memory In Use" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="#FF3B82F6" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppStatusInfoBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                         </Grid>
-                        <ProgressBar Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="#FF3B82F6" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                        <ProgressBar Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{ThemeResource AppStatusInfoBrush}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -286,8 +286,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#2010B981" BorderBrush="#5010B981" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE9D9;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE9D9;" FontSize="16" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                         <TextBlock Text="RAM Maintenance" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />

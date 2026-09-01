@@ -314,7 +314,9 @@ public sealed partial class NetworkPage : Page
             SecondaryButtonText = history.Count > 0 ? tm.T("Clear All History") : null,
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = this.XamlRoot,
-            RequestedTheme = ThemeManager.Instance.CurrentTheme
+            RequestedTheme = ThemeManager.Instance.CurrentTheme,
+            CornerRadius = new CornerRadius(14),
+            BorderThickness = new Thickness(1)
         };
 
         var res = await dialog.ShowAsync();

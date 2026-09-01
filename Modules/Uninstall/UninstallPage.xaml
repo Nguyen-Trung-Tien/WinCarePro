@@ -131,12 +131,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Width="38" Height="38" CornerRadius="19" Background="#158B5CF6" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE71D;" FontSize="16" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusPurpleBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE71D;" FontSize="16" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                         <TextBlock Text="Total Apps" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.TotalAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                        <TextBlock Text="{x:Bind ViewModel.TotalAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                     </StackPanel>
                 </Grid>
 
@@ -149,12 +149,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Width="38" Height="38" CornerRadius="19" Background="#153B82F6" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE736;" FontSize="16" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusInfoBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE736;" FontSize="16" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                         <TextBlock Text="Win32 Desktop" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.DesktopAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                        <TextBlock Text="{x:Bind ViewModel.DesktopAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                     </StackPanel>
                 </Grid>
 
@@ -167,12 +167,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Width="38" Height="38" CornerRadius="19" Background="#1506B6D4" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE719;" FontSize="16" Foreground="#FF06B6D4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusCyanBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE719;" FontSize="16" Foreground="{ThemeResource AppStatusCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                         <TextBlock Text="Store Apps" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.StoreAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                        <TextBlock Text="{x:Bind ViewModel.StoreAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                     </StackPanel>
                 </Grid>
 
@@ -185,12 +185,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Width="38" Height="38" CornerRadius="19" Background="#1510B981" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE95A;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusGoodBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE95A;" FontSize="16" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                         <TextBlock Text="Occupied Space" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.TotalAppsSizeFormatted, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                        <TextBlock Text="{x:Bind ViewModel.TotalAppsSizeFormatted, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource AppStatusGoodBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                     </StackPanel>
                 </Grid>
             </Grid>

@@ -228,8 +228,8 @@
                                 <Border x:Name="LightThemeCard" Grid.Column="0" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" PointerPressed="OnLightModeCardClick" Style="{StaticResource QuickStatCardStyle}"
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="12">
                                     <StackPanel Orientation="Horizontal" Spacing="12">
-                                        <Border Width="36" Height="36" CornerRadius="18" Background="#20F59E0B" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE706;" FontSize="18" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Border Width="36" Height="36" CornerRadius="18" Background="{ThemeResource AppStatusWarningBackground}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE706;" FontSize="18" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
                                         <StackPanel VerticalAlignment="Center" Spacing="2">
                                             <TextBlock Text="Light Theme" FontWeight="Bold" FontSize="13" />
@@ -241,8 +241,8 @@
                                 <Border x:Name="DarkThemeCard" Grid.Column="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" PointerPressed="OnDarkModeCardClick" Style="{StaticResource QuickStatCardStyle}"
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="12">
                                     <StackPanel Orientation="Horizontal" Spacing="12">
-                                        <Border Width="36" Height="36" CornerRadius="18" Background="#208B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE708;" FontSize="18" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Border Width="36" Height="36" CornerRadius="18" Background="{ThemeResource AppStatusPurpleBackground}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE708;" FontSize="18" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
                                         <StackPanel VerticalAlignment="Center" Spacing="2">
                                             <TextBlock Text="Dark Theme" FontWeight="Bold" FontSize="13" />
@@ -291,6 +291,24 @@
                                     <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Amber" Background="Transparent" ToolTipService.ToolTip="Amber Gold">
                                         <Ellipse x:Name="AccentAmber" Width="32" Height="32" Fill="#FFF59E0B"/>
                                         <FontIcon x:Name="CheckAmber" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                    </Grid>
+                                    <!-- Cyan -->
+                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Cyan" Background="Transparent" ToolTipService.ToolTip="Cyan / Teal">
+                                        <Ellipse x:Name="AccentCyan" Width="32" Height="32" Fill="#FF06B6D4"/>
+                                        <FontIcon x:Name="CheckCyan" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                    </Grid>
+                                    <!-- Cyberpunk Neon -->
+                                    <Grid Width="32" Height="32" PointerPressed="OnAccentClick" Tag="Cyberpunk" Background="Transparent" ToolTipService.ToolTip="Cyberpunk Neon">
+                                        <Ellipse x:Name="AccentCyberpunk" Width="32" Height="32">
+                                            <Ellipse.Fill>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                    <GradientStop Color="#FF00F2FE" Offset="0"/>
+                                                    <GradientStop Color="#FF7F56D9" Offset="0.5"/>
+                                                    <GradientStop Color="#FFFE0979" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                        <FontIcon x:Name="CheckCyberpunk" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
                                     </Grid>
                                 </StackPanel>
                             </StackPanel>

@@ -184,7 +184,7 @@ namespace WinCarePro.Shared.Animations
                 visual.Properties.InsertVector3("Translation", new Vector3(0, slideDistanceY, 0));
                 visual.Opacity = 0.0f;
 
-                float delay = i * baseDelayMs;
+                float delay = Math.Min(i * baseDelayMs, 200f);
 
                 // Spring translation animation with cascading delay
                 SpringVector3NaturalMotionAnimation springTranslation = compositor.CreateSpringVector3Animation();

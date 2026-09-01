@@ -12,4 +12,8 @@ public interface IDialogService
     Task<bool> ShowForceClosePromptAsync(string appName);
     Task ShowMessageAsync(string title, string content);
     Task<bool> ShowForceUninstallPromptAsync(string appName);
+    Task<bool> ShowConfirmAsync(string title, string message, string confirmText = "Confirm", string cancelText = "Cancel", bool isDestructive = false);
+    Task ShowSuccessAsync(string title, string message, string? detailLog = null);
+    Task ShowWarningAsync(string title, string message, string? detailLog = null);
+    Task ShowErrorAsync(string title, string message, string? detailLog = null);
 }

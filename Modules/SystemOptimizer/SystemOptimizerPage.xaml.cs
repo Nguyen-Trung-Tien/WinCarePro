@@ -8,6 +8,7 @@ using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Shared.Animations;
+using WinCarePro.Shared.Components;
 
 namespace WinCarePro.Views;
 
@@ -146,19 +147,9 @@ public sealed partial class SystemOptimizerPage : Page
             ? string.Format("Successfully applied {0} Windows system tweaks and purged memory cache for maximum responsiveness.".T(), applied)
             : "Your selected system tweaks and memory resources are already fully optimized!".T();
 
-        ContentDialog dialog = new ContentDialog
-        {
-            Title = "System Optimization Complete".T(),
-            Content = msg,
-            CloseButtonText = "OK".T(),
-            DefaultButton = ContentDialogButton.Close,
-            XamlRoot = this.XamlRoot,
-            RequestedTheme = ThemeManager.Instance.CurrentTheme
-        };
-
         try
         {
-            await dialog.ShowAsync();
+            await ResultDialogHelper.ShowSuccessAsync(this.XamlRoot, "System Optimization Complete", msg);
         }
         catch { }
     }
@@ -189,18 +180,14 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnRestoreDefaultsClick(object sender, RoutedEventArgs e)
     {
-        ContentDialog dialog = new ContentDialog
-        {
-            Title = "Confirm Restore".T(),
-            Content = "Are you sure you want to restore default Windows settings for all tweaks?".T(),
-            PrimaryButtonText = "Yes, Restore".T(),
-            CloseButtonText = "Cancel".T(),
-            XamlRoot = this.XamlRoot,
-            RequestedTheme = ThemeManager.Instance.CurrentTheme
-        };
+        bool confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            this.XamlRoot,
+            "Confirm Restore",
+            "Are you sure you want to restore default Windows settings for all tweaks?".T(),
+            confirmText: "Yes, Restore",
+            cancelText: "Cancel");
 
-        var result = await dialog.ShowAsync();
-        if (result == ContentDialogResult.Primary)
+        if (confirmed)
         {
             await ViewModel.RestoreDefaultsAsync();
         }

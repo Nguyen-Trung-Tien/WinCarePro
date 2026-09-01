@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Shared.Components;
 
 namespace WinCarePro.Views;
 
@@ -215,14 +216,21 @@ public sealed partial class UpdaterPage : Page
     private async void OnBackupDriversClick(object sender, RoutedEventArgs e)
     {
         var result = await ViewModel.BackupDriversAsync();
-        var dialog = new ContentDialog
+        if (result.Success)
         {
-            Title = result.Success ? "Driver Backup Completed" : "Driver Backup Alert",
-            Content = result.Message + (result.Success ? $"\n\nSaved Location: {result.BackupPath}" : ""),
-            CloseButtonText = "OK",
-            XamlRoot = this.XamlRoot
-        };
-        await dialog.ShowAsync();
+            await ResultDialogHelper.ShowSuccessAsync(
+                this.XamlRoot,
+                "Driver Backup Completed",
+                result.Message,
+                detailLog: $"Saved Location:\n{result.BackupPath}");
+        }
+        else
+        {
+            await ResultDialogHelper.ShowWarningAsync(
+                this.XamlRoot,
+                "Driver Backup Alert",
+                result.Message);
+        }
     }
 
     private async void OnRestoreDriversClick(object sender, RoutedEventArgs e)
@@ -233,41 +241,40 @@ public sealed partial class UpdaterPage : Page
 
         if (!System.IO.Directory.Exists(defaultDir))
         {
-            var noDirDialog = new ContentDialog
-            {
-                Title = "Restore Drivers",
-                Content = "No driver backup directory found at default location:\n" + defaultDir,
-                CloseButtonText = "Close",
-                XamlRoot = this.XamlRoot
-            };
-            await noDirDialog.ShowAsync();
+            await ResultDialogHelper.ShowWarningAsync(
+                this.XamlRoot,
+                "Restore Drivers",
+                "No driver backup directory found at default location:\n" + defaultDir);
             return;
         }
 
         var subDirs = System.IO.Directory.GetDirectories(defaultDir);
         string targetDir = subDirs.Length > 0 ? subDirs.OrderByDescending(d => d).First() : defaultDir;
 
-        var confirmDialog = new ContentDialog
-        {
-            Title = "Restore Hardware Drivers",
-            Content = $"Are you sure you want to restore drivers from the latest backup folder?\n\n{targetDir}",
-            PrimaryButtonText = "Restore Now",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = this.XamlRoot
-        };
+        bool confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            this.XamlRoot,
+            "Restore Hardware Drivers",
+            $"Are you sure you want to restore drivers from the latest backup folder?\n\n{targetDir}",
+            confirmText: "Restore Now",
+            cancelText: "Cancel");
 
-        if (await confirmDialog.ShowAsync() == ContentDialogResult.Primary)
+        if (confirmed)
         {
             var result = await ViewModel.RestoreDriversAsync(targetDir);
-            var resultDialog = new ContentDialog
+            if (result.Success)
             {
-                Title = result.Success ? "Restore Complete" : "Restore Result",
-                Content = result.Message,
-                CloseButtonText = "OK",
-                XamlRoot = this.XamlRoot
-            };
-            await resultDialog.ShowAsync();
+                await ResultDialogHelper.ShowSuccessAsync(
+                    this.XamlRoot,
+                    "Restore Complete",
+                    result.Message);
+            }
+            else
+            {
+                await ResultDialogHelper.ShowErrorAsync(
+                    this.XamlRoot,
+                    "Restore Result",
+                    result.Message);
+            }
         }
     }
 }

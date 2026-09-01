@@ -225,6 +225,26 @@ public class ThemeManager
                     cyber1 = isDark ? Color.FromArgb(255, 236, 72, 153) : Color.FromArgb(255, 219, 39, 119);
                     cyber2 = isDark ? Color.FromArgb(255, 168, 85, 247) : Color.FromArgb(255, 168, 85, 247);
                     break;
+                case "cyan":
+                case "teal":
+                    c0 = isDark ? Color.FromArgb(255, 6, 182, 212) : Color.FromArgb(255, 8, 145, 178);
+                    c1 = isDark ? Color.FromArgb(255, 14, 165, 233) : Color.FromArgb(255, 2, 132, 199);
+                    c2 = isDark ? Color.FromArgb(255, 20, 184, 166) : Color.FromArgb(255, 13, 148, 136);
+
+                    cyber0 = isDark ? Color.FromArgb(255, 103, 232, 249) : Color.FromArgb(255, 6, 182, 212);
+                    cyber1 = isDark ? Color.FromArgb(255, 6, 182, 212) : Color.FromArgb(255, 8, 145, 178);
+                    cyber2 = isDark ? Color.FromArgb(255, 45, 212, 191) : Color.FromArgb(255, 20, 184, 166);
+                    break;
+                case "cyberpunk":
+                case "neon":
+                    c0 = isDark ? Color.FromArgb(255, 0, 242, 254) : Color.FromArgb(255, 0, 193, 238);
+                    c1 = isDark ? Color.FromArgb(255, 127, 86, 217) : Color.FromArgb(255, 105, 65, 198);
+                    c2 = isDark ? Color.FromArgb(255, 254, 9, 121) : Color.FromArgb(255, 219, 39, 119);
+
+                    cyber0 = isDark ? Color.FromArgb(255, 0, 242, 254) : Color.FromArgb(255, 0, 193, 238);
+                    cyber1 = isDark ? Color.FromArgb(255, 254, 9, 121) : Color.FromArgb(255, 219, 39, 119);
+                    cyber2 = isDark ? Color.FromArgb(255, 0, 255, 157) : Color.FromArgb(255, 16, 185, 129);
+                    break;
                 case "amber":
                     c0 = isDark ? Color.FromArgb(255, 245, 158, 11) : Color.FromArgb(255, 217, 119, 6);
                     c1 = isDark ? Color.FromArgb(255, 217, 119, 6) : Color.FromArgb(255, 234, 88, 12);

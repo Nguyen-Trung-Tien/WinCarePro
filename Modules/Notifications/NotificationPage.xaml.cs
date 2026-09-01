@@ -7,6 +7,8 @@ using Microsoft.UI.Xaml.Controls;
 using WinCarePro.Database;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Core.Helpers;
+using WinCarePro.Shared.Components;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 
@@ -303,19 +305,15 @@ public sealed partial class NotificationPage : Page
     {
         try
         {
-            var dialog = new ContentDialog
-            {
-                Title = "Clear All Notifications?".T(),
-                Content = "Are you sure you want to delete all notifications? This action cannot be undone.".T(),
-                PrimaryButtonText = "Clear Alerts".T(),
-                CloseButtonText = "Cancel".T(),
-                DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.XamlRoot,
-                RequestedTheme = ThemeManager.Instance.CurrentTheme
-            };
+            bool confirmed = await ResultDialogHelper.ShowConfirmAsync(
+                this.XamlRoot,
+                "Clear All Notifications?",
+                "Are you sure you want to delete all notifications? This action cannot be undone.".T(),
+                confirmText: "Clear Alerts",
+                cancelText: "Cancel",
+                isDestructive: true);
 
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
+            if (confirmed)
             {
                 DbManager.ClearAllNotifications();
                 await LoadNotificationsAsync();
@@ -332,19 +330,15 @@ public sealed partial class NotificationPage : Page
     {
         try
         {
-            var dialog = new ContentDialog
-            {
-                Title = "Clear All Activity Logs?".T(),
-                Content = "Are you sure you want to delete all activity log entries? This action cannot be undone.".T(),
-                PrimaryButtonText = "Clear Logs".T(),
-                CloseButtonText = "Cancel".T(),
-                DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.XamlRoot,
-                RequestedTheme = ThemeManager.Instance.CurrentTheme
-            };
+            bool confirmed = await ResultDialogHelper.ShowConfirmAsync(
+                this.XamlRoot,
+                "Clear All Activity Logs?",
+                "Are you sure you want to delete all activity log entries? This action cannot be undone.".T(),
+                confirmText: "Clear Logs",
+                cancelText: "Cancel",
+                isDestructive: true);
 
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
+            if (confirmed)
             {
                 DbManager.CleanupOldLogs(0);
                 await LoadLogsAsync();

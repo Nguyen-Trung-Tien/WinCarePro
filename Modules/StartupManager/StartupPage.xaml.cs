@@ -9,6 +9,7 @@ using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Shared.Components;
 
 namespace WinCarePro.Views;
 
@@ -130,18 +131,9 @@ public sealed partial class StartupPage : Page
             },
             minDurationMs: 1200);
 
-        var dialog = new ContentDialog
-        {
-            Title = "Startup & Services Optimization".T(),
-            Content = ViewModel.StatusText,
-            CloseButtonText = "OK".T(),
-            DefaultButton = ContentDialogButton.Close,
-            XamlRoot = this.XamlRoot,
-            RequestedTheme = ThemeManager.Instance.CurrentTheme
-        };
         try
         {
-            await dialog.ShowAsync();
+            await ResultDialogHelper.ShowSuccessAsync(this.XamlRoot, "Startup & Services Optimization", ViewModel.StatusText);
         }
         catch { }
     }
@@ -185,20 +177,15 @@ public sealed partial class StartupPage : Page
     {
         if (sender is Button btn && btn.DataContext is StartupEntry entry)
         {
-            var dialogService = App.Services.GetService<IDialogService>();
-            dialogService?.SetXamlRoot(this.XamlRoot);
-            var dialog = new ContentDialog
-            {
-                Title = "Permanently Remove Startup Entry".T(),
-                Content = string.Format("Are you sure you want to permanently remove '{0}' from startup? This cannot be undone automatically.".T(), entry.Name),
-                PrimaryButtonText = "Remove".T(),
-                CloseButtonText = "Cancel".T(),
-                DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.XamlRoot,
-                RequestedTheme = ThemeManager.Instance.CurrentTheme
-            };
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
+            bool confirmed = await ResultDialogHelper.ShowConfirmAsync(
+                this.XamlRoot,
+                "Permanently Remove Startup Entry",
+                string.Format("Are you sure you want to permanently remove '{0}' from startup? This cannot be undone automatically.".T(), entry.Name),
+                confirmText: "Remove",
+                cancelText: "Cancel",
+                isDestructive: true);
+
+            if (confirmed)
             {
                 await ViewModel.RemoveStartupAppAsync(entry);
             }
@@ -222,22 +209,17 @@ public sealed partial class StartupPage : Page
 
             if (entry.StartupType != newType)
             {
-                var dialogService = App.Services.GetService<IDialogService>();
                 if (newType == "Disabled" && (entry.IsCriticalService || entry.IsMicrosoftService))
                 {
-                    dialogService?.SetXamlRoot(this.XamlRoot);
-                    var dialog = new ContentDialog
-                    {
-                        Title = "Disable System Service".T(),
-                        Content = string.Format("Disabling system service '{0}' may affect Windows stability. Do you want to proceed?".T(), entry.DisplayName),
-                        PrimaryButtonText = "Disable Service".T(),
-                        CloseButtonText = "Cancel".T(),
-                        DefaultButton = ContentDialogButton.Close,
-                        XamlRoot = this.XamlRoot,
-                        RequestedTheme = ThemeManager.Instance.CurrentTheme
-                    };
-                    var result = await dialog.ShowAsync();
-                    if (result != ContentDialogResult.Primary)
+                    bool confirmed = await ResultDialogHelper.ShowConfirmAsync(
+                        this.XamlRoot,
+                        "Disable System Service",
+                        string.Format("Disabling system service '{0}' may affect Windows stability. Do you want to proceed?".T(), entry.DisplayName),
+                        confirmText: "Disable Service",
+                        cancelText: "Cancel",
+                        isDestructive: true);
+
+                    if (!confirmed)
                     {
                         cb.SelectedValue = entry.StartupType;
                         return;
@@ -283,27 +265,21 @@ public sealed partial class StartupPage : Page
     {
         if (sender is Button btn && btn.DataContext is ScheduledTaskEntry entry)
         {
-            var dialogService = App.Services.GetService<IDialogService>();
-            dialogService?.SetXamlRoot(this.XamlRoot);
-            
             string message = string.Format("Are you sure you want to permanently delete the scheduled task '{0}'?".T(), entry.Name);
             if (entry.IsMicrosoftTask)
             {
                 message = string.Format("Warning: '{0}' is a Microsoft scheduled task. Deleting it may cause Windows system features to stop working. Are you sure you want to delete?".T(), entry.Name);
             }
 
-            var dialog = new ContentDialog
-            {
-                Title = "Delete Scheduled Task".T(),
-                Content = message,
-                PrimaryButtonText = "Delete Task".T(),
-                CloseButtonText = "Cancel".T(),
-                DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.XamlRoot,
-                RequestedTheme = ThemeManager.Instance.CurrentTheme
-            };
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
+            bool confirmed = await ResultDialogHelper.ShowConfirmAsync(
+                this.XamlRoot,
+                "Delete Scheduled Task",
+                message,
+                confirmText: "Delete Task",
+                cancelText: "Cancel",
+                isDestructive: true);
+
+            if (confirmed)
             {
                 await ViewModel.DeleteScheduledTaskAsync(entry);
             }

@@ -184,8 +184,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#20F59E0B" BorderBrush="#50F59E0B" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE895;" FontSize="16" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusWarningBackground}" BorderBrush="{ThemeResource AppStatusWarningBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE895;" FontSize="16" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                         <Grid>
@@ -194,10 +194,10 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="Pending Updates" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="12" FontWeight="ExtraBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.PendingUpdatesCount, Mode=OneWay}" FontSize="12" FontWeight="ExtraBold" Foreground="{ThemeResource AppStatusWarningBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                         </Grid>
                         <Border Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="6,1" HorizontalAlignment="Left" Visibility="{x:Bind HasNoPendingUpdatesVisibility(ViewModel.PendingUpdatesCount), Mode=OneWay}">
-                            <TextBlock Text="All Up-to-Date" FontSize="9.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                            <TextBlock Text="All Up-to-Date" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
                         </Border>
                     </StackPanel>
                 </Grid>
@@ -211,12 +211,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#203B82F6" BorderBrush="#503B82F6" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE896;" FontSize="16" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusInfoBackground}" BorderBrush="{ThemeResource AppStatusInfoBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE896;" FontSize="16" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="Package Provider" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.ActiveEngineName, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="#FF3B82F6" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{x:Bind ViewModel.ActiveEngineName, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppStatusInfoBrush}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -332,10 +332,10 @@
                                     <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,12,0">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis"/>
-                                            <Border Visibility="{x:Bind IsCompleted, Mode=OneWay}" Background="#2510B981" BorderBrush="#5010B981" BorderThickness="1" Padding="6,1" CornerRadius="4" VerticalAlignment="Center">
+                                            <Border Visibility="{x:Bind IsCompleted, Mode=OneWay}" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" Padding="6,1" CornerRadius="4" VerticalAlignment="Center">
                                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                                    <FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#FF10B981"/>
-                                                    <TextBlock Text="Up to Date" FontSize="9.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                                    <FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                                                    <TextBlock Text="Up to Date" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                                                 </StackPanel>
                                             </Border>
                                         </StackPanel>
@@ -381,26 +381,26 @@
                                         <Button Visibility="{x:Bind IsAvailable, Mode=OneWay}" Content="{x:Bind ActionBtnText, Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnUpdateSingleClick" IsEnabled="{x:Bind CanUpdate, Mode=OneWay}" VerticalAlignment="Center" Padding="16,6" CornerRadius="6" FontWeight="SemiBold"/>
 
                                         <!-- Retry Button (Failed) -->
-                                        <Button Visibility="{x:Bind IsFailed, Mode=OneWay}" Click="OnUpdateSingleClick" Background="#20EF4444" Foreground="#FFEF4444" BorderBrush="#50EF4444" BorderThickness="1" VerticalAlignment="Center" Padding="14,6" CornerRadius="6" FontWeight="SemiBold">
+                                        <Button Visibility="{x:Bind IsFailed, Mode=OneWay}" Click="OnUpdateSingleClick" Background="{ThemeResource AppStatusDangerBackground}" Foreground="{ThemeResource AppStatusDangerBrush}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" VerticalAlignment="Center" Padding="14,6" CornerRadius="6" FontWeight="SemiBold">
                                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                                <FontIcon Glyph="&#xE72C;" FontSize="11" Foreground="#FFEF4444"/>
-                                                <TextBlock Text="Retry" FontSize="11.5" FontWeight="Bold" Foreground="#FFEF4444"/>
+                                                <FontIcon Glyph="&#xE72C;" FontSize="11" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                                                <TextBlock Text="Retry" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                                             </StackPanel>
                                         </Button>
 
                                         <!-- Up to Date Pill Badge (Completed) -->
-                                        <Border Visibility="{x:Bind IsCompleted, Mode=OneWay}" Background="#2010B981" BorderBrush="#6010B981" BorderThickness="1" Padding="14,6" CornerRadius="6">
+                                        <Border Visibility="{x:Bind IsCompleted, Mode=OneWay}" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" Padding="14,6" CornerRadius="6">
                                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                                <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="#FF10B981"/>
-                                                <TextBlock Text="Up to Date" FontSize="11.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                                <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                                                <TextBlock Text="Up to Date" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                                             </StackPanel>
                                         </Border>
 
                                         <!-- Updating Badge Pill (Updating) -->
-                                        <Border Visibility="{x:Bind IsUpdating, Mode=OneWay}" Background="#20F59E0B" BorderBrush="#60F59E0B" BorderThickness="1" Padding="12,6" CornerRadius="6">
+                                        <Border Visibility="{x:Bind IsUpdating, Mode=OneWay}" Background="{ThemeResource AppStatusWarningBackground}" BorderBrush="{ThemeResource AppStatusWarningBorder}" BorderThickness="1" Padding="12,6" CornerRadius="6">
                                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                                <ProgressRing IsActive="True" Width="12" Height="12" Foreground="#FFF59E0B"/>
-                                                <TextBlock Text="Updating..." FontSize="11.5" FontWeight="SemiBold" Foreground="#FFF59E0B"/>
+                                                <ProgressRing IsActive="True" Width="12" Height="12" Foreground="{ThemeResource AppStatusWarningBrush}"/>
+                                                <TextBlock Text="Updating..." FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource AppStatusWarningBrush}"/>
                                             </StackPanel>
                                         </Border>
                                     </Grid>
@@ -415,8 +415,8 @@
             <Grid Visibility="{x:Bind IsListEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,20">
                 <Border Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="16" Padding="32,24" MaxWidth="440">
                     <StackPanel Spacing="12" HorizontalAlignment="Center">
-                        <Border Width="56" Height="56" CornerRadius="28" Background="#1E10B981" BorderBrush="#4010B981" BorderThickness="1.5" HorizontalAlignment="Center">
-                            <FontIcon Glyph="&#xE73E;" FontSize="26" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border Width="56" Height="56" CornerRadius="28" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1.5" HorizontalAlignment="Center">
+                            <FontIcon Glyph="&#xE73E;" FontSize="26" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Spacing="3" HorizontalAlignment="Center">
                             <TextBlock Text="All Applications Up to Date" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display"/>

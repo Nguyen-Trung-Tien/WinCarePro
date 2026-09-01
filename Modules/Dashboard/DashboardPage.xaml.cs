@@ -557,7 +557,9 @@ public sealed partial class DashboardPage : Page
             CloseButtonText = "Done".T(),
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = this.XamlRoot,
-            RequestedTheme = ThemeManager.Instance.CurrentTheme
+            RequestedTheme = ThemeManager.Instance.CurrentTheme,
+            CornerRadius = new CornerRadius(14),
+            BorderThickness = new Thickness(1)
         };
 
         try

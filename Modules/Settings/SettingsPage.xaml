@@ -737,6 +737,12 @@
 
                                     <!-- Top Right: Action Buttons (Compact & Sleek) -->
                                     <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                        <Button x:Name="ManualDownloadWebBtn" Click="OnManualDownloadWebClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="12,0" CornerRadius="8" ToolTipService.ToolTip="Open official website to download installer manually">
+                                            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Download from Website" FontSize="11.5" FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                        </Button>
                                         <Button x:Name="CancelUpdatesBtn" Click="OnCancelUpdateClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="10,0" CornerRadius="6" ToolTipService.ToolTip="Cancel current update operation" Visibility="Collapsed">
                                             <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xE711;" FontSize="11" Foreground="#FFEF4444"/>

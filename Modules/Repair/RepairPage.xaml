@@ -79,7 +79,7 @@
             </StackPanel>
 
             <StackPanel x:Name="HeaderButtonsPanel" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button x:Name="CancelHeaderBtn" Click="OnCancelOperationClick" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" CornerRadius="8" Padding="14,8" Background="#26EF4444" Foreground="#FFEF4444" FontWeight="Bold">
+                <Button x:Name="CancelHeaderBtn" Click="OnCancelOperationClick" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" CornerRadius="8" Padding="14,8" Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" Foreground="{ThemeResource AppStatusDangerBrush}" FontWeight="Bold">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE711;" FontSize="13" />
                         <TextBlock Text="Cancel Operation" VerticalAlignment="Center" FontSize="12.5" />
@@ -146,8 +146,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#20EF4444" BorderBrush="#50EF4444" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xEDA2;" FontSize="17" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xEDA2;" FontSize="17" Foreground="{ThemeResource AppStatusDangerBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="Policy Bans Found" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
@@ -164,8 +164,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#203B82F6" BorderBrush="#503B82F6" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE774;" FontSize="17" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusInfoBackground}" BorderBrush="{ThemeResource AppStatusInfoBorder}" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE774;" FontSize="17" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                         <TextBlock Text="DNS Query Ping" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
@@ -463,8 +463,8 @@
                             <!-- Registry Policies -->
                             <StackPanel Grid.Column="0" Spacing="10">
                                 <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <Border Background="#20EF4444" BorderBrush="#50EF4444" BorderThickness="1" CornerRadius="10" Padding="8">
-                                        <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="#FFEF4444" />
+                                    <Border Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" CornerRadius="10" Padding="8">
+                                        <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="{ThemeResource AppStatusDangerBrush}" />
                                     </Border>
                                     <StackPanel VerticalAlignment="Center">
                                         <TextBlock Text="Registry Policy Restrictions" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
@@ -478,8 +478,8 @@
                             <!-- Restore Points -->
                             <StackPanel Grid.Column="1" Spacing="10">
                                 <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <Border Background="#2010B981" BorderBrush="#5010B981" BorderThickness="1" CornerRadius="10" Padding="8">
-                                        <FontIcon Glyph="&#xEC7A;" FontSize="18" Foreground="#FF10B981" />
+                                    <Border Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" CornerRadius="10" Padding="8">
+                                        <FontIcon Glyph="&#xEC7A;" FontSize="18" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                     </Border>
                                     <StackPanel VerticalAlignment="Center">
                                         <TextBlock Text="System Restore Checkpoint" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
@@ -507,8 +507,8 @@
                             <!-- Windows Update Fixer -->
                             <StackPanel Grid.Column="0" Spacing="10">
                                 <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <Border Background="#208B5CF6" BorderBrush="#508B5CF6" BorderThickness="1" CornerRadius="10" Padding="8">
-                                        <FontIcon Glyph="&#xE736;" FontSize="18" Foreground="#FF8B5CF6" />
+                                    <Border Background="{ThemeResource AppStatusPurpleBackground}" BorderBrush="{ThemeResource AppStatusPurpleBorder}" BorderThickness="1" CornerRadius="10" Padding="8">
+                                        <FontIcon Glyph="&#xE736;" FontSize="18" Foreground="{ThemeResource AppStatusPurpleBrush}" />
                                     </Border>
                                     <StackPanel VerticalAlignment="Center">
                                         <TextBlock Text="Windows Update Fixer" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
@@ -522,8 +522,8 @@
                             <!-- Network Stack Fixer -->
                             <StackPanel Grid.Column="1" Spacing="10">
                                 <StackPanel Orientation="Horizontal" Spacing="10">
-                                    <Border Background="#203B82F6" BorderBrush="#503B82F6" BorderThickness="1" CornerRadius="10" Padding="8">
-                                        <FontIcon Glyph="&#xE774;" FontSize="18" Foreground="#FF3B82F6" />
+                                    <Border Background="{ThemeResource AppStatusInfoBackground}" BorderBrush="{ThemeResource AppStatusInfoBorder}" BorderThickness="1" CornerRadius="10" Padding="8">
+                                        <FontIcon Glyph="&#xE774;" FontSize="18" Foreground="{ThemeResource AppStatusInfoBrush}" />
                                     </Border>
                                     <StackPanel VerticalAlignment="Center">
                                         <TextBlock Text="Network Stack &amp; Winsock Reset" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
@@ -575,12 +575,12 @@
                             <TextBlock Text="Repair Progress" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
                             <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="14" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Right" FontFamily="Segoe UI Variable Display"/>
                         </Grid>
-                        <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1">
+                        <Border Background="{ThemeResource ControlStrokeColorDefaultBrush}" CornerRadius="4" Height="8" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="1">
                             <ProgressBar Value="{x:Bind ViewModel.RepairProgressPercent, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch"/>
                         </Border>
                     </StackPanel>
                     
-                    <Button Click="OnCancelOperationClick" Content="Cancel Operation" HorizontalAlignment="Center" CornerRadius="8" Padding="18,6" Margin="0,4,0,0" Background="#26EF4444" Foreground="#FFEF4444" FontWeight="Bold"/>
+                    <Button Click="OnCancelOperationClick" Content="Cancel Operation" HorizontalAlignment="Center" CornerRadius="8" Padding="18,6" Margin="0,4,0,0" Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" Foreground="{ThemeResource AppStatusDangerBrush}" FontWeight="Bold"/>
                 </StackPanel>
             </Border>
         </Grid>

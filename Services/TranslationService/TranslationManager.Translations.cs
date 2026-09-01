@@ -2518,6 +2518,15 @@ public partial class TranslationManager
         _translations["Unable to reach update server. Check internet connection or DNS settings."] = "Không thể truy cập máy chủ cập nhật. Kiểm tra kết nối mạng hoặc DNS.";
         _translations["Unable to connect to network. Verify Wi-Fi or Ethernet adapter status."] = "Không thể kết nối mạng. Kiểm tra trạng thái Wi-Fi hoặc cáp mạng.";
         _translations["No internet connection detected. Please verify your network and try again."] = "Không phát hiện kết nối Internet. Vui lòng kiểm tra mạng và thử lại.";
+        _translations["Download from Website"] = "Tải từ trang chủ";
+        _translations["Website Download"] = "Tải từ trang chủ";
+        _translations["Manual Download"] = "Tải thủ công";
+        _translations["Open Homepage"] = "Mở trang chủ";
+        _translations["Download from Official Website"] = "Tải từ trang chủ chính thức";
+        _translations["Open official website to download installer manually"] = "Mở trang chủ chính thức để tải bộ cài đặt thủ công";
+        _translations["Download Failed"] = "Tải xuống thất bại";
+        _translations["The update package could not be downloaded automatically."] = "Không thể tự động tải gói cài đặt cập nhật.";
+        _translations["If automated updates cannot reach the CDN, you can download the installer manually from the official release page."] = "Nếu không thể kết nối tới CDN, bạn có thể tải bản cài đặt thủ công từ trang phát hành chính thức.";
         _translations["Operation cancelled. Ready for new update check."] = "Đã hủy thao tác. Sẵn sàng kiểm tra lại.";
         _translations["Check cancelled by user."] = "Người dùng đã hủy kiểm tra.";
         _translations["Update operation cancelled by user."] = "Thao tác cập nhật đã bị người dùng hủy.";

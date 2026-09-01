@@ -975,6 +975,22 @@ public sealed partial class SettingsPage : Page
         }
     }
 
+    private void OnManualDownloadWebClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases",
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            App.MainWindowInstance?.ShowToastNotification("Browser Launch Failed".T(), ex.Message, "Warning");
+        }
+    }
+
     private void OnCancelUpdateClick(object sender, RoutedEventArgs e)
     {
         try
@@ -1383,6 +1399,18 @@ public sealed partial class SettingsPage : Page
             UpdateDataRateText.Text = "Failed".T();
             SetUpdateBadgeState("Error".T(), "Offline");
             App.MainWindowInstance?.ShowToastNotification("Download Failed".T(), "Network disconnected while downloading the update file.".T(), "Critical");
+
+            if (this.Content?.XamlRoot != null)
+            {
+                DispatcherQueue.TryEnqueue(async () =>
+                {
+                    await UpdateDialogHelper.ShowDownloadFailedAsync(
+                        this.Content.XamlRoot,
+                        ThemeManager.Instance.CurrentTheme,
+                        httpEx.Message,
+                        downloadUrl);
+                });
+            }
         }
         catch (Exception ex)
         {
@@ -1392,6 +1420,18 @@ public sealed partial class SettingsPage : Page
             UpdateDataRateText.Text = "Failed".T();
             SetUpdateBadgeState("Error".T(), "Offline");
             App.MainWindowInstance?.ShowToastNotification("Download Error".T(), ex.Message, "Critical");
+
+            if (this.Content?.XamlRoot != null)
+            {
+                DispatcherQueue.TryEnqueue(async () =>
+                {
+                    await UpdateDialogHelper.ShowDownloadFailedAsync(
+                        this.Content.XamlRoot,
+                        ThemeManager.Instance.CurrentTheme,
+                        ex.Message,
+                        downloadUrl);
+                });
+            }
         }
         finally
         {

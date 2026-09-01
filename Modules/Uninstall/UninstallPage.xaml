@@ -324,18 +324,18 @@
 
                                         <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="12,0,12,0">
                                             <!-- Desktop Badge -->
-                                            <Border Background="#1E7F56D9" BorderBrush="#307F56D9" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsDesktopApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                                <TextBlock Text="Win32 Desktop" FontSize="9" FontWeight="Bold" Foreground="#FF7F56D9"/>
+                                            <Border Background="{ThemeResource AppStatusPurpleBackground}" BorderBrush="{ThemeResource AppStatusPurpleBorder}" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsDesktopApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                                <TextBlock Text="Win32 Desktop" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
                                             </Border>
                                             <!-- Store Badge -->
-                                            <Border Background="#1E00C1EE" BorderBrush="#3000C1EE" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsStoreApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                                <TextBlock Text="Store App" FontSize="9" FontWeight="Bold" Foreground="#FF00C1EE"/>
+                                            <Border Background="{ThemeResource AppStatusCyanBackground}" BorderBrush="{ThemeResource AppStatusCyanBorder}" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsStoreApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                                <TextBlock Text="Store App" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource AppStatusCyanBrush}"/>
                                             </Border>
                                         </StackPanel>
 
                                         <TextBlock Grid.Column="4" Text="{x:Bind SizeFormatted, Mode=OneWay}" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" FontWeight="SemiBold"/>
 
-                                        <Button Grid.Column="5" Content="Uninstall" FontSize="10.5" Padding="10,4" Click="OnSingleUninstallClick" Foreground="#FFE81123" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" VerticalAlignment="Center"/>
+                                        <Button Grid.Column="5" Content="Uninstall" FontSize="10.5" Padding="10,4" Click="OnSingleUninstallClick" Foreground="{ThemeResource AppStatusDangerBrush}" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" VerticalAlignment="Center"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -481,14 +481,14 @@
                             <StackPanel Grid.Row="2" Spacing="8">
                                 <Button Click="OnDetailsUninstallClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Padding="12,8">
                                     <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                                        <FontIcon Glyph="&#xE74D;" FontSize="13" Foreground="#FFE81123"/>
-                                        <TextBlock Text="Standard Uninstall" FontWeight="SemiBold" Foreground="#FFE81123"/>
+                                        <FontIcon Glyph="&#xE74D;" FontSize="13" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                                        <TextBlock Text="Standard Uninstall" FontWeight="SemiBold" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                                     </StackPanel>
                                 </Button>
                                 <Button Click="OnDetailsForceUninstallClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Padding="12,8">
                                     <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                                        <FontIcon Glyph="&#xE894;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}"/>
-                                        <TextBlock Text="Force Wipe &amp; Residual Clean" FontWeight="SemiBold" Foreground="{ThemeResource SystemAccentColor}"/>
+                                        <FontIcon Glyph="&#xE894;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                        <TextBlock Text="Force Wipe &amp; Residual Clean" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                                     </StackPanel>
                                 </Button>
                                 <Button Click="OnSearchOnlineClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Padding="12,8">
@@ -522,7 +522,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE736;" FontSize="18" Foreground="{ThemeResource SystemAccentColor}" />
+                        <FontIcon Glyph="&#xE736;" FontSize="18" Foreground="{ThemeResource PrimaryAccentBrush}" />
                         <TextBlock Text="Batch Actions" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
                         <TextBlock Text="•" FontSize="14" VerticalAlignment="Center" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         <TextBlock Text="Multiple applications are selected for queued execution" FontSize="12.5" VerticalAlignment="Center" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
@@ -555,8 +555,8 @@
             <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="32,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="440" Visibility="{x:Bind GetStepProgressVisibility(ViewModel.UninstallStep), Mode=OneWay}">
                 <StackPanel Spacing="18" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Grid Width="64" Height="64" HorizontalAlignment="Center">
-                        <Border Width="64" Height="64" CornerRadius="18" Background="#15EF4444" BorderBrush="#40EF4444" BorderThickness="1.5">
-                            <FontIcon Glyph="&#xE74D;" FontSize="24" Foreground="#FFEF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border Width="64" Height="64" CornerRadius="18" Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1.5">
+                            <FontIcon Glyph="&#xE74D;" FontSize="24" Foreground="{ThemeResource AppStatusDangerBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </Grid>
 
@@ -569,10 +569,10 @@
                     <StackPanel Spacing="8" Width="360" HorizontalAlignment="Center">
                         <Grid>
                             <TextBlock Text="Uninstallation &amp; Scan Progress" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
-                            <TextBlock Text="{x:Bind ViewModel.ProgressPercentFormatted, Mode=OneWay}" FontSize="13" Foreground="#FFEF4444" HorizontalAlignment="Right" FontWeight="Bold"/>
+                            <TextBlock Text="{x:Bind ViewModel.ProgressPercentFormatted, Mode=OneWay}" FontSize="13" Foreground="{ThemeResource AppStatusDangerBrush}" HorizontalAlignment="Right" FontWeight="Bold"/>
                         </Grid>
-                        <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1">
-                            <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="#FFEF4444" Background="Transparent" HorizontalAlignment="Stretch"/>
+                        <Border Background="{ThemeResource ControlStrokeColorDefaultBrush}" CornerRadius="4" Height="8" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="1">
+                            <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{ThemeResource AppStatusDangerBrush}" Background="Transparent" HorizontalAlignment="Stretch"/>
                         </Border>
                     </StackPanel>
                 </StackPanel>

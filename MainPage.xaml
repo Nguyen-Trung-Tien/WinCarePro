@@ -54,31 +54,31 @@
                 
                 <NavigationViewItem Content="Junk Cleaner" Tag="Junk" AutomationProperties.Name="Junk Cleaner" AutomationProperties.HelpText="Scan and safely clean temporary files, cache, and system clutter.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEA99;" Foreground="Orange" />
+                        <FontIcon Glyph="&#xEA99;" Foreground="#FFF59E0B" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem Content="App Uninstaller" Tag="Uninstall" AutomationProperties.Name="App Uninstaller" AutomationProperties.HelpText="Uninstall desktop and Store apps with deep leftover cleanup.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE74D;" Foreground="Red" />
+                        <FontIcon Glyph="&#xE74D;" Foreground="#FFEF4444" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem Content="Network Center" Tag="Network" AutomationProperties.Name="Network Center" AutomationProperties.HelpText="Network monitoring, DNS benchmark, and latency diagnostics.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE701;" Foreground="DodgerBlue" />
+                        <FontIcon Glyph="&#xE701;" Foreground="#FF0284C7" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem Content="System Repair" Tag="Repair" AutomationProperties.Name="System Repair" AutomationProperties.HelpText="Windows system file checker, DISM repair, and subsystem restoration.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE90F;" Foreground="Teal" />
+                        <FontIcon Glyph="&#xE90F;" Foreground="#FF06B6D4" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem Content="Security Shield" Tag="Security" AutomationProperties.Name="Security Shield" AutomationProperties.HelpText="Windows Defender, Firewall, and privacy telemetry settings.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE727;" Foreground="MediumSpringGreen" />
+                        <FontIcon Glyph="&#xE727;" Foreground="#FF10B981" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
@@ -101,13 +101,13 @@
 
                 <NavigationViewItem Content="Disk &amp; Storage" Tag="Disk" AutomationProperties.Name="Disk &amp; Storage" AutomationProperties.HelpText="Drive S.M.A.R.T. health, duplicate finder, and large files analyzer.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7F1;" Foreground="SkyBlue" />
+                        <FontIcon Glyph="&#xE7F1;" Foreground="#FF38BDF8" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem Content="Registry Center" Tag="Registry" AutomationProperties.Name="Registry Center" AutomationProperties.HelpText="Registry backup, defragmentation, and cleanup.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEDA2;" Foreground="Tomato" />
+                        <FontIcon Glyph="&#xEDA2;" Foreground="#FFF43F5E" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 

@@ -584,7 +584,7 @@ public static class UpdateDialogHelper
 
         errStack.Children.Add(new TextBlock
         {
-            Text = "Troubleshooting tips:\n• Check active Internet connection or Wi-Fi.\n• Flush DNS or switch DNS provider in Network Booster.\n• Retry in a few moments.".T(),
+            Text = "Troubleshooting tips:\n• Check active Internet connection or Wi-Fi.\n• Flush DNS or switch DNS provider in Network Booster.\n• Or download the latest installer directly from the official website.\n• Retry in a few moments.".T(),
             FontSize = 11,
             Foreground = GetTextSecondary(isDark),
             TextWrapping = TextWrapping.Wrap,
@@ -599,6 +599,7 @@ public static class UpdateDialogHelper
         {
             Content = rootStack,
             PrimaryButtonText = "Retry".T(),
+            SecondaryButtonText = "Download from Website".T(),
             CloseButtonText = "Close".T(),
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = xamlRoot,
@@ -607,7 +608,157 @@ public static class UpdateDialogHelper
             CornerRadius = new CornerRadius(16)
         };
 
-        return await dialog.ShowAsync();
+        var result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Secondary)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases",
+                    UseShellExecute = true
+                });
+            }
+            catch { }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Hiển thị Popup khi quá trình tải gói cập nhật thất bại, cho phép người dùng tải thủ công từ trang chủ.
+    /// </summary>
+    public static async Task<ContentDialogResult> ShowDownloadFailedAsync(
+        XamlRoot xamlRoot,
+        ElementTheme theme,
+        string errorMessage,
+        string? directDownloadUrl = null)
+    {
+        if (xamlRoot == null) return ContentDialogResult.None;
+
+        bool isDark = ResolveIsDark(theme);
+
+        var rootStack = new StackPanel
+        {
+            Spacing = 16,
+            Width = 450
+        };
+
+        // Header with Amber Warning Badge
+        var headerGrid = new Grid();
+        headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        var iconBadge = new Border
+        {
+            Width = 44,
+            Height = 44,
+            CornerRadius = new CornerRadius(12),
+            Background = new SolidColorBrush(Windows.UI.Color.FromArgb(32, 239, 68, 68)),
+            BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(80, 239, 68, 68)),
+            BorderThickness = new Thickness(1),
+            Margin = new Thickness(0, 0, 14, 0),
+            Child = new FontIcon
+            {
+                Glyph = "\uE896", // Download error
+                FontSize = 20,
+                Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            }
+        };
+        Grid.SetColumn(iconBadge, 0);
+        headerGrid.Children.Add(iconBadge);
+
+        var titleStack = new StackPanel
+        {
+            Spacing = 2,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        titleStack.Children.Add(new TextBlock
+        {
+            Text = "Download Failed".T(),
+            FontSize = 17,
+            FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+            FontFamily = new FontFamily("Segoe UI Variable Display"),
+            Foreground = GetTextPrimary(isDark)
+        });
+        titleStack.Children.Add(new TextBlock
+        {
+            Text = "The update package could not be downloaded automatically.".T(),
+            FontSize = 12,
+            Foreground = GetTextSecondary(isDark),
+            TextWrapping = TextWrapping.Wrap
+        });
+        Grid.SetColumn(titleStack, 1);
+        headerGrid.Children.Add(titleStack);
+
+        rootStack.Children.Add(headerGrid);
+
+        // Details Card
+        var errCard = new Border
+        {
+            Background = GetCardBackground(isDark),
+            BorderBrush = GetCardBorder(isDark),
+            BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(12),
+            Padding = new Thickness(14, 12, 14, 12)
+        };
+
+        var errStack = new StackPanel { Spacing = 8 };
+        errStack.Children.Add(new TextBlock
+        {
+            Text = $"Error: {errorMessage}",
+            FontSize = 11.5,
+            Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)),
+            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+            TextWrapping = TextWrapping.Wrap
+        });
+
+        errStack.Children.Add(new TextBlock
+        {
+            Text = "If automated updates cannot reach the CDN, you can download the installer manually from the official release page.".T(),
+            FontSize = 11.5,
+            Foreground = GetTextPrimary(isDark),
+            TextWrapping = TextWrapping.Wrap,
+            LineHeight = 16
+        });
+
+        errCard.Child = errStack;
+        rootStack.Children.Add(errCard);
+
+        var dialog = new ContentDialog
+        {
+            Content = rootStack,
+            PrimaryButtonText = "Download from Website".T(),
+            SecondaryButtonText = "Retry".T(),
+            CloseButtonText = "Close".T(),
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = xamlRoot,
+            RequestedTheme = theme,
+            Background = GetDialogBackground(isDark),
+            CornerRadius = new CornerRadius(16)
+        };
+
+        var result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary)
+        {
+            try
+            {
+                string targetUrl = !string.IsNullOrEmpty(directDownloadUrl) && (directDownloadUrl.StartsWith("http://") || directDownloadUrl.StartsWith("https://"))
+                    ? directDownloadUrl
+                    : "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases";
+
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = targetUrl,
+                    UseShellExecute = true
+                });
+            }
+            catch { }
+        }
+
+        return result;
     }
 
     private static Grid CreateInfoRow(string label, string value, bool isDark)

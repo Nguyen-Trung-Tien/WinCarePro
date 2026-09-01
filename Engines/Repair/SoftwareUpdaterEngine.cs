@@ -10,6 +10,17 @@ using WinCarePro.Models;
 
 namespace WinCarePro.Engines;
 
+public class SoftwareUpdateProgressReport
+{
+    public string AppId { get; set; } = "";
+    public int Percent { get; set; }
+    public string Phase { get; set; } = "Updating";
+    public string StatusText { get; set; } = "";
+    public string DownloadUrl { get; set; } = "";
+    public string BytesProgress { get; set; } = "";
+    public string SpeedText { get; set; } = "";
+}
+
 public class SoftwareUpdaterEngine
 {
     private static readonly System.Net.Http.HttpClient _httpClient = new()
@@ -20,6 +31,7 @@ public class SoftwareUpdaterEngine
 
     public event Action<string>? OutputReceived;
     public event Action<string, int, string>? ItemProgressChanged; // (appId, percent, statusText)
+    public event Action<SoftwareUpdateProgressReport>? UpdateProgressReported;
     private void Log(string msg) => OutputReceived?.Invoke($"[{DateTime.Now:HH:mm:ss}] {msg}");
 
     private class AppDefinition
@@ -153,6 +165,9 @@ public class SoftwareUpdaterEngine
     private static readonly Regex DigitsOnlyRegex = new(@"[^\d\.]", RegexOptions.Compiled);
     private static readonly Regex VersionNumRegex = new(@"^\d", RegexOptions.Compiled);
     private static readonly Regex DotNumberRegex = new(@"^\d+(\.\d+)+$", RegexOptions.Compiled);
+    private static readonly Regex DownloadUrlRegex = new(@"Downloading\s+(https?://[^\s\r\n]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex BytesProgressRegex = new(@"(\d+(?:\.\d+)?\s*(?:B|KB|MB|GB|TB))\s*/\s*(\d+(?:\.\d+)?\s*(?:B|KB|MB|GB|TB))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex PercentPatternRegex = new(@"(\d{1,3})%", RegexOptions.Compiled);
 
     public async Task<List<SoftwareUpdateInfo>> ScanUpdatesAsync(string updateEngine = "winget", System.Threading.CancellationToken cancellationToken = default)
     {
@@ -526,31 +541,125 @@ public class SoftwareUpdaterEngine
             return await UpdateApplicationDirectAsync(appId, version, cancellationToken);
         }
 
-        Log($"Upgrading application: {appId} (requires Administrator permission)...");
-        ItemProgressChanged?.Invoke(appId, 15, "Connecting to Winget...");
+        Log($"Upgrading application: {appId} via WinGet...");
+        var initReport = new SoftwareUpdateProgressReport
+        {
+            AppId = appId,
+            Percent = 5,
+            Phase = "Connecting",
+            StatusText = "Connecting to WinGet package source...",
+            DownloadUrl = "",
+            BytesProgress = ""
+        };
+        UpdateProgressReported?.Invoke(initReport);
+        ItemProgressChanged?.Invoke(appId, 5, initReport.StatusText);
+
         try
         {
             var psi = new ProcessStartInfo
             {
                 FileName = "winget.exe",
-                Arguments = $"upgrade --id \"{appId}\" --exact --silent --accept-package-agreements --accept-source-agreements --disable-interactivity",
-                UseShellExecute = true,
-                Verb = "runas",
-                WindowStyle = ProcessWindowStyle.Hidden
+                Arguments = $"upgrade --id \"{appId}\" --exact --accept-package-agreements --accept-source-agreements --disable-interactivity",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8,
+                StandardErrorEncoding = System.Text.Encoding.UTF8,
+                CreateNoWindow = true
             };
 
             using var process = new Process { StartInfo = psi };
+
+            string currentUrl = "";
+            string currentBytes = "";
+            string currentPhase = "Preparing";
+            int currentPercent = 10;
+            string currentSpeed = "";
+
+            process.OutputDataReceived += (sender, e) =>
+            {
+                if (string.IsNullOrEmpty(e.Data)) return;
+                string cleanLine = AnsiRegex.Replace(e.Data, "").Trim();
+                if (string.IsNullOrWhiteSpace(cleanLine)) return;
+
+                Log(cleanLine);
+
+                // Check for URL
+                var urlMatch = DownloadUrlRegex.Match(cleanLine);
+                if (urlMatch.Success)
+                {
+                    currentUrl = urlMatch.Groups[1].Value.Trim();
+                    currentPhase = "Downloading";
+                }
+
+                // Check for Bytes (e.g. 167 MB / 360 MB)
+                var bytesMatch = BytesProgressRegex.Match(cleanLine);
+                if (bytesMatch.Success)
+                {
+                    currentBytes = bytesMatch.Value.Trim();
+                    currentPhase = "Downloading";
+                }
+
+                // Check for Percentage
+                var percentMatch = PercentPatternRegex.Match(cleanLine);
+                if (percentMatch.Success && int.TryParse(percentMatch.Groups[1].Value, out int p))
+                {
+                    currentPercent = Math.Clamp(p, 0, 100);
+                }
+
+                // Phase detection
+                if (cleanLine.Contains("Downloading", StringComparison.OrdinalIgnoreCase))
+                {
+                    currentPhase = "Downloading";
+                }
+                else if (cleanLine.Contains("verif", StringComparison.OrdinalIgnoreCase) || cleanLine.Contains("hash", StringComparison.OrdinalIgnoreCase))
+                {
+                    currentPhase = "Verifying Hash";
+                    currentPercent = Math.Max(currentPercent, 90);
+                }
+                else if (cleanLine.Contains("Starting package install", StringComparison.OrdinalIgnoreCase) || cleanLine.Contains("install", StringComparison.OrdinalIgnoreCase))
+                {
+                    currentPhase = "Installing";
+                    currentPercent = Math.Max(currentPercent, 95);
+                }
+
+                string statusText = !string.IsNullOrEmpty(currentBytes) 
+                    ? $"Downloading {currentBytes} ({currentPercent}%)"
+                    : $"{currentPhase}...";
+
+                var rep = new SoftwareUpdateProgressReport
+                {
+                    AppId = appId,
+                    Percent = currentPercent,
+                    Phase = currentPhase,
+                    StatusText = statusText,
+                    DownloadUrl = currentUrl,
+                    BytesProgress = currentBytes,
+                    SpeedText = currentSpeed
+                };
+                UpdateProgressReported?.Invoke(rep);
+                ItemProgressChanged?.Invoke(appId, currentPercent, statusText);
+            };
+
+            process.ErrorDataReceived += (sender, e) =>
+            {
+                if (!string.IsNullOrEmpty(e.Data))
+                {
+                    Log($"[winget err] {e.Data}");
+                }
+            };
+
             process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
 
             using var reg = cancellationToken.Register(() =>
             {
                 try { if (!process.HasExited) process.Kill(true); } catch { }
             });
 
-            ItemProgressChanged?.Invoke(appId, 50, "Downloading & Installing...");
-
             var exitTask = process.WaitForExitAsync(cancellationToken);
-            var completedTask = await Task.WhenAny(exitTask, Task.Delay(120000, cancellationToken));
+            var completedTask = await Task.WhenAny(exitTask, Task.Delay(180000, cancellationToken));
             if (completedTask != exitTask)
             {
                 try { if (!process.HasExited) process.Kill(true); } catch {}
@@ -563,16 +672,44 @@ public class SoftwareUpdaterEngine
             
             if (!ok)
             {
+                var failRep = new SoftwareUpdateProgressReport
+                {
+                    AppId = appId,
+                    Percent = 0,
+                    Phase = "Failed",
+                    StatusText = "Update Failed",
+                    DownloadUrl = currentUrl,
+                    BytesProgress = currentBytes
+                };
+                UpdateProgressReported?.Invoke(failRep);
                 ItemProgressChanged?.Invoke(appId, 0, "Failed");
                 return false;
             }
 
+            var successRep = new SoftwareUpdateProgressReport
+            {
+                AppId = appId,
+                Percent = 100,
+                Phase = "Completed",
+                StatusText = "Successfully Updated",
+                DownloadUrl = currentUrl,
+                BytesProgress = currentBytes
+            };
+            UpdateProgressReported?.Invoke(successRep);
             ItemProgressChanged?.Invoke(appId, 100, "Completed");
             Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
         }
         catch (OperationCanceledException)
         {
+            var cancelRep = new SoftwareUpdateProgressReport
+            {
+                AppId = appId,
+                Percent = 0,
+                Phase = "Cancelled",
+                StatusText = "Cancelled"
+            };
+            UpdateProgressReported?.Invoke(cancelRep);
             ItemProgressChanged?.Invoke(appId, 0, "Cancelled");
             Log($"Update cancelled for {appId}.");
             return false;
@@ -580,6 +717,14 @@ public class SoftwareUpdaterEngine
         catch (Exception ex)
         {
             Log($"Failed to run winget upgrade for {appId}: {ex.Message}");
+            var errRep = new SoftwareUpdateProgressReport
+            {
+                AppId = appId,
+                Percent = 0,
+                Phase = "Failed",
+                StatusText = $"Failed: {ex.Message}"
+            };
+            UpdateProgressReported?.Invoke(errRep);
             ItemProgressChanged?.Invoke(appId, 0, "Failed");
             return false;
         }
@@ -588,7 +733,6 @@ public class SoftwareUpdaterEngine
     public async Task<bool> UpdateApplicationDirectAsync(string appId, string version = "", System.Threading.CancellationToken cancellationToken = default)
     {
         Log($"Upgrading application {appId} via WinCare Custom Downloader...");
-        ItemProgressChanged?.Invoke(appId, 0, "Connecting...");
         var app = SupportedApps.FirstOrDefault(x => x.Id == appId);
         if (app == null)
         {
@@ -600,6 +744,18 @@ public class SoftwareUpdaterEngine
         {
             version = app.LatestVersion;
         }
+
+        var startReport = new SoftwareUpdateProgressReport
+        {
+            AppId = appId,
+            Percent = 0,
+            Phase = "Connecting",
+            StatusText = "Connecting...",
+            DownloadUrl = app.DownloadUrl,
+            BytesProgress = ""
+        };
+        UpdateProgressReported?.Invoke(startReport);
+        ItemProgressChanged?.Invoke(appId, 0, "Connecting...");
 
         try
         {
@@ -631,11 +787,26 @@ public class SoftwareUpdaterEngine
                         long totalRead = 0;
                         int read;
                         int lastReportedPercent = -1;
+                        var speedStopwatch = Stopwatch.StartNew();
+                        long lastBytesCount = 0;
+                        double lastSeconds = 0;
+                        string currentSpeedText = "";
 
                         while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
                         {
                             await fileStream.WriteAsync(buffer, 0, read, cancellationToken);
                             totalRead += read;
+
+                            double elapsed = speedStopwatch.Elapsed.TotalSeconds;
+                            if (elapsed - lastSeconds >= 0.4)
+                            {
+                                double bytesDiff = totalRead - lastBytesCount;
+                                double timeDiff = elapsed - lastSeconds;
+                                double mbPerSec = (bytesDiff / (1024.0 * 1024.0)) / Math.Max(timeDiff, 0.01);
+                                currentSpeedText = mbPerSec >= 1.0 ? $"{mbPerSec:F1} MB/s" : $"{(mbPerSec * 1024.0):F0} KB/s";
+                                lastBytesCount = totalRead;
+                                lastSeconds = elapsed;
+                            }
 
                             if (totalBytes.HasValue && totalBytes.Value > 0)
                             {
@@ -644,7 +815,20 @@ public class SoftwareUpdaterEngine
                                 {
                                     string detail = $"{totalRead / 1024 / 1024} MB / {totalBytes.Value / 1024 / 1024} MB";
                                     string statusText = $"Downloading {percent}% ({detail})";
+
+                                    var rep = new SoftwareUpdateProgressReport
+                                    {
+                                        AppId = appId,
+                                        Percent = percent,
+                                        Phase = "Downloading",
+                                        StatusText = statusText,
+                                        DownloadUrl = app.DownloadUrl,
+                                        BytesProgress = detail,
+                                        SpeedText = currentSpeedText
+                                    };
+                                    UpdateProgressReported?.Invoke(rep);
                                     ItemProgressChanged?.Invoke(appId, percent, statusText);
+
                                     if (percent - lastReportedPercent >= 10 || percent == 100)
                                     {
                                         Log($"Downloading: {percent}% ({detail})");
@@ -672,7 +856,17 @@ public class SoftwareUpdaterEngine
             cancellationToken.ThrowIfCancellationRequested();
 
             Log($"Download completed. Saved to: {filePath}");
-            ItemProgressChanged?.Invoke(appId, 100, "Verifying Signature...");
+            var verifyRep = new SoftwareUpdateProgressReport
+            {
+                AppId = appId,
+                Percent = 95,
+                Phase = "Verifying Signature",
+                StatusText = "Verifying Authenticode signature...",
+                DownloadUrl = app.DownloadUrl,
+                BytesProgress = "Download Complete"
+            };
+            UpdateProgressReported?.Invoke(verifyRep);
+            ItemProgressChanged?.Invoke(appId, 95, "Verifying Signature...");
 
             Log("Verifying Authenticode digital signature of the downloaded installer...");
             if (!VerifyDigitalSignature(filePath, app.ExpectedPublisher))
@@ -683,7 +877,17 @@ public class SoftwareUpdaterEngine
             Log("Authenticode verification successful. The installer is signed and trusted.");
 
             Log($"Launching installer silently: {app.Name}");
-            ItemProgressChanged?.Invoke(appId, 100, "Installing...");
+            var installRep = new SoftwareUpdateProgressReport
+            {
+                AppId = appId,
+                Percent = 98,
+                Phase = "Installing",
+                StatusText = "Installing silently...",
+                DownloadUrl = app.DownloadUrl,
+                BytesProgress = "Installing"
+            };
+            UpdateProgressReported?.Invoke(installRep);
+            ItemProgressChanged?.Invoke(appId, 98, "Installing...");
 
             var psi = new ProcessStartInfo
             {
@@ -716,35 +920,63 @@ public class SoftwareUpdaterEngine
                 throw new TimeoutException("Installer process timed out.");
             }
 
-            bool success = process.ExitCode == 0 || process.ExitCode == 3010 || process.ExitCode == 1641;
-            Log($"Installer exited with code: {process.ExitCode}");
-            Database.DbManager.LogAction($"Update Software {appId} (Direct)", "Software Updater", success ? "Success" : "Failed");
+            bool ok = process.ExitCode == 0;
+            Log($"Installation finished for {app.Name}. Exit code: {process.ExitCode}");
+            Database.DbManager.LogAction($"Update Software {appId}", "Software Updater", ok ? "Success" : "Failed");
             
-            try
-            {
-                File.Delete(filePath);
-            }
-            catch {}
+            try { File.Delete(filePath); } catch {}
 
-            if (!success)
+            if (!ok)
             {
+                var failRep = new SoftwareUpdateProgressReport
+                {
+                    AppId = appId,
+                    Percent = 0,
+                    Phase = "Failed",
+                    StatusText = "Installation Failed"
+                };
+                UpdateProgressReported?.Invoke(failRep);
                 ItemProgressChanged?.Invoke(appId, 0, "Failed");
                 return false;
             }
 
-            Database.DbManager.SaveUpdatedApp(appId, version);
+            var compRep = new SoftwareUpdateProgressReport
+            {
+                AppId = appId,
+                Percent = 100,
+                Phase = "Completed",
+                StatusText = "Completed"
+            };
+            UpdateProgressReported?.Invoke(compRep);
             ItemProgressChanged?.Invoke(appId, 100, "Completed");
+            Database.DbManager.SaveUpdatedApp(appId, version);
             return true;
         }
         catch (OperationCanceledException)
         {
+            var cancelRep = new SoftwareUpdateProgressReport
+            {
+                AppId = appId,
+                Percent = 0,
+                Phase = "Cancelled",
+                StatusText = "Cancelled"
+            };
+            UpdateProgressReported?.Invoke(cancelRep);
             ItemProgressChanged?.Invoke(appId, 0, "Cancelled");
             Log($"Direct update cancelled for {app.Name}.");
             return false;
         }
         catch (Exception ex)
         {
-            Log($"Direct update failed for {app.Name}: {ex.Message}");
+            Log($"Failed to update {app.Name}: {ex.Message}");
+            var errRep = new SoftwareUpdateProgressReport
+            {
+                AppId = appId,
+                Percent = 0,
+                Phase = "Failed",
+                StatusText = $"Failed: {ex.Message}"
+            };
+            UpdateProgressReported?.Invoke(errRep);
             ItemProgressChanged?.Invoke(appId, 0, "Failed");
             return false;
         }

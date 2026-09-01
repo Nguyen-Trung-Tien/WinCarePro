@@ -213,6 +213,12 @@ public sealed partial class UpdaterPage : Page
 
     public bool IsNot(bool val) => !val;
 
+    public Visibility HasTextVisibility(string? text) => !string.IsNullOrWhiteSpace(text) ? Visibility.Visible : Visibility.Collapsed;
+
+    public string GetSpeedDisplay(string? speed) => string.IsNullOrWhiteSpace(speed) ? "" : $"•  {speed}";
+
+    public string GetPercentText(int percent) => percent > 0 ? $"{Math.Clamp(percent, 0, 100)}%" : "";
+
     private async void OnBackupDriversClick(object sender, RoutedEventArgs e)
     {
         var result = await ViewModel.BackupDriversAsync();

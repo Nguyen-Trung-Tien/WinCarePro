@@ -80,6 +80,68 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
         }
     }
 
+    private string _downloadUrl = "";
+    public string DownloadUrl
+    {
+        get => _downloadUrl;
+        set
+        {
+            if (_downloadUrl != value)
+            {
+                _downloadUrl = value;
+                OnPropertyChanged(nameof(DownloadUrl));
+                OnPropertyChanged(nameof(HasDownloadUrl));
+            }
+        }
+    }
+
+    public bool HasDownloadUrl => !string.IsNullOrWhiteSpace(_downloadUrl);
+
+    private string _bytesProgress = "";
+    public string BytesProgress
+    {
+        get => _bytesProgress;
+        set
+        {
+            if (_bytesProgress != value)
+            {
+                _bytesProgress = value;
+                OnPropertyChanged(nameof(BytesProgress));
+                OnPropertyChanged(nameof(HasBytesProgress));
+            }
+        }
+    }
+
+    public bool HasBytesProgress => !string.IsNullOrWhiteSpace(_bytesProgress);
+
+    private string _speedText = "";
+    public string SpeedText
+    {
+        get => _speedText;
+        set
+        {
+            if (_speedText != value)
+            {
+                _speedText = value;
+                OnPropertyChanged(nameof(SpeedText));
+            }
+        }
+    }
+
+    private string _currentPhase = "Preparing";
+    public string CurrentPhase
+    {
+        get => _currentPhase;
+        set
+        {
+            if (_currentPhase != value)
+            {
+                _currentPhase = value;
+                OnPropertyChanged(nameof(CurrentPhase));
+            }
+        }
+    }
+
     private string _updateStatus = StatusAvailable;
     public string UpdateStatus // Always store English constants: Available, Updating, Completed, Failed
     {

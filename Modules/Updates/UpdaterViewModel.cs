@@ -53,6 +53,54 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         set => SetPropertyOnUI(() => _progressPercent, v => _progressPercent = v, value);
     }
 
+    // Live Download & Telemetry HUD Properties
+    private string _activeUpdatingAppName = "Software Package".T();
+    public string ActiveUpdatingAppName
+    {
+        get => _activeUpdatingAppName;
+        set => SetPropertyOnUI(() => _activeUpdatingAppName, v => _activeUpdatingAppName = v, value);
+    }
+
+    private string _currentDownloadUrl = "";
+    public string CurrentDownloadUrl
+    {
+        get => _currentDownloadUrl;
+        set => SetPropertyOnUI(() => _currentDownloadUrl, v => 
+        {
+            _currentDownloadUrl = v;
+            OnPropertyChanged(nameof(HasDownloadUrl));
+        }, value);
+    }
+
+    public bool HasDownloadUrl => !string.IsNullOrWhiteSpace(_currentDownloadUrl);
+
+    private string _currentBytesProgress = "";
+    public string CurrentBytesProgress
+    {
+        get => _currentBytesProgress;
+        set => SetPropertyOnUI(() => _currentBytesProgress, v => 
+        {
+            _currentBytesProgress = v;
+            OnPropertyChanged(nameof(HasBytesProgress));
+        }, value);
+    }
+
+    public bool HasBytesProgress => !string.IsNullOrWhiteSpace(_currentBytesProgress);
+
+    private string _currentSpeedText = "";
+    public string CurrentSpeedText
+    {
+        get => _currentSpeedText;
+        set => SetPropertyOnUI(() => _currentSpeedText, v => _currentSpeedText = v, value);
+    }
+
+    private string _currentPhase = "Updating".T();
+    public string CurrentPhase
+    {
+        get => _currentPhase;
+        set => SetPropertyOnUI(() => _currentPhase, v => _currentPhase = v, value);
+    }
+
     private string _searchText = "";
     public string SearchText
     {
@@ -213,6 +261,39 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         });
     }
 
+    private void OnUpdateProgressReported(SoftwareUpdateProgressReport report)
+    {
+        _dispatcherQueue?.TryEnqueue(() =>
+        {
+            var app = Updates.FirstOrDefault(x => x.Id.Equals(report.AppId, StringComparison.OrdinalIgnoreCase)) ??
+                      _allUpdates.FirstOrDefault(x => x.Id.Equals(report.AppId, StringComparison.OrdinalIgnoreCase));
+            
+            if (app != null)
+            {
+                app.DownloadProgress = report.Percent;
+                app.IsIndeterminate = (report.Percent <= 0);
+                app.ProgressText = report.StatusText;
+                if (!string.IsNullOrEmpty(report.DownloadUrl)) app.DownloadUrl = report.DownloadUrl;
+                if (!string.IsNullOrEmpty(report.BytesProgress)) app.BytesProgress = report.BytesProgress;
+                if (!string.IsNullOrEmpty(report.SpeedText)) app.SpeedText = report.SpeedText;
+                if (!string.IsNullOrEmpty(report.Phase)) app.CurrentPhase = report.Phase;
+                ActiveUpdatingAppName = app.Name;
+            }
+            else
+            {
+                ActiveUpdatingAppName = report.AppId;
+            }
+
+            if (!string.IsNullOrEmpty(report.DownloadUrl)) CurrentDownloadUrl = report.DownloadUrl;
+            if (!string.IsNullOrEmpty(report.BytesProgress)) CurrentBytesProgress = report.BytesProgress;
+            if (!string.IsNullOrEmpty(report.SpeedText)) CurrentSpeedText = report.SpeedText;
+            if (!string.IsNullOrEmpty(report.Phase)) CurrentPhase = report.Phase.T();
+
+            ProgressPercent = report.Percent;
+            ProgressMessage = report.StatusText;
+        });
+    }
+
     private void OnLanguageChanged(object? sender, EventArgs e)
     {
         _dispatcherQueue?.TryEnqueue(() =>
@@ -229,6 +310,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         _updaterEngine.OutputReceived += OnOutputReceived;
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
         _updaterEngine.ItemProgressChanged += OnItemProgressChanged;
+        _updaterEngine.UpdateProgressReported -= OnUpdateProgressReported;
+        _updaterEngine.UpdateProgressReported += OnUpdateProgressReported;
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
 
@@ -244,6 +327,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         _searchDebounceTimer?.Stop();
         _updaterEngine.OutputReceived -= OnOutputReceived;
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
+        _updaterEngine.UpdateProgressReported -= OnUpdateProgressReported;
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
     }
 

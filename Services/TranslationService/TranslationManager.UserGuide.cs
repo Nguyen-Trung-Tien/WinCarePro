@@ -17,8 +17,11 @@ public partial class TranslationManager
         _translations["Comprehensive documentation, detailed feature capabilities, step-by-step guides & safety guidelines."] = "Tài liệu chi tiết mô tả mục đích, tính năng nổi bật, hướng dẫn thao tác từng bước và quy tắc an toàn.";
         _translations["Comprehensive documentation explaining the purpose, detailed features, step-by-step usage, and safety guidelines for each WinCare Pro module."] = "Tài liệu toàn diện giải thích mục đích, tính năng chi tiết, hướng dẫn từng bước và quy tắc an toàn cho từng phân hệ WinCare Pro.";
         _translations["100% Safe Guidelines"] = "Quy Tắc 100% An Toàn";
+        _translations["14 Core Modules"] = "14 Phân Hệ Cốt Lõi";
         _translations["15 Core Modules"] = "15 Phân Hệ Cốt Lõi";
+        _translations["Search guide (e.g., RAM, DNS, SFC, junk)..."] = "Tìm kiếm hướng dẫn (ví dụ: RAM, DNS, SFC, rác)...";
         _translations["Search guide (e.g., RAM, DNS, SFC, game, junk)..."] = "Tìm kiếm hướng dẫn (ví dụ: RAM, DNS, SFC, game, rác)...";
+        _translations["Comprehensive documentation, step-by-step feature guides, and best practices."] = "Tài liệu toàn diện, hướng dẫn tính năng từng bước và các chuẩn mực thực hành tốt nhất.";
         _translations["All Modules"] = "Tất Cả";
         _translations["Care"] = "Chăm Sóc";
         _translations["Tuning"] = "Tối Ưu";

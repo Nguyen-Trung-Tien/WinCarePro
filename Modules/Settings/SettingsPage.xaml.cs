@@ -130,6 +130,7 @@ public sealed partial class SettingsPage : Page
 
     private void OnLanguageChanged(object? sender, EventArgs e)
     {
+        _settingsSearchRegistry.Clear();
         this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
     }
 
@@ -1518,57 +1519,15 @@ public sealed partial class SettingsPage : Page
         {
             var isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
 
-            // Structure holding release milestone data
-            var releaseData = new Dictionary<string, (string Codename, string Date, string Summary, (string Tag, string Title, string Description, string Glyph, string ColorHex)[] Items)>
+            // Structure holding release milestone data for v4.6.0 Nova
+            var releaseItems = new (string Tag, string Title, string Description, string Glyph, string ColorHex)[]
             {
-                ["v4.6.0"] = (
-                    "Nova",
-                    "2026.09 (Current)",
-                    "Aura Glassmorphic Fluent 2.0 design overhaul, Cyberpunk & Cyan palettes, 120 FPS capped fluid animations, ResultDialog engine, and hardware driver backup manager.".T(),
-                    new[]
-                    {
-                        ("🎨 UI/UX", "Aura Glassmorphic Fluent 2.0 Theme Studio", "Synchronized semantic tokens across dark and light modes with Cyberpunk Neon & Cyan/Teal accent gradients.", "\uE790", "#FF06B6D4"),
-                        ("⚡ PERF", "120 FPS Fluid Animations & Reduced Motion", "Staggered entrance delays capped to <=200ms to eliminate UI lag, with automated low-power and accessibility fallbacks.", "\uE745", "#FFF59E0B"),
-                        ("💬 POPUP", "Standardized Aura ResultDialog Engine", "High-contrast result popups with telemetry breakdowns, collapsible log expander, and jitter-free tabular figures.", "\uE8BD", "#FF8B5CF6"),
-                        ("💾 DRIVER", "Hardware Driver Backup & Rollback Manager", "Comprehensive hardware component inspection, health auditing, and one-click rollback snapshot generation.", "\uE9A6", "#FF3B82F6"),
-                        ("🛡️ SECURE", "SafePathGuard Defense & Local Audit Trail", "Multi-layered filesystem protection, path traversal defenses, input sanitization, and tamper-resistant SQLite logs.", "\uE727", "#FF10B981"),
-                        ("🧹 BOOST", "1-Click Smart Boost & Memory Purging", "Instant RAM working set optimization and DNS cache flushing in under 800ms for peak gaming and productivity.", "\uE9D9", "#FFEC4899")
-                    }
-                ),
-                ["v4.5.0"] = (
-                    "Quantum",
-                    "2026.06",
-                    "Embedded AI heuristic diagnostic scoring, zero-latency bilingual engine, and third-party software updater.".T(),
-                    new[]
-                    {
-                        ("🧠 AI", "Embedded AI Diagnostics & Predictive Engine", "Realtime heuristic system analysis, predictive hardware forecasting, automated health scoring (0-100) and smart remedies.", "\uE946", "#FF6366F1"),
-                        ("🌐 LANG", "Instant Bilingual Translation Engine", "Zero-latency UI switching between English and Vietnamese with live reactive translation across all 15 modules.", "\uE775", "#FF10B981"),
-                        ("🔍 SEARCH", "Granular Settings Discovery", "Full-text settings discovery and instant navigation across 100+ deep configuration parameters and developer tools.", "\uE721", "#FF3B82F6"),
-                        ("📦 APPS", "Third-Party Software Updater", "Automated detection of outdated desktop apps with SHA-256 cryptographic package integrity validation.", "\uE895", "#FFF59E0B")
-                    }
-                ),
-                ["v4.3.0"] = (
-                    "Core",
-                    "2026.03",
-                    "Startup & service optimizer, deep disk space analyzer, duplicate file hunter, and real-time network telemetry.".T(),
-                    new[]
-                    {
-                        ("🚀 BOOT", "Startup & Services Optimizer", "Non-Microsoft background service safety classification, boot duration telemetry, and safe disabling guards.", "\uE7F1", "#FF3B82F6"),
-                        ("📁 DISK", "Deep Storage Analyzer & Duplicate Hunter", "Cluster-level storage breakdown, space heatmap visualization, and fast SHA-256 duplicate file cleanup.", "\uE8B7", "#FF8B5CF6"),
-                        ("🌐 NET", "Realtime Network Telemetry & DNS Benchmark", "Live bandwidth throughput graphs, socket connection diagnostics, latency ping tests, and fastest DNS benchmarking.", "\uE839", "#FF06B6D4")
-                    }
-                ),
-                ["v4.0.0"] = (
-                    "Origin",
-                    "2026.01",
-                    "Foundation release of WinCare Pro Suite with high-performance native cleaning core and zero-telemetry guarantee.".T(),
-                    new[]
-                    {
-                        ("🧹 CLEAN", "High-Performance System Cache Cleaner", "Deep scanning and purging of system temporary files, debris, browser caches, and obsolete Windows logs.", "\uEA99", "#FF10B981"),
-                        ("🔧 TWEAK", "System Optimizer & Context Menu Manager", "Essential Windows performance and telemetry tweaks, context menu editor, and safe registry maintenance.", "\uE713", "#FF6366F1"),
-                        ("🔒 PRIVACY", "Zero-Cloud Telemetry Guarantee Pledge", "100% offline local processing architecture with encrypted SQLite database and zero cloud tracking.", "\uE72E", "#FFEC4899")
-                    }
-                )
+                ("🎨 UI/UX", "Aura Glassmorphic Fluent 2.0 Theme Studio", "Synchronized semantic tokens across dark and light modes with Cyberpunk Neon & Cyan/Teal accent gradients.", "\uE790", "#FF06B6D4"),
+                ("⚡ PERF", "120 FPS Fluid Animations & Reduced Motion", "Staggered entrance delays capped to <=200ms to eliminate UI lag, with automated low-power and accessibility fallbacks.", "\uE745", "#FFF59E0B"),
+                ("💬 POPUP", "Standardized Aura ResultDialog Engine", "High-contrast result popups with telemetry breakdowns, collapsible log expander, and jitter-free tabular figures.", "\uE8BD", "#FF8B5CF6"),
+                ("💾 DRIVER", "Hardware Driver Backup & Rollback Manager", "Comprehensive hardware component inspection, health auditing, and one-click rollback snapshot generation.", "\uE9A6", "#FF3B82F6"),
+                ("🛡️ SECURE", "SafePathGuard Defense & Local Audit Trail", "Multi-layered filesystem protection, path traversal defenses, input sanitization, and tamper-resistant SQLite logs.", "\uE727", "#FF10B981"),
+                ("🧹 BOOST", "1-Click Smart Boost & Memory Purging", "Instant RAM working set optimization and DNS cache flushing in under 800ms for peak gaming and productivity.", "\uE9D9", "#FFEC4899")
             };
 
             var rootStack = new StackPanel
@@ -1621,183 +1580,132 @@ public sealed partial class SettingsPage : Page
             headerCard.Child = headerStack;
             rootStack.Children.Add(headerCard);
 
-            // 2. Interactive Version Pills Selector
-            var pillsPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Spacing = 8,
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-
             var versionListContainer = new StackPanel { Spacing = 8 };
 
-            void RenderVersion(string versionKey)
+            // Milestone summary card for v4.6.0 Nova
+            var milestoneSummaryCard = new Border
             {
-                versionListContainer.Children.Clear();
-                if (!releaseData.TryGetValue(versionKey, out var data)) return;
+                Background = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"],
+                BorderBrush = (Brush)Application.Current.Resources["ControlStrokeColorDefaultBrush"],
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(8),
+                Padding = new Thickness(12, 10, 12, 10)
+            };
+            var mStack = new StackPanel { Spacing = 4 };
+            var mRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
+            mRow.Children.Add(new TextBlock
+            {
+                Text = "v4.6.0 Nova",
+                FontSize = 13,
+                FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+                Foreground = (Brush)Application.Current.Resources["PrimaryAccentBrush"]
+            });
+            mRow.Children.Add(new TextBlock
+            {
+                Text = "• 2026.09 (Current)".T(),
+                FontSize = 11,
+                Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
+                VerticalAlignment = VerticalAlignment.Center
+            });
+            mStack.Children.Add(mRow);
+            mStack.Children.Add(new TextBlock
+            {
+                Text = "Aura Glassmorphic Fluent 2.0 design overhaul, Cyberpunk & Cyan palettes, 120 FPS capped fluid animations, ResultDialog engine, and hardware driver backup manager.".T(),
+                FontSize = 11.5,
+                Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
+                TextWrapping = TextWrapping.Wrap
+            });
+            milestoneSummaryCard.Child = mStack;
+            versionListContainer.Children.Add(milestoneSummaryCard);
 
-                // Milestone summary card
-                var milestoneSummaryCard = new Border
+            // Feature items
+            foreach (var item in releaseItems)
+            {
+                var itemCard = new Border
                 {
                     Background = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"],
                     BorderBrush = (Brush)Application.Current.Resources["ControlStrokeColorDefaultBrush"],
                     BorderThickness = new Thickness(1),
                     CornerRadius = new CornerRadius(8),
-                    Padding = new Thickness(12, 8, 12, 8)
+                    Padding = new Thickness(12, 10, 12, 10)
                 };
-                var mStack = new StackPanel { Spacing = 2 };
-                var mRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
-                mRow.Children.Add(new TextBlock
+                var iGrid = new Grid { ColumnSpacing = 12 };
+                iGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                iGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+                byte a = 255;
+                byte r = Convert.ToByte(item.ColorHex.Substring(3, 2), 16);
+                byte g = Convert.ToByte(item.ColorHex.Substring(5, 2), 16);
+                byte b = Convert.ToByte(item.ColorHex.Substring(7, 2), 16);
+                var itemColor = Windows.UI.Color.FromArgb(a, r, g, b);
+
+                var iconBox = new Border
                 {
-                    Text = $"{versionKey} {data.Codename}",
-                    FontSize = 12.5,
-                    FontWeight = Microsoft.UI.Text.FontWeights.Bold,
-                    Foreground = (Brush)Application.Current.Resources["PrimaryAccentBrush"]
-                });
-                mRow.Children.Add(new TextBlock
+                    Width = 36,
+                    Height = 36,
+                    CornerRadius = new CornerRadius(8),
+                    Background = new SolidColorBrush(Windows.UI.Color.FromArgb(32, r, g, b)),
+                    BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(64, r, g, b)),
+                    BorderThickness = new Thickness(1),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Child = new FontIcon
+                    {
+                        Glyph = item.Glyph,
+                        FontSize = 16,
+                        Foreground = new SolidColorBrush(itemColor),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    }
+                };
+                Grid.SetColumn(iconBox, 0);
+                iGrid.Children.Add(iconBox);
+
+                var textStack = new StackPanel { Spacing = 3, VerticalAlignment = VerticalAlignment.Center };
+                
+                var titleRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
+                var tagBorder = new Border
                 {
-                    Text = $"• {data.Date}",
-                    FontSize = 11,
-                    Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
+                    Background = new SolidColorBrush(Windows.UI.Color.FromArgb(32, r, g, b)),
+                    CornerRadius = new CornerRadius(4),
+                    Padding = new Thickness(5, 1, 5, 1),
+                    Child = new TextBlock
+                    {
+                        Text = item.Tag,
+                        FontSize = 9.5,
+                        FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+                        Foreground = new SolidColorBrush(itemColor)
+                    }
+                };
+                titleRow.Children.Add(tagBorder);
+                titleRow.Children.Add(new TextBlock
+                {
+                    Text = item.Title.T(),
+                    FontSize = 12,
+                    FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+                    TextWrapping = TextWrapping.Wrap,
                     VerticalAlignment = VerticalAlignment.Center
                 });
-                mStack.Children.Add(mRow);
-                mStack.Children.Add(new TextBlock
+                textStack.Children.Add(titleRow);
+
+                textStack.Children.Add(new TextBlock
                 {
-                    Text = data.Summary,
+                    Text = item.Description.T(),
                     FontSize = 11,
                     Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
-                    TextWrapping = TextWrapping.Wrap
+                    TextWrapping = TextWrapping.Wrap,
+                    LineHeight = 16
                 });
-                milestoneSummaryCard.Child = mStack;
-                versionListContainer.Children.Add(milestoneSummaryCard);
 
-                // Feature items
-                foreach (var item in data.Items)
-                {
-                    var itemCard = new Border
-                    {
-                        Background = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"],
-                        BorderBrush = (Brush)Application.Current.Resources["ControlStrokeColorDefaultBrush"],
-                        BorderThickness = new Thickness(1),
-                        CornerRadius = new CornerRadius(8),
-                        Padding = new Thickness(12, 10, 12, 10)
-                    };
-                    var iGrid = new Grid { ColumnSpacing = 12 };
-                    iGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-                    iGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                Grid.SetColumn(textStack, 1);
+                iGrid.Children.Add(textStack);
 
-                    byte a = 255;
-                    byte r = Convert.ToByte(item.ColorHex.Substring(3, 2), 16);
-                    byte g = Convert.ToByte(item.ColorHex.Substring(5, 2), 16);
-                    byte b = Convert.ToByte(item.ColorHex.Substring(7, 2), 16);
-                    var itemColor = Windows.UI.Color.FromArgb(a, r, g, b);
-
-                    var iconBox = new Border
-                    {
-                        Width = 36,
-                        Height = 36,
-                        CornerRadius = new CornerRadius(8),
-                        Background = new SolidColorBrush(Windows.UI.Color.FromArgb(32, r, g, b)),
-                        BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(64, r, g, b)),
-                        BorderThickness = new Thickness(1),
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Child = new FontIcon
-                        {
-                            Glyph = item.Glyph,
-                            FontSize = 16,
-                            Foreground = new SolidColorBrush(itemColor),
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center
-                        }
-                    };
-                    Grid.SetColumn(iconBox, 0);
-                    iGrid.Children.Add(iconBox);
-
-                    var textStack = new StackPanel { Spacing = 3, VerticalAlignment = VerticalAlignment.Center };
-                    
-                    var titleRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
-                    var tagBorder = new Border
-                    {
-                        Background = new SolidColorBrush(Windows.UI.Color.FromArgb(32, r, g, b)),
-                        CornerRadius = new CornerRadius(4),
-                        Padding = new Thickness(5, 1, 5, 1),
-                        Child = new TextBlock
-                        {
-                            Text = item.Tag,
-                            FontSize = 9.5,
-                            FontWeight = Microsoft.UI.Text.FontWeights.Bold,
-                            Foreground = new SolidColorBrush(itemColor)
-                        }
-                    };
-                    titleRow.Children.Add(tagBorder);
-                    titleRow.Children.Add(new TextBlock
-                    {
-                        Text = item.Title.T(),
-                        FontSize = 12,
-                        FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
-                        TextWrapping = TextWrapping.Wrap,
-                        VerticalAlignment = VerticalAlignment.Center
-                    });
-                    textStack.Children.Add(titleRow);
-
-                    textStack.Children.Add(new TextBlock
-                    {
-                        Text = item.Description.T(),
-                        FontSize = 11,
-                        Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
-                        TextWrapping = TextWrapping.Wrap,
-                        LineHeight = 16
-                    });
-
-                    Grid.SetColumn(textStack, 1);
-                    iGrid.Children.Add(textStack);
-
-                    itemCard.Child = iGrid;
-                    versionListContainer.Children.Add(itemCard);
-                }
+                itemCard.Child = iGrid;
+                versionListContainer.Children.Add(itemCard);
             }
-
-            string currentSelectedVersion = "v4.6.0";
-            var pillButtons = new List<(string Version, Button Btn)>();
-
-            foreach (var kvp in releaseData)
-            {
-                var vKey = kvp.Key;
-                var pillBtn = new Button
-                {
-                    Content = vKey == "v4.6.0" ? $"{vKey} Nova" : vKey,
-                    FontSize = 11.5,
-                    FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
-                    Padding = new Thickness(12, 5, 12, 5),
-                    CornerRadius = new CornerRadius(8),
-                    Style = vKey == currentSelectedVersion ? (Style)Application.Current.Resources["AccentButtonStyle"] : (Style)Application.Current.Resources["DefaultButtonStyle"]
-                };
-
-                pillBtn.Click += (s, ev) =>
-                {
-                    currentSelectedVersion = vKey;
-                    foreach (var (v, b) in pillButtons)
-                    {
-                        b.Style = v == currentSelectedVersion
-                            ? (Style)Application.Current.Resources["AccentButtonStyle"]
-                            : (Style)Application.Current.Resources["DefaultButtonStyle"];
-                    }
-                    RenderVersion(vKey);
-                };
-
-                pillButtons.Add((vKey, pillBtn));
-                pillsPanel.Children.Add(pillBtn);
-            }
-
-            rootStack.Children.Add(pillsPanel);
-
-            // Initial render
-            RenderVersion(currentSelectedVersion);
 
             var scrollViewer = new ScrollViewer
             {
-                MaxHeight = 360,
+                MaxHeight = 380,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 Content = versionListContainer
@@ -1806,7 +1714,7 @@ public sealed partial class SettingsPage : Page
 
             var dialog = new ContentDialog
             {
-                Title = "What's New in WinCare Pro".T(),
+                Title = "What's New in v4.6".T(),
                 Content = rootStack,
                 CloseButtonText = "Close".T(),
                 DefaultButton = ContentDialogButton.Close,
@@ -2059,6 +1967,10 @@ public sealed partial class SettingsPage : Page
     private void SettingsNavList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // View switches automatically via binding
+        this.DispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+        {
+            TranslationManager.Instance.Translate(this);
+        });
     }
 
     private Visibility GetSectionVisibility(int selectedIndex, int targetIndex)

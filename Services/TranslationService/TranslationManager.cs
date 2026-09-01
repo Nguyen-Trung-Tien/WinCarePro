@@ -87,6 +87,9 @@ public partial class TranslationManager
     private static readonly System.Text.RegularExpressions.Regex PresetRegex = new(@"^Preset:\s*(.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex BootSavingsRegex = new(@"^-([\d\.,]+)s\s+Boot Time$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
     private static readonly System.Text.RegularExpressions.Regex DaysLeftRegex = new(@"^(\d+)\s+Days Left$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex LastCheckedRegex = new(@"^Last Checked:\s*(.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex VersionSuiteRegex = new(@"^Version\s+([\d\.]+)\s*\((.+?)\)\s*•\s*64-bit Native System Suite$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    private static readonly System.Text.RegularExpressions.Regex WhatsNewRegex = new(@"^What's New in\s+(.+)$", System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
     private static string PreserveWhitespace(string original, string newText)
     {
@@ -276,6 +279,39 @@ public partial class TranslationManager
                 return PreserveWhitespace(key, res);
             }
 
+            // Dynamic Regex for Last Checked
+            if (LastCheckedRegex.IsMatch(trimmed))
+            {
+                var match = LastCheckedRegex.Match(trimmed);
+                string timeVal = match.Groups[1].Value.Trim();
+                string translatedVal = _translations.TryGetValue(timeVal, out var tVal) ? tVal : timeVal;
+                if (string.Equals(timeVal, "Just now", StringComparison.OrdinalIgnoreCase)) translatedVal = "Vừa xong";
+                string res = $"Lần kiểm tra cuối: {translatedVal}";
+                CacheDynamicTranslation(trimmed, res);
+                return PreserveWhitespace(key, res);
+            }
+
+            // Dynamic Regex for Version Suite
+            if (VersionSuiteRegex.IsMatch(trimmed))
+            {
+                var match = VersionSuiteRegex.Match(trimmed);
+                string ver = match.Groups[1].Value;
+                string codename = match.Groups[2].Value;
+                string res = $"Phiên bản {ver} ({codename}) • Bộ Công Cụ Hệ Thống 64-bit Native";
+                CacheDynamicTranslation(trimmed, res);
+                return PreserveWhitespace(key, res);
+            }
+
+            // Dynamic Regex for What's New
+            if (WhatsNewRegex.IsMatch(trimmed))
+            {
+                var match = WhatsNewRegex.Match(trimmed);
+                string ver = match.Groups[1].Value;
+                string res = $"Điểm mới trong {ver}";
+                CacheDynamicTranslation(trimmed, res);
+                return PreserveWhitespace(key, res);
+            }
+
             // Fast-path prefix check for Status Condition
             if (trimmed.StartsWith("Trạng thái:", StringComparison.OrdinalIgnoreCase))
             {
@@ -407,13 +443,19 @@ public partial class TranslationManager
             PresetRegex.IsMatch(trimmed) ||
             BootSavingsRegex.IsMatch(trimmed) ||
             DaysLeftRegex.IsMatch(trimmed) ||
+            LastCheckedRegex.IsMatch(trimmed) ||
+            VersionSuiteRegex.IsMatch(trimmed) ||
+            WhatsNewRegex.IsMatch(trimmed) ||
             AiProcessesRegex.IsMatch(trimmed) ||
             BackgroundProcessesActiveRegex.IsMatch(trimmed) ||
             trimmed.StartsWith("Drive ", StringComparison.OrdinalIgnoreCase) ||
             trimmed.StartsWith("Uninstalling ", StringComparison.OrdinalIgnoreCase) ||
             trimmed.StartsWith("Trạng thái:", StringComparison.OrdinalIgnoreCase) ||
             trimmed.StartsWith("Preset:", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.StartsWith("AI detected", StringComparison.OrdinalIgnoreCase))
+            trimmed.StartsWith("AI detected", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Last Checked:", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("What's New in", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Version ", StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }

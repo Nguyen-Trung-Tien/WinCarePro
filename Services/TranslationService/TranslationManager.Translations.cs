@@ -2553,26 +2553,43 @@ public partial class TranslationManager
         _translations["Backup & Reset"] = "Sao lưu & Đặt lại";
         _translations["About & Developer"] = "Thông tin & Nhà phát triển";
         _translations["Feature Guide & Manual"] = "Hướng dẫn sử dụng";
+        _translations["Find a setting..."] = "Tìm kiếm cài đặt...";
         _translations["General Configurations"] = "Cấu hình chung";
         _translations["General Configuration"] = "Cấu hình chung";
         _translations["Manage startup behaviors, language settings, and window minimization policies."] = "Quản lý hành vi khởi động, cài đặt ngôn ngữ và chính sách thu nhỏ cửa sổ.";
+        _translations["Core System"] = "Hệ Thống Cốt Lõi";
         _translations["Language Selection / Lựa chọn Ngôn ngữ"] = "Lựa chọn Ngôn ngữ";
         _translations["Switch instant application UI locale without restarting."] = "Chuyển đổi tức thời ngôn ngữ giao diện mà không cần khởi động lại.";
         _translations["Launch WinCare Pro automatically upon Windows OS startup"] = "Tự động khởi chạy WinCare Pro khi bật máy tính Windows";
         _translations["Minimize application to System Tray instead of terminating process"] = "Thu nhỏ ứng dụng xuống khay hệ thống (System Tray) thay vì đóng hoàn toàn";
+
+        // Section 1: Appearance & Theme
         _translations["Appearance & Theme Customization"] = "Tùy biến Giao diện & Chủ đề";
+        _translations["Appearance & Theme"] = "Giao diện & Chủ đề";
         _translations["Customize color theme modes, accent palettes, acrylic transparency, and fluid animations."] = "Tùy chỉnh chế độ màu giao diện, bảng màu chủ đạo, độ trong suốt acrylic và hoạt ảnh mượt mà.";
+        _translations["Aura Studio"] = "Aura Studio";
+        _translations["Application Color Theme Mode"] = "Chế Độ Màu Giao Diện Ứng Dụng";
+        _translations["Light Theme"] = "Giao diện Sáng";
+        _translations["Clean and bright interface"] = "Giao diện sáng sủa và rõ nét";
+        _translations["Dark Theme"] = "Giao diện Tối";
+        _translations["Deep space & neon dark tones"] = "Tông màu không gian sâu & neon huyền bí";
         _translations["Window Accent Colors Palette"] = "Bảng Màu Chủ Đạo Cửa Sổ";
         _translations["Choose system-wide brand gradient and highlight color tone."] = "Chọn dải màu gradient thương hiệu và tông màu nổi bật trên toàn hệ thống.";
+        _translations["Radiant Azure (Default)"] = "Xanh Lam Tỏa Sáng (Mặc định)";
         _translations["Default Indigo-Purple"] = "Tím Chàm Mặc định";
         _translations["Emerald Green"] = "Xanh Lục Ngọc";
         _translations["Royal Purple"] = "Tím Hoàng Gia";
         _translations["Cyber Pink"] = "Hồng Cyber";
         _translations["Amber Gold"] = "Vàng Hổ Phách";
+        _translations["Cyan / Teal"] = "Xanh Lục Lam / Teal";
+        _translations["Cyberpunk Neon"] = "Neon Cyberpunk";
         _translations["Mica / Acrylic Background Transparency Level"] = "Độ Trong Suốt Nền Mica / Acrylic";
         _translations["Enable UI fluid translation and hover animations"] = "Bật hiệu ứng chuyển động mượt mà và hoạt ảnh khi rê chuột";
+
+        // Section 2: Auto Maintenance
         _translations["Auto Maintenance Task Schedulers"] = "Lịch Trình Nhiệm Vụ Tự Động Bảo Trì";
         _translations["Automate background junk cleaning and intelligent RAM working set flushing."] = "Tự động dọn dẹp rác chạy ngầm và giải phóng bộ nhớ RAM thông minh.";
+        _translations["Automation"] = "Tự Động Hóa";
         _translations["Automated Cleanup Trigger Threshold"] = "Ngưỡng Kích Hoạt Dọn Dẹp Tự Động";
         _translations["WinCare Pro silently cleans junk if accumulated cache exceeds this limit."] = "WinCare Pro sẽ tự động dọn rác chạy ngầm nếu bộ nhớ đệm tích lũy vượt quá giới hạn này.";
         _translations["Trigger Smart Boost optimization automatically if free RAM falls below 10%"] = "Tự động kích hoạt tối ưu Smart Boost nếu RAM trống dưới 10%";
@@ -2581,8 +2598,11 @@ public partial class TranslationManager
         _translations["Daily run"] = "Chạy hàng ngày";
         _translations["Weekly scan"] = "Quét hàng tuần";
         _translations["Monthly execution"] = "Thực thi hàng tháng";
+
+        // Section 3: Telemetry & Alert Policy
         _translations["Telemetry & Notification Center Policy"] = "Chính Sách Telemetry & Trung Tâm Thông Báo";
         _translations["Configure real-time monitoring polling speed, health score alert thresholds, and audio alerts."] = "Cấu hình tốc độ quét giám sát thời gian thực, ngưỡng cảnh báo điểm sức khỏe và âm thanh cảnh báo.";
+        _translations["Monitoring"] = "Giám Sát";
         _translations["Notification Center Policy"] = "Chính Sách Trung Tâm Thông Báo";
         _translations["Show dynamic in-app Toast Notifications"] = "Hiển thị thông báo động Toast trong ứng dụng";
         _translations["PC Health Rating Severity Trigger Limit"] = "Giới Hạn Kích Hoạt Mức Độ Nghiêm Trọng Sức Khỏe PC";
@@ -2592,43 +2612,100 @@ public partial class TranslationManager
         _translations["Play subtle system audio alert upon notification arrival"] = "Phát âm thanh cảnh báo hệ thống nhẹ nhàng khi có thông báo đến";
         _translations["Hardware Sensors Telemetry"] = "Đo Lường Cảm Biến Phần Cứng";
         _translations["Sensors Telemetry Update Interval"] = "Khoảng Thời Gian Cập Nhật Đo Lường Cảm Biến";
+        _translations["Polling frequency for hardware temperature and loading rates."] = "Tần suất cập nhật nhiệt độ và mức tải phần cứng.";
+        _translations["0.5s (High Precision)"] = "0.5 giây (Độ chính xác cao)";
+        _translations["1.0s (Normal Mode)"] = "1.0 giây (Chế độ bình thường)";
+        _translations["2.0s (Eco Mode)"] = "2.0 giây (Chế độ tiết kiệm)";
+        _translations["5.0s (Low Power)"] = "5.0 giây (Công suất thấp)";
         _translations["0.5 seconds (Fast)"] = "0.5 giây (Nhanh)";
         _translations["1.0 seconds (Normal)"] = "1.0 giây (Bình thường)";
         _translations["2.0 seconds (Eco)"] = "2.0 giây (Tiết kiệm)";
         _translations["5.0 seconds (Low power)"] = "5.0 giây (Công suất thấp)";
         _translations["Performance History Logging Duration"] = "Thời Gian Lưu Nhật Ký Lịch Sử Hiệu Năng";
+        _translations["Retention timeline for diagnostic telemetry history records."] = "Thời gian lưu trữ dữ liệu lịch sử đo lường chẩn đoán.";
+        _translations["7 Days History"] = "Lịch sử 7 ngày";
+        _translations["30 Days History"] = "Lịch sử 30 ngày";
+        _translations["90 Days History"] = "Lịch sử 90 ngày";
         _translations["7 Days logs"] = "Nhật ký 7 ngày";
         _translations["30 Days logs"] = "Nhật ký 30 ngày";
         _translations["90 Days logs"] = "Nhật ký 90 ngày";
         _translations["Enable continuous low-overhead hardware sensors scanning thread"] = "Bật luồng quét cảm biến phần cứng liên tục với mức tiêu thụ tài nguyên cực thấp";
         _translations["Runs a background worker thread to poll CPU/GPU temperature and loading metrics."] = "Chạy luồng worker ngầm để lấy số liệu nhiệt độ và mức tải của CPU/GPU.";
+
+        // Section 4: Safety & Rollback
         _translations["Rollback & Safety Registries"] = "An Toàn & Khôi Phục Registry";
         _translations["Configure restore points, registry backups, and modification confirmation levels."] = "Cấu hình điểm khôi phục, sao lưu registry và cấp độ xác nhận sửa đổi.";
+        _translations["Safety Shield"] = "Lá Chắn An Toàn";
         _translations["Automatically create a System Restore Point before major updates"] = "Tự động tạo Điểm Khôi Phục Hệ Thống trước các cập nhật lớn";
         _translations["Saves a system restore point so you can roll back changes if optimizing causes issues."] = "Lưu điểm khôi phục hệ thống để bạn có thể quay lại nếu việc tối ưu gặp sự cố.";
         _translations["Automatically backup system registry hive partitions before repair"] = "Tự động sao lưu phân vùng registry hệ thống trước khi sửa chữa";
         _translations["Automatically backs up HKCU and modified HKLM keys before tweaking registry settings."] = "Tự động sao lưu các khóa HKCU và HKLM trước khi tinh chỉnh cài đặt registry.";
         _translations["Modification Confirmation Alerts Level"] = "Cấp Độ Cảnh Báo Xác Nhận Sửa Đổi";
         _translations["Level 2 (Balanced): Prompts confirmation warnings before major file tree and registry mutations."] = "Cấp độ 2 (Cân bằng): Nhắc cảnh báo xác nhận trước các thay đổi lớn về cây tệp và registry.";
+
+        // Section 5: Database & Storage
         _translations["Database & Storage Footprint Manager"] = "Quản Lý Dấu Chân Bộ Nhớ & Cơ Sở Dữ Liệu";
         _translations["Inspect and reclaim storage consumed by diagnostic logs, assessment reports, and update packages."] = "Kiểm tra và thu hồi dung lượng lưu trữ bị chiếm dụng bởi nhật ký chẩn đoán, báo cáo đánh giá và gói cập nhật.";
+        _translations["Storage Engine"] = "Động Cơ Lưu Trữ";
         _translations["Storage Utilization Statistics"] = "Thống Kê Sử Dụng Bộ Nhớ Lưu Trữ";
         _translations["Live breakdown of local SQLite logs and temporary cache folders."] = "Báo cáo trực tiếp về nhật ký SQLite cục bộ và các thư mục bộ đệm tạm thời.";
         _translations["Refresh Stats"] = "Làm mới thống kê";
+        _translations["Activity Logs"] = "Nhật Ký Hoạt Động";
+        _translations["Reports Files"] = "Tệp Báo Cáo";
+        _translations["Updates Cache"] = "Bộ Đệm Cập Nhật";
         _translations["Selective Purge Targets"] = "Mục tiêu dọn dẹp chọn lọc";
         _translations["Purge SQLite Activity History Logs"] = "Xóa nhật ký lịch sử hoạt động SQLite";
         _translations["Wipe Saved Diagnostic Assessment Report Files"] = "Xóa các tệp báo cáo đánh giá chẩn đoán đã lưu";
         _translations["Clear Temporary Updates Installation Packages"] = "Xóa các gói cài đặt cập nhật tạm thời";
+        _translations["Purge Selected Storage"] = "Dọn Dẹp Bộ Nhớ Đã Chọn";
+        _translations["Purging Selected Storage..."] = "Đang dọn dẹp bộ nhớ đã chọn...";
+
+        // Section 6: Software Updates & Release CDN
+        _translations["Software Update Policies & CDN Stream"] = "Chính Sách Cập Nhật & Luồng CDN";
+        _translations["Manage background version checks, live percentage telemetry stream, and automated installer delivery."] = "Quản lý kiểm tra phiên bản chạy ngầm, luồng dữ liệu tiến trình trực tiếp và tự động phân phối trình cài đặt.";
+        _translations["Release CDN"] = "Mạng Phân Phối CDN";
+        _translations["WinCare Pro Distribution Channel"] = "Kênh Phân Phối WinCare Pro";
+        _translations["Download from Website"] = "Tải từ Trang Web";
+        _translations["CDN Connected"] = "Đã Kết Nối CDN";
+        _translations["System is up to date with the latest security and optimization definitions."] = "Hệ thống đã cập nhật định nghĩa bảo mật và tối ưu mới nhất.";
+        _translations["Last Checked: Just now"] = "Lần kiểm tra cuối: Vừa xong";
+        _translations["Data Synchronization Status"] = "Trạng Thái Đồng Bộ Dữ Liệu";
+        _translations["CDN Manifest Sync: Complete • Channel: Stable • Digital Signature: Verified"] = "Đồng bộ CDN Manifest: Hoàn tất • Kênh: Ổn định • Chữ ký số: Đã xác thực";
+        _translations["Ready"] = "Sẵn sàng";
+        _translations["Check for updates automatically in the background"] = "Tự động kiểm tra bản cập nhật mới chạy ngầm";
+        _translations["Auto download & install updates silently (Requires background check)"] = "Tự động tải & cài đặt bản cập nhật âm thầm (Yêu cầu kiểm tra ngầm)";
+        _translations["Enroll in the pre-release channel (Beta updates)"] = "Tham gia kênh thử nghiệm trước phát hành (Bản cập nhật Beta)";
+        _translations["Receive early updates with new features before public release."] = "Nhận các bản cập nhật sớm kèm tính năng mới trước khi phát hành chính thức.";
+        _translations["Open official website to download installer manually"] = "Mở trang web chính thức để tải trình cài đặt thủ công";
+        _translations["Cancel current update operation"] = "Hủy thao tác cập nhật hiện tại";
+
+        // Section 7: Advanced & Developer Workbench
+        _translations["Advanced & Developer Workbench"] = "Công Cụ Nâng Cao & Bàn Làm Việc Nhà Phát Triển";
         _translations["Advanced & Sandbox Options"] = "Tùy Chọn Nâng Cao & Sandbox";
+        _translations["Developer debugging flags, live diagnostic suite, memory trimmer, and sandbox runtime."] = "Cờ gỡ lỗi nhà phát triển, bộ công cụ chẩn đoán trực tiếp, giải phóng RAM và môi trường sandbox.";
         _translations["Developer debugging flags, verified plugin manager, and experimental modules."] = "Cờ gỡ lỗi nhà phát triển, quản lý plugin đã xác minh và các mô-đun thử nghiệm.";
+        _translations["Workbench"] = "Bàn Làm Việc Kỹ Thuật";
         _translations["Enable verbose debug log trace files"] = "Bật ghi tệp theo dõi nhật ký gỡ lỗi chi tiết";
         _translations["Plugin & Sandbox Modules Manager"] = "Trình Quản Lý Mô-đun Sandbox & Plugin";
         _translations["No custom external plugins are currently loaded in the sandbox runtime."] = "Hiện không có plugin bên ngoài tùy chỉnh nào được tải trong môi trường sandbox.";
         _translations["Browse Verified Plugins"] = "Duyệt Các Plugin Đã Xác Minh";
         _translations["Enable experimental AI diagnostics auto-remediations (Pre-release)"] = "Bật tính năng tự động khắc phục bằng chẩn đoán AI thử nghiệm (Bản xem trước)";
         _translations["Uses heuristic rules to automatically attempt fixing found system issues without user confirmation."] = "Sử dụng quy tắc suy nghiệm để tự động thử sửa chữa các sự cố hệ thống tìm thấy mà không cần người dùng xác nhận.";
+        _translations["Live Developer Diagnostics & Memory Control"] = "Chẩn Đoán Trực Tiếp & Kiểm Soát Bộ Nhớ Cho Nhà Phát Triển";
+        _translations["Execute low-level memory trimming, inspect process runtime parameters, and view SQLite audit records."] = "Thực thi giải phóng bộ nhớ cấp thấp, kiểm tra tham số thực thi tiến trình và xem bản ghi kiểm toán SQLite.";
+        _translations["Inspect System Environment"] = "Kiểm Tra Môi Trường Hệ Thống";
+        _translations["View OS, CLR, CPU & GC mode"] = "Xem hệ điều hành, CLR, CPU & chế độ GC";
+        _translations["Trim RAM & Force GC"] = "Giải Phóng RAM & Thu Gom Rác GC";
+        _translations["Flush process working set"] = "Giải phóng bộ nhớ làm việc của tiến trình";
+        _translations["View SQLite Audit Logs"] = "Xem Nhật Ký Kiểm Toán SQLite";
+        _translations["Inspect recent system events"] = "Kiểm tra các sự kiện hệ thống gần đây";
+        _translations["Export Diagnostics (JSON)"] = "Xuất Chẩn Đoán (JSON)";
+        _translations["Sanitized bundle for debugging"] = "Gói dữ liệu đã được làm sạch để gỡ lỗi";
+
+        // Section 8: Backup & Reset
         _translations["Backup & Reset Configurations"] = "Cấu Hình Sao Lưu & Đặt Lại";
         _translations["Export configurations to JSON, restore profiles, or revert to pristine factory settings."] = "Xuất cấu hình ra tệp JSON, khôi phục hồ sơ hoặc đưa về cài đặt gốc ban đầu.";
+        _translations["Profiles"] = "Hồ Sơ Cấu Hình";
         _translations["Configuration Profiles Backup & Restore"] = "Sao Lưu & Khôi Phục Hồ Sơ Cấu Hình";
         _translations["Save your entire personalization, scheduler, and security preferences to a portable JSON file."] = "Lưu toàn bộ tùy chỉnh cá nhân, lịch trình và tùy chọn bảo mật của bạn vào tệp JSON di động.";
         _translations["Export Backup (JSON)"] = "Xuất bản sao lưu (JSON)";
@@ -2636,14 +2713,52 @@ public partial class TranslationManager
         _translations["Factory Reset Preferences"] = "Cài Đặt Lại Về Mặc Định Gốc";
         _translations["Reset all settings, theme customizations, schedulers, and thresholds to pristine factory defaults."] = "Đặt lại tất cả cài đặt, tùy chỉnh giao diện, lịch trình và ngưỡng về mặc định gốc.";
         _translations["Reset to Factory Defaults"] = "Đặt lại về mặc định gốc";
+
+        // Section 9: About WinCare Pro & Developer Info
+        _translations["About WinCare Pro & Engineering Team"] = "Giới Thiệu WinCare Pro & Đội Ngũ Kỹ Sư";
         _translations["About WinCare Pro"] = "Thông tin về WinCare Pro";
+        _translations["Software architecture, lead developer portfolio, zero-telemetry privacy pledge, and open-source ecosystem."] = "Kiến trúc phần mềm, hồ sơ nhà phát triển chính, cam kết quyền riêng tư không telemetry và hệ sinh thái mã nguồn mở.";
         _translations["Software build specifications, developer contact, and open-source repository."] = "Thông số bản dựng phần mềm, liên hệ nhà phát triển và kho mã nguồn mở.";
+        _translations["v4.6.0 Nova"] = "v4.6.0 Nova";
+        _translations["Nova Suite"] = "Bộ Nova Suite";
+        _translations["Evolution Suite"] = "Bộ Evolution Suite";
+        _translations["Next-Generation System Optimizer, Security Shield & Care Suite"] = "Bộ Tối Ưu Hệ Thống, Lá Chắn Bảo Mật & Chăm Sóc Thế Hệ Mới";
         _translations["System Optimizer, Security Shield & Care Suite"] = "Bộ Tối Ưu Hệ Thống, Lá Chắn Bảo Mật & Chăm Sóc Toàn Diện";
-        _translations["Version 4.3.0 (Next-Gen Intelligence Release)"] = "Phiên bản 4.3.0 (Bản phát hành Next-Gen Intelligence)";
+        _translations["Version 4.6.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.6.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit Native";
+        _translations["What's New in v4.6"] = "Điểm mới trong v4.6";
+        _translations["View official release notes & new features changelog"] = "Xem ghi chú phát hành chính thức & danh sách tính năng mới";
+        _translations["PROCESS WORKING SET"] = "BỘ NHỚ TIẾN TRÌNH";
+        _translations["ACTIVE SESSION UPTIME"] = "THỜI GIAN PHIÊN HOẠT ĐỘNG";
+        _translations["LOCAL STORAGE ENGINE"] = "ĐỘNG CƠ LƯU TRỮ CỤC BỘ";
+        _translations["Encrypted WAL • Healthy"] = "WAL Mã Hóa • Tốt";
         _translations["Lead Developer:"] = "Nhà phát triển chính:";
         _translations["Contact Support:"] = "Liên hệ hỗ trợ:";
+        _translations["Nguyen Trung Tien"] = "Nguyễn Trung Tiến";
+        _translations["Lead Systems Architect"] = "Kiến Trúc Sư Hệ Thống Trưởng";
+        _translations["Principal Software Engineer • Creator & Maintainer of WinCare Pro"] = "Kỹ Sư Phần Mềm Chính • Tác Giả & Phát Triển WinCare Pro";
+        _translations["Quick Contacts & Developer Links"] = "Liên Hệ Nhanh & Liên Kết Nhà Phát Triển";
+        _translations["Email Developer"] = "Gửi Email Cho Nhà Phát Triển";
+        _translations["Copy Contact Email"] = "Sao Chép Email Liên Hệ";
+        _translations["GitHub Repository"] = "Kho Mã Nguồn GitHub";
+        _translations["Report Bug / Issue"] = "Báo Cáo Lỗi / Góp Ý";
         _translations["Source Code Repository & Feedback"] = "Kho Mã Nguồn & Đóng Góp Ý Kiến";
         _translations["Contributions, bug reports, and feature requests are welcome on GitHub."] = "Hoan nghênh các đóng góp, báo cáo lỗi và yêu cầu tính năng trên GitHub.";
+        _translations["Zero-Telemetry & Privacy Guarantee Pledge"] = "Cam Kết Quyền Riêng Tư & Không Thu Thập Dữ Liệu (Zero-Telemetry)";
+        _translations["🔒 100% On-Device Processing"] = "🔒 Xử Lý 100% Trên Thiết Bị Cục Bộ";
+        _translations["All diagnostics, system scans, and cleanups execute locally with zero cloud telemetry transmission."] = "Tất cả chẩn đoán, quét hệ thống và dọn dẹp đều thực thi cục bộ, hoàn toàn không truyền dữ liệu telemetry lên đám mây.";
+        _translations["💾 Local Encrypted Storage"] = "💾 Lưu Trữ Cục Bộ Được Bảo Mật";
+        _translations["Activity logs, configurations, and rollback snapshots reside in high-speed local database files."] = "Nhật ký hoạt động, cấu hình và ảnh chụp khôi phục được lưu trữ an toàn trong các tệp cơ sở dữ liệu cục bộ tốc độ cao.";
+        _translations["🛡️ Cryptographic Payload Audit"] = "🛡️ Kiểm Toán Gói Cập Nhật Bằng Mật Mã";
+        _translations["Update payloads are audited for valid PE headers, file integrity, and digital certificate validation."] = "Các gói cập nhật được kiểm toán định dạng PE hợp lệ, tính toàn vẹn tệp và xác thực chứng chỉ số nghiêm ngặt.";
+        _translations["⏪ Transactional Safety Rollbacks"] = "⏪ Khôi Phục Trạng Thái An Toàn Theo Giao Tác";
+        _translations["Integrates Windows System Restore Points and registry backup snapshots prior to modifications."] = "Tích hợp Điểm Khôi Phục Hệ Thống Windows và sao lưu registry trước khi thực hiện bất kỳ thay đổi nào.";
+        _translations["System Integrity & Security Certifications"] = "Chứng Nhận Toàn Vẹn & An Toàn Hệ Thống";
+        _translations["100% Offline Processing"] = "Xử Lý 100% Ngoại Tuyến";
+        _translations["Zero Cloud Telemetry"] = "Không Thu Thập Telemetry";
+        _translations["Local Cryptographic Storage"] = "Lưu Trữ Cục Bộ Mã Hóa";
+        _translations["Binary Integrity Verified"] = "Đã Xác Thực Toàn Vẹn Tệp Nhị Phân";
+        _translations["Hardware Acceleration"] = "Tăng Tốc Phần Cứng";
+        _translations["Safe State Rollbacks"] = "Khôi Phục Trạng Thái An Toàn";
         // --- Additional Comprehensive Module Translations ---
         // AI Assistant & Diagnostics
         _translations["Neural Scan: Active & Calibrated"] = "Quét Neural: Hoạt Động & Đã Hiệu Chuẩn";
@@ -3208,29 +3323,12 @@ public partial class TranslationManager
         _translations["Privacy Shield"] = "Khiên Riêng Tư";
         _translations["Restore Defaults"] = "Khôi Phục Mặc Định";
         _translations["Apply Tweaks"] = "Áp Dụng Tinh Chỉnh";
-        _translations["Preset Profiles"] = "Hồ Sơ Cấu Hình";
-        _translations["Profiles"] = "Hồ Sơ";
 
         // --- Software Updates Status & Changelog ---
-        _translations["Last Checked: Just now"] = "Kiểm tra gần nhất: Vừa xong";
-        _translations["Last Checked: {0}"] = "Kiểm tra gần nhất: {0}";
         _translations["Changelog"] = "Nhật Ký Bản Cập Nhật";
-        _translations["View current release notes & changelog"] = "Xem nhật ký phát hành và ghi chú phiên bản hiện tại";
         _translations["Release Notes & Changelog"] = "Ghi Chú Phát Hành & Nhật Ký Thay Đổi";
 
-        // --- Advanced Developer Workbench (Section 7) ---
-        _translations["Advanced & Developer Workbench"] = "Tùy Chọn Nâng Cao & Bàn Làm Việc Nhà Phát Triển";
-        _translations["Developer debugging flags, live diagnostic suite, memory trimmer, and sandbox runtime."] = "Cờ gỡ lỗi nhà phát triển, bộ công cụ chẩn đoán trực tiếp, trình dọn RAM và môi trường sandbox.";
-        _translations["Live Developer Diagnostics & Memory Control"] = "Chẩn Đoán Trực Tiếp & Kiểm Soát Bộ Nhớ";
-        _translations["Execute low-level memory trimming, inspect process runtime parameters, and view SQLite audit records."] = "Dọn dẹp bộ nhớ RAM cấp thấp, kiểm tra tham số tiến trình runtime và tra cứu nhật ký SQLite.";
-        _translations["Inspect System Environment"] = "Kiểm Tra Môi Trường Hệ Thống";
-        _translations["View OS, CLR, CPU & GC mode"] = "Xem thông số HĐH, CLR, CPU & chế độ GC";
-        _translations["Trim RAM & Force GC"] = "Dọn RAM & Ép Thu Gom Rác";
-        _translations["Flush process working set"] = "Giải phóng bộ nhớ làm việc Working Set";
-        _translations["View SQLite Audit Logs"] = "Xem Nhật Ký Hoạt Động SQLite";
-        _translations["Inspect recent system events"] = "Tra cứu các sự kiện hệ thống gần đây";
-        _translations["Export Diagnostics (JSON)"] = "Xuất File Chẩn Đoán (JSON)";
-        _translations["Sanitized bundle for debugging"] = "Gói dữ liệu đã ẩn danh để gỡ lỗi";
+        // --- Advanced Developer Workbench System Info ---
         _translations["System Environment & Runtime Inspector"] = "Kiểm Tra Môi Trường Hệ Thống & Runtime";
         _translations["RAM Working Set Trimmed"] = "Đã Dọn Dẹp Bộ Nhớ Working Set";
         _translations["Forced Garbage Collection completed. Freed {0:F1} MB of RAM."] = "Đã ép thu gom rác thành công. Giải phóng {0:F1} MB RAM.";
@@ -3238,66 +3336,15 @@ public partial class TranslationManager
         _translations["No activity logs recorded in the local SQLite database."] = "Chưa ghi nhận nhật ký hoạt động nào trong cơ sở dữ liệu SQLite cục bộ.";
         _translations["Diagnostics Exported"] = "Đã Xuất Gói Chẩn Đoán";
         _translations["Diagnostic bundle saved to Desktop:\n{0}"] = "Gói chẩn đoán đã được lưu ra Màn hình chính (Desktop):\n{0}";
-
-        // --- About & Developer Suite (Section 9) ---
-        _translations["About WinCare Pro & Engineering Team"] = "Giới Thiệu WinCare Pro & Đội Ngũ Kỹ Sư";
-        _translations["Software architecture, lead developer portfolio, zero-telemetry privacy pledge, and open-source ecosystem."] = "Kiến trúc phần mềm, hồ sơ nhà phát triển chính, cam kết quyền riêng tư và hệ sinh thái mã nguồn mở.";
-        _translations["Next-Generation System Optimizer, Security Shield & Care Suite"] = "Bộ Công Cụ Tối Ưu, Bảo Vệ & Chăm Sóc Hệ Thống Thế Hệ Mới";
-        _translations["Version 4.6.0 (Codename: Nova) • 64-bit Native WinUI 3 • .NET 10.0 CLR"] = "Phiên bản 4.6.0 (Codename: Nova) • WinUI 3 Bản Quyền 64-bit • .NET 10.0 CLR";
-        _translations["Version 4.5.0 (Codename: Nova) • 64-bit Native WinUI 3 • .NET 10.0 CLR"] = "Phiên bản 4.5.0 (Codename: Nova) • WinUI 3 Bản Quyền 64-bit • .NET 10.0 CLR";
-        _translations["Version 4.3.0 (Official Build) • 64-bit Native WinUI 3 • .NET 10.0 CLR"] = "Phiên bản 4.3.0 (Bản Chính Thức) • WinUI 3 Bản Quyền 64-bit • .NET 10.0 CLR";
-        _translations["PROCESS WORKING SET"] = "BỘ NHỚ LÀM VIỆC (WORKING SET)";
-        _translations["ACTIVE SESSION UPTIME"] = "THỜI GIAN HOẠT ĐỘNG PHIÊN";
-        _translations["DATABASE ENGINE"] = "ĐỘNG CƠ CƠ SỞ DỮ LIỆU";
-        _translations["SQLite WAL • Healthy"] = "SQLite WAL • Hoạt động tốt";
-        _translations["SQLite WAL • Active"] = "SQLite WAL • Đang hoạt động";
-        _translations["Lead Systems Architect"] = "Kiến Trúc Sư Hệ Thống Trưởng";
-        _translations["Principal Software Engineer • Creator & Maintainer of WinCare Pro"] = "Kỹ sư Phần mềm Trưởng • Tác giả & Quản trị WinCare Pro";
-        _translations["Quick Contacts & Developer Links"] = "Liên Hệ Nhanh & Liên Kết Nhà Phát Triển";
-        _translations["Email Developer"] = "Gửi Email Tác Giả";
-        _translations["Copy Contact Email"] = "Sao Chép Email Liên Hệ";
-        _translations["GitHub Repository"] = "Kho Mã Nguồn GitHub";
-        _translations["Report Bug / Issue"] = "Báo Cáo Sự Cố / Lỗi";
-        _translations["Release Changelog"] = "Nhật Ký Phiên Bản";
-        _translations["Zero-Telemetry & Privacy Guarantee Pledge"] = "Cam Kết Không Thu Thập Dữ Liệu & Bảo Vệ Riêng Tư";
-        _translations["🔒 100% On-Device Processing"] = "🔒 100% Xử Lý Trực Tiếp Trên Máy";
-        _translations["All diagnostics, system scans, and cleanups execute locally with zero cloud telemetry transmission."] = "Mọi chẩn đoán, quét hệ thống và dọn dẹp đều thực thi cục bộ, không gửi dữ liệu ra đám mây.";
-        _translations["💾 ACID SQLite Encrypted Storage"] = "💾 Lưu Trữ Cục Bộ SQLite Chuẩn ACID";
-        _translations["Activity logs, configurations, and rollback snapshots reside in high-speed local database files."] = "Nhật ký hoạt động, cấu hình và điểm khôi phục được lưu trữ an toàn trong tệp cơ sở dữ liệu nội bộ.";
-        _translations["🛡️ Cryptographic Payload Audit"] = "🛡️ Kiểm Toán Chữ Ký Mã Hóa Gói Cài";
-        _translations["Update payloads are audited for valid PE headers, file integrity, and digital certificate validation."] = "Gói cập nhật được kiểm toán cấu trúc PE header, tính toàn vẹn tệp và xác thực chứng chỉ số.";
-        _translations["⏪ Transactional Safety Rollbacks"] = "⏪ Khôi Phục An Toàn Dạng Giao Dịch";
-        _translations["Integrates Windows System Restore Points and registry backup snapshots prior to modifications."] = "Tự động tích hợp Điểm Khôi Phục Hệ Thống Windows và sao lưu registry trước khi thay đổi.";
-        _translations["Core Technology Stack & Frameworks"] = "Ngăn Xếp Công Nghệ & Nền Tảng Cốt Lõi";
         _translations["Email Copied"] = "Đã Sao Chép Email";
         _translations["trungtiennguyen910@gmail.com has been copied to clipboard."] = "Đã sao chép email trungtiennguyen910@gmail.com vào khay nhớ tạm.";
 
-        _translations["Version 4.6.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.6.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit";
-        _translations["Version 4.5.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.5.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit";
-        _translations["Version 4.3.0 (Official Release Build) • 64-bit Native System Suite"] = "Phiên bản 4.3.0 (Bản Phát Hành Chính Thức) • Bộ Công Cụ Hệ Thống 64-bit";
-        _translations["LOCAL STORAGE ENGINE"] = "ĐỘNG CƠ LƯU TRỮ CỤC BỘ";
-        _translations["Encrypted WAL • Healthy"] = "Mã Hóa WAL • Hoạt động tốt";
-        _translations["Encrypted WAL • Active"] = "Mã Hóa WAL • Đang hoạt động";
-        _translations["💾 Local Encrypted Storage"] = "💾 Lưu Trữ Cục Bộ Mã Hóa An Toàn";
-
-        // --- Security & Trust Architecture ---
-        _translations["System Integrity & Security Certifications"] = "Chứng Nhận Toàn Vẹn Hệ Thống & Bảo Mật";
-        _translations["100% Offline Processing"] = "100% Xử Lý Ngoại Tuyến";
-        _translations["Zero Cloud Telemetry"] = "Không Gửi Dữ Liệu Lên Đám Mây";
-        _translations["Local Cryptographic Storage"] = "Lưu Trữ Mã Hóa Cục Bộ";
-        _translations["Binary Integrity Verified"] = "Xác Thực Toàn Vẹn Nhị Phân";
-        _translations["Hardware Acceleration"] = "Tăng Tốc Phần Cứng";
-        _translations["Safe State Rollbacks"] = "Khôi Phục Trạng Thái An Toàn";
-
-        // --- What's New & Changelog Dialog (Sanitized) ---
-        _translations["What's New in v4.6"] = "Điểm Mới ở v4.6";
-        _translations["What's New in v4.5"] = "Điểm Mới ở v4.5";
-        _translations["What's New in v4.3.0"] = "Điểm Mới ở v4.3.0";
-        _translations["What's New in WinCare Pro"] = "Những Điểm Mới trong WinCare Pro";
-        _translations["View official release notes & new features changelog"] = "Xem ghi chú phát hành chính thức và nhật ký tính năng mới";
+        // --- What's New & Changelog Dialog (v4.6.0 Nova) ---
+        _translations["What's New in v4.6"] = "Điểm mới trong v4.6";
+        _translations["What's New in WinCare Pro"] = "Những điểm mới trong WinCare Pro";
+        _translations["View official release notes & new features changelog"] = "Xem ghi chú phát hành chính thức & danh sách tính năng mới";
         _translations["v4.6 Nova Release"] = "Bản Phát Hành v4.6 Nova";
-        _translations["v4.5 Nova Release"] = "Bản Phát Hành v4.5 Nova";
-        _translations["v4.3.0 Official Release"] = "Bản Phát Hành Chính Thức v4.3.0";
+        _translations["• 2026.09 (Current)"] = "• 09/2026 (Hiện Tại)";
         _translations["WinCare Pro Next-Gen Intelligence Suite"] = "Bộ Ứng Dụng WinCare Pro Trí Tuệ Thế Hệ Mới";
         _translations["Embedded AI Diagnostic Engine, SafePathGuard Defense Core, Hardware Driver Manager & 3D Fluid Transitions."] = "Động cơ chẩn đoán AI nhúng, lõi bảo vệ SafePathGuard, trình quản lý driver phần cứng và chuyển cảnh 3D mượt mà.";
         _translations["Embedded AI WinCare Diagnostics & Predictive Engine"] = "Chẩn Đoán AI WinCare & Động Cơ Phân Tích Dự Đoán";

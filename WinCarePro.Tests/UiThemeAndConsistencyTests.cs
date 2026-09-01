@@ -241,5 +241,43 @@ public class UiThemeAndConsistencyTests
 
         string toggleTheme = manager.GetTranslationForLanguage("Toggle Theme", AppLanguage.Vietnamese);
         Assert.Equal("Đổi Giao Diện", toggleTheme);
+
+        // Settings Section Header, Badges & About Cards tests
+        Assert.Equal("Hệ Thống Cốt Lõi", manager.GetTranslationForLanguage("Core System", AppLanguage.Vietnamese));
+        Assert.Equal("Aura Studio", manager.GetTranslationForLanguage("Aura Studio", AppLanguage.Vietnamese));
+        Assert.Equal("Tự Động Hóa", manager.GetTranslationForLanguage("Automation", AppLanguage.Vietnamese));
+        Assert.Equal("Giám Sát", manager.GetTranslationForLanguage("Monitoring", AppLanguage.Vietnamese));
+        Assert.Equal("Lá Chắn An Toàn", manager.GetTranslationForLanguage("Safety Shield", AppLanguage.Vietnamese));
+        Assert.Equal("Động Cơ Lưu Trữ", manager.GetTranslationForLanguage("Storage Engine", AppLanguage.Vietnamese));
+        Assert.Equal("Mạng Phân Phối CDN", manager.GetTranslationForLanguage("Release CDN", AppLanguage.Vietnamese));
+        Assert.Equal("Bàn Làm Việc Kỹ Thuật", manager.GetTranslationForLanguage("Workbench", AppLanguage.Vietnamese));
+        Assert.Equal("Hồ Sơ Cấu Hình", manager.GetTranslationForLanguage("Profiles", AppLanguage.Vietnamese));
+        Assert.Equal("Bộ Nova Suite", manager.GetTranslationForLanguage("Nova Suite", AppLanguage.Vietnamese));
+        Assert.Equal("Bộ Evolution Suite", manager.GetTranslationForLanguage("Evolution Suite", AppLanguage.Vietnamese));
+        Assert.Equal("Kiến Trúc Sư Hệ Thống Trưởng", manager.GetTranslationForLanguage("Lead Systems Architect", AppLanguage.Vietnamese));
+        Assert.Equal("Kỹ Sư Phần Mềm Chính • Tác Giả & Phát Triển WinCare Pro", manager.GetTranslationForLanguage("Principal Software Engineer • Creator & Maintainer of WinCare Pro", AppLanguage.Vietnamese));
+        Assert.Equal("Gửi Email Cho Nhà Phát Triển", manager.GetTranslationForLanguage("Email Developer", AppLanguage.Vietnamese));
+        Assert.Equal("Sao Chép Email Liên Hệ", manager.GetTranslationForLanguage("Copy Contact Email", AppLanguage.Vietnamese));
+        Assert.Equal("Báo Cáo Lỗi / Góp Ý", manager.GetTranslationForLanguage("Report Bug / Issue", AppLanguage.Vietnamese));
+        Assert.Equal("Cam Kết Quyền Riêng Tư & Không Thu Thập Dữ Liệu (Zero-Telemetry)", manager.GetTranslationForLanguage("Zero-Telemetry & Privacy Guarantee Pledge", AppLanguage.Vietnamese));
+        Assert.Equal("BỘ NHỚ TIẾN TRÌNH", manager.GetTranslationForLanguage("PROCESS WORKING SET", AppLanguage.Vietnamese));
+        Assert.Equal("THỜI GIAN PHIÊN HOẠT ĐỘNG", manager.GetTranslationForLanguage("ACTIVE SESSION UPTIME", AppLanguage.Vietnamese));
+        Assert.Equal("ĐỘNG CƠ LƯU TRỮ CỤC BỘ", manager.GetTranslationForLanguage("LOCAL STORAGE ENGINE", AppLanguage.Vietnamese));
+        Assert.Equal("WAL Mã Hóa • Tốt", manager.GetTranslationForLanguage("Encrypted WAL • Healthy", AppLanguage.Vietnamese));
+        Assert.Equal("Dọn Dẹp Bộ Nhớ Đã Chọn", manager.GetTranslationForLanguage("Purge Selected Storage", AppLanguage.Vietnamese));
+        Assert.Equal("Kênh Phân Phối WinCare Pro", manager.GetTranslationForLanguage("WinCare Pro Distribution Channel", AppLanguage.Vietnamese));
+        Assert.Equal("Tải từ Trang Web", manager.GetTranslationForLanguage("Download from Website", AppLanguage.Vietnamese));
+        Assert.Equal("Đã Kết Nối CDN", manager.GetTranslationForLanguage("CDN Connected", AppLanguage.Vietnamese));
+        Assert.Equal("Trạng Thái Đồng Bộ Dữ Liệu", manager.GetTranslationForLanguage("Data Synchronization Status", AppLanguage.Vietnamese));
+        Assert.Equal("Chẩn Đoán Trực Tiếp & Kiểm Soát Bộ Nhớ Cho Nhà Phát Triển", manager.GetTranslationForLanguage("Live Developer Diagnostics & Memory Control", AppLanguage.Vietnamese));
+        Assert.Equal("Giải Phóng RAM & Thu Gom Rác GC", manager.GetTranslationForLanguage("Trim RAM & Force GC", AppLanguage.Vietnamese));
+        Assert.Equal("Xem Nhật Ký Kiểm Toán SQLite", manager.GetTranslationForLanguage("View SQLite Audit Logs", AppLanguage.Vietnamese));
+        Assert.Equal("Xuất Chẩn Đoán (JSON)", manager.GetTranslationForLanguage("Export Diagnostics (JSON)", AppLanguage.Vietnamese));
+        Assert.Equal("14 Phân Hệ Cốt Lõi", manager.GetTranslationForLanguage("14 Core Modules", AppLanguage.Vietnamese));
+
+        // Dynamic regex tests
+        Assert.Equal("Lần kiểm tra cuối: Vừa xong", manager.GetTranslationForLanguage("Last Checked: Just now", AppLanguage.Vietnamese));
+        Assert.Equal("Phiên bản 4.6.0 (Nova) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.6.0 (Nova) • 64-bit Native System Suite", AppLanguage.Vietnamese));
+        Assert.Equal("Điểm mới trong v4.6", manager.GetTranslationForLanguage("What's New in v4.6", AppLanguage.Vietnamese));
     }
 }

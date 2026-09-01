@@ -1174,22 +1174,22 @@ public sealed partial class SettingsPage : Page
 
         if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
         {
-            remoteVerStr = betaVerProp.GetString() ?? "4.6.0";
+            remoteVerStr = betaVerProp.GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString;
             downloadUrl = root.TryGetProperty("beta_url", out var betaUrlProp) ? betaUrlProp.GetString() ?? "" : "";
             changelog = root.TryGetProperty("beta_changelog", out var betaClProp) ? betaClProp.GetString() ?? "" : "";
         }
         else
         {
-            remoteVerStr = root.GetProperty("version").GetString() ?? "4.6.0";
+            remoteVerStr = root.GetProperty("version").GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString;
             downloadUrl = root.GetProperty("url").GetString() ?? "";
             changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
         }
 
-        var currentVersion = typeof(SettingsPage).Assembly.GetName().Version ?? new Version(4, 6, 0, 0);
+        var currentVersion = WinCarePro.Core.AppConstants.CurrentVersion;
         string cleanRemoteVer = System.Text.RegularExpressions.Regex.Replace(remoteVerStr, @"[^\d\.]", "").TrimEnd('.');
         if (!Version.TryParse(cleanRemoteVer, out var remoteVersion))
         {
-            remoteVersion = new Version(4, 2, 0, 0);
+            remoteVersion = WinCarePro.Core.AppConstants.CurrentVersion;
         }
 
         UpdateProgressRing.IsActive = false;
@@ -2006,8 +2006,8 @@ public sealed partial class SettingsPage : Page
 
             var diagObj = new
             {
-                App = "WinCare Pro",
-                Version = "4.6.0",
+                App = WinCarePro.Core.AppConstants.AppName,
+                Version = WinCarePro.Core.AppConstants.VersionString,
                 TimestampUtc = DateTime.UtcNow.ToString("o"),
                 Architecture = RuntimeInformation.ProcessArchitecture.ToString(),
                 OS = Environment.OSVersion.VersionString,

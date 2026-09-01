@@ -74,12 +74,19 @@ public partial class App : Application
         services.AddSingleton<ILockingAppService, LockingAppService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<INotificationService, NotificationService>();
+        services.AddSingleton<ISystemSnapshotService, SystemSnapshotService>();
+        services.AddSingleton<IMaintenanceSchedulerService, MaintenanceSchedulerService>();
+        services.AddSingleton<UndoManagerService>();
+        services.AddSingleton<SmartFixService>();
+        services.AddSingleton<TaskSchedulerService>(TaskSchedulerService.Instance);
         services.AddSingleton<IconCacheService>();
         services.AddSingleton<ServiceSafetyService>();
         services.AddSingleton<AuditLogService>();
 
-        // v3.0 — Register engines in DI for testability
+        // Register engines in DI
         services.AddSingleton<Engines.AiDiagnosticsEngine>();
+        services.AddSingleton<Engines.AiWinCareScoringEngine>();
+        services.AddSingleton<Engines.PredictiveAnalysisEngine>();
         services.AddSingleton<Engines.JunkCleanerEngine>();
         services.AddSingleton<Engines.SecurityPrivacyEngine>();
         services.AddSingleton<Engines.SystemOptimizerEngine>();
@@ -237,13 +244,7 @@ public partial class App : Application
     {
         try
         {
-            if (!System.IO.Directory.Exists(CrashLogDir))
-            {
-                System.IO.Directory.CreateDirectory(CrashLogDir);
-            }
-            System.IO.File.AppendAllText(
-                System.IO.Path.Combine(CrashLogDir, fileName),
-                $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]\n{content}\n{"".PadLeft(60, '-')}\n");
+            Infrastructure.Logging.CrashLogger.LogMessage($"App.{fileName}", content);
         }
         catch (Exception ex)
         {

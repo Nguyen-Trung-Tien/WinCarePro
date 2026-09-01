@@ -222,7 +222,8 @@ public sealed partial class MainWindow : Window
             FadeOutStartupOverlay.Begin();
 
             // 6. Deferred background tasks: Index search registry & database maintenance
-            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(4, 1, 0, 0);
+            AppTitleVersionBadge.Text = WinCarePro.Core.AppConstants.DisplayVersion;
+            var currentVersion = WinCarePro.Core.AppConstants.CurrentVersion;
             CheckAndShowChangelog(currentVersion);
 
             _ = Task.Run(async () =>

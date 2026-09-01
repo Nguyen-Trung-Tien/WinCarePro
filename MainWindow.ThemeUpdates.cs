@@ -109,22 +109,22 @@ public sealed partial class MainWindow : Window
 
             if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
             {
-                remoteVerStr = betaVerProp.GetString() ?? "2.0.0";
+                remoteVerStr = betaVerProp.GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString;
                 downloadUrl = root.TryGetProperty("beta_url", out var betaUrlProp) ? betaUrlProp.GetString() ?? "" : "";
                 expectedHash = root.TryGetProperty("beta_sha256", out var betaHashProp) ? betaHashProp.GetString() ?? "" : "";
             }
             else
             {
-                remoteVerStr = root.GetProperty("version").GetString() ?? "2.0.0";
+                remoteVerStr = root.GetProperty("version").GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString;
                 downloadUrl = root.GetProperty("url").GetString() ?? "";
                 expectedHash = root.TryGetProperty("sha256", out var hashProp) ? hashProp.GetString() ?? "" : "";
             }
             
-            var currentVersion = typeof(MainWindow).Assembly.GetName().Version ?? new Version(3, 4, 9, 0);
+            var currentVersion = WinCarePro.Core.AppConstants.CurrentVersion;
             string cleanRemoteVer = System.Text.RegularExpressions.Regex.Replace(remoteVerStr, @"[^\d\.]", "").TrimEnd('.');
             if (!Version.TryParse(cleanRemoteVer, out var remoteVersion))
             {
-                remoteVersion = new Version(3, 4, 9, 0);
+                remoteVersion = WinCarePro.Core.AppConstants.CurrentVersion;
             }
 
             if (remoteVersion > currentVersion)

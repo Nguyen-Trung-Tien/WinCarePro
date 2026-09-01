@@ -28,6 +28,7 @@ public sealed partial class MainWindow : Window
             var settings = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
             bool isDark = !string.Equals(settings.Theme, "Light", StringComparison.OrdinalIgnoreCase);
             ApplyAppTheme(isDark);
+            ThemeManager.Instance.AccentChanged += (s, e) => DispatcherQueue?.TryEnqueue(() => ApplyTransparency(CurrentTransparencyLevel));
             App.ApplyAccentColor(settings.AccentColor ?? "Default");
             ApplyTransparency(settings.TransparencyLevel);
 
@@ -57,7 +58,15 @@ public sealed partial class MainWindow : Window
         
         if (isDark)
         {
-            RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 26, 26, 26));
+            var accent = ThemeManager.Instance.CurrentAccent?.ToLower();
+            if (accent == "cyberpunk" || accent == "neon")
+            {
+                RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 14, 12, 24));
+            }
+            else
+            {
+                RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 26, 26, 26));
+            }
         }
         else
         {

@@ -244,6 +244,15 @@
                 <GradientStop Color="#FF0369A1" Offset="1" />
             </LinearGradientBrush>
 
+            <!-- Cyberpunk Rainbow Neon Spectrum (Full Chroma Prism) -->
+            <LinearGradientBrush x:Key="RainbowChromaGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#FF00F2FE" Offset="0.0" />
+                <GradientStop Color="#FF7F56D9" Offset="0.25" />
+                <GradientStop Color="#FFFE0979" Offset="0.5" />
+                <GradientStop Color="#FFFFB800" Offset="0.75" />
+                <GradientStop Color="#FF00FF9D" Offset="1.0" />
+            </LinearGradientBrush>
+
             <LinearGradientBrush x:Key="AuraShimmerSweepBrush" StartPoint="0,0" EndPoint="1,0">
                 <GradientStop Color="#00FFFFFF" Offset="0.0" />
                 <GradientStop Color="#15FFFFFF" Offset="0.4" />

@@ -339,6 +339,8 @@ public sealed partial class SettingsPage : Page
         if (AccentPurple?.Stroke != null) return "Purple";
         if (AccentPink?.Stroke != null) return "Pink";
         if (AccentAmber?.Stroke != null) return "Amber";
+        if (AccentCyan?.Stroke != null) return "Cyan";
+        if (AccentCyberpunk?.Stroke != null) return "Cyberpunk";
         if (AccentDefault?.Stroke != null) return "Default";
         return SettingsService.Instance.CurrentSettings.AccentColor ?? "Default";
     }
@@ -373,7 +375,7 @@ public sealed partial class SettingsPage : Page
             "pink" => AccentPink,
             "amber" => AccentAmber,
             "cyan" or "teal" => AccentCyan,
-            "cyberpunk" or "neon" => AccentCyberpunk,
+            "cyberpunk" or "neon" or "rainbow" => AccentCyberpunk,
             _ => AccentDefault
         };
 
@@ -384,7 +386,7 @@ public sealed partial class SettingsPage : Page
             "pink" => CheckPink,
             "amber" => CheckAmber,
             "cyan" or "teal" => CheckCyan,
-            "cyberpunk" or "neon" => CheckCyberpunk,
+            "cyberpunk" or "neon" or "rainbow" => CheckCyberpunk,
             _ => CheckDefault
         };
 

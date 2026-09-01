@@ -373,7 +373,7 @@
                                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                                     <GradientStop Color="#FF00F2FE" Offset="0"/>
                                                     <GradientStop Color="#FF7F56D9" Offset="0.5"/>
-                                                    <GradientStop Color="#FFFE0979" Offset="1"/>
+                                                    <GradientStop Color="#FFEC4899" Offset="1"/>
                                                 </LinearGradientBrush>
                                             </Ellipse.Fill>
                                         </Ellipse>

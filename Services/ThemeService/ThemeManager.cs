@@ -237,13 +237,15 @@ public class ThemeManager
                     break;
                 case "cyberpunk":
                 case "neon":
-                    c0 = isDark ? Color.FromArgb(255, 0, 242, 254) : Color.FromArgb(255, 0, 193, 238);
-                    c1 = isDark ? Color.FromArgb(255, 127, 86, 217) : Color.FromArgb(255, 105, 65, 198);
-                    c2 = isDark ? Color.FromArgb(255, 254, 9, 121) : Color.FromArgb(255, 219, 39, 119);
+                case "rainbow":
+                    // Harmonious Cyberpunk Neon (Electric Cyan -> Royal Purple -> Cyber Pink)
+                    c0 = isDark ? Color.FromArgb(255, 0, 242, 254) : Color.FromArgb(255, 6, 182, 212);    // Electric Cyan (#00F2FE / #06B6D4)
+                    c1 = isDark ? Color.FromArgb(255, 127, 86, 217) : Color.FromArgb(255, 124, 58, 237);  // Royal Purple (#7F56D9 / #7C3AED)
+                    c2 = isDark ? Color.FromArgb(255, 236, 72, 153) : Color.FromArgb(255, 219, 39, 119);  // Cyber Pink (#EC4899 / #DB2777)
 
-                    cyber0 = isDark ? Color.FromArgb(255, 0, 242, 254) : Color.FromArgb(255, 0, 193, 238);
-                    cyber1 = isDark ? Color.FromArgb(255, 254, 9, 121) : Color.FromArgb(255, 219, 39, 119);
-                    cyber2 = isDark ? Color.FromArgb(255, 0, 255, 157) : Color.FromArgb(255, 16, 185, 129);
+                    cyber0 = isDark ? Color.FromArgb(255, 56, 189, 248) : Color.FromArgb(255, 14, 165, 233); // Sky Cyan (#38BDF8)
+                    cyber1 = isDark ? Color.FromArgb(255, 168, 85, 247) : Color.FromArgb(255, 147, 51, 234); // Neon Purple (#A855F7)
+                    cyber2 = isDark ? Color.FromArgb(255, 244, 114, 182) : Color.FromArgb(255, 236, 72, 153);// Soft Rose Pink (#F472B6)
                     break;
                 case "amber":
                     c0 = isDark ? Color.FromArgb(255, 245, 158, 11) : Color.FromArgb(255, 217, 119, 6);
@@ -336,12 +338,87 @@ public class ThemeManager
                     cyberGlassBrush.GradientStops[2].Color = Color.FromArgb(isDark ? (byte)37 : (byte)50, cyber2.R, cyber2.G, cyber2.B);
             }
 
-            if (Application.Current.Resources.TryGetValue("NavActiveIndicatorBrush", out var navBrushObj) &&
-                navBrushObj is LinearGradientBrush navBrush && navBrush.GradientStops.Count >= 2)
+            if (Application.Current.Resources.TryGetValue("NavActiveIndicatorBrush", out var navBrushObj))
             {
-                navBrush.GradientStops[0].Color = c0;
-                navBrush.GradientStops[1].Color = c1;
+                if (navBrushObj is SolidColorBrush solidNavBrush)
+                {
+                    solidNavBrush.Color = c0;
+                }
+                else if (navBrushObj is LinearGradientBrush navBrush && navBrush.GradientStops.Count >= 2)
+                {
+                    navBrush.GradientStops[0].Color = c0;
+                    navBrush.GradientStops[1].Color = c1;
+                }
             }
+
+            if (Application.Current.Resources.TryGetValue("AuroraGlowBorderBrush", out var auroraObj) &&
+                auroraObj is SolidColorBrush auroraBrush)
+            {
+                auroraBrush.Color = Color.FromArgb(isDark ? (byte)45 : (byte)70, c0.R, c0.G, c0.B);
+            }
+
+            if (Application.Current.Resources.TryGetValue("AiWinCareEngineGradient", out var aiBrushObj) &&
+                aiBrushObj is LinearGradientBrush aiBrush && aiBrush.GradientStops.Count >= 2)
+            {
+                aiBrush.GradientStops[0].Color = c0;
+                aiBrush.GradientStops[1].Color = c1;
+            }
+
+            if (Application.Current.Resources.TryGetValue("Asc19ReactorGradient", out var reactorObj) &&
+                reactorObj is LinearGradientBrush reactorBrush)
+            {
+                if (reactorBrush.GradientStops.Count >= 3)
+                {
+                    reactorBrush.GradientStops[0].Color = c0;
+                    reactorBrush.GradientStops[1].Color = c1;
+                    reactorBrush.GradientStops[2].Color = c2;
+                }
+                else if (reactorBrush.GradientStops.Count == 2)
+                {
+                    reactorBrush.GradientStops[0].Color = c0;
+                    reactorBrush.GradientStops[1].Color = c1;
+                }
+            }
+
+            if (Application.Current.Resources.TryGetValue("Asc19RadarSweepBrush", out var radarObj) &&
+                radarObj is LinearGradientBrush radarBrush && radarBrush.GradientStops.Count >= 3)
+            {
+                radarBrush.GradientStops[0].Color = Color.FromArgb(144, c0.R, c0.G, c0.B);
+                radarBrush.GradientStops[1].Color = Color.FromArgb(48, c0.R, c0.G, c0.B);
+                radarBrush.GradientStops[2].Color = Color.FromArgb(0, c0.R, c0.G, c0.B);
+            }
+
+            // Sync System Accent & control resources
+            try
+            {
+                Application.Current.Resources["SystemAccentColor"] = c0;
+                Application.Current.Resources["SystemAccentColorLight1"] = cyber0;
+                Application.Current.Resources["SystemAccentColorLight2"] = c1;
+                Application.Current.Resources["SystemAccentColorLight3"] = c0;
+                Application.Current.Resources["SystemAccentColorDark1"] = c1;
+                Application.Current.Resources["SystemAccentColorDark2"] = c2;
+                Application.Current.Resources["SystemAccentColorDark3"] = c2;
+
+                if (Application.Current.Resources.TryGetValue("SystemControlHighlightAccentBrush", out var sysHlObj) && sysHlObj is SolidColorBrush sysHlBrush)
+                    sysHlBrush.Color = c0;
+                if (Application.Current.Resources.TryGetValue("AccentFillColorDefaultBrush", out var accDefObj) && accDefObj is SolidColorBrush accDefBrush)
+                    accDefBrush.Color = c0;
+                if (Application.Current.Resources.TryGetValue("AccentButtonBackground", out var accBtnObj) && accBtnObj is SolidColorBrush accBtnBrush)
+                    accBtnBrush.Color = c0;
+                if (Application.Current.Resources.TryGetValue("AppBadgeNeutralBg", out var bgNeutObj) && bgNeutObj is SolidColorBrush bgNeutBrush)
+                    bgNeutBrush.Color = Color.FromArgb(isDark ? (byte)24 : (byte)32, c0.R, c0.G, c0.B);
+                if (Application.Current.Resources.TryGetValue("AppBadgeNeutralBorder", out var bdNeutObj) && bdNeutObj is SolidColorBrush bdNeutBrush)
+                    bdNeutBrush.Color = Color.FromArgb(isDark ? (byte)53 : (byte)80, c0.R, c0.G, c0.B);
+                if (Application.Current.Resources.TryGetValue("AppBadgeNeutralFg", out var fgNeutObj) && fgNeutObj is SolidColorBrush fgNeutBrush)
+                    fgNeutBrush.Color = isDark ? cyber0 : c0;
+                if (Application.Current.Resources.TryGetValue("AppRamChipBg", out var bgRamObj) && bgRamObj is SolidColorBrush bgRamBrush)
+                    bgRamBrush.Color = Color.FromArgb(isDark ? (byte)24 : (byte)32, c1.R, c1.G, c1.B);
+                if (Application.Current.Resources.TryGetValue("AppRamChipBorder", out var bdRamObj) && bdRamObj is SolidColorBrush bdRamBrush)
+                    bdRamBrush.Color = Color.FromArgb(isDark ? (byte)53 : (byte)80, c1.R, c1.G, c1.B);
+                if (Application.Current.Resources.TryGetValue("AppRamChipFg", out var fgRamObj) && fgRamObj is SolidColorBrush fgRamBrush)
+                    fgRamBrush.Color = isDark ? cyber1 : c1;
+            }
+            catch { }
         }
         catch { }
 

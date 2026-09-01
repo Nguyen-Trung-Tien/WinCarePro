@@ -1,4 +1,4 @@
-# 🚀 WinCare Pro Suite v4.6 (Codename: Nova)
+# 🚀 WinCare Pro Suite v4.7 (Codename: Nova)
 
 <div align="center">
   <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(0, 120, 212, 0.45); margin-bottom: 20px;" />
@@ -9,8 +9,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.6.0/WinCareProSetup.exe">
-      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v4.6-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v4.6" />
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.7.0/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v4.7-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v4.7" />
     </a>
   </p>
 

@@ -282,7 +282,7 @@ public sealed partial class SettingsPage
             var mRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
             mRow.Children.Add(new TextBlock
             {
-                Text = "v4.6.0 Nova",
+                Text = "v4.7.0 Nova",
                 FontSize = 13,
                 FontWeight = Microsoft.UI.Text.FontWeights.Bold,
                 Foreground = (Brush)Application.Current.Resources["PrimaryAccentBrush"]
@@ -297,7 +297,7 @@ public sealed partial class SettingsPage
             mStack.Children.Add(mRow);
             mStack.Children.Add(new TextBlock
             {
-                Text = "Aura Glassmorphic Fluent 2.0 design overhaul, Cyberpunk & Cyan palettes, 120 FPS capped fluid animations, ResultDialog engine, and hardware driver backup manager.".T(),
+                Text = "Streamlined modular architecture, Settings Page decomposition, complete DI standardization, zero-allocation reduced motion checks, and optimized Windows 11 responsiveness.".T(),
                 FontSize = 11.5,
                 Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
                 TextWrapping = TextWrapping.Wrap

@@ -16,11 +16,11 @@
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
-    <Version>4.6.0</Version>
-    <AssemblyVersion>4.6.0.0</AssemblyVersion>
-    <FileVersion>4.6.0.0</FileVersion>
-    <InformationalVersion>4.6.0 (Codename: Nova)</InformationalVersion>
-    <Product>WinCare Pro v4.6</Product>
+    <Version>4.7.0</Version>
+    <AssemblyVersion>4.7.0.0</AssemblyVersion>
+    <FileVersion>4.7.0.0</FileVersion>
+    <InformationalVersion>4.7.0 (Codename: Nova)</InformationalVersion>
+    <Product>WinCare Pro v4.7</Product>
   </PropertyGroup>
 
   <ItemGroup>

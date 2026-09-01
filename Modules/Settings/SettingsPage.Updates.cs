@@ -280,7 +280,7 @@ public sealed partial class SettingsPage
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
 
-        string latestVerStr = root.GetProperty("version").GetString() ?? "4.6.0";
+        string latestVerStr = root.GetProperty("version").GetString() ?? "4.7.0";
         string currentVerStr = WinCarePro.Core.AppConstants.VersionString;
 
         bool hasUpdate = false;

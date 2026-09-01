@@ -67,14 +67,14 @@ File cài đặt sau khi hoàn tất sẽ nằm tại: `PublishOutput/WinCarePro
 
 ```json
 {
-  "version": "4.6.0",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.6.0/WinCareProSetup.exe",
+  "version": "4.7.0",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.7.0/WinCareProSetup.exe",
   "sha256": "766663278a3754e66596dff7ef411595b13dc4883aeb3d802f451730bde177f7",
-  "changelog": "Cập nhật v4.6 (Codename: Nova): Động cơ Chẩn đoán Trí tuệ Nhân tạo AI WinCare Engine & Phân tích Dự đoán Predictive Analysis, Kiến trúc An toàn SafePathGuard & InputSanitizer, Phân hệ Quản lý & Cập nhật Driver Phần cứng, Quản lý Cập nhật Phần mềm (Software Updater), Động cơ Hoạt ảnh 3D & Fluid Animation 120 FPS, và Nâng cấp Tìm kiếm Cài đặt Toàn diện.",
-  "beta_version": "4.6.0-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.6.0-beta/WinCareProSetup_Beta.exe",
+  "changelog": "Cập nhật v4.7 (Codename: Nova): Tinh gọn kiến trúc hệ thống, phân rã mô-đun Cài đặt tối ưu bảo trì, loại bỏ mã dư thừa, nâng cấp tích hợp Dependency Injection toàn diện và tối ưu hóa hiệu năng phản hồi trên Windows 11.",
+  "beta_version": "4.7.0-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.7.0-beta/WinCareProSetup_Beta.exe",
   "beta_sha256": "766663278a3754e66596dff7ef411595b13dc4883aeb3d802f451730bde177f7",
-  "beta_changelog": "WinCare Pro v4.6 (Nova Release)"
+  "beta_changelog": "WinCare Pro v4.7 (Nova Streamlined Release)"
 }
 ```
 

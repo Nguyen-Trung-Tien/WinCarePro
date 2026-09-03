@@ -71,7 +71,8 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
 
     public SecurityViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = SafeGetDispatcherQueue();
+        DispatcherQueueInstance = _dispatcherQueue;
         _securityEngine = App.Services?.GetService<SecurityPrivacyEngine>() ?? new();
 
         _languageChangedHandler = (s, e) =>

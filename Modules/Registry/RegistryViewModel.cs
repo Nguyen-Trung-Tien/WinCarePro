@@ -41,7 +41,7 @@ public class RegistryViewModel : ViewModelBase
 
     public RegistryViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        _dispatcherQueue = SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
         LoadBackups();
     }

@@ -223,7 +223,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
     public UpdaterViewModel()
     {
-        _dispatcherQueue = App.MainDispatcherQueue ?? DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = SafeGetDispatcherQueue();
+        DispatcherQueueInstance = _dispatcherQueue;
         if (_dispatcherQueue != null)
         {
             _searchDebounceTimer = _dispatcherQueue.CreateTimer();

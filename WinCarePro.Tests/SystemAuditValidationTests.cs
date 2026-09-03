@@ -196,8 +196,8 @@ public class SystemAuditValidationTests
         vm.Initialize();
 
         // Assert 2: ViewModel must NOT be locked in disposed state; LoadTweaks should function
-        int tweakCount = vm.LoadTweaks();
-        Assert.True(tweakCount >= 0);
+        vm.LoadTweaks();
+        Assert.True(vm.Tweaks.Count >= 0);
         vm.Cleanup();
     }
 

@@ -270,8 +270,9 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
     public UninstallViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
-        _dialogService = App.Services.GetRequiredService<IDialogService>();
+        _dispatcherQueue = SafeGetDispatcherQueue();
+        DispatcherQueueInstance = _dispatcherQueue;
+        _dialogService = App.Services?.GetService<IDialogService>() ?? new DialogService();
 
         _uninstallEngine.OutputReceived += msg => _dispatcherQueue?.TryEnqueue(() => ProgressMessage = msg.T());
         _uninstallEngine.ProgressChanged += pct => _dispatcherQueue?.TryEnqueue(() => ProgressPercent = pct);

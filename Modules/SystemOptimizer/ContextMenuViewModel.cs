@@ -81,7 +81,8 @@ public class ContextMenuViewModel : ViewModelBase
 
     public ContextMenuViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = SafeGetDispatcherQueue();
+        DispatcherQueueInstance = _dispatcherQueue;
         _engine.ProgressMessage += (msg) => Log(msg);
         _ = ScanAsync();
     }

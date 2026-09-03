@@ -9,6 +9,18 @@ public class ViewModelBase : ObservableObject
 {
     protected DispatcherQueue? DispatcherQueueInstance { get; set; } = App.MainDispatcherQueue;
 
+    public static DispatcherQueue? SafeGetDispatcherQueue()
+    {
+        try
+        {
+            return DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        }
+        catch
+        {
+            return App.MainDispatcherQueue;
+        }
+    }
+
     protected void SetPropertyOnUI<T>(Func<T> getter, Action<T> setter, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
     {
         if (Equals(getter(), value)) return;

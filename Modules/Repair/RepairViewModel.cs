@@ -254,7 +254,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
 
     public RepairViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        _dispatcherQueue = SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
 
         _repairEngine.OutputReceived += LogText;

@@ -283,7 +283,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
 
     public DashboardViewModel(DispatcherQueue? dispatcherQueue)
     {
-        _dispatcherQueue = dispatcherQueue ?? DispatcherQueue.GetForCurrentThread() ?? WinCarePro.App.MainDispatcherQueue;
+        _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
 
         // Initialize historical values for rolling charts
         for (int i = 0; i < 30; i++)

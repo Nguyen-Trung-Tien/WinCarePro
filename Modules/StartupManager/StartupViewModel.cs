@@ -194,7 +194,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
 
     public StartupViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        _dispatcherQueue = SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
 
         try

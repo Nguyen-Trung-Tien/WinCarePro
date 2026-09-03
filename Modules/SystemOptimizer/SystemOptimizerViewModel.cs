@@ -425,7 +425,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 
     public SystemOptimizerViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        _dispatcherQueue = SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
         
         _progressHandler = (msg) => Log(msg.T());

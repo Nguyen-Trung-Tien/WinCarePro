@@ -99,7 +99,7 @@ public class DiskViewModel : ViewModelBase, IDisposable
 
     public DiskViewModel()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue;
+        _dispatcherQueue = SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
         // Don't subscribe events in constructor; use SubscribeEvents/UnsubscribeEvents
         // called from DiskPage.OnNavigatedTo/From to avoid double-subscription

@@ -132,7 +132,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
         _junkEngine = junkEngine;
         _lockingAppService = lockingAppService;
         _dialogService = dialogService;
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
 
         _languageChangedHandler = (s, e) =>

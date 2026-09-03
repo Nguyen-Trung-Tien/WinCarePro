@@ -57,10 +57,21 @@ public sealed partial class RepairPage : Page
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+        ViewModel?.Initialize();
         this.DataContext = ViewModel;
         this.Bindings.Update();
         SetActiveTab(ViewModel?.ActiveTab ?? "diagnostics");
         TranslationManager.Instance.Translate(this);
+    }
+
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        if (ViewModel != null && ViewModel.IsBusy)
+        {
+            ViewModel.CancelCurrentOperation();
+        }
+        ViewModel?.Cleanup();
     }
 
     public void OnTabDiagnosticsClick(object sender, RoutedEventArgs e) => SetActiveTab("diagnostics");

@@ -21,9 +21,16 @@ public class DiskViewModel : ViewModelBase, IDisposable
     private System.Threading.CancellationTokenSource? _diskCts;
     private bool _isDisposed;
 
-    public void Cleanup()
+    public void Initialize()
     {
-        _isDisposed = true;
+        _isDisposed = false;
+        SubscribeEvents();
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+    }
+
+    public void CancelOperations()
+    {
         try
         {
             _diskCts?.Cancel();
@@ -31,11 +38,21 @@ public class DiskViewModel : ViewModelBase, IDisposable
             _diskCts = null;
         }
         catch { }
-        UnsubscribeEvents();
-        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        IsBusy = false;
     }
 
-    public void Dispose() => Cleanup();
+    public void Cleanup()
+    {
+        CancelOperations();
+        UnsubscribeEvents();
+    }
+
+    public void Dispose()
+    {
+        _isDisposed = true;
+        Cleanup();
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+    }
 
     private string _storageScanPath = "";
     public string StorageScanPath

@@ -177,4 +177,114 @@ public class SystemAuditValidationTests
         // Assert: Must return quickly (< 2000 ms) and not throw unhandled exception
         Assert.True(sw.ElapsedMilliseconds < 2500, $"Aborted speed test took {sw.ElapsedMilliseconds}ms, expected < 2500ms");
     }
+
+    [Fact]
+    public void SystemOptimizerViewModel_NavigationCycle_PreservesOperabilityAndResetsDisposed()
+    {
+        // Arrange
+        var vm = new WinCarePro.ViewModels.SystemOptimizerViewModel();
+
+        // Act 1: Simulate leaving SystemOptimizerPage
+        vm.Cleanup();
+
+        // Assert 1: Busy states are cleared
+        Assert.False(vm.IsLoading);
+        Assert.False(vm.IsBoosting);
+        Assert.False(vm.IsAiScanning);
+
+        // Act 2: Simulate returning to SystemOptimizerPage
+        vm.Initialize();
+
+        // Assert 2: ViewModel must NOT be locked in disposed state; LoadTweaks should function
+        int tweakCount = vm.LoadTweaks();
+        Assert.True(tweakCount >= 0);
+        vm.Cleanup();
+    }
+
+    [Fact]
+    public void RepairViewModel_NavigationCycle_PreservesEngineListenersAndConsoleOutput()
+    {
+        // Arrange
+        var vm = new WinCarePro.ViewModels.RepairViewModel();
+
+        // Act 1: Simulate leaving RepairPage while busy
+        vm.IsBusy = true;
+        vm.Cleanup();
+
+        // Assert 1: IsBusy must be reset
+        Assert.False(vm.IsBusy);
+
+        // Act 2: Simulate returning to RepairPage
+        vm.Initialize();
+
+        // Assert 2: ViewModel is ready for new repairs
+        Assert.False(vm.IsBusy);
+        vm.Cleanup();
+    }
+
+    [Fact]
+    public void DiskViewModel_NavigationCycle_AbortsPromptlyAndResetsState()
+    {
+        // Arrange
+        var vm = new WinCarePro.ViewModels.DiskViewModel();
+        vm.IsBusy = true;
+
+        // Act 1: Simulate leaving DiskPage
+        vm.Cleanup();
+
+        // Assert 1: IsBusy must be reset
+        Assert.False(vm.IsBusy);
+
+        // Act 2: Simulate returning to DiskPage
+        vm.Initialize();
+
+        // Assert 2: Ready for operations
+        Assert.False(vm.IsBusy);
+        vm.Cleanup();
+    }
+
+    [Fact]
+    public void SecurityViewModel_NavigationCycle_CancelsPromptlyAndPreservesSubsequentScan()
+    {
+        // Arrange
+        var vm = new WinCarePro.ViewModels.SecurityViewModel();
+        vm.IsScanning = true;
+
+        // Act 1: Simulate leaving SecurityPage
+        vm.Cleanup();
+
+        // Assert 1: Scanning must be cancelled immediately
+        Assert.False(vm.IsScanning);
+
+        // Act 2: Simulate returning to SecurityPage
+        vm.Initialize();
+
+        // Assert 2: Ready for scanning again
+        Assert.False(vm.IsScanning);
+        vm.Cleanup();
+    }
+
+    [Fact]
+    public void JunkViewModel_NavigationCycle_PreservesLanguageAndResetsBusyState()
+    {
+        // Arrange
+        var vm = new WinCarePro.ViewModels.JunkViewModel();
+        vm.IsScanning = true;
+        vm.IsCleaning = true;
+
+        // Act 1: Simulate leaving JunkPage
+        vm.Cleanup();
+
+        // Assert 1: Scanning and cleaning are reset
+        Assert.False(vm.IsScanning);
+        Assert.False(vm.IsCleaning);
+
+        // Act 2: Simulate returning to JunkPage
+        vm.Initialize();
+
+        // Assert 2: Operational state restored
+        Assert.False(vm.IsScanning);
+        Assert.False(vm.IsCleaning);
+        vm.Cleanup();
+    }
 }

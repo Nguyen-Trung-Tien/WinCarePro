@@ -53,18 +53,24 @@ namespace WinCarePro.Modules.AiAssistant
                 return Task.CompletedTask;
             }
             var tcs = new TaskCompletionSource<bool>();
-            DispatcherQueue.TryEnqueue(() =>
+            bool enqueued = DispatcherQueue.TryEnqueue(() =>
             {
                 try
                 {
                     action();
-                    tcs.SetResult(true);
+                    tcs.TrySetResult(true);
                 }
                 catch (Exception ex)
                 {
-                    tcs.SetException(ex);
+                    tcs.TrySetException(ex);
                 }
             });
+
+            if (!enqueued)
+            {
+                tcs.TrySetResult(false);
+            }
+
             return tcs.Task;
         }
 

@@ -16,6 +16,18 @@ public class DialogService : IDialogService
     private XamlRoot? _xamlRoot;
     private readonly System.Threading.SemaphoreSlim _dialogSemaphore = new(1, 1);
 
+    private XamlRoot? ActiveXamlRoot
+    {
+        get
+        {
+            if (_xamlRoot != null && _xamlRoot.IsHostVisible)
+            {
+                return _xamlRoot;
+            }
+            return (App.MainWindowInstance?.Content as FrameworkElement)?.XamlRoot;
+        }
+    }
+
     public void SetXamlRoot(XamlRoot xamlRoot)
     {
         _xamlRoot = xamlRoot;
@@ -23,7 +35,8 @@ public class DialogService : IDialogService
 
     public async Task<CleaningAction> ShowLockingAppsDialogAsync(List<LockingAppInfo> apps)
     {
-        if (_xamlRoot == null) return CleaningAction.CleanAnyway;
+        var xamlRoot = ActiveXamlRoot;
+        if (xamlRoot == null) return CleaningAction.CleanAnyway;
 
         await _dialogSemaphore.WaitAsync();
         try
@@ -123,7 +136,7 @@ public class DialogService : IDialogService
                 SecondaryButtonText = "Clean Anyway".T(),
                 CloseButtonText = "Cancel".T(),
                 DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = _xamlRoot,
+                XamlRoot = xamlRoot,
                 RequestedTheme = currentTheme,
                 Background = dialogBg,
                 BorderBrush = dialogBorder,
@@ -144,7 +157,8 @@ public class DialogService : IDialogService
             panel.Children.Add(restartButton);
 
             var dialogResult = await dialog.ShowAsync();
-            if (action == CleaningAction.ScheduleAfterRestart)
+
+            if (dialogResult == ContentDialogResult.None && action == CleaningAction.ScheduleAfterRestart)
             {
                 return CleaningAction.ScheduleAfterRestart;
             }
@@ -164,10 +178,11 @@ public class DialogService : IDialogService
 
     public async Task<bool> ShowForceClosePromptAsync(string appName)
     {
-        if (_xamlRoot == null) return false;
+        var xamlRoot = ActiveXamlRoot;
+        if (xamlRoot == null) return false;
 
         return await ResultDialogHelper.ShowConfirmAsync(
-            _xamlRoot,
+            xamlRoot,
             "Force Close Application",
             string.Format("{0} did not close normally. Force close?".T(), appName),
             confirmText: "Force Close",
@@ -177,10 +192,11 @@ public class DialogService : IDialogService
 
     public async Task ShowMessageAsync(string title, string content)
     {
-        if (_xamlRoot == null) return;
+        var xamlRoot = ActiveXamlRoot;
+        if (xamlRoot == null) return;
 
         await ResultDialogHelper.ShowCustomResultDialogAsync(
-            _xamlRoot,
+            xamlRoot,
             ResultDialogType.Info,
             title,
             content,
@@ -189,10 +205,11 @@ public class DialogService : IDialogService
 
     public async Task<bool> ShowForceUninstallPromptAsync(string appName)
     {
-        if (_xamlRoot == null) return false;
+        var xamlRoot = ActiveXamlRoot;
+        if (xamlRoot == null) return false;
 
         return await ResultDialogHelper.ShowConfirmAsync(
-            _xamlRoot,
+            xamlRoot,
             "Uninstaller Failed or Cancelled",
             string.Format("The standard uninstaller for {0} could not be completed. Would you like to perform a Force Uninstall (wipe its residual files and registry entries)?".T(), appName),
             confirmText: "Force Uninstall",
@@ -202,10 +219,11 @@ public class DialogService : IDialogService
 
     public async Task<bool> ShowConfirmAsync(string title, string message, string confirmText = "Confirm", string cancelText = "Cancel", bool isDestructive = false)
     {
-        if (_xamlRoot == null) return false;
+        var xamlRoot = ActiveXamlRoot;
+        if (xamlRoot == null) return false;
 
         return await ResultDialogHelper.ShowConfirmAsync(
-            _xamlRoot,
+            xamlRoot,
             title,
             message,
             confirmText: confirmText,
@@ -215,22 +233,25 @@ public class DialogService : IDialogService
 
     public async Task ShowSuccessAsync(string title, string message, string? detailLog = null)
     {
-        if (_xamlRoot == null) return;
+        var xamlRoot = ActiveXamlRoot;
+        if (xamlRoot == null) return;
 
-        await ResultDialogHelper.ShowSuccessAsync(_xamlRoot, title, message, detailLog: detailLog);
+        await ResultDialogHelper.ShowSuccessAsync(xamlRoot, title, message, detailLog: detailLog);
     }
 
     public async Task ShowWarningAsync(string title, string message, string? detailLog = null)
     {
-        if (_xamlRoot == null) return;
+        var xamlRoot = ActiveXamlRoot;
+        if (xamlRoot == null) return;
 
-        await ResultDialogHelper.ShowWarningAsync(_xamlRoot, title, message, detailLog: detailLog);
+        await ResultDialogHelper.ShowWarningAsync(xamlRoot, title, message, detailLog: detailLog);
     }
 
     public async Task ShowErrorAsync(string title, string message, string? detailLog = null)
     {
-        if (_xamlRoot == null) return;
+        var xamlRoot = ActiveXamlRoot;
+        if (xamlRoot == null) return;
 
-        await ResultDialogHelper.ShowErrorAsync(_xamlRoot, title, message, detailLog: detailLog);
+        await ResultDialogHelper.ShowErrorAsync(xamlRoot, title, message, detailLog: detailLog);
     }
 }

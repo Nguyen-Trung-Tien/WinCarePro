@@ -38,13 +38,13 @@ public sealed partial class DiskPage : Page
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        ViewModel.SubscribeEvents();
+        ViewModel.Initialize();
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        ViewModel.UnsubscribeEvents();
+        ViewModel.Cleanup();
     }
 
     private async void OnBrowseFolderClick(object sender, RoutedEventArgs e)

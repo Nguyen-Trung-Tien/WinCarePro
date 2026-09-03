@@ -247,38 +247,10 @@ public sealed partial class MainPage : Page
 
     public void CleanupActivePage()
     {
-        try
-        {
-            var content = ContentFrame.Content;
-            if (content == null) return;
-
-            // Handle pages with specific cleanup methods first
-            switch (content)
-            {
-                case Views.DashboardPage dbPage:
-                    dbPage.ViewModel?.Dispose();
-                    return; // Already disposed, skip generic check
-                case Views.NetworkPage netPage:
-                    netPage.ViewModel?.Cleanup();
-                    return;
-                case Views.DiskPage diskPage:
-                    diskPage.ViewModel?.Cleanup();
-                    return;
-                case Views.JunkPage junkPage:
-                    junkPage.ViewModel?.Cleanup();
-                    return;
-                case Views.SystemOptimizerPage optPage:
-                    optPage.ViewModel?.Dispose();
-                    return;
-            }
-
-            // Generic IDisposable cleanup for all other pages
-            if (content is Page page && page.DataContext is IDisposable disposable)
-            {
-                disposable.Dispose();
-            }
-        }
-        catch { }
+        // Note: All functional pages utilize NavigationCacheMode.Required.
+        // Terminal Dispose() must NEVER be called on cached pages during navigation,
+        // as this breaks event wiring and invalidates ViewModels on subsequent visits.
+        // Operation cancellation and timer pauses are safely handled in each page's OnNavigatedFrom().
     }
 
     private void UpdateUserAvatarAccent()

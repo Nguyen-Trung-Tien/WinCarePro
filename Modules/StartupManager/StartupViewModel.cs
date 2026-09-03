@@ -227,9 +227,22 @@ public class StartupViewModel : ViewModelBase, IDisposable
         _ = LoadAllDataAsync();
     }
 
+    public void Initialize()
+    {
+        _isDisposed = false;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+    }
+
+    public void Cleanup()
+    {
+        IsLoading = false;
+    }
+
     public void Dispose()
     {
         _isDisposed = true;
+        Cleanup();
         TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 

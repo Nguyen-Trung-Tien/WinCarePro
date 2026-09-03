@@ -86,7 +86,10 @@ public class RegistryViewModel : ViewModelBase
         }
         finally
         {
-            IsBusy = false;
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                IsBusy = false;
+            });
         }
     }
 

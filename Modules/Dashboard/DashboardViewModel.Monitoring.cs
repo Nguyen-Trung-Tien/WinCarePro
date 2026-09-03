@@ -329,6 +329,17 @@ public partial class DashboardViewModel
 
     public void StartMonitoring()
     {
+        _isDisposed = false;
+        if (_languageChangedHandler != null)
+        {
+            TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+            TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+        }
+        if (_diskTimeCounter == null)
+        {
+            InitializeCounters();
+        }
+
         if (_monitorCts == null || _monitorCts.IsCancellationRequested)
         {
             _monitorCts?.Dispose();

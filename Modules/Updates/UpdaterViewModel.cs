@@ -306,6 +306,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
     public void Initialize()
     {
+        _isDisposed = false;
         _updaterEngine.OutputReceived -= OnOutputReceived;
         _updaterEngine.OutputReceived += OnOutputReceived;
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
@@ -315,12 +316,14 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
 
-        _ = ScanUpdatesAsync();
+        if (_allUpdates.Count == 0 && !IsBusy)
+        {
+            _ = ScanUpdatesAsync();
+        }
     }
 
     public void Cleanup()
     {
-        _isDisposed = true;
         CancelOperations();
         try { _operationCts?.Dispose(); } catch { }
         _operationCts = null;
@@ -328,10 +331,15 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         _updaterEngine.OutputReceived -= OnOutputReceived;
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
         _updaterEngine.UpdateProgressReported -= OnUpdateProgressReported;
-        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        IsBusy = false;
     }
 
-    public void Dispose() => Cleanup();
+    public void Dispose()
+    {
+        _isDisposed = true;
+        Cleanup();
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+    }
 
     public void CancelOperations()
     {

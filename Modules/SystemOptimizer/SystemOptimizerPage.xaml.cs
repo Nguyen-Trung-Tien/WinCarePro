@@ -38,6 +38,8 @@ public sealed partial class SystemOptimizerPage : Page
     {
         base.OnNavigatedTo(e);
         
+        ViewModel.Initialize();
+
         // Refresh values on page entry
         ViewModel.UpdateRamAndServices();
         ViewModel.LoadTweaks();
@@ -61,6 +63,7 @@ public sealed partial class SystemOptimizerPage : Page
         
         // Stop timer when navigating away to conserve resources
         _ramTimer?.Stop();
+        ViewModel.Cleanup();
     }
 
     private void RamTimer_Tick(object? sender, object e)

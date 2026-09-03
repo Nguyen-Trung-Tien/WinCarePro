@@ -59,11 +59,21 @@ public sealed partial class SecurityPage : Page
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+        ViewModel?.Initialize();
         this.DataContext = ViewModel;
-        ViewModel.LoadPrivacySettings();
-        _ = ViewModel.ScanSecurityAsync();
+        ViewModel?.LoadPrivacySettings();
+        _ = ViewModel?.ScanSecurityAsync();
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
         TranslationManager.Instance.Translate(this);
         Bindings.Update();
+    }
+
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        ViewModel?.Cleanup();
     }
 
     // ==================== SECURITY CENTER: SHORTCUTS & LAUNCHERS ====================

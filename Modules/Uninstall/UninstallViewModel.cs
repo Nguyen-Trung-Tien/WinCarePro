@@ -699,9 +699,22 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
     }
 
+    public void Initialize()
+    {
+        _isDisposed = false;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+    }
+
+    public void Cleanup()
+    {
+        IsBusy = false;
+    }
+
     public void Dispose()
     {
         _isDisposed = true;
+        Cleanup();
         TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 }

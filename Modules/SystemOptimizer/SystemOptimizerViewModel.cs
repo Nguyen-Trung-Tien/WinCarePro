@@ -878,9 +878,22 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         }
     }
 
+    public void Initialize()
+    {
+        _isDisposed = false;
+        _optimizerEngine.ProgressMessage -= _progressHandler;
+        _optimizerEngine.ProgressMessage += _progressHandler;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+    }
+
     public void Cleanup()
     {
-        Dispose();
+        // Transient cleanup when navigating away: reset busy states
+        IsLoading = false;
+        IsBoosting = false;
+        IsCleaningCache = false;
+        IsAiScanning = false;
     }
 
     public void Dispose()

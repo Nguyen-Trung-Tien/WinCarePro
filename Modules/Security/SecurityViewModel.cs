@@ -15,6 +15,7 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     private readonly DispatcherQueue? _dispatcherQueue;
     private readonly SecurityPrivacyEngine _securityEngine;
     private readonly EventHandler _languageChangedHandler;
+    private System.Threading.CancellationTokenSource? _scanCts;
     private bool _isDisposed;
 
     [ObservableProperty]
@@ -84,12 +85,36 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
 
         LoadPrivacySettings();
-        _ = ScanSecurityAsync();
+    }
+
+    public void Initialize()
+    {
+        _isDisposed = false;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+    }
+
+    public void CancelScan()
+    {
+        try
+        {
+            _scanCts?.Cancel();
+            _scanCts?.Dispose();
+            _scanCts = null;
+        }
+        catch { }
+        IsScanning = false;
+    }
+
+    public void Cleanup()
+    {
+        CancelScan();
     }
 
     public void Dispose()
     {
         _isDisposed = true;
+        Cleanup();
         TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
@@ -108,6 +133,16 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     public async Task ScanSecurityAsync()
     {
         if (IsScanning) return;
+
+        try
+        {
+            _scanCts?.Cancel();
+            _scanCts?.Dispose();
+        }
+        catch { }
+
+        _scanCts = new System.Threading.CancellationTokenSource();
+        var ct = _scanCts.Token;
 
         IsScanning = true;
         StatusMessage = "Analyzing system security indicators...".T();
@@ -128,6 +163,12 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             var auditTask = Task.Run(() => _securityEngine.RunSecurityAudits());
 
             await Task.WhenAll(avTask, fwTask, blTask, sbTask, tpmTask, auditTask);
+
+            if (ct.IsCancellationRequested || _isDisposed)
+            {
+                IsScanning = false;
+                return;
+            }
 
             var av = await avTask;
             bool fw = await fwTask;

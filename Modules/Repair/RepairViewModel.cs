@@ -275,6 +275,24 @@ public class RepairViewModel : ViewModelBase, IDisposable
         LoadServices();
     }
 
+    public void Initialize()
+    {
+        _isDisposed = false;
+        _repairEngine.OutputReceived -= LogText;
+        _repairEngine.OutputReceived += LogText;
+        _repairEngine.ProgressChanged -= _progressChangedHandler;
+        _repairEngine.ProgressChanged += _progressChangedHandler;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+    }
+
+    public void Cleanup()
+    {
+        CancelCurrentOperation();
+        IsBusy = false;
+        IsScanningDiagnostics = false;
+    }
+
     public void Dispose()
     {
         _isDisposed = true;

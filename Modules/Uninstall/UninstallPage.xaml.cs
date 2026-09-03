@@ -132,6 +132,18 @@ public sealed partial class UninstallPage : Page
         };
     }
 
+    protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        ViewModel?.Initialize();
+    }
+
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        ViewModel?.Cleanup();
+    }
+
     private void OnBackToListClick(object sender, RoutedEventArgs e)
     {
         ViewModel.SelectedApp = null;

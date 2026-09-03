@@ -82,6 +82,18 @@ public sealed partial class StartupPage : Page
         };
     }
 
+    protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        ViewModel?.Initialize();
+    }
+
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        ViewModel?.Cleanup();
+    }
+
     private async void OnReloadStartupClick(object sender, RoutedEventArgs e)
     {
         var btn = ScanButton ?? (sender as Button);

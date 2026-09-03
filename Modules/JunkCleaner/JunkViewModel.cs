@@ -155,19 +155,20 @@ public class JunkViewModel : ViewModelBase, IDisposable
 
     public void Initialize()
     {
+        _isDisposed = false;
         // Unsubscribe first to prevent double-registration on re-navigation
         _junkEngine.ProgressMessage -= OnProgressMessage;
         _junkEngine.ProgressChanged -= OnProgressChanged;
         _junkEngine.ProgressMessage += OnProgressMessage;
         _junkEngine.ProgressChanged += OnProgressChanged;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
     }
 
     public void Cleanup()
     {
-        _isDisposed = true;
         _junkEngine.ProgressMessage -= OnProgressMessage;
         _junkEngine.ProgressChanged -= OnProgressChanged;
-        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
 
         try
         {
@@ -176,9 +177,16 @@ public class JunkViewModel : ViewModelBase, IDisposable
             _scanCts = null;
         }
         catch { }
+        IsScanning = false;
+        IsCleaning = false;
     }
 
-    public void Dispose() => Cleanup();
+    public void Dispose()
+    {
+        _isDisposed = true;
+        Cleanup();
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+    }
 
     private readonly System.Text.StringBuilder _logBuffer = new();
     private DateTime _lastLogUpdate = DateTime.MinValue;

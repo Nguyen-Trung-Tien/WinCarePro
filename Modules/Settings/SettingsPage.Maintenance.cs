@@ -199,8 +199,6 @@ public sealed partial class SettingsPage
     {
         try
         {
-            var isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
-
             var releaseItems = new (string Tag, string Title, string Description, string Glyph, string ColorHex)[]
             {
                 ("🎨 UI/UX", "Aura Glassmorphic Fluent 2.0 Theme Studio", "Synchronized semantic tokens across dark and light modes with Cyberpunk Neon & Cyan/Teal accent gradients.", "\uE790", "#FF06B6D4"),
@@ -211,6 +209,29 @@ public sealed partial class SettingsPage
                 ("🧹 BOOST", "1-Click Smart Boost & Memory Purging", "Instant RAM working set optimization and DNS cache flushing in under 800ms for peak gaming and productivity.", "\uE9D9", "#FFEC4899")
             };
 
+            var currentTheme = ThemeManager.Instance.CurrentTheme;
+            bool isDark = currentTheme == ElementTheme.Dark ||
+                          (currentTheme == ElementTheme.Default && Application.Current.RequestedTheme == ApplicationTheme.Dark);
+
+            var dialogBg = isDark
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 18, 20, 29))
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(254, 255, 255, 255));
+            var dialogBorder = isDark
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(38, 255, 255, 255))
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 232, 240));
+            var cardBg = isDark
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(220, 24, 27, 38))
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(245, 248, 250, 252));
+            var cardBorder = isDark
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(35, 255, 255, 255))
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 232, 240));
+            var textPrimary = isDark
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 248, 250, 252))
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 15, 23, 42));
+            var textSecondary = isDark
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 148, 163, 184))
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 100, 116, 139));
+
             var rootStack = new StackPanel
             {
                 Spacing = 14,
@@ -219,8 +240,8 @@ public sealed partial class SettingsPage
 
             var headerCard = new Border
             {
-                Background = (Brush)Application.Current.Resources["AppStatChipBackground"],
-                BorderBrush = (Brush)Application.Current.Resources["AppStatChipBorder"],
+                Background = cardBg,
+                BorderBrush = cardBorder,
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(12),
                 Padding = new Thickness(16, 14, 16, 14)
@@ -246,7 +267,8 @@ public sealed partial class SettingsPage
             {
                 Text = "WinCare Pro Evolution & Release Notes".T(),
                 FontSize = 14.5,
-                FontWeight = Microsoft.UI.Text.FontWeights.Bold
+                FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+                Foreground = textPrimary
             });
             headerStack.Children.Add(headerRow);
 
@@ -254,7 +276,7 @@ public sealed partial class SettingsPage
             {
                 Text = "Explore detailed feature evolutions, architectural upgrades, performance optimizations, and security patches.".T(),
                 FontSize = 11.5,
-                Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
+                Foreground = textSecondary,
                 TextWrapping = TextWrapping.Wrap
             });
             headerCard.Child = headerStack;
@@ -264,8 +286,8 @@ public sealed partial class SettingsPage
 
             var milestoneSummaryCard = new Border
             {
-                Background = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"],
-                BorderBrush = (Brush)Application.Current.Resources["ControlStrokeColorDefaultBrush"],
+                Background = cardBg,
+                BorderBrush = cardBorder,
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(8),
                 Padding = new Thickness(12, 10, 12, 10)
@@ -274,7 +296,7 @@ public sealed partial class SettingsPage
             var mRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
             mRow.Children.Add(new TextBlock
             {
-                Text = "v4.7.0 Nova",
+                Text = "v4.8.0 Nova",
                 FontSize = 13,
                 FontWeight = Microsoft.UI.Text.FontWeights.Bold,
                 Foreground = (Brush)Application.Current.Resources["PrimaryAccentBrush"]
@@ -283,7 +305,7 @@ public sealed partial class SettingsPage
             {
                 Text = "• 2026.09 (Current)".T(),
                 FontSize = 11,
-                Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
+                Foreground = textSecondary,
                 VerticalAlignment = VerticalAlignment.Center
             });
             mStack.Children.Add(mRow);
@@ -291,7 +313,7 @@ public sealed partial class SettingsPage
             {
                 Text = "Streamlined modular architecture, Settings Page decomposition, complete DI standardization, zero-allocation reduced motion checks, and optimized Windows 11 responsiveness.".T(),
                 FontSize = 11.5,
-                Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
+                Foreground = textSecondary,
                 TextWrapping = TextWrapping.Wrap
             });
             milestoneSummaryCard.Child = mStack;
@@ -301,8 +323,8 @@ public sealed partial class SettingsPage
             {
                 var itemCard = new Border
                 {
-                    Background = (Brush)Application.Current.Resources["SubtleFillColorSecondaryBrush"],
-                    BorderBrush = (Brush)Application.Current.Resources["ControlStrokeColorDefaultBrush"],
+                    Background = cardBg,
+                    BorderBrush = cardBorder,
                     BorderThickness = new Thickness(1),
                     CornerRadius = new CornerRadius(8),
                     Padding = new Thickness(12, 10, 12, 10)
@@ -360,6 +382,7 @@ public sealed partial class SettingsPage
                     Text = item.Title.T(),
                     FontSize = 12,
                     FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+                    Foreground = textPrimary,
                     TextWrapping = TextWrapping.Wrap,
                     VerticalAlignment = VerticalAlignment.Center
                 });
@@ -369,7 +392,7 @@ public sealed partial class SettingsPage
                 {
                     Text = item.Description.T(),
                     FontSize = 11,
-                    Foreground = (Brush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"],
+                    Foreground = textSecondary,
                     TextWrapping = TextWrapping.Wrap,
                     LineHeight = 16
                 });
@@ -392,15 +415,22 @@ public sealed partial class SettingsPage
 
             var dialog = new ContentDialog
             {
-                Title = "What's New in v4.7".T(),
+                Title = "What's New in v4.8".T(),
                 Content = rootStack,
                 CloseButtonText = "Close".T(),
                 DefaultButton = ContentDialogButton.Close,
                 XamlRoot = this.Content.XamlRoot,
-                RequestedTheme = ThemeManager.Instance.CurrentTheme,
-                CornerRadius = new CornerRadius(14),
+                RequestedTheme = currentTheme,
+                Background = dialogBg,
+                BorderBrush = dialogBorder,
+                CornerRadius = new CornerRadius(16),
                 BorderThickness = new Thickness(1)
             };
+
+            if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style accentStyle)
+            {
+                dialog.CloseButtonStyle = accentStyle;
+            }
 
             await dialog.ShowAsync();
         }

@@ -6,6 +6,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using WinCarePro.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Windows.ApplicationModel.DataTransfer;
@@ -159,8 +161,102 @@ public sealed partial class NetworkPage : Page
     private async void OnViewSpeedHistoryClick(object sender, RoutedEventArgs e)
     {
         var history = ViewModel.SpeedTestHistory.ToList();
+        var tm = TranslationManager.Instance;
         
-        var stack = new StackPanel { Spacing = 12, MinWidth = 480 };
+        var currentTheme = ThemeManager.Instance.CurrentTheme;
+        bool isDark = currentTheme == ElementTheme.Dark ||
+                      (currentTheme == ElementTheme.Default && Application.Current.RequestedTheme == ApplicationTheme.Dark);
+
+        var dialogBg = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 18, 20, 29))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(254, 255, 255, 255));
+        var dialogBorder = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(38, 255, 255, 255))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 232, 240));
+        var textPrimary = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 248, 250, 252))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 15, 23, 42));
+        var textSecondary = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 148, 163, 184))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 100, 116, 139));
+
+        var stack = new StackPanel { Spacing = 14, MinWidth = 500 };
+
+        // 0. Radiant Header with Ambient Glowing Aura
+        var bannerGrid = new Grid { Margin = new Thickness(0, 2, 0, 4) };
+        bannerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        bannerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+        var iconContainer = new Grid
+        {
+            Width = 54,
+            Height = 54,
+            Margin = new Thickness(0, 0, 12, 0),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        var auraHalo = new Ellipse
+        {
+            Width = 54,
+            Height = 54,
+            Fill = new RadialGradientBrush
+            {
+                GradientStops =
+                {
+                    new GradientStop { Color = Windows.UI.Color.FromArgb((byte)(isDark ? 40 : 30), 6, 182, 212), Offset = 0 },
+                    new GradientStop { Color = Windows.UI.Color.FromArgb(0, 6, 182, 212), Offset = 1 }
+                }
+            }
+        };
+        iconContainer.Children.Add(auraHalo);
+
+        var iconBox = new Border
+        {
+            Width = 44,
+            Height = 44,
+            CornerRadius = new CornerRadius(14),
+            Background = isDark
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(32, 6, 182, 212))
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 236, 254, 255)),
+            BorderBrush = isDark
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(70, 6, 182, 212))
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 165, 243, 252)),
+            BorderThickness = new Thickness(1.5),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Child = new FontIcon
+            {
+                Glyph = "\uE774",
+                FontSize = 20,
+                Foreground = isDark 
+                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 6, 182, 212))
+                    : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 8, 145, 178)),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            }
+        };
+        iconContainer.Children.Add(iconBox);
+        Grid.SetColumn(iconContainer, 0);
+        bannerGrid.Children.Add(iconContainer);
+
+        var titleStack = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Spacing = 2 };
+        titleStack.Children.Add(new TextBlock
+        {
+            Text = tm.T("Speed Test Telemetry History"),
+            FontSize = 17,
+            FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+            FontFamily = new FontFamily("Segoe UI Variable Display"),
+            Foreground = textPrimary
+        });
+        titleStack.Children.Add(new TextBlock
+        {
+            Text = tm.T("Historic network throughput benchmarks, latency and jitter analytics."),
+            FontSize = 12,
+            Foreground = textSecondary
+        });
+        Grid.SetColumn(titleStack, 1);
+        bannerGrid.Children.Add(titleStack);
+        stack.Children.Add(bannerGrid);
 
         // 1. Summary Analytics Header
         double maxDl = history.Count > 0 ? history.Max(h => h.DownloadMbps) : 0;
@@ -196,7 +292,6 @@ public sealed partial class NetworkPage : Page
             return b;
         }
 
-        var tm = TranslationManager.Instance;
         var dlChip = CreateStatChip(tm.T("PEAK DOWNLOAD"), $"{maxDl:F1} Mbps", Windows.UI.Color.FromArgb(255, 16, 185, 129));
         Grid.SetColumn(dlChip, 0);
         statsGrid.Children.Add(dlChip);
@@ -308,16 +403,22 @@ public sealed partial class NetworkPage : Page
 
         var dialog = new ContentDialog
         {
-            Title = tm.T("Speed Test Telemetry History"),
             Content = stack,
             PrimaryButtonText = tm.T("Close"),
             SecondaryButtonText = history.Count > 0 ? tm.T("Clear All History") : null,
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = this.XamlRoot,
-            RequestedTheme = ThemeManager.Instance.CurrentTheme,
-            CornerRadius = new CornerRadius(14),
+            RequestedTheme = currentTheme,
+            Background = dialogBg,
+            BorderBrush = dialogBorder,
+            CornerRadius = new CornerRadius(16),
             BorderThickness = new Thickness(1)
         };
+
+        if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style accentStyle)
+        {
+            dialog.PrimaryButtonStyle = accentStyle;
+        }
 
         var res = await dialog.ShowAsync();
         if (res == ContentDialogResult.Secondary)

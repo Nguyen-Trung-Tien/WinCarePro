@@ -1822,6 +1822,21 @@ public partial class TranslationManager
         _translations["Advanced"] = "Nâng cao";
         _translations["Game Boost"] = "Tối ưu hóa Game";
         _translations["System optimized successfully in {0} mode."] = "Hệ thống đã được tối ưu hóa thành công ở chế độ {0}.";
+        _translations["System Optimized Successfully"] = "Tối Ưu Hóa Hệ Thống Thành Công";
+        _translations["All diagnosed areas have been optimized to peak health."] = "Tất cả các khu vực chẩn đoán đã được tối ưu đạt hiệu năng đỉnh cao.";
+        _translations["SPACE RECLAIMED"] = "DUNG LƯỢNG GIẢI PHÓNG";
+        _translations["RAM BOOST"] = "TĂNG TỐC RAM";
+        _translations["SYSTEM STATUS"] = "TRẠNG THÁI HỆ THỐNG";
+        _translations["Peak Ready"] = "Sẵn sàng tối đa";
+        _translations["100% Peak"] = "100% Đỉnh cao";
+        _translations["Temporary & cache storage"] = "Tệp tạm & bộ nhớ đệm";
+        _translations["Invalid keys & orphaned entries"] = "Khóa lỗi & mục phân mảnh";
+        _translations["Working set memory freed"] = "Bộ nhớ tiến trình giải phóng";
+        _translations["Background processes tuned"] = "Tiến trình chạy ngầm tinh chỉnh";
+        _translations["Network socket & cache reset"] = "Đặt lại socket & bộ đệm mạng";
+        _translations["System responsiveness applied"] = "Độ phản hồi hệ thống áp dụng";
+        _translations["Restart is recommended to fully apply system tweaks."] = "Khuyến nghị khởi động lại máy để áp dụng đầy đủ các tinh chỉnh hệ thống.";
+        _translations["Historic network throughput benchmarks, latency and jitter analytics."] = "Lịch sử đo lường thông lượng mạng, độ trễ và phân tích jitter.";
 
         // --- Disk Page ---
         _translations["S.M.A.R.T Status: OK"] = "Trạng thái S.M.A.R.T: Tốt";
@@ -2059,6 +2074,7 @@ public partial class TranslationManager
         _translations["Diagnostics Trace Log Reader"] = "Trình đọc nhật ký theo dõi chẩn đoán";
         _translations["Real-time application framework execution events."] = "Các sự kiện thực thi framework ứng dụng theo thời gian thực.";
         _translations["System Optimizer & Security Shield"] = "Tối ưu hóa hệ thống & Khiên bảo mật";
+        _translations["Version 4.8.0 (Stable Release)"] = "Phiên bản 4.8.0 (Bản ổn định)";
         _translations["Version 4.7.0 (Stable Release)"] = "Phiên bản 4.7.0 (Bản ổn định)";
         _translations["Version 4.6.0 (Stable Release)"] = "Phiên bản 4.6.0 (Bản ổn định)";
         _translations["Version 4.5.0 (Stable Release)"] = "Phiên bản 4.5.0 (Bản ổn định)";
@@ -2720,14 +2736,17 @@ public partial class TranslationManager
         _translations["About WinCare Pro"] = "Thông tin về WinCare Pro";
         _translations["Software architecture, lead developer portfolio, zero-telemetry privacy pledge, and open-source ecosystem."] = "Kiến trúc phần mềm, hồ sơ nhà phát triển chính, cam kết quyền riêng tư không telemetry và hệ sinh thái mã nguồn mở.";
         _translations["Software build specifications, developer contact, and open-source repository."] = "Thông số bản dựng phần mềm, liên hệ nhà phát triển và kho mã nguồn mở.";
+        _translations["v4.8.0 Nova"] = "v4.8.0 Nova";
         _translations["v4.7.0 Nova"] = "v4.7.0 Nova";
         _translations["v4.6.0 Nova"] = "v4.6.0 Nova";
         _translations["Nova Suite"] = "Bộ Nova Suite";
         _translations["Evolution Suite"] = "Bộ Evolution Suite";
         _translations["Next-Generation System Optimizer, Security Shield & Care Suite"] = "Bộ Tối Ưu Hệ Thống, Lá Chắn Bảo Mật & Chăm Sóc Thế Hệ Mới";
         _translations["System Optimizer, Security Shield & Care Suite"] = "Bộ Tối Ưu Hệ Thống, Lá Chắn Bảo Mật & Chăm Sóc Toàn Diện";
+        _translations["Version 4.8.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.8.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit Native";
         _translations["Version 4.7.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.7.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit Native";
         _translations["Version 4.6.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.6.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit Native";
+        _translations["What's New in v4.8"] = "Điểm mới trong v4.8";
         _translations["What's New in v4.7"] = "Điểm mới trong v4.7";
         _translations["What's New in v4.6"] = "Điểm mới trong v4.6";
         _translations["View official release notes & new features changelog"] = "Xem ghi chú phát hành chính thức & danh sách tính năng mới";

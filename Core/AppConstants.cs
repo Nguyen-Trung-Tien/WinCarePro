@@ -12,9 +12,9 @@ public static class AppConstants
     public const string AppName = "WinCare Pro";
     public const string Publisher = "Nguyen Trung Tien";
     public const string Codename = "Nova";
-    public const string DefaultVersionString = "4.7.0";
-    public const string DefaultAssemblyVersionString = "4.7.0.0";
-    public const string DefaultBuildDate = "2026-09-01";
+    public const string DefaultVersionString = "4.8.0";
+    public const string DefaultAssemblyVersionString = "4.8.0.0";
+    public const string DefaultBuildDate = "2026-09-03";
     public const string TargetWindowsVersion = "Windows 10 / 11 (64-bit)";
     public const string Architecture = "x64 Native";
     public const string CompanyName = "WinCare Pro";
@@ -24,10 +24,10 @@ public static class AppConstants
     /// The runtime assembly version.
     /// </summary>
     public static readonly Version CurrentVersion = 
-        typeof(AppConstants).Assembly.GetName().Version ?? new Version(4, 7, 0, 0);
+        typeof(AppConstants).Assembly.GetName().Version ?? new Version(4, 8, 0, 0);
 
     /// <summary>
-    /// Standard semantic version string (e.g., "4.7.0").
+    /// Standard semantic version string (e.g., "4.8.0").
     /// </summary>
     public static readonly string VersionString = 
         $"{CurrentVersion.Major}.{CurrentVersion.Minor}.{CurrentVersion.Build}";

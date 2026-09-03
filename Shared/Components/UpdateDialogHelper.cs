@@ -6,6 +6,7 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Services;
 
@@ -386,6 +387,11 @@ public static class UpdateDialogHelper
             CornerRadius = new CornerRadius(16)
         };
 
+        if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj1) && styleObj1 is Style accentStyle1)
+        {
+            dialog.PrimaryButtonStyle = accentStyle1;
+        }
+
         return await dialog.ShowAsync();
     }
 
@@ -413,26 +419,51 @@ public static class UpdateDialogHelper
         headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
+        var iconContainer = new Grid
+        {
+            Width = 56,
+            Height = 56,
+            Margin = new Thickness(0, 0, 10, 0),
+            VerticalAlignment = VerticalAlignment.Center
+        };
+
+        var auraHalo = new Ellipse
+        {
+            Width = 56,
+            Height = 56,
+            Fill = new RadialGradientBrush
+            {
+                GradientStops =
+                {
+                    new GradientStop { Color = Windows.UI.Color.FromArgb(40, 16, 185, 129), Offset = 0 },
+                    new GradientStop { Color = Windows.UI.Color.FromArgb(0, 16, 185, 129), Offset = 1 }
+                }
+            }
+        };
+        iconContainer.Children.Add(auraHalo);
+
         var iconBadge = new Border
         {
             Width = 44,
             Height = 44,
-            CornerRadius = new CornerRadius(22),
-            Background = new SolidColorBrush(Windows.UI.Color.FromArgb(32, 16, 185, 129)),
+            CornerRadius = new CornerRadius(14),
+            Background = new SolidColorBrush(Windows.UI.Color.FromArgb(36, 16, 185, 129)),
             BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(80, 16, 185, 129)),
-            BorderThickness = new Thickness(1),
-            Margin = new Thickness(0, 0, 14, 0),
+            BorderThickness = new Thickness(1.5),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
             Child = new FontIcon
             {
                 Glyph = "\uE73E", // Checkmark
-                FontSize = 20,
+                FontSize = 22,
                 Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             }
         };
-        Grid.SetColumn(iconBadge, 0);
-        headerGrid.Children.Add(iconBadge);
+        iconContainer.Children.Add(iconBadge);
+        Grid.SetColumn(iconContainer, 0);
+        headerGrid.Children.Add(iconContainer);
 
         var titleStack = new StackPanel
         {
@@ -489,6 +520,11 @@ public static class UpdateDialogHelper
             Background = GetDialogBackground(isDark),
             CornerRadius = new CornerRadius(16)
         };
+
+        if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj2) && styleObj2 is Style accentStyle2)
+        {
+            dialog.CloseButtonStyle = accentStyle2;
+        }
 
         await dialog.ShowAsync();
     }
@@ -607,6 +643,11 @@ public static class UpdateDialogHelper
             Background = GetDialogBackground(isDark),
             CornerRadius = new CornerRadius(16)
         };
+
+        if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj3) && styleObj3 is Style accentStyle3)
+        {
+            dialog.PrimaryButtonStyle = accentStyle3;
+        }
 
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Secondary)
@@ -739,6 +780,11 @@ public static class UpdateDialogHelper
             Background = GetDialogBackground(isDark),
             CornerRadius = new CornerRadius(16)
         };
+
+        if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj4) && styleObj4 is Style accentStyle4)
+        {
+            dialog.PrimaryButtonStyle = accentStyle4;
+        }
 
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)

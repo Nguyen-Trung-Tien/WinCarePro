@@ -65,10 +65,7 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (!token.IsCancellationRequested && (_cts == null || !_cts.IsCancellationRequested))
-            {
-                IsBusy = false;
-            }
+            IsBusy = false;
         }
     }
 
@@ -101,10 +98,7 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (_cts != null && !_cts.IsCancellationRequested)
-            {
-                IsBusy = false;
-            }
+            IsBusy = false;
         }
     }
 
@@ -139,10 +133,7 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (_cts != null && !_cts.IsCancellationRequested)
-            {
-                IsBusy = false;
-            }
+            IsBusy = false;
         }
     }
 
@@ -216,10 +207,7 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (_cts != null && !_cts.IsCancellationRequested)
-            {
-                IsBusy = false;
-            }
+            IsBusy = false;
         }
     }
 

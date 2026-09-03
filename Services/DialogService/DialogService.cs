@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using WinCarePro.Models;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Shared.Components;
@@ -103,6 +104,17 @@ public class DialogService : IDialogService
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto
             };
 
+            var currentTheme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme;
+            bool isDark = currentTheme == ElementTheme.Dark ||
+                          (currentTheme == ElementTheme.Default && Application.Current.RequestedTheme == ApplicationTheme.Dark);
+
+            var dialogBg = isDark
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 18, 20, 29))
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(254, 255, 255, 255));
+            var dialogBorder = isDark
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(38, 255, 255, 255))
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 232, 240));
+
             var dialog = new ContentDialog
             {
                 Title = "Running Applications Detected".T(),
@@ -112,8 +124,17 @@ public class DialogService : IDialogService
                 CloseButtonText = "Cancel".T(),
                 DefaultButton = ContentDialogButton.Primary,
                 XamlRoot = _xamlRoot,
-                RequestedTheme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme
+                RequestedTheme = currentTheme,
+                Background = dialogBg,
+                BorderBrush = dialogBorder,
+                CornerRadius = new CornerRadius(16),
+                BorderThickness = new Thickness(1)
             };
+
+            if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style accentStyle)
+            {
+                dialog.PrimaryButtonStyle = accentStyle;
+            }
 
             restartButton.Click += (s, e) =>
             {

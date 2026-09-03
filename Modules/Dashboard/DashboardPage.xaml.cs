@@ -4,6 +4,8 @@ using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
+using WinCarePro.Core.Helpers;
 using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Services;
@@ -418,131 +420,415 @@ public sealed partial class DashboardPage : Page
         double totalDiskCleanedMb = totalDiskCleanedBytes / 1024.0 / 1024.0;
         double ramReclaimedMb = summary.RamBytesReclaimed / 1024.0 / 1024.0;
 
-        bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
+        var currentTheme = ThemeManager.Instance.CurrentTheme;
+        bool isDark = currentTheme == ElementTheme.Dark ||
+                      (currentTheme == ElementTheme.Default && Application.Current.RequestedTheme == ApplicationTheme.Dark);
 
-        var mainPanel = new StackPanel { Spacing = 16, Width = 380 };
+        // Core dynamic palette for optimal contrast in Dark Mode & Light Mode
+        var dialogBg = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 18, 20, 29))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(254, 255, 255, 255));
+        var dialogBorder = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(38, 255, 255, 255))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 232, 240));
+        var cardBg = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(220, 24, 27, 38))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(245, 248, 250, 252));
+        var cardBorder = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(35, 255, 255, 255))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 232, 240));
+        var dividerBrush = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(25, 255, 255, 255))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(20, 0, 0, 0));
+        var textPrimary = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 248, 250, 252))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 15, 23, 42));
+        var textSecondary = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 148, 163, 184))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 100, 116, 139));
+        var emeraldText = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 5, 150, 105));
+        var skyText = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 56, 189, 248))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 2, 132, 199));
+        var purpleText = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 168, 85, 247))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 124, 58, 237));
 
-        var headerPanel = new StackPanel { Spacing = 8, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 8, 0, 8) };
-        var icon = new FontIcon 
+        var mainPanel = new StackPanel { Spacing = 14, Width = 430 };
+
+        // 1. Radiant Header with Ambient Glowing Aura & Squircle Checkmark
+        var headerPanel = new StackPanel 
         { 
-            Glyph = "\uE73E", 
-            FontSize = 48, 
-            Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)) 
-        };
-        var titleText = new TextBlock 
-        { 
-            Text = "System Optimized Successfully".T(), 
-            FontSize = 18, 
-            FontWeight = Microsoft.UI.Text.FontWeights.Bold, 
-            HorizontalAlignment = HorizontalAlignment.Center 
-        };
-        var subText = new TextBlock 
-        { 
-            Text = "All diagnosed areas have been optimized to peak health.".T(), 
-            FontSize = 12, 
-            Foreground = new SolidColorBrush(isDark ? Windows.UI.Color.FromArgb(255, 148, 163, 184) : Windows.UI.Color.FromArgb(255, 100, 116, 139)), 
-            HorizontalAlignment = HorizontalAlignment.Center 
+            Spacing = 8, 
+            HorizontalAlignment = HorizontalAlignment.Center, 
+            Margin = new Thickness(0, 4, 0, 2) 
         };
 
-        headerPanel.Children.Add(icon);
+        var iconContainer = new Grid
+        {
+            Width = 68,
+            Height = 68,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+
+        var auraHalo = new Ellipse
+        {
+            Width = 68,
+            Height = 68,
+            Fill = new RadialGradientBrush
+            {
+                GradientStops =
+                {
+                    new GradientStop { Color = Windows.UI.Color.FromArgb((byte)(isDark ? 50 : 35), 16, 185, 129), Offset = 0 },
+                    new GradientStop { Color = Windows.UI.Color.FromArgb(0, 16, 185, 129), Offset = 1 }
+                }
+            }
+        };
+        iconContainer.Children.Add(auraHalo);
+
+        var iconBox = new Border
+        {
+            Width = 54,
+            Height = 54,
+            CornerRadius = new CornerRadius(16),
+            Background = isDark 
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(36, 16, 185, 129)) 
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 236, 253, 245)),
+            BorderBrush = isDark 
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(80, 16, 185, 129)) 
+                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 167, 243, 208)),
+            BorderThickness = new Thickness(1.5),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Child = new FontIcon
+            {
+                Glyph = "\uE73E",
+                FontSize = 26,
+                Foreground = emeraldText,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            }
+        };
+        iconContainer.Children.Add(iconBox);
+        headerPanel.Children.Add(iconContainer);
+
+        var titleText = new TextBlock
+        {
+            Text = "System Optimized Successfully".T(),
+            FontSize = 19,
+            FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+            FontFamily = new FontFamily("Segoe UI Variable Display"),
+            Foreground = textPrimary,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
         headerPanel.Children.Add(titleText);
+
+        var subText = new TextBlock
+        {
+            Text = "All diagnosed areas have been optimized to peak health.".T(),
+            FontSize = 12.5,
+            Foreground = textSecondary,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
         headerPanel.Children.Add(subText);
         mainPanel.Children.Add(headerPanel);
 
-        var separator = new Border 
-        { 
-            Height = 1, 
-            Background = new SolidColorBrush(isDark ? Windows.UI.Color.FromArgb(30, 255, 255, 255) : Windows.UI.Color.FromArgb(30, 0, 0, 0)), 
-            Margin = new Thickness(0, 4, 0, 4) 
-        };
-        mainPanel.Children.Add(separator);
-
-        var detailsGrid = new Grid { RowSpacing = 12 };
-        detailsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(32) });
-        detailsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        detailsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-        int rowIndex = 0;
-        
-        void AddDetailRow(string glyph, Windows.UI.Color glyphColor, string title, string description)
+        // 2. High-Impact Highlights Hero Banner (Quick KPI summary)
+        var heroCard = new Border
         {
-            detailsGrid.RowDefinitions.Add(new RowDefinition());
+            Background = cardBg,
+            BorderBrush = cardBorder,
+            BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(12),
+            Padding = new Thickness(14, 10, 14, 10)
+        };
+        var heroGrid = new Grid();
+        heroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        heroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        heroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        heroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        heroGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
-            var rowIcon = new FontIcon 
-            { 
-                Glyph = glyph, 
-                FontSize = 14, 
-                Foreground = new SolidColorBrush(glyphColor), 
+        // KPI 1: Space Reclaimed
+        var kpi1 = new StackPanel { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Center };
+        kpi1.Children.Add(new TextBlock
+        {
+            Text = "SPACE RECLAIMED".T(),
+            FontSize = 9.5,
+            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+            Foreground = textSecondary,
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
+        var spaceValueText = new TextBlock
+        {
+            Text = totalDiskCleanedBytes > 0 ? FormatHelper.FormatBytes(totalDiskCleanedBytes) : "Clean".T(),
+            FontSize = 14.5,
+            FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+            FontFamily = new FontFamily("Segoe UI Variable Display"),
+            Foreground = totalDiskCleanedBytes > 0 ? emeraldText : textSecondary,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+        Microsoft.UI.Xaml.Documents.Typography.SetNumeralAlignment(spaceValueText, FontNumeralAlignment.Tabular);
+        kpi1.Children.Add(spaceValueText);
+        Grid.SetColumn(kpi1, 0);
+        heroGrid.Children.Add(kpi1);
+
+        // Divider 1
+        var div1 = new Border { Width = 1, Height = 26, Background = dividerBrush, VerticalAlignment = VerticalAlignment.Center };
+        Grid.SetColumn(div1, 1);
+        heroGrid.Children.Add(div1);
+
+        // KPI 2: RAM Optimization
+        var kpi2 = new StackPanel { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Center };
+        kpi2.Children.Add(new TextBlock
+        {
+            Text = "RAM BOOST".T(),
+            FontSize = 9.5,
+            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+            Foreground = textSecondary,
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
+        var ramValueText = new TextBlock
+        {
+            Text = ramReclaimedMb > 0 ? $"{ramReclaimedMb:F1} MB" : "Peak Ready".T(),
+            FontSize = 14.5,
+            FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+            FontFamily = new FontFamily("Segoe UI Variable Display"),
+            Foreground = ramReclaimedMb > 0 ? skyText : textSecondary,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+        Microsoft.UI.Xaml.Documents.Typography.SetNumeralAlignment(ramValueText, FontNumeralAlignment.Tabular);
+        kpi2.Children.Add(ramValueText);
+        Grid.SetColumn(kpi2, 2);
+        heroGrid.Children.Add(kpi2);
+
+        // Divider 2
+        var div2 = new Border { Width = 1, Height = 26, Background = dividerBrush, VerticalAlignment = VerticalAlignment.Center };
+        Grid.SetColumn(div2, 3);
+        heroGrid.Children.Add(div2);
+
+        // KPI 3: Health Status
+        var kpi3 = new StackPanel { Spacing = 2, HorizontalAlignment = HorizontalAlignment.Center };
+        kpi3.Children.Add(new TextBlock
+        {
+            Text = "SYSTEM STATUS".T(),
+            FontSize = 9.5,
+            FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+            Foreground = textSecondary,
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
+        kpi3.Children.Add(new TextBlock
+        {
+            Text = "100% Peak".T(),
+            FontSize = 14.5,
+            FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+            FontFamily = new FontFamily("Segoe UI Variable Display"),
+            Foreground = purpleText,
+            HorizontalAlignment = HorizontalAlignment.Center
+        });
+        Grid.SetColumn(kpi3, 4);
+        heroGrid.Children.Add(kpi3);
+
+        heroCard.Child = heroGrid;
+        mainPanel.Children.Add(heroCard);
+
+        // 3. Grouped Diagnostic Breakdown Container
+        var breakdownContainer = new Border
+        {
+            Background = cardBg,
+            BorderBrush = cardBorder,
+            BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(12),
+            Padding = new Thickness(12, 6, 12, 6)
+        };
+
+        var breakdownStack = new StackPanel { Spacing = 0 };
+
+        void AddDetailItem(string glyph, Windows.UI.Color darkColor, Windows.UI.Color lightBg, Windows.UI.Color lightBorder, Windows.UI.Color lightFg, string title, string subDesc, string valueDisplay, bool isPositiveHighlight, bool isLast = false)
+        {
+            var rowGrid = new Grid { Margin = new Thickness(0, 5, 0, 5) };
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(38) });
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            // Themed Icon Badge Box
+            var rowIconBox = new Border
+            {
+                Width = 28,
+                Height = 28,
+                CornerRadius = new CornerRadius(7),
+                Background = isDark 
+                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(30, darkColor.R, darkColor.G, darkColor.B))
+                    : new SolidColorBrush(lightBg),
+                BorderBrush = isDark 
+                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(60, darkColor.R, darkColor.G, darkColor.B))
+                    : new SolidColorBrush(lightBorder),
+                BorderThickness = new Thickness(1),
                 VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Left
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Child = new FontIcon
+                {
+                    Glyph = glyph,
+                    FontSize = 12.5,
+                    Foreground = isDark ? new SolidColorBrush(darkColor) : new SolidColorBrush(lightFg),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                }
             };
-            Grid.SetRow(rowIcon, rowIndex);
-            Grid.SetColumn(rowIcon, 0);
-            detailsGrid.Children.Add(rowIcon);
+            Grid.SetColumn(rowIconBox, 0);
+            rowGrid.Children.Add(rowIconBox);
 
-            var titleBlock = new TextBlock 
-            { 
-                Text = title, 
-                FontSize = 13, 
-                FontWeight = Microsoft.UI.Text.FontWeights.SemiBold, 
-                VerticalAlignment = VerticalAlignment.Center 
+            // Title & Subtitle Stack
+            var textStack = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Spacing = 1 };
+            var titleBlock = new TextBlock
+            {
+                Text = title,
+                FontSize = 12.5,
+                FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+                FontFamily = new FontFamily("Segoe UI Variable Display"),
+                Foreground = textPrimary,
+                VerticalAlignment = VerticalAlignment.Center
             };
-            Grid.SetRow(titleBlock, rowIndex);
-            Grid.SetColumn(titleBlock, 1);
-            detailsGrid.Children.Add(titleBlock);
+            textStack.Children.Add(titleBlock);
 
-            var descBlock = new TextBlock 
-            { 
-                Text = description, 
-                FontSize = 13, 
-                Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)),
+            if (!string.IsNullOrEmpty(subDesc))
+            {
+                var subDescription = new TextBlock
+                {
+                    Text = subDesc,
+                    FontSize = 10,
+                    Foreground = textSecondary
+                };
+                textStack.Children.Add(subDescription);
+            }
+            Grid.SetColumn(textStack, 1);
+            rowGrid.Children.Add(textStack);
+
+            // Styled Value Pill Badge
+            var pillBorder = new Border
+            {
+                CornerRadius = new CornerRadius(6),
+                Padding = new Thickness(8, 2.5, 8, 2.5),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var valBlock = new TextBlock
+            {
+                Text = valueDisplay,
+                FontSize = 11.5,
                 FontWeight = Microsoft.UI.Text.FontWeights.Bold,
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Right
+                FontFamily = new FontFamily("Segoe UI Variable Display"),
+                VerticalAlignment = VerticalAlignment.Center
             };
-            Grid.SetRow(descBlock, rowIndex);
-            Grid.SetColumn(descBlock, 2);
-            detailsGrid.Children.Add(descBlock);
+            Microsoft.UI.Xaml.Documents.Typography.SetNumeralAlignment(valBlock, FontNumeralAlignment.Tabular);
 
-            rowIndex++;
+            if (isPositiveHighlight)
+            {
+                pillBorder.Background = isDark 
+                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(30, 16, 185, 129))
+                    : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 236, 253, 245));
+                pillBorder.BorderBrush = isDark 
+                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(65, 16, 185, 129))
+                    : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 167, 243, 208));
+                pillBorder.BorderThickness = new Thickness(1);
+                valBlock.Foreground = emeraldText;
+            }
+            else
+            {
+                pillBorder.Background = isDark 
+                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(16, 255, 255, 255))
+                    : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 241, 245, 249));
+                pillBorder.BorderBrush = isDark
+                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(25, 255, 255, 255))
+                    : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 232, 240));
+                pillBorder.BorderThickness = new Thickness(1);
+                valBlock.Foreground = textSecondary;
+            }
+
+            pillBorder.Child = valBlock;
+            Grid.SetColumn(pillBorder, 2);
+            rowGrid.Children.Add(pillBorder);
+
+            breakdownStack.Children.Add(rowGrid);
+
+            if (!isLast)
+            {
+                var microDivider = new Border
+                {
+                    Height = 1,
+                    Background = dividerBrush,
+                    Margin = new Thickness(38, 0, 0, 0)
+                };
+                breakdownStack.Children.Add(microDivider);
+            }
         }
 
-        AddDetailRow("\uE7F1", Windows.UI.Color.FromArgb(255, 245, 158, 11), "Disk Junk Cleaned".T(), $"{totalDiskCleanedMb:F1} MB");
-        AddDetailRow("\uE949", Windows.UI.Color.FromArgb(255, 168, 85, 247), "Registry Errors Fixed".T(), $"{summary.RegistryIssuesFixed} " + "resolved".T());
-        AddDetailRow("\uE950", Windows.UI.Color.FromArgb(255, 59, 130, 246), "RAM Reclaimed (Boost)".T(), $"{ramReclaimedMb:F1} MB");
-        AddDetailRow("\uE8F1", Windows.UI.Color.FromArgb(255, 20, 184, 166), "Active Apps Boosted".T(), $"{summary.RamProcessesOptimized} " + "processes".T());
-        AddDetailRow("\uE774", Windows.UI.Color.FromArgb(255, 6, 182, 212), "DNS Resolver Cache".T(), summary.DnsCacheFlushed ? "Flushed".T() : "Done".T());
-        AddDetailRow("\uE945", Windows.UI.Color.FromArgb(255, 236, 72, 153), "Performance Tweaks".T(), $"{summary.TweaksApplied} " + "activated".T());
+        AddDetailItem("\uE7F1", 
+            Windows.UI.Color.FromArgb(255, 245, 158, 11), Windows.UI.Color.FromArgb(255, 254, 243, 199), Windows.UI.Color.FromArgb(255, 253, 230, 138), Windows.UI.Color.FromArgb(255, 217, 119, 6),
+            "Disk Junk Cleaned".T(), "Temporary & cache storage".T(), $"{totalDiskCleanedMb:F1} MB", totalDiskCleanedBytes > 0);
 
-        mainPanel.Children.Add(detailsGrid);
+        AddDetailItem("\uE949", 
+            Windows.UI.Color.FromArgb(255, 168, 85, 247), Windows.UI.Color.FromArgb(255, 245, 243, 255), Windows.UI.Color.FromArgb(255, 221, 214, 254), Windows.UI.Color.FromArgb(255, 124, 58, 237),
+            "Registry Errors Fixed".T(), "Invalid keys & orphaned entries".T(), summary.RegistryIssuesFixed > 0 ? $"{summary.RegistryIssuesFixed} " + "resolved".T() : "0 resolved".T(), summary.RegistryIssuesFixed > 0);
 
+        AddDetailItem("\uE950", 
+            Windows.UI.Color.FromArgb(255, 59, 130, 246), Windows.UI.Color.FromArgb(255, 239, 246, 255), Windows.UI.Color.FromArgb(255, 191, 219, 254), Windows.UI.Color.FromArgb(255, 37, 99, 235),
+            "RAM Reclaimed (Boost)".T(), "Working set memory freed".T(), ramReclaimedMb > 0 ? $"{ramReclaimedMb:F1} MB" : "0.0 MB", ramReclaimedMb > 0);
+
+        AddDetailItem("\uE8F1", 
+            Windows.UI.Color.FromArgb(255, 20, 184, 166), Windows.UI.Color.FromArgb(255, 240, 253, 250), Windows.UI.Color.FromArgb(255, 153, 246, 228), Windows.UI.Color.FromArgb(255, 13, 148, 136),
+            "Active Apps Boosted".T(), "Background processes tuned".T(), summary.RamProcessesOptimized > 0 ? $"{summary.RamProcessesOptimized} " + "processes".T() : "0 processes".T(), summary.RamProcessesOptimized > 0);
+
+        AddDetailItem("\uE774", 
+            Windows.UI.Color.FromArgb(255, 6, 182, 212), Windows.UI.Color.FromArgb(255, 236, 254, 255), Windows.UI.Color.FromArgb(255, 165, 243, 252), Windows.UI.Color.FromArgb(255, 8, 145, 178),
+            "DNS Resolver Cache".T(), "Network socket & cache reset".T(), summary.DnsCacheFlushed ? "✓ " + "Flushed".T() : "Done".T(), summary.DnsCacheFlushed);
+
+        AddDetailItem("\uE945", 
+            Windows.UI.Color.FromArgb(255, 236, 72, 153), Windows.UI.Color.FromArgb(255, 253, 242, 248), Windows.UI.Color.FromArgb(255, 251, 207, 232), Windows.UI.Color.FromArgb(255, 219, 39, 119),
+            "Performance Tweaks".T(), "System responsiveness applied".T(), summary.TweaksApplied > 0 ? $"{summary.TweaksApplied} " + "activated".T() : "0 activated".T(), summary.TweaksApplied > 0, isLast: true);
+
+        breakdownContainer.Child = breakdownStack;
+        mainPanel.Children.Add(breakdownContainer);
+
+        // 4. Restart Recommended Banner (if tweaks applied)
         if (summary.TweaksApplied > 0)
         {
             var restartWarningBorder = new Border
             {
-                Background = new SolidColorBrush(isDark ? Windows.UI.Color.FromArgb(20, 245, 158, 11) : Windows.UI.Color.FromArgb(20, 217, 119, 6)),
-                BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(50, 245, 158, 11)),
+                Background = isDark 
+                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(25, 245, 158, 11)) 
+                    : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 254, 243, 199)),
+                BorderBrush = isDark 
+                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(65, 245, 158, 11)) 
+                    : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 253, 230, 138)),
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(8),
-                Padding = new Thickness(12),
-                Margin = new Thickness(0, 12, 0, 0)
+                CornerRadius = new CornerRadius(10),
+                Padding = new Thickness(12, 9, 12, 9),
+                Margin = new Thickness(0, 2, 0, 0)
             };
 
-            var warningPanel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+            var warningPanel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 10, VerticalAlignment = VerticalAlignment.Center };
             var warningIcon = new FontIcon
             {
                 Glyph = "\uE7BA",
-                FontSize = 14,
-                Foreground = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)),
+                FontSize = 15,
+                Foreground = isDark 
+                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)) 
+                    : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 217, 119, 6)),
                 VerticalAlignment = VerticalAlignment.Center
             };
             var warningText = new TextBlock
             {
                 Text = "Restart is recommended to fully apply system tweaks.".T(),
-                FontSize = 12.5,
+                FontSize = 12,
                 TextWrapping = TextWrapping.Wrap,
+                Foreground = isDark 
+                    ? textPrimary 
+                    : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 146, 64, 14)),
                 VerticalAlignment = VerticalAlignment.Center,
-                Width = 320
+                Width = 350
             };
             warningPanel.Children.Add(warningIcon);
             warningPanel.Children.Add(warningText);
@@ -556,10 +842,17 @@ public sealed partial class DashboardPage : Page
             CloseButtonText = "Done".T(),
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = this.XamlRoot,
-            RequestedTheme = ThemeManager.Instance.CurrentTheme,
-            CornerRadius = new CornerRadius(14),
+            RequestedTheme = currentTheme,
+            Background = dialogBg,
+            BorderBrush = dialogBorder,
+            CornerRadius = new CornerRadius(16),
             BorderThickness = new Thickness(1)
         };
+
+        if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style accentStyle)
+        {
+            dialog.CloseButtonStyle = accentStyle;
+        }
 
         try
         {

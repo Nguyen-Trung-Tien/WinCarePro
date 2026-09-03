@@ -6,6 +6,7 @@ using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Shapes;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Services;
 
@@ -102,39 +103,44 @@ public static class ResultDialogHelper
         return Microsoft.UI.Colors.White;
     }
 
-    private static (string Glyph, Brush IconBg, Brush IconBorder, Brush IconFg) GetTypeVisuals(ResultDialogType type, bool isDark)
+    private static (string Glyph, Brush IconBg, Brush IconBorder, Brush IconFg, Windows.UI.Color BaseColor) GetTypeVisuals(ResultDialogType type, bool isDark)
     {
         return type switch
         {
             ResultDialogType.Success => (
                 "\uE73E",
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(32, 16, 185, 129)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 236, 253, 245)),
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(64, 16, 185, 129)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 167, 243, 208)),
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 5, 150, 105))
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(36, 16, 185, 129)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 236, 253, 245)),
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(80, 16, 185, 129)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 167, 243, 208)),
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 5, 150, 105)),
+                Windows.UI.Color.FromArgb(255, 16, 185, 129)
             ),
             ResultDialogType.Warning => (
                 "\uE7BA",
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(32, 245, 158, 11)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 251, 235)),
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(64, 245, 158, 11)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 253, 230, 138)),
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 217, 119, 6))
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(36, 245, 158, 11)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 255, 251, 235)),
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(80, 245, 158, 11)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 253, 230, 138)),
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 217, 119, 6)),
+                Windows.UI.Color.FromArgb(255, 245, 158, 11)
             ),
             ResultDialogType.Error or ResultDialogType.Destructive => (
                 "\uE711",
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(32, 239, 68, 68)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 254, 242, 242)),
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(64, 239, 68, 68)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 254, 202, 202)),
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 220, 38, 38))
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(36, 239, 68, 68)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 254, 242, 242)),
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(80, 239, 68, 68)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 254, 202, 202)),
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 220, 38, 38)),
+                Windows.UI.Color.FromArgb(255, 239, 68, 68)
             ),
             ResultDialogType.Confirmation => (
                 "\uE774",
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(32, 139, 92, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 243, 255)),
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(64, 139, 92, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 221, 214, 254)),
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 124, 58, 237))
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(36, 139, 92, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 243, 255)),
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(80, 139, 92, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 221, 214, 254)),
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 124, 58, 237)),
+                Windows.UI.Color.FromArgb(255, 139, 92, 246)
             ),
             _ => (
                 "\uE946",
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(32, 59, 130, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 246, 255)),
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(64, 59, 130, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 191, 219, 254)),
-                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 37, 99, 235))
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(36, 59, 130, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 246, 255)),
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(80, 59, 130, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 191, 219, 254)),
+                isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246)) : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 37, 99, 235)),
+                Windows.UI.Color.FromArgb(255, 59, 130, 246)
             )
         };
     }
@@ -164,7 +170,7 @@ public static class ResultDialogHelper
 
             var currentTheme = ThemeManager.Instance.CurrentTheme;
             bool isDark = ResolveIsDark(currentTheme);
-            var (iconGlyph, iconBg, iconBorder, iconFg) = GetTypeVisuals(type, isDark);
+            var (iconGlyph, iconBg, iconBorder, iconFg, baseColor) = GetTypeVisuals(type, isDark);
 
             var rootPanel = new StackPanel
             {
@@ -172,7 +178,7 @@ public static class ResultDialogHelper
                 Width = 460
             };
 
-            // 1. Header Banner with Icon Badge & Typography
+            // 1. Header Banner with Ambient Glowing Aura & Typography
             var headerGrid = new Grid
             {
                 ColumnSpacing = 14
@@ -180,14 +186,37 @@ public static class ResultDialogHelper
             headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
+            var iconContainer = new Grid
+            {
+                Width = 58,
+                Height = 58,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var auraHalo = new Ellipse
+            {
+                Width = 58,
+                Height = 58,
+                Fill = new RadialGradientBrush
+                {
+                    GradientStops =
+                    {
+                        new GradientStop { Color = Windows.UI.Color.FromArgb(40, baseColor.R, baseColor.G, baseColor.B), Offset = 0 },
+                        new GradientStop { Color = Windows.UI.Color.FromArgb(0, baseColor.R, baseColor.G, baseColor.B), Offset = 1 }
+                    }
+                }
+            };
+            iconContainer.Children.Add(auraHalo);
+
             var iconBorderBox = new Border
             {
                 Width = 46,
                 Height = 46,
-                CornerRadius = new CornerRadius(12),
+                CornerRadius = new CornerRadius(14),
                 Background = iconBg,
                 BorderBrush = iconBorder,
-                BorderThickness = new Thickness(1.2),
+                BorderThickness = new Thickness(1.5),
+                HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
             var fontIcon = new FontIcon
@@ -199,8 +228,9 @@ public static class ResultDialogHelper
                 VerticalAlignment = VerticalAlignment.Center
             };
             iconBorderBox.Child = fontIcon;
-            Grid.SetColumn(iconBorderBox, 0);
-            headerGrid.Children.Add(iconBorderBox);
+            iconContainer.Children.Add(iconBorderBox);
+            Grid.SetColumn(iconContainer, 0);
+            headerGrid.Children.Add(iconContainer);
 
             var titleStack = new StackPanel
             {
@@ -223,10 +253,10 @@ public static class ResultDialogHelper
                 Background = iconBg,
                 BorderBrush = iconBorder,
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(4),
-                Padding = new Thickness(6, 1, 6, 1),
+                CornerRadius = new CornerRadius(6),
+                Padding = new Thickness(8, 2, 8, 2),
                 HorizontalAlignment = HorizontalAlignment.Left,
-                Margin = new Thickness(0, 2, 0, 0)
+                Margin = new Thickness(0, 3, 0, 0)
             };
             statusBadge.Child = new TextBlock
             {
@@ -248,7 +278,7 @@ public static class ResultDialogHelper
                 Background = GetCardBackground(isDark),
                 BorderBrush = GetCardBorder(isDark),
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(10),
+                CornerRadius = new CornerRadius(12),
                 Padding = new Thickness(16, 14, 16, 14)
             };
             var messageBlock = new TextBlock
@@ -262,7 +292,7 @@ public static class ResultDialogHelper
             bodyCard.Child = messageBlock;
             rootPanel.Children.Add(bodyCard);
 
-            // 3. Optional Metrics Summary Grid
+            // 3. Optional Metrics Summary Grid with Styled Pill Badges
             if (metrics != null)
             {
                 var metricsCard = new Border
@@ -270,7 +300,7 @@ public static class ResultDialogHelper
                     Background = GetDetailBoxBackground(isDark),
                     BorderBrush = GetCardBorder(isDark),
                     BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(8),
+                    CornerRadius = new CornerRadius(10),
                     Padding = new Thickness(12, 10, 12, 10)
                 };
                 var metricsStack = new StackPanel { Spacing = 6 };
@@ -283,27 +313,48 @@ public static class ResultDialogHelper
                     var mLabel = new TextBlock
                     {
                         Text = label.T(),
-                        FontSize = 11.5,
+                        FontSize = 12,
                         Foreground = GetTextSecondary(isDark),
                         VerticalAlignment = VerticalAlignment.Center
                     };
                     Grid.SetColumn(mLabel, 0);
                     mGrid.Children.Add(mLabel);
 
+                    var mValueBorder = new Border
+                    {
+                        CornerRadius = new CornerRadius(6),
+                        Padding = new Thickness(8, 2, 8, 2),
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+
                     var mValue = new TextBlock
                     {
                         Text = val,
-                        FontSize = 12,
+                        FontSize = 11.5,
                         FontWeight = FontWeights.Bold,
                         FontFamily = new FontFamily("Segoe UI Variable Display"),
-                        Foreground = !string.IsNullOrEmpty(statColor)
-                            ? new SolidColorBrush(ParseColor(statColor))
-                            : GetTextPrimary(isDark),
                         VerticalAlignment = VerticalAlignment.Center
                     };
                     Microsoft.UI.Xaml.Documents.Typography.SetNumeralAlignment(mValue, FontNumeralAlignment.Tabular);
-                    Grid.SetColumn(mValue, 1);
-                    mGrid.Children.Add(mValue);
+
+                    if (!string.IsNullOrEmpty(statColor))
+                    {
+                        var c = ParseColor(statColor);
+                        mValueBorder.Background = new SolidColorBrush(Windows.UI.Color.FromArgb(28, c.R, c.G, c.B));
+                        mValueBorder.BorderBrush = new SolidColorBrush(Windows.UI.Color.FromArgb(60, c.R, c.G, c.B));
+                        mValueBorder.BorderThickness = new Thickness(1);
+                        mValue.Foreground = new SolidColorBrush(c);
+                    }
+                    else
+                    {
+                        mValueBorder.Background = new SolidColorBrush(isDark ? Windows.UI.Color.FromArgb(16, 255, 255, 255) : Windows.UI.Color.FromArgb(255, 241, 245, 249));
+                        mValueBorder.BorderBrush = new SolidColorBrush(isDark ? Windows.UI.Color.FromArgb(25, 255, 255, 255) : Windows.UI.Color.FromArgb(255, 226, 232, 240));
+                        mValueBorder.BorderThickness = new Thickness(1);
+                        mValue.Foreground = isDark ? GetTextPrimary(isDark) : GetTextSecondary(isDark);
+                    }
+                    mValueBorder.Child = mValue;
+                    Grid.SetColumn(mValueBorder, 1);
+                    mGrid.Children.Add(mValueBorder);
 
                     metricsStack.Children.Add(mGrid);
                 }
@@ -321,7 +372,7 @@ public static class ResultDialogHelper
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
                     Background = GetCardBackground(isDark),
                     BorderBrush = GetCardBorder(isDark),
-                    CornerRadius = new CornerRadius(8)
+                    CornerRadius = new CornerRadius(10)
                 };
 
                 var logScroll = new ScrollViewer
@@ -360,8 +411,16 @@ public static class ResultDialogHelper
                 Background = GetDialogBackground(isDark),
                 BorderBrush = GetCardBorder(isDark),
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(14)
+                CornerRadius = new CornerRadius(16)
             };
+
+            if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style accentStyle)
+            {
+                if (!isDestructive)
+                {
+                    dialog.PrimaryButtonStyle = accentStyle;
+                }
+            }
 
             return await dialog.ShowAsync();
         }

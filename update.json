@@ -2,11 +2,11 @@
   "version": "4.8.0",
   "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.8.0/WinCareProSetup.exe",
   "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.8.0/WinCareProSetup.exe",
-  "sha256": "0e57beaba4e74d126527faceb4a7a317b7ab333d313c803b8c7313bb4cc5d146",
+  "sha256": "234e21798dbe696dceced4829c4f5fb4b4632bad8a01dbfc2f9c4c51bb843d1b",
   "changelog": "Cập nhật v4.8.0 (Codename: Nova): Khắc phục triệt để lỗi đóng băng khi chuyển trang trong Speed Test và chẩn đoán mạng, tối ưu hóa vòng đời ViewModel, làm sạch bộ nhớ tự động và nâng cao độ ổn định hệ thống toàn diện.",
   "beta_version": "4.8.0-beta",
   "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.8.0-beta/WinCareProSetup_Beta.exe",
   "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.8.0-beta/WinCareProSetup_Beta.exe",
-  "beta_sha256": "0e57beaba4e74d126527faceb4a7a317b7ab333d313c803b8c7313bb4cc5d146",
+  "beta_sha256": "234e21798dbe696dceced4829c4f5fb4b4632bad8a01dbfc2f9c4c51bb843d1b",
   "beta_changelog": "WinCare Pro v4.8 (Nova Resilience & System Hardening Release)"
 }

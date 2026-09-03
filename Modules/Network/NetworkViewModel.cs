@@ -16,7 +16,7 @@ namespace WinCarePro.ViewModels;
 
 public partial class NetworkViewModel : ViewModelBase, IDisposable
 {
-    private DispatcherQueue _dispatcherQueue;
+    private DispatcherQueue? _dispatcherQueue;
     private readonly INetworkService _engine;
     private readonly INetworkHistoryService _historyService;
     private readonly INotificationService _notificationService;
@@ -341,7 +341,14 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         _engine = engine;
         _historyService = historyService;
         _notificationService = notificationService;
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        try
+        {
+            _dispatcherQueue = App.MainDispatcherQueue ?? DispatcherQueue.GetForCurrentThread();
+        }
+        catch
+        {
+            _dispatcherQueue = null;
+        }
         DispatcherQueueInstance = _dispatcherQueue;
         _cts = new System.Threading.CancellationTokenSource();
     }
@@ -355,7 +362,14 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
 
     public void Initialize()
     {
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue ?? _dispatcherQueue;
+        try
+        {
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread() ?? App.MainDispatcherQueue ?? _dispatcherQueue;
+        }
+        catch
+        {
+            _dispatcherQueue = App.MainDispatcherQueue ?? _dispatcherQueue;
+        }
         DispatcherQueueInstance = _dispatcherQueue;
         try
         {

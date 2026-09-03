@@ -12,7 +12,7 @@ namespace WinCarePro.ViewModels;
 
 public class ContextMenuViewModel : ViewModelBase
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly DispatcherQueue? _dispatcherQueue;
     private readonly ContextMenuEngine _engine = App.Services?.GetService<ContextMenuEngine>() ?? new();
 
     private bool _isBusy;
@@ -110,7 +110,7 @@ public class ContextMenuViewModel : ViewModelBase
         try
         {
             var result = await _engine.ScanContextMenuItemsAsync();
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 foreach (var item in result)
                 {
@@ -145,7 +145,7 @@ public class ContextMenuViewModel : ViewModelBase
             bool ok = await _engine.ToggleContextMenuItemAsync(item, enable);
             if (ok)
             {
-                _dispatcherQueue.TryEnqueue(() =>
+                _dispatcherQueue?.TryEnqueue(() =>
                 {
                     item.IsEnabled = enable;
                     UpdateCounts();

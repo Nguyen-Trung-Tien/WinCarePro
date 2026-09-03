@@ -16,7 +16,7 @@ namespace WinCarePro.ViewModels;
 
 public class UninstallViewModel : ViewModelBase, IDisposable
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly DispatcherQueue? _dispatcherQueue;
     private readonly UninstallEngine _uninstallEngine = new();
     private readonly IDialogService _dialogService;
     private readonly EventHandler _languageChangedHandler;
@@ -272,7 +272,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     {
         _dispatcherQueue = SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
-        _dialogService = App.Services?.GetService<IDialogService>() ?? new DialogService();
+        _dialogService = App.Services?.GetService<IDialogService>() ?? new WinCarePro.Services.Implementations.DialogService();
 
         _uninstallEngine.OutputReceived += msg => _dispatcherQueue?.TryEnqueue(() => ProgressMessage = msg.T());
         _uninstallEngine.ProgressChanged += pct => _dispatcherQueue?.TryEnqueue(() => ProgressPercent = pct);
@@ -306,7 +306,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
             var apps = await Task.Run(() => _uninstallEngine.ScanInstalledApps());
             ProgressPercent = 80;
 
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 _allApps = apps;
                 UpdateStatistics();
@@ -318,7 +318,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 ProgressMessage = "Scan failed:".T() + " " + ex.Message;
                 IsBusy = false;
@@ -451,7 +451,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
             IsBusy = false;
 
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 Leftovers.Clear();
                 foreach (var item in leftoverList)
@@ -486,7 +486,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 ProgressMessage = "Uninstallation failed:".T() + " " + ex.Message;
                 IsBusy = false;
@@ -539,7 +539,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
             IsBusy = false;
 
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 Leftovers.Clear();
                 // Filter unique path leftovers to prevent duplicate deletions
@@ -577,7 +577,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 ProgressMessage = "Batch uninstallation encountered an error:".T() + " " + ex.Message;
                 IsBusy = false;
@@ -597,7 +597,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
             var selectedItems = Leftovers.Where(x => x.IsSelected).ToList();
             int deleted = await _uninstallEngine.DeleteLeftoversAsync(selectedItems);
             
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 ProgressPercent = 100;
                 ProgressMessage = string.Format("Cleaned {0} leftover files and registry entries.".T(), deleted);
@@ -608,7 +608,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            _dispatcherQueue.TryEnqueue(() =>
+            _dispatcherQueue?.TryEnqueue(() =>
             {
                 ProgressMessage = "Error deleting leftovers:".T() + " " + ex.Message;
                 IsBusy = false;

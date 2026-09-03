@@ -14,7 +14,7 @@ namespace WinCarePro.ViewModels;
 
 public class JunkViewModel : ViewModelBase, IDisposable
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly DispatcherQueue? _dispatcherQueue;
     private readonly IJunkCleanerService _junkEngine;
     private readonly ILockingAppService _lockingAppService;
     private readonly IDialogService _dialogService;

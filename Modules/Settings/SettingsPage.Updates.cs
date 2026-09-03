@@ -298,7 +298,8 @@ public sealed partial class SettingsPage
         if (hasUpdate)
         {
             string changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
-            string downloadUrl = root.TryGetProperty("downloadUrl", out var dlProp) ? dlProp.GetString() ?? "" : "";
+            string downloadUrl = (root.TryGetProperty("downloadUrl", out var dlProp) ? dlProp.GetString() : null)
+                ?? (root.TryGetProperty("url", out var uProp) ? uProp.GetString() : "") ?? "";
             string expectedSha256 = root.TryGetProperty("sha256", out var shaProp) ? shaProp.GetString() ?? "" : "";
             string releaseNotes = root.TryGetProperty("releaseNotes", out var rnProp) ? rnProp.GetString() ?? "" : "";
 

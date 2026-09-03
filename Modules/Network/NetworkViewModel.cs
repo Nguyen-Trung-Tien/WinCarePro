@@ -378,6 +378,16 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         _ = LoadHistoryAsync();
         _ = InitializeDohAsync();
         
+        IsBusy = false;
+        if (SpeedTestPhase != "Completed")
+        {
+            SpeedTestPhase = "Ready";
+        }
+        OnPropertyChanged(nameof(DisplaySpeed));
+        OnPropertyChanged(nameof(DisplaySpeedLabel));
+        OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
+        OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
+
         StartMonitoringLoops(_cts.Token);
     }
 
@@ -396,6 +406,15 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
             _cts = null;
         }
         CancelDnsBenchmark();
+        IsBusy = false;
+        if (SpeedTestPhase != "Completed")
+        {
+            SpeedTestPhase = "Ready";
+        }
+        OnPropertyChanged(nameof(DisplaySpeed));
+        OnPropertyChanged(nameof(DisplaySpeedLabel));
+        OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
+        OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
     }
 
     public void Dispose() => Cleanup();

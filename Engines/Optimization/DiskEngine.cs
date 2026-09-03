@@ -494,13 +494,16 @@ public class DiskEngine
                 deletedCount += DeleteEmptyDirsRecursive(subDir);
             }
 
-            // Check if now empty
+            // Check if now empty and safe to remove
             if (Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0)
             {
                 try
                 {
-                    Directory.Delete(path, false);
-                    deletedCount++;
+                    if (SafePathGuard.IsSafeToDelete(path))
+                    {
+                        Directory.Delete(path, false);
+                        deletedCount++;
+                    }
                 }
                 catch { }
             }

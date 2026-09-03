@@ -64,7 +64,7 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (userTriggered && _cts != null && !_cts.IsCancellationRequested)
+            if (userTriggered)
             {
                 IsBusy = false;
             }
@@ -89,10 +89,7 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (_cts != null && !_cts.IsCancellationRequested)
-            {
-                IsBusy = false;
-            }
+            IsBusy = false;
         }
     }
 
@@ -114,10 +111,7 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (_cts != null && !_cts.IsCancellationRequested)
-            {
-                IsBusy = false;
-            }
+            IsBusy = false;
         }
     }
 
@@ -139,10 +133,7 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (_cts != null && !_cts.IsCancellationRequested)
-            {
-                IsBusy = false;
-            }
+            IsBusy = false;
         }
     }
 
@@ -174,10 +165,7 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (_cts != null && !_cts.IsCancellationRequested)
-            {
-                IsBusy = false;
-            }
+            IsBusy = false;
         }
     }
 
@@ -217,6 +205,7 @@ public partial class NetworkViewModel
             OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
             OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
             LogText("Running download speed benchmark...".T());
+            var token = _cts?.Token ?? default;
             double dl = await _engine.RunSpeedTestAsync((speed, progress) =>
             {
                 _dispatcherQueue?.TryEnqueue(() =>
@@ -226,7 +215,7 @@ public partial class NetworkViewModel
                     OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
                     OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
                 });
-            });
+            }, token);
 
             if (_cts == null || _cts.IsCancellationRequested) return;
 
@@ -245,7 +234,7 @@ public partial class NetworkViewModel
                     OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
                     OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
                 });
-            });
+            }, token);
 
             if (_cts == null || _cts.IsCancellationRequested) return;
             SpeedProgress = 100;
@@ -283,16 +272,15 @@ public partial class NetworkViewModel
         }
         finally
         {
-            if (_cts != null && !_cts.IsCancellationRequested)
+            IsBusy = false;
+            if (SpeedTestPhase != "Completed")
             {
-                IsBusy = false;
-                if (SpeedTestPhase != "Completed")
-                {
-                    SpeedTestPhase = "Ready";
-                }
-                OnPropertyChanged(nameof(DisplaySpeed));
-                OnPropertyChanged(nameof(DisplaySpeedLabel));
+                SpeedTestPhase = "Ready";
             }
+            OnPropertyChanged(nameof(DisplaySpeed));
+            OnPropertyChanged(nameof(DisplaySpeedLabel));
+            OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
+            OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
         }
     }
 

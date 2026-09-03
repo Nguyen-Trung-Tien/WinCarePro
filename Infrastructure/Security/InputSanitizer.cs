@@ -104,4 +104,24 @@ public static class InputSanitizer
         sanitized = sanitized.Replace("..", "").Replace("/", "").Replace("\\", "");
         return string.IsNullOrWhiteSpace(sanitized) ? fallback : sanitized;
     }
+
+    /// <summary>
+    /// Sanitizes an input string (e.g. package ID, app identifier, command argument)
+    /// to eliminate dangerous shell meta-characters and command injection vectors as required by Rule 02.
+    /// </summary>
+    public static string Sanitize(string? input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return string.Empty;
+
+        // Strip shell delimiters, redirection operators, and quotes
+        char[] dangerousChars = { '&', '|', ';', '`', '$', '<', '>', '\n', '\r', '\0', '"', '\'', '^' };
+        string sanitized = input.Trim();
+        foreach (char c in dangerousChars)
+        {
+            sanitized = sanitized.Replace(c.ToString(), string.Empty);
+        }
+
+        return sanitized.Trim();
+    }
 }

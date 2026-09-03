@@ -449,9 +449,29 @@ public class DbManager
         {
             using var cmd = connection.CreateCommand();
             cmd.CommandText = "DELETE FROM Logs WHERE CreatedAt < @cutoff";
-            cmd.Parameters.AddWithValue("@cutoff", DateTime.Now.AddDays(-retentionDays).ToString("o"));
+            cmd.Parameters.AddWithValue("@cutoff", DateTime.UtcNow.AddDays(-retentionDays).ToString("yyyy-MM-dd HH:mm:ss"));
             return cmd.ExecuteNonQuery();
         }, 0);
+    }
+
+    public static void ClearAllLogs()
+    {
+        ExecuteWithConnection(connection =>
+        {
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "DELETE FROM Logs";
+            cmd.ExecuteNonQuery();
+        });
+    }
+
+    public static void ClearAllReports()
+    {
+        ExecuteWithConnection(connection =>
+        {
+            using var cmd = connection.CreateCommand();
+            cmd.CommandText = "DELETE FROM Reports";
+            cmd.ExecuteNonQuery();
+        });
     }
 
     public static List<LogEntry> GetRecentLogs(int limit = 50)

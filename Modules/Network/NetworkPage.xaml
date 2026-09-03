@@ -155,7 +155,7 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Spacing="2">
                                 <TextBlock Text="Latency (Ping)" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                <TextBlock Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}" FontSize="22" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                                <TextBlock Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}" FontSize="22" FontWeight="ExtraBold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                 <TextBlock Text="Round-trip echo" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                             <Border Grid.Column="1" Background="#2010B981" CornerRadius="8" Padding="9" VerticalAlignment="Center">
@@ -174,7 +174,7 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Spacing="2">
                                 <TextBlock Text="Jitter Stability" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                <TextBlock Text="{x:Bind FormatMs(ViewModel.JitterMs), Mode=OneWay}" FontSize="22" FontWeight="ExtraBold" Foreground="#FF8B5CF6"/>
+                                <TextBlock Text="{x:Bind FormatMs(ViewModel.JitterMs), Mode=OneWay}" FontSize="22" FontWeight="ExtraBold" Foreground="#FF8B5CF6" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                 <TextBlock Text="Buffer variation" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                             <Border Grid.Column="1" Background="#208B5CF6" CornerRadius="8" Padding="9" VerticalAlignment="Center">
@@ -193,7 +193,7 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Spacing="2">
                                 <TextBlock Text="Packet Loss" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                <TextBlock Text="{x:Bind FormatPercent(ViewModel.PacketLossPercent), Mode=OneWay}" FontSize="22" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                                <TextBlock Text="{x:Bind FormatPercent(ViewModel.PacketLossPercent), Mode=OneWay}" FontSize="22" FontWeight="ExtraBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                 <TextBlock Text="Dropped frames ratio" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                             <Border Grid.Column="1" Background="#20F59E0B" CornerRadius="8" Padding="9" VerticalAlignment="Center">
@@ -300,7 +300,7 @@
                                     <Ellipse Width="136" Height="136" Fill="{ThemeResource AppStatChipBackground}" Stroke="{ThemeResource AppStatChipBorder}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
                                         <TextBlock Text="{x:Bind ViewModel.DisplaySpeedLabel, Mode=OneWay}" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{x:Bind FormatSpeedValue(ViewModel.DisplaySpeed), Mode=OneWay}" FontSize="32" FontWeight="ExtraBold" Foreground="{x:Bind ViewModel.SpeedPhaseAccentBrush, Mode=OneWay}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{x:Bind FormatSpeedValue(ViewModel.DisplaySpeed), Mode=OneWay}" FontSize="32" FontWeight="ExtraBold" Foreground="{x:Bind ViewModel.SpeedPhaseAccentBrush, Mode=OneWay}" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                         <Border Background="{x:Bind ViewModel.SpeedPhaseBadgeBgBrush, Mode=OneWay}" CornerRadius="5" Padding="8,2" HorizontalAlignment="Center">
                                             <TextBlock Text="{x:Bind FormatSpeedUnit(ViewModel.DisplaySpeed), Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{x:Bind ViewModel.SpeedPhaseAccentBrush, Mode=OneWay}"/>
                                         </Border>
@@ -331,7 +331,7 @@
                                                 <TextBlock Text="DOWNLOAD" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                                 <TextBlock Text="Inbound throughput" FontSize="8.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMbps(ViewModel.DownloadSpeed), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMbps(ViewModel.DownloadSpeed), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF10B981" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                         </Grid>
                                     </Border>
 
@@ -350,7 +350,7 @@
                                                 <TextBlock Text="UPLOAD" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                                 <TextBlock Text="Outbound throughput" FontSize="8.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMbps(ViewModel.UploadSpeed), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF8B5CF6" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMbps(ViewModel.UploadSpeed), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF8B5CF6" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                         </Grid>
                                     </Border>
 
@@ -369,7 +369,7 @@
                                                 <TextBlock Text="PING LATENCY" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                                 <TextBlock Text="Round-trip echo" FontSize="8.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF06B6D4" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF06B6D4" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                         </Grid>
                                     </Border>
 
@@ -388,7 +388,7 @@
                                                 <TextBlock Text="BUFFER JITTER" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                                 <TextBlock Text="Latency deviation" FontSize="8.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMs(ViewModel.JitterMs), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FFF59E0B" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="2" Text="{x:Bind FormatMs(ViewModel.JitterMs), Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FFF59E0B" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                         </Grid>
                                     </Border>
                                 </Grid>

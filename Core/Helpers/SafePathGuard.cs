@@ -184,6 +184,12 @@ public static class SafePathGuard
     }
 
     /// <summary>
+    /// Standard alias for IsPathSafeForDeletion adhering to Rules 02, 03, 07 and system specifications.
+    /// Returns true if the path is safe to delete.
+    /// </summary>
+    public static bool IsSafeToDelete(string path) => IsPathSafeForDeletion(path);
+
+    /// <summary>
     /// Safely deletes a file after verifying security constraints.
     /// </summary>
     public static bool TrySafeDeleteFile(string filePath)

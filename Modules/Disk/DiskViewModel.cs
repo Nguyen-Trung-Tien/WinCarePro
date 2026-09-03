@@ -9,6 +9,7 @@ using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Services.Implementations;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.ViewModels;
 
@@ -332,6 +333,13 @@ public class DiskViewModel : ViewModelBase, IDisposable
                             {
                                 if (File.Exists(item.Path))
                                 {
+                                    if (!SafePathGuard.IsSafeToDelete(item.Path))
+                                    {
+                                        failedCount++;
+                                        LogText(string.Format("Skipped protected file: {0}".T(), Path.GetFileName(item.Path)));
+                                        continue;
+                                    }
+
                                     File.Delete(item.Path);
                                     count++;
                                     bytesSaved += item.SizeBytes;

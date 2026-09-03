@@ -109,11 +109,16 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            GC.Collect(2, GCCollectionMode.Optimized, true, true);
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
             GC.WaitForPendingFinalizers();
-            EmptyWorkingSet(System.Diagnostics.Process.GetCurrentProcess().Handle);
+            GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
+            using var proc = System.Diagnostics.Process.GetCurrentProcess();
+            EmptyWorkingSet(proc.Handle);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("TrimProcessMemory", ex);
+        }
     }
 
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]

@@ -1,6 +1,6 @@
 # 🛡️ WinCare Pro Suite — Production System Rules & Engineering Governance
 
-> **Phiên bản áp dụng:** v4.6 Nova (Production Release)  
+> **Phiên bản áp dụng:** v4.7 Nova (Production Release)  
 > **Nền tảng mục tiêu:** Windows 10 (Build 19041+) & Windows 11 (x64)  
 > **Bộ công nghệ:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite WAL  
 > **Mục tiêu tối thượng:** Đảm bảo tính ổn định tuyệt đối, an toàn dữ liệu, hiệu năng cao và chuẩn mực mã nguồn cấp Enterprise.

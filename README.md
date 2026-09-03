@@ -23,7 +23,7 @@
     <img src="https://img.shields.io/badge/Database-SQLite_3_(WAL)-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite 3" />
     <img src="https://img.shields.io/badge/Architecture-Modular_MVVM-008080?style=flat-square" alt="MVVM Pattern" />
     <img src="https://img.shields.io/badge/OS_Support-Windows_10_%2F_11-0078D6?style=flat-square&logo=windows" alt="Windows 10/11" />
-    <img src="https://img.shields.io/badge/Tests-100%25%20Passed%20(227%2F227)-success?style=flat-square&logo=xunit" alt="Tests Passed (227/227)" />
+    <img src="https://img.shields.io/badge/Tests-100%25%20Passed%20(245%2F245)-success?style=flat-square&logo=xunit" alt="Tests Passed (245/245)" />
     <img src="https://img.shields.io/badge/Security-Zero--Bug%20Hardened-green?style=flat-square&logo=shield" alt="Zero-Bug Hardened" />
   </p>
 </div>
@@ -32,7 +32,7 @@
 
 ## 📖 Tổng Quan Dự Án
 
-**WinCare Pro v4.6 (Codename: Nova)** là giải pháp tối ưu hóa, chăm sóc và khắc phục sự cố hệ điều hành Windows toàn diện. Với ngôn ngữ thiết kế **Aura Glass 2.0**, hiệu ứng kính mờ Mica/Acrylic, chuyển động mượt mà **Windows Composition 120 FPS**, cùng các trạng thái **Shimmer Skeleton Loading** và **Staggered Entrance Animation**, ứng dụng mang lại trải nghiệm thị giác cao cấp và hiện đại bậc nhất.
+**WinCare Pro v4.7 (Codename: Nova)** là giải pháp tối ưu hóa, chăm sóc và khắc phục sự cố hệ điều hành Windows toàn diện. Với ngôn ngữ thiết kế **Aura Glass 2.0**, hiệu ứng kính mờ Mica/Acrylic, chuyển động mượt mà **Windows Composition 120 FPS**, cùng các trạng thái **Shimmer Skeleton Loading** và **Staggered Entrance Animation**, ứng dụng mang lại trải nghiệm thị giác cao cấp và hiện đại bậc nhất.
 
 Ứng dụng tích hợp **Trợ lý AI WinCare Engine** chẩn đoán Heuristic không gửi dữ liệu ra ngoài, cửa sổ nổi **Desktop HUD Widget**, hệ thống **SafePathGuard** chống rò rỉ dữ liệu, cơ chế **Bảo vệ Dịch vụ Hệ thống (Service Safety Whitelist)**, và khả năng **tự động thu nhỏ RAM nền (< 15MB)** khi chạy ngầm dưới khay hệ thống.
 

@@ -120,26 +120,18 @@ public sealed partial class SettingsPage
 
                     if (PurgeLogsCheckbox.IsChecked == true)
                     {
-                        using var connection = new SqliteConnection($"Data Source={dbPath}");
-                        connection.Open();
-                        using var cmd = new SqliteCommand("DELETE FROM Logs", connection);
-                        cmd.ExecuteNonQuery();
+                        DbManager.ClearAllLogs();
                     }
                     if (PurgeReportsCheckbox.IsChecked == true)
                     {
-                        using var connection = new SqliteConnection($"Data Source={dbPath}");
-                        connection.Open();
-                        using (var cmd = new SqliteCommand("DELETE FROM Reports", connection))
-                        {
-                            cmd.ExecuteNonQuery();
-                        }
+                        DbManager.ClearAllReports();
 
                         string reportsFolder = Path.Combine(appData, "Reports");
                         if (Directory.Exists(reportsFolder))
                         {
                             foreach (var file in Directory.GetFiles(reportsFolder))
                             {
-                                try { File.Delete(file); } catch { }
+                                try { if (SafePathGuard.IsSafeToDelete(file)) File.Delete(file); } catch { }
                             }
                         }
                     }
@@ -150,7 +142,7 @@ public sealed partial class SettingsPage
                         {
                             foreach (var file in Directory.GetFiles(cacheFolder))
                             {
-                                try { File.Delete(file); } catch { }
+                                try { if (SafePathGuard.IsSafeToDelete(file)) File.Delete(file); } catch { }
                             }
                         }
                         string directCacheFolder = Path.Combine(Path.GetTempPath(), "WinCareUpdates");
@@ -158,7 +150,7 @@ public sealed partial class SettingsPage
                         {
                             foreach (var file in Directory.GetFiles(directCacheFolder))
                             {
-                                try { File.Delete(file); } catch { }
+                                try { if (SafePathGuard.IsSafeToDelete(file)) File.Delete(file); } catch { }
                             }
                         }
                     }
@@ -400,7 +392,7 @@ public sealed partial class SettingsPage
 
             var dialog = new ContentDialog
             {
-                Title = "What's New in v4.6".T(),
+                Title = "What's New in v4.7".T(),
                 Content = rootStack,
                 CloseButtonText = "Close".T(),
                 DefaultButton = ContentDialogButton.Close,

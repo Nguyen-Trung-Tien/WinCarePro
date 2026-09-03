@@ -40,9 +40,10 @@ public partial class NetworkEngine
         "https://postman-echo.com/post"
     };
 
-    private static async Task<string> SelectFastEndpointAsync(string[] endpoints, bool isPost = false)
+    private static async Task<string> SelectFastEndpointAsync(string[] endpoints, bool isPost = false, CancellationToken cancellationToken = default)
     {
-        using var cts = new CancellationTokenSource(2500);
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cts.CancelAfter(2500);
         var tasks = new List<Task<(string url, bool ok)>>();
 
         foreach (var url in endpoints)
@@ -84,18 +85,19 @@ public partial class NetworkEngine
         return endpoints[0];
     }
 
-    public async Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null)
+    public async Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null, CancellationToken cancellationToken = default)
     {
         Log("Starting high-speed download speed test...");
         
-        string selectedUrl = await SelectFastEndpointAsync(DownloadEndpoints, isPost: false);
+        string selectedUrl = await SelectFastEndpointAsync(DownloadEndpoints, isPost: false, cancellationToken);
 
         int numThreads = 4; // 4 parallel streams for maximum fiber throughput
         long totalBytes = 0;
         long activeMeasurementBytes = 0;
         var stopwatch = Stopwatch.StartNew();
 
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5.8));
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cts.CancelAfter(TimeSpan.FromSeconds(5.8));
         var tasks = new List<Task>();
 
         for (int i = 0; i < numThreads; i++)
@@ -175,11 +177,11 @@ public partial class NetworkEngine
         return finalSpeedMbps;
     }
 
-    public async Task<double> RunUploadSpeedTestAsync(Action<double, double>? progressCallback = null)
+    public async Task<double> RunUploadSpeedTestAsync(Action<double, double>? progressCallback = null, CancellationToken cancellationToken = default)
     {
         Log("Starting high-speed upload speed test...");
         
-        string selectedUrl = await SelectFastEndpointAsync(UploadEndpoints, isPost: true);
+        string selectedUrl = await SelectFastEndpointAsync(UploadEndpoints, isPost: true, cancellationToken);
 
         int numThreads = 3;
         long totalUploadedBytes = 0;
@@ -189,7 +191,8 @@ public partial class NetworkEngine
         byte[] dummyData = new byte[128 * 1024]; // 128 KB payload per chunk
         new Random().NextBytes(dummyData);
 
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5.0));
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cts.CancelAfter(TimeSpan.FromSeconds(5.0));
         var tasks = new List<Task>();
 
         for (int i = 0; i < numThreads; i++)

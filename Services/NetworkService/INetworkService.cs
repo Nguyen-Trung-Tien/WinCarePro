@@ -18,8 +18,8 @@ public interface INetworkService
     Task RunTracerouteAsync(string host, int maxHops = 30);
     Task RunDnsLookupAsync(string host);
     Task RunPortScanAsync(string host, int[] ports);
-    Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null);
-    Task<double> RunUploadSpeedTestAsync(Action<double, double>? progressCallback = null);
+    Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null, CancellationToken cancellationToken = default);
+    Task<double> RunUploadSpeedTestAsync(Action<double, double>? progressCallback = null, CancellationToken cancellationToken = default);
     Task<bool> FlushDnsAsync();
     Task<bool> ResetWinsockAsync();
     Task<bool> ResetTcpIpAsync();

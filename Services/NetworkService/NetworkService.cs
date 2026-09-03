@@ -59,14 +59,14 @@ public class NetworkService : INetworkService
         return _engine.RunPortScanAsync(host, ports);
     }
 
-    public Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null)
+    public Task<double> RunSpeedTestAsync(Action<double, double>? progressCallback = null, CancellationToken cancellationToken = default)
     {
-        return _engine.RunSpeedTestAsync(progressCallback);
+        return _engine.RunSpeedTestAsync(progressCallback, cancellationToken);
     }
 
-    public Task<double> RunUploadSpeedTestAsync(Action<double, double>? progressCallback = null)
+    public Task<double> RunUploadSpeedTestAsync(Action<double, double>? progressCallback = null, CancellationToken cancellationToken = default)
     {
-        return _engine.RunUploadSpeedTestAsync(progressCallback);
+        return _engine.RunUploadSpeedTestAsync(progressCallback, cancellationToken);
     }
 
     public Task<bool> FlushDnsAsync() => _engine.FlushDnsAsync();

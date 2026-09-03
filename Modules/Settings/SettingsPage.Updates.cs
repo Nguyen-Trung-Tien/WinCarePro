@@ -192,6 +192,7 @@ public sealed partial class SettingsPage
         var token = _updateCts.Token;
 
         CancelUpdatesBtn.Visibility = Visibility.Visible;
+        ManualDownloadWebBtn.Visibility = Visibility.Collapsed;
         UpdateProgressBar.Value = 10;
         UpdatePercentText.Text = "10%";
         UpdateProgressStepLabel.Text = "Connecting to CDN Repository...".T();
@@ -240,6 +241,7 @@ public sealed partial class SettingsPage
                         UpdateDataRateText.Text = "Error".T();
                         UpdateDetailsText.Text = $"Connection refused by remote host ({httpEx.StatusCode?.ToString() ?? "Timeout"}).".T();
                         SetUpdateBadgeState("Connection Refused".T(), "Offline");
+                        ManualDownloadWebBtn.Visibility = Visibility.Visible;
                         App.MainWindowInstance?.ShowToastNotification("Update Check Failed".T(), "Unable to reach GitHub/CDN update distribution servers.", "Critical");
                     });
                 }
@@ -252,6 +254,7 @@ public sealed partial class SettingsPage
                         UpdateDataRateText.Text = "Failed".T();
                         UpdateDetailsText.Text = ex.Message;
                         SetUpdateBadgeState("Error".T(), "Offline");
+                        ManualDownloadWebBtn.Visibility = Visibility.Visible;
                         App.MainWindowInstance?.ShowToastNotification("Update Check Error".T(), ex.Message, "Critical");
                     });
                 }
@@ -353,14 +356,14 @@ public sealed partial class SettingsPage
 
             if (result == ContentDialogResult.Primary)
             {
-                if (!string.IsNullOrEmpty(downloadUrl))
+                // In-app update: ALWAYS automatically download and automatically install
+                string resolvedDownloadUrl = downloadUrl;
+                if (string.IsNullOrWhiteSpace(resolvedDownloadUrl))
                 {
-                    await DownloadAndInstallUpdateAsync(version, downloadUrl, sha256);
+                    resolvedDownloadUrl = $"https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v{version}/WinCareProSetup.exe";
                 }
-                else
-                {
-                    OnManualDownloadWebClick(this, new RoutedEventArgs());
-                }
+
+                await DownloadAndInstallUpdateAsync(version, resolvedDownloadUrl, sha256);
             }
         }
         catch (Exception ex)
@@ -376,6 +379,7 @@ public sealed partial class SettingsPage
         _updateCts = new CancellationTokenSource();
         var token = _updateCts.Token;
 
+        ManualDownloadWebBtn.Visibility = Visibility.Collapsed;
         CancelUpdatesBtn.Visibility = Visibility.Visible;
         CheckUpdatesBtn.IsEnabled = false;
 
@@ -515,14 +519,29 @@ public sealed partial class SettingsPage
         }
         catch (Exception ex)
         {
-            DispatcherQueue.TryEnqueue(() =>
+            DispatcherQueue.TryEnqueue(async () =>
             {
                 UpdateStatusLabel.Text = "Download or Installation Failed".T();
                 UpdateProgressStepLabel.Text = "Failed".T();
                 UpdateDataRateText.Text = "Error".T();
                 UpdateDetailsText.Text = ex.Message;
                 SetUpdateBadgeState("Failed".T(), "Offline");
+                ManualDownloadWebBtn.Visibility = Visibility.Visible;
                 App.MainWindowInstance?.ShowToastNotification("Update Failed".T(), ex.Message, "Critical");
+
+                if (this.Content?.XamlRoot != null)
+                {
+                    var dialogRes = await UpdateDialogHelper.ShowDownloadFailedAsync(
+                        this.Content.XamlRoot,
+                        ThemeManager.Instance.CurrentTheme,
+                        ex.Message,
+                        downloadUrl);
+
+                    if (dialogRes == ContentDialogResult.Secondary)
+                    {
+                        _ = DownloadAndInstallUpdateAsync(version, downloadUrl, expectedSha256);
+                    }
+                }
             });
             try { if (File.Exists(targetFile)) File.Delete(targetFile); } catch { }
         }

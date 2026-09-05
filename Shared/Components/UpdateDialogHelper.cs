@@ -544,7 +544,7 @@ public static class UpdateDialogHelper
         var rootStack = new StackPanel
         {
             Spacing = 16,
-            Width = 530
+            Width = 560
         };
 
         // Header with Amber Warning Badge
@@ -642,8 +642,8 @@ public static class UpdateDialogHelper
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
             CornerRadius = new CornerRadius(16),
-            MinWidth = 530,
-            MaxWidth = 620
+            MinWidth = 560,
+            MaxWidth = 640
         };
 
         if (Application.Current.Resources.TryGetValue("CompactDialogAccentButtonStyle", out var styleObj3) && styleObj3 is Style accentStyle3)
@@ -694,7 +694,7 @@ public static class UpdateDialogHelper
         var rootStack = new StackPanel
         {
             Spacing = 16,
-            Width = 530
+            Width = 560
         };
 
         // Header with Amber Warning Badge
@@ -791,8 +791,8 @@ public static class UpdateDialogHelper
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
             CornerRadius = new CornerRadius(16),
-            MinWidth = 530,
-            MaxWidth = 620
+            MinWidth = 560,
+            MaxWidth = 640
         };
 
         if (Application.Current.Resources.TryGetValue("CompactDialogAccentButtonStyle", out var styleObj4) && styleObj4 is Style accentStyle4)

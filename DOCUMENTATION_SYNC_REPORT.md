@@ -42,7 +42,7 @@
 - **[Package.appxmanifest](file:///d:/WinCare/Package.appxmanifest)**: Updated `Version="4.9.0.0"`.
 - **[app.manifest](file:///d:/WinCare/app.manifest)**: Updated `<assemblyIdentity version="4.9.0.0" name="WinCarePro.app"/>`.
 - **[setup.iss](file:///d:/WinCare/setup.iss)**: Updated `#define MyAppVersion "4.9.0"`.
-- **[update.json](file:///d:/WinCare/update.json)**: Updated `version` to `"4.9.0"`, download URL to `v4.9.0`, exact calculated `sha256` (`343f7a8472bc1495f0cddd5a78c2589acbcb956b1b6dffafb3171617bb8c35ac`), and changelog to describe Production Hardening & Safety Architecture.
+- **[update.json](file:///d:/WinCare/update.json)**: Updated `version` to `"4.9.0"`, download URL to `v4.9.0`, exact calculated `sha256` (`6a4fbc46540a539b45a74016c119ef64398f98dabbf3be1266c2aadd1b4119a4`), and changelog to describe Production Hardening & Safety Architecture.
 - **UI Labels & Badges**:
   - `MainWindow.xaml`: Updated `AppTitleVersionBadge` to `"v4.9"`.
   - `Modules/Settings/SettingsPage.xaml`: Updated badge to `"v4.9"`, hero card title to `"v4.9.0 Nova"`, subtitle to `"Version 4.9.0 (Codename: Nova) • 64-bit Native System Suite"`, and maintenance card to `"What's New in v4.9"`.

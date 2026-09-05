@@ -1211,11 +1211,11 @@
 
             <!-- Compact Dialog Action Styles for ContentDialogs with 3 Buttons -->
             <Style x:Key="CompactDialogAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
-                <Setter Property="Padding" Value="8,6" />
+                <Setter Property="Padding" Value="6,5" />
                 <Setter Property="FontSize" Value="11" />
             </Style>
             <Style x:Key="CompactDialogDefaultButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
-                <Setter Property="Padding" Value="8,6" />
+                <Setter Property="Padding" Value="6,5" />
                 <Setter Property="FontSize" Value="11" />
             </Style>
 

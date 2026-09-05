@@ -271,7 +271,7 @@ public sealed partial class SettingsPage
 
     private async Task CheckForUpdatesInternalAsync(CancellationToken token)
     {
-        string updateUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
+        string updateUrl = $"https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json?t={DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
         
         using var request = new HttpRequestMessage(HttpMethod.Get, updateUrl);
         request.Headers.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true, NoStore = true, MustRevalidate = true };

@@ -135,10 +135,11 @@ namespace WinCarePro.Modules.AiAssistant
     /// </summary>
     public static class AiWinCareEngine
     {
-        public static async Task<AiWinCareReport> AnalyzeSystemHealthAsync()
+        public static async Task<AiWinCareReport> AnalyzeSystemHealthAsync(System.Threading.CancellationToken cancellationToken = default)
         {
             return await Task.Run(() =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var report = new AiWinCareReport();
                 var recommendations = new List<AiWinCareRecommendation>();
                 int penaltyScore = 0;

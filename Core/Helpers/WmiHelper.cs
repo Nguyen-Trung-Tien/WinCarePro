@@ -18,6 +18,8 @@ public static class WmiHelper
         try
         {
             using var searcher = new ManagementObjectSearcher(scope, query);
+            searcher.Options.Timeout = TimeSpan.FromSeconds(5);
+            searcher.Options.ReturnImmediately = true;
             using var collection = searcher.Get();
             foreach (ManagementObject obj in collection)
             {

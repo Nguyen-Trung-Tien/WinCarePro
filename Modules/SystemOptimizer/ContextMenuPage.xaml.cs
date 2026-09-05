@@ -44,6 +44,18 @@ public sealed partial class ContextMenuPage : Page
         this.Unloaded += (s, e) => TranslationManager.Instance.LanguageChanged -= langHandler;
     }
 
+    protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        ViewModel?.Initialize();
+    }
+
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        ViewModel?.Cleanup();
+    }
+
     private void UpdateLoadingOverlayState()
     {
         if (LoadingOverlayGrid == null || FadeInLoading == null || FadeOutLoading == null) return;

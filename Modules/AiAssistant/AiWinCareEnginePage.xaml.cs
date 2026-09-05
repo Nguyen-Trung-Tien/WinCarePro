@@ -15,6 +15,9 @@ namespace WinCarePro.Modules.AiAssistant
     {
         private EventHandler? _languageChangedHandler;
 
+        private System.Threading.CancellationTokenSource? _scanCts;
+        private bool _isNavigatedAway;
+
         public AiWinCareEnginePage()
         {
             InitializeComponent();
@@ -28,7 +31,10 @@ namespace WinCarePro.Modules.AiAssistant
             {
                 DispatcherQueue.TryEnqueue(() =>
                 {
-                    TranslationManager.Instance.Translate(this);
+                    if (!_isNavigatedAway)
+                    {
+                        TranslationManager.Instance.Translate(this);
+                    }
                 });
             };
 
@@ -41,12 +47,32 @@ namespace WinCarePro.Modules.AiAssistant
                     TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
                 }
             };
+        }
 
+        protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            _isNavigatedAway = false;
             _ = RunAiScanAsync();
+        }
+
+        protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            _isNavigatedAway = true;
+            try
+            {
+                _scanCts?.Cancel();
+                _scanCts?.Dispose();
+                _scanCts = null;
+            }
+            catch { }
         }
 
         private Task RunOnUIAsync(Action action)
         {
+            if (_isNavigatedAway) return Task.CompletedTask;
+
             if (DispatcherQueue.HasThreadAccess)
             {
                 action();
@@ -55,6 +81,11 @@ namespace WinCarePro.Modules.AiAssistant
             var tcs = new TaskCompletionSource<bool>();
             bool enqueued = DispatcherQueue.TryEnqueue(() =>
             {
+                if (_isNavigatedAway)
+                {
+                    tcs.TrySetResult(false);
+                    return;
+                }
                 try
                 {
                     action();
@@ -78,12 +109,23 @@ namespace WinCarePro.Modules.AiAssistant
         {
             try
             {
+                _scanCts?.Cancel();
+                _scanCts?.Dispose();
+            }
+            catch { }
+            _scanCts = new System.Threading.CancellationTokenSource();
+            var token = _scanCts.Token;
+
+            try
+            {
                 await RunOnUIAsync(() =>
                 {
                     StatusTitleText.Text = $"{TranslationManager.Instance.T("Status")}: {TranslationManager.Instance.T("Analyzing...")}";
                 });
                 
-                var report = await AiWinCareEngine.AnalyzeSystemHealthAsync();
+                var report = await AiWinCareEngine.AnalyzeSystemHealthAsync(token);
+
+                if (_isNavigatedAway || token.IsCancellationRequested) return;
 
                 await RunOnUIAsync(() =>
                 {
@@ -102,6 +144,10 @@ namespace WinCarePro.Modules.AiAssistant
                     EmptyStateCard.Visibility = hasRecommendations ? Visibility.Collapsed : Visibility.Visible;
                     RecommendationsListView.Visibility = hasRecommendations ? Visibility.Visible : Visibility.Collapsed;
                 });
+            }
+            catch (OperationCanceledException)
+            {
+                // Gracefully handled when user navigates away or cancels
             }
             catch 
             {

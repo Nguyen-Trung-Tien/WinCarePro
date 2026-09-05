@@ -28,8 +28,11 @@ public class OperationResult
     public string Message { get; set; } = string.Empty;
     public string? Details { get; set; }
     public string? ErrorCode { get; set; }
+    public Exception? Exception { get; set; }
     public List<string> Warnings { get; set; } = new();
     public List<string> Errors { get; set; } = new();
+    public bool HasWarnings => Warnings.Count > 0;
+    public bool HasErrors => Errors.Count > 0;
     public TimeSpan Duration { get; set; }
     public DateTime Timestamp { get; set; } = DateTime.Now;
 
@@ -75,17 +78,23 @@ public class OperationResult
 
     public static OperationResult Fail(string message, string? errorCode = null, string? details = null, TimeSpan duration = default, IEnumerable<string>? errors = null)
     {
+        return Fail(message, (Exception?)null, errorCode, details, duration, errors);
+    }
+
+    public static OperationResult Fail(string message, Exception? ex, string? errorCode = null, string? details = null, TimeSpan duration = default, IEnumerable<string>? errors = null)
+    {
         var res = new OperationResult
         {
             Status = OperationStatus.Failed,
             Message = message,
-            ErrorCode = errorCode,
-            Details = details,
+            ErrorCode = errorCode ?? ex?.GetType().Name,
+            Details = details ?? ex?.Message,
+            Exception = ex,
             Duration = duration
         };
-        if (!string.IsNullOrEmpty(errorCode))
+        if (!string.IsNullOrEmpty(res.ErrorCode))
         {
-            res.Errors.Add(errorCode);
+            res.Errors.Add(res.ErrorCode);
         }
         if (errors != null)
         {
@@ -164,18 +173,24 @@ public class OperationResult<T> : OperationResult
 
     public static new OperationResult<T> Fail(string message, string? errorCode = null, string? details = null, TimeSpan duration = default, IEnumerable<string>? errors = null)
     {
+        return Fail(message, (Exception?)null, errorCode, details, duration, errors);
+    }
+
+    public static new OperationResult<T> Fail(string message, Exception? ex, string? errorCode = null, string? details = null, TimeSpan duration = default, IEnumerable<string>? errors = null)
+    {
         var res = new OperationResult<T>
         {
             Status = OperationStatus.Failed,
             Message = message,
-            ErrorCode = errorCode,
-            Details = details,
+            ErrorCode = errorCode ?? ex?.GetType().Name,
+            Details = details ?? ex?.Message,
+            Exception = ex,
             Duration = duration,
             Data = default
         };
-        if (!string.IsNullOrEmpty(errorCode))
+        if (!string.IsNullOrEmpty(res.ErrorCode))
         {
-            res.Errors.Add(errorCode);
+            res.Errors.Add(res.ErrorCode);
         }
         if (errors != null)
         {

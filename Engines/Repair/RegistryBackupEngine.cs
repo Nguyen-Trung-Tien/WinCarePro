@@ -25,14 +25,15 @@ public class RegistryBackupEngine
         @"WinCarePro\Backups"
     );
 
-    public List<RegistryIssue> ScanRegistryIssues()
+    public List<RegistryIssue> ScanRegistryIssues(System.Threading.CancellationToken cancellationToken = default)
     {
         var issues = new List<RegistryIssue>();
+        cancellationToken.ThrowIfCancellationRequested();
         
         // 1. Scan Startup run keys for missing executables
-        ScanRunKeyPaths(Registry.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Run", "User Startup Registry", issues);
-        ScanRunKeyPaths(Registry.LocalMachine, @"Software\Microsoft\Windows\CurrentVersion\Run", "System Startup Registry", issues);
-        ScanRunKeyPaths(Registry.LocalMachine, @"Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Run", "Wow64 Startup Registry", issues);
+        ScanRunKeyPaths(Registry.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Run", "User Startup Registry", issues, cancellationToken);
+        ScanRunKeyPaths(Registry.LocalMachine, @"Software\Microsoft\Windows\CurrentVersion\Run", "System Startup Registry", issues, cancellationToken);
+        ScanRunKeyPaths(Registry.LocalMachine, @"Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Run", "Wow64 Startup Registry", issues, cancellationToken);
 
         // 2. Scan standard Shell Open commands for missing targets in file handlers
         try
@@ -41,6 +42,7 @@ public class RegistryBackupEngine
             int scanned = 0;
             foreach (var subkeyName in classesKey.GetSubKeyNames())
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!subkeyName.StartsWith(".")) continue;
                 if (scanned++ > 1000) break; // Cap search space for speed
 
@@ -75,7 +77,7 @@ public class RegistryBackupEngine
         return issues;
     }
 
-    private void ScanRunKeyPaths(RegistryKey hive, string subkey, string section, List<RegistryIssue> issues)
+    private void ScanRunKeyPaths(RegistryKey hive, string subkey, string section, List<RegistryIssue> issues, System.Threading.CancellationToken cancellationToken = default)
     {
         try
         {
@@ -84,6 +86,7 @@ public class RegistryBackupEngine
 
             foreach (var valName in key.GetValueNames())
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var cmd = key.GetValue(valName)?.ToString() ?? "";
                 string path = CleanCommandPath(cmd);
                 
@@ -152,7 +155,7 @@ public class RegistryBackupEngine
         return cmd;
     }
 
-    public async Task<bool> FixRegistryIssuesAsync(List<RegistryIssue> issues)
+    public async Task<bool> FixRegistryIssuesAsync(List<RegistryIssue> issues, System.Threading.CancellationToken cancellationToken = default)
     {
         return await Task.Run(() =>
         {
@@ -168,7 +171,14 @@ public class RegistryBackupEngine
 
             foreach (var issue in issues)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!issue.IsSelected) continue;
+
+                if (!SafeRegistryGuard.IsSafeToDeleteKey(issue.KeyPath) ||
+                    !SafeRegistryGuard.IsSafeToDeleteValue(issue.KeyPath, issue.ValueName))
+                {
+                    continue; // Skip protected keys/values
+                }
 
                 try
                 {

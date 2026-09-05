@@ -533,6 +533,13 @@ public class StartupEngine
     {
         try
         {
+            var safety = App.Services?.GetService<ServiceSafetyService>() ?? new ServiceSafetyService();
+            if (safety.IsCriticalService(serviceName) && startMode == ServiceStartMode.Disabled)
+            {
+                Database.DbManager.LogAction($"Safety Block: Prevented setting critical core service '{serviceName}' to Disabled.", "Service Manager", "Warning");
+                return false;
+            }
+
             using var key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\{serviceName}", true);
             if (key != null)
             {
@@ -559,6 +566,13 @@ public class StartupEngine
     {
         try
         {
+            var safety = App.Services?.GetService<ServiceSafetyService>() ?? new ServiceSafetyService();
+            if (safety.IsCriticalService(serviceName) && action.Equals("Stop", StringComparison.OrdinalIgnoreCase))
+            {
+                Database.DbManager.LogAction($"Safety Block: Prevented stopping critical core service '{serviceName}'.", "Service Manager", "Warning");
+                return false;
+            }
+
             using var svc = new ServiceController(serviceName);
             if (action == "Start")
             {

@@ -62,6 +62,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 {
     private DispatcherQueue? _dispatcherQueue;
     private readonly SystemOptimizerEngine _optimizerEngine = App.Services?.GetService<SystemOptimizerEngine>() ?? new();
+    private CancellationTokenSource? _aiScanCts;
     private bool _isDisposed;
 
     private bool _isLoading;
@@ -149,19 +150,34 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     public async Task RunAiScanAsync()
     {
         if (IsAiScanning || _isDisposed) return;
+        _aiScanCts?.Cancel();
+        _aiScanCts?.Dispose();
+        _aiScanCts = new CancellationTokenSource();
+        var token = _aiScanCts.Token;
+
         IsAiScanning = true;
         AiStatusText = "Analyzing system health...".T();
 
         try
         {
-            var report = await Modules.AiAssistant.AiWinCareEngine.AnalyzeSystemHealthAsync();
+            var report = await Modules.AiAssistant.AiWinCareEngine.AnalyzeSystemHealthAsync(token);
+            if (token.IsCancellationRequested || _isDisposed) return;
             
             _dispatcherQueue?.TryEnqueue(() =>
             {
-                if (_isDisposed) return;
+                if (token.IsCancellationRequested || _isDisposed) return;
                 RecalculateEfficiencyScore();
                 AiStatusText = report.HealthStatus;
                 AiSummaryText = report.SummaryText;
+                IsAiScanning = false;
+            });
+        }
+        catch (OperationCanceledException)
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                AiStatusText = "Scan cancelled.".T();
                 IsAiScanning = false;
             });
         }
@@ -889,7 +905,10 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 
     public void Cleanup()
     {
-        // Transient cleanup when navigating away: reset busy states
+        // Transient cleanup when navigating away: cancel scans & reset busy states
+        _aiScanCts?.Cancel();
+        _aiScanCts?.Dispose();
+        _aiScanCts = null;
         IsLoading = false;
         IsBoosting = false;
         IsCleaningCache = false;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,16 +11,19 @@ using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
-public class ContextMenuViewModel : ViewModelBase
+public class ContextMenuViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue? _dispatcherQueue;
     private readonly ContextMenuEngine _engine = App.Services?.GetService<ContextMenuEngine>() ?? new();
+    private readonly Action<string> _progressHandler;
+    private CancellationTokenSource? _scanCts;
+    private bool _isDisposed;
 
     private bool _isBusy;
     public bool IsBusy
     {
         get => _isBusy;
-        set => SetProperty(ref _isBusy, value);
+        set => SetPropertyOnUI(() => _isBusy, v => _isBusy = v, value);
     }
 
     private string _statusText = "Ready".T();
@@ -83,8 +87,35 @@ public class ContextMenuViewModel : ViewModelBase
     {
         _dispatcherQueue = SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
-        _engine.ProgressMessage += (msg) => Log(msg);
+        _progressHandler = msg => Log(msg);
+        _engine.ProgressMessage += _progressHandler;
         _ = ScanAsync();
+    }
+
+    public void Initialize()
+    {
+        _isDisposed = false;
+        _engine.ProgressMessage -= _progressHandler;
+        _engine.ProgressMessage += _progressHandler;
+    }
+
+    public void Cleanup()
+    {
+        try
+        {
+            _scanCts?.Cancel();
+            _scanCts?.Dispose();
+            _scanCts = null;
+        }
+        catch { }
+        _engine.ProgressMessage -= _progressHandler;
+        IsBusy = false;
+    }
+
+    public void Dispose()
+    {
+        _isDisposed = true;
+        Cleanup();
     }
 
     private void Log(string msg)
@@ -101,7 +132,7 @@ public class ContextMenuViewModel : ViewModelBase
 
     public async Task ScanAsync()
     {
-        if (IsBusy) return;
+        if (IsBusy || _isDisposed) return;
         IsBusy = true;
         StatusText = "Scanning context menu handlers...".T();
         Items.Clear();
@@ -109,9 +140,19 @@ public class ContextMenuViewModel : ViewModelBase
 
         try
         {
+            _scanCts?.Cancel();
+            _scanCts?.Dispose();
+        }
+        catch { }
+        _scanCts = new CancellationTokenSource();
+        var token = _scanCts.Token;
+
+        try
+        {
             var result = await _engine.ScanContextMenuItemsAsync();
             _dispatcherQueue?.TryEnqueue(() =>
             {
+                if (token.IsCancellationRequested || _isDisposed) return;
                 foreach (var item in result)
                 {
                     Items.Add(item);
@@ -121,13 +162,27 @@ public class ContextMenuViewModel : ViewModelBase
                 StatusText = string.Format("Found {0} context menu handlers.".T(), Items.Count);
             });
         }
+        catch (OperationCanceledException)
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                StatusText = "Scan cancelled.".T();
+            });
+        }
         catch (Exception ex)
         {
-            StatusText = "Scan failed:".T() + " " + ex.Message;
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                StatusText = "Scan failed:".T() + " " + ex.Message;
+            });
         }
         finally
         {
-            IsBusy = false;
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                IsBusy = false;
+            });
         }
     }
 

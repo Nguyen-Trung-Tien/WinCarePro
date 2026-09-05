@@ -4,16 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
-public class RegistryViewModel : ViewModelBase
+public class RegistryViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue? _dispatcherQueue;
     private readonly RegistryBackupEngine _engine = App.Services?.GetService<RegistryBackupEngine>() ?? new();
+    private CancellationTokenSource? _scanCts;
+    private bool _isDisposed;
 
     private bool _isBusy;
     public bool IsBusy
@@ -56,9 +59,32 @@ public class RegistryViewModel : ViewModelBase
         }
     }
 
+    public void Initialize()
+    {
+        _isDisposed = false;
+    }
+
+    public void Cleanup()
+    {
+        try
+        {
+            _scanCts?.Cancel();
+            _scanCts?.Dispose();
+            _scanCts = null;
+        }
+        catch { }
+        IsBusy = false;
+    }
+
+    public void Dispose()
+    {
+        _isDisposed = true;
+        Cleanup();
+    }
+
     public async Task ScanRegistryAsync()
     {
-        if (IsBusy) return;
+        if (IsBusy || _isDisposed) return;
         IsBusy = true;
         ScanProgress = 0;
         StatusText = "Scanning registry for broken paths...".T();
@@ -66,9 +92,19 @@ public class RegistryViewModel : ViewModelBase
 
         try
         {
-            var list = await Task.Run(() => _engine.ScanRegistryIssues());
+            _scanCts?.Cancel();
+            _scanCts?.Dispose();
+        }
+        catch { }
+        _scanCts = new CancellationTokenSource();
+        var token = _scanCts.Token;
+
+        try
+        {
+            var list = await Task.Run(() => _engine.ScanRegistryIssues(token), token);
             _dispatcherQueue?.TryEnqueue(() =>
             {
+                if (token.IsCancellationRequested || _isDisposed) return;
                 foreach (var issue in list)
                 {
                     Issues.Add(issue);
@@ -77,10 +113,19 @@ public class RegistryViewModel : ViewModelBase
                 StatusText = string.Format("Scan complete. Found {0} issues.".T(), Issues.Count);
             });
         }
+        catch (OperationCanceledException)
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                StatusText = "Scan cancelled.".T();
+                ScanProgress = 0;
+            });
+        }
         catch (Exception ex)
         {
             _dispatcherQueue?.TryEnqueue(() =>
             {
+                if (_isDisposed) return;
                 StatusText = "Scan failed: ".T() + ex.Message;
             });
         }
@@ -110,6 +155,7 @@ public class RegistryViewModel : ViewModelBase
             StatusText = "Repairing selected registry issues...".T();
             await _engine.FixRegistryIssuesAsync(selected);
             StatusText = string.Format("Repaired {0} registry issues.".T(), selected.Count);
+            IsBusy = false;
             await ScanRegistryAsync();
         }
         catch (Exception ex)

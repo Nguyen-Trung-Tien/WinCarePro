@@ -79,6 +79,12 @@ public static class SafePathGuard
                 BlacklistedPathPrefixes.Add(Path.Combine(programFilesX86, "Windows Defender"));
             }
 
+            var programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            if (!string.IsNullOrEmpty(programData))
+            {
+                BlacklistedExactPaths.Add(programData);
+            }
+
             var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             if (!string.IsNullOrEmpty(userProfile))
             {
@@ -256,7 +262,7 @@ public static class SafePathGuard
                             deletedBytes += SafeCleanDirectoryContents(subDir.FullName, true);
                             try
                             {
-                                subDir.Delete(true);
+                                subDir.Delete(false); // Only delete if empty
                             }
                             catch { }
                         }

@@ -523,13 +523,32 @@ public class DbManager
         }
         catch { }
 
-        var win = WinCarePro.App.MainWindowInstance;
-        if (win != null)
+        var dispatcher = WinCarePro.App.MainDispatcherQueue;
+        if (dispatcher != null)
         {
-            win.UpdateNotificationBadge();
-            if (showToast)
+            dispatcher.TryEnqueue(() =>
             {
-                win.ShowToastFromDb(title, message, level);
+                var win = WinCarePro.App.MainWindowInstance;
+                if (win != null)
+                {
+                    win.UpdateNotificationBadge();
+                    if (showToast)
+                    {
+                        win.ShowToastFromDb(title, message, level);
+                    }
+                }
+            });
+        }
+        else
+        {
+            var win = WinCarePro.App.MainWindowInstance;
+            if (win != null)
+            {
+                win.UpdateNotificationBadge();
+                if (showToast)
+                {
+                    win.ShowToastFromDb(title, message, level);
+                }
             }
         }
     }

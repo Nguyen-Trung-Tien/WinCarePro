@@ -20,6 +20,9 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     private readonly UninstallEngine _uninstallEngine = new();
     private readonly IDialogService _dialogService;
     private readonly EventHandler _languageChangedHandler;
+    private readonly Action<string> _outputHandler;
+    private readonly Action<int> _progressHandler;
+    private CancellationTokenSource? _scanCts;
     private bool _isDisposed;
 
     private bool _updatingAllAppsFlag;
@@ -274,8 +277,11 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         DispatcherQueueInstance = _dispatcherQueue;
         _dialogService = App.Services?.GetService<IDialogService>() ?? new WinCarePro.Services.Implementations.DialogService();
 
-        _uninstallEngine.OutputReceived += msg => _dispatcherQueue?.TryEnqueue(() => ProgressMessage = msg.T());
-        _uninstallEngine.ProgressChanged += pct => _dispatcherQueue?.TryEnqueue(() => ProgressPercent = pct);
+        _outputHandler = msg => _dispatcherQueue?.TryEnqueue(() => ProgressMessage = msg.T());
+        _progressHandler = pct => _dispatcherQueue?.TryEnqueue(() => ProgressPercent = pct);
+
+        _uninstallEngine.OutputReceived += _outputHandler;
+        _uninstallEngine.ProgressChanged += _progressHandler;
 
         _languageChangedHandler = (s, e) =>
         {
@@ -294,6 +300,11 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     public async Task ScanAppsAsync()
     {
         if (IsBusy) return;
+        _scanCts?.Cancel();
+        _scanCts?.Dispose();
+        _scanCts = new CancellationTokenSource();
+        var token = _scanCts.Token;
+
         IsBusy = true;
         ProgressPercent = 10;
         ProgressMessage = "Scanning registry for installed applications...".T();
@@ -303,16 +314,26 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
         try
         {
-            var apps = await Task.Run(() => _uninstallEngine.ScanInstalledApps());
+            var apps = await Task.Run(() => _uninstallEngine.ScanInstalledApps(), token);
+            if (token.IsCancellationRequested || _isDisposed) return;
             ProgressPercent = 80;
 
             _dispatcherQueue?.TryEnqueue(() =>
             {
+                if (token.IsCancellationRequested || _isDisposed) return;
                 _allApps = apps;
                 UpdateStatistics();
                 ApplyAppFilter();
                 ProgressPercent = 100;
                 ProgressMessage = string.Format("Loaded {0} applications.".T(), _allApps.Count);
+                IsBusy = false;
+            });
+        }
+        catch (OperationCanceledException)
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                ProgressMessage = "Scan cancelled.".T();
                 IsBusy = false;
             });
         }
@@ -416,6 +437,10 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     {
         UninstallStep = 1;
         IsBusy = true;
+        _scanCts?.Cancel();
+        _scanCts?.Dispose();
+        _scanCts = new CancellationTokenSource();
+        var token = _scanCts.Token;
 
         try
         {
@@ -423,11 +448,14 @@ public class UninstallViewModel : ViewModelBase, IDisposable
             ProgressMessage = string.Format("Uninstalling {0}...".T(), app.DisplayName);
 
             bool uninstalled = await _uninstallEngine.RunStandardUninstallerAsync(app);
+            if (token.IsCancellationRequested || _isDisposed) return;
+
             if (!uninstalled)
             {
                 IsBusy = false;
                 UninstallStep = 0;
                 bool force = await _dialogService.ShowForceUninstallPromptAsync(app.DisplayName);
+                if (token.IsCancellationRequested || _isDisposed) return;
                 if (force)
                 {
                     foreach (var a in _allApps)
@@ -447,12 +475,14 @@ public class UninstallViewModel : ViewModelBase, IDisposable
             ProgressPercent = 60;
             ProgressMessage = string.Format("Scanning leftovers for {0}...".T(), app.DisplayName);
 
-            var leftoverList = await Task.Run(() => _uninstallEngine.ScanLeftovers(app));
+            var leftoverList = await Task.Run(() => _uninstallEngine.ScanLeftovers(app, token), token);
+            if (token.IsCancellationRequested || _isDisposed) return;
 
             IsBusy = false;
 
             _dispatcherQueue?.TryEnqueue(() =>
             {
+                if (token.IsCancellationRequested || _isDisposed) return;
                 Leftovers.Clear();
                 foreach (var item in leftoverList)
                 {
@@ -503,6 +533,10 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
         UninstallStep = 1;
         IsBusy = true;
+        _scanCts?.Cancel();
+        _scanCts?.Dispose();
+        _scanCts = new CancellationTokenSource();
+        var token = _scanCts.Token;
         
         var allLeftovers = new List<LeftoverItem>();
         int count = 0;
@@ -511,6 +545,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         {
             foreach (var app in selected)
             {
+                if (token.IsCancellationRequested || _isDisposed) return;
                 count++;
                 ProgressPercent = (int)((double)(count - 1) / selected.Count * 100);
 
@@ -523,7 +558,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
                     }
                     else
                     {
-                        await Task.Delay(500); // UI delay
+                        await Task.Delay(500, token); // UI delay
                     }
                 }
                 else
@@ -532,15 +567,18 @@ public class UninstallViewModel : ViewModelBase, IDisposable
                     await _uninstallEngine.RunStandardUninstallerAsync(app);
                 }
 
+                if (token.IsCancellationRequested || _isDisposed) return;
                 ProgressMessage = string.Format("Scanning leftovers for {0}...".T(), app.DisplayName);
-                var leftoverList = await Task.Run(() => _uninstallEngine.ScanLeftovers(app));
+                var leftoverList = await Task.Run(() => _uninstallEngine.ScanLeftovers(app, token), token);
                 allLeftovers.AddRange(leftoverList);
             }
 
+            if (token.IsCancellationRequested || _isDisposed) return;
             IsBusy = false;
 
             _dispatcherQueue?.TryEnqueue(() =>
             {
+                if (token.IsCancellationRequested || _isDisposed) return;
                 Leftovers.Clear();
                 // Filter unique path leftovers to prevent duplicate deletions
                 var uniqueLeftovers = allLeftovers.GroupBy(x => x.Path.ToLower()).Select(g => g.First()).ToList();
@@ -575,6 +613,15 @@ public class UninstallViewModel : ViewModelBase, IDisposable
                 }
             });
         }
+        catch (OperationCanceledException)
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                ProgressMessage = "Operation cancelled.".T();
+                IsBusy = false;
+                UninstallStep = 0;
+            });
+        }
         catch (Exception ex)
         {
             _dispatcherQueue?.TryEnqueue(() =>
@@ -590,20 +637,34 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     {
         if (Leftovers.Count == 0) return;
         IsBusy = true;
+        _scanCts?.Cancel();
+        _scanCts?.Dispose();
+        _scanCts = new CancellationTokenSource();
+        var token = _scanCts.Token;
         ProgressMessage = "Deleting leftover components...".T();
 
         try
         {
             var selectedItems = Leftovers.Where(x => x.IsSelected).ToList();
-            int deleted = await _uninstallEngine.DeleteLeftoversAsync(selectedItems);
+            int deleted = await _uninstallEngine.DeleteLeftoversAsync(selectedItems, token);
+            if (token.IsCancellationRequested || _isDisposed) return;
             
             _dispatcherQueue?.TryEnqueue(() =>
             {
+                if (token.IsCancellationRequested || _isDisposed) return;
                 ProgressPercent = 100;
                 ProgressMessage = string.Format("Cleaned {0} leftover files and registry entries.".T(), deleted);
                 IsBusy = false;
                 UninstallStep = 0;
                 _ = ScanAppsAsync();
+            });
+        }
+        catch (OperationCanceledException)
+        {
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                ProgressMessage = "Leftover deletion cancelled.".T();
+                IsBusy = false;
             });
         }
         catch (Exception ex)
@@ -709,6 +770,9 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
     public void Cleanup()
     {
+        _scanCts?.Cancel();
+        _scanCts?.Dispose();
+        _scanCts = null;
         IsBusy = false;
     }
 
@@ -716,6 +780,8 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     {
         _isDisposed = true;
         Cleanup();
+        _uninstallEngine.OutputReceived -= _outputHandler;
+        _uninstallEngine.ProgressChanged -= _progressHandler;
         TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 }

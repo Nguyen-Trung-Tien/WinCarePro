@@ -22,6 +22,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
     private readonly ServiceSafetyService _safety;
     private readonly AuditLogService _audit;
     private readonly EventHandler _languageChangedHandler;
+    private CancellationTokenSource? _loadCts;
     private bool _isDisposed;
 
     // Undo Stack Definition
@@ -236,6 +237,9 @@ public class StartupViewModel : ViewModelBase, IDisposable
 
     public void Cleanup()
     {
+        _loadCts?.Cancel();
+        _loadCts?.Dispose();
+        _loadCts = null;
         IsLoading = false;
     }
 
@@ -249,6 +253,11 @@ public class StartupViewModel : ViewModelBase, IDisposable
     public async Task LoadAllDataAsync()
     {
         if (IsLoading) return;
+        _loadCts?.Cancel();
+        _loadCts?.Dispose();
+        _loadCts = new CancellationTokenSource();
+        var token = _loadCts.Token;
+
         IsLoading = true;
         StatusText = "Scanning startup configuration...".T();
 
@@ -256,23 +265,27 @@ public class StartupViewModel : ViewModelBase, IDisposable
         {
             // 1. Boot Performance Analytics
             LoadingStatus = "Analyzing last system boot performance...".T();
-            double bootSec = await Task.Run(() => _startupEngine.GetLastBootTimeSeconds());
+            double bootSec = await Task.Run(() => _startupEngine.GetLastBootTimeSeconds(), token);
+            if (token.IsCancellationRequested || _isDisposed) return;
 
             // 2. Load Startup Apps
             LoadingStatus = "Reading registry and folder startup applications...".T();
-            var apps = await Task.Run(() => _startupEngine.GetStartupEntries());
+            var apps = await Task.Run(() => _startupEngine.GetStartupEntries(), token);
+            if (token.IsCancellationRequested || _isDisposed) return;
             _allStartupApps.Clear();
             _allStartupApps.AddRange(apps);
 
             // 3. Load Background Services
             LoadingStatus = "Scanning Windows background services...".T();
-            var svcs = await Task.Run(() => _startupEngine.GetServices());
+            var svcs = await Task.Run(() => _startupEngine.GetServices(), token);
+            if (token.IsCancellationRequested || _isDisposed) return;
             _allServices.Clear();
             _allServices.AddRange(svcs);
 
             // 4. Load Scheduled Tasks
             LoadingStatus = "Reading active scheduled maintenance tasks...".T();
-            var tasks = await Task.Run(() => _startupEngine.GetScheduledTasks());
+            var tasks = await Task.Run(() => _startupEngine.GetScheduledTasks(), token);
+            if (token.IsCancellationRequested || _isDisposed) return;
             _allScheduledTasks.Clear();
             _allScheduledTasks.AddRange(tasks);
 
@@ -303,6 +316,10 @@ public class StartupViewModel : ViewModelBase, IDisposable
             ApplyFilters();
 
             StatusText = "Startup data loaded successfully.".T();
+        }
+        catch (OperationCanceledException)
+        {
+            StatusText = "Scan cancelled.".T();
         }
         catch (Exception ex)
         {

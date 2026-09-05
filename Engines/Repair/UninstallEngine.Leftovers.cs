@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using WinCarePro.Core.Helpers;
 using WinCarePro.Models;
 
 namespace WinCarePro.Engines;
 
 public partial class UninstallEngine
 {
-    public List<LeftoverItem> ScanLeftovers(InstalledAppInfo app)
+    public List<LeftoverItem> ScanLeftovers(InstalledAppInfo app, CancellationToken cancellationToken = default)
     {
         ProgressChanged?.Invoke(15);
         var leftovers = new List<LeftoverItem>();
+        if (cancellationToken.IsCancellationRequested) return leftovers;
         string cleanName = CleanAppNameForMatching(app.DisplayName);
         string cleanPublisher = CleanAppNameForMatching(app.Publisher);
 
@@ -227,7 +230,7 @@ public partial class UninstallEngine
         return leftovers;
     }
     
-    public async Task<int> DeleteLeftoversAsync(List<LeftoverItem> items)
+    public async Task<int> DeleteLeftoversAsync(List<LeftoverItem> items, CancellationToken cancellationToken = default)
     {
         int deletedCount = 0;
         Log("Starting cleanup of selected residual files and registry entries...");
@@ -239,6 +242,7 @@ public partial class UninstallEngine
             int current = 0;
             foreach (var item in items)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!item.IsSelected) continue;
                 
                 if (item.Type == LeftoverType.Directory)
@@ -247,8 +251,24 @@ public partial class UninstallEngine
                     {
                         if (Directory.Exists(item.Path))
                         {
-                            Log($"Deleting leftover directory: {item.Path}");
-                            Directory.Delete(item.Path, true);
+                            if (!SafePathGuard.IsPathSafeForDeletion(item.Path))
+                            {
+                                Log($"Safety Warning: Skipped protected directory: {item.Path}");
+                                continue;
+                            }
+
+                            var di = new DirectoryInfo(item.Path);
+                            if ((di.Attributes & FileAttributes.ReparsePoint) != 0)
+                            {
+                                Log($"Safety Notice: Unlinking junction/reparse directory: {item.Path}");
+                                Directory.Delete(item.Path, false);
+                            }
+                            else
+                            {
+                                Log($"Deleting leftover directory: {item.Path}");
+                                SafePathGuard.SafeCleanDirectoryContents(item.Path, true);
+                                try { Directory.Delete(item.Path, false); } catch { }
+                            }
                             deletedCount++;
                         }
                     }
@@ -263,8 +283,14 @@ public partial class UninstallEngine
                     {
                         if (File.Exists(item.Path))
                         {
+                            if (!SafePathGuard.IsPathSafeForDeletion(item.Path))
+                            {
+                                Log($"Safety Warning: Skipped protected file: {item.Path}");
+                                continue;
+                            }
+
                             Log($"Deleting leftover file: {item.Path}");
-                            File.Delete(item.Path);
+                            SafePathGuard.TrySafeDeleteFile(item.Path);
                             deletedCount++;
                         }
                     }
@@ -277,6 +303,12 @@ public partial class UninstallEngine
                 {
                     try
                     {
+                        if (!SafeRegistryGuard.IsSafeToDeleteKey(item.Path))
+                        {
+                            Log($"Safety Warning: Skipped protected registry key: {item.Path}");
+                            continue;
+                        }
+
                         int slashIndex = item.Path.IndexOf('\\');
                         if (slashIndex > 0)
                         {
@@ -324,11 +356,17 @@ public partial class UninstallEngine
                                 string parentPath = relativePath.Substring(0, lastSlash);
                                 string valueToDelete = relativePath.Substring(lastSlash + 1);
                                 
+                                if (!SafeRegistryGuard.IsSafeToDeleteValue(parentPath, valueToDelete))
+                                {
+                                    Log($"Safety Warning: Skipped protected registry value: {item.Path}");
+                                    continue;
+                                }
+
                                 using var parentKey = hive.OpenSubKey(parentPath, true);
                                 if (parentKey != null)
                                 {
                                     Log($"Deleting leftover registry value: {item.Path}");
-                                    parentKey.DeleteValue(valueToDelete);
+                                    parentKey.DeleteValue(valueToDelete, false);
                                     deletedCount++;
                                 }
                             }
@@ -347,7 +385,7 @@ public partial class UninstallEngine
                     ProgressChanged?.Invoke(percent);
                 }
             }
-        });
+        }, cancellationToken);
         
         Log($"Residual cleanup complete. Successfully removed {deletedCount} leftovers.");
         ProgressChanged?.Invoke(100);

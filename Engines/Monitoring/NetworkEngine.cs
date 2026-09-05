@@ -380,6 +380,24 @@ public partial class NetworkEngine
 
     public List<ActiveConnectionInfo> GetActiveConnections()
     {
+        try
+        {
+            var nativeList = GetActiveConnectionsNative();
+            if (nativeList != null && nativeList.Count > 0)
+            {
+                return nativeList;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log($"Native connection lookup failed, falling back to netstat: {ex.Message}");
+        }
+
+        return GetActiveConnectionsNetstatFallback();
+    }
+
+    private List<ActiveConnectionInfo> GetActiveConnectionsNetstatFallback()
+    {
         var list = new List<ActiveConnectionInfo>();
         try
         {
@@ -388,7 +406,15 @@ public partial class NetworkEngine
             {
                 foreach (var p in Process.GetProcesses())
                 {
-                    procDict[p.Id] = p.ProcessName;
+                    try
+                    {
+                        procDict[p.Id] = p.ProcessName;
+                    }
+                    catch { }
+                    finally
+                    {
+                        p.Dispose();
+                    }
                 }
             }
             catch { }
@@ -459,7 +485,7 @@ public partial class NetworkEngine
         }
         catch (Exception ex)
         {
-            Log($"Failed to retrieve active connections: {ex.Message}");
+            Log($"Failed to retrieve active connections via netstat fallback: {ex.Message}");
         }
         return list;
     }

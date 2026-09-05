@@ -66,6 +66,21 @@ public class NetworkCenterEngineTests
     }
 
     [Fact]
+    public void GetActiveConnections_ReturnsValidConnections()
+    {
+        // Act
+        var connections = _networkEngine.GetActiveConnections();
+
+        // Assert
+        Assert.NotNull(connections);
+        // On any running Windows machine, there are active TCP or UDP connections/listeners
+        Assert.NotEmpty(connections);
+        var first = connections.First();
+        Assert.False(string.IsNullOrEmpty(first.Protocol));
+        Assert.False(string.IsNullOrEmpty(first.LocalAddress));
+    }
+
+    [Fact]
     public void ActiveConnectionInfo_FilterLogic_WorksAccurately()
     {
         // Arrange

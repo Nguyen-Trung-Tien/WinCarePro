@@ -29,6 +29,7 @@ public partial class TranslationManager
             if (_currentLanguage != value)
             {
                 _currentLanguage = value;
+                _dynamicRegexCache.Clear();
                 LanguageChanged?.Invoke(this, EventArgs.Empty);
                 ApplyLanguageChange();
             }
@@ -40,7 +41,7 @@ public partial class TranslationManager
     private readonly Dictionary<string, string> _translations = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> _reverseTranslations = new(StringComparer.OrdinalIgnoreCase);
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> _dynamicRegexCache = new(StringComparer.OrdinalIgnoreCase);
-    private const int MaxDynamicRegexCache = 500;
+    private const int MaxDynamicRegexCache = 2000;
     private static readonly ConditionalWeakTable<DependencyObject, Dictionary<string, string>> OriginalValues = new();
     private static readonly ConditionalWeakTable<DependencyObject, object> RegisteredControlsMap = new();
     private static readonly object DummyValue = new();
@@ -349,6 +350,8 @@ public partial class TranslationManager
                 }
             }
 
+            // Cache negative lookup to prevent re-evaluating 15+ regexes on repeated calls
+            CacheDynamicTranslation(trimmed, trimmed);
             return key;
         }
     }
@@ -422,6 +425,24 @@ public partial class TranslationManager
         if (_translations.ContainsKey(trimmed) || _reverseTranslations.ContainsKey(trimmed))
             return true;
 
+        if (_dynamicRegexCache.TryGetValue(trimmed, out var cached))
+        {
+            return !string.Equals(cached, trimmed, StringComparison.Ordinal);
+        }
+
+        // Fast prefix checks first before running regexes
+        if (trimmed.StartsWith("Drive ", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Uninstalling ", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Trạng thái:", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Preset:", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("AI detected", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Last Checked:", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("What's New in", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.StartsWith("Version ", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
         if (DriveUsageHealthyRegex.IsMatch(trimmed) ||
             DriveUsageCritRegex.IsMatch(trimmed) ||
             DriveUsageCapRegex.IsMatch(trimmed) ||
@@ -437,15 +458,7 @@ public partial class TranslationManager
             VersionSuiteRegex.IsMatch(trimmed) ||
             WhatsNewRegex.IsMatch(trimmed) ||
             AiProcessesRegex.IsMatch(trimmed) ||
-            BackgroundProcessesActiveRegex.IsMatch(trimmed) ||
-            trimmed.StartsWith("Drive ", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.StartsWith("Uninstalling ", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.StartsWith("Trạng thái:", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.StartsWith("Preset:", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.StartsWith("AI detected", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.StartsWith("Last Checked:", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.StartsWith("What's New in", StringComparison.OrdinalIgnoreCase) ||
-            trimmed.StartsWith("Version ", StringComparison.OrdinalIgnoreCase))
+            BackgroundProcessesActiveRegex.IsMatch(trimmed))
         {
             return true;
         }

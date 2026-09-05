@@ -544,7 +544,7 @@ public static class UpdateDialogHelper
         var rootStack = new StackPanel
         {
             Spacing = 16,
-            Width = 440
+            Width = 530
         };
 
         // Header with Amber Warning Badge
@@ -641,12 +641,24 @@ public static class UpdateDialogHelper
             XamlRoot = xamlRoot,
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
-            CornerRadius = new CornerRadius(16)
+            CornerRadius = new CornerRadius(16),
+            MinWidth = 530,
+            MaxWidth = 620
         };
 
-        if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj3) && styleObj3 is Style accentStyle3)
+        if (Application.Current.Resources.TryGetValue("CompactDialogAccentButtonStyle", out var styleObj3) && styleObj3 is Style accentStyle3)
         {
             dialog.PrimaryButtonStyle = accentStyle3;
+        }
+        else if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleFallback3) && styleFallback3 is Style accentFb3)
+        {
+            dialog.PrimaryButtonStyle = accentFb3;
+        }
+
+        if (Application.Current.Resources.TryGetValue("CompactDialogDefaultButtonStyle", out var defStyleObj3) && defStyleObj3 is Style defStyle3)
+        {
+            dialog.SecondaryButtonStyle = defStyle3;
+            dialog.CloseButtonStyle = defStyle3;
         }
 
         var result = await dialog.ShowAsync();
@@ -682,7 +694,7 @@ public static class UpdateDialogHelper
         var rootStack = new StackPanel
         {
             Spacing = 16,
-            Width = 450
+            Width = 530
         };
 
         // Header with Amber Warning Badge
@@ -778,12 +790,24 @@ public static class UpdateDialogHelper
             XamlRoot = xamlRoot,
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
-            CornerRadius = new CornerRadius(16)
+            CornerRadius = new CornerRadius(16),
+            MinWidth = 530,
+            MaxWidth = 620
         };
 
-        if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj4) && styleObj4 is Style accentStyle4)
+        if (Application.Current.Resources.TryGetValue("CompactDialogAccentButtonStyle", out var styleObj4) && styleObj4 is Style accentStyle4)
         {
             dialog.PrimaryButtonStyle = accentStyle4;
+        }
+        else if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleFallback4) && styleFallback4 is Style accentFb4)
+        {
+            dialog.PrimaryButtonStyle = accentFb4;
+        }
+
+        if (Application.Current.Resources.TryGetValue("CompactDialogDefaultButtonStyle", out var defStyleObj4) && defStyleObj4 is Style defStyle4)
+        {
+            dialog.SecondaryButtonStyle = defStyle4;
+            dialog.CloseButtonStyle = defStyle4;
         }
 
         var result = await dialog.ShowAsync();

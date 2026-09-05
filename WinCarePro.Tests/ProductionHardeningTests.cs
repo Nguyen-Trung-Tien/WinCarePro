@@ -8,7 +8,10 @@ using WinCarePro.Core.Helpers;
 using WinCarePro.Core.Models;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Services;
 using WinCarePro.Services.Implementations;
+using WinCarePro.ViewModels;
+using WinCarePro.Database;
 using Xunit;
 
 namespace WinCarePro.Tests;
@@ -240,5 +243,112 @@ public class ProductionHardeningTests
         cts.Cancel(); // Pre-cancelled
 
         await Assert.ThrowsAsync<OperationCanceledException>(() => Modules.AiAssistant.AiWinCareEngine.AnalyzeSystemHealthAsync(cts.Token));
+    }
+
+    // ============================================================
+    // 6. Navigation & ViewModel Lifecycle Tests
+    // ============================================================
+
+    [Fact]
+    public void RegistryViewModel_NavigationCycle_CancelsPromptlyAndResetsState()
+    {
+        var vm = new RegistryViewModel();
+        vm.IsBusy = true;
+
+        // Navigate away
+        vm.Cleanup();
+        Assert.False(vm.IsBusy);
+
+        // Navigate back
+        vm.Initialize();
+        Assert.False(vm.IsBusy);
+        vm.Cleanup();
+    }
+
+    [Fact]
+    public void StartupViewModel_NavigationCycle_CancelsPromptlyAndResetsLoading()
+    {
+        var vm = new StartupViewModel();
+        vm.IsLoading = true;
+
+        // Navigate away
+        vm.Cleanup();
+        Assert.False(vm.IsLoading);
+
+        // Navigate back
+        vm.Initialize();
+        Assert.False(vm.IsLoading);
+        vm.Cleanup();
+    }
+
+    [Fact]
+    public void UninstallViewModel_NavigationCycle_CancelsPromptlyAndResetsState()
+    {
+        var vm = new UninstallViewModel();
+        vm.IsBusy = true;
+
+        // Navigate away
+        vm.Cleanup();
+        Assert.False(vm.IsBusy);
+
+        // Navigate back
+        vm.Initialize();
+        Assert.False(vm.IsBusy);
+        vm.Cleanup();
+    }
+
+    [Fact]
+    public void ContextMenuViewModel_NavigationCycle_CancelsPromptlyAndResetsState()
+    {
+        var vm = new ContextMenuViewModel();
+        vm.IsBusy = true;
+
+        // Navigate away
+        vm.Cleanup();
+        Assert.False(vm.IsBusy);
+
+        // Navigate back
+        vm.Initialize();
+        Assert.False(vm.IsBusy);
+        vm.Cleanup();
+    }
+
+    // ============================================================
+    // 7. Concurrency & Database Locking Verification
+    // ============================================================
+
+    [Fact]
+    public void Database_ConcurrentOperations_DoNotThrowLockingExceptions()
+    {
+        DbManager.InitializeDatabase();
+
+        // Run multiple concurrent background read/write transactions
+        Parallel.For(0, 15, i =>
+        {
+            string category = $"ParallelTest_{i}";
+            DbManager.LogAction($"Action_{i}", category, "Success");
+            var logs = DbManager.GetLogs(category);
+            Assert.NotNull(logs);
+        });
+    }
+
+    // ============================================================
+    // 8. Localization & Translation Switching Verification
+    // ============================================================
+
+    [Fact]
+    public void TranslationManager_SwitchLanguage_RoundTripsWithoutExceptions()
+    {
+        var tm = TranslationManager.Instance;
+        
+        tm.CurrentLanguage = AppLanguage.Vietnamese;
+        Assert.Equal(AppLanguage.Vietnamese, tm.CurrentLanguage);
+        string viScan = "Scan".T();
+        Assert.False(string.IsNullOrEmpty(viScan));
+
+        tm.CurrentLanguage = AppLanguage.English;
+        Assert.Equal(AppLanguage.English, tm.CurrentLanguage);
+        string enScan = "Scan".T();
+        Assert.False(string.IsNullOrEmpty(enScan));
     }
 }

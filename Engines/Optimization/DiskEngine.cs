@@ -512,7 +512,7 @@ public class DiskEngine
         return deletedCount;
     }
 
-    public async Task<bool> RunChkdskAsync(string driveLetter)
+    public async Task<bool> RunChkdskAsync(string driveLetter, CancellationToken token = default)
     {
         string drive = driveLetter.Trim().TrimEnd('\\').TrimEnd(':');
         Log($"Scheduling CheckDisk for drive {drive}:...");
@@ -522,16 +522,12 @@ public class DiskEngine
             var psi = new ProcessStartInfo
             {
                 FileName = "chkdsk.exe",
-                Arguments = $"{drive}: /f /r",
+                Arguments = $"{drive}:", // Read only for quick testing/diagnostics, doesn't lock system!
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true
             };
-
-            // Warning: /f requires locking the volume, which may prompt to schedule on restart
-            // Let's run a read-only chkdsk first to show errors, or normal chkdsk
-            psi.Arguments = $"{drive}:"; // Read only for quick testing/diagnostics, doesn't lock system!
 
             using var process = new Process { StartInfo = psi };
             process.OutputDataReceived += (s, e) => { if (e.Data != null) Log(e.Data); };
@@ -541,11 +537,28 @@ public class DiskEngine
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
 
-            await process.WaitForExitAsync();
+            using var reg = token.Register(() =>
+            {
+                try { if (!process.HasExited) process.Kill(true); } catch { }
+            });
+
+            var exitTask = process.WaitForExitAsync(token);
+            var completedTask = await Task.WhenAny(exitTask, Task.Delay(TimeSpan.FromMinutes(10), token));
+            if (completedTask != exitTask)
+            {
+                try { if (!process.HasExited) process.Kill(true); } catch { }
+                Log($"Chkdsk on {drive}: timed out after 10 minutes.");
+                return false;
+            }
 
             Log($"Chkdsk on {drive}: finished. Exit Code: {process.ExitCode}");
             Database.DbManager.LogAction($"Run CHKDSK on {drive}:", "Disk Tools", process.ExitCode == 0 ? "Success" : "Errors Logged");
             return process.ExitCode == 0;
+        }
+        catch (OperationCanceledException)
+        {
+            Log($"Chkdsk on {drive}: cancelled by user.");
+            return false;
         }
         catch (Exception ex)
         {

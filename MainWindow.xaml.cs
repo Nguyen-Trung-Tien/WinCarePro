@@ -108,6 +108,9 @@ public sealed partial class MainWindow : Window
         ThemeManager.Instance.RegisterWindow(this);
         TranslationManager.Instance.RegisterWindow(this);
 
+        // Decoupled notification listener from Database layer
+        DbManager.OnNotificationAdded += OnDbNotificationAdded;
+
         // Handle window resizing and start async application initialization on load
         if (RootGrid != null)
         {
@@ -395,6 +398,7 @@ public sealed partial class MainWindow : Window
 
         ThemeManager.Instance.UnregisterWindow(this);
         TranslationManager.Instance.UnregisterWindow(this);
+        DbManager.OnNotificationAdded -= OnDbNotificationAdded;
         CleanupTrayIcon();
         UnsubclassWindow();
         try
@@ -420,8 +424,21 @@ public sealed partial class MainWindow : Window
         {
             WinCarePro.Services.Implementations.SettingsService.Instance.FlushPendingSave();
             DbManager.ShutdownDatabase();
+            App.ReleaseSingleInstanceMutex();
         }
         catch { }
+    }
+
+    private void OnDbNotificationAdded(WinCarePro.Models.NotificationItem item)
+    {
+        this.DispatcherQueue?.TryEnqueue(() =>
+        {
+            UpdateNotificationBadge();
+            if (item.ShowToast)
+            {
+                ShowToastFromDb(item.Title, item.Message, item.Level);
+            }
+        });
     }
 
     public void ShowToastFromDb(string title, string message, string level)

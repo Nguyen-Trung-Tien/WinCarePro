@@ -158,6 +158,11 @@ public sealed partial class MainWindow : Window
     private const uint WM_QUERYENDSESSION = 0x0011;
     private const uint WM_ENDSESSION = 0x0016;
 
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    private static extern uint RegisterWindowMessage(string lpString);
+
+    public static readonly uint WM_ACTIVATE_INSTANCE = RegisterWindowMessage("WinCarePro_Activate_SingleInstance");
+
     private const uint MF_STRING = 0x00000000;
     private const uint MF_SEPARATOR = 0x00000800;
 
@@ -196,6 +201,16 @@ public sealed partial class MainWindow : Window
 
     private IntPtr NewWindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
+        if (msg == WM_ACTIVATE_INSTANCE && WM_ACTIVATE_INSTANCE != 0)
+        {
+            this.DispatcherQueue?.TryEnqueue(() =>
+            {
+                this.AppWindow.Show();
+                BringToForeground();
+            });
+            return IntPtr.Zero;
+        }
+
         if (msg == WM_GETMINMAXINFO)
         {
             var mmi = Marshal.PtrToStructure<MINMAXINFO>(lParam);
@@ -427,7 +442,7 @@ public sealed partial class MainWindow : Window
         catch { }
     }
 
-    private void CleanupTrayIcon()
+    public void CleanupTrayIcon()
     {
         if (_trayIconRegistered)
         {

@@ -13,6 +13,7 @@ public class NotificationItem
     public string Level { get; set; } = "Info"; // Info, Warning, Critical
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public bool IsRead { get; set; }
+    public bool ShowToast { get; set; } = true;
     public string CreatedAtFormatted => CreatedAt.ToString("yyyy-MM-dd HH:mm:ss");
 
     public Visibility UnreadVisibility => IsRead ? Visibility.Collapsed : Visibility.Visible;

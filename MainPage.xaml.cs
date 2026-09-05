@@ -14,6 +14,9 @@ public sealed partial class MainPage : Page
 
     private Page? _lastTranslatedPage;
     private RoutedEventHandler? _lastLoadedHandler;
+    private readonly EventHandler _themeChangedHandler;
+    private readonly EventHandler _accentChangedHandler;
+    private readonly EventHandler _languageChangedHandler;
 
     public MainPage()
     {
@@ -27,7 +30,8 @@ public sealed partial class MainPage : Page
         // Register to theme changes to force update RequestedTheme for this page, children, and navigated content
         ThemeManager.Instance.RegisterPage(this);
         TranslationManager.Instance.RegisterPage(this);
-        ThemeManager.Instance.ThemeChanged += (s, e) =>
+
+        _themeChangedHandler = (s, e) =>
         {
             var theme = ThemeManager.Instance.CurrentTheme;
             this.RequestedTheme = theme;
@@ -37,20 +41,23 @@ public sealed partial class MainPage : Page
                 page.RequestedTheme = theme;
             }
         };
+        ThemeManager.Instance.ThemeChanged += _themeChangedHandler;
+
         // Apply initial theme
         var initialTheme = ThemeManager.Instance.CurrentTheme;
         this.RequestedTheme = initialTheme;
         NavView.RequestedTheme = initialTheme;
 
         // Register to accent color changes to dynamically update user avatar and brand gradients
-        ThemeManager.Instance.AccentChanged += (s, e) =>
+        _accentChangedHandler = (s, e) =>
         {
             UpdateUserAvatarAccent();
         };
+        ThemeManager.Instance.AccentChanged += _accentChangedHandler;
         UpdateUserAvatarAccent();
         
         // Register to language changes to force translation for this page and current navigated page
-        TranslationManager.Instance.LanguageChanged += (s, e) =>
+        _languageChangedHandler = (s, e) =>
         {
             TranslationManager.Instance.Translate(this);
             if (ContentFrame.Content is Page currentPage)
@@ -58,6 +65,8 @@ public sealed partial class MainPage : Page
                 TranslationManager.Instance.Translate(currentPage);
             }
         };
+        TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+        this.Unloaded += (s, e) => Cleanup();
         
         // Auto-translate and synchronize theme for navigated pages
         ContentFrame.Navigated += (s, e) =>
@@ -245,12 +254,25 @@ public sealed partial class MainPage : Page
         NavView.Header = null;
     }
 
+    public void Cleanup()
+    {
+        ThemeManager.Instance.ThemeChanged -= _themeChangedHandler;
+        ThemeManager.Instance.AccentChanged -= _accentChangedHandler;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        ThemeManager.Instance.UnregisterPage(this);
+        TranslationManager.Instance.UnregisterPage(this);
+
+        if (_lastTranslatedPage != null && _lastLoadedHandler != null)
+        {
+            _lastTranslatedPage.Loaded -= _lastLoadedHandler;
+            _lastTranslatedPage = null;
+            _lastLoadedHandler = null;
+        }
+    }
+
     public void CleanupActivePage()
     {
-        // Note: All functional pages utilize NavigationCacheMode.Required.
-        // Terminal Dispose() must NEVER be called on cached pages during navigation,
-        // as this breaks event wiring and invalidates ViewModels on subsequent visits.
-        // Operation cancellation and timer pauses are safely handled in each page's OnNavigatedFrom().
+        Cleanup();
     }
 
     private void UpdateUserAvatarAccent()

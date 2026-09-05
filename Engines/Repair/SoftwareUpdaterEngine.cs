@@ -261,10 +261,12 @@ public class SoftwareUpdaterEngine
                 });
 
                 var readTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
+                var errTask = process.StandardError.ReadToEndAsync(cancellationToken);
                 var exitTask = process.WaitForExitAsync(cancellationToken);
-                var completedTask = await Task.WhenAny(exitTask, Task.Delay(12000, cancellationToken));
+                var allTasks = Task.WhenAll(readTask, errTask, exitTask);
+                var completedTask = await Task.WhenAny(allTasks, Task.Delay(12000, cancellationToken));
                 
-                if (completedTask != exitTask)
+                if (completedTask != allTasks)
                 {
                     try { if (!process.HasExited) process.Kill(true); } catch { }
                     Log("Winget scan response delayed (>12s), transitioning to fast registry audit...");

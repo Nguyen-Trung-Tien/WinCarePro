@@ -77,16 +77,36 @@ public partial class UninstallEngine
                     
                     if (!parsed)
                     {
-                        // Fallback: split on first space
-                        int spaceIndex = cmd.IndexOf(" ");
-                        if (spaceIndex > 0)
+                        // Fallback: Check if the whole string is an existing file or simple command name
+                        if (File.Exists(cmd.Trim()) || !cmd.Contains(' '))
                         {
-                            exe = cmd.Substring(0, spaceIndex).Trim();
-                            args = cmd.Substring(spaceIndex + 1).Trim();
+                            exe = cmd.Trim();
+                            args = "";
                         }
                         else
                         {
-                            exe = cmd;
+                            int spaceIndex = cmd.IndexOf(" ");
+                            if (spaceIndex > 0)
+                            {
+                                string firstToken = cmd.Substring(0, spaceIndex).Trim();
+                                if (firstToken.Equals("msiexec", StringComparison.OrdinalIgnoreCase) || 
+                                    firstToken.Equals("msiexec.exe", StringComparison.OrdinalIgnoreCase) ||
+                                    File.Exists(firstToken))
+                                {
+                                    exe = firstToken;
+                                    args = cmd.Substring(spaceIndex + 1).Trim();
+                                }
+                                else
+                                {
+                                    exe = cmd.Trim();
+                                    args = "";
+                                }
+                            }
+                            else
+                            {
+                                exe = cmd.Trim();
+                                args = "";
+                            }
                         }
                     }
                 }

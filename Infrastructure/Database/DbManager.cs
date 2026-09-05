@@ -46,33 +46,33 @@ public class DbManager
 
     private static T ExecuteWithConnection<T>(Func<SqliteConnection, T> operation, T defaultValue = default!)
     {
-        lock (DbLock)
+        int maxRetries = 3;
+        for (int attempt = 0; attempt < maxRetries; attempt++)
         {
-            int maxRetries = 3;
-            for (int attempt = 0; attempt < maxRetries; attempt++)
+            try
             {
-                try
+                lock (DbLock)
                 {
                     using var connection = CreateAndOpenConnection();
                     return operation(connection);
                 }
-                catch (SqliteException ex) when (ex.SqliteErrorCode == 5 || ex.Message.Contains("locked", StringComparison.OrdinalIgnoreCase) || ex.Message.Contains("busy", StringComparison.OrdinalIgnoreCase))
+            }
+            catch (SqliteException ex) when (ex.SqliteErrorCode == 5 || ex.Message.Contains("locked", StringComparison.OrdinalIgnoreCase) || ex.Message.Contains("busy", StringComparison.OrdinalIgnoreCase))
+            {
+                if (attempt == maxRetries - 1)
                 {
-                    if (attempt == maxRetries - 1)
-                    {
-                        Infrastructure.Logging.CrashLogger.LogException($"DbManager.ExecuteWithConnection (Locked/Busy after {maxRetries} attempts)", ex);
-                        return defaultValue;
-                    }
-                    Thread.Sleep(50 * (attempt + 1));
-                }
-                catch (Exception ex)
-                {
-                    Infrastructure.Logging.CrashLogger.LogException("DbManager.ExecuteWithConnection", ex);
+                    Infrastructure.Logging.CrashLogger.LogException($"DbManager.ExecuteWithConnection (Locked/Busy after {maxRetries} attempts)", ex);
                     return defaultValue;
                 }
+                Thread.Sleep(50 * (attempt + 1));
             }
-            return defaultValue;
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("DbManager.ExecuteWithConnection", ex);
+                return defaultValue;
+            }
         }
+        return defaultValue;
     }
 
     public static void ExecuteInTransaction(Action<SqliteConnection, SqliteTransaction> operation)
@@ -96,31 +96,31 @@ public class DbManager
 
     private static void ExecuteWithConnection(Action<SqliteConnection> operation)
     {
-        lock (DbLock)
+        int maxRetries = 3;
+        for (int attempt = 0; attempt < maxRetries; attempt++)
         {
-            int maxRetries = 3;
-            for (int attempt = 0; attempt < maxRetries; attempt++)
+            try
             {
-                try
+                lock (DbLock)
                 {
                     using var connection = CreateAndOpenConnection();
                     operation(connection);
                     return;
                 }
-                catch (SqliteException ex) when (ex.SqliteErrorCode == 5 || ex.Message.Contains("locked", StringComparison.OrdinalIgnoreCase) || ex.Message.Contains("busy", StringComparison.OrdinalIgnoreCase))
+            }
+            catch (SqliteException ex) when (ex.SqliteErrorCode == 5 || ex.Message.Contains("locked", StringComparison.OrdinalIgnoreCase) || ex.Message.Contains("busy", StringComparison.OrdinalIgnoreCase))
+            {
+                if (attempt == maxRetries - 1)
                 {
-                    if (attempt == maxRetries - 1)
-                    {
-                        Infrastructure.Logging.CrashLogger.LogException($"DbManager.ExecuteWithConnection (Locked/Busy after {maxRetries} attempts)", ex);
-                        return;
-                    }
-                    Thread.Sleep(50 * (attempt + 1));
-                }
-                catch (Exception ex)
-                {
-                    Infrastructure.Logging.CrashLogger.LogException("DbManager.ExecuteWithConnection(Action)", ex);
+                    Infrastructure.Logging.CrashLogger.LogException($"DbManager.ExecuteWithConnection (Locked/Busy after {maxRetries} attempts)", ex);
                     return;
                 }
+                Thread.Sleep(50 * (attempt + 1));
+            }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("DbManager.ExecuteWithConnection(Action)", ex);
+                return;
             }
         }
     }
@@ -518,39 +518,11 @@ public class DbManager
                 Message = message,
                 Level = level,
                 IsRead = false,
+                ShowToast = showToast,
                 CreatedAt = DateTime.Now
             });
         }
         catch { }
-
-        var dispatcher = WinCarePro.App.MainDispatcherQueue;
-        if (dispatcher != null)
-        {
-            dispatcher.TryEnqueue(() =>
-            {
-                var win = WinCarePro.App.MainWindowInstance;
-                if (win != null)
-                {
-                    win.UpdateNotificationBadge();
-                    if (showToast)
-                    {
-                        win.ShowToastFromDb(title, message, level);
-                    }
-                }
-            });
-        }
-        else
-        {
-            var win = WinCarePro.App.MainWindowInstance;
-            if (win != null)
-            {
-                win.UpdateNotificationBadge();
-                if (showToast)
-                {
-                    win.ShowToastFromDb(title, message, level);
-                }
-            }
-        }
     }
 
     public static List<WinCarePro.Models.NotificationItem> GetRecentNotifications(int limit = 50)

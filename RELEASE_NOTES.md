@@ -1,29 +1,34 @@
-# 📝 Nhật ký Phát hành (Release Notes) — WinCare Pro v4.8.0
+# 📝 Nhật ký Phát hành (Release Notes) — WinCare Pro v4.9.0
 
 ---
 
-## 🚀 WinCare Pro v4.8.0 (Codename: Nova) — Bộ Ứng Dụng Tối Ưu, Chăm Sóc & Bảo Mật Windows Toàn Diện
+## 🚀 WinCare Pro v4.9.0 (Codename: Nova) — Bộ Ứng Dụng Tối Ưu, Chăm Sóc & Bảo Mật Windows Toàn Diện
 
-> **Phiên bản:** v4.8.0 (Codename: Nova) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Chính Thức (Official Production Release)
+> **Phiên bản:** v4.9.0 (Codename: Nova) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Chính Thức (Official Production Release) · **Chứng nhận:** 300/300 Tests PASS · 0 Warnings / 0 Errors
 
-**WinCare Pro v4.8.0 (Codename: Nova)** là phiên bản nâng cấp toàn diện tập trung vào tính ổn định vượt trội, khả năng phục hồi tác vụ mượt mà và hoàn thiện trải nghiệm người dùng trên hệ điều hành Windows. Phiên bản tổng hợp trọn vẹn toàn bộ sức mạnh của chuỗi phát triển **v4.x.x**, kết hợp cùng các cải tiến tối ưu hóa phản hồi giao diện và bảo vệ hệ thống tối đa.
+**WinCare Pro v4.9.0 (Codename: Nova)** là phiên bản nâng cấp sản xuất đỉnh cao (Production Hardening & Safety Architecture), củng cố toàn diện độ an toàn cấp doanh nghiệp, bảo vệ tuyệt đối hệ thống Windows khỏi các nguy cơ xóa nhầm hoặc xung đột luồng, đồng thời tối ưu hóa vòng đời tác vụ ngầm và phản hồi giao diện WinUI 3 đạt mức hoàn thiện 100%.
 
 ---
 
-## ✨ Điểm Mới & Cải Tiến Nổi Bật Dành Cho Người Dùng (What's New in v4.8.0)
+## ✨ Điểm Mới & Cải Tiến Nổi Bật Dành Cho Người Dùng (What's New in v4.9.0)
 
-### 1. 🌐 Trải Nghiệm Trung Tâm Mạng Mượt Mà & Liền Mạch (Seamless Network Center)
-* **Chuyển đổi chức năng tự do không gián đoạn:** Người dùng có thể thoải mái bắt đầu đo tốc độ Internet (Speed Test), kiểm tra độ trễ mạng hoặc chạy chẩn đoán, sau đó chuyển sang bất kỳ trang nào khác (Dọn rác, Tối ưu, Bảo mật, Cài đặt) và quay lại mà không bao giờ gặp tình trạng đơ giao diện hay nút bấm bị khóa.
-* **Tự động ngắt kết nối an toàn khi rời trang:** Khi chuyển sang trang khác trong lúc đang đo tốc độ, ứng dụng tự động ngắt các luồng truyền dữ liệu nền để tiết kiệm tối đa băng thông mạng và tài nguyên máy tính của bạn.
-* **Hiển thị số liệu trực quan, chống giật:** Số liệu đo tốc độ, độ trễ và thông số mạng được căn chỉnh chuyên nghiệp theo chuẩn hiển thị bảng biểu số liệu, giúp mắt dễ theo dõi và không bị nhảy chữ khi tốc độ thay đổi liên tục.
+### 1. 🛡️ Khiên Bảo Vệ Registry Đa Lớp (SafeRegistryGuard Enterprise Barrier)
+* **Bảo vệ toàn vẹn Registry hệ thống:** Tích hợp bộ lọc an toàn `SafeRegistryGuard`, ngăn chặn tuyệt đối mọi hành vi xóa nhầm hoặc sửa đổi các nhánh gốc Windows (`HKLM`, `HKCU`, `HKCR`, `HKU`, `HKCC`) và các nhánh cấu hình sống còn (`SYSTEM\CurrentControlSet`, `Winlogon`, `Image File Execution Options`).
+* **Bảo vệ khóa khởi động và thông số boot:** Các giá trị nhạy cảm của hệ thống như `Shell`, `Userinit`, `AppInit_DLLs` được khóa an toàn, ngăn chặn mã độc hoặc thao tác dọn dẹp nhầm lẫn làm hỏng phiên đăng nhập Windows.
+* **Yêu cầu phân cấp nghiêm ngặt:** Khóa Registry chỉ được phép xóa khi có độ sâu từ 3 phân cấp trở lên và thuộc về ứng dụng cụ thể.
 
-### 2. ⚡ Tối Ưu Hóa Phản Hồi Giao Diện & Tự Động Phục Hồi Trạng Thái (UI Responsiveness & State Recovery)
-* **Khôi phục trạng thái sẵn sàng tức thì:** Mọi công cụ kiểm tra, quét rác hay sửa chữa hệ thống luôn tự động đặt lại trạng thái sẵn sàng ngay khi người dùng quay lại trang, loại bỏ hoàn toàn hiện tượng nút chức năng bị vô hiệu hóa ngoài ý muốn.
-* **Hoạt động nền siêu nhẹ:** Ứng dụng tự động tối ưu và thu gọn bộ nhớ tiêu thụ khi thu nhỏ xuống khay hệ thống, giữ cho máy tính luôn nhẹ nhàng và sẵn sàng cho các tựa game hoặc tác vụ làm việc nặng.
+### 2. 🔒 Bảo Vệ Dịch Vụ Cốt Lõi Hệ Điều Hành (ServiceSafetyService Fail-Safe)
+* **Chống dừng / vô hiệu hóa nhầm dịch vụ Windows:** Tích hợp cơ chế kiểm soát dịch vụ bảo vệ tuyệt đối các dịch vụ lõi như `RpcSs` (Remote Procedure Call), `WinDefend` (Microsoft Defender), `SamSs` (Security Accounts Manager), `PlugPlay`, `RpcEptMapper`, `DcomLaunch`.
+* **Cảnh báo và tự động ghi log an toàn:** Bất kỳ thao tác nào cố tình đưa dịch vụ cốt lõi về trạng thái `Disabled` hoặc `Stop` đều bị chặn tức thì và ghi nhận vào nhật ký kiểm toán hệ thống.
 
-### 3. 🛡️ Củng Cố Khiên Bảo Vệ Hệ Thống & Chống Xóa Nhầm (Enhanced System Protection)
-* **Bảo vệ tuyệt đối tệp tin cốt lõi:** Khiên bảo vệ thông minh tự động ngăn chặn việc can thiệp hoặc xóa nhầm các tệp tin hệ điều hành quan trọng, dữ liệu tài khoản và các trình duyệt đang hoạt động.
-* **Tự động sao lưu an toàn:** Tất cả các thao tác tinh chỉnh Registry hay sửa lỗi hệ thống đều tự động tạo điểm khôi phục dự phòng trước khi thực hiện.
+### 3. ⚡ Quản Lý Vòng Đời Tác Vụ & Điều Phối Giao Diện An Toàn (CancellationToken & UI Dispatcher)
+* **Hủy tác vụ an toàn, tức thời:** Toàn bộ các thao tác quét rác, quét tàn dư, sửa Registry, chẩn đoán AI và kiểm tra mạng đều được kiểm soát bởi `CancellationToken`. Người dùng có thể hủy hoặc chuyển trang bất kỳ lúc nào mà không lo ứng dụng bị treo.
+* **Tự động dọn dẹp khi rời trang (`OnNavigatedFrom`):** Khi người dùng chuyển trang, ViewModel tự động hủy tác vụ cũ, giải phóng trạng thái `IsBusy` và ngắt kết nối sự kiện ngầm, đảm bảo khi quay lại trang luôn sẵn sàng 100%.
+* **Đồng bộ luồng giao diện WinUI 3 hoàn hảo:** Mọi thông báo ngầm từ cơ sở dữ liệu SQLite và tiến độ xử lý đều được điều phối chuẩn xác qua `App.MainDispatcherQueue.TryEnqueue()`, triệt tiêu hoàn toàn nguy cơ lỗi luồng chéo (COMException).
+
+### 4. 📁 Củng Cố An Toàn Tệp Tin & Thư Mục (Enhanced SafePathGuard)
+* **Xóa thư mục không đệ quy:** Quy trình dọn dẹp thư mục chuyển sang cơ chế xóa an toàn không đệ quy (`Delete(false)`), đảm bảo chỉ xóa thư mục khi đã thực sự rỗng và bảo vệ toàn vẹn các liên kết tượng trưng (Junction/Symlink).
+* **Khóa bảo vệ `C:\ProgramData`:** Bổ sung `C:\ProgramData` và các thư mục bảo mật Windows vào danh sách cấm xóa tuyệt đối.
 
 ---
 
@@ -80,5 +85,5 @@
 ---
 
 <div align="center">
-  <sub>WinCare Pro Suite v4.8.0 Nova • Phát triển bởi <b>Nguyễn Trung Tiến</b></sub>
+  <sub>WinCare Pro Suite v4.9.0 Nova • Phát triển bởi <b>Nguyễn Trung Tiến</b></sub>
 </div>

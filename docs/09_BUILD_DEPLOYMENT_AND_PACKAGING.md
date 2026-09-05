@@ -2,7 +2,7 @@
 
 > [⬅️ 08. Kiểm Thử Tự Động & QA](08_TESTING_AND_QUALITY_ASSURANCE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 09** • [Trang Kế Tiếp: 10. Hướng Dẫn Lập Trình Viên Mới ➡️](10_DEVELOPER_ONBOARDING_GUIDE.md)
 
-Tài liệu này hướng dẫn quy trình biên dịch mã nguồn, xuất bản bản phát hành (Publish), đóng gói bộ cài đặt cài qua **Inno Setup**, cấu hình hệ thống cập nhật tự động **Auto-Update**, và thiết lập đường ống tích hợp liên tục **CI/CD** trong **WinCare Pro Suite v4.6 (Codename: Nova)**.
+Tài liệu này hướng dẫn quy trình biên dịch mã nguồn, xuất bản bản phát hành (Publish), đóng gói bộ cài đặt cài qua **Inno Setup**, cấu hình hệ thống cập nhật tự động **Auto-Update**, và thiết lập đường ống tích hợp liên tục **CI/CD** trong **WinCare Pro Suite v4.9 (Codename: Nova)**.
 
 ---
 
@@ -67,14 +67,14 @@ File cài đặt sau khi hoàn tất sẽ nằm tại: `PublishOutput/WinCarePro
 
 ```json
 {
-  "version": "4.8.0",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.8.0/WinCareProSetup.exe",
-  "sha256": "766663278a3754e66596dff7ef411595b13dc4883aeb3d802f451730bde177f7",
-  "changelog": "Cập nhật v4.8.0 (Codename: Nova): Khắc phục triệt để lỗi đóng băng khi chuyển trang trong Speed Test và chẩn đoán mạng, tối ưu hóa vòng đời ViewModel, làm sạch bộ nhớ tự động và nâng cao độ ổn định hệ thống toàn diện.",
-  "beta_version": "4.8.0-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.8.0-beta/WinCareProSetup_Beta.exe",
-  "beta_sha256": "766663278a3754e66596dff7ef411595b13dc4883aeb3d802f451730bde177f7",
-  "beta_changelog": "WinCare Pro v4.8 (Nova Resilience & System Hardening Release)"
+  "version": "4.9.0",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.0/WinCareProSetup.exe",
+  "sha256": "343f7a8472bc1495f0cddd5a78c2589acbcb956b1b6dffafb3171617bb8c35ac",
+  "changelog": "Cập nhật v4.9.0 (Codename: Nova): Production Hardening toàn diện, SafeRegistryGuard & SafePathGuard chống can thiệp hệ điều hành, ServiceSafetyService bảo vệ dịch vụ cốt lõi, quản lý vòng đời CancellationToken triệt tiêu rò rỉ tác vụ.",
+  "beta_version": "4.9.0-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.0-beta/WinCareProSetup_Beta.exe",
+  "beta_sha256": "343f7a8472bc1495f0cddd5a78c2589acbcb956b1b6dffafb3171617bb8c35ac",
+  "beta_changelog": "WinCare Pro v4.9 (Nova Production Hardening & Safety Architecture Release)"
 }
 ```
 
@@ -97,7 +97,7 @@ graph LR
     Checkout["1. Checkout Code"] --> SetupDotnet["2. Setup .NET 10 SDK"]
     SetupDotnet --> Restore["3. Restore NuGet Packages"]
     Restore --> Build["4. Compile Release Solution"]
-    Build --> Test["5. Run xUnit 227 Tests"]
+    Build --> Test["5. Run xUnit 300 Tests"]
     Test --> Pack["6. Package Inno Setup Installer"]
     Pack --> Release["7. Publish Artifacts / GitHub Release"]
 ```

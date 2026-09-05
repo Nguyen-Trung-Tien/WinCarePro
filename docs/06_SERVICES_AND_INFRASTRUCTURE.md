@@ -2,7 +2,7 @@
 
 > [⬅️ 05. Tiêu Chuẩn Bảo Mật & An Toàn](05_SECURITY_AND_SAFETY_ARCHITECTURE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 06** • [Trang Kế Tiếp: 07. Hệ Thống Thiết Kế UI/UX Aura Glass ➡️](07_UI_UX_DESIGN_SYSTEM.md)
 
-Tài liệu này cung cấp chi tiết về các dịch vụ nghiệp vụ nền (`Services/`) và các module hạ tầng kỹ thuật (`Infrastructure/`) trong **WinCare Pro Suite v4.6 (Codename: Nova)**.
+Tài liệu này cung cấp chi tiết về các dịch vụ nghiệp vụ nền (`Services/`) và các module hạ tầng kỹ thuật (`Infrastructure/`) trong **WinCare Pro Suite v4.9 (Codename: Nova)**.
 
 ---
 

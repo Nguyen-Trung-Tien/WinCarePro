@@ -1,6 +1,6 @@
 # 📚 WinCare Pro Suite — Documentation Hub (Trung Tâm Tài Liệu)
 
-> **Phiên bản hệ thống:** v4.6 (Codename: Nova)  
+> **Phiên bản hệ thống:** v4.9 (Codename: Nova)  
 > **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64)  
 > **Công nghệ cốt lõi:** .NET 10.0 • Windows App SDK (WinUI 3) • SQLite WAL • Modular MVVM  
 > **Ngôn ngữ tài liệu:** Tiếng Việt (Chính thức) & English Technical References  
@@ -61,10 +61,10 @@ graph TD
 | **02** | [**02. Chi Tiết 16 Phân Hệ Chức Năng**](02_CORE_MODULES_DETAILED.md) | Đặc tả 16 Modules: Dashboard, AI Assistant, Junk Cleaner, Uninstaller, Security, Turbo Game, Widget,... | *Developers, Product Owners* |
 | **03** | [**03. Tầng Động Cơ Nghiệp Vụ**](03_ENGINES_AND_BUSINESS_LOGIC.md) | Thuật toán Heuristic chẩn đoán AI, RAM booster, công thức chấm điểm sức khỏe, SFC/DISM wrapper. | *Engine Developers* |
 | **04** | [**04. Cơ Sở Dữ Liệu & Lưu Trữ**](04_DATABASE_AND_STORAGE.md) | SQLite 3 WAL Mode, PRAGMA tuning, Lược đồ 6 bảng CSDL, Version Migration và bảo mật dữ liệu. | *Data & Backend Devs* |
-| **05** | [**05. Tiêu Chuẩn An Toàn & Bảo Mật**](05_SECURITY_AND_SAFETY_ARCHITECTURE.md) | SafePathGuard chống xóa nhầm, Service Safety Whitelist, ProcessRunner ArgumentList chống Injection. | *Security Engineers* |
+| **05** | [**05. Tiêu Chuẩn An Toàn & Bảo Mật**](05_SECURITY_AND_SAFETY_ARCHITECTURE.md) | SafePathGuard, SafeRegistryGuard, Service Safety Whitelist, ProcessRunner ArgumentList chống Injection, CancellationToken Lifecycle. | *Security Engineers* |
 | **06** | [**06. Dịch Vụ Nền & Hạ Tầng Hệ Thống**](06_SERVICES_AND_INFRASTRUCTURE.md) | Background Workers, Theme Studio đa bảng màu, Bộ dịch thuật ngữ đa ngôn ngữ, UndoManager hoàn tác. | *Core Developers* |
 | **07** | [**07. Hệ Thống Thiết Kế UI/UX Aura Glass**](07_UI_UX_DESIGN_SYSTEM.md) | Fluent Design 2.0, Mica Backdrop, Acrylic, Shimmer Skeleton Loader, Composition 120 FPS Motion. | *UI/UX Designers & Devs* |
-| **08** | [**08. Kiểm Thử Tự Động & Đảm Bảo Chất Lượng**](08_TESTING_AND_QUALITY_ASSURANCE.md) | Bộ 227 Unit Tests xUnit, kiểm thử đa luồng, Mocking, tỷ lệ bao phủ và tiêu chuẩn Zero-Bug. | *QA & Testers* |
+| **08** | [**08. Kiểm Thử Tự Động & Đảm Bảo Chất Lượng**](08_TESTING_AND_QUALITY_ASSURANCE.md) | Bộ 300 Unit Tests xUnit, kiểm thử đa luồng, Mocking, tỷ lệ bao phủ và tiêu chuẩn Zero-Bug. | *QA & Testers* |
 | **09** | [**09. Đóng Gói, Triển Khai & CI/CD**](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) | Biên dịch Self-Contained x64, Đóng gói Inno Setup 6, cấu hình Auto-Update và GitHub Actions CI. | *DevOps, Release Managers* |
 | **10** | [**10. Hướng Dẫn Lập Trình Viên Mới**](10_DEVELOPER_ONBOARDING_GUIDE.md) | Setup môi trường Visual Studio 2022, quy chuẩn code C# 13, hướng dẫn từng bước thêm một Module mới. | *New Developers* |
 | **11** | [**11. Hướng Dẫn Sử Dụng Chi Tiết (Tiếng Việt)**](11_USER_MANUAL_VI.md) | Cẩm nang thao tác dành cho người dùng cuối: Dọn dẹp máy tính, tăng tốc game, khôi phục hệ thống. | *End Users, Support Team* |

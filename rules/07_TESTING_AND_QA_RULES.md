@@ -6,7 +6,7 @@
 
 ## 🏆 1. Chính Sách Không Lỗi Tuyệt Đối (Zero-Bug Policy)
 
-Dự án duy trì tỷ lệ kiểm thử thành công **100% Passed (227/227 Tests)**. Không một bản build nào được phép xuất xưởng nếu có bất kỳ bài test nào bị `Failed`.
+Dự án duy trì tỷ lệ kiểm thử thành công **100% Passed (300/300 Tests)**. Không một bản build nào được phép xuất xưởng nếu có bất kỳ bài test nào bị `Failed`.
 
 ```powershell
 # Lệnh kiểm thử bắt buộc trước khi merge code:

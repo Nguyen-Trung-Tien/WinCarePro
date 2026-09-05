@@ -9,11 +9,14 @@
 WinCare Pro can thiệp vào Registry để tối ưu hệ thống, chỉnh sửa Context Menu, quản lý ứng dụng khởi động và thu dọn tàn dư.
 
 ### 🔴 CÁC QUY TẮC BẮT BUỘC:
-1. **Bắt buộc sao lưu trước khi ghi/xóa:**
+1. **Kiểm tra qua SafeRegistryGuard:**
+   - Mọi thao tác xóa khóa hoặc sửa giá trị Registry **bắt buộc** phải vượt qua kiểm tra [SafeRegistryGuard.cs](file:///d:/WinCare/Core/Helpers/SafeRegistryGuard.cs).
+   - Tuyệt đối cấm xóa Root Hives (`HKLM`, `HKCU`, `HKCR`, `HKU`, `HKCC`).
+   - Cấm xóa các tiền tố hệ thống sống còn (`HKLM\SYSTEM\CurrentControlSet\Control`, `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion`).
+   - Độ sâu khóa xóa phải đạt tối thiểu từ 3 cấp trở lên (`SegmentCount >= 3`).
+   - Cấm sửa đổi/xóa các giá trị khởi động thiết yếu (`Shell`, `Userinit`).
+2. **Bắt buộc sao lưu trước khi ghi/xóa:**
    - Trước khi sửa đổi bất kỳ Key/Value nào trong Registry, **bắt buộc** gọi `RegistryBackupEngine.BackupKey()` để xuất bản sao lưu `.reg` an toàn.
-2. **Xác thực quyền & Nhánh Registry (Hive Safety):**
-   - Chỉ ghi vào `RegistryHive.CurrentUser` (`HKCU`) hoặc `RegistryHive.LocalMachine` (`HKLM`).
-   - Tuyệt đối không xóa toàn bộ một SubKey nhánh gốc hệ thống (`HKCR`, `HKU`, `HKCC`).
 3. **Phân biệt 32-bit & 64-bit Registry Views (`RegistryView`):**
    - Khi quét ứng dụng đã cài đặt hoặc khóa khởi động, luôn duyệt cả hai chế độ `RegistryView.Registry64` và `RegistryView.Registry32` (`WOW6432Node`) để không bỏ sót thông tin.
 

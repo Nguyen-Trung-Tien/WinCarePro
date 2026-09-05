@@ -2,7 +2,7 @@
 
 > [⬅️ 10. Hướng Dẫn Lập Trình Viên Mới](10_DEVELOPER_ONBOARDING_GUIDE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 11** • [Về Trang Đầu: 01. Kiến Trúc Tổng Thể ➡️](01_SYSTEM_ARCHITECTURE.md)
 
-Chào mừng bạn đến với **WinCare Pro Suite v4.6 (Codename: Nova)** — Hệ thống chăm sóc, dọn dẹp, bảo mật và tăng tốc Windows toàn diện thế hệ mới!
+Chào mừng bạn đến với **WinCare Pro Suite v4.9 (Codename: Nova)** — Hệ thống chăm sóc, dọn dẹp, bảo mật và tăng tốc Windows toàn diện thế hệ mới!
 
 ---
 

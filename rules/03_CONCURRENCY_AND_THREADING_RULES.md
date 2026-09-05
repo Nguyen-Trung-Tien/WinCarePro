@@ -83,6 +83,11 @@ public async Task<OperationResult<List<JunkItem>>> ScanDirectoryAsync(
 }
 ```
 
+### 🔴 Quy Chuẩn Vòng Đời Điều Hướng (Navigation Lifecycle & Cleanup):
+1. **Quản lý CancellationTokenSource:** Mọi ViewModel có tác vụ dài hạn phải duy trì `CancellationTokenSource? _cts`.
+2. **Hủy khi rời trang (OnNavigatedFrom / Cleanup):** Khi người dùng chuyển trang hoặc nhấn nút Hủy, ViewModel/Page **bắt buộc** phải gọi `_cts?.Cancel()` và `_cts?.Dispose()`.
+3. **Triệt tiêu Orphaned Tasks:** Tuyệt đối không để task nền tiếp tục chạy ngầm và gọi `RunOnUI` cập nhật dữ liệu sau khi View đã bị hủy hoặc điều hướng sang trang khác.
+
 ---
 
 ## 💾 3. Quy Chuẩn Khóa Đồng Bộ CSDL (`_dbLock` & SQLite WAL)

@@ -2,7 +2,7 @@
 
 > [🏠 Mục Lục Toàn Bộ 11 Tài Liệu Kỹ Thuật (Docs Hub)](README.md) • [10. Hướng Dẫn Lập Trình Viên Mới](10_DEVELOPER_ONBOARDING_GUIDE.md)
 
-Tài liệu này cung cấp bản tóm tắt nhanh cho các nhà phát triển và kiến trúc sư phần mềm muốn tìm hiểu nhanh về cách hoạt động, kiến trúc thiết kế, và các tiêu chuẩn bảo mật/hiệu năng trong dự án **WinCare Pro Suite v4.6 (Codename: Nova)**. Để xem trọn bộ 11 tài liệu chuyên đề chi tiết, vui lòng truy cập **[Docs Hub (README.md)](README.md)**.
+Tài liệu này cung cấp bản tóm tắt nhanh cho các nhà phát triển và kiến trúc sư phần mềm muốn tìm hiểu nhanh về cách hoạt động, kiến trúc thiết kế, và các tiêu chuẩn bảo mật/hiệu năng trong dự án **WinCare Pro Suite v4.9 (Codename: Nova)**. Để xem trọn bộ 11 tài liệu chuyên đề chi tiết, vui lòng truy cập **[Docs Hub (README.md)](README.md)**.
 
 ---
 
@@ -120,9 +120,19 @@ Do ứng dụng can thiệp sâu vào các cài đặt hệ thống, WinCare Pro
 Điều này đảm bảo các lệnh hệ thống như `sfc /scannow`, `dism`, hoặc sửa đổi Registry tại nhánh `HKEY_LOCAL_MACHINE` không bị từ chối quyền truy cập (`UnauthorizedAccessException`).
 
 ### 4.2. Chống Tấn công Chèn lệnh (Command Injection Prevention)
-Khi sử dụng [ProcessRunner.cs](file:///d:/WinCare/Core/Helpers/ProcessRunner.cs) để khởi chạy các tiến trình ngoài, ứng dụng tách biệt rõ ràng phần tệp thực thi (`FileName`) và các tham số (`Arguments`). Không sử dụng cơ chế nối chuỗi thô từ input của người dùng để ngăn chặn tấn công chèn lệnh độc hại.
+Khi sử dụng [ProcessRunner.cs](file:///d:/WinCare/Core/Helpers/ProcessRunner.cs) để khởi chạy các tiến trình ngoài, ứng dụng sử dụng `ProcessStartInfo.ArgumentList` thay vì ghép chuỗi câu lệnh thô từ input của người dùng để loại trừ hoàn toàn nguy cơ Command Injection.
 
-### 4.3. An toàn Dữ liệu Mạng
+### 4.3. Phòng Vệ Hệ Thống & Tệp Tin Cốt Lõi (SafePathGuard & SafeRegistryGuard)
+- [SafePathGuard.cs](file:///d:/WinCare/Core/Helpers/SafePathGuard.cs) bảo vệ thư mục gốc Windows, `System32`, `Boot`, `WinSxS`, `ProgramData`, và các file nhạy cảm (`Login Data`, `Web Data`, `SAM`, `SECURITY`, `SYSTEM`).
+- [SafeRegistryGuard.cs](file:///d:/WinCare/Core/Helpers/SafeRegistryGuard.cs) ngăn chặn xóa Root Hives, bảo vệ các khóa Windows cốt lõi và các giá trị sống còn như `Shell`, `Userinit`.
+- [ServiceSafetyService.cs](file:///d:/WinCare/Infrastructure/Security/ServiceSafetyService.cs) duy trì danh sách trắng bảo vệ các dịch vụ Windows thiết yếu không bị vô hiệu hóa nhầm.
+
+### 4.4. Quản Lý Vòng Đời Bất Đồng Bộ (CancellationToken Lifecycle & DispatcherQueue)
+- Mọi ViewModel và Engine đều hỗ trợ `CancellationToken` cho các tác vụ dài hạn (Scan, Clean, Repair, Test).
+- Khi người dùng bấm Hủy hoặc chuyển trang (`Cleanup`), `CancellationTokenSource` được kích hoạt lập tức để giải phóng luồng và tài nguyên.
+- Mọi cập nhật giao diện bất đồng bộ đều đi qua `DispatcherQueue.TryEnqueue` để đảm bảo Thread-Safety tuyệt đối.
+
+### 4.5. An toàn Dữ liệu Mạng
 Hệ thống giám sát và cấu hình Secure DNS sử dụng DNS-over-HTTPS (DoH). Cấu hình này được ghi trực tiếp vào cấu trúc đăng ký DNS của Windows một cách an toàn thông qua Registry hệ thống.
 
 ---

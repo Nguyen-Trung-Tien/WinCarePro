@@ -2,7 +2,7 @@
 
 > [⬅️ 09. Đóng Gói & CI/CD](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) • [🏠 Mục Lục Docs](README.md) • **Chương 10** • [Trang Kế Tiếp: 11. Hướng Dẫn Sử Dụng Chi Tiết ➡️](11_USER_MANUAL_VI.md)
 
-Chào mừng bạn tham gia phát triển **WinCare Pro Suite**! Tài liệu này cung cấp hướng dẫn từng bước từ việc thiết lập môi trường đến quy trình xây dựng thêm một tính năng/phân hệ mới theo đúng chuẩn kiến trúc của dự án.
+Chào mừng bạn tham gia phát triển **WinCare Pro Suite v4.9 (Codename: Nova)**! Tài liệu này cung cấp hướng dẫn từng bước từ việc thiết lập môi trường đến quy trình xây dựng thêm một tính năng/phân hệ mới theo đúng chuẩn kiến trúc của dự án.
 
 ---
 

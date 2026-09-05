@@ -2074,6 +2074,7 @@ public partial class TranslationManager
         _translations["Diagnostics Trace Log Reader"] = "Trình đọc nhật ký theo dõi chẩn đoán";
         _translations["Real-time application framework execution events."] = "Các sự kiện thực thi framework ứng dụng theo thời gian thực.";
         _translations["System Optimizer & Security Shield"] = "Tối ưu hóa hệ thống & Khiên bảo mật";
+        _translations["Version 4.9.0 (Stable Release)"] = "Phiên bản 4.9.0 (Bản ổn định)";
         _translations["Version 4.8.0 (Stable Release)"] = "Phiên bản 4.8.0 (Bản ổn định)";
         _translations["Version 4.7.0 (Stable Release)"] = "Phiên bản 4.7.0 (Bản ổn định)";
         _translations["Version 4.6.0 (Stable Release)"] = "Phiên bản 4.6.0 (Bản ổn định)";
@@ -2736,6 +2737,7 @@ public partial class TranslationManager
         _translations["About WinCare Pro"] = "Thông tin về WinCare Pro";
         _translations["Software architecture, lead developer portfolio, zero-telemetry privacy pledge, and open-source ecosystem."] = "Kiến trúc phần mềm, hồ sơ nhà phát triển chính, cam kết quyền riêng tư không telemetry và hệ sinh thái mã nguồn mở.";
         _translations["Software build specifications, developer contact, and open-source repository."] = "Thông số bản dựng phần mềm, liên hệ nhà phát triển và kho mã nguồn mở.";
+        _translations["v4.9.0 Nova"] = "v4.9.0 Nova";
         _translations["v4.8.0 Nova"] = "v4.8.0 Nova";
         _translations["v4.7.0 Nova"] = "v4.7.0 Nova";
         _translations["v4.6.0 Nova"] = "v4.6.0 Nova";
@@ -2743,12 +2745,16 @@ public partial class TranslationManager
         _translations["Evolution Suite"] = "Bộ Evolution Suite";
         _translations["Next-Generation System Optimizer, Security Shield & Care Suite"] = "Bộ Tối Ưu Hệ Thống, Lá Chắn Bảo Mật & Chăm Sóc Thế Hệ Mới";
         _translations["System Optimizer, Security Shield & Care Suite"] = "Bộ Tối Ưu Hệ Thống, Lá Chắn Bảo Mật & Chăm Sóc Toàn Diện";
+        _translations["Version 4.9.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.9.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit Native";
         _translations["Version 4.8.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.8.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit Native";
         _translations["Version 4.7.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.7.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit Native";
         _translations["Version 4.6.0 (Codename: Nova) • 64-bit Native System Suite"] = "Phiên bản 4.6.0 (Codename: Nova) • Bộ Công Cụ Hệ Thống 64-bit Native";
+        _translations["What's New in v4.9"] = "Điểm mới trong v4.9";
         _translations["What's New in v4.8"] = "Điểm mới trong v4.8";
         _translations["What's New in v4.7"] = "Điểm mới trong v4.7";
         _translations["What's New in v4.6"] = "Điểm mới trong v4.6";
+        _translations["v4.9 Nova Release"] = "Bản Phát Hành v4.9 Nova";
+        _translations["Version 4.9.0 (Nova) • 64-bit Native System Suite"] = "Phiên bản 4.9.0 (Nova) • Bộ Công Cụ Hệ Thống 64-bit Native";
         _translations["View official release notes & new features changelog"] = "Xem ghi chú phát hành chính thức & danh sách tính năng mới";
         _translations["PROCESS WORKING SET"] = "BỘ NHỚ TIẾN TRÌNH";
         _translations["ACTIVE SESSION UPTIME"] = "THỜI GIAN PHIÊN HOẠT ĐỘNG";

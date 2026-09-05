@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.9.0] - 2026-09-05 (Nova Production Hardening & Safety Architecture Release)
+
+### What's New
+- **SafeRegistryGuard Enterprise Barrier:** Centralized protection for Windows registry hives (`HKLM`, `HKCU`, `HKCR`, `HKU`, `HKCC`), critical OS keys (`SYSTEM\CurrentControlSet`, `Winlogon`, `Image File Execution Options`), and security-critical values (`Shell`, `Userinit`, `AppInit_DLLs`). Key deletions strictly require depth ≥ 3 levels.
+- **ServiceSafetyService Fail-Safe Guard:** Kernel and critical operating system services (`RpcSs`, `WinDefend`, `SamSs`, `PlugPlay`, `RpcEptMapper`, `DcomLaunch`) are safeguarded against accidental stopping or disabling in Startup & Services Manager.
+- **Full Cancellation & Lifecycle Hardening:** Integrated `CancellationToken` throughout scan, batch uninstall, leftover purge, registry repair, and AI diagnostics. Pages automatically invoke `ViewModel.Cleanup()` on `OnNavigatedFrom`, preventing background tasks from modifying detached or disposed views.
+- **UI Dispatcher Thread-Safety:** Background SQLite notification inserts and engine progress events are strictly marshalled to the UI thread via `App.MainDispatcherQueue.TryEnqueue()`, completely eliminating cross-thread COM exceptions.
+- **Standardized OperationResult & Error Propagation:** Unified `OperationResult` and `OperationResult<T>` with rich `Exception` propagation, `HasWarnings`, and `HasErrors` properties across all engine boundaries.
+- **Comprehensive Quality Milestone:** 300 / 300 automated unit and regression tests passing with 0 Warnings and 0 Errors across both Debug and Release configurations.
+
+### Changes
+- **SafePathGuard Enhanced:** Made folder cleanup strictly non-recursive (`Delete(false)`) to guarantee directories are only removed when empty, added `C:\ProgramData` to protected exact paths, and verified reparse points before leftover folder deletion.
+- **WMI Timeout Hardening:** Configured 5-second timeout and immediate return flags on `ManagementObjectSearcher` queries to prevent thread locking on damaged WMI repositories.
+- **Registry Repair Rescan Fix:** Resolved state locking in `RegistryViewModel.RepairSelectedAsync` to allow instant rescan after completing repair operations.
+
+---
+
 ## [4.8.0] - 2026-09-03 (Nova Resilience & State Recovery Release)
 
 ### What's New

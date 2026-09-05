@@ -2,7 +2,7 @@
 
 > [⬅️ 03. Tầng Động Cơ Nghiệp Vụ](03_ENGINES_AND_BUSINESS_LOGIC.md) • [🏠 Mục Lục Docs](README.md) • **Chương 04** • [Trang Kế Tiếp: 05. Tiêu Chuẩn Bảo Mật & An Toàn ➡️](05_SECURITY_AND_SAFETY_ARCHITECTURE.md)
 
-Tài liệu này trình bày chi tiết về kiến trúc tầng lưu trữ dữ liệu, cấu hình cơ sở dữ liệu SQLite 3, lược đồ bảng (Schema), chiến lược di chuyển (Migration) và mã hóa an toàn trong **WinCare Pro Suite v4.6 (Codename: Nova)**.
+Tài liệu này trình bày chi tiết về kiến trúc tầng lưu trữ dữ liệu, cấu hình cơ sở dữ liệu SQLite 3, lược đồ bảng (Schema), chiến lược di chuyển (Migration) và mã hóa an toàn trong **WinCare Pro Suite v4.9 (Codename: Nova)**.
 
 ---
 

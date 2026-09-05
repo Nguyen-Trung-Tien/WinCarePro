@@ -2,7 +2,7 @@
 
 > [🏠 Main Documentation Hub](README.md) • [01. Detailed System Architecture (Vietnamese)](01_SYSTEM_ARCHITECTURE.md)
 >
-> **Version:** 4.6 Nova (Production Release)  
+> **Version:** 4.9 Nova (Production Release)  
 > **Platform:** Windows 10 (Build 19041+) & Windows 11 (x64)  
 > **Framework:** .NET 10.0 + Windows App SDK (WinUI 3)  
 > **Architecture Standard:** Layered Domain-Driven Architecture with Zero-Trust Security & Thread-Safe Concurrency
@@ -47,6 +47,7 @@ graph TD
         OpResult["OperationResult & OperationResult&lt;T&gt;"]
         Models["SystemTweak, JunkCategory, InstalledAppInfo, etc."]
         SafeGuard["SafePathGuard (System Directory & File Blacklist)"]
+        SafeReg["SafeRegistryGuard (Root Hive & System Critical Keys Shield)"]
         ProcRunner["ProcessRunner (Structured Argument Execution)"]
     end
 
@@ -169,13 +170,14 @@ WinCare Pro includes a comprehensive xUnit test suite (`WinCarePro.Tests`):
 | :--- | :--- | :--- |
 | `MasterUpgradePhaseTests` | Core Architecture | `OperationResult`, Authenticode `WinVerifyTrust`, `StateSnapshots`, SystemTweak metadata. |
 | `SecurityAndSafetyTests` | Filesystem & Shell | `SafePathGuard` system path rejection, argument sanitization, `.reg` header safety. |
+| `ProductionHardeningTests` | Concurrency & Safety | `SafeRegistryGuard`, `ServiceSafetyService` core services, `CancellationToken` cancellation & thread-safety. |
 | `UninstallEngineTests` | App Management | Name normalization, version stripping, protected folder validation. |
 | `JunkCleanerEngineTests` | Cleaning Engine | Directory recursion, size calculations, category filters. |
 | `SystemOptimizerEngineTests`| System Tweaks | Registry value encoding/decoding, RAM working set metrics. |
 | `NetworkCenterEngineTests` | Network Engine | DNS benchmark, packet parsing, ping telemetry. |
 | `SettingsAndStateTests` | Config & Theme | Theme persistence, user settings caching, JSON serialization. |
 
-- **Test Suite Status:** **227 tests passing (100% success rate, 0 failures, 0 regressions)**.
+- **Test Suite Status:** **300 tests passing (100% success rate, 0 failures, 0 regressions)**.
 
 ---
 

@@ -1,4 +1,4 @@
-# 🚀 WinCare Pro Suite v4.8 (Codename: Nova)
+# 🚀 WinCare Pro Suite v4.9 (Codename: Nova)
 
 <div align="center">
   <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(0, 120, 212, 0.45); margin-bottom: 20px;" />
@@ -9,8 +9,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.8.0/WinCareProSetup.exe">
-      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v4.8-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v4.8" />
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.0/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v4.9-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v4.9" />
     </a>
   </p>
 
@@ -23,7 +23,7 @@
     <img src="https://img.shields.io/badge/Database-SQLite_3_(WAL)-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite 3" />
     <img src="https://img.shields.io/badge/Architecture-Modular_MVVM-008080?style=flat-square" alt="MVVM Pattern" />
     <img src="https://img.shields.io/badge/OS_Support-Windows_10_%2F_11-0078D6?style=flat-square&logo=windows" alt="Windows 10/11" />
-    <img src="https://img.shields.io/badge/Tests-100%25%20Passed%20(247%2F247)-success?style=flat-square&logo=xunit" alt="Tests Passed (247/247)" />
+    <img src="https://img.shields.io/badge/Tests-100%25%20Passed%20(300%2F300)-success?style=flat-square&logo=xunit" alt="Tests Passed (300/300)" />
     <img src="https://img.shields.io/badge/Security-Zero--Bug%20Hardened-green?style=flat-square&logo=shield" alt="Zero-Bug Hardened" />
   </p>
 </div>
@@ -32,9 +32,9 @@
 
 ## 📖 Tổng Quan Dự Án
 
-**WinCare Pro v4.8 (Codename: Nova)** là giải pháp tối ưu hóa, chăm sóc và khắc phục sự cố hệ điều hành Windows toàn diện. Với ngôn ngữ thiết kế **Aura Glass 2.0**, hiệu ứng kính mờ Mica/Acrylic, chuyển động mượt mà **Windows Composition 120 FPS**, cùng các trạng thái **Shimmer Skeleton Loading** và **Staggered Entrance Animation**, ứng dụng mang lại trải nghiệm thị giác cao cấp và hiện đại bậc nhất.
+**WinCare Pro v4.9 (Codename: Nova)** là giải pháp tối ưu hóa, chăm sóc và khắc phục sự cố hệ điều hành Windows toàn diện. Với ngôn ngữ thiết kế **Aura Glass 2.0**, hiệu ứng kính mờ Mica/Acrylic, chuyển động mượt mà **Windows Composition 120 FPS**, cùng các trạng thái **Shimmer Skeleton Loading** và **Staggered Entrance Animation**, ứng dụng mang lại trải nghiệm thị giác cao cấp và hiện đại bậc nhất.
 
-Ứng dụng tích hợp **Trợ lý AI WinCare Engine** chẩn đoán Heuristic không gửi dữ liệu ra ngoài, cửa sổ nổi **Desktop HUD Widget**, hệ thống **SafePathGuard** chống rò rỉ dữ liệu, cơ chế **Bảo vệ Dịch vụ Hệ thống (Service Safety Whitelist)**, và khả năng **tự động thu nhỏ RAM nền (< 15MB)** khi chạy ngầm dưới khay hệ thống.
+Ứng dụng tích hợp **Trợ lý AI WinCare Engine** chẩn đoán Heuristic không gửi dữ liệu ra ngoài, cửa sổ nổi **Desktop HUD Widget**, hệ thống phòng vệ kép **SafePathGuard** và **SafeRegistryGuard**, cơ chế **Bảo vệ Dịch vụ Hệ thống (Service Safety Whitelist)**, cơ chế hủy tác vụ đa luồng an toàn **CancellationToken Lifecycle**, và khả năng **tự động thu nhỏ RAM nền (< 15MB)** khi chạy ngầm dưới khay hệ thống.
 
 ---
 
@@ -51,13 +51,13 @@ graph TD
     classDef os fill:#701a75,stroke:#ec4899,stroke-width:2px,color:#fff;
 
     UI["Lớp Giao Diện (Presentation Layer)<br/>• MainWindow, MainPage & Desktop HUD Widget<br/>• 16 Chức năng Pages chuẩn Aura Glass 2.0<br/>• Shimmer Skeleton Loaders & Composition Motion"]:::ui
-    VM["Lớp Điều Phối Dữ Liệu (ViewModel Layer)<br/>• DashboardViewModel, JunkViewModel, SecurityViewModel...<br/>• CommunityToolkit.Mvvm, Thread-Safe UI Dispatching"]:::vm
+    VM["Lớp Điều Phối Dữ Liệu (ViewModel Layer)<br/>• DashboardViewModel, JunkViewModel, SecurityViewModel...<br/>• CommunityToolkit.Mvvm, Thread-Safe UI Dispatching<br/>• CancellationTokenSource Navigation Lifecycle"]:::vm
     Engine["Bộ Máy Xử Lý Nghiệp Vụ (Engine Layer)<br/>• AiDiagnosticsEngine, SystemOptimizerEngine<br/>• JunkCleanerEngine, SystemRepairEngine, NetworkEngine"]:::engine
-    Infra["Hạ Tầng & Bảo Mật (Infrastructure & Security)<br/>• SafePathGuard (Anti-Traversal & Credential Shield)<br/>• ServiceSafetyService (Windows Core Services Whitelist)<br/>• ProcessRunner (Argument-List Safe Process Exec)<br/>• SQLite WAL Database & Caching Layer"]:::infra
+    Infra["Hạ Tầng & Bảo Mật (Infrastructure & Security)<br/>• SafePathGuard (Anti-Traversal & Blacklist Directory Shield)<br/>• SafeRegistryGuard (Root Hive & System Critical Keys Shield)<br/>• ServiceSafetyService (Windows Core Services Whitelist)<br/>• ProcessRunner (Argument-List Safe Process Exec)<br/>• SQLite WAL Database & Caching Layer"]:::infra
     OS["Tầng Hệ Điều Hành (Windows OS Layer)<br/>• Win32 APIs, WMI, Performance Counters, Registry Hives<br/>• Windows Package Manager (winget CLI)"]:::os
 
     UI <--> |Data Binding & Commands| VM
-    VM --> |Invoke Async Tasks| Engine
+    VM --> |Invoke Async Tasks with CancellationToken| Engine
     Engine --> |Execute Guarded Operations| Infra
     Infra --> |Direct Interop| OS
 ```
@@ -91,12 +91,14 @@ graph TD
 
 1. **Chống Command Injection Tuyệt Đối:**
    - [ProcessRunner.cs](file:///d:/WinCare/Core/Helpers/ProcessRunner.cs) sử dụng `ProcessStartInfo.ArgumentList` thay vì ghép chuỗi câu lệnh thô (Raw String Concatenation), loại bỏ hoàn toàn nguy cơ chèn mã thực thi độc hại (`&`, `|`, `;`, `powershell -enc`).
-2. **Ngăn Chặn Path Traversal & Bảo Vệ Dữ Liệu Cá Nhân:**
-   - [SafePathGuard.cs](file:///d:/WinCare/Core/Helpers/SafePathGuard.cs) sở hữu danh sách đen toàn diện chặn xóa thư mục gốc hệ thống (`Windows`, `System32`, `Boot`, `WinSxS`, `System Volume Information`) và bảo vệ các tệp cơ sở dữ liệu đăng nhập nhạy cảm của người dùng (`Login Data`, `Web Data`, `Local State`, `SAM`, `SECURITY`, `SYSTEM`).
-   - Tự động bỏ qua các liên kết Reparse Points / Junction Symlinks tránh tấn công liên kết chéo.
-3. **Bảo Vệ Dịch Vụ Hệ Thống Cốt Lõi:**
-   - [ServiceSafetyService.cs](file:///d:/WinCare/Infrastructure/Security/ServiceSafetyService.cs) duy trì danh sách trắng (Whitelist) bảo vệ các dịch vụ nền thiết yếu (`RpcSs`, `DcomLaunch`, `SamSs`, `gpsvc`, `ProfSvc`, `BFE`, `WinDefend`, `CryptSvc`), ngăn chặn hành vi vô hiệu hóa nhầm làm sập Windows.
-4. **An Toàn Luồng Giao Diện (Thread-Safety & Crash Prevention):**
+2. **Ngăn Chặn Path Traversal & Bảo Vệ Thư Mục Trọng Yếu:**
+   - [SafePathGuard.cs](file:///d:/WinCare/Core/Helpers/SafePathGuard.cs) sở hữu danh sách đen toàn diện chặn xóa thư mục gốc hệ thống (`Windows`, `System32`, `Boot`, `WinSxS`, `System Volume Information`, `ProgramData`), bảo vệ các tệp cơ sở dữ liệu đăng nhập nhạy cảm (`Login Data`, `Web Data`, `Local State`, `SAM`, `SECURITY`, `SYSTEM`) và tự động bỏ qua Reparse Points / Junction Symlinks.
+3. **Bảo Vệ Registry Cốt Lõi Hệ Thống:**
+   - [SafeRegistryGuard.cs](file:///d:/WinCare/Core/Helpers/SafeRegistryGuard.cs) ngăn chặn xóa Root Hives (`HKLM`, `HKCU`), chặn các tiền tố cốt lõi hệ thống (`HKLM\SYSTEM\CurrentControlSet\Control`, `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion`), yêu cầu độ sâu đường dẫn tối thiểu ≥ 3 cấp, và bảo vệ các giá trị khởi động sống còn (`Shell`, `Userinit`).
+4. **Bảo Vệ Dịch Vụ Hệ Thống Cốt Lõi:**
+   - [ServiceSafetyService.cs](file:///d:/WinCare/Infrastructure/Security/ServiceSafetyService.cs) duy trì danh sách trắng (Whitelist) bảo vệ các dịch vụ nền thiết yếu (`RpcSs`, `DcomLaunch`, `SamSs`, `gpsvc`, `ProfSvc`, `BFE`, `WinDefend`, `CryptSvc`, `PlugPlay`, `RpcEptMapper`), ngăn chặn hành vi vô hiệu hóa nhầm làm hỏng HĐH.
+5. **Vòng Đời Hủy Tác Vụ Đa Luồng & An Toàn UI Dispatcher:**
+   - 100% các thao tác nền dài hạn (Scan, Repair, Update, Clean) nhận và kiểm tra `CancellationToken`. Khi người dùng chuyển trang hoặc nhấn Hủy, `CancellationTokenSource` được kích hoạt lập tức, ngắt luồng an toàn mà không để sót tác vụ mồ côi (orphaned task).
    - 100% các cập nhật giao diện bất đồng bộ được bảo vệ qua `DispatcherQueue.TryEnqueue`, ngăn chặn triệt để hiện tượng Cross-Thread Exception gây crash ứng dụng.
 
 ---
@@ -163,11 +165,11 @@ dotnet run
 
 ## 🏆 Đảm Bảo Chất Lượng & Kết Quả Kiểm Thử (100% Passed)
 
-Toàn bộ **227/227 Unit Tests** trong bộ kiểm thử `WinCarePro.Tests` đều vượt qua thành công:
+Toàn bộ **300/300 Unit Tests** trong bộ kiểm thử `WinCarePro.Tests` đều vượt qua thành công:
 
 ```text
 Test run for WinCarePro.Tests.dll (.NETCoreApp,Version=v10.0)
-Passed!  - Failed: 0, Passed: 227, Skipped: 0, Total: 227, Duration: 8 s
+Passed!  - Failed: 0, Passed: 300, Skipped: 0, Total: 300, Duration: 8 s
 ```
 
 ---

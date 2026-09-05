@@ -9,18 +9,18 @@ namespace WinCarePro.Tests;
 public class AppVersionManagementTests
 {
     [Fact]
-    public void AppConstants_VersionProperties_AreStandardizedTo480()
+    public void AppConstants_VersionProperties_AreStandardizedTo490()
     {
         Assert.Equal(4, AppConstants.CurrentVersion.Major);
-        Assert.Equal(8, AppConstants.CurrentVersion.Minor);
+        Assert.Equal(9, AppConstants.CurrentVersion.Minor);
         Assert.Equal(0, AppConstants.CurrentVersion.Build);
-        Assert.Equal("4.8.0", AppConstants.VersionString);
-        Assert.Equal("v4.8", AppConstants.DisplayVersion);
-        Assert.Equal("v4.8.0", AppConstants.DisplayVersionFull);
+        Assert.Equal("4.9.0", AppConstants.VersionString);
+        Assert.Equal("v4.9", AppConstants.DisplayVersion);
+        Assert.Equal("v4.9.0", AppConstants.DisplayVersionFull);
         Assert.Equal("WinCare Pro", AppConstants.AppName);
         Assert.Equal("Nova", AppConstants.Codename);
-        Assert.Contains("WinCare Pro v4.8", AppConstants.TitleWithVersion);
-        Assert.Contains("Version 4.8.0 (Codename: Nova)", AppConstants.SystemBadgeText);
+        Assert.Contains("WinCare Pro v4.9", AppConstants.TitleWithVersion);
+        Assert.Contains("Version 4.9.0 (Codename: Nova)", AppConstants.SystemBadgeText);
     }
 
     [Fact]

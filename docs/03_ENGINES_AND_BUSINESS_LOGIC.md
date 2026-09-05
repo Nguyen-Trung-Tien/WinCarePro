@@ -114,6 +114,7 @@ Engines/
     3. Thư mục `shell:startup` (`%AppData%\Microsoft\Windows\Start Menu\Programs\Startup`)
     4. Thư mục `shell:common startup` (`%ProgramData%\Microsoft\Windows\Start Menu\Programs\Startup`)
   - `ToggleStartupItem(StartupItem item, bool isEnabled)`: Bật/tắt bằng cách di chuyển khóa sang nhánh `RunDisabled` hoặc đổi thuộc tính file shortcut.
+  - **Cơ chế phòng vệ:** Tích hợp kiểm tra [SafeRegistryGuard.cs](file:///d:/WinCare/Core/Helpers/SafeRegistryGuard.cs) và [ServiceSafetyService.cs](file:///d:/WinCare/Infrastructure/Security/ServiceSafetyService.cs) để ngăn chặn sửa đổi các dịch vụ hoặc khóa hệ điều hành thiết yếu.
 
 ---
 

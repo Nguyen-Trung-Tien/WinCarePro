@@ -2,7 +2,7 @@
 
 > [🏠 Mục Lục Docs](README.md) • **Chương 01** • [Trang Kế Tiếp: 02. Chi Tiết 16 Phân Hệ ➡️](02_CORE_MODULES_DETAILED.md)
 
-Tài liệu này cung cấp cái nhìn chi tiết và chuyên sâu về kiến trúc phần mềm, nguyên lý thiết kế, cơ chế quản lý luồng dữ liệu và Dependency Injection trong **WinCare Pro Suite v4.6 (Codename: Nova)**.
+Tài liệu này cung cấp cái nhìn chi tiết và chuyên sâu về kiến trúc phần mềm, nguyên lý thiết kế, cơ chế quản lý luồng dữ liệu và Dependency Injection trong **WinCare Pro Suite v4.9 (Codename: Nova)**.
 
 ---
 
@@ -12,8 +12,8 @@ Dự án WinCare Pro được thiết kế và vận hành theo kim chỉ nam ư
 
 $$\mathbf{Safety} > \mathbf{Correctness} > \mathbf{Security} > \mathbf{Stability} > \mathbf{Performance} > \mathbf{Maintainability} > \mathbf{UX} > \mathbf{Aesthetics}$$
 
-1. **Zero-Crash UI:** Mọi thao tác tốn thời gian (I/O, quét tệp tin, phân tích tiến trình, gọi API hệ thống) đều chạy ở luồng nền (`Task.Run`) và cập nhật kết quả lên UI thread thông qua `DispatcherQueue.TryEnqueue`.
-2. **Fail-Safe by Default:** Bất kỳ thao tác can thiệp hệ thống nào (sửa Registry, xóa file, tinh chỉnh dịch vụ) đều phải có cơ chế xác thực an toàn (`SafePathGuard`, `ServiceSafetyService`), sao lưu dự phòng (`RegistryBackupEngine`, `SystemSnapshotService`), và trả về cấu trúc kết quả tường minh `OperationResult<T>`.
+1. **Zero-Crash UI:** Mọi thao tác tốn thời gian (I/O, quét tệp tin, phân tích tiến trình, gọi API hệ thống) đều chạy ở luồng nền (`Task.Run`) với hỗ trợ `CancellationToken` và cập nhật kết quả lên UI thread thông qua `DispatcherQueue.TryEnqueue`.
+2. **Fail-Safe by Default:** Bất kỳ thao tác can thiệp hệ thống nào (sửa Registry, xóa file, tinh chỉnh dịch vụ) đều phải có cơ chế xác thực an toàn (`SafePathGuard`, `SafeRegistryGuard`, `ServiceSafetyService`), sao lưu dự phòng (`RegistryBackupEngine`, `SystemSnapshotService`), và trả về cấu trúc kết quả tường minh `OperationResult<T>`.
 3. **Modular MVVM:** Phân rã tối đa các phân hệ giao diện thành các cặp View-ViewModel độc lập, không tham chiếu chéo phụ thuộc, dễ dàng mở rộng và viết unit test.
 
 ---
@@ -49,7 +49,7 @@ graph TD
 
     subgraph Infra_Layer ["4. Infrastructure & Services (Infrastructure/ & Services/)"]
         DbLayer["DbManager (SQLite WAL + Migrations)"]:::infra
-        SecLayer["SafePathGuard, ServiceSafetyService, CryptoHelper"]:::infra
+        SecLayer["SafePathGuard, SafeRegistryGuard, ServiceSafetyService, CryptoHelper"]:::infra
         Svcs["ThemeService, TranslationService, NotificationService, UndoManager"]:::infra
         LogLayer["AuditLogService, CrashLogger"]:::infra
     end
@@ -161,8 +161,9 @@ public class OperationResult<T> : OperationResult
 
 ---
 
-## 5. An Toàn Luồng Giao Diện (Thread-Safety & Concurrency)
+## 5. An Toàn Luồng Giao Diện & Vòng Đời Hủy Tác Vụ (Thread-Safety & Cancellation Lifecycle)
 
+### 5.1. Điều Phối Luồng UI An Toàn (`RunOnUI`)
 Do ứng dụng WinUI 3 có luồng UI riêng biệt (UI Dispatcher Thread), mọi cập nhật ObservableProperty hoặc CollectionBinding từ Background Thread bắt buộc phải qua `ViewModelBase`:
 
 ```csharp
@@ -185,6 +186,12 @@ public abstract class ViewModelBase : ObservableObject
 ```
 
 Nhờ mô hình này, hệ thống ngăn chặn 100% hiện tượng `COMException (0x8001010E: The application called an interface that was marshalled for a different thread)`.
+
+### 5.2. Quản Lý Vòng Đời Bất Đồng Bộ (`CancellationToken`)
+Khi người dùng chuyển qua lại giữa các trang trong ứng dụng:
+- Các Page triển khai sự kiện chuyển hướng hoặc phương thức dọn dẹp `Cleanup()` trên ViewModel.
+- Mỗi ViewModel duy trì một `CancellationTokenSource` cho các tác vụ nền đang chạy (Scan, Clean, Repair, Ping, SpeedTest).
+- Khi người dùng điều hướng rời trang hoặc ấn "Hủy", `cts?.Cancel()` được kích hoạt ngay lập tức, ngắt tiến trình nền mà không cập nhật UI sau khi View đã bị gỡ bỏ, triệt tiêu nguy cơ rò rỉ bộ nhớ và xung đột dữ liệu.
 
 ---
 

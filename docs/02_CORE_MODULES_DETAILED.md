@@ -2,7 +2,7 @@
 
 > [⬅️ 01. Kiến Trúc Tổng Thể](01_SYSTEM_ARCHITECTURE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 02** • [Trang Kế Tiếp: 03. Tầng Động Cơ Nghiệp Vụ ➡️](03_ENGINES_AND_BUSINESS_LOGIC.md)
 
-Tài liệu này mô tả chi tiết 16 phân hệ tính năng trong **WinCare Pro Suite v4.6 (Codename: Nova)**, bao gồm giao diện người dùng (View), tầng điều phối (ViewModel), động cơ xử lý (Engine), quyền hạn yêu cầu và mức độ an toàn.
+Tài liệu này mô tả chi tiết 16 phân hệ tính năng trong **WinCare Pro Suite v4.9 (Codename: Nova)**, bao gồm giao diện người dùng (View), tầng điều phối (ViewModel), động cơ xử lý (Engine), quyền hạn yêu cầu và mức độ an toàn.
 
 ---
 

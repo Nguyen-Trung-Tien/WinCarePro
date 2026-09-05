@@ -125,6 +125,7 @@ public partial class App : Application
         services.AddSingleton<Engines.ProcessService>();
         services.AddSingleton<Engines.NetworkEngine>();
         services.AddSingleton<Engines.ContextMenuEngine>();
+        services.AddSingleton<Engines.SystemEngine>();
 
         // Register ViewModels
         services.AddTransient<DashboardViewModel>();

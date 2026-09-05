@@ -10,6 +10,7 @@ using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Shared.Animations;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro.Views;
 
@@ -22,7 +23,8 @@ public sealed partial class DashboardPage : Page
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         
-        ViewModel = new DashboardViewModel(this.DispatcherQueue);
+        ViewModel = App.Services?.GetService<DashboardViewModel>() ?? new DashboardViewModel(this.DispatcherQueue);
+        ViewModel.DispatcherQueue = this.DispatcherQueue;
         this.Loaded += async (s, e) => 
         {
             ViewModel.DispatcherQueue = this.DispatcherQueue;

@@ -93,7 +93,7 @@ public class DiagnosticIssueItem : ViewModelBase
 public class RepairViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue? _dispatcherQueue;
-    private readonly SystemEngine _repairEngine = App.Services?.GetService<SystemEngine>() ?? new();
+    private readonly SystemEngine _repairEngine;
     private readonly EventHandler _languageChangedHandler;
     private CancellationTokenSource? _cts;
     private bool _isDisposed;
@@ -252,9 +252,14 @@ public class RepairViewModel : ViewModelBase, IDisposable
 
     private readonly Action<int> _progressChangedHandler;
 
-    public RepairViewModel()
+    public RepairViewModel() : this(null, null)
     {
-        _dispatcherQueue = SafeGetDispatcherQueue();
+    }
+
+    public RepairViewModel(SystemEngine? repairEngine = null, DispatcherQueue? dispatcherQueue = null)
+    {
+        _repairEngine = repairEngine ?? App.Services?.GetService<SystemEngine>() ?? new();
+        _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
 
         _repairEngine.OutputReceived += LogText;

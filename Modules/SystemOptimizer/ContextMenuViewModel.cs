@@ -14,7 +14,7 @@ namespace WinCarePro.ViewModels;
 public class ContextMenuViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue? _dispatcherQueue;
-    private readonly ContextMenuEngine _engine = App.Services?.GetService<ContextMenuEngine>() ?? new();
+    private readonly ContextMenuEngine _engine;
     private readonly Action<string> _progressHandler;
     private CancellationTokenSource? _scanCts;
     private bool _isDisposed;
@@ -83,9 +83,14 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
     public ObservableCollection<ContextMenuItem> Items { get; } = new();
     public ObservableCollection<ContextMenuItem> FilteredItems { get; } = new();
 
-    public ContextMenuViewModel()
+    public ContextMenuViewModel() : this(null, null)
     {
-        _dispatcherQueue = SafeGetDispatcherQueue();
+    }
+
+    public ContextMenuViewModel(ContextMenuEngine? engine = null, DispatcherQueue? dispatcherQueue = null)
+    {
+        _engine = engine ?? App.Services?.GetService<ContextMenuEngine>() ?? new();
+        _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
         _progressHandler = msg => Log(msg);
         _engine.ProgressMessage += _progressHandler;

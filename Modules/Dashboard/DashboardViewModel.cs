@@ -49,21 +49,21 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     }
 
     // Engine dependencies
-    private readonly ProcessService _processService = App.Services.GetService<ProcessService>() ?? new();
-    private readonly HardwareDriverEngine _hardwareEngine = App.Services.GetService<HardwareDriverEngine>() ?? new();
-    private readonly SecurityPrivacyEngine _securityEngine = App.Services.GetService<SecurityPrivacyEngine>() ?? new();
-    private readonly JunkCleanerEngine _junkEngine = App.Services.GetService<JunkCleanerEngine>() ?? new();
-    private readonly SoftwareUpdaterEngine _updaterEngine = App.Services.GetService<SoftwareUpdaterEngine>() ?? new();
-    private readonly StartupEngine _startupEngine = App.Services.GetService<StartupEngine>() ?? new();
-    private readonly RegistryBackupEngine _registryEngine = App.Services.GetService<RegistryBackupEngine>() ?? new();
-    private readonly AiDiagnosticsEngine _aiEngine = App.Services.GetService<AiDiagnosticsEngine>() ?? new();
-    private readonly SystemOptimizerEngine _optimizerEngine = App.Services.GetService<SystemOptimizerEngine>() ?? new();
-    private readonly NetworkEngine _networkEngine = App.Services.GetService<NetworkEngine>() ?? new();
+    private readonly ProcessService _processService;
+    private readonly HardwareDriverEngine _hardwareEngine;
+    private readonly SecurityPrivacyEngine _securityEngine;
+    private readonly JunkCleanerEngine _junkEngine;
+    private readonly SoftwareUpdaterEngine _updaterEngine;
+    private readonly StartupEngine _startupEngine;
+    private readonly RegistryBackupEngine _registryEngine;
+    private readonly AiDiagnosticsEngine _aiEngine;
+    private readonly SystemOptimizerEngine _optimizerEngine;
+    private readonly NetworkEngine _networkEngine;
 
     // Service dependencies
-    private readonly ISystemSnapshotService _snapshotService = App.Services.GetService<ISystemSnapshotService>() ?? new SystemSnapshotService();
-    private readonly INotificationService _notificationService = App.Services.GetService<INotificationService>() ?? new NotificationService();
-    private readonly IMaintenanceSchedulerService _schedulerService = App.Services.GetService<IMaintenanceSchedulerService>() ?? new MaintenanceSchedulerService();
+    private readonly ISystemSnapshotService _snapshotService;
+    private readonly INotificationService _notificationService;
+    private readonly IMaintenanceSchedulerService _schedulerService;
     
     private bool _isDisposed = false;
     private readonly EventHandler? _languageChangedHandler;
@@ -282,7 +282,59 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     }
 
     public DashboardViewModel(DispatcherQueue? dispatcherQueue)
+        : this(dispatcherQueue, null, null, null, null, null, null, null, null, null, null, null, null, null)
     {
+    }
+
+    public DashboardViewModel(
+        ProcessService processService,
+        HardwareDriverEngine hardwareEngine,
+        SecurityPrivacyEngine securityEngine,
+        JunkCleanerEngine junkEngine,
+        SoftwareUpdaterEngine updaterEngine,
+        StartupEngine startupEngine,
+        RegistryBackupEngine registryEngine,
+        AiDiagnosticsEngine aiEngine,
+        SystemOptimizerEngine optimizerEngine,
+        NetworkEngine networkEngine,
+        ISystemSnapshotService snapshotService,
+        INotificationService notificationService,
+        IMaintenanceSchedulerService schedulerService)
+        : this(null, processService, hardwareEngine, securityEngine, junkEngine, updaterEngine, startupEngine, registryEngine, aiEngine, optimizerEngine, networkEngine, snapshotService, notificationService, schedulerService)
+    {
+    }
+
+    public DashboardViewModel(
+        DispatcherQueue? dispatcherQueue,
+        ProcessService? processService,
+        HardwareDriverEngine? hardwareEngine,
+        SecurityPrivacyEngine? securityEngine,
+        JunkCleanerEngine? junkEngine,
+        SoftwareUpdaterEngine? updaterEngine,
+        StartupEngine? startupEngine,
+        RegistryBackupEngine? registryEngine,
+        AiDiagnosticsEngine? aiEngine,
+        SystemOptimizerEngine? optimizerEngine,
+        NetworkEngine? networkEngine,
+        ISystemSnapshotService? snapshotService,
+        INotificationService? notificationService,
+        IMaintenanceSchedulerService? schedulerService)
+    {
+        _processService = processService ?? App.Services?.GetService<ProcessService>() ?? new();
+        _hardwareEngine = hardwareEngine ?? App.Services?.GetService<HardwareDriverEngine>() ?? new();
+        _securityEngine = securityEngine ?? App.Services?.GetService<SecurityPrivacyEngine>() ?? new();
+        _junkEngine = junkEngine ?? App.Services?.GetService<JunkCleanerEngine>() ?? new();
+        _updaterEngine = updaterEngine ?? App.Services?.GetService<SoftwareUpdaterEngine>() ?? new();
+        _startupEngine = startupEngine ?? App.Services?.GetService<StartupEngine>() ?? new();
+        _registryEngine = registryEngine ?? App.Services?.GetService<RegistryBackupEngine>() ?? new();
+        _aiEngine = aiEngine ?? App.Services?.GetService<AiDiagnosticsEngine>() ?? new();
+        _optimizerEngine = optimizerEngine ?? App.Services?.GetService<SystemOptimizerEngine>() ?? new();
+        _networkEngine = networkEngine ?? App.Services?.GetService<NetworkEngine>() ?? new();
+
+        _snapshotService = snapshotService ?? App.Services?.GetService<ISystemSnapshotService>() ?? new SystemSnapshotService();
+        _notificationService = notificationService ?? App.Services?.GetService<INotificationService>() ?? new NotificationService();
+        _schedulerService = schedulerService ?? App.Services?.GetService<IMaintenanceSchedulerService>() ?? new MaintenanceSchedulerService();
+
         _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
 
         // Initialize historical values for rolling charts

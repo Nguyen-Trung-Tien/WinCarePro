@@ -15,7 +15,8 @@ namespace WinCarePro.ViewModels;
 public class UpdaterViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue? _dispatcherQueue;
-    private readonly SoftwareUpdaterEngine _updaterEngine = App.Services?.GetService<SoftwareUpdaterEngine>() ?? new();
+    private readonly SoftwareUpdaterEngine _updaterEngine;
+    private readonly HardwareDriverEngine _driverEngine;
     private readonly List<SoftwareUpdateInfo> _allUpdates = new();
     private readonly DispatcherQueueTimer? _searchDebounceTimer;
     private CancellationTokenSource? _operationCts;
@@ -221,9 +222,15 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
     public ObservableCollection<SoftwareUpdateInfo> Updates { get; } = new();
 
-    public UpdaterViewModel()
+    public UpdaterViewModel() : this(null, null, null)
     {
-        _dispatcherQueue = SafeGetDispatcherQueue();
+    }
+
+    public UpdaterViewModel(SoftwareUpdaterEngine? updaterEngine = null, HardwareDriverEngine? driverEngine = null, DispatcherQueue? dispatcherQueue = null)
+    {
+        _updaterEngine = updaterEngine ?? App.Services?.GetService<SoftwareUpdaterEngine>() ?? new();
+        _driverEngine = driverEngine ?? App.Services?.GetService<HardwareDriverEngine>() ?? new();
+        _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
         if (_dispatcherQueue != null)
         {
@@ -634,8 +641,6 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
             _dispatcherQueue?.TryEnqueue(UpdateStatistics);
         }
     }
-
-    private readonly HardwareDriverEngine _driverEngine = App.Services?.GetService<HardwareDriverEngine>() ?? new();
 
     public async Task<DriverBackupResult> BackupDriversAsync(string? customPath = null)
     {

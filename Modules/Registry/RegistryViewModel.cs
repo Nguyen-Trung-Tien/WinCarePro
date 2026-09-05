@@ -14,7 +14,7 @@ namespace WinCarePro.ViewModels;
 public class RegistryViewModel : ViewModelBase, IDisposable
 {
     private readonly DispatcherQueue? _dispatcherQueue;
-    private readonly RegistryBackupEngine _engine = App.Services?.GetService<RegistryBackupEngine>() ?? new();
+    private readonly RegistryBackupEngine _engine;
     private CancellationTokenSource? _scanCts;
     private bool _isDisposed;
 
@@ -42,9 +42,14 @@ public class RegistryViewModel : ViewModelBase, IDisposable
     public ObservableCollection<RegistryIssue> Issues { get; } = new();
     public ObservableCollection<RegistryBackupItem> Backups { get; } = new();
 
-    public RegistryViewModel()
+    public RegistryViewModel() : this(null, null)
     {
-        _dispatcherQueue = SafeGetDispatcherQueue();
+    }
+
+    public RegistryViewModel(RegistryBackupEngine? engine = null, DispatcherQueue? dispatcherQueue = null)
+    {
+        _engine = engine ?? App.Services?.GetService<RegistryBackupEngine>() ?? new();
+        _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
         LoadBackups();
     }

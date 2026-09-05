@@ -61,7 +61,8 @@ public class ServiceStatusItem : System.ComponentModel.INotifyPropertyChanged
 public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 {
     private DispatcherQueue? _dispatcherQueue;
-    private readonly SystemOptimizerEngine _optimizerEngine = App.Services?.GetService<SystemOptimizerEngine>() ?? new();
+    private readonly SystemOptimizerEngine _optimizerEngine;
+    private readonly INotificationService? _notificationService;
     private CancellationTokenSource? _aiScanCts;
     private bool _isDisposed;
 
@@ -410,7 +411,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
             double mb = freed / 1024.0 / 1024.0;
             StatusText = string.Format("Purged {0:F1} MB Delivery Optimization Cache.".T(), mb);
 
-            var notificationService = App.Services?.GetService<INotificationService>();
+            var notificationService = _notificationService ?? App.Services?.GetService<INotificationService>();
             notificationService?.ShowToast(
                 "Cache Cleanup".T(), 
                 string.Format("Successfully purged {0:F1} MB from Delivery Optimization cache.".T(), mb),
@@ -439,9 +440,15 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     private readonly Action<string> _progressHandler;
     private readonly EventHandler _languageChangedHandler;
 
-    public SystemOptimizerViewModel()
+    public SystemOptimizerViewModel() : this(null, null, null)
     {
-        _dispatcherQueue = SafeGetDispatcherQueue();
+    }
+
+    public SystemOptimizerViewModel(SystemOptimizerEngine? optimizerEngine = null, INotificationService? notificationService = null, DispatcherQueue? dispatcherQueue = null)
+    {
+        _optimizerEngine = optimizerEngine ?? App.Services?.GetService<SystemOptimizerEngine>() ?? new();
+        _notificationService = notificationService ?? App.Services?.GetService<INotificationService>();
+        _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
         
         _progressHandler = (msg) => Log(msg.T());
@@ -554,7 +561,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
                 RamOptimizedText = res;
                 Log(string.Format("RAM Booster completed. Purged {0} processes and freed {1} MB.".T(), procs, mb.ToString("F1")));
 
-                var notificationService = App.Services?.GetService<INotificationService>();
+                var notificationService = _notificationService ?? App.Services?.GetService<INotificationService>();
                 notificationService?.ShowToast(
                     "RAM Booster".T(), 
                     string.Format("Successfully reclaimed {0} MB of physical memory across {1} processes.".T(), mb.ToString("F1"), procs),
@@ -791,7 +798,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
             StatusText = string.Format("Applied {0} tweaks successfully.".T(), applied);
             Log(string.Format("Registry Sweep completed. Successfully adjusted {0} settings.".T(), applied));
             
-            var notificationService = App.Services?.GetService<INotificationService>();
+            var notificationService = _notificationService ?? App.Services?.GetService<INotificationService>();
             notificationService?.ShowToast(
                 "System Optimizer".T(), 
                 string.Format("Successfully applied {0} performance tweaks and purged RAM cache.".T(), applied),

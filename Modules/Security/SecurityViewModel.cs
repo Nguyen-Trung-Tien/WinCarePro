@@ -69,11 +69,15 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
 
     public ObservableCollection<string> SecurityAlerts { get; } = new();
 
-    public SecurityViewModel()
+    public SecurityViewModel() : this(null, null)
     {
-        _dispatcherQueue = SafeGetDispatcherQueue();
+    }
+
+    public SecurityViewModel(SecurityPrivacyEngine? securityEngine = null, DispatcherQueue? dispatcherQueue = null)
+    {
+        _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
-        _securityEngine = App.Services?.GetService<SecurityPrivacyEngine>() ?? new();
+        _securityEngine = securityEngine ?? App.Services?.GetService<SecurityPrivacyEngine>() ?? new();
 
         _languageChangedHandler = (s, e) =>
         {

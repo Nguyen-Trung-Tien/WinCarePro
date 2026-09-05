@@ -21,6 +21,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
     private readonly IconCacheService _iconCache;
     private readonly ServiceSafetyService _safety;
     private readonly AuditLogService _audit;
+    private readonly INotificationService? _notificationService;
     private readonly EventHandler _languageChangedHandler;
     private CancellationTokenSource? _loadCts;
     private bool _isDisposed;
@@ -193,25 +194,26 @@ public class StartupViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _selectedTask, value);
     }
 
-    public StartupViewModel()
+    public StartupViewModel() : this(null, null, null, null, null, null)
     {
-        _dispatcherQueue = SafeGetDispatcherQueue();
+    }
+
+    public StartupViewModel(
+        StartupEngine? startupEngine = null,
+        IconCacheService? iconCache = null,
+        ServiceSafetyService? safety = null,
+        AuditLogService? audit = null,
+        INotificationService? notificationService = null,
+        DispatcherQueue? dispatcherQueue = null)
+    {
+        _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
 
-        try
-        {
-            _startupEngine = App.Services?.GetService<StartupEngine>() ?? new StartupEngine();
-            _iconCache = App.Services?.GetService<IconCacheService>() ?? new IconCacheService();
-            _safety = App.Services?.GetService<ServiceSafetyService>() ?? new ServiceSafetyService();
-            _audit = App.Services?.GetService<AuditLogService>() ?? new AuditLogService();
-        }
-        catch
-        {
-            _startupEngine = new StartupEngine();
-            _iconCache = new IconCacheService();
-            _safety = new ServiceSafetyService();
-            _audit = new AuditLogService();
-        }
+        _startupEngine = startupEngine ?? App.Services?.GetService<StartupEngine>() ?? new StartupEngine();
+        _iconCache = iconCache ?? App.Services?.GetService<IconCacheService>() ?? new IconCacheService();
+        _safety = safety ?? App.Services?.GetService<ServiceSafetyService>() ?? new ServiceSafetyService();
+        _audit = audit ?? App.Services?.GetService<AuditLogService>() ?? new AuditLogService();
+        _notificationService = notificationService ?? App.Services?.GetService<INotificationService>();
 
         _languageChangedHandler = (s, e) =>
         {
@@ -668,7 +670,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
         if (targetApps.Count == 0 && targetServices.Count == 0)
         {
             StatusText = "Startup and background services are already fully optimized!".T();
-            var notificationService = App.Services.GetService<INotificationService>();
+            var notificationService = _notificationService ?? App.Services?.GetService<INotificationService>();
             notificationService?.ShowToast("Startup Fully Optimized".T(), "No non-essential third-party startup items or services found.".T(), NotificationSeverity.Success);
             return;
         }
@@ -709,7 +711,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
 
         StatusText = string.Format("Successfully optimized startup! Disabled {0} startup programs and set {1} services to Manual.".T(), disabledApps, disabledServices);
 
-        var notifier = App.Services.GetService<INotificationService>();
+        var notifier = _notificationService ?? App.Services?.GetService<INotificationService>();
         notifier?.ShowToast(
             "Startup & Services Optimized".T(), 
             string.Format("Disabled {0} third-party startup apps and optimized {1} background services.".T(), disabledApps, disabledServices),

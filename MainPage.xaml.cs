@@ -91,12 +91,48 @@ public sealed partial class MainPage : Page
         // Load animations setting
         LoadAnimationsConfiguration();
 
+        NavView.Loaded += (s, e) =>
+        {
+            UpdateNavViewPaneBackground(ThemeManager.Instance.CurrentTheme == ElementTheme.Dark);
+        };
+
         // Translate this container page and ensure sidebar theme consistency
         this.Loaded += (s, e) =>
         {
             ApplyNavTheme(ThemeManager.Instance.CurrentTheme);
             TranslationManager.Instance.Translate(this);
         };
+    }
+
+    private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+    {
+        int count = VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < count; i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is T typed) return typed;
+            var found = FindVisualChild<T>(child);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    private void UpdateNavViewPaneBackground(bool isDark)
+    {
+        var paneBg = isDark 
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 18, 20, 31)) 
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 241, 245, 249));
+
+        NavView.Resources["NavigationViewDefaultPaneBackground"] = paneBg;
+        NavView.Resources["NavigationViewExpandedPaneBackground"] = paneBg;
+        NavView.Resources["NavigationViewPaneBackground"] = paneBg;
+        NavView.Resources["SplitViewPaneBackground"] = paneBg;
+
+        var splitView = FindVisualChild<SplitView>(NavView);
+        if (splitView != null)
+        {
+            splitView.PaneBackground = paneBg;
+        }
     }
 
     private void ApplyNavTheme(ElementTheme theme)
@@ -106,13 +142,7 @@ public sealed partial class MainPage : Page
         UserProfileBorder.RequestedTheme = theme;
 
         bool isDark = (theme == ElementTheme.Dark);
-        var paneBg = isDark 
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 18, 20, 31)) 
-            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 241, 245, 249));
-
-        NavView.Resources["NavigationViewDefaultPaneBackground"] = paneBg;
-        NavView.Resources["NavigationViewExpandedPaneBackground"] = paneBg;
-        NavView.Resources["NavigationViewPaneBackground"] = paneBg;
+        UpdateNavViewPaneBackground(isDark);
 
         UserProfileBorder.Background = isDark
             ? new SolidColorBrush(Windows.UI.Color.FromArgb(240, 24, 26, 38))
@@ -132,88 +162,19 @@ public sealed partial class MainPage : Page
 
         foreach (var item in NavView.MenuItems)
         {
-            if (item is NavigationViewItem nvi)
-            {
-                nvi.RequestedTheme = theme;
-                nvi.Foreground = itemFg;
-                if (nvi.Content is TextBlock tb)
-                {
-                    tb.Foreground = itemFg;
-                }
-                else if (nvi.Content is string s)
-                {
-                    nvi.Content = new TextBlock
-                    {
-                        Text = s,
-                        Foreground = itemFg,
-                        FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
-                        FontSize = 13,
-                        VerticalAlignment = VerticalAlignment.Center
-                    };
-                }
-            }
-            else if (item is NavigationViewItemHeader nvih)
-            {
-                nvih.RequestedTheme = theme;
-                nvih.Foreground = headerFg;
-                if (nvih.Content is TextBlock htb)
-                {
-                    htb.Foreground = headerFg;
-                }
-                else if (nvih.Content is string hs)
-                {
-                    nvih.Content = new TextBlock
-                    {
-                        Text = hs,
-                        Foreground = headerFg,
-                        FontWeight = Microsoft.UI.Text.FontWeights.Bold,
-                        FontSize = 11,
-                        VerticalAlignment = VerticalAlignment.Center
-                    };
-                }
-            }
-            else if (item is FrameworkElement fe)
+            if (item is FrameworkElement fe)
             {
                 fe.RequestedTheme = theme;
             }
         }
         foreach (var item in NavView.FooterMenuItems)
         {
-            if (item is NavigationViewItem nvi)
-            {
-                nvi.RequestedTheme = theme;
-                nvi.Foreground = itemFg;
-                if (nvi.Content is TextBlock tb)
-                {
-                    tb.Foreground = itemFg;
-                }
-            }
-            else if (item is FrameworkElement fe)
+            if (item is FrameworkElement fe)
             {
                 fe.RequestedTheme = theme;
             }
         }
-        if (NavView.SettingsItem is NavigationViewItem settingsNvi)
-        {
-            settingsNvi.RequestedTheme = theme;
-            settingsNvi.Foreground = itemFg;
-            if (settingsNvi.Content is TextBlock stb)
-            {
-                stb.Foreground = itemFg;
-            }
-            else if (settingsNvi.Content is string ss)
-            {
-                settingsNvi.Content = new TextBlock
-                {
-                    Text = ss,
-                    Foreground = itemFg,
-                    FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
-                    FontSize = 13,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-            }
-        }
-        else if (NavView.SettingsItem is FrameworkElement settingsElem)
+        if (NavView.SettingsItem is FrameworkElement settingsElem)
         {
             settingsElem.RequestedTheme = theme;
         }

@@ -105,6 +105,7 @@
                     <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#FF12141F" />
                     <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#FF12141F" />
                     <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#FF12141F" />
+                    <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#FF12141F" />
                     <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
@@ -203,6 +204,7 @@
                     <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#F1F5F9" />
                     <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#F1F5F9" />
                     <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#F1F5F9" />
+                    <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#F1F5F9" />
                     <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>

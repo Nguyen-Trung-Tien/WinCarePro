@@ -561,7 +561,6 @@ public class SoftwareUpdaterEngine
             var psi = new ProcessStartInfo
             {
                 FileName = "winget.exe",
-                Arguments = $"upgrade --id \"{appId}\" --exact --accept-package-agreements --accept-source-agreements --disable-interactivity",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -569,6 +568,13 @@ public class SoftwareUpdaterEngine
                 StandardErrorEncoding = System.Text.Encoding.UTF8,
                 CreateNoWindow = true
             };
+            psi.ArgumentList.Add("upgrade");
+            psi.ArgumentList.Add("--id");
+            psi.ArgumentList.Add(appId);
+            psi.ArgumentList.Add("--exact");
+            psi.ArgumentList.Add("--accept-package-agreements");
+            psi.ArgumentList.Add("--accept-source-agreements");
+            psi.ArgumentList.Add("--disable-interactivity");
 
             using var process = new Process { StartInfo = psi };
 

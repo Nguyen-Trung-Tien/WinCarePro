@@ -12,6 +12,8 @@ using Microsoft.UI.Xaml.Media;
 using WinCarePro.Engines;
 using WinCarePro.Services;
 using WinCarePro.Shared.Animations;
+using WinCarePro.Core.Interop;
+using static WinCarePro.Core.Interop.NativeApi;
 
 namespace WinCarePro.Modules.DesktopWidget
 {
@@ -27,32 +29,6 @@ namespace WinCarePro.Modules.DesktopWidget
 
     public sealed partial class DesktopWidgetWindow : Window
     {
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        private struct MEMORYSTATUSEX
-        {
-            public uint dwLength;
-            public uint dwMemoryLoad;
-            public ulong ullTotalPhys;
-            public ulong ullAvailPhys;
-            public ulong ullTotalPageFile;
-            public ulong ullAvailPageFile;
-            public ulong ullTotalVirtual;
-            public ulong ullAvailVirtual;
-            public ulong ullAvailExtendedVirtual;
-        }
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct FILETIME
-        {
-            public uint dwLowDateTime;
-            public uint dwHighDateTime;
-        }
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool GetSystemTimes(out FILETIME lpIdleTime, out FILETIME lpKernelTime, out FILETIME lpUserTime);
 
         [DllImport("comctl32.dll", SetLastError = true)]
         private static extern bool SetWindowSubclass(IntPtr hWnd, SUBCLASSPROC pfnSubclass, uint uIdSubclass, IntPtr dwRefData);

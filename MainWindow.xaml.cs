@@ -306,17 +306,17 @@ public sealed partial class MainWindow : Window
             try
             {
                 // Sample RAM
-                var mem = new MEMORYSTATUSEX { dwLength = (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(MEMORYSTATUSEX)) };
-                GlobalMemoryStatusEx(ref mem);
+                var mem = Core.Interop.NativeApi.MEMORYSTATUSEX.Create();
+                Core.Interop.NativeApi.GlobalMemoryStatusEx(ref mem);
                 double ramPercent = mem.dwMemoryLoad;
                 double freeGb = mem.ullAvailPhys / (1024.0 * 1024.0 * 1024.0);
                 double totalGb = mem.ullTotalPhys / (1024.0 * 1024.0 * 1024.0);
 
                 // Sample CPU
-                GetSystemTimes(out var idleTime, out var kernelTime, out var userTime);
-                ulong idle = ((ulong)idleTime.dwHighDateTime << 32) | idleTime.dwLowDateTime;
-                ulong kernel = ((ulong)kernelTime.dwHighDateTime << 32) | kernelTime.dwLowDateTime;
-                ulong user = ((ulong)userTime.dwHighDateTime << 32) | userTime.dwLowDateTime;
+                Core.Interop.NativeApi.GetSystemTimes(out var idleTime, out var kernelTime, out var userTime);
+                ulong idle = idleTime.ToUInt64();
+                ulong kernel = kernelTime.ToUInt64();
+                ulong user = userTime.ToUInt64();
 
                 double cpuPercent = 0;
                 if (_hudHasPrevTimes)

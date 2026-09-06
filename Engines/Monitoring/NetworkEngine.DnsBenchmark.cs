@@ -142,13 +142,29 @@ public partial class NetworkEngine
             }
             else
             {
+                if (!System.Net.IPAddress.TryParse(primaryIp?.Trim(), out var parsedPrimary))
+                {
+                    Log($"Invalid primary DNS IP address: {primaryIp}");
+                    return false;
+                }
+
+                string serverAddresses;
+                if (!string.IsNullOrWhiteSpace(secondaryIp) && System.Net.IPAddress.TryParse(secondaryIp.Trim(), out var parsedSecondary))
+                {
+                    serverAddresses = $"('{parsedPrimary}', '{parsedSecondary}')";
+                }
+                else
+                {
+                    serverAddresses = $"('{parsedPrimary}')";
+                }
+
                 script = "$route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object RouteMetric | Select-Object -First 1; " +
                          "if ($route) { " +
-                         "  Set-DnsClientServerAddress -InterfaceIndex $route.InterfaceIndex -ServerAddresses ('" + primaryIp + "', '" + secondaryIp + "'); " +
+                         "  Set-DnsClientServerAddress -InterfaceIndex $route.InterfaceIndex -ServerAddresses " + serverAddresses + "; " +
                          "} else { " +
                          "  $adapters = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }; " +
                          "  foreach ($adapter in $adapters) { " +
-                         "    Set-DnsClientServerAddress -InterfaceAlias $adapter.Name -ServerAddresses ('" + primaryIp + "', '" + secondaryIp + "'); " +
+                         "    Set-DnsClientServerAddress -InterfaceAlias $adapter.Name -ServerAddresses " + serverAddresses + "; " +
                          "  } " +
                          "}";
             }
@@ -165,7 +181,18 @@ public partial class NetworkEngine
             using var proc = Process.Start(psi);
             if (proc != null)
             {
-                await proc.WaitForExitAsync();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                try
+                {
+                    await proc.WaitForExitAsync(cts.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    try { proc.Kill(true); } catch { }
+                    Log("DNS configuration timed out after 15 seconds.");
+                    return false;
+                }
+
                 if (proc.ExitCode == 0)
                 {
                     Log($"DNS configured successfully to {dnsName}.");

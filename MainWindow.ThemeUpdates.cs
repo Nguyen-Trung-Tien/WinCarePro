@@ -27,6 +27,10 @@ public sealed partial class MainWindow : Window
         {
             var settings = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
             bool isDark = !string.Equals(settings.Theme, "Light", StringComparison.OrdinalIgnoreCase);
+            
+            RootGrid.RequestedTheme = isDark ? ElementTheme.Dark : ElementTheme.Light;
+            ThemeIcon.Glyph = isDark ? "\uE708" : "\uE706";
+            
             ApplyAppTheme(isDark);
             ThemeManager.Instance.AccentChanged += (s, e) => DispatcherQueue?.TryEnqueue(() => ApplyTransparency(CurrentTransparencyLevel));
             App.ApplyAccentColor(settings.AccentColor ?? "Default");
@@ -53,8 +57,14 @@ public sealed partial class MainWindow : Window
         CurrentTransparencyLevel = level;
         if (RootGrid == null) return;
         
-        bool isDark = RootGrid.RequestedTheme == ElementTheme.Dark;
-        byte colorAlpha = (byte)(255 * (level / 100.0));
+        bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
+        
+        // Transparency level ranges from 10% to 100%.
+        // At 10% (minimum transparency): opacityFraction = 0.98 (solid, crisp slate-ice, 0% muddy wallpaper bleed).
+        // At 100% (maximum transparency): opacityFraction = 0.72 (soft translucent frosted acrylic).
+        double clampedLevel = Math.Clamp(level, 10.0, 100.0);
+        double opacityFraction = 0.98 - ((clampedLevel - 10.0) / 90.0) * 0.26;
+        byte colorAlpha = (byte)Math.Clamp((int)(255 * opacityFraction), 180, 255);
         
         if (isDark)
         {
@@ -70,9 +80,8 @@ public sealed partial class MainWindow : Window
         }
         else
         {
-            // In light mode, provide a rich, crisp Slate-Ice base (#F1F5F9) so pure white cards pop crisply with depth
-            byte lightAlpha = (byte)(50 + (205 * (level / 100.0)));
-            RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(lightAlpha, 241, 245, 249));
+            // In light mode, apply crisp Slate-Ice base (#F1F5F9) with smooth opacity fraction
+            RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 241, 245, 249));
         }
     }
 
@@ -260,6 +269,10 @@ public sealed partial class MainWindow : Window
     {
         bool isCurrentlyDark = RootGrid.RequestedTheme == ElementTheme.Dark;
         bool nextIsDark = !isCurrentlyDark;
+        
+        RootGrid.RequestedTheme = nextIsDark ? ElementTheme.Dark : ElementTheme.Light;
+        ThemeIcon.Glyph = nextIsDark ? "\uE708" : "\uE706";
+        
         ApplyAppTheme(nextIsDark);
 
         // Update stored settings reactively

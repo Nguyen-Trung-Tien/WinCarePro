@@ -1075,7 +1075,15 @@ public class SecurityPrivacyEngine
             {
                 foreach (var file in Directory.GetFiles(recentFolder))
                 {
-                    try { File.Delete(file); deleted++; } catch { }
+                    try 
+                    { 
+                        if (SafePathGuard.IsSafeToDelete(file))
+                        {
+                            File.Delete(file); 
+                            deleted++; 
+                        }
+                    } 
+                    catch { }
                 }
             }
             Database.DbManager.LogAction($"Cleared {deleted} Explorer Recent files", "Privacy Center", "Success");
@@ -1097,14 +1105,30 @@ public class SecurityPrivacyEngine
             {
                 foreach (var f in Directory.GetFiles(autoDest))
                 {
-                    try { File.Delete(f); deleted++; } catch { }
+                    try 
+                    { 
+                        if (SafePathGuard.IsSafeToDelete(f))
+                        {
+                            File.Delete(f); 
+                            deleted++; 
+                        }
+                    } 
+                    catch { }
                 }
             }
             if (Directory.Exists(customDest))
             {
                 foreach (var f in Directory.GetFiles(customDest))
                 {
-                    try { File.Delete(f); deleted++; } catch { }
+                    try 
+                    { 
+                        if (SafePathGuard.IsSafeToDelete(f))
+                        {
+                            File.Delete(f); 
+                            deleted++; 
+                        }
+                    } 
+                    catch { }
                 }
             }
             Database.DbManager.LogAction($"Cleared {deleted} Quick Access JumpList destinations", "Privacy Center", "Success");

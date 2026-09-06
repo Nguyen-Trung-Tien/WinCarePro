@@ -368,7 +368,7 @@ public class DbManager
                     Id = reader.GetInt32(0),
                     ReportName = reader.GetString(1),
                     FilePath = reader.GetString(2),
-                    CreatedAt = reader.GetDateTime(3)
+                    CreatedAt = DateTime.TryParse(reader.GetValue(3)?.ToString(), out var dt) ? dt : DateTime.Now
                 });
             }
             return reports;
@@ -491,7 +491,7 @@ public class DbManager
                     Action = reader.GetString(1),
                     Module = reader.GetString(2),
                     Status = reader.GetString(3),
-                    CreatedAt = DateTime.TryParse(reader.GetString(4), out var dt) ? dt : DateTime.Now
+                    CreatedAt = DateTime.TryParse(reader.GetValue(4)?.ToString(), out var dt) ? dt : DateTime.Now
                 });
             }
             return logs;

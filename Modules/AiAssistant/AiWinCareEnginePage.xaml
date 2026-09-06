@@ -95,7 +95,7 @@
 
         <!-- Main Body -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Spacing="16">
+            <StackPanel Spacing="16" Padding="0,0,0,36">
                 
                 <!-- 1. AI Overall Score & Neural Overview Hero Card -->
                 <Border x:Name="AiHeroCard" Style="{StaticResource ModernCardStyle}" Padding="20">

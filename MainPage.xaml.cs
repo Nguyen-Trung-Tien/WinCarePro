@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using WinCarePro.Views;
 using WinCarePro.Services;
@@ -33,20 +34,12 @@ public sealed partial class MainPage : Page
 
         _themeChangedHandler = (s, e) =>
         {
-            var theme = ThemeManager.Instance.CurrentTheme;
-            this.RequestedTheme = theme;
-            NavView.RequestedTheme = theme;
-            if (ContentFrame.Content is Page page)
-            {
-                page.RequestedTheme = theme;
-            }
+            ApplyNavTheme(ThemeManager.Instance.CurrentTheme);
         };
         ThemeManager.Instance.ThemeChanged += _themeChangedHandler;
 
         // Apply initial theme
-        var initialTheme = ThemeManager.Instance.CurrentTheme;
-        this.RequestedTheme = initialTheme;
-        NavView.RequestedTheme = initialTheme;
+        ApplyNavTheme(ThemeManager.Instance.CurrentTheme);
 
         // Register to accent color changes to dynamically update user avatar and brand gradients
         _accentChangedHandler = (s, e) =>
@@ -98,8 +91,137 @@ public sealed partial class MainPage : Page
         // Load animations setting
         LoadAnimationsConfiguration();
 
-        // Translate this container page
-        this.Loaded += (s, e) => TranslationManager.Instance.Translate(this);
+        // Translate this container page and ensure sidebar theme consistency
+        this.Loaded += (s, e) =>
+        {
+            ApplyNavTheme(ThemeManager.Instance.CurrentTheme);
+            TranslationManager.Instance.Translate(this);
+        };
+    }
+
+    private void ApplyNavTheme(ElementTheme theme)
+    {
+        this.RequestedTheme = theme;
+        NavView.RequestedTheme = theme;
+        UserProfileBorder.RequestedTheme = theme;
+
+        bool isDark = (theme == ElementTheme.Dark);
+        var paneBg = isDark 
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 18, 20, 31)) 
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 241, 245, 249));
+
+        NavView.Resources["NavigationViewDefaultPaneBackground"] = paneBg;
+        NavView.Resources["NavigationViewExpandedPaneBackground"] = paneBg;
+        NavView.Resources["NavigationViewPaneBackground"] = paneBg;
+
+        UserProfileBorder.Background = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(240, 24, 26, 38))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 248, 250, 252));
+
+        UserProfileBorder.BorderBrush = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(30, 255, 255, 255))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 203, 213, 225));
+
+        var itemFg = isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 248, 250, 252)) 
+                            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 15, 23, 42));
+        var headerFg = isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 148, 163, 184)) 
+                              : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 51, 65, 85));
+
+        NavUserName.Foreground = itemFg;
+        NavMachineName.Foreground = headerFg;
+
+        foreach (var item in NavView.MenuItems)
+        {
+            if (item is NavigationViewItem nvi)
+            {
+                nvi.RequestedTheme = theme;
+                nvi.Foreground = itemFg;
+                if (nvi.Content is TextBlock tb)
+                {
+                    tb.Foreground = itemFg;
+                }
+                else if (nvi.Content is string s)
+                {
+                    nvi.Content = new TextBlock
+                    {
+                        Text = s,
+                        Foreground = itemFg,
+                        FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+                        FontSize = 13,
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+                }
+            }
+            else if (item is NavigationViewItemHeader nvih)
+            {
+                nvih.RequestedTheme = theme;
+                nvih.Foreground = headerFg;
+                if (nvih.Content is TextBlock htb)
+                {
+                    htb.Foreground = headerFg;
+                }
+                else if (nvih.Content is string hs)
+                {
+                    nvih.Content = new TextBlock
+                    {
+                        Text = hs,
+                        Foreground = headerFg,
+                        FontWeight = Microsoft.UI.Text.FontWeights.Bold,
+                        FontSize = 11,
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+                }
+            }
+            else if (item is FrameworkElement fe)
+            {
+                fe.RequestedTheme = theme;
+            }
+        }
+        foreach (var item in NavView.FooterMenuItems)
+        {
+            if (item is NavigationViewItem nvi)
+            {
+                nvi.RequestedTheme = theme;
+                nvi.Foreground = itemFg;
+                if (nvi.Content is TextBlock tb)
+                {
+                    tb.Foreground = itemFg;
+                }
+            }
+            else if (item is FrameworkElement fe)
+            {
+                fe.RequestedTheme = theme;
+            }
+        }
+        if (NavView.SettingsItem is NavigationViewItem settingsNvi)
+        {
+            settingsNvi.RequestedTheme = theme;
+            settingsNvi.Foreground = itemFg;
+            if (settingsNvi.Content is TextBlock stb)
+            {
+                stb.Foreground = itemFg;
+            }
+            else if (settingsNvi.Content is string ss)
+            {
+                settingsNvi.Content = new TextBlock
+                {
+                    Text = ss,
+                    Foreground = itemFg,
+                    FontWeight = Microsoft.UI.Text.FontWeights.SemiBold,
+                    FontSize = 13,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+            }
+        }
+        else if (NavView.SettingsItem is FrameworkElement settingsElem)
+        {
+            settingsElem.RequestedTheme = theme;
+        }
+
+        if (ContentFrame.Content is Page page)
+        {
+            page.RequestedTheme = theme;
+        }
     }
 
     private void OnNavSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)

@@ -6,29 +6,12 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using WinCarePro.Models;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Core.Interop;
 
 namespace WinCarePro.Engines;
 
 public class HardwareDriverEngine
 {
-    [StructLayout(LayoutKind.Sequential)]
-    private struct MEMORYSTATUSEX
-    {
-        public uint dwLength;
-        public uint dwMemoryLoad;
-        public ulong ullTotalPhys;
-        public ulong ullAvailPhys;
-        public ulong ullTotalPageFile;
-        public ulong ullAvailPageFile;
-        public ulong ullTotalVirtual;
-        public ulong ullAvailVirtual;
-        public ulong ullAvailExtendedVirtual;
-    }
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
-
     private HardwareSpecs? _cachedSpecs;
     private DateTime _specsCacheTime = DateTime.MinValue;
 
@@ -105,8 +88,8 @@ public class HardwareDriverEngine
         double fallbackRamGb = 16.0;
         try
         {
-            var memStatus = new MEMORYSTATUSEX { dwLength = (uint)System.Runtime.InteropServices.Marshal.SizeOf<MEMORYSTATUSEX>() };
-            if (GlobalMemoryStatusEx(ref memStatus) && memStatus.ullTotalPhys > 0)
+            var memStatus = NativeApi.MEMORYSTATUSEX.Create();
+            if (NativeApi.GlobalMemoryStatusEx(ref memStatus) && memStatus.ullTotalPhys > 0)
             {
                 fallbackRamGb = Math.Round(memStatus.ullTotalPhys / (1024.0 * 1024.0 * 1024.0), 1);
             }

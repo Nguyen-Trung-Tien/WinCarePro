@@ -68,4 +68,17 @@ public class SystemOptimizerEngineTests
         Assert.False(string.IsNullOrWhiteSpace(tweak.Name));
         Assert.False(string.IsNullOrWhiteSpace(tweak.Description));
     }
+
+    [Fact]
+    public void GetRamStatus_ReturnsValidMetrics()
+    {
+        // Act
+        var (totalGb, availGb, usedGb, pct) = _engine.GetRamStatus();
+
+        // Assert
+        Assert.True(totalGb > 0, "Total RAM should be greater than 0");
+        Assert.True(availGb >= 0, "Available RAM should be non-negative");
+        Assert.True(usedGb >= 0, "Used RAM should be non-negative");
+        Assert.True(pct >= 0 && pct <= 100, "RAM percentage should be between 0 and 100");
+    }
 }

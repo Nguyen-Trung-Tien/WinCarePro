@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Microsoft.Win32;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Core.Interop;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
@@ -17,47 +19,10 @@ public class SystemOptimizerEngine
     public event Action<string>? ProgressMessage;
     private void Log(string msg) => ProgressMessage?.Invoke(msg);
 
-    // RAM Booster Win32 API imports
-    [DllImport("psapi.dll", SetLastError = true)]
-    private static extern bool EmptyWorkingSet(IntPtr hProcess);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool CloseHandle(IntPtr hObject);
-
-    private const uint PROCESS_SET_QUOTA = 0x0100;
-    private const uint PROCESS_QUERY_INFORMATION = 0x0400;
-
-    // Memory status structure
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    private struct MEMORYSTATUSEX
-    {
-        public uint dwLength;
-        public uint dwMemoryLoad;
-        public ulong ullTotalPhys;
-        public ulong ullAvailPhys;
-        public ulong ullTotalPageFile;
-        public ulong ullAvailPageFile;
-        public ulong ullTotalVirtual;
-        public ulong ullAvailVirtual;
-        public ulong ullAvailExtendedVirtual;
-
-        public MEMORYSTATUSEX()
-        {
-            dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
-        }
-    }
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
-
     public ulong GetAvailablePhysicalMemory()
     {
-        var status = new MEMORYSTATUSEX();
-        if (GlobalMemoryStatusEx(ref status))
+        var status = NativeApi.MEMORYSTATUSEX.Create();
+        if (NativeApi.GlobalMemoryStatusEx(ref status))
         {
             return status.ullAvailPhys;
         }
@@ -66,8 +31,8 @@ public class SystemOptimizerEngine
 
     public ulong GetTotalPhysicalMemory()
     {
-        var status = new MEMORYSTATUSEX();
-        if (GlobalMemoryStatusEx(ref status))
+        var status = NativeApi.MEMORYSTATUSEX.Create();
+        if (NativeApi.GlobalMemoryStatusEx(ref status))
         {
             return status.ullTotalPhys;
         }
@@ -98,7 +63,7 @@ public class SystemOptimizerEngine
                 GC.Collect();
 
                 // 2. Trim WinCarePro's own working set safely
-                EmptyWorkingSet(curProc.Handle);
+                NativeApi.EmptyWorkingSet(curProc.Handle);
 
                 curProc.Refresh();
                 long wsAfter = curProc.WorkingSet64;
@@ -649,11 +614,14 @@ public class SystemOptimizerEngine
                 {
                     try
                     {
-                        var info = new FileInfo(file);
-                        long size = info.Length;
-                        File.Delete(file);
-                        bytesFreed += size;
-                        count++;
+                        if (SafePathGuard.IsSafeToDelete(file))
+                        {
+                            var info = new FileInfo(file);
+                            long size = info.Length;
+                            File.Delete(file);
+                            bytesFreed += size;
+                            count++;
+                        }
                     }
                     catch { } // Skip locked files
                 }
@@ -662,7 +630,14 @@ public class SystemOptimizerEngine
                 {
                     try
                     {
-                        Directory.Delete(dir, true);
+                        if (SafePathGuard.IsSafeToDelete(dir))
+                        {
+                            var dirInfo = new DirectoryInfo(dir);
+                            if (!dirInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                            {
+                                Directory.Delete(dir, true);
+                            }
+                        }
                     }
                     catch { }
                 }
@@ -680,13 +655,12 @@ public class SystemOptimizerEngine
 
     public (double totalGb, double availGb, double usedGb, double percentage) GetRamStatus()
     {
-        var status = new MEMORYSTATUSEX();
-        if (GlobalMemoryStatusEx(ref status))
+        var (pct, availBytes, totalBytes) = WinCarePro.Core.Interop.NativeApi.GetMemoryStatus();
+        if (totalBytes > 0)
         {
-            double total = status.ullTotalPhys / 1024.0 / 1024.0 / 1024.0;
-            double avail = status.ullAvailPhys / 1024.0 / 1024.0 / 1024.0;
+            double total = totalBytes / 1024.0 / 1024.0 / 1024.0;
+            double avail = availBytes / 1024.0 / 1024.0 / 1024.0;
             double used = total - avail;
-            double pct = status.dwMemoryLoad;
             return (total, avail, used, pct);
         }
         return (0, 0, 0, 0);

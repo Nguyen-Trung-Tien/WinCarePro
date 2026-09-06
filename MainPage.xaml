@@ -5,9 +5,55 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Background="Transparent">
 
-    <Grid>
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="NavigationViewItemForeground" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundPressed" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="NavigationViewItemHeaderForeground" Color="#94A3B8" />
+                    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#FF12141F" />
+                    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#FF12141F" />
+                    <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#FF12141F" />
+                    <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+                    <SolidColorBrush x:Key="SystemControlPageTextBaseHighBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#FF94A3B8" />
+                    <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#94A3B8" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#E8141620" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#F0181A26" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="NavigationViewItemForeground" Color="#0F172A" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="#0F172A" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundPressed" Color="#1E293B" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="#0F172A" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="#0F172A" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="#1E293B" />
+                    <SolidColorBrush x:Key="NavigationViewItemHeaderForeground" Color="#334155" />
+                    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#F1F5F9" />
+                    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#F1F5F9" />
+                    <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#F1F5F9" />
+                    <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+                    <SolidColorBrush x:Key="SystemControlPageTextBaseHighBrush" Color="#0F172A" />
+                    <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#334155" />
+                    <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#0F172A" />
+                    <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#334155" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#FFFFFFFF" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#F8FAFC" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Background="Transparent">
         <!-- OpenPaneLength set to 220px, CompactPaneLength to 60px -->
         <NavigationView x:Name="NavView" PaneDisplayMode="Auto" SelectionChanged="OnNavSelectionChanged" IsBackButtonVisible="Collapsed" AlwaysShowHeader="False" IsSettingsVisible="True" OpenPaneLength="220" CompactPaneLength="60">
 
@@ -25,8 +71,8 @@
                                 <FontIcon Glyph="&#xE77B;" FontSize="14" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1" Margin="8,0,0,0" Visibility="{x:Bind NavView.IsPaneOpen, Mode=OneWay}">
-                                <TextBlock x:Name="NavUserName" Text="User" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
-                                <TextBlock x:Name="NavMachineName" Text="PC" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+                                <TextBlock x:Name="NavUserName" Text="User" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource NavigationViewItemForeground}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+                                <TextBlock x:Name="NavMachineName" Text="PC" FontSize="10" Foreground="{ThemeResource NavigationViewItemHeaderForeground}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -35,86 +81,102 @@
 
             <NavigationView.MenuItems>
                 <!-- Dashboard View -->
-                <NavigationViewItem Content="Dashboard" Tag="Dashboard" AutomationProperties.Name="Dashboard" AutomationProperties.HelpText="Overview of system health, hardware telemetry, and one-click quick boost.">
+                <NavigationViewItem Tag="Dashboard" AutomationProperties.Name="Dashboard" AutomationProperties.HelpText="Overview of system health, hardware telemetry, and one-click quick boost.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE80F;" Foreground="{StaticResource PrimaryAccentBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="Dashboard" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Smart Diagnostics" Tag="AiWinCareEngine" AutomationProperties.Name="Smart Diagnostics" AutomationProperties.HelpText="Intelligent multi-factor system diagnostics and automated remedies.">
+                <NavigationViewItem Tag="AiWinCareEngine" AutomationProperties.Name="Smart Diagnostics" AutomationProperties.HelpText="Intelligent multi-factor system diagnostics and automated remedies.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE99A;" Foreground="#FF06B6D4" />
+                        <FontIcon Glyph="&#xE99A;" Foreground="{ThemeResource AppStatusCyanBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="Smart Diagnostics" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
                 
                 <NavigationViewItemSeparator />
 
                 <!-- CARE & CLEAN -->
-                <NavigationViewItemHeader Content="CARE &amp; CLEAN" />
+                <NavigationViewItemHeader>
+                    <TextBlock Text="CARE &amp; CLEAN" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource NavigationViewItemHeaderForeground}"/>
+                </NavigationViewItemHeader>
                 
-                <NavigationViewItem Content="Junk Cleaner" Tag="Junk" AutomationProperties.Name="Junk Cleaner" AutomationProperties.HelpText="Scan and safely clean temporary files, cache, and system clutter.">
+                <NavigationViewItem Tag="Junk" AutomationProperties.Name="Junk Cleaner" AutomationProperties.HelpText="Scan and safely clean temporary files, cache, and system clutter.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEA99;" Foreground="#FFF59E0B" />
+                        <FontIcon Glyph="&#xEA99;" Foreground="{ThemeResource AppStatusWarningBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="Junk Cleaner" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="App Uninstaller" Tag="Uninstall" AutomationProperties.Name="App Uninstaller" AutomationProperties.HelpText="Uninstall desktop and Store apps with deep leftover cleanup.">
+                <NavigationViewItem Tag="Uninstall" AutomationProperties.Name="App Uninstaller" AutomationProperties.HelpText="Uninstall desktop and Store apps with deep leftover cleanup.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE74D;" Foreground="#FFEF4444" />
+                        <FontIcon Glyph="&#xE74D;" Foreground="{ThemeResource AppStatusDangerBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="App Uninstaller" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Network Center" Tag="Network" AutomationProperties.Name="Network Center" AutomationProperties.HelpText="Network monitoring, DNS benchmark, and latency diagnostics.">
+                <NavigationViewItem Tag="Network" AutomationProperties.Name="Network Center" AutomationProperties.HelpText="Network monitoring, DNS benchmark, and latency diagnostics.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE701;" Foreground="#FF0284C7" />
+                        <FontIcon Glyph="&#xE701;" Foreground="{ThemeResource AppStatusInfoBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="Network Center" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="System Repair" Tag="Repair" AutomationProperties.Name="System Repair" AutomationProperties.HelpText="Windows system file checker, DISM repair, and subsystem restoration.">
+                <NavigationViewItem Tag="Repair" AutomationProperties.Name="System Repair" AutomationProperties.HelpText="Windows system file checker, DISM repair, and subsystem restoration.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE90F;" Foreground="#FF06B6D4" />
+                        <FontIcon Glyph="&#xE90F;" Foreground="{ThemeResource AppStatusCyanBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="System Repair" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Security Shield" Tag="Security" AutomationProperties.Name="Security Shield" AutomationProperties.HelpText="Windows Defender, Firewall, and privacy telemetry settings.">
+                <NavigationViewItem Tag="Security" AutomationProperties.Name="Security Shield" AutomationProperties.HelpText="Windows Defender, Firewall, and privacy telemetry settings.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE727;" Foreground="#FF10B981" />
+                        <FontIcon Glyph="&#xE727;" Foreground="{ThemeResource AppStatusGoodBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="Security Shield" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
                 <NavigationViewItemSeparator />
 
                 <!-- SYSTEM TUNING -->
-                <NavigationViewItemHeader Content="SYSTEM TUNING" />
+                <NavigationViewItemHeader>
+                    <TextBlock Text="SYSTEM TUNING" VerticalAlignment="Center" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource NavigationViewItemHeaderForeground}"/>
+                </NavigationViewItemHeader>
 
-                <NavigationViewItem Content="System Optimizer" Tag="Optimizer" AutomationProperties.Name="System Optimizer" AutomationProperties.HelpText="System tweaks, RAM working set optimization, and performance profiles.">
+                <NavigationViewItem Tag="Optimizer" AutomationProperties.Name="System Optimizer" AutomationProperties.HelpText="System tweaks, RAM working set optimization, and performance profiles.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7FC;" Foreground="#FFF59E0B" />
+                        <FontIcon Glyph="&#xE7FC;" Foreground="{ThemeResource AppStatusWarningBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="System Optimizer" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Context Menu" Tag="ContextMenu" AutomationProperties.Name="Context Menu Manager" AutomationProperties.HelpText="Manage and clean Windows Explorer right-click shell extensions.">
+                <NavigationViewItem Tag="ContextMenu" AutomationProperties.Name="Context Menu Manager" AutomationProperties.HelpText="Manage and clean Windows Explorer right-click shell extensions.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8EC;" Foreground="#FFA855F7" />
+                        <FontIcon Glyph="&#xE8EC;" Foreground="{ThemeResource AppStatusPurpleBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="Context Menu" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Disk &amp; Storage" Tag="Disk" AutomationProperties.Name="Disk &amp; Storage" AutomationProperties.HelpText="Drive S.M.A.R.T. health, duplicate finder, and large files analyzer.">
+                <NavigationViewItem Tag="Disk" AutomationProperties.Name="Disk &amp; Storage" AutomationProperties.HelpText="Drive S.M.A.R.T. health, duplicate finder, and large files analyzer.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7F1;" Foreground="#FF38BDF8" />
+                        <FontIcon Glyph="&#xE7F1;" Foreground="{ThemeResource AppStatusCyanBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="Disk &amp; Storage" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Registry Center" Tag="Registry" AutomationProperties.Name="Registry Center" AutomationProperties.HelpText="Registry backup, defragmentation, and cleanup.">
+                <NavigationViewItem Tag="Registry" AutomationProperties.Name="Registry Center" AutomationProperties.HelpText="Registry backup, defragmentation, and cleanup.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEDA2;" Foreground="#FFF43F5E" />
+                        <FontIcon Glyph="&#xEDA2;" Foreground="{ThemeResource AppStatusDangerBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="Registry Center" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Software Updater" Tag="Updater" AutomationProperties.Name="Software Updater" AutomationProperties.HelpText="Scan and update installed third-party software applications.">
+                <NavigationViewItem Tag="Updater" AutomationProperties.Name="Software Updater" AutomationProperties.HelpText="Scan and update installed third-party software applications.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE895;" Foreground="#FF6366F1" />
+                        <FontIcon Glyph="&#xE895;" Foreground="{ThemeResource AppStatusPurpleBrush}" />
                     </NavigationViewItem.Icon>
+                    <TextBlock Text="Software Updater" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource NavigationViewItemForeground}"/>
                 </NavigationViewItem>
 
             </NavigationView.MenuItems>
@@ -132,4 +194,3 @@
         </NavigationView>
     </Grid>
 </Page>
-

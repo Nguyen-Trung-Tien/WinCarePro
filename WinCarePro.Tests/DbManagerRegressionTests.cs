@@ -49,6 +49,25 @@ public class DbManagerRegressionTests
     }
 
     [Fact]
+    public void DbManager_GetReports_And_GetRecentLogs_HandleDatesSafely()
+    {
+        // Arrange
+        string reportName = $"Report_{Guid.NewGuid()}.txt";
+        string filePath = @"C:\Temp\" + reportName;
+        DbManager.SaveReport(reportName, filePath);
+        DbManager.LogAction($"Action_{Guid.NewGuid()}", "TestModule", "Success");
+
+        // Act
+        var reports = DbManager.GetReports();
+        var recentLogs = DbManager.GetRecentLogs(5);
+
+        // Assert
+        Assert.NotEmpty(reports);
+        Assert.Contains(reports, r => r.ReportName == reportName);
+        Assert.NotEmpty(recentLogs);
+    }
+
+    [Fact]
     public async Task ProcessService_GetRunningProcessesAsync_RunsConcurrentlyWithoutExceptions()
     {
         // Arrange

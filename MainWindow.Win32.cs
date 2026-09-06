@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinCarePro.Services;
 using WinCarePro.Database;
+using WinCarePro.Core.Interop;
 
 namespace WinCarePro;
 
@@ -102,9 +103,6 @@ public sealed partial class MainWindow : Window
     [DllImport("user32.dll")]
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-    [DllImport("psapi.dll")]
-    private static extern int EmptyWorkingSet(IntPtr hwProc);
-
     public static void TrimProcessMemory()
     {
         try
@@ -113,7 +111,7 @@ public sealed partial class MainWindow : Window
             GC.WaitForPendingFinalizers();
             GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
             using var proc = System.Diagnostics.Process.GetCurrentProcess();
-            EmptyWorkingSet(proc.Handle);
+            NativeApi.EmptyWorkingSet(proc.Handle);
         }
         catch (Exception ex)
         {
@@ -502,30 +500,4 @@ public sealed partial class MainWindow : Window
         catch { }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    private struct FILETIME
-    {
-        public uint dwLowDateTime;
-        public uint dwHighDateTime;
-    }
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool GetSystemTimes(out FILETIME lpIdleTime, out FILETIME lpKernelTime, out FILETIME lpUserTime);
-
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    private struct MEMORYSTATUSEX
-    {
-        public uint dwLength;
-        public uint dwMemoryLoad;
-        public ulong ullTotalPhys;
-        public ulong ullAvailPhys;
-        public ulong ullTotalPageFile;
-        public ulong ullAvailPageFile;
-        public ulong ullTotalVirtual;
-        public ulong ullAvailVirtual;
-        public ulong ullAvailExtendedVirtual;
-    }
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
 }

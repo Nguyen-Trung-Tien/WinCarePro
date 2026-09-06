@@ -69,6 +69,14 @@ public sealed partial class DashboardPage : Page
         {
             UpdateResponsiveLayout(e.NewSize.Width);
         };
+
+        this.ActualThemeChanged += (s, e) =>
+        {
+            DispatcherQueue?.TryEnqueue(() =>
+            {
+                Bindings.Update();
+            });
+        };
     }
 
     private void OnLaunchAiWinCareEngineClick(object sender, RoutedEventArgs e)
@@ -872,16 +880,18 @@ public sealed partial class DashboardPage : Page
 
     public Brush GetHealthScoreBrush(int score)
     {
-        if (score >= 90) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)); 
-        if (score >= 70) return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)); 
-        return new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); 
+        bool isLight = ThemeManager.Instance.CurrentTheme == ElementTheme.Light;
+        if (score >= 90) return new SolidColorBrush(isLight ? Windows.UI.Color.FromArgb(255, 5, 150, 105) : Windows.UI.Color.FromArgb(255, 16, 185, 129)); 
+        if (score >= 70) return new SolidColorBrush(isLight ? Windows.UI.Color.FromArgb(255, 217, 119, 6) : Windows.UI.Color.FromArgb(255, 245, 158, 11)); 
+        return new SolidColorBrush(isLight ? Windows.UI.Color.FromArgb(255, 220, 38, 38) : Windows.UI.Color.FromArgb(255, 239, 68, 68)); 
     }
 
     public Brush GetHealthScoreBadgeBackground(int score)
     {
-        if (score >= 90) return new SolidColorBrush(Windows.UI.Color.FromArgb(30, 16, 185, 129)); 
-        if (score >= 70) return new SolidColorBrush(Windows.UI.Color.FromArgb(30, 245, 158, 11));
-        return new SolidColorBrush(Windows.UI.Color.FromArgb(30, 239, 68, 68));
+        bool isLight = ThemeManager.Instance.CurrentTheme == ElementTheme.Light;
+        if (score >= 90) return new SolidColorBrush(isLight ? Windows.UI.Color.FromArgb(255, 236, 253, 245) : Windows.UI.Color.FromArgb(30, 16, 185, 129)); 
+        if (score >= 70) return new SolidColorBrush(isLight ? Windows.UI.Color.FromArgb(255, 255, 251, 235) : Windows.UI.Color.FromArgb(30, 245, 158, 11));
+        return new SolidColorBrush(isLight ? Windows.UI.Color.FromArgb(255, 254, 242, 242) : Windows.UI.Color.FromArgb(30, 239, 68, 68));
     }
 
     public bool IsNot(bool val) => !val;
@@ -919,13 +929,19 @@ public sealed partial class DashboardPage : Page
 
     internal static Brush GetStatusColor(bool healthy)
     {
-        var color = healthy ? Windows.UI.Color.FromArgb(255, 16, 185, 129) : Windows.UI.Color.FromArgb(255, 245, 158, 11);
+        bool isLight = ThemeManager.Instance.CurrentTheme == ElementTheme.Light;
+        var color = healthy ? 
+            (isLight ? Windows.UI.Color.FromArgb(255, 5, 150, 105) : Windows.UI.Color.FromArgb(255, 16, 185, 129)) : 
+            (isLight ? Windows.UI.Color.FromArgb(255, 217, 119, 6) : Windows.UI.Color.FromArgb(255, 245, 158, 11));
         return new SolidColorBrush(color);
     }
 
     internal static Brush GetStatusBadgeBg(bool healthy)
     {
-        var color = healthy ? Windows.UI.Color.FromArgb(30, 16, 185, 129) : Windows.UI.Color.FromArgb(30, 245, 158, 11);
+        bool isLight = ThemeManager.Instance.CurrentTheme == ElementTheme.Light;
+        var color = healthy ? 
+            (isLight ? Windows.UI.Color.FromArgb(255, 236, 253, 245) : Windows.UI.Color.FromArgb(30, 16, 185, 129)) : 
+            (isLight ? Windows.UI.Color.FromArgb(255, 255, 251, 235) : Windows.UI.Color.FromArgb(30, 245, 158, 11));
         return new SolidColorBrush(color);
     }
 
@@ -1094,13 +1110,19 @@ public sealed partial class DashboardPage : Page
 
     internal Brush GetBottleneckBadgeBg(bool hasBottleneck)
     {
-        var color = hasBottleneck ? Windows.UI.Color.FromArgb(30, 239, 68, 68) : Windows.UI.Color.FromArgb(30, 16, 185, 129);
+        bool isLight = ThemeManager.Instance.CurrentTheme == ElementTheme.Light;
+        var color = hasBottleneck ? 
+            (isLight ? Windows.UI.Color.FromArgb(255, 254, 242, 242) : Windows.UI.Color.FromArgb(30, 239, 68, 68)) : 
+            (isLight ? Windows.UI.Color.FromArgb(255, 236, 253, 245) : Windows.UI.Color.FromArgb(30, 16, 185, 129));
         return new SolidColorBrush(color);
     }
 
     internal Brush GetBottleneckBadgeFg(bool hasBottleneck)
     {
-        var color = hasBottleneck ? Microsoft.UI.Colors.Crimson : Microsoft.UI.Colors.MediumSeaGreen;
+        bool isLight = ThemeManager.Instance.CurrentTheme == ElementTheme.Light;
+        var color = hasBottleneck ? 
+            (isLight ? Windows.UI.Color.FromArgb(255, 220, 38, 38) : Microsoft.UI.Colors.Crimson) : 
+            (isLight ? Windows.UI.Color.FromArgb(255, 5, 150, 105) : Microsoft.UI.Colors.MediumSeaGreen);
         return new SolidColorBrush(color);
     }
 

@@ -12,7 +12,7 @@ public partial class UninstallEngine
     
     private void Log(string msg) => OutputReceived?.Invoke($"[{DateTime.Now:HH:mm:ss}] {msg}");
     
-    public async Task<bool> RunStandardUninstallerAsync(InstalledAppInfo app)
+    public async Task<bool> RunStandardUninstallerAsync(InstalledAppInfo app, CancellationToken cancellationToken = default)
     {
         if (app.IsStoreApp)
         {
@@ -144,7 +144,7 @@ public partial class UninstallEngine
             
             Log("Standard uninstaller launched. Please follow the prompt/UI instruction to finish uninstallation.");
             ProgressChanged?.Invoke(75);
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync(cancellationToken);
             Log($"Standard uninstaller exited. Exit Code: {process.ExitCode}");
             ProgressChanged?.Invoke(100);
             return true;

@@ -7,54 +7,16 @@ using Microsoft.UI.Dispatching;
 using LiveChartsCore.Defaults;
 using WinCarePro.Services;
 using WinCarePro.Engines;
+using WinCarePro.Core.Interop;
 
 namespace WinCarePro.ViewModels;
 
 public partial class DashboardViewModel
 {
-    [StructLayout(LayoutKind.Sequential)]
-    private struct FILETIME
-    {
-        public uint dwLowDateTime;
-        public uint dwHighDateTime;
-    }
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool GetSystemTimes(out FILETIME lpIdleTime, out FILETIME lpKernelTime, out FILETIME lpUserTime);
-
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    private struct MEMORYSTATUSEX
-    {
-        public uint dwLength;
-        public uint dwMemoryLoad;
-        public ulong ullTotalPhys;
-        public ulong ullAvailPhys;
-        public ulong ullTotalPageFile;
-        public ulong ullAvailPageFile;
-        public ulong ullTotalVirtual;
-        public ulong ullAvailVirtual;
-        public ulong ullAvailExtendedVirtual;
-    }
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool GetDiskFreeSpaceEx(
-        string lpDirectoryName,
-        out ulong lpFreeBytesAvailable,
-        out ulong lpTotalNumberOfBytes,
-        out ulong lpTotalNumberOfFreeBytes);
-
-    private FILETIME _prevIdleTime;
-    private FILETIME _prevKernelTime;
-    private FILETIME _prevUserTime;
+    private NativeApi.FILETIME _prevIdleTime;
+    private NativeApi.FILETIME _prevKernelTime;
+    private NativeApi.FILETIME _prevUserTime;
     private bool _hasPrevTimes = false;
-
-    private static ulong FileTimeToUInt64(FILETIME ft)
-    {
-        return ((ulong)ft.dwHighDateTime << 32) | ft.dwLowDateTime;
-    }
 
     private (double cpu, double ramPercent) GetSystemResourceUsage()
     {
@@ -65,17 +27,17 @@ public partial class DashboardViewModel
 
         try
         {
-            if (GetSystemTimes(out FILETIME idleTime, out FILETIME kernelTime, out FILETIME userTime))
+            if (NativeApi.GetSystemTimes(out NativeApi.FILETIME idleTime, out NativeApi.FILETIME kernelTime, out NativeApi.FILETIME userTime))
             {
                 if (_hasPrevTimes)
                 {
-                    ulong prevIdle = FileTimeToUInt64(_prevIdleTime);
-                    ulong prevKernel = FileTimeToUInt64(_prevKernelTime);
-                    ulong prevUser = FileTimeToUInt64(_prevUserTime);
+                    ulong prevIdle = _prevIdleTime.ToUInt64();
+                    ulong prevKernel = _prevKernelTime.ToUInt64();
+                    ulong prevUser = _prevUserTime.ToUInt64();
 
-                    ulong currIdle = FileTimeToUInt64(idleTime);
-                    ulong currKernel = FileTimeToUInt64(kernelTime);
-                    ulong currUser = FileTimeToUInt64(userTime);
+                    ulong currIdle = idleTime.ToUInt64();
+                    ulong currKernel = kernelTime.ToUInt64();
+                    ulong currUser = userTime.ToUInt64();
 
                     ulong idleDiff = currIdle - prevIdle;
                     ulong kernelDiff = currKernel - prevKernel;
@@ -101,9 +63,8 @@ public partial class DashboardViewModel
                 _hasPrevTimes = true;
             }
 
-            var memStatus = new MEMORYSTATUSEX();
-            memStatus.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
-            if (GlobalMemoryStatusEx(ref memStatus))
+            var memStatus = NativeApi.MEMORYSTATUSEX.Create();
+            if (NativeApi.GlobalMemoryStatusEx(ref memStatus))
             {
                 ramPercent = memStatus.dwMemoryLoad;
                 ramReadSuccess = true;
@@ -389,7 +350,7 @@ public partial class DashboardViewModel
         // Fallback using P/Invoke GetDiskFreeSpaceEx
         try
         {
-            if (GetDiskFreeSpaceEx("C:\\", out ulong freeBytes, out ulong totalBytes, out _))
+            if (NativeApi.GetDiskFreeSpaceEx("C:\\", out ulong freeBytes, out ulong totalBytes, out _))
             {
                 if (totalBytes > 0)
                 {

@@ -12,6 +12,7 @@ using Microsoft.Win32.TaskScheduler;
 using WinCarePro.Models;
 using WinCarePro.Services.Implementations;
 using Microsoft.Extensions.DependencyInjection;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
@@ -428,7 +429,7 @@ public class StartupEngine
         {
             if (entry.Source == StartupSource.StartupFolderUser || entry.Source == StartupSource.StartupFolderCommon)
             {
-                if (File.Exists(entry.Command))
+                if (File.Exists(entry.Command) && SafePathGuard.IsSafeToDelete(entry.Command))
                 {
                     File.Delete(entry.Command);
                     Database.DbManager.LogAction($"Deleted Startup File {entry.Name}", "Startup Manager", "Success");

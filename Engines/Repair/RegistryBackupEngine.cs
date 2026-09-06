@@ -375,12 +375,12 @@ public class RegistryBackupEngine
             // Define parameters for CreateRestorePoint
             // Type: 100 (DEVICE_DRIVER_INSTALL), 101 (APPLICATION_INSTALL), 102 (APPLICATION_UNINSTALL), 103 (MODIFY_SETTINGS), 104 (CANCELLED_OPERATION)
             // EventType: 100 (BEGIN_SYSTEM_CHANGE), 101 (END_SYSTEM_CHANGE)
-            var inParams = mc.GetMethodParameters("CreateRestorePoint");
+            using var inParams = mc.GetMethodParameters("CreateRestorePoint");
             inParams["Description"] = description;
             inParams["RestorePointType"] = 103; // MODIFY_SETTINGS
             inParams["EventType"] = 100; // BEGIN_SYSTEM_CHANGE
 
-            var outParams = mc.InvokeMethod("CreateRestorePoint", inParams, null);
+            using var outParams = mc.InvokeMethod("CreateRestorePoint", inParams, null);
             uint result = Convert.ToUInt32(outParams?["ReturnValue"] ?? 1);
 
             Database.DbManager.LogAction($"Created System Restore Point: {description}", "Backup & Restore", result == 0 ? "Success" : $"Failed (Code {result})");

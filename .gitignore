@@ -1,70 +1,187 @@
-## .NET / Visual Studio
-[Bb]in/
-[Oo]bj/
-[Dd]ebug/
-[Rr]elease/
-.vs/
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
-artifacts/
+# ==============================================================================
+# WinCare Pro - .gitignore
+# Chuẩn hóa cho .NET 10 / C# / WinUI 3 / Windows Desktop Application
+# Bảo vệ mã nguồn, tránh lộ thông tin nhạy cảm (Credentials, Certs, Backups, Logs)
+# ==============================================================================
 
-# Build logs
+# ------------------------------------------------------------------------------
+# 1. BẢO MẬT & THÔNG TIN NHẠY CẢM (SECRETS & CREDENTIALS) - TUYỆT ĐỐI KHÔNG PUSH
+# ------------------------------------------------------------------------------
+# Chứng chỉ số & Khóa ký mã (Code Signing Certificates & Private Keys)
+*.pfx
+*.p12
+*.snk
+*.cer
+*.crt
+*.der
+*.pem
+*.key
+*.pub
+*.developerkey
+*.publishsettings
+
+# File cấu hình môi trường & User Secrets
+*.env
+*.env.*
+*.env.local
+.env
+.env.*
+secrets.json
+local.settings.json
+appsettings.*.json
+!appsettings.json
+
+# Credentials, API Keys, Tokens & Auth caches
+*credential*
+*secret*
+*.token
+*.auth
+id_rsa
+id_ed25519
+
+# ------------------------------------------------------------------------------
+# 2. RUNTIME DATA, BACKUP & DỮ LIỆU CÁ NHÂN (WINCARE RUNTIME / TEST ENGINE)
+# ------------------------------------------------------------------------------
+# Cơ sở dữ liệu cục bộ SQLite & Caching
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Bản sao lưu Registry & System Snapshot (do các Engine WinCare tạo ra khi test)
+*.reg
+*.bak
+*.backup
+[Bb]ackup*/
+[Ss]napshot*/
+RegistryBackups/
+DriverBackups/
+SystemSnapshots/
+
+# Nhật ký thực thi, Audit & Crash Dumps (chứa đường dẫn máy cá nhân, process, IP)
 [Ll]og/
 [Ll]ogs/
 *.log
 *.binlog
+crashdump/
+[Cc]rash[Dd]ump*/
+*.dmp
+*.mdmp
+*.crash
+*.stackdump
 
-# Test results
-[Tt]est[Rr]esult*/
-*.trx
-*.coverage
-*.coveragexml
+# ------------------------------------------------------------------------------
+# 3. BUILD OUTPUTS & ARTIFACTS (.NET / WINUI 3 / MSBUILD)
+# ------------------------------------------------------------------------------
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+arm64/
+[Aa]rtifacts/
+[Gg]enerated [Ff]iles/
+Generated\ Files/
+*_wpftmp.csproj
 
-# NuGet
+# NuGet Packages & Restores
 *.nupkg
 *.snupkg
 *.nuget.props
 *.nuget.targets
 project.lock.json
+project.assets.json
 
-# MSIX packaging output
+# Test Results & Code Coverage
+[Tt]est[Rr]esult*/
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# ------------------------------------------------------------------------------
+# 4. PACKAGING & INSTALLER OUTPUTS (INNO SETUP / MSIX / PORTABLE)
+# ------------------------------------------------------------------------------
+# Local Publish folders (do publish.bat / publish_installer.bat tạo ra)
+PublishOutput/
+PublishOutputFolder/
+PublishOutputFolder.zip
+publish/
+PublishScripts/
+*.pubxml
+
+# Inno Setup output
+Output/
+
+# MSIX / AppX Packaging
 AppPackages/
 BundleArtifacts/
+PackageLayout/
 *.msix
+*.msixbundle
 *.msixupload
 *.appx
 *.appxbundle
 *.appxupload
 
-# Publish output
-publish/
-*.pubxml
-PublishScripts/
+# Tệp cài đặt / nén cục bộ (Không đẩy trực tiếp vào Git, dùng GitHub Releases)
+*.exe
+!WinCarePro/
+*.msi
+*.zip
+*.7z
+*.rar
+*.tar.gz
 
-# Code analysis and tooling
-_ReSharper*/
+# ------------------------------------------------------------------------------
+# 5. IDE & EDITOR CONFIGURATIONS (VISUAL STUDIO, VS CODE, RIDER)
+# ------------------------------------------------------------------------------
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
 *.DotSettings.user
+.vsidx/
+
+# Visual Studio Code (bảo vệ workspace settings cá nhân)
+.vscode/*
+!.vscode/extensions.json
+
+# JetBrains (Rider, ReSharper)
+_ReSharper*/
 *.dotCover
 .idea/
+*.sln.DotSettings.user
 
-# Generated files
-Generated\ Files/
-*_wpftmp.csproj
-
-# Local Publish outputs
-PublishOutput/
-PublishOutputFolder/
-PublishOutputFolder.zip
-
-# Backup folder
-Assets_backup/
-
-#Agents folder
-agents/
-
-#Plants folder
-plants/
-
+# ------------------------------------------------------------------------------
+# 6. SCRIPT NỘI BỘ, BACKUP THƯ MỤC & WORKSPACE ARTIFACTS
+# ------------------------------------------------------------------------------
 run.bat
+Assets_backup/
+agents/
+plants/
+scratch/
+temp/
+tmp/
+
+# ------------------------------------------------------------------------------
+# 7. HỆ ĐIỀU HÀNH (OS GENERATED FILES)
+# ------------------------------------------------------------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*

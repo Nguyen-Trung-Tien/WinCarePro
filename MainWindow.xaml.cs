@@ -406,6 +406,7 @@ public sealed partial class MainWindow : Window
             if (RootFrame.Content is MainPage mainPage)
             {
                 mainPage.CleanupActivePage();
+                mainPage.Cleanup();
             }
             else if (RootFrame.Content is WinCarePro.Views.NetworkPage netPage)
             {
@@ -594,6 +595,7 @@ public sealed partial class MainWindow : Window
             if (RootFrame.Content is MainPage mainPage)
             {
                 mainPage.CleanupActivePage();
+                mainPage.Cleanup();
             }
             else if (RootFrame.Content is WinCarePro.Views.NetworkPage netPage)
             {

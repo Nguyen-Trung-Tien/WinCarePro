@@ -124,7 +124,7 @@
                 </Button>
 
                 <!-- Update All Apps Hero Primary CTA (Only visible when there are pending updates) -->
-                <Button x:Name="UpdateAllBtn" Style="{StaticResource AccentButtonStyle}" Background="#FF10B981" Foreground="White" Click="OnUpdateAllClick" Visibility="{x:Bind HasPendingUpdatesVisibility(ViewModel.PendingUpdatesCount, ViewModel.IsBusy), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12">
+                <Button x:Name="UpdateAllBtn" Style="{StaticResource AccentButtonStyle}" Background="{ThemeResource AppStatusGoodBrush}" Foreground="White" Click="OnUpdateAllClick" Visibility="{x:Bind HasPendingUpdatesVisibility(ViewModel.PendingUpdatesCount, ViewModel.IsBusy), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ProgressRing x:Name="UpdateAllRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center"/>
                         <FontIcon Glyph="&#xE896;" FontSize="12" Foreground="White" />

@@ -60,6 +60,8 @@
                     <SolidColorBrush x:Key="AppStatusCyanBrush" Color="#FF06B6D4" />
                     <SolidColorBrush x:Key="AppStatusCyanBackground" Color="#1806B6D4" />
                     <SolidColorBrush x:Key="AppStatusCyanBorder" Color="#3506B6D4" />
+                    <SolidColorBrush x:Key="AppLoadingOverlayBackground" Color="#80000000" />
+                    <SolidColorBrush x:Key="AppModalBackdropBrush" Color="#B00F0F14" />
 
                     <!-- Resource Specific Hardware Telemetry Brushes (Dark Mode) -->
                     <SolidColorBrush x:Key="CpuAccentBrush" Color="#FFF59E0B" />
@@ -72,6 +74,104 @@
                     <SolidColorBrush x:Key="DiskTrackBrush" Color="#1810B981" />
 
                     <!-- System Text & Control Overrides for 100% Seamless Dark Mode Readability & Layout Consistency -->
+                    <SolidColorBrush x:Key="SystemControlPageTextBaseHighBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#FF94A3B8" />
+                    <SolidColorBrush x:Key="SystemControlForegroundBaseHighBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="SystemControlForegroundBaseMediumBrush" Color="#FF94A3B8" />
+                    <SolidColorBrush x:Key="SystemControlForegroundBaseMediumHighBrush" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#94A3B8" />
+                    <SolidColorBrush x:Key="TextFillColorTertiaryBrush" Color="#64748B" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorDefaultBrush" Color="#E8141620" />
+                    <SolidColorBrush x:Key="CardBackgroundFillColorSecondaryBrush" Color="#F0181A26" />
+                    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#D012141F" />
+                    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="#FF0D0E15" />
+                    <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="#1EFFFFFF" />
+                    <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="#1AFFFFFF" />
+                    
+                    <!-- Solid Opaque Flyout & Popup Brushes (Dark Mode) -->
+                    <SolidColorBrush x:Key="AppFlyoutBackground" Color="#FF181A24" />
+                    <SolidColorBrush x:Key="AppFlyoutBorder" Color="#28FFFFFF" />
+                    <SolidColorBrush x:Key="AppFlyoutItemBackground" Color="#FF202330" />
+                    <SolidColorBrush x:Key="AppFlyoutItemPointerOver" Color="#FF282C3D" />
+                    <SolidColorBrush x:Key="AppFlyoutItemBorder" Color="#20FFFFFF" />
+
+                    <!-- Explicit NavigationView tokens for Sidebar in Dark Mode -->
+                    <SolidColorBrush x:Key="NavigationViewItemForeground" Color="#F8FAFC" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundPressed" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="#CBD5E1" />
+                    <SolidColorBrush x:Key="NavigationViewItemHeaderForeground" Color="#94A3B8" />
+                    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#FF12141F" />
+                    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#FF12141F" />
+                    <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#FF12141F" />
+                    <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#FF12141F" />
+                    <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <!-- Explicit Dark Theme Tokens for WinUI 3 controls requesting Dark -->
+                    <SolidColorBrush x:Key="AppCardBackground" Color="#E8141620" />
+                    <SolidColorBrush x:Key="AppCardBorder" Color="#1EFFFFFF" />
+                    <SolidColorBrush x:Key="AppCardSubtleBorder" Color="#14FFFFFF" />
+                    <SolidColorBrush x:Key="AppSecondaryCardBackground" Color="#F0181A26" />
+                    <SolidColorBrush x:Key="AppStatChipBackground" Color="#12FFFFFF" />
+                    <SolidColorBrush x:Key="AppStatChipBorder" Color="#1AFFFFFF" />
+                    <SolidColorBrush x:Key="AppTerminalBackground" Color="#FF0B0E14" />
+                    <SolidColorBrush x:Key="AppTerminalForeground" Color="#FF38BDF8" />
+                    <SolidColorBrush x:Key="AppBadgeGoodBg" Color="#1810B981" />
+                    <SolidColorBrush x:Key="AppBadgeGoodBorder" Color="#3510B981" />
+                    <SolidColorBrush x:Key="AppBadgeGoodFg" Color="#FF10B981" />
+                    <SolidColorBrush x:Key="AppBadgeWarningBg" Color="#18F59E0B" />
+                    <SolidColorBrush x:Key="AppBadgeWarningBorder" Color="#35F59E0B" />
+                    <SolidColorBrush x:Key="AppBadgeWarningFg" Color="#FFF59E0B" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalBg" Color="#18EF4444" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalBorder" Color="#35EF4444" />
+                    <SolidColorBrush x:Key="AppBadgeCriticalFg" Color="#FFEF4444" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralBg" Color="#140F6CBD" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralBorder" Color="#300F6CBD" />
+                    <SolidColorBrush x:Key="AppBadgeNeutralFg" Color="#FF38BDF8" />
+                    <SolidColorBrush x:Key="AppCpuChipBg" Color="#18F59E0B" />
+                    <SolidColorBrush x:Key="AppCpuChipBorder" Color="#35F59E0B" />
+                    <SolidColorBrush x:Key="AppCpuChipFg" Color="#FFFBBF24" />
+                    <SolidColorBrush x:Key="AppRamChipBg" Color="#180284C7" />
+                    <SolidColorBrush x:Key="AppRamChipBorder" Color="#350284C7" />
+                    <SolidColorBrush x:Key="AppRamChipFg" Color="#FF60A5FA" />
+                    
+                    <!-- Semantic Status Brushes (Dark Mode) -->
+                    <SolidColorBrush x:Key="AppStatusGoodBrush" Color="#FF10B981" />
+                    <SolidColorBrush x:Key="AppStatusGoodBackground" Color="#1810B981" />
+                    <SolidColorBrush x:Key="AppStatusGoodBorder" Color="#3510B981" />
+                    <SolidColorBrush x:Key="AppStatusWarningBrush" Color="#FFF59E0B" />
+                    <SolidColorBrush x:Key="AppStatusWarningBackground" Color="#18F59E0B" />
+                    <SolidColorBrush x:Key="AppStatusWarningBorder" Color="#35F59E0B" />
+                    <SolidColorBrush x:Key="AppStatusDangerBrush" Color="#FFEF4444" />
+                    <SolidColorBrush x:Key="AppStatusDangerBackground" Color="#18EF4444" />
+                    <SolidColorBrush x:Key="AppStatusDangerBorder" Color="#35EF4444" />
+                    <SolidColorBrush x:Key="AppStatusInfoBrush" Color="#FF3B82F6" />
+                    <SolidColorBrush x:Key="AppStatusInfoBackground" Color="#183B82F6" />
+                    <SolidColorBrush x:Key="AppStatusInfoBorder" Color="#353B82F6" />
+                    <SolidColorBrush x:Key="AppStatusPurpleBrush" Color="#FF8B5CF6" />
+                    <SolidColorBrush x:Key="AppStatusPurpleBackground" Color="#188B5CF6" />
+                    <SolidColorBrush x:Key="AppStatusPurpleBorder" Color="#358B5CF6" />
+                    <SolidColorBrush x:Key="AppStatusCyanBrush" Color="#FF06B6D4" />
+                    <SolidColorBrush x:Key="AppStatusCyanBackground" Color="#1806B6D4" />
+                    <SolidColorBrush x:Key="AppStatusCyanBorder" Color="#3506B6D4" />
+                    <SolidColorBrush x:Key="AppLoadingOverlayBackground" Color="#80000000" />
+                    <SolidColorBrush x:Key="AppModalBackdropBrush" Color="#B00F0F14" />
+
+                    <!-- Resource Specific Hardware Telemetry Brushes (Dark Mode) -->
+                    <SolidColorBrush x:Key="CpuAccentBrush" Color="#FFF59E0B" />
+                    <SolidColorBrush x:Key="RamAccentBrush" Color="#FF0284C7" />
+                    <SolidColorBrush x:Key="GpuAccentBrush" Color="#FF8B5CF6" />
+                    <SolidColorBrush x:Key="DiskAccentBrush" Color="#FF10B981" />
+                    <SolidColorBrush x:Key="CpuTrackBrush" Color="#18F59E0B" />
+                    <SolidColorBrush x:Key="RamTrackBrush" Color="#180284C7" />
+                    <SolidColorBrush x:Key="GpuTrackBrush" Color="#188B5CF6" />
+                    <SolidColorBrush x:Key="DiskTrackBrush" Color="#1810B981" />
+
+                    <!-- System Text & Control Overrides for Dark Mode -->
                     <SolidColorBrush x:Key="SystemControlPageTextBaseHighBrush" Color="#F8FAFC" />
                     <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="#FF94A3B8" />
                     <SolidColorBrush x:Key="SystemControlForegroundBaseHighBrush" Color="#F8FAFC" />
@@ -166,6 +266,8 @@
                     <SolidColorBrush x:Key="AppStatusCyanBrush" Color="#FF0891B2" />
                     <SolidColorBrush x:Key="AppStatusCyanBackground" Color="#ECFEFF" />
                     <SolidColorBrush x:Key="AppStatusCyanBorder" Color="#A5F3FC" />
+                    <SolidColorBrush x:Key="AppLoadingOverlayBackground" Color="#40000000" />
+                    <SolidColorBrush x:Key="AppModalBackdropBrush" Color="#E0F8FAFC" />
                     
                     <!-- System Text & Control Overrides for Razor-Sharp Legibility & High Definition in Light Mode -->
                     <SolidColorBrush x:Key="SystemControlPageTextBaseHighBrush" Color="#0F172A" />

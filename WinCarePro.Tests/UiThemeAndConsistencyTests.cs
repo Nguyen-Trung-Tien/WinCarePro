@@ -78,6 +78,64 @@ public class UiThemeAndConsistencyTests
     }
 
     [Fact]
+    public void ThemeManager_IsDark_Property_TracksCurrentThemeAccurately()
+    {
+        var manager = ThemeManager.Instance;
+
+        manager.ApplyTheme(ElementTheme.Dark);
+        Assert.True(manager.IsDark);
+        Assert.Equal(ElementTheme.Dark, manager.CurrentTheme);
+
+        manager.ApplyTheme(ElementTheme.Light);
+        Assert.False(manager.IsDark);
+        Assert.Equal(ElementTheme.Light, manager.CurrentTheme);
+
+        manager.ApplyTheme(ElementTheme.Dark);
+        Assert.True(manager.IsDark);
+    }
+
+    [Fact]
+    public void ThemeManager_RapidToggleStress_MaintainsConsistencyAndDoesNotThrow()
+    {
+        var manager = ThemeManager.Instance;
+        int themeEventCount = 0;
+        EventHandler handler = (s, e) => themeEventCount++;
+
+        manager.ThemeChanged += handler;
+        try
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                var targetTheme = (i % 2 == 0) ? ElementTheme.Light : ElementTheme.Dark;
+                manager.ApplyTheme(targetTheme);
+                Assert.Equal(targetTheme, manager.CurrentTheme);
+                Assert.Equal(targetTheme == ElementTheme.Dark, manager.IsDark);
+            }
+            Assert.Equal(100, themeEventCount);
+        }
+        finally
+        {
+            manager.ThemeChanged -= handler;
+            manager.ApplyTheme(ElementTheme.Dark);
+        }
+    }
+
+    [Theory]
+    [InlineData("Default")]
+    [InlineData("Green")]
+    [InlineData("Purple")]
+    [InlineData("Pink")]
+    [InlineData("Amber")]
+    [InlineData("Cyan")]
+    [InlineData("Cyberpunk")]
+    public void ThemeManager_ApplyAccent_PaletteSwitchingStress(string accent)
+    {
+        var manager = ThemeManager.Instance;
+        manager.ApplyAccent(accent);
+        Assert.Equal(accent, manager.CurrentAccent);
+    }
+
+    [Fact]
     public void TranslationManager_Instance_ShouldBeSingleton()
     {
         var instance1 = TranslationManager.Instance;

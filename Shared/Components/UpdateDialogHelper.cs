@@ -24,7 +24,7 @@ public static class UpdateDialogHelper
     {
         if (theme == ElementTheme.Dark) return true;
         if (theme == ElementTheme.Light) return false;
-        return ThemeManager.Instance.CurrentTheme == ElementTheme.Dark || Application.Current.RequestedTheme == ApplicationTheme.Dark;
+        return ThemeManager.Instance.IsDark;
     }
 
     private static Brush GetDialogBackground(bool isDark)

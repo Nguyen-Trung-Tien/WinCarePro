@@ -210,8 +210,7 @@ public sealed partial class SettingsPage
             };
 
             var currentTheme = ThemeManager.Instance.CurrentTheme;
-            bool isDark = currentTheme == ElementTheme.Dark ||
-                          (currentTheme == ElementTheme.Default && Application.Current.RequestedTheme == ApplicationTheme.Dark);
+            bool isDark = ThemeManager.Instance.IsDark;
 
             var dialogBg = isDark
                 ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 18, 20, 29))

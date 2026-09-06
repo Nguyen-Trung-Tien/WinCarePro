@@ -370,6 +370,10 @@ public sealed partial class MainWindow : Window
             {
                 var newTheme = (ThemeManager.Instance.CurrentTheme == ElementTheme.Dark) ? ElementTheme.Light : ElementTheme.Dark;
                 ThemeManager.Instance.ApplyTheme(newTheme);
+                WinCarePro.Services.Implementations.SettingsService.Instance.UpdateSettings(s =>
+                {
+                    s.Theme = (newTheme == ElementTheme.Dark) ? "Dark" : "Light";
+                }, "Theme");
 
                 string title = "Theme Updated".T();
                 string msg = (newTheme == ElementTheme.Dark) ? "Switched to Dark Mode.".T() : "Switched to Light Mode.".T();

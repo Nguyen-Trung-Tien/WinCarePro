@@ -34,7 +34,10 @@ public sealed partial class MainPage : Page
 
         _themeChangedHandler = (s, e) =>
         {
-            ApplyNavTheme(ThemeManager.Instance.CurrentTheme);
+            DispatcherQueue?.TryEnqueue(() =>
+            {
+                ApplyNavTheme(ThemeManager.Instance.CurrentTheme);
+            });
         };
         ThemeManager.Instance.ThemeChanged += _themeChangedHandler;
 
@@ -59,7 +62,6 @@ public sealed partial class MainPage : Page
             }
         };
         TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
-        this.Unloaded += (s, e) => Cleanup();
         
         // Auto-translate and synchronize theme for navigated pages
         ContentFrame.Navigated += (s, e) =>
@@ -123,15 +125,31 @@ public sealed partial class MainPage : Page
             ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 18, 20, 31)) 
             : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 241, 245, 249));
 
-        NavView.Resources["NavigationViewDefaultPaneBackground"] = paneBg;
-        NavView.Resources["NavigationViewExpandedPaneBackground"] = paneBg;
-        NavView.Resources["NavigationViewPaneBackground"] = paneBg;
-        NavView.Resources["SplitViewPaneBackground"] = paneBg;
+        // Remove flat static overrides so template binds natively to App.xaml ThemeDictionaries
+        NavView.Resources.Remove("NavigationViewDefaultPaneBackground");
+        NavView.Resources.Remove("NavigationViewExpandedPaneBackground");
+        NavView.Resources.Remove("NavigationViewPaneBackground");
+        NavView.Resources.Remove("SplitViewPaneBackground");
 
-        var splitView = FindVisualChild<SplitView>(NavView);
-        if (splitView != null)
+        // Explicitly set background on SplitView and all pane visual elements
+        ApplyPaneBackgroundRecursively(NavView, paneBg);
+    }
+
+    private static void ApplyPaneBackgroundRecursively(DependencyObject parent, Brush paneBg)
+    {
+        int count = VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < count; i++)
         {
-            splitView.PaneBackground = paneBg;
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is SplitView sv)
+            {
+                sv.PaneBackground = paneBg;
+            }
+            else if (child is Panel p && (p.Name == "PaneContentGrid" || p.Name == "PaneRoot" || p.Name == "RootSplitView"))
+            {
+                p.Background = paneBg;
+            }
+            ApplyPaneBackgroundRecursively(child, paneBg);
         }
     }
 
@@ -355,7 +373,23 @@ public sealed partial class MainPage : Page
 
     public void CleanupActivePage()
     {
-        Cleanup();
+        try
+        {
+            if (ContentFrame.Content is Page oldPage)
+            {
+                ThemeManager.Instance.UnregisterPage(oldPage);
+                TranslationManager.Instance.UnregisterPage(oldPage);
+                if (oldPage.DataContext is IDisposable disposableVm)
+                {
+                    disposableVm.Dispose();
+                }
+                else if (oldPage is IDisposable disposablePage)
+                {
+                    disposablePage.Dispose();
+                }
+            }
+        }
+        catch { }
     }
 
     private void UpdateUserAvatarAccent()

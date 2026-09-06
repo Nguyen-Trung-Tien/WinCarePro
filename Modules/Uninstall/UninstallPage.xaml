@@ -422,7 +422,7 @@
                                         <TextBlock Text="{x:Bind ViewModel.SelectedApp.DisplayName, Mode=OneWay}" FontWeight="Bold" FontSize="15" TextWrapping="Wrap" />
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            <Border Background="#1E8B5CF6" BorderBrush="#308B5CF6" BorderThickness="1" CornerRadius="4" Padding="6,1" VerticalAlignment="Center">
+                                            <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="4" Padding="6,1" VerticalAlignment="Center">
                                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.TypeBadgeText, Mode=OneWay}" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}"/>
                                             </Border>
                                         </StackPanel>
@@ -444,7 +444,7 @@
                                     </Grid>
                                     <Grid>
                                         <TextBlock Text="Total Size:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.SizeFormatted, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="#FF10B981" HorizontalAlignment="Right"/>
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.SizeFormatted, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Right"/>
                                     </Grid>
                                     <Grid>
                                         <TextBlock Text="Registry Hive:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
@@ -537,7 +537,7 @@
         </Grid>
 
         <!-- Frosted Glass Step Overlays (Step 1 Progress & Step 2 Leftovers) -->
-        <Grid x:Name="StepOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="#B0000000" Visibility="{x:Bind GetOverlayVisibility(ViewModel.UninstallStep), Mode=OneWay}" Canvas.ZIndex="100">
+        <Grid x:Name="StepOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="{ThemeResource AppLoadingOverlayBackground}" Visibility="{x:Bind GetOverlayVisibility(ViewModel.UninstallStep), Mode=OneWay}" Canvas.ZIndex="100">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
                     <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="40"/>
@@ -545,11 +545,7 @@
             </Grid.ChildrenTransitions>
 
             <!-- Frosted acrylic tint layer -->
-            <Border BorderThickness="0">
-                <Border.Background>
-                    <AcrylicBrush TintColor="#0F0F14" TintOpacity="0.85" FallbackColor="#0F0F14"/>
-                </Border.Background>
-            </Border>
+            <Border BorderThickness="0" Background="{ThemeResource AppModalBackdropBrush}"/>
 
             <!-- Step 1: Progress Card -->
             <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="32,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="440" Visibility="{x:Bind GetStepProgressVisibility(ViewModel.UninstallStep), Mode=OneWay}">
@@ -602,7 +598,7 @@
                         
                         <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="12">
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <FontIcon Glyph="&#xE7BA;" FontSize="22" Foreground="#FFEF4444" VerticalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE7BA;" FontSize="22" Foreground="{ThemeResource AppStatusDangerBrush}" VerticalAlignment="Center"/>
                                 <StackPanel>
                                     <TextBlock Text="Residual Items Found" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     <TextBlock Text="{x:Bind ViewModel.LeftoversCount, Mode=OneWay}" FontSize="16" FontWeight="Bold"/>
@@ -612,10 +608,10 @@
 
                         <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="12">
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <FontIcon Glyph="&#xE95A;" FontSize="22" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE95A;" FontSize="22" Foreground="{ThemeResource AppStatusGoodBrush}" VerticalAlignment="Center"/>
                                 <StackPanel>
                                     <TextBlock Text="Reclaimable Space" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                    <TextBlock Text="{x:Bind ViewModel.LeftoversSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="#FF10B981"/>
+                                    <TextBlock Text="{x:Bind ViewModel.LeftoversSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                                 </StackPanel>
                             </StackPanel>
                         </Border>

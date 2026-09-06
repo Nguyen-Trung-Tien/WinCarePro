@@ -267,12 +267,7 @@ public sealed partial class MainWindow : Window
 
     private void ThemeButton_Click(object sender, RoutedEventArgs e)
     {
-        bool isCurrentlyDark = RootGrid.RequestedTheme == ElementTheme.Dark;
-        bool nextIsDark = !isCurrentlyDark;
-        
-        RootGrid.RequestedTheme = nextIsDark ? ElementTheme.Dark : ElementTheme.Light;
-        ThemeIcon.Glyph = nextIsDark ? "\uE708" : "\uE706";
-        
+        bool nextIsDark = (Services.ThemeManager.Instance.CurrentTheme != ElementTheme.Dark);
         ApplyAppTheme(nextIsDark);
 
         // Update stored settings reactively

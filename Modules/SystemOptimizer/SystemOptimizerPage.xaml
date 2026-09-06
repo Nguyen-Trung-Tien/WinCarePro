@@ -145,12 +145,12 @@
                             </MenuFlyoutItem>
                             <MenuFlyoutItem Text="Max Performance" Click="OnSelectPerformanceProfileClick">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE7FC;" Foreground="#FFF59E0B"/>
+                                    <FontIcon Glyph="&#xE7FC;" Foreground="{ThemeResource AppStatusWarningBrush}"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutItem Text="Privacy Shield" Click="OnSelectPrivacyProfileClick">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE727;" Foreground="#FF10B981"/>
+                                    <FontIcon Glyph="&#xE727;" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                         </MenuFlyout>
@@ -243,7 +243,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="Tweaks Applied" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="{x:Bind ViewModel.OptimizedTweaksCount, Mode=OneWay}" FontSize="12" FontWeight="ExtraBold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                <TextBlock Text="{x:Bind ViewModel.OptimizedTweaksCount, Mode=OneWay}" FontSize="12" FontWeight="ExtraBold" Foreground="{ThemeResource AppStatusGoodBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                 <TextBlock Text="/" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                 <TextBlock Text="{x:Bind ViewModel.TotalTweaksCount, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                             </StackPanel>
@@ -369,13 +369,13 @@
                             <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
                                     <TextBlock Text="Optimized:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.OptimizedTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                    <TextBlock Text="{x:Bind ViewModel.OptimizedTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                 </StackPanel>
                             </Border>
                             <Border Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
                                     <TextBlock Text="Available:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.AvailableTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="#FFF59E0B" />
+                                    <TextBlock Text="{x:Bind ViewModel.AvailableTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusWarningBrush}" />
                                 </StackPanel>
                             </Border>
                         </StackPanel>
@@ -443,8 +443,8 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Border Width="28" Height="28" Background="#253B82F6" CornerRadius="14" Grid.Column="0">
-                                    <FontIcon Glyph="&#xE968;" FontSize="13" Foreground="#FF3B82F6" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                <Border Width="28" Height="28" Background="{ThemeResource AppStatusInfoBackground}" CornerRadius="14" Grid.Column="0">
+                                    <FontIcon Glyph="&#xE968;" FontSize="13" Foreground="{ThemeResource AppStatusInfoBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                 </Border>
                                 <TextBlock Grid.Column="1" Text="RAM Booster 2.0" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
                                 <ToggleSwitch Grid.Column="2" IsOn="{x:Bind ViewModel.AutoBoostEnabled, Mode=TwoWay}" VerticalAlignment="Center" OffContent="" OnContent="" MinWidth="0" HorizontalAlignment="Right" ToolTipService.ToolTip="Auto-purges RAM when load exceeds 85%" />
@@ -491,7 +491,7 @@
                                         <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.UsedRamText, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
 
                                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Available:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.AvailableRamText, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.AvailableRamText, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
                                     </Grid>
                                 </Grid>
                             </Border>
@@ -522,7 +522,7 @@
                                 </Border>
                                 <TextBlock Grid.Column="1" Text="Monitored Services" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
                                 <Border Grid.Column="2" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="6,1.5" VerticalAlignment="Center">
-                                    <TextBlock Text="Active" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                    <TextBlock Text="Active" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                 </Border>
                             </Grid>
 
@@ -563,7 +563,7 @@
                                 </Border>
                                 <TextBlock Grid.Column="1" Text="Kernel &amp; Latency Tuning" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
                                 <Border Grid.Column="2" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="6,1.5" VerticalAlignment="Center">
-                                    <TextBlock Text="Optimized" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                    <TextBlock Text="Optimized" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                 </Border>
                             </Grid>
 
@@ -582,19 +582,19 @@
                                 <!-- Multimedia Scheduling -->
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Multimedia Scheduling:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
                                 <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
-                                    <TextBlock Text="{x:Bind ViewModel.MultimediaSchedulingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                    <TextBlock Text="{x:Bind ViewModel.MultimediaSchedulingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                 </Border>
 
                                 <!-- Network Throttling -->
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Network Packet Rate:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
                                 <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
-                                    <TextBlock Text="{x:Bind ViewModel.NetworkThrottlingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                    <TextBlock Text="{x:Bind ViewModel.NetworkThrottlingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                 </Border>
 
                                 <!-- Kernel Paging -->
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Kernel RAM Resident:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
                                 <Border Grid.Row="2" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
-                                    <TextBlock Text="{x:Bind ViewModel.KernelPagingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" />
+                                    <TextBlock Text="{x:Bind ViewModel.KernelPagingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                 </Border>
                             </Grid>
                         </StackPanel>

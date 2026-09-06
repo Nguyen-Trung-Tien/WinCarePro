@@ -214,9 +214,7 @@ public sealed partial class ToastNotification : UserControl
 
     private void ApplySeverityStyle(string level)
     {
-        bool isDark = (ThemeManager.Instance.CurrentTheme == ElementTheme.Dark || 
-                      (ThemeManager.Instance.CurrentTheme == ElementTheme.Default && 
-                       this.ActualTheme != ElementTheme.Light));
+        bool isDark = ThemeManager.Instance.IsDark;
 
         string glyph = "\uE946"; // Info
         Color fgColor;

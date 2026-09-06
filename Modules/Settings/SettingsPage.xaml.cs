@@ -551,19 +551,26 @@ public sealed partial class SettingsPage : Page
 
     private void ApplyThemeCardSelection(bool dark)
     {
-        var accentBrush = (Brush)Application.Current.Resources["PrimaryAccentGradient"];
-        var defaultBorderBrush = (Brush)Application.Current.Resources["ControlStrokeColorDefaultBrush"];
+        Brush? accentBrush = null;
+        if (Application.Current.Resources.TryGetValue("PrimaryAccentGradient", out var ab) && ab is Brush b)
+        {
+            accentBrush = b;
+        }
+        else if (Application.Current.Resources.TryGetValue("AccentFillColorDefaultBrush", out var afb) && afb is Brush fb)
+        {
+            accentBrush = fb;
+        }
 
         if (dark)
         {
             if (DarkThemeCard != null)
             {
-                DarkThemeCard.BorderBrush = accentBrush;
+                if (accentBrush != null) DarkThemeCard.BorderBrush = accentBrush;
                 DarkThemeCard.BorderThickness = new Thickness(2.0);
             }
             if (LightThemeCard != null)
             {
-                LightThemeCard.BorderBrush = defaultBorderBrush;
+                LightThemeCard.ClearValue(Border.BorderBrushProperty);
                 LightThemeCard.BorderThickness = new Thickness(1.5);
             }
             if (DarkThemeCheck != null) DarkThemeCheck.Visibility = Visibility.Visible;
@@ -573,12 +580,12 @@ public sealed partial class SettingsPage : Page
         {
             if (LightThemeCard != null)
             {
-                LightThemeCard.BorderBrush = accentBrush;
+                if (accentBrush != null) LightThemeCard.BorderBrush = accentBrush;
                 LightThemeCard.BorderThickness = new Thickness(2.0);
             }
             if (DarkThemeCard != null)
             {
-                DarkThemeCard.BorderBrush = defaultBorderBrush;
+                DarkThemeCard.ClearValue(Border.BorderBrushProperty);
                 DarkThemeCard.BorderThickness = new Thickness(1.5);
             }
             if (LightThemeCheck != null) LightThemeCheck.Visibility = Visibility.Visible;

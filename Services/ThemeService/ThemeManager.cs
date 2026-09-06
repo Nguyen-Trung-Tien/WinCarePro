@@ -16,6 +16,7 @@ public class ThemeManager
     private readonly List<WeakReference<Page>> _registeredPages = new();
 
     public ElementTheme CurrentTheme { get; private set; } = ElementTheme.Dark;
+    public bool IsDark => CurrentTheme == ElementTheme.Dark;
     public string CurrentAccent { get; private set; } = "Default";
 
     public event EventHandler? ThemeChanged;
@@ -399,30 +400,55 @@ public class ThemeManager
                 Application.Current.Resources["SystemAccentColorDark2"] = c2;
                 Application.Current.Resources["SystemAccentColorDark3"] = c2;
 
-                if (Application.Current.Resources.TryGetValue("SystemControlHighlightAccentBrush", out var sysHlObj) && sysHlObj is SolidColorBrush sysHlBrush)
-                    sysHlBrush.Color = c0;
-                if (Application.Current.Resources.TryGetValue("AccentFillColorDefaultBrush", out var accDefObj) && accDefObj is SolidColorBrush accDefBrush)
-                    accDefBrush.Color = c0;
-                if (Application.Current.Resources.TryGetValue("AccentButtonBackground", out var accBtnObj) && accBtnObj is SolidColorBrush accBtnBrush)
-                    accBtnBrush.Color = c0;
-                if (Application.Current.Resources.TryGetValue("AppBadgeNeutralBg", out var bgNeutObj) && bgNeutObj is SolidColorBrush bgNeutBrush)
-                    bgNeutBrush.Color = Color.FromArgb(isDark ? (byte)24 : (byte)32, c0.R, c0.G, c0.B);
-                if (Application.Current.Resources.TryGetValue("AppBadgeNeutralBorder", out var bdNeutObj) && bdNeutObj is SolidColorBrush bdNeutBrush)
-                    bdNeutBrush.Color = Color.FromArgb(isDark ? (byte)53 : (byte)80, c0.R, c0.G, c0.B);
-                if (Application.Current.Resources.TryGetValue("AppBadgeNeutralFg", out var fgNeutObj) && fgNeutObj is SolidColorBrush fgNeutBrush)
-                    fgNeutBrush.Color = isDark ? cyber0 : c0;
-                if (Application.Current.Resources.TryGetValue("AppRamChipBg", out var bgRamObj) && bgRamObj is SolidColorBrush bgRamBrush)
-                    bgRamBrush.Color = Color.FromArgb(isDark ? (byte)24 : (byte)32, c1.R, c1.G, c1.B);
-                if (Application.Current.Resources.TryGetValue("AppRamChipBorder", out var bdRamObj) && bdRamObj is SolidColorBrush bdRamBrush)
-                    bdRamBrush.Color = Color.FromArgb(isDark ? (byte)53 : (byte)80, c1.R, c1.G, c1.B);
-                if (Application.Current.Resources.TryGetValue("AppRamChipFg", out var fgRamObj) && fgRamObj is SolidColorBrush fgRamBrush)
-                    fgRamBrush.Color = isDark ? cyber1 : c1;
+                SetOrCreateBrush(Application.Current.Resources, "SystemControlHighlightAccentBrush", c0);
+                SetOrCreateBrush(Application.Current.Resources, "AccentFillColorDefaultBrush", c0);
+                SetOrCreateBrush(Application.Current.Resources, "AccentButtonBackground", c0);
+                SetOrCreateBrush(Application.Current.Resources, "AccentFillColorSecondaryBrush", c1);
+                SetOrCreateBrush(Application.Current.Resources, "AccentFillColorTertiaryBrush", c2);
+
+                UpdateThemeDictionaryTokens("Default", true, c0, c1, cyber0, cyber1);
+                UpdateThemeDictionaryTokens("Dark", true, c0, c1, cyber0, cyber1);
+                UpdateThemeDictionaryTokens("Light", false, c0, c1, cyber0, cyber1);
             }
             catch { }
         }
         catch { }
 
         AccentChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private static void UpdateThemeDictionaryTokens(string dictKey, bool dictIsDark, Color c0, Color c1, Color cyber0, Color cyber1)
+    {
+        try
+        {
+            if (Application.Current.Resources.ThemeDictionaries.TryGetValue(dictKey, out var dictObj) &&
+                dictObj is ResourceDictionary dict)
+            {
+                SetOrCreateBrush(dict, "SystemAccentColor", c0);
+                SetOrCreateBrush(dict, "SystemControlHighlightAccentBrush", c0);
+                SetOrCreateBrush(dict, "AccentFillColorDefaultBrush", c0);
+                SetOrCreateBrush(dict, "AccentButtonBackground", c0);
+                SetOrCreateBrush(dict, "AppBadgeNeutralBg", Color.FromArgb(dictIsDark ? (byte)24 : (byte)32, c0.R, c0.G, c0.B));
+                SetOrCreateBrush(dict, "AppBadgeNeutralBorder", Color.FromArgb(dictIsDark ? (byte)53 : (byte)80, c0.R, c0.G, c0.B));
+                SetOrCreateBrush(dict, "AppBadgeNeutralFg", dictIsDark ? cyber0 : c0);
+                SetOrCreateBrush(dict, "AppRamChipBg", Color.FromArgb(dictIsDark ? (byte)24 : (byte)32, c1.R, c1.G, c1.B));
+                SetOrCreateBrush(dict, "AppRamChipBorder", Color.FromArgb(dictIsDark ? (byte)53 : (byte)80, c1.R, c1.G, c1.B));
+                SetOrCreateBrush(dict, "AppRamChipFg", dictIsDark ? cyber1 : c1);
+            }
+        }
+        catch { }
+    }
+
+    private static void SetOrCreateBrush(ResourceDictionary dict, string key, Color color)
+    {
+        if (dict.TryGetValue(key, out var obj) && obj is SolidColorBrush scb)
+        {
+            scb.Color = color;
+        }
+        else
+        {
+            dict[key] = new SolidColorBrush(color);
+        }
     }
 
     [System.Runtime.InteropServices.DllImport("dwmapi.dll")]

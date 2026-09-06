@@ -117,12 +117,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#2010B981" BorderBrush="#5010B981" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="Active in Context Menu" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.ActiveCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="#FF10B981" />
+                        <TextBlock Text="{x:Bind ViewModel.ActiveCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -135,12 +135,12 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#20F59E0B" BorderBrush="#50F59E0B" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE711;" FontSize="16" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusWarningBackground}" BorderBrush="{ThemeResource AppStatusWarningBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE711;" FontSize="16" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="Disabled / Shelved" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.DisabledCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="#FFF59E0B" />
+                        <TextBlock Text="{x:Bind ViewModel.DisabledCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource AppStatusWarningBrush}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -248,11 +248,11 @@
                                TextWrapping="Wrap" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="16" />
 
                     <!-- Safe Mechanism Note -->
-                    <Border Background="#1510B981" BorderBrush="#3010B981" BorderThickness="1" CornerRadius="8" Padding="12">
+                    <Border Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="12">
                         <StackPanel Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="#FF10B981" VerticalAlignment="Center" />
-                                <TextBlock Text="Safe Non-Destructive Mod" FontWeight="Bold" FontSize="11.5" Foreground="#FF10B981" VerticalAlignment="Center" />
+                                <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="{ThemeResource AppStatusGoodBrush}" VerticalAlignment="Center" />
+                                <TextBlock Text="Safe Non-Destructive Mod" FontWeight="Bold" FontSize="11.5" Foreground="{ThemeResource AppStatusGoodBrush}" VerticalAlignment="Center" />
                             </StackPanel>
                             <TextBlock Text="Disabled keys are safely prefixed with '-' rather than deleted, allowing instant restoration anytime."
                                        TextWrapping="Wrap" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="15" />
@@ -266,7 +266,7 @@
         <TextBlock Grid.Row="3" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,8,0,0" />
 
         <!-- Loading Overlay Indicator — smooth fade in/out -->
-        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="{ThemeResource AppLoadingOverlayBackground}" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.Resources>
                 <Storyboard x:Name="FadeInLoading">
                     <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">
@@ -295,7 +295,7 @@
                     <TextBlock Text="Scanning Context Menus..." FontSize="14" FontWeight="Bold" TextAlignment="Center" />
 
                     <!-- Linear Progress Bar -->
-                    <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1" Width="260">
+                    <Border Background="{ThemeResource ControlFillColorDefaultBrush}" CornerRadius="4" Height="8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" Padding="1" Width="260">
                         <ProgressBar IsIndeterminate="True" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch"/>
                     </Border>
                 </StackPanel>

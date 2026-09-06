@@ -431,8 +431,7 @@ public sealed partial class DashboardPage : Page
         double ramReclaimedMb = summary.RamBytesReclaimed / 1024.0 / 1024.0;
 
         var currentTheme = ThemeManager.Instance.CurrentTheme;
-        bool isDark = currentTheme == ElementTheme.Dark ||
-                      (currentTheme == ElementTheme.Default && Application.Current.RequestedTheme == ApplicationTheme.Dark);
+        bool isDark = ThemeManager.Instance.IsDark;
 
         // Core dynamic palette for optimal contrast in Dark Mode & Light Mode
         var dialogBg = isDark

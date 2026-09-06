@@ -1139,7 +1139,13 @@ public partial class TranslationManager
         _translations["Light Mode"] = "Chế độ sáng";
         _translations["Dark Mode"] = "Chế độ tối";
         _translations["Window Accent Colors Palette"] = "Bảng màu nhấn cửa sổ";
+        _translations["Window Backdrop Material"] = "Chất liệu nền cửa sổ";
+        _translations["Mica Alt (Tabbed Deep Contrast)"] = "Mica Alt (Tương phản sâu nhiều lớp)";
+        _translations["Mica (Dynamic Desktop Tint)"] = "Mica (Ánh màu màn hình động)";
+        _translations["Desktop Acrylic (Frosted Glass)"] = "Desktop Acrylic (Kính mờ Gaussian)";
+        _translations["Aura Glass (Ambient Glow Mesh)"] = "Aura Glass (Dải sáng chuyển màu Aura)";
         _translations["Mica Acrylic Background Transparency Level"] = "Mức độ trong suốt nền Mica Acrylic";
+        _translations["Smart RAM Boost"] = "Tối ưu RAM Thông minh";
         _translations["Enable UI fluid translation animations"] = "Bật hiệu ứng chuyển động mượt mà của giao diện";
         _translations["Auto Maintenance Task Schedulers"] = "Lập lịch tác vụ bảo trì tự động";
         _translations["Automated Cleanup Trigger Size (GB)"] = "Dung lượng kích hoạt dọn dẹp tự động (GB)";

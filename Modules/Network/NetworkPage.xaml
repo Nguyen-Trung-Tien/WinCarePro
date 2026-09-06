@@ -37,7 +37,7 @@
                         <!-- Tab 4 Stacking -->
                         <Setter Target="RepairPaneCol0.Width" Value="*" />
                         <Setter Target="RepairPaneCol1.Width" Value="0" />
-                        <Setter Target="RepairPaneLeft.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="RepairLeftScrollViewer.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="RepairPaneRight.(Grid.Row)" Value="1" />
                         <Setter Target="RepairPaneRight.(Grid.Column)" Value="0" />
                         <Setter Target="RepairPaneRight.(Grid.ColumnSpan)" Value="2" />
@@ -820,18 +820,19 @@
             </Grid>
 
             <!-- ++++++++++++++++++++ TAB 4: REPAIR & DIAGNOSTICS SUITE (2-PANE BALANCED WORKSPACE) ++++++++++++++++++++ -->
-            <ScrollViewer x:Name="SectionRepairs" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,4,8">
-                <Grid ColumnSpacing="14">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+            <Grid x:Name="SectionRepairs" Visibility="Collapsed" ColumnSpacing="14">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="RepairPaneCol0" Width="1.18*"/>
                     <ColumnDefinition x:Name="RepairPaneCol1" Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Left Pane: 1-Click Smart Repair + Modular Tools -->
-                <Grid x:Name="RepairPaneLeft" Grid.Row="0" Grid.Column="0" RowSpacing="12">
+                <!-- Left Pane: 1-Click Smart Repair + Modular Tools with independent scroll -->
+                <ScrollViewer x:Name="RepairLeftScrollViewer" Grid.Row="0" Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,6,8">
+                    <Grid x:Name="RepairPaneLeft" RowSpacing="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/> <!-- 0: Hero 1-Click Auto Repair -->
                         <RowDefinition Height="Auto"/> <!-- 1: Core Repairs -->
@@ -839,26 +840,26 @@
                     </Grid.RowDefinitions>
 
                     <!-- Hero Banner: 1-Click Auto Network Repair & Latency Optimization -->
-                    <Border Grid.Row="0" Style="{StaticResource NeonGlowBorderStyle}" Padding="16,14">
-                        <Grid ColumnSpacing="14">
+                    <Border Grid.Row="0" Style="{StaticResource NeonGlowBorderStyle}" Padding="14,10">
+                        <Grid ColumnSpacing="12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Width="44" Height="44" CornerRadius="12" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE768;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE768;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                 <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                    <TextBlock Text="Smart Network Auto-Repair" FontSize="14" FontWeight="ExtraBold"/>
+                                    <TextBlock Text="Smart Network Auto-Repair" FontSize="13.5" FontWeight="ExtraBold"/>
                                     <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,1.5">
                                         <TextBlock Text="Recommended" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
                                     </Border>
                                 </StackPanel>
-                                <TextBlock Text="Automatically flush DNS, rebuild TCP/IP, renew DHCP leases &amp; optimize throughput in 1 click." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                <TextBlock Text="Automatically flush DNS, rebuild TCP/IP, renew DHCP leases &amp; optimize throughput in 1 click." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                             </StackPanel>
-                            <Button Grid.Column="2" Click="OnRepairClick" Tag="smartrepair" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Height="36" Padding="16,0" CornerRadius="8" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
+                            <Button Grid.Column="2" Click="OnRepairClick" Tag="smartrepair" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Height="34" Padding="14,0" CornerRadius="8" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <FontIcon Glyph="&#xE8FB;" FontSize="12"/>
                                     <TextBlock Text="Auto Repair All" FontWeight="Bold" FontSize="12"/>
@@ -868,29 +869,29 @@
                     </Border>
 
                     <!-- Section 1: Core Repairs Suite -->
-                    <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                    <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,11">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <Grid Grid.Row="0" Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" Spacing="2">
-                                    <TextBlock Text="1-Click TCP/IP &amp; Winsock Repairs" FontSize="14" FontWeight="Bold"/>
-                                    <TextBlock Text="Resolve DNS failures, socket corruption &amp; IP lease timeouts" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <StackPanel Grid.Column="0" Spacing="1">
+                                    <TextBlock Text="1-Click TCP/IP &amp; Winsock Repairs" FontSize="13" FontWeight="Bold"/>
+                                    <TextBlock Text="Resolve DNS failures, socket corruption &amp; IP lease timeouts" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
-                                <Border Grid.Column="1" Background="#2010B981" CornerRadius="6" Padding="10,3" VerticalAlignment="Center">
-                                    <TextBlock Text="Core Repairs" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                <Border Grid.Column="1" Background="#2010B981" CornerRadius="6" Padding="8,2" VerticalAlignment="Center">
+                                    <TextBlock Text="Core Repairs" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
                                 </Border>
                             </Grid>
 
                             <!-- 3x2 Grid of Core Fix Tiles -->
-                            <Grid Grid.Row="1" RowSpacing="8" ColumnSpacing="8">
+                            <Grid Grid.Row="1" RowSpacing="6" ColumnSpacing="6">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -902,97 +903,115 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Fix 1: Reset TCP/IP -->
-                                <Border Grid.Row="0" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="0" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Reset TCP/IP" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Rebuild TCP/IP stack." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resettcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Reset TCP" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Reset TCP/IP" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Rebuild TCP/IP stack." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resettcp" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE777;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Reset TCP" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Fix 2: Reset Winsock -->
-                                <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Reset Winsock" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Restore Sockets API." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetwinsock" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Reset Winsock" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Reset Winsock" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Restore Sockets API." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetwinsock" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE895;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Reset Winsock" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Fix 3: Renew DHCP Lease -->
-                                <Border Grid.Row="0" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="0" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Renew DHCP" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Re-request IP lease." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="renewdhcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Renew DHCP" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Renew DHCP" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Re-request IP lease." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="renewdhcp" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE896;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Renew DHCP" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Fix 4: Flush DNS & ARP -->
-                                <Border Grid.Row="1" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="1" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Flush DNS/ARP" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Purge cache table." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="flushdns" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Flush Cache" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Flush DNS/ARP" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Purge cache table." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="flushdns" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE74D;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Flush Cache" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Fix 5: Reset Network Adapters -->
-                                <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Reset Adapters" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Restart NIC devices." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetadapters" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Restart NICs" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Reset Adapters" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Restart NIC devices." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetadapters" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE81D;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Restart NICs" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Fix 6: Repair Windows Firewall -->
-                                <Border Grid.Row="1" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="1" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Repair Firewall" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Restore default rules." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="repairfirewall" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Fix Firewall" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Repair Firewall" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Restore default rules." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="repairfirewall" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE727;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Fix Firewall" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
@@ -1001,29 +1020,29 @@
                     </Border>
 
                     <!-- Section 2: Gaming & Latency Optimization Suite (6 Tiles, 3x2 Symmetrical Grid) -->
-                    <Border Grid.Row="2" Style="{StaticResource AuraGlassCardStyle}" Padding="16,14">
+                    <Border Grid.Row="2" Style="{StaticResource AuraGlassCardStyle}" Padding="14,11">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <Grid Grid.Row="0" Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" Spacing="2">
-                                    <TextBlock Text="Gaming &amp; Performance Latency Boost" FontSize="14" FontWeight="Bold"/>
-                                    <TextBlock Text="Reduce bufferbloat, lower game ping &amp; clean routing" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <StackPanel Grid.Column="0" Spacing="1">
+                                    <TextBlock Text="Gaming &amp; Performance Latency Boost" FontSize="13" FontWeight="Bold"/>
+                                    <TextBlock Text="Reduce bufferbloat, lower game ping &amp; clean routing" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
-                                <Border Grid.Column="1" Background="#208B5CF6" CornerRadius="6" Padding="10,3" VerticalAlignment="Center">
-                                    <TextBlock Text="Performance Boost" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <Border Grid.Column="1" Background="#208B5CF6" CornerRadius="6" Padding="8,2" VerticalAlignment="Center">
+                                    <TextBlock Text="Performance Boost" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                 </Border>
                             </Grid>
 
                             <!-- 3x2 Grid perfectly matching Section 1 above -->
-                            <Grid Grid.Row="1" RowSpacing="8" ColumnSpacing="8">
+                            <Grid Grid.Row="1" RowSpacing="6" ColumnSpacing="6">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -1035,97 +1054,115 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Advanced Fix 1: Optimize TCP Auto-Tuning -->
-                                <Border Grid.Row="0" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="0" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="TCP Auto-Tuning" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Unlock max throughput." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="optimizetcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Enable Tuning" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="TCP Auto-Tuning" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Unlock max throughput." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="optimizetcp" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE945;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Enable Tuning" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Advanced Fix 2: Disable Energy-Efficient Ethernet -->
-                                <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Disable EEE" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Lower ping in gaming." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="disableeee" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Disable EEE" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Disable EEE" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Lower ping in gaming." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="disableeee" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE7E8;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Disable EEE" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Advanced Fix 3: Reset Proxy & WinHTTP -->
-                                <Border Grid.Row="0" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="0" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Reset WinHTTP" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Purge corrupt proxies." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetproxy" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Reset Proxy" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Reset WinHTTP" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Purge corrupt proxies." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resetproxy" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE774;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Reset Proxy" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Advanced Fix 4: Reset Hosts File -->
-                                <Border Grid.Row="1" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="1" Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Reset Hosts File" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Restore clean hosts." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resethosts" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Reset Hosts" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Reset Hosts File" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Restore clean hosts." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="resethosts" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE70F;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Reset Hosts" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Advanced Fix 5: Release & Rebind IP -->
-                                <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Rebind IP Lease" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Renew DHCP routing." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="renewdhcp" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Rebind IP" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Rebind IP Lease" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Renew DHCP routing." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="renewdhcp" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE896;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Rebind IP" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
 
                                 <!-- Advanced Fix 6: Purge Routing Cache -->
-                                <Border Grid.Row="1" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="9" Padding="10,8">
+                                <Border Grid.Row="1" Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,6">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <TextBlock Grid.Row="0" Text="Purge Routing" FontWeight="Bold" FontSize="12"/>
-                                        <TextBlock Grid.Row="1" Text="Clear socket route cache." FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,2,0,8"/>
-                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="flushdns" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" CornerRadius="7" Padding="0,0">
-                                            <TextBlock Text="Clear Routes" FontSize="11" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Row="0" Text="Purge Routing" FontWeight="Bold" FontSize="11.5"/>
+                                        <TextBlock Grid.Row="1" Text="Clear socket route cache." FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,1,0,5"/>
+                                        <Button Grid.Row="2" Click="OnRepairClick" Tag="flushdns" Style="{StaticResource RepairTileButtonStyle}" Height="28">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE8B7;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="Clear Routes" FontSize="11" FontWeight="SemiBold"/>
+                                            </StackPanel>
                                         </Button>
                                     </Grid>
                                 </Border>
@@ -1133,9 +1170,10 @@
                         </Grid>
                     </Border>
                 </Grid>
+            </ScrollViewer>
 
-                <!-- Right Pane: Diagnostic Terminal Console (Pixel-Perfect Balanced Height) -->
-                <Border x:Name="RepairPaneRight" Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+            <!-- Right Pane: Diagnostic Terminal Console (Pixel-Perfect Balanced Height) -->
+            <Border x:Name="RepairPaneRight" Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,11" VerticalAlignment="Stretch">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -1144,28 +1182,28 @@
                         </Grid.RowDefinitions>
 
                         <!-- Console Header -->
-                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                        <Grid Grid.Row="0" Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="Network Diagnostic Terminal" FontSize="14" FontWeight="Bold"/>
-                                <TextBlock Text="Live command output and instant network test tools" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="Network Diagnostic Terminal" FontSize="13" FontWeight="Bold"/>
+                                <TextBlock Text="Live command output and instant network test tools" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
-                                <Button Click="OnCopyConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="30" Padding="10,0" ToolTipService.ToolTip="Copy Console Output">
+                                <Button Click="OnCopyConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="28" Padding="8,0" ToolTipService.ToolTip="Copy Console Output">
                                     <FontIcon Glyph="&#xE8C8;" FontSize="11"/>
                                 </Button>
-                                <Button Click="OnClearConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="30" Padding="10,0" ToolTipService.ToolTip="Clear Console">
+                                <Button Click="OnClearConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="28" Padding="8,0" ToolTipService.ToolTip="Clear Console">
                                     <FontIcon Glyph="&#xE74D;" FontSize="11"/>
                                 </Button>
                             </StackPanel>
                         </Grid>
 
                         <!-- Tool Input & Trigger Buttons -->
-                        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,10">
-                            <TextBox Text="{x:Bind ViewModel.TestHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" KeyDown="OnHostKeyDown" PlaceholderText="Target host (e.g. 8.8.8.8, google.com) - Press Enter to Ping..." Height="34"/>
+                        <StackPanel Grid.Row="1" Spacing="6" Margin="0,0,0,8">
+                            <TextBox Text="{x:Bind ViewModel.TestHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" KeyDown="OnHostKeyDown" PlaceholderText="Target host (e.g. 8.8.8.8, google.com) - Press Enter to Ping..." Height="32" FontSize="12"/>
                             
                             <Grid ColumnSpacing="6">
                                 <Grid.ColumnDefinitions>
@@ -1175,46 +1213,45 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <Button Grid.Column="0" Click="OnPingClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,0">
+                                <Button Grid.Column="0" Click="OnPingClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="30" HorizontalAlignment="Stretch" Padding="0,0">
                                     <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                         <FontIcon Glyph="&#xE8B7;" FontSize="11"/>
-                                        <TextBlock Text="Ping" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Ping" FontSize="11" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
                                 
-                                <Button Grid.Column="1" Click="OnTraceClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,0">
+                                <Button Grid.Column="1" Click="OnTraceClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="30" HorizontalAlignment="Stretch" Padding="0,0">
                                     <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                         <FontIcon Glyph="&#xE756;" FontSize="11"/>
-                                        <TextBlock Text="Traceroute" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Traceroute" FontSize="11" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
                                 
-                                <Button Grid.Column="2" Click="OnDnsLookupClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,0">
+                                <Button Grid.Column="2" Click="OnDnsLookupClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="30" HorizontalAlignment="Stretch" Padding="0,0">
                                     <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                         <FontIcon Glyph="&#xEC1B;" FontSize="11"/>
-                                        <TextBlock Text="DNS" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <TextBlock Text="DNS" FontSize="11" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
                                 
-                                <Button Grid.Column="3" Click="OnPortScanClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="0,0">
+                                <Button Grid.Column="3" Click="OnPortScanClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="30" HorizontalAlignment="Stretch" Padding="0,0">
                                     <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                         <FontIcon Glyph="&#xE71E;" FontSize="11"/>
-                                        <TextBlock Text="Port Scan" FontSize="11.5" FontWeight="SemiBold"/>
+                                        <TextBlock Text="Port Scan" FontSize="11" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
                             </Grid>
                         </StackPanel>
 
                         <!-- Terminal Console Output Screen (Height-Balanced with Left Pane) -->
-                        <Border Grid.Row="2" Height="285" Background="{ThemeResource AppTerminalBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="12">
+                        <Border Grid.Row="2" VerticalAlignment="Stretch" Background="{ThemeResource AppTerminalBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="12">
                             <ScrollViewer x:Name="TerminalScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                                <TextBlock Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" FontFamily="Cascadia Code, Consolas, Courier New" FontSize="12" Foreground="{ThemeResource AppTerminalForeground}" TextWrapping="Wrap" IsTextSelectionEnabled="True" LineHeight="18"/>
+                                <TextBlock Text="{x:Bind ViewModel.ConsoleOutput, Mode=OneWay}" FontFamily="Cascadia Code, Consolas, Courier New" FontSize="11.5" Foreground="{ThemeResource AppTerminalForeground}" TextWrapping="Wrap" IsTextSelectionEnabled="True" LineHeight="17"/>
                             </ScrollViewer>
                         </Border>
                     </Grid>
                 </Border>
-                </Grid>
-            </ScrollViewer>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

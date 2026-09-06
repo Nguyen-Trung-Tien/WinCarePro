@@ -10,7 +10,7 @@
 
     <Grid Background="Transparent">
         <!-- OpenPaneLength set to 220px, CompactPaneLength to 60px -->
-        <NavigationView x:Name="NavView" PaneDisplayMode="Auto" SelectionChanged="OnNavSelectionChanged" IsBackButtonVisible="Collapsed" AlwaysShowHeader="False" IsSettingsVisible="True" OpenPaneLength="220" CompactPaneLength="60">
+        <NavigationView x:Name="NavView" PaneDisplayMode="Auto" SelectionChanged="OnNavSelectionChanged" IsBackButtonVisible="Collapsed" AlwaysShowHeader="False" IsSettingsVisible="True" OpenPaneLength="220" CompactPaneLength="60" Background="Transparent">
 
             <!-- v3.0 Nova — User Chip in Pane Footer -->
             <NavigationView.PaneFooter>
@@ -125,7 +125,7 @@
                 <Frame.ContentTransitions>
                     <TransitionCollection>
                         <NavigationThemeTransition>
-                            <SlideNavigationTransitionInfo Effect="FromRight" />
+                            <EntranceNavigationTransitionInfo />
                         </NavigationThemeTransition>
                     </TransitionCollection>
                 </Frame.ContentTransitions>

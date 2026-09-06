@@ -144,6 +144,7 @@ public sealed partial class SettingsPage : Page
 
             // Appearance
             ApplyAccentColorSelection(profile.AccentColor);
+            SelectBackdropComboItem(profile.BackdropType);
             TransparencySlider.Value = profile.TransparencyLevel;
             if (TransparencyValueLabel != null)
             {
@@ -210,6 +211,7 @@ public sealed partial class SettingsPage : Page
             BetaUpdatesToggle.IsOn = profile.BetaUpdates;
 
             ApplyAccentColorSelection(profile.AccentColor);
+            SelectBackdropComboItem(profile.BackdropType);
             TransparencySlider.Value = profile.TransparencyLevel;
             if (TransparencyValueLabel != null)
             {
@@ -276,6 +278,10 @@ public sealed partial class SettingsPage : Page
             p.MinimizeToTray = MinimizeToTrayToggle.IsOn;
             p.BetaUpdates = BetaUpdatesToggle.IsOn;
 
+            if (BackdropComboBox.SelectedItem is ComboBoxItem backdropItem && backdropItem.Tag is string backdropType)
+            {
+                p.BackdropType = backdropType;
+            }
             p.TransparencyLevel = TransparencySlider.Value;
             p.EnableAnimations = EnableAnimationsToggle.IsOn;
 
@@ -311,9 +317,10 @@ public sealed partial class SettingsPage : Page
         // 1. Accent color
         App.ApplyAccentColor(profile.AccentColor);
 
-        // 2. Transparency
+        // 2. Backdrop & Transparency
         if (App.MainWindowInstance != null)
         {
+            App.MainWindowInstance.SetBackdropType(profile.BackdropType);
             App.MainWindowInstance.ApplyTransparency(profile.TransparencyLevel);
         }
 
@@ -479,6 +486,34 @@ public sealed partial class SettingsPage : Page
         }
 
         SettingsService.Instance.UpdateSettings(s => s.TransparencyLevel = e.NewValue, "TransparencyLevel");
+    }
+
+    private void OnBackdropSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_loadingSettings) return;
+        if (BackdropComboBox?.SelectedItem is ComboBoxItem item && item.Tag is string backdropType)
+        {
+            App.MainWindowInstance?.SetBackdropType(backdropType);
+            SettingsService.Instance.UpdateSettings(s => s.BackdropType = backdropType, "BackdropType");
+        }
+    }
+
+    private void SelectBackdropComboItem(string? backdropType)
+    {
+        if (BackdropComboBox == null) return;
+        string target = backdropType ?? "MicaAlt";
+        foreach (var item in BackdropComboBox.Items)
+        {
+            if (item is ComboBoxItem cbi && string.Equals(cbi.Tag?.ToString(), target, StringComparison.OrdinalIgnoreCase))
+            {
+                BackdropComboBox.SelectedItem = cbi;
+                return;
+            }
+        }
+        if (BackdropComboBox.Items.Count > 0)
+        {
+            BackdropComboBox.SelectedIndex = 0;
+        }
     }
 
     private void OnAutoCleanupSliderChanged(object sender, Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)

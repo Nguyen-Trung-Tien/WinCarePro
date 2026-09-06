@@ -1368,6 +1368,17 @@
                 <Setter Property="FontSize" Value="11" />
             </Style>
 
+            <!-- Tile Action Secondary Button Style (For compact modular repair & tool tiles) -->
+            <Style x:Key="RepairTileButtonStyle" TargetType="Button" BasedOn="{StaticResource StandardSecondaryButtonStyle}">
+                <Setter Property="Height" Value="28" />
+                <Setter Property="Padding" Value="0,0" />
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="FontSize" Value="11" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Style>
+
             <!-- Destructive / Danger Action Button Style (Red Glass Glow) -->
             <Style x:Key="DangerButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{ThemeResource AppBadgeCriticalBg}" />

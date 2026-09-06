@@ -349,6 +349,17 @@
 
                             <MenuFlyoutSeparator />
 
+                            <!-- Window Backdrop Material Selector -->
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Window Backdrop Material" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <ComboBox x:Name="BackdropComboBox" SelectionChanged="OnBackdropSelectionChanged" Width="340" HorizontalAlignment="Left" CornerRadius="8">
+                                    <ComboBoxItem Content="Mica Alt (Tabbed Deep Contrast)" Tag="MicaAlt"/>
+                                    <ComboBoxItem Content="Mica (Dynamic Desktop Tint)" Tag="Mica"/>
+                                    <ComboBoxItem Content="Desktop Acrylic (Frosted Glass)" Tag="Acrylic"/>
+                                    <ComboBoxItem Content="Aura Glass (Ambient Glow Mesh)" Tag="AuraGlow"/>
+                                </ComboBox>
+                            </StackPanel>
+
                             <StackPanel Spacing="8">
                                 <Grid Width="340" HorizontalAlignment="Left">
                                     <TextBlock Text="Mica / Acrylic Background Transparency Level" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>

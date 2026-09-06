@@ -25,6 +25,7 @@ public class SettingsAndStateTests
         Assert.True(profile.AutoCheckUpdates);
         Assert.True(profile.MinimizeToTray);
         Assert.Equal("Default", profile.AccentColor);
+        Assert.Equal("MicaAlt", profile.BackdropType);
         Assert.True(profile.EnableAnimations);
         Assert.True(profile.ShowNotifications);
     }
@@ -38,6 +39,7 @@ public class SettingsAndStateTests
             Theme = "Light",
             AutoScan = true,
             AccentColor = "Green",
+            BackdropType = "Acrylic",
             LanguageIndex = 1,
             TransparencyLevel = 90.0,
             EnableAnimations = false,
@@ -53,6 +55,7 @@ public class SettingsAndStateTests
         Assert.Equal("Light", restored.Theme);
         Assert.True(restored.AutoScan);
         Assert.Equal("Green", restored.AccentColor);
+        Assert.Equal("Acrylic", restored.BackdropType);
         Assert.Equal(1, restored.LanguageIndex);
         Assert.Equal(90.0, restored.TransparencyLevel);
         Assert.False(restored.EnableAnimations);
@@ -238,4 +241,53 @@ public class SettingsAndStateTests
         // Cleanup
         service.ResetToDefaults();
     }
+
+    [Fact]
+    public void SettingsService_BackdropType_PersistsCorrectly()
+    {
+        // Arrange
+        var service = SettingsService.Instance;
+
+        // Act
+        service.UpdateSettings(s => s.BackdropType = "Acrylic", "BackdropType");
+
+        // Assert
+        Assert.Equal("Acrylic", service.CurrentSettings.BackdropType);
+        string dbJson = DbManager.GetSettings();
+        var profile = JsonSerializer.Deserialize<SettingsProfile>(dbJson);
+        Assert.NotNull(profile);
+        Assert.Equal("Acrylic", profile.BackdropType);
+
+        // Cleanup
+        service.ResetToDefaults();
+    }
+
+    [Fact]
+    public void BackgroundWatchdogService_Lifecycle_StartsAndStopsCleanly()
+    {
+        // Arrange
+        var optimizer = new Engines.SystemOptimizerEngine();
+        var service = new BackgroundWatchdogService(optimizer, SettingsService.Instance);
+
+        // Act & Assert
+        Assert.False(service.IsRunning);
+
+        service.Start();
+        Assert.True(service.IsRunning);
+
+        // Double start should be idempotent
+        service.Start();
+        Assert.True(service.IsRunning);
+
+        service.Stop();
+        Assert.False(service.IsRunning);
+
+        // Double stop should be idempotent
+        service.Stop();
+        Assert.False(service.IsRunning);
+
+        service.Dispose();
+        Assert.False(service.IsRunning);
+    }
 }
+

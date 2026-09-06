@@ -80,10 +80,11 @@ public class SettingsService : ISettingsService, IDisposable
 
         SettingsChanged?.Invoke(this, new SettingsChangedEventArgs(snapshot, propertyName));
 
-        // Critical user interface preferences (Theme, AccentColor, Language) must persist immediately
+        // Critical user interface preferences (Theme, AccentColor, BackdropType, Language) must persist immediately
         // to prevent data loss on rapid app shutdown/restart.
         bool isCriticalSetting = string.Equals(propertyName, "Theme", StringComparison.OrdinalIgnoreCase) ||
                                  string.Equals(propertyName, "AccentColor", StringComparison.OrdinalIgnoreCase) ||
+                                 string.Equals(propertyName, "BackdropType", StringComparison.OrdinalIgnoreCase) ||
                                  string.Equals(propertyName, "LanguageIndex", StringComparison.OrdinalIgnoreCase) ||
                                  string.Equals(propertyName, "Immediate", StringComparison.OrdinalIgnoreCase);
 

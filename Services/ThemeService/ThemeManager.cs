@@ -90,7 +90,15 @@ public class ThemeManager
             {
                 win.MainRootGrid.RequestedTheme = theme;
                 win.MainThemeIcon.Glyph = (theme == ElementTheme.Dark) ? "\uE708" : "\uE706";
-                win.SetBackdropType((theme == ElementTheme.Dark) ? "micaalt" : "mica");
+                string preferredBackdrop = Implementations.SettingsService.Instance.CurrentSettings?.BackdropType ?? "";
+                if (string.IsNullOrEmpty(preferredBackdrop) || preferredBackdrop.Equals("default", StringComparison.OrdinalIgnoreCase))
+                {
+                    win.SetBackdropType((theme == ElementTheme.Dark) ? "micaalt" : "mica");
+                }
+                else
+                {
+                    win.SetBackdropType(preferredBackdrop);
+                }
                 win.ApplyTransparency(win.CurrentTransparencyLevel);
             });
         }

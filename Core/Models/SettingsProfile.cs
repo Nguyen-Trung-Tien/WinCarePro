@@ -18,6 +18,7 @@ public class SettingsProfile
 
     // Appearance
     public string AccentColor { get; set; } = "Default"; // Default, Green, Purple, Pink, Amber
+    public string BackdropType { get; set; } = "MicaAlt"; // MicaAlt, Mica, Acrylic, AuraGlow
     public double TransparencyLevel { get; set; } = 10.0;
     public bool EnableAnimations { get; set; } = true;
 

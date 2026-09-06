@@ -103,6 +103,7 @@ public partial class App : Application
         services.AddSingleton<INotificationService, NotificationService>();
         services.AddSingleton<ISystemSnapshotService, SystemSnapshotService>();
         services.AddSingleton<IMaintenanceSchedulerService, MaintenanceSchedulerService>();
+        services.AddSingleton<IBackgroundWatchdogService, BackgroundWatchdogService>();
         services.AddSingleton<UndoManagerService>();
         services.AddSingleton<SmartFixService>();
         services.AddSingleton<TaskSchedulerService>(TaskSchedulerService.Instance);
@@ -219,6 +220,9 @@ public partial class App : Application
 
             _window = new MainWindow();
             _window.Activate();
+
+            // Start background watchdog for proactive health monitoring and automated RAM optimization
+            Services.GetService<IBackgroundWatchdogService>()?.Start();
         }
         catch (Exception ex)
         {

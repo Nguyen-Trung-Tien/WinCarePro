@@ -18,6 +18,8 @@ public sealed partial class MainPage : Page
     private readonly EventHandler _themeChangedHandler;
     private readonly EventHandler _accentChangedHandler;
     private readonly EventHandler _languageChangedHandler;
+    private readonly EventHandler<WinCarePro.Services.Contracts.SettingsChangedEventArgs> _settingsChangedHandler;
+    private SplitView? _splitView;
 
     public MainPage()
     {
@@ -62,6 +64,20 @@ public sealed partial class MainPage : Page
             }
         };
         TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
+
+        // Synchronize Nav menu background reactively with Settings (TransparencyLevel, BackdropType, AccentColor)
+        _settingsChangedHandler = (s, e) =>
+        {
+            if (e.PropertyName is "TransparencyLevel" or "BackdropType" or "Theme" or "AccentColor")
+            {
+                DispatcherQueue?.TryEnqueue(() =>
+                {
+                    var cur = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+                    UpdateNavTransparencyAndBackdrop(cur.TransparencyLevel, cur.BackdropType);
+                });
+            }
+        };
+        WinCarePro.Services.Implementations.SettingsService.Instance.SettingsChanged += _settingsChangedHandler;
         
         // Auto-translate and synchronize theme for navigated pages
         ContentFrame.Navigated += (s, e) =>
@@ -71,7 +87,6 @@ public sealed partial class MainPage : Page
                 ThemeManager.Instance.RegisterPage(page);
                 TranslationManager.Instance.RegisterPage(page);
                 page.RequestedTheme = ThemeManager.Instance.CurrentTheme;
-                TranslationManager.Instance.Translate(page);
 
                 // Detach previous page's Loaded handler to prevent memory leak
                 if (_lastTranslatedPage != null && _lastLoadedHandler != null)
@@ -79,7 +94,7 @@ public sealed partial class MainPage : Page
                     _lastTranslatedPage.Loaded -= _lastLoadedHandler;
                 }
 
-                // Attach new handler and track references
+                // Attach new handler: translation runs asynchronously on Loaded to keep entrance transition at 120 FPS
                 _lastLoadedHandler = (sender, args) => TranslationManager.Instance.Translate(page);
                 page.Loaded += _lastLoadedHandler;
                 _lastTranslatedPage = page;
@@ -95,7 +110,8 @@ public sealed partial class MainPage : Page
 
         NavView.Loaded += (s, e) =>
         {
-            UpdateNavViewPaneBackground(ThemeManager.Instance.CurrentTheme == ElementTheme.Dark);
+            var cur = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+            UpdateNavTransparencyAndBackdrop(cur.TransparencyLevel, cur.BackdropType);
         };
 
         // Translate this container page and ensure sidebar theme consistency
@@ -119,38 +135,56 @@ public sealed partial class MainPage : Page
         return null;
     }
 
-    private void UpdateNavViewPaneBackground(bool isDark)
+    public void UpdateNavTransparencyAndBackdrop(double transparencyLevel, string? backdropType)
     {
-        var paneBg = isDark 
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 18, 20, 31)) 
-            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 241, 245, 249));
+        bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
+        double clampedLevel = Math.Clamp(transparencyLevel, 10.0, 100.0);
+        double fraction = (clampedLevel - 10.0) / 90.0; // 0.0 to 1.0
 
-        // Remove flat static overrides so template binds natively to App.xaml ThemeDictionaries
-        NavView.Resources.Remove("NavigationViewDefaultPaneBackground");
-        NavView.Resources.Remove("NavigationViewExpandedPaneBackground");
-        NavView.Resources.Remove("NavigationViewPaneBackground");
-        NavView.Resources.Remove("SplitViewPaneBackground");
+        // Synchronize pane alpha with window transparency:
+        // at 10% (solid/contrast): alpha ~165
+        // at 100% (pure frosted glass): alpha ~18
+        byte paneAlpha = (byte)Math.Clamp((int)(165 - (fraction * 145)), 18, 175);
 
-        // Explicitly set background on SplitView and all pane visual elements
-        ApplyPaneBackgroundRecursively(NavView, paneBg);
-    }
-
-    private static void ApplyPaneBackgroundRecursively(DependencyObject parent, Brush paneBg)
-    {
-        int count = VisualTreeHelper.GetChildrenCount(parent);
-        for (int i = 0; i < count; i++)
+        Brush paneBg;
+        if (isDark)
         {
-            var child = VisualTreeHelper.GetChild(parent, i);
-            if (child is SplitView sv)
+            var accent = ThemeManager.Instance.CurrentAccent?.ToLowerInvariant();
+            if (accent == "cyberpunk" || accent == "neon")
             {
-                sv.PaneBackground = paneBg;
+                paneBg = new SolidColorBrush(Windows.UI.Color.FromArgb(paneAlpha, 14, 12, 24));
             }
-            else if (child is Panel p && (p.Name == "PaneContentGrid" || p.Name == "PaneRoot" || p.Name == "RootSplitView"))
+            else
             {
-                p.Background = paneBg;
+                paneBg = new SolidColorBrush(Windows.UI.Color.FromArgb(paneAlpha, 18, 20, 26));
             }
-            ApplyPaneBackgroundRecursively(child, paneBg);
         }
+        else
+        {
+            paneBg = new SolidColorBrush(Windows.UI.Color.FromArgb(paneAlpha, 243, 245, 249));
+        }
+
+        // Apply resource overrides for native WinUI 3 NavigationView template
+        NavView.Resources["NavigationViewDefaultPaneBackground"] = paneBg;
+        NavView.Resources["NavigationViewExpandedPaneBackground"] = paneBg;
+        NavView.Resources["NavigationViewPaneBackground"] = paneBg;
+        NavView.Resources["SplitViewPaneBackground"] = paneBg;
+
+        // Apply directly to cached SplitView in O(1) without visual tree walking
+        _splitView ??= FindVisualChild<SplitView>(NavView);
+        if (_splitView != null)
+        {
+            _splitView.PaneBackground = paneBg;
+        }
+
+        // Synchronize UserProfileBorder in PaneFooter
+        byte userChipAlpha = (byte)Math.Clamp(paneAlpha + 30, 35, 220);
+        UserProfileBorder.Background = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(userChipAlpha, 26, 28, 38))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(userChipAlpha, 255, 255, 255));
+        UserProfileBorder.BorderBrush = isDark
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(35, 255, 255, 255))
+            : new SolidColorBrush(Windows.UI.Color.FromArgb(35, 0, 0, 0));
     }
 
     private void ApplyNavTheme(ElementTheme theme)
@@ -160,15 +194,8 @@ public sealed partial class MainPage : Page
         UserProfileBorder.RequestedTheme = theme;
 
         bool isDark = (theme == ElementTheme.Dark);
-        UpdateNavViewPaneBackground(isDark);
-
-        UserProfileBorder.Background = isDark
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(240, 24, 26, 38))
-            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 248, 250, 252));
-
-        UserProfileBorder.BorderBrush = isDark
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(30, 255, 255, 255))
-            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 203, 213, 225));
+        var cur = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+        UpdateNavTransparencyAndBackdrop(cur.TransparencyLevel, cur.BackdropType);
 
         var itemFg = isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 248, 250, 252)) 
                             : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 15, 23, 42));
@@ -325,24 +352,13 @@ public sealed partial class MainPage : Page
     {
         if (enabled)
         {
-            if (ContentFrame.ContentTransitions == null || ContentFrame.ContentTransitions.Count == 0)
+            ContentFrame.ContentTransitions = new Microsoft.UI.Xaml.Media.Animation.TransitionCollection
             {
-                ContentFrame.ContentTransitions = new Microsoft.UI.Xaml.Media.Animation.TransitionCollection
+                new Microsoft.UI.Xaml.Media.Animation.NavigationThemeTransition
                 {
-                    new Microsoft.UI.Xaml.Media.Animation.NavigationThemeTransition
-                    {
-                        DefaultNavigationTransitionInfo = new Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionInfo
-                        {
-                            Effect = Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionEffect.FromRight
-                        }
-                    },
-                    new Microsoft.UI.Xaml.Media.Animation.EntranceThemeTransition
-                    {
-                        FromVerticalOffset = 16,
-                        IsStaggeringEnabled = true
-                    }
-                };
-            }
+                    DefaultNavigationTransitionInfo = new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo()
+                }
+            };
         }
         else
         {
@@ -360,6 +376,7 @@ public sealed partial class MainPage : Page
         ThemeManager.Instance.ThemeChanged -= _themeChangedHandler;
         ThemeManager.Instance.AccentChanged -= _accentChangedHandler;
         TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        WinCarePro.Services.Implementations.SettingsService.Instance.SettingsChanged -= _settingsChangedHandler;
         ThemeManager.Instance.UnregisterPage(this);
         TranslationManager.Instance.UnregisterPage(this);
 

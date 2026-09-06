@@ -20,6 +20,7 @@ public sealed partial class MainWindow : Window
 
     private string? _downloadedSetupPath = null;
     public double CurrentTransparencyLevel { get; private set; } = 10.0;
+    public string CurrentBackdropType { get; private set; } = "MicaAlt";
 
     private void LoadThemeConfiguration()
     {
@@ -32,8 +33,13 @@ public sealed partial class MainWindow : Window
             ThemeIcon.Glyph = isDark ? "\uE708" : "\uE706";
             
             ApplyAppTheme(isDark);
-            ThemeManager.Instance.AccentChanged += (s, e) => DispatcherQueue?.TryEnqueue(() => ApplyTransparency(CurrentTransparencyLevel));
+            ThemeManager.Instance.AccentChanged += (s, e) => DispatcherQueue?.TryEnqueue(() =>
+            {
+                UpdateAuraMesh();
+                ApplyTransparency(CurrentTransparencyLevel);
+            });
             App.ApplyAccentColor(settings.AccentColor ?? "Default");
+            SetBackdropType(settings.BackdropType ?? (isDark ? "micaalt" : "mica"));
             ApplyTransparency(settings.TransparencyLevel);
 
             // Check for updates automatically in the background
@@ -60,11 +66,11 @@ public sealed partial class MainWindow : Window
         bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
         
         // Transparency level ranges from 10% to 100%.
-        // At 10% (minimum transparency): opacityFraction = 0.98 (solid, crisp slate-ice, 0% muddy wallpaper bleed).
-        // At 100% (maximum transparency): opacityFraction = 0.72 (soft translucent frosted acrylic).
+        // At 10% (minimum transparency): solid/crisp contrast (alpha = 175)
+        // At 100% (maximum transparency): lush frosted glass (alpha = 25)
         double clampedLevel = Math.Clamp(level, 10.0, 100.0);
-        double opacityFraction = 0.98 - ((clampedLevel - 10.0) / 90.0) * 0.26;
-        byte colorAlpha = (byte)Math.Clamp((int)(255 * opacityFraction), 180, 255);
+        double fraction = (clampedLevel - 10.0) / 90.0; // 0.0 to 1.0
+        byte colorAlpha = (byte)Math.Clamp((int)(175 - (fraction * 150)), 25, 185);
         
         if (isDark)
         {
@@ -75,13 +81,19 @@ public sealed partial class MainWindow : Window
             }
             else
             {
-                RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 26, 26, 26));
+                RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 22, 24, 29));
             }
         }
         else
         {
             // In light mode, apply crisp Slate-Ice base (#F1F5F9) with smooth opacity fraction
             RootGrid.Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(colorAlpha, 241, 245, 249));
+        }
+
+        // Synchronize Nav menu pane background in MainPage
+        if (RootFrame?.Content is MainPage mainPage)
+        {
+            mainPage.UpdateNavTransparencyAndBackdrop(clampedLevel, CurrentBackdropType);
         }
     }
 
@@ -254,13 +266,76 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            this.SystemBackdrop = type.ToLower() switch
+            string normalized = type?.ToLowerInvariant() ?? "micaalt";
+            CurrentBackdropType = normalized;
+
+            // Avoid tearing down DWM swapchain surface if the underlying backdrop can be reused
+            if (normalized == "acrylic")
             {
-                "mica" => new Microsoft.UI.Xaml.Media.MicaBackdrop { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base },
-                "micaalt" => new Microsoft.UI.Xaml.Media.MicaBackdrop { Kind = Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt },
-                "acrylic" => new Microsoft.UI.Xaml.Media.DesktopAcrylicBackdrop(),
-                _ => new Microsoft.UI.Xaml.Media.MicaBackdrop()
+                if (this.SystemBackdrop is not Microsoft.UI.Xaml.Media.DesktopAcrylicBackdrop)
+                {
+                    this.SystemBackdrop = new Microsoft.UI.Xaml.Media.DesktopAcrylicBackdrop();
+                }
+            }
+            else
+            {
+                var targetKind = (normalized == "mica")
+                    ? Microsoft.UI.Composition.SystemBackdrops.MicaKind.Base
+                    : Microsoft.UI.Composition.SystemBackdrops.MicaKind.BaseAlt;
+
+                if (this.SystemBackdrop is Microsoft.UI.Xaml.Media.MicaBackdrop existingMica)
+                {
+                    if (existingMica.Kind != targetKind)
+                    {
+                        existingMica.Kind = targetKind; // In-place kind update: zero screen jitter/flash
+                    }
+                }
+                else
+                {
+                    this.SystemBackdrop = new Microsoft.UI.Xaml.Media.MicaBackdrop { Kind = targetKind };
+                }
+            }
+
+            UpdateAuraMesh();
+            ApplyTransparency(CurrentTransparencyLevel);
+        }
+        catch { }
+    }
+
+    public void UpdateAuraMesh()
+    {
+        try
+        {
+            if (AmbientAuraMesh == null) return;
+
+            string normalized = CurrentBackdropType?.ToLowerInvariant() ?? "micaalt";
+            bool isAura = normalized == "auraglow";
+
+            AmbientAuraMesh.Opacity = isAura ? 0.95 : 0.65;
+
+            var accent = ThemeManager.Instance.CurrentAccent?.ToLowerInvariant() ?? "default";
+            Windows.UI.Color color1 = accent switch
+            {
+                "green" => Windows.UI.Color.FromArgb(255, 16, 185, 129),
+                "purple" => Windows.UI.Color.FromArgb(255, 168, 85, 247),
+                "pink" => Windows.UI.Color.FromArgb(255, 244, 63, 94),
+                "amber" => Windows.UI.Color.FromArgb(255, 245, 158, 11),
+                "cyberpunk" or "neon" => Windows.UI.Color.FromArgb(255, 6, 182, 212),
+                _ => Windows.UI.Color.FromArgb(255, 59, 130, 246)
             };
+
+            Windows.UI.Color color2 = accent switch
+            {
+                "green" => Windows.UI.Color.FromArgb(255, 6, 182, 212),
+                "purple" => Windows.UI.Color.FromArgb(255, 236, 72, 153),
+                "pink" => Windows.UI.Color.FromArgb(255, 139, 92, 246),
+                "amber" => Windows.UI.Color.FromArgb(255, 239, 68, 68),
+                "cyberpunk" or "neon" => Windows.UI.Color.FromArgb(255, 217, 70, 239),
+                _ => Windows.UI.Color.FromArgb(255, 139, 92, 246)
+            };
+
+            if (AuraGlowStop1 != null) AuraGlowStop1.Color = color1;
+            if (AuraGlowStop2 != null) AuraGlowStop2.Color = color2;
         }
         catch { }
     }

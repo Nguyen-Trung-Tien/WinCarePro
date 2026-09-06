@@ -297,6 +297,10 @@ public sealed partial class MainWindow : Window
 
     private void UpdateTitleBarTelemetry()
     {
+        // Standby check: Skip sampling if window is hidden (minimized to tray) to save CPU
+        if (this.AppWindow == null || !this.AppWindow.IsVisible)
+            return;
+
         // Concurrency guard: Skip sampling if a previous sample is still running
         if (Interlocked.CompareExchange(ref _isTelemetrySampling, 1, 0) != 0)
             return;
@@ -374,6 +378,9 @@ public sealed partial class MainWindow : Window
             {
                 this.AppWindow.Hide();
                 InitializeTrayIcon();
+
+                // Immediately reclaim background working set memory (Rule 04: <= 15MB)
+                Task.Run(() => TrimProcessMemory());
             }
             else
             {
@@ -620,6 +627,11 @@ public sealed partial class MainWindow : Window
 
         // Stage 3: Disposing telemetry & tray icons
         await SmoothTweenExitProgressAsync(95, "Disposing telemetry engines & system monitors...", 180);
+        try
+        {
+            App.Services?.GetService<Services.Contracts.IBackgroundWatchdogService>()?.Stop();
+        }
+        catch { }
         CleanupTrayIcon();
 
         // Stage 4: Farewell complete

@@ -19,8 +19,30 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- Ambient Aura Glow Mesh (Dynamic Background Depth) -->
+        <Grid x:Name="AmbientAuraMesh" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Canvas.ZIndex="0" Opacity="0.85">
+            <!-- Top-Right Accent Ambient Glow -->
+            <Ellipse Width="700" Height="480" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-140,-140,0" Opacity="0.10">
+                <Ellipse.Fill>
+                    <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                        <GradientStop x:Name="AuraGlowStop1" Color="#FF3B82F6" Offset="0" />
+                        <GradientStop Color="#003B82F6" Offset="1" />
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+            <!-- Bottom-Left Complementary Ambient Glow -->
+            <Ellipse Width="600" Height="420" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-120,0,0,-120" Opacity="0.08">
+                <Ellipse.Fill>
+                    <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                        <GradientStop x:Name="AuraGlowStop2" Color="#FF8B5CF6" Offset="0" />
+                        <GradientStop Color="#008B5CF6" Offset="1" />
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+        </Grid>
+
         <!-- Custom Title Bar Grid — v3.0 Nova -->
-        <Grid x:Name="TitleBarGrid" Grid.Row="0" Height="56" Background="Transparent">
+        <Grid x:Name="TitleBarGrid" Grid.Row="0" Height="56" Background="Transparent" Canvas.ZIndex="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />  <!-- Logo & Brand -->
                 <ColumnDefinition Width="*" />     <!-- Drag Area & Search -->

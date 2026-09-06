@@ -202,4 +202,5 @@ public sealed partial class DiskPage : Page
 
     public static string FormatTemp(double temp) => $"{temp:F0}°C";
     public static string FormatDuplicateGroupSize(string size) => $"Duplicate Group - Size: {size}";
+    public static Visibility IsListEmpty(int count, bool isBusy) => (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 }

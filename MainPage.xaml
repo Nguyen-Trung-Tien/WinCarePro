@@ -10,7 +10,7 @@
 
     <Grid Background="Transparent">
         <!-- OpenPaneLength set to 220px, CompactPaneLength to 60px -->
-        <NavigationView x:Name="NavView" PaneDisplayMode="Auto" SelectionChanged="OnNavSelectionChanged" IsBackButtonVisible="Collapsed" AlwaysShowHeader="False" IsSettingsVisible="True" OpenPaneLength="220" CompactPaneLength="60" Background="Transparent">
+        <NavigationView x:Name="NavView" PaneDisplayMode="Auto" SelectionChanged="OnNavSelectionChanged" BackRequested="OnNavBackRequested" IsBackButtonVisible="Auto" AlwaysShowHeader="False" IsSettingsVisible="True" OpenPaneLength="220" CompactPaneLength="60" Background="Transparent">
 
             <!-- v3.0 Nova — User Chip in Pane Footer -->
             <NavigationView.PaneFooter>
@@ -91,6 +91,12 @@
                 <NavigationViewItem Tag="Optimizer" Content="System Optimizer" AutomationProperties.Name="System Optimizer" AutomationProperties.HelpText="System tweaks, RAM working set optimization, and performance profiles.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7FC;" Foreground="{ThemeResource AppStatusWarningBrush}" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem Tag="Startup" Content="Startup &amp; Services" AutomationProperties.Name="Startup &amp; Services Manager" AutomationProperties.HelpText="Manage and accelerate Windows boot apps, daemon states, and background velocity.">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7B5;" Foreground="{ThemeResource AppStatusPurpleBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 

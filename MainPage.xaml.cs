@@ -98,6 +98,16 @@ public sealed partial class MainPage : Page
                 _lastLoadedHandler = (sender, args) => TranslationManager.Instance.Translate(page);
                 page.Loaded += _lastLoadedHandler;
                 _lastTranslatedPage = page;
+
+                // For cached pages that are already loaded in visual tree, Loaded does not re-fire
+                if (page.IsLoaded)
+                {
+                    DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(page));
+                }
+
+                // Synchronize NavigationView back button & selection indicator
+                NavView.IsBackEnabled = ContentFrame.CanGoBack;
+                UpdateSelectedNavItem();
             }
         };
 
@@ -230,6 +240,62 @@ public sealed partial class MainPage : Page
         }
     }
 
+    private void OnNavBackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+    {
+        if (ContentFrame.CanGoBack)
+        {
+            CleanupActivePage();
+            ContentFrame.GoBack();
+            UpdateSelectedNavItem();
+        }
+    }
+
+    public void UpdateSelectedNavItem()
+    {
+        if (ContentFrame.Content is not Page currentPage) return;
+        var curType = currentPage.GetType();
+
+        if (curType == typeof(SettingsPage))
+        {
+            NavView.SelectedItem = NavView.SettingsItem;
+            return;
+        }
+        if (curType == typeof(NotificationPage))
+        {
+            NavView.SelectedItem = null;
+            return;
+        }
+
+        string? targetTag = curType.Name switch
+        {
+            nameof(DashboardPage) => "Dashboard",
+            "AiWinCareEnginePage" => "AiWinCareEngine",
+            nameof(JunkPage) => "Junk",
+            nameof(UninstallPage) => "Uninstall",
+            nameof(NetworkPage) => "Network",
+            nameof(RepairPage) => "Repair",
+            nameof(SecurityPage) => "Security",
+            nameof(SystemOptimizerPage) => "Optimizer",
+            nameof(StartupPage) => "Startup",
+            nameof(ContextMenuPage) => "ContextMenu",
+            nameof(DiskPage) => "Disk",
+            nameof(RegistryPage) => "Registry",
+            nameof(UpdaterPage) => "Updater",
+            _ => null
+        };
+
+        if (targetTag != null)
+        {
+            var match = NavView.MenuItems
+                .OfType<NavigationViewItem>()
+                .FirstOrDefault(x => x.Tag?.ToString()?.Equals(targetTag, StringComparison.OrdinalIgnoreCase) == true);
+            if (match != null)
+            {
+                NavView.SelectedItem = match;
+            }
+        }
+    }
+
     private void OnNavSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
         if (args.IsSettingsSelected)
@@ -263,6 +329,12 @@ public sealed partial class MainPage : Page
             return;
         }
 
+        if (tag.Equals("notification", StringComparison.OrdinalIgnoreCase))
+        {
+            NavigateToNotificationPage();
+            return;
+        }
+
         var menuItem = NavView.MenuItems
             .OfType<NavigationViewItem>()
             .FirstOrDefault(x => x.Tag?.ToString()?.Equals(tag, StringComparison.OrdinalIgnoreCase) == true);
@@ -270,6 +342,10 @@ public sealed partial class MainPage : Page
         if (menuItem != null)
         {
             NavView.SelectedItem = menuItem;
+            NavigateToPage(tag);
+        }
+        else
+        {
             NavigateToPage(tag);
         }
     }
@@ -394,15 +470,19 @@ public sealed partial class MainPage : Page
         {
             if (ContentFrame.Content is Page oldPage)
             {
-                ThemeManager.Instance.UnregisterPage(oldPage);
-                TranslationManager.Instance.UnregisterPage(oldPage);
-                if (oldPage.DataContext is IDisposable disposableVm)
+                // Only unregister and dispose transient non-cached pages to prevent destroying cached ViewModels
+                if (oldPage.NavigationCacheMode != Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required)
                 {
-                    disposableVm.Dispose();
-                }
-                else if (oldPage is IDisposable disposablePage)
-                {
-                    disposablePage.Dispose();
+                    ThemeManager.Instance.UnregisterPage(oldPage);
+                    TranslationManager.Instance.UnregisterPage(oldPage);
+                    if (oldPage.DataContext is IDisposable disposableVm)
+                    {
+                        disposableVm.Dispose();
+                    }
+                    else if (oldPage is IDisposable disposablePage)
+                    {
+                        disposablePage.Dispose();
+                    }
                 }
             }
         }

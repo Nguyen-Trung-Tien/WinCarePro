@@ -764,6 +764,10 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     public void Initialize()
     {
         _isDisposed = false;
+        _uninstallEngine.OutputReceived -= _outputHandler;
+        _uninstallEngine.OutputReceived += _outputHandler;
+        _uninstallEngine.ProgressChanged -= _progressHandler;
+        _uninstallEngine.ProgressChanged += _progressHandler;
         TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
         TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
     }

@@ -334,4 +334,22 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("Phiên bản 4.9.0 (Nova) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.9.0 (Nova) • 64-bit Native System Suite", AppLanguage.Vietnamese));
         Assert.Equal("Điểm mới trong v4.9", manager.GetTranslationForLanguage("What's New in v4.9", AppLanguage.Vietnamese));
     }
+
+    [Fact]
+    public void DiskPage_IsListEmpty_ShouldReturnCorrectVisibility()
+    {
+        Assert.Equal(Microsoft.UI.Xaml.Visibility.Visible, WinCarePro.Views.DiskPage.IsListEmpty(0, false));
+        Assert.Equal(Microsoft.UI.Xaml.Visibility.Collapsed, WinCarePro.Views.DiskPage.IsListEmpty(5, false));
+        Assert.Equal(Microsoft.UI.Xaml.Visibility.Collapsed, WinCarePro.Views.DiskPage.IsListEmpty(0, true));
+        Assert.Equal(Microsoft.UI.Xaml.Visibility.Collapsed, WinCarePro.Views.DiskPage.IsListEmpty(5, true));
+    }
+
+    [Fact]
+    public void Translations_StartupAndDiskEmptyStates_ShouldBeLocalized()
+    {
+        var manager = TranslationManager.Instance;
+        Assert.Equal("Khởi động & Dịch vụ", manager.GetTranslationForLanguage("Startup & Services", AppLanguage.Vietnamese));
+        Assert.Equal("Sẵn sàng phân tích phân bổ dung lượng", manager.GetTranslationForLanguage("Ready to analyze storage distribution", AppLanguage.Vietnamese));
+        Assert.Equal("Không phát hiện tệp tin trùng lặp nào", manager.GetTranslationForLanguage("No duplicate files detected", AppLanguage.Vietnamese));
+    }
 }

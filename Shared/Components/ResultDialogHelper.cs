@@ -414,12 +414,16 @@ public static class ResultDialogHelper
                 CornerRadius = new CornerRadius(16)
             };
 
-            if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style accentStyle)
+            if (isDestructive)
             {
-                if (!isDestructive)
+                if (Application.Current.Resources.TryGetValue("DangerButtonStyle", out var dangerStyleObj) && dangerStyleObj is Style dangerStyle)
                 {
-                    dialog.PrimaryButtonStyle = accentStyle;
+                    dialog.PrimaryButtonStyle = dangerStyle;
                 }
+            }
+            else if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style accentStyle)
+            {
+                dialog.PrimaryButtonStyle = accentStyle;
             }
 
             return await dialog.ShowAsync();

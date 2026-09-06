@@ -3317,6 +3317,12 @@ public partial class TranslationManager
         _translations["Keep Oldest"] = "Giữ Cũ Nhất";
         _translations["Scan Duplicates"] = "Quét Tệp Trùng";
         _translations["Delete Selected"] = "Xóa Mục Đã Chọn";
+        _translations["Ready to analyze storage distribution"] = "Sẵn sàng phân tích phân bổ dung lượng";
+        _translations["Browse or select a directory above and click [Scan Directory] to visualize folder sizes."] = "Duyệt hoặc chọn thư mục phía trên rồi nhấn [Quét Thư Mục] để trực quan hóa kích thước thư mục.";
+        _translations["No duplicate files detected"] = "Không phát hiện tệp tin trùng lặp nào";
+        _translations["Click [Scan Duplicates] to search storage for byte-by-byte identical files."] = "Nhấn [Quét Tệp Trùng] để tìm kiếm các tệp giống nhau từng byte trên ổ đĩa.";
+        _translations["Manage and accelerate Windows boot apps, daemon states, and background velocity."] = "Quản lý và tăng tốc ứng dụng khởi động Windows, tiến trình daemon và tốc độ mở máy.";
+        _translations["Manage background daemons, startup impact scores, boot speed acceleration."] = "Quản lý dịch vụ nền, điểm ảnh hưởng khởi động và tăng tốc độ boot hệ thống.";
 
         // --- Memory card / Working Set ---
         _translations["Working set & Trạng thái Standby"] = "Bộ nhớ Working Set & Bộ nhớ Chờ (Standby)";

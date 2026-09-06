@@ -307,6 +307,18 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="Allocation Directory Weight (Double-click folder card to Zoom In)" FontSize="13" FontWeight="Bold" Margin="0,0,0,10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
+                            <!-- Empty / Ready State -->
+                            <StackPanel Grid.Row="1" Visibility="{x:Bind views:DiskPage.IsListEmpty(ViewModel.StorageItems.Count, ViewModel.IsBusy), Mode=OneWay}"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Margin="0,40,0,40">
+                                <Border Width="56" Height="56" CornerRadius="28" Background="{ThemeResource AppStatChipBackground}" HorizontalAlignment="Center">
+                                    <FontIcon Glyph="&#xE8B7;" FontSize="24" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="Ready to analyze storage distribution" FontSize="15" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Browse or select a directory above and click [Scan Directory] to visualize folder sizes." FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="380" TextAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+
                             <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.StorageItems, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
@@ -378,36 +390,50 @@
                     </Border>
 
                     <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,12">
-                        <ListView ItemsSource="{x:Bind ViewModel.DuplicateGroups, Mode=OneWay}" SelectionMode="None">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="0,0,0,14">
-                                        <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" HorizontalAlignment="Left" Margin="0,0,0,6">
-                                            <TextBlock Text="{Binding SizeFormatted}" FontWeight="Bold" FontSize="11.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                        </Border>
-                                        <ItemsControl ItemsSource="{Binding Items}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid Padding="12,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto" />
-                                                            <ColumnDefinition Width="*" />
-                                                            <ColumnDefinition Width="Auto" />
-                                                        </Grid.ColumnDefinitions>
-                                                        <CheckBox IsChecked="{Binding IsSelectedForDeletion, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,8,0" MinWidth="20" />
-                                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="12"/>
-                                                            <TextBlock Text="{Binding Path}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                                        </StackPanel>
-                                                        <TextBlock Grid.Column="2" Text="{Binding LastModifiedFormatted}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                        <Grid>
+                            <!-- Empty / Ready State -->
+                            <StackPanel Visibility="{x:Bind views:DiskPage.IsListEmpty(ViewModel.DuplicateGroups.Count, ViewModel.IsBusy), Mode=OneWay}"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Margin="0,40,0,40">
+                                <Border Width="56" Height="56" CornerRadius="28" Background="{ThemeResource AppStatChipBackground}" HorizontalAlignment="Center">
+                                    <FontIcon Glyph="&#xE7F1;" FontSize="24" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="No duplicate files detected" FontSize="15" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Click [Scan Duplicates] to search storage for byte-by-byte identical files." FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="380" TextAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <ListView ItemsSource="{x:Bind ViewModel.DuplicateGroups, Mode=OneWay}" SelectionMode="None">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,0,0,14">
+                                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" HorizontalAlignment="Left" Margin="0,0,0,6">
+                                                <TextBlock Text="{Binding SizeFormatted}" FontWeight="Bold" FontSize="11.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                            </Border>
+                                            <ItemsControl ItemsSource="{Binding Items}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Padding="12,6" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <CheckBox IsChecked="{Binding IsSelectedForDeletion, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,8,0" MinWidth="20" />
+                                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="12"/>
+                                                                <TextBlock Text="{Binding Path}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                            </StackPanel>
+                                                            <TextBlock Grid.Column="2" Text="{Binding LastModifiedFormatted}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Grid>
                     </Border>
                 </Grid>
             </PivotItem>

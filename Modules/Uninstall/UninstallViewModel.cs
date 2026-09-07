@@ -297,6 +297,29 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         _ = ScanAppsAsync();
     }
 
+    private void RunOnUI(Action action)
+    {
+        if (_dispatcherQueue != null)
+        {
+            _dispatcherQueue.TryEnqueue(() => action());
+        }
+        else
+        {
+            action();
+        }
+    }
+
+    public void CancelScan()
+    {
+        try
+        {
+            _scanCts?.Cancel();
+        }
+        catch { }
+        IsBusy = false;
+        SetOperationState(OperationState.Idle);
+    }
+
     public async Task ScanAppsAsync()
     {
         if (IsBusy) return;
@@ -319,9 +342,14 @@ public class UninstallViewModel : ViewModelBase, IDisposable
             if (token.IsCancellationRequested || _isDisposed) return;
             ProgressPercent = 80;
 
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
-                if (token.IsCancellationRequested || _isDisposed) return;
+                if (token.IsCancellationRequested || _isDisposed)
+                {
+                    IsBusy = false;
+                    SetOperationState(OperationState.Idle);
+                    return;
+                }
                 _allApps = apps;
                 UpdateStatistics();
                 ApplyAppFilter();
@@ -333,7 +361,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 ProgressMessage = "Scan cancelled.".T();
                 IsBusy = false;
@@ -342,12 +370,23 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 ProgressMessage = "Scan failed:".T() + " " + ex.Message;
                 IsBusy = false;
                 SetOperationState(OperationState.Failed);
             });
+        }
+        finally
+        {
+            if (token.IsCancellationRequested || _isDisposed)
+            {
+                RunOnUI(() =>
+                {
+                    IsBusy = false;
+                    SetOperationState(OperationState.Idle);
+                });
+            }
         }
     }
 
@@ -441,6 +480,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     {
         UninstallStep = 1;
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         _scanCts?.Cancel();
         _scanCts?.Dispose();
         _scanCts = new CancellationTokenSource();
@@ -484,9 +524,14 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
             IsBusy = false;
 
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
-                if (token.IsCancellationRequested || _isDisposed) return;
+                if (token.IsCancellationRequested || _isDisposed)
+                {
+                    IsBusy = false;
+                    SetOperationState(OperationState.Idle);
+                    return;
+                }
                 Leftovers.Clear();
                 foreach (var item in leftoverList)
                 {
@@ -518,14 +563,37 @@ public class UninstallViewModel : ViewModelBase, IDisposable
                 }
             });
         }
+        catch (OperationCanceledException)
+        {
+            RunOnUI(() =>
+            {
+                ProgressMessage = "Uninstallation cancelled.".T();
+                IsBusy = false;
+                UninstallStep = 0;
+                SetOperationState(OperationState.Idle);
+            });
+        }
         catch (Exception ex)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 ProgressMessage = "Uninstallation failed:".T() + " " + ex.Message;
                 IsBusy = false;
                 UninstallStep = 0;
+                SetOperationState(OperationState.Failed);
             });
+        }
+        finally
+        {
+            if (token.IsCancellationRequested || _isDisposed)
+            {
+                RunOnUI(() =>
+                {
+                    IsBusy = false;
+                    UninstallStep = 0;
+                    SetOperationState(OperationState.Idle);
+                });
+            }
         }
     }
 
@@ -537,6 +605,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
         UninstallStep = 1;
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         _scanCts?.Cancel();
         _scanCts?.Dispose();
         _scanCts = new CancellationTokenSource();
@@ -580,9 +649,14 @@ public class UninstallViewModel : ViewModelBase, IDisposable
             if (token.IsCancellationRequested || _isDisposed) return;
             IsBusy = false;
 
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
-                if (token.IsCancellationRequested || _isDisposed) return;
+                if (token.IsCancellationRequested || _isDisposed)
+                {
+                    IsBusy = false;
+                    SetOperationState(OperationState.Idle);
+                    return;
+                }
                 Leftovers.Clear();
                 // Filter unique path leftovers to prevent duplicate deletions
                 var uniqueLeftovers = allLeftovers.GroupBy(x => x.Path.ToLower()).Select(g => g.First()).ToList();
@@ -619,21 +693,35 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 ProgressMessage = "Operation cancelled.".T();
                 IsBusy = false;
                 UninstallStep = 0;
+                SetOperationState(OperationState.Idle);
             });
         }
         catch (Exception ex)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 ProgressMessage = "Batch uninstallation encountered an error:".T() + " " + ex.Message;
                 IsBusy = false;
                 UninstallStep = 0;
+                SetOperationState(OperationState.Failed);
             });
+        }
+        finally
+        {
+            if (token.IsCancellationRequested || _isDisposed)
+            {
+                RunOnUI(() =>
+                {
+                    IsBusy = false;
+                    UninstallStep = 0;
+                    SetOperationState(OperationState.Idle);
+                });
+            }
         }
     }
 
@@ -641,6 +729,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     {
         if (Leftovers.Count == 0) return;
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         _scanCts?.Cancel();
         _scanCts?.Dispose();
         _scanCts = new CancellationTokenSource();
@@ -653,9 +742,14 @@ public class UninstallViewModel : ViewModelBase, IDisposable
             int deleted = await _uninstallEngine.DeleteLeftoversAsync(selectedItems, token);
             if (token.IsCancellationRequested || _isDisposed) return;
             
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
-                if (token.IsCancellationRequested || _isDisposed) return;
+                if (token.IsCancellationRequested || _isDisposed)
+                {
+                    IsBusy = false;
+                    SetOperationState(OperationState.Idle);
+                    return;
+                }
                 ProgressPercent = 100;
                 ProgressMessage = string.Format("Cleaned {0} leftover files and registry entries.".T(), deleted);
                 IsBusy = false;
@@ -665,19 +759,32 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 ProgressMessage = "Leftover deletion cancelled.".T();
                 IsBusy = false;
+                SetOperationState(OperationState.Idle);
             });
         }
         catch (Exception ex)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 ProgressMessage = "Error deleting leftovers:".T() + " " + ex.Message;
                 IsBusy = false;
+                SetOperationState(OperationState.Failed);
             });
+        }
+        finally
+        {
+            if (token.IsCancellationRequested || _isDisposed)
+            {
+                RunOnUI(() =>
+                {
+                    IsBusy = false;
+                    SetOperationState(OperationState.Idle);
+                });
+            }
         }
     }
 

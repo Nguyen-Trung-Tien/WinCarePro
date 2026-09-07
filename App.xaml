@@ -1368,15 +1368,107 @@
                 <Setter Property="FontSize" Value="11" />
             </Style>
 
-            <!-- Tile Action Secondary Button Style (For compact modular repair & tool tiles) -->
-            <Style x:Key="RepairTileButtonStyle" TargetType="Button" BasedOn="{StaticResource StandardSecondaryButtonStyle}">
+            <!-- Tile Action Secondary Button Style (Unified Accent-Tinted Glass Button for compact modular repair & tool tiles) -->
+            <Style x:Key="RepairTileButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource PrimaryAccentLightBrush}" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="6" />
                 <Setter Property="Height" Value="28" />
                 <Setter Property="Padding" Value="0,0" />
-                <Setter Property="CornerRadius" Value="6" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
                 <Setter Property="FontSize" Value="11" />
                 <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
+                                </Grid.RenderTransform>
+                                <ContentPresenter x:Name="ContentPresenter"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    Padding="{TemplateBinding Padding}"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualStateGroup.Transitions>
+                                                <VisualTransition To="PointerOver" GeneratedDuration="0:0:0.12">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="-0.5" Duration="0:0:0.12">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </VisualTransition>
+                                                <VisualTransition To="Pressed" GeneratedDuration="0:0:0.08">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="0.985" Duration="0:0:0.08">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="0.985" Duration="0:0:0.08">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0.5" Duration="0:0:0.08">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </VisualTransition>
+                                                <VisualTransition To="Normal" GeneratedDuration="0:0:0.15">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.15">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.15">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.15">
+                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
+                                                        </DoubleAnimation>
+                                                    </Storyboard>
+                                                </VisualTransition>
+                                            </VisualStateGroup.Transitions>
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="PointerOver">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Background" Value="{StaticResource PrimaryAccentBorderBrush}" />
+                                                    <Setter Target="ContentPresenter.BorderBrush" Value="{StaticResource PrimaryAccentBrush}" />
+                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="-0.5" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Pressed">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Background" Value="{StaticResource PrimaryAccentLightBrush}" />
+                                                    <Setter Target="ContentPresenter.Opacity" Value="0.85" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleX" Value="0.985" />
+                                                    <Setter Target="ButtonScaleTransform.ScaleY" Value="0.985" />
+                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="0.5" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState x:Name="Disabled">
+                                                <VisualState.Setters>
+                                                    <Setter Target="ContentPresenter.Opacity" Value="0.4" />
+                                                    <Setter Target="RootButtonGrid.Opacity" Value="0.4" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </ContentPresenter>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
 
             <!-- Destructive / Danger Action Button Style (Red Glass Glow) -->

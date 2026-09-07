@@ -88,6 +88,29 @@ public class RegistryViewModel : ViewModelBase, IDisposable
         Cleanup();
     }
 
+    private void RunOnUI(Action action)
+    {
+        if (_dispatcherQueue != null)
+        {
+            _dispatcherQueue.TryEnqueue(() => action());
+        }
+        else
+        {
+            action();
+        }
+    }
+
+    public void CancelScan()
+    {
+        try
+        {
+            _scanCts?.Cancel();
+        }
+        catch { }
+        IsBusy = false;
+        SetOperationState(OperationState.Idle);
+    }
+
     public async Task ScanRegistryAsync()
     {
         if (IsBusy || _isDisposed) return;
@@ -109,7 +132,7 @@ public class RegistryViewModel : ViewModelBase, IDisposable
         try
         {
             var list = await Task.Run(() => _engine.ScanRegistryIssues(token), token);
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 if (token.IsCancellationRequested || _isDisposed) return;
                 foreach (var issue in list)
@@ -123,7 +146,7 @@ public class RegistryViewModel : ViewModelBase, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 StatusText = "Scan cancelled.".T();
                 ScanProgress = 0;
@@ -133,7 +156,7 @@ public class RegistryViewModel : ViewModelBase, IDisposable
         catch (Exception ex)
         {
             Infrastructure.Logging.CrashLogger.LogException("RegistryViewModel.ScanRegistryAsync", ex);
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 if (_isDisposed) return;
                 StatusText = "Scan failed: ".T() + ex.Message;
@@ -142,12 +165,12 @@ public class RegistryViewModel : ViewModelBase, IDisposable
         }
         finally
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 IsBusy = false;
-                if (CurrentOperationState == OperationState.Running)
+                if (token.IsCancellationRequested || _isDisposed)
                 {
-                    SetOperationState(OperationState.Completed);
+                    SetOperationState(OperationState.Idle);
                 }
             });
         }
@@ -192,18 +215,31 @@ public class RegistryViewModel : ViewModelBase, IDisposable
         }
         catch (OperationCanceledException)
         {
-            StatusText = "Repair cancelled.".T();
-            SetOperationState(OperationState.Idle);
+            RunOnUI(() =>
+            {
+                StatusText = "Repair cancelled.".T();
+                SetOperationState(OperationState.Idle);
+            });
         }
         catch (Exception ex)
         {
             Infrastructure.Logging.CrashLogger.LogException("RegistryViewModel.RepairSelectedAsync", ex);
-            StatusText = "Repair failed:".T() + " " + ex.Message;
-            SetOperationState(OperationState.Failed);
+            RunOnUI(() =>
+            {
+                StatusText = "Repair failed:".T() + " " + ex.Message;
+                SetOperationState(OperationState.Failed);
+            });
         }
         finally
         {
-            IsBusy = false;
+            RunOnUI(() =>
+            {
+                IsBusy = false;
+                if (token.IsCancellationRequested || _isDisposed)
+                {
+                    SetOperationState(OperationState.Idle);
+                }
+            });
         }
     }
 

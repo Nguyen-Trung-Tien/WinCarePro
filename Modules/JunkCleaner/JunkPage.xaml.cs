@@ -82,6 +82,11 @@ public sealed partial class JunkPage : Page
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
+        try
+        {
+            WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(this);
+        }
+        catch { }
         ViewModel.Cleanup();
     }
 
@@ -93,24 +98,24 @@ public sealed partial class JunkPage : Page
         try
         {
             WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(this, Windows.UI.Color.FromArgb(220, 167, 139, 250));
+            await UiLoadingHelper.ExecuteWithLoadingAsync(
+                btn, ScanJunkRing, ScanJunkText, ScanJunkIcon,
+                "Scanning Debris...", "Scan Directories",
+                async () =>
+                {
+                    await ViewModel.ScanAsync();
+                },
+                minDurationMs: 1200);
         }
-        catch { }
-
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, ScanJunkRing, ScanJunkText, ScanJunkIcon,
-            "Scanning Debris...", "Scan Directories",
-            async () =>
-            {
-                await ViewModel.ScanAsync();
-            },
-            minDurationMs: 1200);
-
-        try
+        finally
         {
-            WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(this);
-            if (btn != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(btn, Windows.UI.Color.FromArgb(255, 167, 139, 250));
+            try
+            {
+                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(this);
+                if (btn != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(btn, Windows.UI.Color.FromArgb(255, 167, 139, 250));
+            }
+            catch { }
         }
-        catch { }
 
         ViewModel.FinalizeScan();
     }
@@ -123,43 +128,50 @@ public sealed partial class JunkPage : Page
         try
         {
             WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(this, Windows.UI.Color.FromArgb(220, 16, 185, 129));
-        }
-        catch { }
-
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, CleanJunkRing, CleanJunkText, CleanJunkIcon,
-            "Cleaning Debris...", "Clean Now",
-            async () =>
-            {
-                var lockingAppService = App.Services.GetService<ILockingAppService>();
-                var dialogService = App.Services.GetService<IDialogService>();
-                if (lockingAppService != null && dialogService != null)
+            await UiLoadingHelper.ExecuteWithLoadingAsync(
+                btn, CleanJunkRing, CleanJunkText, CleanJunkIcon,
+                "Cleaning Debris...", "Clean Now",
+                async () =>
                 {
-                    var apps = await lockingAppService.GetLockingAppsAsync();
-                    if (apps.Count > 0)
+                    var lockingAppService = App.Services.GetService<ILockingAppService>();
+                    var dialogService = App.Services.GetService<IDialogService>();
+                    if (lockingAppService != null && dialogService != null)
                     {
-                        dialogService.SetXamlRoot(this.XamlRoot);
-                        var action = await dialogService.ShowLockingAppsDialogAsync(apps);
-                        if (action == CleaningAction.CloseAndClean)
+                        var apps = await lockingAppService.GetLockingAppsAsync();
+                        if (apps.Count > 0)
                         {
-                            await ViewModel.CloseAppsOnlyAsync();
-                            await ViewModel.CleanAsync();
+                            dialogService.SetXamlRoot(this.XamlRoot);
+                            var action = await dialogService.ShowLockingAppsDialogAsync(apps);
+                            if (action == CleaningAction.CloseAndClean)
+                            {
+                                await ViewModel.CloseAppsOnlyAsync();
+                                await ViewModel.CleanAsync();
+                            }
+                            else if (action == CleaningAction.CleanAnyway)
+                            {
+                                await ViewModel.CleanAsync();
+                            }
+                            else if (action == CleaningAction.ScheduleAfterRestart)
+                            {
+                                await ViewModel.ScheduleCleanupAfterRestartAsync();
+                            }
+                            return;
                         }
-                        else if (action == CleaningAction.CleanAnyway)
-                        {
-                            await ViewModel.CleanAsync();
-                        }
-                        else if (action == CleaningAction.ScheduleAfterRestart)
-                        {
-                            await ViewModel.ScheduleCleanupAfterRestartAsync();
-                        }
-                        return;
                     }
-                }
-                await ViewModel.CleanAsync();
-            },
-            minDurationMs: 1200,
-            restoreIsEnabled: true);
+                    await ViewModel.CleanAsync();
+                },
+                minDurationMs: 1200,
+                restoreIsEnabled: true);
+        }
+        finally
+        {
+            try
+            {
+                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(this);
+                if (btn != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(this, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+            }
+            catch { }
+        }
 
         ViewModel.FinalizeClean();
 
@@ -167,13 +179,6 @@ public sealed partial class JunkPage : Page
         {
             mw.ShowToastFromDb("System Cleanup Complete".T(), "Cleaned files and reclaimed storage successfully.".T(), "Success");
         }
-
-        try
-        {
-            WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(this);
-            WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(this, Windows.UI.Color.FromArgb(255, 16, 185, 129));
-        }
-        catch { }
     }
 
     private void OnJunkSelectionChanged(object sender, RoutedEventArgs e)

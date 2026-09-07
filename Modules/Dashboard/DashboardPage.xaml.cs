@@ -331,6 +331,14 @@ public sealed partial class DashboardPage : Page
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
+        try
+        {
+            if (HealthGaugeCard != null)
+            {
+                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(HealthGaugeCard);
+            }
+        }
+        catch { }
         ViewModel.StopMonitoring();
     }
 
@@ -342,20 +350,20 @@ public sealed partial class DashboardPage : Page
             {
                 WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(HealthGaugeCard, Windows.UI.Color.FromArgb(120, 0, 242, 254));
             }
+            await ViewModel.RunFullDiagnosticsAsync();
         }
-        catch { }
-
-        await ViewModel.RunFullDiagnosticsAsync();
-
-        try
+        finally
         {
-            if (HealthGaugeCard != null)
+            try
             {
-                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(HealthGaugeCard);
-                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(HealthGaugeCard, Windows.UI.Color.FromArgb(120, 0, 242, 254));
+                if (HealthGaugeCard != null)
+                {
+                    WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(HealthGaugeCard);
+                    WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(HealthGaugeCard, Windows.UI.Color.FromArgb(120, 0, 242, 254));
+                }
             }
+            catch { }
         }
-        catch { }
     }
 
     private async void OnOptimizeClick(SplitButton sender, SplitButtonClickEventArgs e)
@@ -386,36 +394,37 @@ public sealed partial class DashboardPage : Page
 
     private async Task RunOptimizationFlow(OptimizationMode mode)
     {
+        OptimizationSummary? summary = null;
         try
         {
             if (HealthGaugeCard != null)
             {
                 WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(HealthGaugeCard, Windows.UI.Color.FromArgb(220, 16, 185, 129));
             }
+            summary = await ViewModel.OptimizeSystemAsync(mode);
         }
-        catch { }
-
-        var summary = await ViewModel.OptimizeSystemAsync(mode);
-
-        try
+        finally
         {
-            if (HealthGaugeCard != null)
+            try
             {
-                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(HealthGaugeCard);
-                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(HealthGaugeCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                if (HealthGaugeCard != null)
+                {
+                    WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(HealthGaugeCard);
+                    WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(HealthGaugeCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                }
+
+                // Cascade 3D Quantum Ripple Wave through telemetry cards
+                var rippleCards = new System.Collections.Generic.List<FrameworkElement>();
+                if (CpuCard != null) rippleCards.Add(CpuCard);
+                if (RamCard != null) rippleCards.Add(RamCard);
+                if (GpuCard != null) rippleCards.Add(GpuCard);
+                if (DiskCard != null) rippleCards.Add(DiskCard);
+                if (TopAiRecommendationCard != null) rippleCards.Add(TopAiRecommendationCard);
+
+                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DCascadeWave(rippleCards, 70);
             }
-
-            // Cascade 3D Quantum Ripple Wave through telemetry cards
-            var rippleCards = new System.Collections.Generic.List<FrameworkElement>();
-            if (CpuCard != null) rippleCards.Add(CpuCard);
-            if (RamCard != null) rippleCards.Add(RamCard);
-            if (GpuCard != null) rippleCards.Add(GpuCard);
-            if (DiskCard != null) rippleCards.Add(DiskCard);
-            if (TopAiRecommendationCard != null) rippleCards.Add(TopAiRecommendationCard);
-
-            WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DCascadeWave(rippleCards, 70);
+            catch { }
         }
-        catch { }
 
         if (summary != null)
         {

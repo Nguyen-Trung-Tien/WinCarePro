@@ -148,6 +148,29 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _isAiScanning, value);
     }
 
+    private void RunOnUI(Action action)
+    {
+        if (_dispatcherQueue != null)
+        {
+            _dispatcherQueue.TryEnqueue(() => action());
+        }
+        else
+        {
+            action();
+        }
+    }
+
+    public void CancelAiScan()
+    {
+        try
+        {
+            _aiScanCts?.Cancel();
+        }
+        catch { }
+        IsAiScanning = false;
+        SetOperationState(OperationState.Idle);
+    }
+
     public async Task RunAiScanAsync()
     {
         if (IsAiScanning || _isDisposed) return;
@@ -165,9 +188,14 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
             var report = await Modules.AiAssistant.AiWinCareEngine.AnalyzeSystemHealthAsync(token);
             if (token.IsCancellationRequested || _isDisposed) return;
             
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
-                if (token.IsCancellationRequested || _isDisposed) return;
+                if (token.IsCancellationRequested || _isDisposed)
+                {
+                    IsAiScanning = false;
+                    SetOperationState(OperationState.Idle);
+                    return;
+                }
                 RecalculateEfficiencyScore();
                 AiStatusText = report.HealthStatus;
                 AiSummaryText = report.SummaryText;
@@ -177,7 +205,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 if (_isDisposed) return;
                 AiStatusText = "Scan cancelled.".T();
@@ -188,7 +216,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         catch (Exception ex)
         {
             Infrastructure.Logging.CrashLogger.LogException("SystemOptimizerViewModel.RunAiScanAsync", ex);
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 if (_isDisposed) return;
                 AiStatusText = string.Format("Scan failed: {0}".T(), ex.Message);
@@ -196,6 +224,17 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
                 IsAiScanning = false;
                 SetOperationState(OperationState.Failed);
             });
+        }
+        finally
+        {
+            if (token.IsCancellationRequested || _isDisposed)
+            {
+                RunOnUI(() =>
+                {
+                    IsAiScanning = false;
+                    SetOperationState(OperationState.Idle);
+                });
+            }
         }
     }
 

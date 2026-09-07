@@ -49,17 +49,23 @@ namespace WinCarePro.Modules.AiAssistant
             };
         }
 
+        private bool _isScanning;
+
         protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             _isNavigatedAway = false;
-            _ = RunAiScanAsync();
+            if (ScoreText != null && (ScoreText.Text == "--" || string.IsNullOrEmpty(ScoreText.Text)))
+            {
+                _ = RunAiScanAsync();
+            }
         }
 
         protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
             _isNavigatedAway = true;
+            _isScanning = false;
             try
             {
                 _scanCts?.Cancel();
@@ -107,6 +113,8 @@ namespace WinCarePro.Modules.AiAssistant
 
         private async Task RunAiScanAsync()
         {
+            if (_isScanning) return;
+            _isScanning = true;
             try
             {
                 _scanCts?.Cancel();
@@ -156,6 +164,10 @@ namespace WinCarePro.Modules.AiAssistant
                     if (AiSkeletonLoadingDeck != null) AiSkeletonLoadingDeck.Visibility = Visibility.Collapsed;
                     if (RecommendationsListView != null) RecommendationsListView.Visibility = Visibility.Visible;
                 });
+            }
+            finally
+            {
+                _isScanning = false;
             }
         }
 

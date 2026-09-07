@@ -63,6 +63,14 @@ public sealed partial class SystemOptimizerPage : Page
         
         // Stop timer when navigating away to conserve resources
         _ramTimer?.Stop();
+        try
+        {
+            if (TweaksCard != null)
+            {
+                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
+            }
+        }
+        catch { }
         ViewModel.Cleanup();
     }
 
@@ -119,32 +127,33 @@ public sealed partial class SystemOptimizerPage : Page
         var btn = ApplyTweaksBtn ?? (sender as Button);
         if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
 
+        int applied = 0;
         try
         {
             if (TweaksCard != null) WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(TweaksCard, Windows.UI.Color.FromArgb(220, 139, 92, 246));
+
+            await UiLoadingHelper.ExecuteWithLoadingAsync(
+                btn, ApplyTweaksRing, ApplyTweaksText, ApplyTweaksIcon,
+                "Applying...", "Apply Tweaks",
+                async () =>
+                {
+                    applied = await ViewModel.ApplySelectedAsync();
+                },
+                minDurationMs: 1000);
         }
-        catch { }
-
-        int applied = 0;
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, ApplyTweaksRing, ApplyTweaksText, ApplyTweaksIcon,
-            "Applying...", "Apply Tweaks",
-            async () =>
-            {
-                applied = await ViewModel.ApplySelectedAsync();
-            },
-            minDurationMs: 1000);
-
-        try
+        finally
         {
-            if (TweaksCard != null)
+            try
             {
-                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
-                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                if (TweaksCard != null)
+                {
+                    WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
+                    WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                }
+                if (StatCard1 != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(StatCard1);
             }
-            if (StatCard1 != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(StatCard1);
+            catch { }
         }
-        catch { }
 
         string msg = applied > 0 
             ? string.Format("Successfully applied {0} Windows system tweaks and purged memory cache for maximum responsiveness.".T(), applied)

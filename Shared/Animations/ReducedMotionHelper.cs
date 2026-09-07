@@ -35,7 +35,21 @@ public static class ReducedMotionHelper
     }
 
     /// <summary>
-    /// Gets whether system animations are enabled.
+    /// Gets whether animations are enabled (checking both app settings and system accessibility settings).
     /// </summary>
-    public static bool AreAnimationsEnabled => _animationsEnabled;
+    public static bool AreAnimationsEnabled
+    {
+        get
+        {
+            try
+            {
+                if (!WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.EnableAnimations)
+                {
+                    return false;
+                }
+            }
+            catch { }
+            return _animationsEnabled;
+        }
+    }
 }

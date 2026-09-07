@@ -135,6 +135,29 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
         DisabledCount = Items.Count(x => !x.IsEnabled);
     }
 
+    private void RunOnUI(Action action)
+    {
+        if (_dispatcherQueue != null)
+        {
+            _dispatcherQueue.TryEnqueue(() => action());
+        }
+        else
+        {
+            action();
+        }
+    }
+
+    public void CancelScan()
+    {
+        try
+        {
+            _scanCts?.Cancel();
+        }
+        catch { }
+        IsBusy = false;
+        SetOperationState(OperationState.Idle);
+    }
+
     public async Task ScanAsync()
     {
         if (IsBusy || _isDisposed) return;
@@ -156,7 +179,7 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
         try
         {
             var result = await _engine.ScanContextMenuItemsAsync(token);
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 if (token.IsCancellationRequested || _isDisposed) return;
                 foreach (var item in result)
@@ -171,7 +194,7 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 StatusText = "Scan cancelled.".T();
                 SetOperationState(OperationState.Idle);
@@ -179,7 +202,7 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 StatusText = "Scan failed:".T() + " " + ex.Message;
                 SetOperationState(OperationState.Failed);
@@ -187,12 +210,12 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
         }
         finally
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 IsBusy = false;
-                if (CurrentOperationState == OperationState.Running)
+                if (token.IsCancellationRequested || _isDisposed)
                 {
-                    SetOperationState(OperationState.Completed);
+                    SetOperationState(OperationState.Idle);
                 }
             });
         }

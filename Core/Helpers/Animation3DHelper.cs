@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Microsoft.UI.Composition;
@@ -332,6 +334,7 @@ public static class Animation3DHelper
         try
         {
             if (element == null) return;
+            if (!Shared.Animations.ReducedMotionHelper.AreAnimationsEnabled) return;
             var hostVisual = ElementCompositionPreview.GetElementVisual(element);
             if (hostVisual == null) return;
             var compositor = hostVisual.Compositor;
@@ -416,6 +419,22 @@ public static class Animation3DHelper
         catch { }
     }
 
+    /// <summary>
+    /// Stops all running 3D holographic scan effects globally (e.g. during page transition or cleanup).
+    /// </summary>
+    public static void StopAll3DScanEffects()
+    {
+        try
+        {
+            var elements = _activeScanVisuals.Keys.ToList();
+            foreach (var el in elements)
+            {
+                Stop3DScanEffect(el);
+            }
+        }
+        catch { }
+    }
+
     // =========================================================================
     // 7. 3D SYSTEM OPTIMIZATION EFFECT (Refined, Non-Jarring Tactile Glow Pulse)
     // =========================================================================
@@ -429,6 +448,7 @@ public static class Animation3DHelper
         try
         {
             if (element == null) return;
+            if (!Shared.Animations.ReducedMotionHelper.AreAnimationsEnabled) return;
             var hostVisual = ElementCompositionPreview.GetElementVisual(element);
             if (hostVisual == null) return;
             var compositor = hostVisual.Compositor;

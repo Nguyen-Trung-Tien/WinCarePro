@@ -468,6 +468,9 @@ public sealed partial class MainPage : Page
     {
         try
         {
+            // Halt any running 3D holographic composition scan effects globally on navigation
+            WinCarePro.Core.Helpers.Animation3DHelper.StopAll3DScanEffects();
+
             if (ContentFrame.Content is Page oldPage)
             {
                 // Only unregister and dispose transient non-cached pages to prevent destroying cached ViewModels

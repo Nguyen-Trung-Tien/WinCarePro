@@ -609,6 +609,7 @@ public sealed partial class MainWindow : Window
                 netPage.ViewModel?.Cleanup();
             }
 
+            WinCarePro.Core.Helpers.Animation3DHelper.StopAll3DScanEffects();
             WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.CloseWindow();
         }
         catch { }
@@ -640,6 +641,7 @@ public sealed partial class MainWindow : Window
 
         await Task.Delay(250);
 
+        App.ReleaseSingleInstanceMutex();
         _forceClose = true;
         this.Close();
     }

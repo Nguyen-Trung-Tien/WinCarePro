@@ -127,6 +127,16 @@ public void InsertLog(string action, string module, string status)
 
 ---
 
+## 🔒 5. Quy Chuẩn Đảm Bảo Phục Hồi Trạng Thái Khi Hủy (`finally` CancellationToken Pattern)
+
+Khi ViewModel thực thi tác vụ bất đồng bộ thiết lập `IsBusy = true` hoặc `SetOperationState(OperationState.Running)`:
+1. **Bắt buộc có khối `finally`:** Mọi chu trình async có `CancellationToken` phải có khối `finally` để đảm bảo khi `token.IsCancellationRequested` hoặc `_isDisposed == true`, cờ `IsBusy` luôn được đặt lại thành `false` và `OperationState` trở về `OperationState.Idle`.
+2. **Không thoát sớm (early return) mà bỏ qua cleanup:** Tuyệt đối không viết `if (token.IsCancellationRequested) return;` ở giữa hàm mà không nằm trong cấu trúc `try / finally`.
+3. **Cơ chế Fallback `RunOnUI`:** Cung cấp fallback thực thi trực tiếp khi `DispatcherQueue == null` để hỗ trợ kiểm thử tự động (Unit / Stress Tests) độc lập với WinUI thread host.
+
+---
+
 <div align="center">
   <sub>[🏠 Mục Lục Rules](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
 </div>
+

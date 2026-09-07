@@ -70,6 +70,13 @@ public static void TrimProcessMemory()
 
 ---
 
+## 🎨 6. Vòng Đời Composition 3D Visuals & Hỗ Trợ Reduced Motion
+
+1. **Dọn dẹp Animation khi chuyển trang:** Mọi hiệu ứng tia quét Composition SpriteVisual (`Start3DScanEffect`) phải được dừng và hủy (`Stop3DScanEffect`) trong `OnNavigatedFrom` của View và trong `MainPage.CleanupActivePage()`. Tuyệt đối không để animation chạy ngầm vô thời hạn trên GPU khi trang đã bị ẩn hoặc thay thế.
+2. **Tuân thủ Reduced Motion:** Trước khi khởi chạy animation 3D hoặc micro-interaction, bắt buộc kiểm tra `ReducedMotionHelper.AreAnimationsEnabled` (kết hợp cả Windows Accessibility và cấu hình người dùng `EnableAnimations`). Khi Reduced Motion bật, animation phải thực hiện tức thì hoặc chuyển đổi mờ tĩnh nhẹ nhàng.
+
+---
+
 <div align="center">
   <sub>[🏠 Mục Lục Rules](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
 </div>

@@ -6,7 +6,7 @@
 
 ## 🏆 1. Chính Sách Không Lỗi Tuyệt Đối (Zero-Bug Policy)
 
-Dự án duy trì tỷ lệ kiểm thử thành công **100% Passed (300/300 Tests)**. Không một bản build nào được phép xuất xưởng nếu có bất kỳ bài test nào bị `Failed`.
+Dự án duy trì tỷ lệ kiểm thử thành công **100% Passed (339/339 Tests)**. Không một bản build nào được phép xuất xưởng nếu có bất kỳ bài test nào bị `Failed`.
 
 ```powershell
 # Lệnh kiểm thử bắt buộc trước khi merge code:
@@ -19,7 +19,7 @@ dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal
 
 1. **Không can thiệp vào máy tính thật của Developer:**
    - Các bài kiểm thử CSDL **bắt buộc** sử dụng cơ sở dữ liệu tạm thời trong RAM (`Data Source=:memory:`) hoặc file SQLite độc lập trong thư mục `TestTemp/`, tự động dọn sạch sau khi test kết thúc.
-   - Các thao tác Win32 nguy hiểm (như dừng tiến trình thật, can thiệp Registry `HKLM`, chạy `sfc /scannow`) phải được bọc qua Mock Object (`Moq`) hoặc kiểm tra trên tệp giả lập.
+   - Các thao tác Win32 nguy hiểm (như dừng tiến trình thật, can thiệp Registry `HKLM`, chạy `sfc /scannow`) phải được bọc qua Mock Object hoặc kiểm tra trên tệp giả lập.
 2. **Kiểm thử độc lập đa luồng:**
    - Các bài test không được phụ thuộc vào thứ tự chạy (Order-independent). Không dùng biến tĩnh toàn cục có thể gây xung đột trạng thái giữa các bài test chạy song song.
 
@@ -27,10 +27,12 @@ dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal
 
 ## 🎯 3. Yêu Cầu Phạm Vi Kiểm Thử Cho Tính Năng Mới (Coverage Requirements)
 
-Khi lập trình viên thêm một Engine hoặc tính năng mới, **bắt buộc** phải viết kèm bộ test xUnit trong `WinCarePro.Tests`:
+Khi lập trình viên thêm một Engine, ViewModel hoặc tính năng mới, **bắt buộc** phải viết kèm bộ test xUnit trong `WinCarePro.Tests`:
 
 | Phân loại tính năng | Yêu cầu bài test tối thiểu |
 | :--- | :--- |
+| **Vòng đời & Hủy tác vụ** | Test `CancelScan()` phục hồi `IsBusy == false` và `OperationState.Idle`, test không bị cờ khóa vĩnh viễn. |
+| **Thử nghiệm Stress thực tế** | Test chu trình `Scan → Cancel → Scan`, click dồn dập (rapid clicks), đổi theme/lang mid-scan. |
 | **Thuật toán quét & dọn dẹp** | Test nhận diện tệp, test bỏ qua file đang khóa, test kiểm tra an toàn `SafePathGuard`. |
 | **Chẩn đoán & Chấm điểm** | Test các trường hợp biên: 0% RAM, 100% CPU, ổ C: đầy, danh sách rỗng. |
 | **Bảo mật & CSDL** | Test chống SQL Injection, test di chuyển Schema Version, test mã hóa DPAPI. |

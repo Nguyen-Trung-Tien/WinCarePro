@@ -2,7 +2,7 @@
 
 > [⬅️ 07. Thiết Kế UI/UX Aura Glass](07_UI_UX_DESIGN_SYSTEM.md) • [🏠 Mục Lục Docs](README.md) • **Chương 08** • [Trang Kế Tiếp: 09. Đóng Gói & CI/CD ➡️](09_BUILD_DEPLOYMENT_AND_PACKAGING.md)
 
-Chất lượng phần mềm và độ tin cậy tuyệt đối được đảm bảo thông qua bộ kiểm thử tự động toàn diện trong dự án `WinCarePro.Tests` với **300 bài kiểm thử xUnit đạt tỷ lệ vượt qua 100% (300/300 Passed — Zero-Bug Policy)**.
+Chất lượng phần mềm và độ tin cậy tuyệt đối được đảm bảo thông qua bộ kiểm thử tự động toàn diện trong dự án `WinCarePro.Tests` với **339 bài kiểm thử xUnit đạt tỷ lệ vượt qua 100% (339/339 Passed — Zero-Bug Policy)**.
 
 ---
 
@@ -14,13 +14,13 @@ Chất lượng phần mềm và độ tin cậy tuyệt đối được đảm 
 - **Vị trí thư mục:** [WinCarePro.Tests/](file:///d:/WinCare/WinCarePro.Tests/)
 
 ```mermaid
-pie title Phân Bổ 300 Tests Theo Danh Mục
+pie title Phân Bổ 339 Tests Theo Danh Mục
     "Security & Sanitization" : 52
     "Engines & Business Logic" : 68
-    "Production Hardening & Concurrency" : 48
+    "Production Hardening & Stress Testing" : 87
     "Database & Migrations" : 36
     "AI Heuristics & Scoring" : 40
-    "UI State, Theme & Versioning" : 56
+    "UI State, Theme & Motion" : 56
 ```
 
 ---
@@ -31,20 +31,22 @@ pie title Phân Bổ 300 Tests Theo Danh Mục
 | :---: | :--- | :--- | :--- |
 | **1** | [SecurityAndSafetyTests.cs](file:///d:/WinCare/WinCarePro.Tests/SecurityAndSafetyTests.cs) | An Toàn & Bảo Vệ | Kiểm thử `SafePathGuard` chặn xóa thư mục hệ điều hành, bỏ qua Junction Points, chặn xóa tệp Credential. |
 | **2** | [ProductionHardeningTests.cs](file:///d:/WinCare/WinCarePro.Tests/ProductionHardeningTests.cs) | Hardening & An Toàn Cao | Kiểm thử `SafeRegistryGuard`, `ServiceSafetyService` core services, `CancellationToken` ngắt luồng an toàn. |
-| **3** | [SecurityAndSanitizationTests.cs](file:///d:/WinCare/WinCarePro.Tests/SecurityAndSanitizationTests.cs) | Chống Injection | Xác thực `InputSanitizer` và `ProcessRunner.ArgumentList` loại bỏ hoàn toàn các chuỗi ký tự tấn công shell. |
-| **4** | [AppVersionManagementTests.cs](file:///d:/WinCare/WinCarePro.Tests/AppVersionManagementTests.cs) | Phiên Bản Hệ Thống | Kiểm tra đồng bộ version v4.9.0, DefaultVersionString, InformationalVersion và AppConstants. |
-| **5** | [DbManagerRegressionTests.cs](file:///d:/WinCare/WinCarePro.Tests/DbManagerRegressionTests.cs) | Cơ Sở Dữ Liệu | Kiểm thử nâng cấp migration `PRAGMA user_version`, kiểm thử khóa đồng bộ đa luồng `_dbLock`. |
-| **6** | [DbAndReportTests.cs](file:///d:/WinCare/WinCarePro.Tests/DbAndReportTests.cs) | Lưu Trữ & Lịch Sử | Kiểm tra ghi/đọc bảng `Logs`, `Users`, `Notifications` và các truy vấn tổng hợp báo cáo. |
-| **7** | [AiDiagnosticsEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/AiDiagnosticsEngineTests.cs) | Thuật Toán AI | Đánh giá tính chính xác của 8 luồng quét Heuristic và khả năng phân loại mức độ nghiêm trọng. |
-| **8** | [AiWinCareEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/AiWinCareEngineTests.cs) | Chấm Điểm Sức Khỏe | Kiểm thử công thức tính điểm `Composite Health Score` (0-100) với các trường hợp biên (Edge Cases). |
-| **9** | [DriverBackupAndAiForecastingTests.cs](file:///d:/WinCare/WinCarePro.Tests/DriverBackupAndAiForecastingTests.cs) | Dự Báo & Driver | Kiểm thử thuật toán ngoại suy số ngày đầy ổ đĩa và logic xuất danh sách Driver. |
-| **10** | [JunkCleanerEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/JunkCleanerEngineTests.cs) | Dọn Dẹp Rác | Kiểm tra tính toán dung lượng tệp rác, bỏ qua file đang bị khóa mà không làm dừng tiến trình quét. |
-| **11** | [SystemOptimizerEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/SystemOptimizerEngineTests.cs) | Tối Ưu RAM & Tweak | Kiểm thử gọi Win32 `EmptyWorkingSet`, cấu hình Registry DWORD an toàn. |
-| **12** | [SystemRepairTests.cs](file:///d:/WinCare/WinCarePro.Tests/SystemRepairTests.cs) | Sửa Lỗi Windows | Kiểm thử chuỗi lệnh SFC, DISM và cơ chế bắt mã trả về `ExitCode`. |
-| **13** | [NetworkCenterEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/NetworkCenterEngineTests.cs) | Mạng & DNS | Kiểm thử đo Ping, phân giải IP DNS Benchmark và chuỗi lệnh Reset Network Stack. |
-| **14** | [UninstallEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/UninstallEngineTests.cs) | Gỡ Phần Mềm | Kiểm tra phân tích tàn dư thư mục và khóa Registry mồ côi. |
-| **15** | [CryptoHelperTests.cs](file:///d:/WinCare/WinCarePro.Tests/CryptoHelperTests.cs) | Mã Hóa DPAPI | Kiểm thử tính đối xứng mã hóa `Protect` và giải mã `Unprotect`. |
-| **16** | [UiThemeAndConsistencyTests.cs](file:///d:/WinCare/WinCarePro.Tests/UiThemeAndConsistencyTests.cs) | Giao Diện & i18n | Kiểm tra tính nhất quán của từ điển dịch thuật ngữ Anh-Việt (Không bị thiếu Key dịch). |
+| **3** | [ProductionStressHardeningTests.cs](file:///d:/WinCare/WinCarePro.Tests/ProductionStressHardeningTests.cs) | Stress Testing & Concurrency | Kiểm thử chu kỳ Scan-Cancel liên tục trên mọi ViewModel, chuyển Theme/Language tức thời khi đang chạy tác vụ, chống Double-click đa luồng. |
+| **4** | [LifecycleAndStressHardeningTests.cs](file:///d:/WinCare/WinCarePro.Tests/LifecycleAndStressHardeningTests.cs) | Vòng Đời & Trạng Thái | Kiểm thử Dispose an toàn khi tác vụ đang chạy, State Machine không bị race condition khi switch view nhanh. |
+| **5** | [SecurityAndSanitizationTests.cs](file:///d:/WinCare/WinCarePro.Tests/SecurityAndSanitizationTests.cs) | Chống Injection | Xác thực `InputSanitizer` và `ProcessRunner.ArgumentList` loại bỏ hoàn toàn các chuỗi ký tự tấn công shell. |
+| **6** | [AppVersionManagementTests.cs](file:///d:/WinCare/WinCarePro.Tests/AppVersionManagementTests.cs) | Phiên Bản Hệ Thống | Kiểm tra đồng bộ version v4.9.0, DefaultVersionString, InformationalVersion và AppConstants. |
+| **7** | [DbManagerRegressionTests.cs](file:///d:/WinCare/WinCarePro.Tests/DbManagerRegressionTests.cs) | Cơ Sở Dữ Liệu | Kiểm thử nâng cấp migration `PRAGMA user_version`, kiểm thử khóa đồng bộ đa luồng `_dbLock`. |
+| **8** | [DbAndReportTests.cs](file:///d:/WinCare/WinCarePro.Tests/DbAndReportTests.cs) | Lưu Trữ & Lịch Sử | Kiểm tra ghi/đọc bảng `Logs`, `Users`, `Notifications` và các truy vấn tổng hợp báo cáo. |
+| **9** | [AiDiagnosticsEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/AiDiagnosticsEngineTests.cs) | Thuật Toán AI | Đánh giá tính chính xác của 8 luồng quét Heuristic và khả năng phân loại mức độ nghiêm trọng. |
+| **10** | [AiWinCareEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/AiWinCareEngineTests.cs) | Chấm Điểm Sức Khỏe | Kiểm thử công thức tính điểm `Composite Health Score` (0-100) với các trường hợp biên (Edge Cases). |
+| **11** | [DriverBackupAndAiForecastingTests.cs](file:///d:/WinCare/WinCarePro.Tests/DriverBackupAndAiForecastingTests.cs) | Dự Báo & Driver | Kiểm thử thuật toán ngoại suy số ngày đầy ổ đĩa và logic xuất danh sách Driver. |
+| **12** | [JunkCleanerEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/JunkCleanerEngineTests.cs) | Dọn Dẹp Rác | Kiểm tra tính toán dung lượng tệp rác, bỏ qua file đang bị khóa mà không làm dừng tiến trình quét. |
+| **13** | [SystemOptimizerEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/SystemOptimizerEngineTests.cs) | Tối Ưu RAM & Tweak | Kiểm thử gọi Win32 `EmptyWorkingSet`, cấu hình Registry DWORD an toàn. |
+| **14** | [SystemRepairTests.cs](file:///d:/WinCare/WinCarePro.Tests/SystemRepairTests.cs) | Sửa Lỗi Windows | Kiểm thử chuỗi lệnh SFC, DISM và cơ chế bắt mã trả về `ExitCode`. |
+| **15** | [NetworkCenterEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/NetworkCenterEngineTests.cs) | Mạng & DNS | Kiểm thử đo Ping, phân giải IP DNS Benchmark và chuỗi lệnh Reset Network Stack. |
+| **16** | [UninstallEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/UninstallEngineTests.cs) | Gỡ Phần Mềm | Kiểm tra phân tích tàn dư thư mục và khóa Registry mồ côi. |
+| **17** | [CryptoHelperTests.cs](file:///d:/WinCare/WinCarePro.Tests/CryptoHelperTests.cs) | Mã Hóa DPAPI | Kiểm thử tính đối xứng mã hóa `Protect` và giải mã `Unprotect`. |
+| **18** | [UiThemeAndConsistencyTests.cs](file:///d:/WinCare/WinCarePro.Tests/UiThemeAndConsistencyTests.cs) | Giao Diện & i18n | Kiểm tra tính nhất quán của từ điển dịch thuật ngữ Anh-Việt (Không bị thiếu Key dịch). |
 
 ---
 

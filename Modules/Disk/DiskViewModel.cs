@@ -31,6 +31,7 @@ public class DiskViewModel : ViewModelBase, IDisposable
 
     public void CancelOperations()
     {
+        SetOperationState(OperationState.Cancelling);
         try
         {
             _diskCts?.Cancel();
@@ -39,6 +40,7 @@ public class DiskViewModel : ViewModelBase, IDisposable
         }
         catch { }
         IsBusy = false;
+        SetOperationState(OperationState.Idle);
     }
 
     public void Cleanup()
@@ -182,6 +184,7 @@ public class DiskViewModel : ViewModelBase, IDisposable
         var token = _diskCts.Token;
 
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         StorageItems.Clear();
         LogText(string.Format("Starting disk usage analysis for: {0}...".T(), StorageScanPath));
 
@@ -194,18 +197,25 @@ public class DiskViewModel : ViewModelBase, IDisposable
                 StorageItems.Add(item);
             }
             LogText(string.Format("Analysis complete. Found {0} items.".T(), StorageItems.Count));
+            SetOperationState(OperationState.Completed);
         }
         catch (OperationCanceledException)
         {
             LogText("Storage analysis cancelled.".T());
+            SetOperationState(OperationState.Idle);
         }
         catch (Exception ex)
         {
             LogText("Storage analysis error:".T() + " " + ex.Message);
+            SetOperationState(OperationState.Failed);
         }
         finally
         {
             IsBusy = false;
+            if (CurrentOperationState == OperationState.Running)
+            {
+                SetOperationState(OperationState.Completed);
+            }
         }
     }
 

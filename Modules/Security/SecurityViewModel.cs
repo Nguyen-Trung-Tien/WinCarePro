@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WinCarePro.Engines;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Core.Models;
+using WinCarePro.Infrastructure.Logging;
 using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
@@ -101,6 +103,7 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
 
     public void CancelScan()
     {
+        SetOperationState(OperationState.Cancelling);
         try
         {
             _scanCts?.Cancel();
@@ -109,6 +112,7 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         }
         catch { }
         IsScanning = false;
+        SetOperationState(OperationState.Idle);
     }
 
     public void Cleanup()
@@ -149,6 +153,7 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         _scanCts = new System.Threading.CancellationTokenSource();
         var ct = _scanCts.Token;
 
+        SetOperationState(OperationState.Running);
         IsScanning = true;
         StatusMessage = "Analyzing system security indicators...".T();
 
@@ -172,6 +177,7 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             if (ct.IsCancellationRequested || _isDisposed)
             {
                 IsScanning = false;
+                SetOperationState(OperationState.Idle);
                 return;
             }
 
@@ -231,14 +237,17 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
 
                 StatusMessage = string.Format("Scan complete. Security Score: {0}/100".T(), SecurityScore);
                 IsScanning = false;
+                SetOperationState(OperationState.Completed);
             });
         }
         catch (Exception ex)
         {
+            CrashLogger.LogException("SecurityViewModel.ScanSecurity", ex);
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 StatusMessage = string.Format("Security analysis failed: {0}".T(), ex.Message);
                 IsScanning = false;
+                SetOperationState(OperationState.Failed);
             });
         }
     }

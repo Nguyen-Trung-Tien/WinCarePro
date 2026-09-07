@@ -140,6 +140,7 @@ public class SystemAuditValidationTests
     public void NetworkViewModel_NavigationDuringSpeedTest_ResetsIsBusyAndReadyState()
     {
         // Arrange
+        WinCarePro.Services.TranslationManager.Instance.CurrentLanguage = WinCarePro.Services.AppLanguage.English;
         var vm = new WinCarePro.ViewModels.NetworkViewModel();
         vm.IsBusy = true;
         vm.SpeedTestPhase = "Testing Download...";

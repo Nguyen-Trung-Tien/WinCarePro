@@ -62,7 +62,7 @@ public class ContextMenuEngine
         return "";
     }
 
-    public Task<List<ContextMenuItem>> ScanContextMenuItemsAsync()
+    public Task<List<ContextMenuItem>> ScanContextMenuItemsAsync(CancellationToken cancellationToken = default)
     {
         return Task.Run(() =>
         {
@@ -71,6 +71,7 @@ public class ContextMenuEngine
 
             foreach (var basePath in _targetPaths)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 Log(string.Format("Scanning registry path: {0}".T(), basePath));
                 try
                 {
@@ -80,6 +81,7 @@ public class ContextMenuEngine
                     var subKeyNames = parentKey.GetSubKeyNames();
                     foreach (var subKeyName in subKeyNames)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         try
                         {
                             using var subKey = parentKey.OpenSubKey(subKeyName, false);

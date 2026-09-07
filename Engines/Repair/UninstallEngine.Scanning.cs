@@ -10,7 +10,7 @@ namespace WinCarePro.Engines;
 
 public partial class UninstallEngine
 {
-    public List<InstalledAppInfo> ScanInstalledApps()
+    public List<InstalledAppInfo> ScanInstalledApps(System.Threading.CancellationToken cancellationToken = default)
     {
         var appList = new List<InstalledAppInfo>();
         var seenNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -29,8 +29,10 @@ public partial class UninstallEngine
         
         foreach (var (baseKey, hiveName) in hives)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             foreach (var path in registryPaths)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 try
                 {
                     using var uninstallKey = baseKey.OpenSubKey(path);
@@ -39,6 +41,7 @@ public partial class UninstallEngine
                     var subkeys = uninstallKey.GetSubKeyNames();
                     foreach (var subkeyName in subkeys)
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
                         try
                         {
                             using var subkey = uninstallKey.OpenSubKey(subkeyName);
@@ -138,6 +141,7 @@ public partial class UninstallEngine
             
             foreach (var package in packages)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 try
                 {
                     if (package.IsFramework || package.IsResourcePackage) 

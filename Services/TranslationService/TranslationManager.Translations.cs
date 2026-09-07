@@ -24,6 +24,14 @@ public partial class TranslationManager
         _translations["Toggle Theme"] = "Đổi Giao Diện";
         _translations["Notifications"] = "Thông Báo";
 
+        // --- Operation States ---
+        _translations["Idle"] = "Sẵn sàng";
+        _translations["Preparing"] = "Đang chuẩn bị";
+        _translations["Running"] = "Đang thực hiện";
+        _translations["Cancelling"] = "Đang hủy";
+        _translations["Completed"] = "Hoàn tất";
+        _translations["Failed"] = "Thất bại";
+
         // --- Core Page Titles & Subtitles (Streamlined, Minimalist & Modern) ---
         _translations["Real-time hardware telemetry & AI care."] = "Giám sát phần cứng & chăm sóc hệ thống.";
         _translations["Intelligent diagnostics & automated optimization."] = "Chẩn đoán thông minh & tối ưu tự động.";

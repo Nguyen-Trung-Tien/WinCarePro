@@ -157,6 +157,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         var token = _aiScanCts.Token;
 
         IsAiScanning = true;
+        SetOperationState(OperationState.Running);
         AiStatusText = "Analyzing system health...".T();
 
         try
@@ -171,6 +172,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
                 AiStatusText = report.HealthStatus;
                 AiSummaryText = report.SummaryText;
                 IsAiScanning = false;
+                SetOperationState(OperationState.Completed);
             });
         }
         catch (OperationCanceledException)
@@ -180,16 +182,19 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
                 if (_isDisposed) return;
                 AiStatusText = "Scan cancelled.".T();
                 IsAiScanning = false;
+                SetOperationState(OperationState.Idle);
             });
         }
-        catch
+        catch (Exception ex)
         {
+            Infrastructure.Logging.CrashLogger.LogException("SystemOptimizerViewModel.RunAiScanAsync", ex);
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 if (_isDisposed) return;
-                AiStatusText = "Scan completed".T();
+                AiStatusText = string.Format("Scan failed: {0}".T(), ex.Message);
                 RecalculateEfficiencyScore();
                 IsAiScanning = false;
+                SetOperationState(OperationState.Failed);
             });
         }
     }
@@ -913,18 +918,24 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     public void Cleanup()
     {
         // Transient cleanup when navigating away: cancel scans & reset busy states
-        _aiScanCts?.Cancel();
-        _aiScanCts?.Dispose();
+        try
+        {
+            _aiScanCts?.Cancel();
+            _aiScanCts?.Dispose();
+        }
+        catch { }
         _aiScanCts = null;
         IsLoading = false;
         IsBoosting = false;
         IsCleaningCache = false;
         IsAiScanning = false;
+        SetOperationState(OperationState.Idle);
     }
 
     public void Dispose()
     {
         _isDisposed = true;
+        Cleanup();
         _optimizerEngine.ProgressMessage -= _progressHandler;
         TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }

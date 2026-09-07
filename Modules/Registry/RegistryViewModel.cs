@@ -79,6 +79,7 @@ public class RegistryViewModel : ViewModelBase, IDisposable
         }
         catch { }
         IsBusy = false;
+        SetOperationState(OperationState.Idle);
     }
 
     public void Dispose()
@@ -91,6 +92,7 @@ public class RegistryViewModel : ViewModelBase, IDisposable
     {
         if (IsBusy || _isDisposed) return;
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         ScanProgress = 0;
         StatusText = "Scanning registry for broken paths...".T();
         Issues.Clear();
@@ -116,6 +118,7 @@ public class RegistryViewModel : ViewModelBase, IDisposable
                 }
                 ScanProgress = 100;
                 StatusText = string.Format("Scan complete. Found {0} issues.".T(), Issues.Count);
+                SetOperationState(OperationState.Completed);
             });
         }
         catch (OperationCanceledException)
@@ -124,14 +127,17 @@ public class RegistryViewModel : ViewModelBase, IDisposable
             {
                 StatusText = "Scan cancelled.".T();
                 ScanProgress = 0;
+                SetOperationState(OperationState.Idle);
             });
         }
         catch (Exception ex)
         {
+            Infrastructure.Logging.CrashLogger.LogException("RegistryViewModel.ScanRegistryAsync", ex);
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 if (_isDisposed) return;
                 StatusText = "Scan failed: ".T() + ex.Message;
+                SetOperationState(OperationState.Failed);
             });
         }
         finally
@@ -139,33 +145,61 @@ public class RegistryViewModel : ViewModelBase, IDisposable
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 IsBusy = false;
+                if (CurrentOperationState == OperationState.Running)
+                {
+                    SetOperationState(OperationState.Completed);
+                }
             });
         }
     }
 
     public async Task RepairSelectedAsync()
     {
-        if (IsBusy || Issues.Count == 0) return;
+        if (IsBusy || Issues.Count == 0 || _isDisposed) return;
         IsBusy = true;
+        SetOperationState(OperationState.Preparing);
         StatusText = "Repairing selected registry issues...".T();
 
         try
         {
+            _scanCts?.Cancel();
+            _scanCts?.Dispose();
+        }
+        catch { }
+        _scanCts = new CancellationTokenSource();
+        var token = _scanCts.Token;
+
+        try
+        {
             var selected = Issues.Where(x => x.IsSelected).ToList();
-            if (selected.Count == 0) return;
+            if (selected.Count == 0)
+            {
+                SetOperationState(OperationState.Idle);
+                return;
+            }
 
             StatusText = "Creating safety backup before repair...".T();
-            await Task.Run(() => _engine.CreateRegistryBackup("AutoBeforeRepair"));
+            await Task.Run(() => _engine.CreateRegistryBackup("AutoBeforeRepair"), token);
+            token.ThrowIfCancellationRequested();
 
+            SetOperationState(OperationState.Running);
             StatusText = "Repairing selected registry issues...".T();
-            await _engine.FixRegistryIssuesAsync(selected);
+            await _engine.FixRegistryIssuesAsync(selected, token);
             StatusText = string.Format("Repaired {0} registry issues.".T(), selected.Count);
+            SetOperationState(OperationState.Completed);
             IsBusy = false;
             await ScanRegistryAsync();
         }
+        catch (OperationCanceledException)
+        {
+            StatusText = "Repair cancelled.".T();
+            SetOperationState(OperationState.Idle);
+        }
         catch (Exception ex)
         {
+            Infrastructure.Logging.CrashLogger.LogException("RegistryViewModel.RepairSelectedAsync", ex);
             StatusText = "Repair failed:".T() + " " + ex.Message;
+            SetOperationState(OperationState.Failed);
         }
         finally
         {
@@ -175,8 +209,9 @@ public class RegistryViewModel : ViewModelBase, IDisposable
 
     public async Task BackupRegistryAsync()
     {
-        if (IsBusy) return;
+        if (IsBusy || _isDisposed) return;
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         StatusText = "Creating registry backup...".T();
 
         try
@@ -184,10 +219,13 @@ public class RegistryViewModel : ViewModelBase, IDisposable
             await Task.Run(() => _engine.CreateRegistryBackup("UserBackup"));
             StatusText = "Registry backup created successfully.".T();
             LoadBackups();
+            SetOperationState(OperationState.Completed);
         }
         catch (Exception ex)
         {
+            Infrastructure.Logging.CrashLogger.LogException("RegistryViewModel.BackupRegistryAsync", ex);
             StatusText = "Backup failed:".T() + " " + ex.Message;
+            SetOperationState(OperationState.Failed);
         }
         finally
         {

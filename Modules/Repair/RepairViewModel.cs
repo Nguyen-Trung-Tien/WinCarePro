@@ -296,6 +296,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
         CancelCurrentOperation();
         IsBusy = false;
         IsScanningDiagnostics = false;
+        SetOperationState(OperationState.Idle);
     }
 
     public void Dispose()
@@ -313,6 +314,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
         var cts = _cts;
         if (cts != null && !cts.IsCancellationRequested)
         {
+            SetOperationState(OperationState.Cancelling);
             try { cts.Cancel(); } catch (ObjectDisposedException) { }
             LogText("Cancelling current operation by user request...".T());
             CurrentScanStepText = "Cancelling operation...".T();
@@ -480,6 +482,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
     {
         if (IsBusy || IsScanningDiagnostics) return;
         IsScanningDiagnostics = true;
+        SetOperationState(OperationState.Running);
         RepairProgressPercent = 0;
         _cts = new CancellationTokenSource();
         var token = _cts.Token;
@@ -727,16 +730,19 @@ public class RepairViewModel : ViewModelBase, IDisposable
 
             ApplyFilter();
             LoadServices();
+            SetOperationState(OperationState.Completed);
         }
         catch (OperationCanceledException)
         {
             CurrentScanStepText = "Diagnostics Scan was cancelled.".T();
             LogText("Diagnostics Scan was cancelled.".T());
+            SetOperationState(OperationState.Idle);
         }
         catch (Exception ex)
         {
             CurrentScanStepText = string.Format("Diagnostics Scan failed: {0}".T(), ex.Message);
             LogText(string.Format("Diagnostics Scan failed: {0}".T(), ex.Message));
+            SetOperationState(OperationState.Failed);
         }
         finally
         {

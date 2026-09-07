@@ -31,7 +31,7 @@ public static class CrashLogger
             EnsureDirectoryExists();
             string filePath = Path.Combine(LogDir, "crash_log.txt");
 
-            FileLock.Wait();
+            if (!FileLock.Wait(2000)) return;
             try
             {
                 // Rotate log file if it exceeds 5 MB to prevent unbounded growth
@@ -69,7 +69,7 @@ public static class CrashLogger
             EnsureDirectoryExists();
             string filePath = Path.Combine(LogDir, "app.log");
 
-            FileLock.Wait();
+            if (!FileLock.Wait(2000)) return;
             try
             {
                 // Rotate log file if it exceeds 5 MB to prevent unbounded growth

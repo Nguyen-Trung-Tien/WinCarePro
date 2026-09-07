@@ -8,6 +8,7 @@ using LiveChartsCore.Defaults;
 using WinCarePro.Services;
 using WinCarePro.Engines;
 using WinCarePro.Core.Interop;
+using WinCarePro.Core.Models;
 
 namespace WinCarePro.ViewModels;
 
@@ -320,7 +321,9 @@ public partial class DashboardViewModel
     {
         if (_scanCts != null && !_scanCts.IsCancellationRequested)
         {
+            SetOperationState(OperationState.Cancelling);
             try { _scanCts.Cancel(); } catch { }
+            SetOperationState(OperationState.Idle);
         }
     }
 

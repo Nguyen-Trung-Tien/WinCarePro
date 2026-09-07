@@ -306,6 +306,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         var token = _scanCts.Token;
 
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         ProgressPercent = 10;
         ProgressMessage = "Scanning registry for installed applications...".T();
 
@@ -314,7 +315,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
         try
         {
-            var apps = await Task.Run(() => _uninstallEngine.ScanInstalledApps(), token);
+            var apps = await Task.Run(() => _uninstallEngine.ScanInstalledApps(token), token);
             if (token.IsCancellationRequested || _isDisposed) return;
             ProgressPercent = 80;
 
@@ -327,6 +328,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
                 ProgressPercent = 100;
                 ProgressMessage = string.Format("Loaded {0} applications.".T(), _allApps.Count);
                 IsBusy = false;
+                SetOperationState(OperationState.Completed);
             });
         }
         catch (OperationCanceledException)
@@ -335,6 +337,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
             {
                 ProgressMessage = "Scan cancelled.".T();
                 IsBusy = false;
+                SetOperationState(OperationState.Idle);
             });
         }
         catch (Exception ex)
@@ -343,6 +346,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
             {
                 ProgressMessage = "Scan failed:".T() + " " + ex.Message;
                 IsBusy = false;
+                SetOperationState(OperationState.Failed);
             });
         }
     }
@@ -774,10 +778,15 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
     public void Cleanup()
     {
-        _scanCts?.Cancel();
-        _scanCts?.Dispose();
+        try
+        {
+            _scanCts?.Cancel();
+            _scanCts?.Dispose();
+        }
+        catch { }
         _scanCts = null;
         IsBusy = false;
+        SetOperationState(OperationState.Idle);
     }
 
     public void Dispose()

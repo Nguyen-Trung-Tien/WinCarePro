@@ -139,6 +139,7 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
     {
         if (IsBusy || _isDisposed) return;
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         StatusText = "Scanning context menu handlers...".T();
         Items.Clear();
         FilteredItems.Clear();
@@ -154,7 +155,7 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
 
         try
         {
-            var result = await _engine.ScanContextMenuItemsAsync();
+            var result = await _engine.ScanContextMenuItemsAsync(token);
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 if (token.IsCancellationRequested || _isDisposed) return;
@@ -165,6 +166,7 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
                 UpdateCounts();
                 ApplyFilter();
                 StatusText = string.Format("Found {0} context menu handlers.".T(), Items.Count);
+                SetOperationState(OperationState.Completed);
             });
         }
         catch (OperationCanceledException)
@@ -172,14 +174,15 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 StatusText = "Scan cancelled.".T();
+                SetOperationState(OperationState.Idle);
             });
         }
         catch (Exception ex)
         {
             _dispatcherQueue?.TryEnqueue(() =>
             {
-                if (_isDisposed) return;
                 StatusText = "Scan failed:".T() + " " + ex.Message;
+                SetOperationState(OperationState.Failed);
             });
         }
         finally
@@ -187,6 +190,10 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 IsBusy = false;
+                if (CurrentOperationState == OperationState.Running)
+                {
+                    SetOperationState(OperationState.Completed);
+                }
             });
         }
     }

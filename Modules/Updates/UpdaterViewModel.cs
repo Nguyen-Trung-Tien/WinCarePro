@@ -8,6 +8,8 @@ using Microsoft.UI.Dispatching;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Core.Models;
+using WinCarePro.Infrastructure.Logging;
 using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
@@ -332,6 +334,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
     public void Cleanup()
     {
+        SetOperationState(OperationState.Cancelling);
         CancelOperations();
         try { _operationCts?.Dispose(); } catch { }
         _operationCts = null;
@@ -340,6 +343,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         _updaterEngine.ItemProgressChanged -= OnItemProgressChanged;
         _updaterEngine.UpdateProgressReported -= OnUpdateProgressReported;
         IsBusy = false;
+        SetOperationState(OperationState.Idle);
     }
 
     public void Dispose()
@@ -353,8 +357,10 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
     {
         if (_operationCts != null && !_operationCts.IsCancellationRequested)
         {
+            SetOperationState(OperationState.Cancelling);
             try { _operationCts.Cancel(); } catch { }
             ProgressMessage = "Operation cancelled by user.".T();
+            SetOperationState(OperationState.Idle);
         }
     }
 
@@ -362,6 +368,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
     {
         if (IsBusy) return;
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         try { _operationCts?.Dispose(); } catch { }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
@@ -386,17 +393,21 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
                 ProgressMessage = string.Format("Updates scan completed. {0} packages found.".T(), list.Count);
                 ProgressPercent = 100;
                 IsBusy = false;
+                SetOperationState(OperationState.Completed);
             });
         }
         catch (OperationCanceledException)
         {
             ProgressMessage = "Scan cancelled.".T();
             IsBusy = false;
+            SetOperationState(OperationState.Idle);
         }
         catch (Exception ex)
         {
+            CrashLogger.LogException("UpdaterViewModel.ScanUpdates", ex);
             ProgressMessage = string.Format("Scan failed: {0}".T(), ex.Message);
             IsBusy = false;
+            SetOperationState(OperationState.Failed);
         }
         finally
         {
@@ -494,6 +505,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         if (selected.Count == 0 || IsBusy) return;
 
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         try { _operationCts?.Dispose(); } catch { }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
@@ -528,14 +540,18 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
             ProgressPercent = 100;
             ProgressMessage = "Selected package installations complete.".T();
+            SetOperationState(OperationState.Completed);
         }
         catch (OperationCanceledException)
         {
             ProgressMessage = "Batch update cancelled.".T();
+            SetOperationState(OperationState.Idle);
         }
         catch (Exception ex)
         {
+            CrashLogger.LogException("UpdaterViewModel.UpdateSelectedApps", ex);
             ProgressMessage = string.Format("Updates failed: {0}".T(), ex.Message);
+            SetOperationState(OperationState.Failed);
         }
         finally
         {
@@ -549,6 +565,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         if (IsBusy || app == null || app.UpdateStatus == SoftwareUpdateInfo.StatusCompleted || app.UpdateStatus == SoftwareUpdateInfo.StatusUpdating) return;
 
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         try { _operationCts?.Dispose(); } catch { }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
@@ -569,14 +586,18 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
             });
             
             ProgressMessage = ok ? string.Format("Successfully updated {0}".T(), app.Name) : string.Format("Failed to update {0}".T(), app.Name);
+            SetOperationState(ok ? OperationState.Completed : OperationState.Failed);
         }
         catch (OperationCanceledException)
         {
             ProgressMessage = "Update cancelled.".T();
+            SetOperationState(OperationState.Idle);
         }
         catch (Exception ex)
         {
+            CrashLogger.LogException("UpdaterViewModel.UpdateSingleApp", ex);
             ProgressMessage = string.Format("Update failed: {0}".T(), ex.Message);
+            SetOperationState(OperationState.Failed);
         }
         finally
         {
@@ -592,6 +613,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         if (pending.Count == 0) return;
 
         IsBusy = true;
+        SetOperationState(OperationState.Running);
         try { _operationCts?.Dispose(); } catch { }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
@@ -626,14 +648,18 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
             ProgressPercent = 100;
             ProgressMessage = "All background installations complete.".T();
+            SetOperationState(OperationState.Completed);
         }
         catch (OperationCanceledException)
         {
             ProgressMessage = "Update all cancelled.".T();
+            SetOperationState(OperationState.Idle);
         }
         catch (Exception ex)
         {
+            CrashLogger.LogException("UpdaterViewModel.UpdateAllApps", ex);
             ProgressMessage = string.Format("Updates failed: {0}".T(), ex.Message);
+            SetOperationState(OperationState.Failed);
         }
         finally
         {

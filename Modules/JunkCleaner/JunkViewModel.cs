@@ -179,6 +179,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
         catch { }
         IsScanning = false;
         IsCleaning = false;
+        SetOperationState(OperationState.Idle);
     }
 
     public void Dispose()
@@ -250,6 +251,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
         var token = _scanCts.Token;
 
         IsScanning = true;
+        SetOperationState(OperationState.Running);
         IsCelebrationActive = false;
         ProgressPercent = 0;
         lock (_logBuffer) { _logBuffer.Clear(); }
@@ -302,19 +304,35 @@ public class JunkViewModel : ViewModelBase, IDisposable
                     HasLockingApps = false;
                     LockingAppsText = "";
                 }
+                SetOperationState(OperationState.Completed);
             });
         }
         catch (OperationCanceledException)
         {
-            await RunOnUIActionAsync(() => ProgressMessage = "Scan cancelled.".T());
+            await RunOnUIActionAsync(() =>
+            {
+                ProgressMessage = "Scan cancelled.".T();
+                SetOperationState(OperationState.Idle);
+            });
         }
         catch (Exception ex)
         {
-            await RunOnUIActionAsync(() => ProgressMessage = "Scan failed:".T() + " " + ex.Message);
+            await RunOnUIActionAsync(() =>
+            {
+                ProgressMessage = "Scan failed:".T() + " " + ex.Message;
+                SetOperationState(OperationState.Failed);
+            });
         }
         finally
         {
-            await RunOnUIActionAsync(() => IsScanning = false);
+            await RunOnUIActionAsync(() =>
+            {
+                IsScanning = false;
+                if (CurrentOperationState == OperationState.Running)
+                {
+                    SetOperationState(OperationState.Completed);
+                }
+            });
         }
     }
 

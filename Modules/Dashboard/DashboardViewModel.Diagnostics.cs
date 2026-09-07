@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Models;
+using WinCarePro.Core.Models;
+using WinCarePro.Infrastructure.Logging;
 using WinCarePro.Services;
 using WinCarePro.Engines;
 
@@ -294,12 +296,26 @@ public partial class DashboardViewModel
         _scanCts = new CancellationTokenSource(TimeSpan.FromSeconds(90));
         var scanToken = _scanCts.Token;
 
+        SetOperationState(OperationState.Running);
         IsScanning = true;
         HasScanned = false;
         ScanProgress = 5;
         ScanStatus = "Status: Scanning Junk Files...".T();
-        Recommendations.Clear();
-        DiagnosticItems.Clear();
+
+        void ClearCollections()
+        {
+            Recommendations.Clear();
+            DiagnosticItems.Clear();
+        }
+
+        if (_dispatcherQueue != null && !_dispatcherQueue.HasThreadAccess)
+        {
+            _dispatcherQueue.TryEnqueue(ClearCollections);
+        }
+        else
+        {
+            ClearCollections();
+        }
 
         // Capture current resource values on UI thread before offloading
         double currentCpuUsage = CpuUsage;
@@ -500,11 +516,13 @@ public partial class DashboardViewModel
 
                     UpdateHealthScoreBreakdown();
                     ScanStatus = string.Format("Evaluation Complete. System Health is {0}/100".T(), HealthScore);
+                    SetOperationState(OperationState.Completed);
                 });
             }, scanToken);
         }
         catch (OperationCanceledException)
         {
+            SetOperationState(OperationState.Idle);
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 ScanStatus = "Status: Scan cancelled.".T();
@@ -515,6 +533,8 @@ public partial class DashboardViewModel
         }
         catch (Exception ex)
         {
+            CrashLogger.LogException("DashboardViewModel.RunFullDiagnostics", ex);
+            SetOperationState(OperationState.Failed);
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 ScanStatus = "Scan failed:".T() + " " + ex.Message;

@@ -2,12 +2,50 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WinCarePro.Core.Models;
+using WinCarePro.Services;
 
 namespace WinCarePro.ViewModels;
 
 public class ViewModelBase : ObservableObject
 {
     protected DispatcherQueue? DispatcherQueueInstance { get; set; } = App.MainDispatcherQueue;
+
+    private OperationState _currentOperationState = OperationState.Idle;
+    public OperationState CurrentOperationState
+    {
+        get => _currentOperationState;
+        set
+        {
+            if (_currentOperationState != value)
+            {
+                SetPropertyOnUI(() => _currentOperationState, v => _currentOperationState = v, value);
+                OnPropertyChanged(nameof(OperationStateText));
+                OnPropertyChanged(nameof(IsOperationActive));
+                OnPropertyChanged(nameof(CanStartOperation));
+            }
+        }
+    }
+
+    public string OperationStateText => CurrentOperationState switch
+    {
+        OperationState.Idle => "Idle".T(),
+        OperationState.Preparing => "Preparing".T(),
+        OperationState.Running => "Running".T(),
+        OperationState.Cancelling => "Cancelling".T(),
+        OperationState.Completed => "Completed".T(),
+        OperationState.Failed => "Failed".T(),
+        _ => "Idle".T()
+    };
+
+    public bool IsOperationActive => CurrentOperationState is OperationState.Preparing or OperationState.Running or OperationState.Cancelling;
+    public bool CanStartOperation => CurrentOperationState is OperationState.Idle or OperationState.Completed or OperationState.Failed;
+
+    public void SetOperationState(OperationState state)
+    {
+        CurrentOperationState = state;
+    }
+
 
     public static DispatcherQueue? SafeGetDispatcherQueue()
     {

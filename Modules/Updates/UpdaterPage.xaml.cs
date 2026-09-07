@@ -20,6 +20,11 @@ public sealed partial class UpdaterPage : Page
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
+        this.Loaded += (s, e) =>
+        {
+            WinCarePro.Services.TranslationManager.Instance.Translate(this);
+            this.DispatcherQueue?.TryEnqueue(() => WinCarePro.Services.TranslationManager.Instance.Translate(this));
+        };
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -29,6 +34,7 @@ public sealed partial class UpdaterPage : Page
         WinCarePro.Services.TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         WinCarePro.Services.TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
         WinCarePro.Services.TranslationManager.Instance.Translate(this);
+        this.DispatcherQueue?.TryEnqueue(() => WinCarePro.Services.TranslationManager.Instance.Translate(this));
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -57,6 +63,7 @@ public sealed partial class UpdaterPage : Page
             async () =>
             {
                 await ViewModel.ScanUpdatesAsync();
+                WinCarePro.Services.TranslationManager.Instance.Translate(this);
             },
             minDurationMs: 1200);
     }

@@ -352,4 +352,33 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("Sẵn sàng phân tích phân bổ dung lượng", manager.GetTranslationForLanguage("Ready to analyze storage distribution", AppLanguage.Vietnamese));
         Assert.Equal("Không phát hiện tệp tin trùng lặp nào", manager.GetTranslationForLanguage("No duplicate files detected", AppLanguage.Vietnamese));
     }
+
+    [Fact]
+    public void Translations_AiDiagnosticsAndNetwork_ShouldBeLocalizedAndReversible()
+    {
+        var manager = TranslationManager.Instance;
+
+        // AI Diagnostics Engine header
+        Assert.Equal("Động cơ chẩn đoán thông minh", manager.GetTranslationForLanguage("Smart Diagnostics Engine", AppLanguage.Vietnamese));
+        Assert.Equal("Lõi sức khỏe hệ thống", manager.GetTranslationForLanguage("System Health Core", AppLanguage.Vietnamese));
+        Assert.Equal("Chẩn đoán thông minh đa yếu tố & đề xuất sức khỏe hệ thống.", manager.GetTranslationForLanguage("Intelligent multi-factor diagnostics & system health recommendations.", AppLanguage.Vietnamese));
+
+        // Network Center & Diagnostics
+        Assert.Equal("Trung tâm Mạng & Chẩn đoán", manager.GetTranslationForLanguage("Network Center & Diagnostics", AppLanguage.Vietnamese));
+        Assert.Equal("Trung tâm Mạng & Chẩn đoán", manager.GetTranslationForLanguage("Network Center &amp; Diagnostics", AppLanguage.Vietnamese));
+        Assert.Equal("Tự động sửa chữa mạng thông minh", manager.GetTranslationForLanguage("Smart Network Auto-Repair", AppLanguage.Vietnamese));
+        Assert.Equal("Đặt lại TCP/IP", manager.GetTranslationForLanguage("Reset TCP/IP", AppLanguage.Vietnamese));
+
+        // Software Updater Empty State
+        Assert.Equal("Tất cả ứng dụng đã mới nhất", manager.GetTranslationForLanguage("All Applications Up to Date", AppLanguage.Vietnamese));
+        Assert.Equal("Hệ thống không có bản cập nhật phần mềm nào đang chờ.", manager.GetTranslationForLanguage("No pending software updates detected for your system.", AppLanguage.Vietnamese));
+        Assert.Equal("Kho lưu trữ WinGet & Kênh cập nhật trực tiếp đã đồng bộ", manager.GetTranslationForLanguage("WinGet Repository & Direct Channel Synced", AppLanguage.Vietnamese));
+        Assert.Equal("Kho lưu trữ WinGet & Kênh cập nhật trực tiếp đã đồng bộ", manager.GetTranslationForLanguage("WinGet Repository &amp; Direct Channel Synced", AppLanguage.Vietnamese));
+
+        // Bi-directional reversibility
+        Assert.Equal("Smart Diagnostics Engine", manager.GetTranslationForLanguage("Động cơ chẩn đoán thông minh", AppLanguage.English));
+        Assert.Equal("System Health Core", manager.GetTranslationForLanguage("Lõi sức khỏe hệ thống", AppLanguage.English));
+        Assert.Equal("Network Center & Diagnostics", manager.GetTranslationForLanguage("Trung tâm Mạng & Chẩn đoán", AppLanguage.English));
+        Assert.Equal("All Applications Up to Date", manager.GetTranslationForLanguage("Tất cả ứng dụng đã mới nhất", AppLanguage.English));
+    }
 }

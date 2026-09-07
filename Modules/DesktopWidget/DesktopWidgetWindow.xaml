@@ -30,14 +30,14 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Brand Logo, Title & Status Badge (Click to open WinCare Pro) -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" PointerPressed="OnOpenMainAppClick" ToolTipService.ToolTip="Nhấp để Mở WinCare Pro">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" PointerPressed="OnOpenMainAppClick" ToolTipService.ToolTip="Click to Open WinCare Pro">
                     <Border Width="22" Height="22" CornerRadius="6" Background="{StaticResource CyberAccentGradient}">
                         <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <TextBlock Text="WinCare HUD" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
                     
                     <!-- TOPMOST Status Pill (Clickable Toggle) -->
-                    <Border x:Name="TopmostBadge" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="5" Padding="6,2" VerticalAlignment="Center" PointerPressed="OnTogglePinClick" ToolTipService.ToolTip="Bật/Tắt Ghim trên cùng (Always On Top)">
+                    <Border x:Name="TopmostBadge" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="5" Padding="6,2" VerticalAlignment="Center" PointerPressed="OnTogglePinClick" ToolTipService.ToolTip="Toggle Always On Top">
                         <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                             <Ellipse x:Name="TopmostDot" Width="5" Height="5" Fill="#FF10B981" VerticalAlignment="Center"/>
                             <TextBlock x:Name="TopmostText" Text="TOPMOST" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981" CharacterSpacing="20"/>
@@ -50,7 +50,7 @@
 
                 <!-- Single Sleek Action Control: Toggle Mini HUD (Positioned right next to Close button) -->
                 <StackPanel x:Name="HeaderActionPanel" Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" Margin="0,0,50,0">
-                    <Button x:Name="ToggleCompactButton" Click="OnToggleCompactModeClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="24" Height="24" Padding="0" ToolTipService.ToolTip="Thu nhỏ thành Mini HUD">
+                    <Button x:Name="ToggleCompactButton" Click="OnToggleCompactModeClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="24" Height="24" Padding="0" ToolTipService.ToolTip="Collapse to Mini HUD">
                         <FontIcon Glyph="&#xE740;" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     </Button>
                 </StackPanel>
@@ -105,7 +105,7 @@
                 <!-- Smart 1-Click Boost Button with Reactor Aura -->
                 <Button x:Name="BoostButton" Grid.Column="2" Click="OnFastCleanClick" 
                         Style="{StaticResource VibrantPrimaryButtonStyle}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                        CornerRadius="10" Padding="0" ToolTipService.ToolTip="Giải phóng RAM vật lý tức thì (Smart 1-Click Boost)">
+                        CornerRadius="10" Padding="0" ToolTipService.ToolTip="Instant RAM Purge (Smart 1-Click Boost)">
                     <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                         <StackPanel x:Name="BoostStackPanel" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
                             <FontIcon x:Name="BoostIcon" Glyph="&#xE74C;" FontSize="16" Foreground="White" RenderTransformOrigin="0.5,0.5">
@@ -200,14 +200,14 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center" PointerPressed="OnOpenMainAppClick" ToolTipService.ToolTip="Nhấp để Mở WinCare Pro">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center" PointerPressed="OnOpenMainAppClick" ToolTipService.ToolTip="Click to Open WinCare Pro">
                         <Border Width="16" Height="16" CornerRadius="4" Background="{StaticResource CyberAccentGradient}">
                             <FontIcon Glyph="&#xE9D9;" FontSize="8.5" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <TextBlock Text="WinCare HUD" FontSize="11" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
 
                         <!-- TOPMOST Status Pill (Clickable) -->
-                        <Border x:Name="CompactTopmostBadge" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1" VerticalAlignment="Center" PointerPressed="OnTogglePinClick" ToolTipService.ToolTip="Bấm để Bật/Tắt Ghim trên cùng">
+                        <Border x:Name="CompactTopmostBadge" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1" VerticalAlignment="Center" PointerPressed="OnTogglePinClick" ToolTipService.ToolTip="Toggle Always On Top">
                             <StackPanel Orientation="Horizontal" Spacing="3" VerticalAlignment="Center">
                                 <Ellipse x:Name="CompactTopmostDot" Width="4" Height="4" Fill="#FF10B981" VerticalAlignment="Center"/>
                                 <TextBlock x:Name="CompactTopmostText" Text="TOPMOST" FontSize="7.5" FontWeight="Bold" Foreground="#FF10B981" CharacterSpacing="15"/>
@@ -216,7 +216,7 @@
                     </StackPanel>
 
                     <!-- Expand to Full HUD Button -->
-                    <Button Grid.Column="2" Click="OnToggleCompactModeClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="22" Height="22" Padding="0" VerticalAlignment="Center" ToolTipService.ToolTip="Mở rộng Full HUD">
+                    <Button Grid.Column="2" Click="OnToggleCompactModeClick" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="22" Height="22" Padding="0" VerticalAlignment="Center" ToolTipService.ToolTip="Expand to Full HUD">
                         <FontIcon Glyph="&#xE73F;" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                     </Button>
                 </Grid>
@@ -255,7 +255,7 @@
                     </Border>
 
                     <!-- Boost Button with Rotation Transform -->
-                    <Button x:Name="CompactBoostButton" Grid.Column="3" Click="OnFastCleanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="28" Padding="9,0" CornerRadius="7" VerticalAlignment="Center" ToolTipService.ToolTip="Boost RAM Nhanh (1-Click Boost)">
+                    <Button x:Name="CompactBoostButton" Grid.Column="3" Click="OnFastCleanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="28" Padding="9,0" CornerRadius="7" VerticalAlignment="Center" ToolTipService.ToolTip="Fast RAM Boost (1-Click Boost)">
                         <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                             <FontIcon x:Name="CompactBoostIcon" Glyph="&#xE74C;" FontSize="10" Foreground="White" RenderTransformOrigin="0.5,0.5">
                                 <FontIcon.RenderTransform>

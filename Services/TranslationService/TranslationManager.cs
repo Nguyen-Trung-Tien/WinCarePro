@@ -163,6 +163,24 @@ public partial class TranslationManager
                 }
             }
 
+            // Fallback for XML entity &amp; vs raw &
+            if (trimmed.IndexOf("&amp;", StringComparison.Ordinal) >= 0)
+            {
+                string decoded = System.Net.WebUtility.HtmlDecode(trimmed);
+                if (_translations.TryGetValue(decoded, out translated))
+                {
+                    return PreserveWhitespace(key, translated);
+                }
+            }
+            else if (trimmed.IndexOf('&') >= 0)
+            {
+                string encoded = trimmed.Replace("&", "&amp;");
+                if (_translations.TryGetValue(encoded, out translated))
+                {
+                    return PreserveWhitespace(key, translated);
+                }
+            }
+
             // 3. Check O(1) Dynamic Regex Cache
             if (_dynamicRegexCache.TryGetValue(trimmed, out var cachedDynamic))
             {
@@ -406,7 +424,11 @@ public partial class TranslationManager
             {
                 if (!string.IsNullOrEmpty(kvp.Value))
                 {
-                    _reverseTranslations[kvp.Value] = kvp.Key;
+                    // Prefer non-&amp; English keys for cleaner, natural reverse translation
+                    if (!_reverseTranslations.TryGetValue(kvp.Value, out var existing) || existing.Contains("&amp;"))
+                    {
+                        _reverseTranslations[kvp.Value] = kvp.Key;
+                    }
                 }
             }
         }
@@ -424,6 +446,19 @@ public partial class TranslationManager
         string trimmed = text.Trim();
         if (_translations.ContainsKey(trimmed) || _reverseTranslations.ContainsKey(trimmed))
             return true;
+
+        if (trimmed.IndexOf("&amp;", StringComparison.Ordinal) >= 0)
+        {
+            string decoded = System.Net.WebUtility.HtmlDecode(trimmed);
+            if (_translations.ContainsKey(decoded) || _reverseTranslations.ContainsKey(decoded))
+                return true;
+        }
+        else if (trimmed.IndexOf('&') >= 0)
+        {
+            string encoded = trimmed.Replace("&", "&amp;");
+            if (_translations.ContainsKey(encoded) || _reverseTranslations.ContainsKey(encoded))
+                return true;
+        }
 
         if (_dynamicRegexCache.TryGetValue(trimmed, out var cached))
         {

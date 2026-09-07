@@ -69,31 +69,31 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="FilterBtnAll" Grid.Column="0" Click="OnCategoryFilterClick" Tag="All" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Xem tất cả 14 phân hệ hướng dẫn">
+                        <Button x:Name="FilterBtnAll" Grid.Column="0" Click="OnCategoryFilterClick" Tag="All" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="View all 14 module guides">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE80F;" FontSize="11" Foreground="White"/>
                                 <TextBlock Text="All Modules" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="FilterBtnCare" Grid.Column="1" Click="OnCategoryFilterClick" Tag="Care" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Chăm sóc &amp; Dọn dẹp hệ thống">
+                        <Button x:Name="FilterBtnCare" Grid.Column="1" Click="OnCategoryFilterClick" Tag="Care" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="System Care &amp; Clean">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xEA99;" FontSize="11" Foreground="Orange"/>
                                 <TextBlock Text="Care" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="FilterBtnTuning" Grid.Column="2" Click="OnCategoryFilterClick" Tag="Tuning" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Tối ưu hóa hiệu năng &amp; Hệ thống">
+                        <Button x:Name="FilterBtnTuning" Grid.Column="2" Click="OnCategoryFilterClick" Tag="Tuning" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="System &amp; Performance Tuning">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE7FC;" FontSize="11" Foreground="#FFF59E0B"/>
                                 <TextBlock Text="Tuning" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="FilterBtnSecurity" Grid.Column="3" Click="OnCategoryFilterClick" Tag="Security" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Bảo mật, Quyền riêng tư &amp; Sửa lỗi Windows">
+                        <Button x:Name="FilterBtnSecurity" Grid.Column="3" Click="OnCategoryFilterClick" Tag="Security" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Security, Privacy &amp; Windows Repair">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE90F;" FontSize="11" Foreground="Teal"/>
                                 <TextBlock Text="Security" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="FilterBtnSystem" Grid.Column="4" Click="OnCategoryFilterClick" Tag="System" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Công cụ hệ thống &amp; Quản lý Windows">
+                        <Button x:Name="FilterBtnSystem" Grid.Column="4" Click="OnCategoryFilterClick" Tag="System" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="System Tools &amp; Windows Management">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE713;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                 <TextBlock Text="System" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>

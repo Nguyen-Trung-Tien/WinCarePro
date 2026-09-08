@@ -253,97 +253,113 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 
-                                <Border x:Name="LightThemeCard" Grid.Column="0" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" PointerPressed="OnLightModeCardClick" Style="{StaticResource QuickStatCardStyle}"
+                                <Button x:Name="LightThemeCard" Grid.Column="0" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" Click="OnLightModeCardClick" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                        AutomationProperties.Name="Light Theme" AutomationProperties.HelpText="Switch to clean and bright light interface mode."
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="12">
-                                    <Grid>
+                                    <Grid HorizontalAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal" Spacing="12">
                                             <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusWarningBackground}" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xE706;" FontSize="18" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                             </Border>
                                             <StackPanel VerticalAlignment="Center" Spacing="2">
                                                 <TextBlock Text="Light Theme" FontWeight="Bold" FontSize="13" />
-                                                <TextBlock Text="Clean and bright interface" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                <TextBlock Text="Clean and bright interface" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                             </StackPanel>
                                         </StackPanel>
                                         <FontIcon x:Name="LightThemeCheck" Glyph="&#xE73E;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,2,0" Visibility="Collapsed"/>
                                     </Grid>
-                                </Border>
+                                </Button>
                                 
-                                <Border x:Name="DarkThemeCard" Grid.Column="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" PointerPressed="OnDarkModeCardClick" Style="{StaticResource QuickStatCardStyle}"
+                                <Button x:Name="DarkThemeCard" Grid.Column="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" Click="OnDarkModeCardClick" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                        AutomationProperties.Name="Dark Theme" AutomationProperties.HelpText="Switch to deep space and neon dark interface mode."
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="12">
-                                    <Grid>
+                                    <Grid HorizontalAlignment="Stretch">
                                         <StackPanel Orientation="Horizontal" Spacing="12">
                                             <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusPurpleBackground}" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xE708;" FontSize="18" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                             </Border>
                                             <StackPanel VerticalAlignment="Center" Spacing="2">
                                                 <TextBlock Text="Dark Theme" FontWeight="Bold" FontSize="13" />
-                                                <TextBlock Text="Deep space &amp; neon dark tones" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                <TextBlock Text="Deep space &amp; neon dark tones" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                             </StackPanel>
                                         </StackPanel>
                                         <FontIcon x:Name="DarkThemeCheck" Glyph="&#xE73E;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,2,0" Visibility="Visible"/>
                                     </Grid>
-                                </Border>
+                                </Button>
                             </Grid>
 
                             <MenuFlyoutSeparator />
 
                             <StackPanel Spacing="8">
                                 <TextBlock Text="Window Accent Colors Palette" FontSize="13.5" FontWeight="Bold" />
-                                <TextBlock Text="Choose system-wide brand gradient and highlight color tone." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="Choose system-wide brand gradient and highlight color tone." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 
                                 <StackPanel Orientation="Horizontal" Spacing="14" x:Name="AccentSelectorPanel" Margin="0,6,0,0">
                                     <!-- Default Radiant Azure -->
-                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Default" Background="Transparent" ToolTipService.ToolTip="Radiant Azure (Default)">
-                                        <Ellipse x:Name="AccentDefault" Width="34" Height="34">
-                                            <Ellipse.Fill>
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                                    <GradientStop Color="#FF0F6CBD" Offset="0"/>
-                                                    <GradientStop Color="#FF0284C7" Offset="0.5"/>
-                                                    <GradientStop Color="#FF2563EB" Offset="1"/>
-                                                </LinearGradientBrush>
-                                            </Ellipse.Fill>
-                                        </Ellipse>
-                                        <FontIcon x:Name="CheckDefault" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
-                                    </Grid>
+                                    <Button Click="OnAccentClick" Tag="Default" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" Padding="0" CornerRadius="18" ToolTipService.ToolTip="Radiant Azure (Default)" AutomationProperties.Name="Accent Color: Radiant Azure (Default)">
+                                        <Grid Width="34" Height="34">
+                                            <Ellipse x:Name="AccentDefault" Width="34" Height="34">
+                                                <Ellipse.Fill>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                        <GradientStop Color="#FF0F6CBD" Offset="0"/>
+                                                        <GradientStop Color="#FF0284C7" Offset="0.5"/>
+                                                        <GradientStop Color="#FF2563EB" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                            <FontIcon x:Name="CheckDefault" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                        </Grid>
+                                    </Button>
                                     <!-- Green -->
-                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Green" Background="Transparent" ToolTipService.ToolTip="Emerald Green">
-                                        <Ellipse x:Name="AccentGreen" Width="34" Height="34" Fill="#FF10B981"/>
-                                        <FontIcon x:Name="CheckGreen" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
-                                    </Grid>
+                                    <Button Click="OnAccentClick" Tag="Green" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" Padding="0" CornerRadius="18" ToolTipService.ToolTip="Emerald Green" AutomationProperties.Name="Accent Color: Emerald Green">
+                                        <Grid Width="34" Height="34">
+                                            <Ellipse x:Name="AccentGreen" Width="34" Height="34" Fill="#FF10B981"/>
+                                            <FontIcon x:Name="CheckGreen" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                        </Grid>
+                                    </Button>
                                     <!-- Purple -->
-                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Purple" Background="Transparent" ToolTipService.ToolTip="Royal Purple">
-                                        <Ellipse x:Name="AccentPurple" Width="34" Height="34" Fill="#FF8B5CF6"/>
-                                        <FontIcon x:Name="CheckPurple" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
-                                    </Grid>
+                                    <Button Click="OnAccentClick" Tag="Purple" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" Padding="0" CornerRadius="18" ToolTipService.ToolTip="Royal Purple" AutomationProperties.Name="Accent Color: Royal Purple">
+                                        <Grid Width="34" Height="34">
+                                            <Ellipse x:Name="AccentPurple" Width="34" Height="34" Fill="#FF8B5CF6"/>
+                                            <FontIcon x:Name="CheckPurple" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                        </Grid>
+                                    </Button>
                                     <!-- Pink -->
-                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Pink" Background="Transparent" ToolTipService.ToolTip="Cyber Pink">
-                                        <Ellipse x:Name="AccentPink" Width="34" Height="34" Fill="#FFEC4899"/>
-                                        <FontIcon x:Name="CheckPink" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
-                                    </Grid>
+                                    <Button Click="OnAccentClick" Tag="Pink" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" Padding="0" CornerRadius="18" ToolTipService.ToolTip="Cyber Pink" AutomationProperties.Name="Accent Color: Cyber Pink">
+                                        <Grid Width="34" Height="34">
+                                            <Ellipse x:Name="AccentPink" Width="34" Height="34" Fill="#FFEC4899"/>
+                                            <FontIcon x:Name="CheckPink" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                        </Grid>
+                                    </Button>
                                     <!-- Amber -->
-                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Amber" Background="Transparent" ToolTipService.ToolTip="Amber Gold">
-                                        <Ellipse x:Name="AccentAmber" Width="34" Height="34" Fill="#FFF59E0B"/>
-                                        <FontIcon x:Name="CheckAmber" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
-                                    </Grid>
+                                    <Button Click="OnAccentClick" Tag="Amber" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" Padding="0" CornerRadius="18" ToolTipService.ToolTip="Amber Gold" AutomationProperties.Name="Accent Color: Amber Gold">
+                                        <Grid Width="34" Height="34">
+                                            <Ellipse x:Name="AccentAmber" Width="34" Height="34" Fill="#FFF59E0B"/>
+                                            <FontIcon x:Name="CheckAmber" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                        </Grid>
+                                    </Button>
                                     <!-- Cyan -->
-                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Cyan" Background="Transparent" ToolTipService.ToolTip="Cyan / Teal">
-                                        <Ellipse x:Name="AccentCyan" Width="34" Height="34" Fill="#FF06B6D4"/>
-                                        <FontIcon x:Name="CheckCyan" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
-                                    </Grid>
+                                    <Button Click="OnAccentClick" Tag="Cyan" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" Padding="0" CornerRadius="18" ToolTipService.ToolTip="Cyan / Teal" AutomationProperties.Name="Accent Color: Cyan / Teal">
+                                        <Grid Width="34" Height="34">
+                                            <Ellipse x:Name="AccentCyan" Width="34" Height="34" Fill="#FF06B6D4"/>
+                                            <FontIcon x:Name="CheckCyan" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                        </Grid>
+                                    </Button>
                                     <!-- Cyberpunk Neon -->
-                                    <Grid Width="34" Height="34" PointerPressed="OnAccentClick" Tag="Cyberpunk" Background="Transparent" ToolTipService.ToolTip="Cyberpunk Neon">
-                                        <Ellipse x:Name="AccentCyberpunk" Width="34" Height="34">
-                                            <Ellipse.Fill>
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                                    <GradientStop Color="#FF00F2FE" Offset="0"/>
-                                                    <GradientStop Color="#FF7F56D9" Offset="0.5"/>
-                                                    <GradientStop Color="#FFEC4899" Offset="1"/>
-                                                </LinearGradientBrush>
-                                            </Ellipse.Fill>
-                                        </Ellipse>
-                                        <FontIcon x:Name="CheckCyberpunk" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
-                                    </Grid>
+                                    <Button Click="OnAccentClick" Tag="Cyberpunk" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" Padding="0" CornerRadius="18" ToolTipService.ToolTip="Cyberpunk Neon" AutomationProperties.Name="Accent Color: Cyberpunk Neon">
+                                        <Grid Width="34" Height="34">
+                                            <Ellipse x:Name="AccentCyberpunk" Width="34" Height="34">
+                                                <Ellipse.Fill>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                        <GradientStop Color="#FF00F2FE" Offset="0"/>
+                                                        <GradientStop Color="#FF7F56D9" Offset="0.5"/>
+                                                        <GradientStop Color="#FFEC4899" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                            <FontIcon x:Name="CheckCyberpunk" Glyph="&#xE73E;" FontSize="12" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                        </Grid>
+                                    </Button>
                                 </StackPanel>
                             </StackPanel>
 

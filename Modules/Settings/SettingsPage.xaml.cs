@@ -551,12 +551,12 @@ public sealed partial class SettingsPage : Page
     }
 
     // Theme Segmented Cards click handlers
-    private void OnLightModeCardClick(object sender, PointerRoutedEventArgs e)
+    private void OnLightModeCardClick(object sender, RoutedEventArgs e)
     {
         UpdateAppTheme(false);
     }
 
-    private void OnDarkModeCardClick(object sender, PointerRoutedEventArgs e)
+    private void OnDarkModeCardClick(object sender, RoutedEventArgs e)
     {
         UpdateAppTheme(true);
     }
@@ -605,7 +605,7 @@ public sealed partial class SettingsPage : Page
             }
             if (LightThemeCard != null)
             {
-                LightThemeCard.ClearValue(Border.BorderBrushProperty);
+                LightThemeCard.ClearValue(Control.BorderBrushProperty);
                 LightThemeCard.BorderThickness = new Thickness(1.5);
             }
             if (DarkThemeCheck != null) DarkThemeCheck.Visibility = Visibility.Visible;
@@ -620,7 +620,7 @@ public sealed partial class SettingsPage : Page
             }
             if (DarkThemeCard != null)
             {
-                DarkThemeCard.ClearValue(Border.BorderBrushProperty);
+                DarkThemeCard.ClearValue(Control.BorderBrushProperty);
                 DarkThemeCard.BorderThickness = new Thickness(1.5);
             }
             if (LightThemeCheck != null) LightThemeCheck.Visibility = Visibility.Visible;
@@ -645,7 +645,7 @@ public sealed partial class SettingsPage : Page
         ApplyAccentColorSelection(currentAccent);
     }
 
-    private void OnAccentClick(object sender, PointerRoutedEventArgs e)
+    private void OnAccentClick(object sender, RoutedEventArgs e)
     {
         string? tag = null;
         if (sender is FrameworkElement element)

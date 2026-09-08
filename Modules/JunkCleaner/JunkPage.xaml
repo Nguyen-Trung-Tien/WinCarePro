@@ -83,14 +83,18 @@
 
                 <!-- Right: Scan & Clean Actions -->
                 <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Button x:Name="ScanJunkBtn" Style="{x:Bind GetScanButtonStyle(ViewModel.HasCleanableJunk), Mode=OneWay}" Click="OnScanJunkClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" MinWidth="145" Padding="16,8" CornerRadius="10">
+                    <Button x:Name="ScanJunkBtn" Style="{x:Bind GetScanButtonStyle(ViewModel.HasCleanableJunk), Mode=OneWay}" Click="OnScanJunkClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" MinWidth="145" Padding="16,8" CornerRadius="10"
+                            AutomationProperties.Name="Scan Junk and System Cache"
+                            AutomationProperties.HelpText="Evaluates safe-to-clean junk files and system caching logs.">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <ProgressRing x:Name="ScanJunkRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" VerticalAlignment="Center"/>
                             <FontIcon x:Name="ScanJunkIcon" Glyph="&#xE721;" FontSize="13" />
                             <TextBlock x:Name="ScanJunkText" Text="{x:Bind GetScanButtonText(ViewModel.HasCleanableJunk), Mode=OneWay}" VerticalAlignment="Center" FontSize="12.5" FontWeight="Bold" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="CleanJunkBtn" Style="{x:Bind GetCleanButtonStyle(ViewModel.HasCleanableJunk), Mode=OneWay}" Click="OnCleanJunkClick" Visibility="{x:Bind GetCleanButtonVisibility(ViewModel.HasCleanableJunk), Mode=OneWay}" IsEnabled="{x:Bind CanClean(ViewModel.IsCleaning, ViewModel.Categories.Count, ViewModel.TotalCleanableBytes), Mode=OneWay}" MinWidth="145" Padding="18,8" CornerRadius="10">
+                    <Button x:Name="CleanJunkBtn" Style="{x:Bind GetCleanButtonStyle(ViewModel.HasCleanableJunk), Mode=OneWay}" Click="OnCleanJunkClick" Visibility="{x:Bind GetCleanButtonVisibility(ViewModel.HasCleanableJunk), Mode=OneWay}" IsEnabled="{x:Bind CanClean(ViewModel.IsCleaning, ViewModel.Categories.Count, ViewModel.TotalCleanableBytes), Mode=OneWay}" MinWidth="145" Padding="18,8" CornerRadius="10"
+                            AutomationProperties.Name="Clean Selected Junk"
+                            AutomationProperties.HelpText="Permanently removes selected temporary junk and cache files.">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <ProgressRing x:Name="CleanJunkRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                             <FontIcon x:Name="CleanJunkIcon" Glyph="&#xE74D;" FontSize="13" />
@@ -270,11 +274,13 @@
                             <TextBlock Text="Junk Categories" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnSelectAllCategoriesClick" Padding="6,2" ToolTipService.ToolTip="Select All Categories">
+                            <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnSelectAllCategoriesClick" Padding="6,2" ToolTipService.ToolTip="Select All Categories"
+                                    AutomationProperties.Name="Select All Categories" AutomationProperties.HelpText="Selects all junk categories for cleaning.">
                                 <TextBlock Text="Select All" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                             </Button>
                             <TextBlock Text="•" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
-                            <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnDeselectAllCategoriesClick" Padding="6,2" ToolTipService.ToolTip="Deselect All Categories">
+                            <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnDeselectAllCategoriesClick" Padding="6,2" ToolTipService.ToolTip="Deselect All Categories"
+                                    AutomationProperties.Name="Deselect All Categories" AutomationProperties.HelpText="Deselects all junk categories.">
                                 <TextBlock Text="Deselect All" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </Button>
                         </StackPanel>
@@ -393,7 +399,8 @@
                                     <TextBlock Text="{x:Bind ViewModel.SelectedCategory.FolderPath, Mode=OneWay}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,4,0,0" Opacity="0.8" />
                                 </StackPanel>
 
-                                <Button Grid.Column="1" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" ToolTipService.ToolTip="Open Folder Location" Click="OnOpenFolderClick" VerticalAlignment="Top" HorizontalAlignment="Right">
+                                <Button Grid.Column="1" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" CornerRadius="18" Padding="0" ToolTipService.ToolTip="Open Folder Location" Click="OnOpenFolderClick" VerticalAlignment="Top" HorizontalAlignment="Right"
+                                        AutomationProperties.Name="Open Selected Folder in File Explorer" AutomationProperties.HelpText="Opens this category folder in Windows File Explorer.">
                                     <FontIcon Glyph="&#xE8B7;" FontSize="15" />
                                 </Button>
                             </Grid>
@@ -456,7 +463,8 @@
                                                     <TextBlock Text="{Binding StatusText}" FontSize="8.5" FontWeight="Bold" Foreground="{Binding StatusForegroundColor}" />
                                                 </Border>
                                             </StackPanel>
-                                            <TextBlock Text="{Binding Path}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Path}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"
+                                                        ToolTipService.ToolTip="{Binding Path}" AutomationProperties.Name="{Binding Path}"/>
                                         </StackPanel>
 
                                         <TextBlock Grid.Column="2" Text="{Binding SizeFormatted}" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right" />
@@ -509,7 +517,8 @@
 
                             <StackPanel Spacing="4" HorizontalAlignment="Center">
                                 <TextBlock Text="Junk Sweeper Operation" FontWeight="Bold" FontSize="15" HorizontalAlignment="Center" />
-                                <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" TextWrapping="Wrap" FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextAlignment="Center" MaxWidth="320" HorizontalAlignment="Center" />
+                                <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" TextWrapping="Wrap" FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextAlignment="Center" MaxWidth="320" HorizontalAlignment="Center"
+                                           AutomationProperties.LiveSetting="Polite"/>
                             </StackPanel>
 
                             <!-- Percentage Progress Bar -->

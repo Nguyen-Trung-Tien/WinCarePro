@@ -15,8 +15,8 @@
             <!-- v3.0 Nova — User Chip in Pane Footer -->
             <NavigationView.PaneFooter>
                 <StackPanel Padding="0,0,0,12">
-                    <!-- User Profile Chip at the bottom — Soft rounded pill -->
-                    <Border x:Name="UserProfileBorder" Margin="6,4,6,4" Padding="6,5" CornerRadius="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" PointerPressed="OnUserProfileClick">
+                    <!-- User Profile Chip at the bottom — Soft rounded pill button with full keyboard navigation -->
+                    <Button x:Name="UserProfileButton" Margin="6,4,6,4" Padding="6,5" CornerRadius="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnUserProfileClick" AutomationProperties.Name="User Profile Settings" AutomationProperties.HelpText="Open Settings page to configure user preferences and application options.">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -27,10 +27,10 @@
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1" Margin="8,0,0,0" Visibility="{x:Bind NavView.IsPaneOpen, Mode=OneWay}">
                                 <TextBlock x:Name="NavUserName" Text="User" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource NavigationViewItemForeground}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
-                                <TextBlock x:Name="NavMachineName" Text="PC" FontSize="10" Foreground="{ThemeResource NavigationViewItemHeaderForeground}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+                                <TextBlock x:Name="NavMachineName" Text="PC" FontSize="12" Foreground="{ThemeResource NavigationViewItemHeaderForeground}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
                             </StackPanel>
                         </Grid>
-                    </Border>
+                    </Button>
                 </StackPanel>
             </NavigationView.PaneFooter>
 

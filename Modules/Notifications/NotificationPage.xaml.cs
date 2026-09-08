@@ -309,8 +309,8 @@ public sealed partial class NotificationPage : Page
                 this.XamlRoot,
                 "Clear All Notifications?",
                 "Are you sure you want to delete all notifications? This action cannot be undone.".T(),
-                confirmText: "Clear Alerts",
-                cancelText: "Cancel",
+                confirmText: "Purge All Notifications".T(),
+                cancelText: "Cancel".T(),
                 isDestructive: true);
 
             if (confirmed)
@@ -334,8 +334,8 @@ public sealed partial class NotificationPage : Page
                 this.XamlRoot,
                 "Clear All Activity Logs?",
                 "Are you sure you want to delete all activity log entries? This action cannot be undone.".T(),
-                confirmText: "Clear Logs",
-                cancelText: "Cancel",
+                confirmText: "Purge Activity Logs".T(),
+                cancelText: "Cancel".T(),
                 isDestructive: true);
 
             if (confirmed)

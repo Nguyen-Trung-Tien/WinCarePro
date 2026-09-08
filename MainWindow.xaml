@@ -97,20 +97,20 @@
 
                 <!-- Live System Telemetry HUD Chips -->
                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,6,0">
-                    <Button x:Name="CpuChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="8" Click="OnCpuChipClick" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance">
+                    <Button x:Name="CpuChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="8" Click="OnCpuChipClick" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance" AutomationProperties.Name="CPU Usage Monitor" AutomationProperties.HelpText="Click to view real-time CPU diagnostics and telemetry on the Dashboard.">
                         <Border Background="{ThemeResource AppCpuChipBg}" BorderBrush="{ThemeResource AppCpuChipBorder}" BorderThickness="1" CornerRadius="8" Padding="7,3">
                             <StackPanel Orientation="Horizontal" Spacing="4">
                                 <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="CpuChipText" Text="CPU" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                <TextBlock x:Name="CpuChipText" Text="CPU" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" AutomationProperties.LiveSetting="Polite"/>
                             </StackPanel>
                         </Border>
                     </Button>
 
-                    <Button x:Name="RamChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="8" Click="OnRamChipClick" ToolTipService.ToolTip="RAM Memory Booster — Click for 1-Click RAM Purge">
+                    <Button x:Name="RamChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="8" Click="OnRamChipClick" ToolTipService.ToolTip="RAM Memory Booster — Click for 1-Click RAM Purge" AutomationProperties.Name="RAM Working Set Booster" AutomationProperties.HelpText="Click to trigger instant memory cache reclamation.">
                         <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="8" Padding="7,3">
                             <StackPanel Orientation="Horizontal" Spacing="4">
                                 <FontIcon Glyph="&#xE7F1;" FontSize="11" Foreground="{ThemeResource AppRamChipFg}" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="RamChipText" Text="RAM" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppRamChipFg}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                <TextBlock x:Name="RamChipText" Text="RAM" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppRamChipFg}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" AutomationProperties.LiveSetting="Polite"/>
                             </StackPanel>
                         </Border>
                     </Button>
@@ -119,43 +119,43 @@
                 <!-- Live Clock -->
                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,8,0">
                     <FontIcon Glyph="&#xE787;" FontSize="13" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="ClockText" Text="--:--" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                    <TextBlock x:Name="ClockText" Text="--:--" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" AutomationProperties.Name="System Clock" AutomationProperties.LiveSetting="Polite"/>
                 </StackPanel>
 
                 <!-- Separator -->
                 <Border Width="1" Height="18" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="4,0" VerticalAlignment="Center" Opacity="0.6"/>
 
                  <!-- User Guide / Help Button '?' -->
-                <Button x:Name="UserGuideButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="34" Height="34" CornerRadius="8" Padding="0" Click="UserGuideButton_Click" ToolTipService.ToolTip="User Guide &amp; Documentation">
+                <Button x:Name="UserGuideButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="34" Height="34" CornerRadius="8" Padding="0" Click="UserGuideButton_Click" ToolTipService.ToolTip="User Guide &amp; Documentation" AutomationProperties.Name="User Guide &amp; Documentation" AutomationProperties.HelpText="Open comprehensive user guide and technical documentation.">
                     <FontIcon Glyph="&#xE897;" FontSize="14" />
                 </Button>
 
                 <!-- Theme Switcher -->
-                <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="34" Height="34" CornerRadius="8" Padding="0" Click="ThemeButton_Click" ToolTipService.ToolTip="Toggle Theme">
+                <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="34" Height="34" CornerRadius="8" Padding="0" Click="ThemeButton_Click" ToolTipService.ToolTip="Toggle Theme" AutomationProperties.Name="Toggle Theme" AutomationProperties.HelpText="Switch between Light and Dark interface appearance.">
                     <FontIcon x:Name="ThemeIcon" Glyph="&#xE706;" FontSize="14" />
                 </Button>
                 
                 <!-- Notification Bell -->
-                <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="34" Height="34" CornerRadius="8" Padding="0" Click="NotificationButton_Click" ToolTipService.ToolTip="Notifications">
+                <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="34" Height="34" CornerRadius="8" Padding="0" Click="NotificationButton_Click" ToolTipService.ToolTip="Notifications" AutomationProperties.Name="Notifications" AutomationProperties.HelpText="Open notification center and review recent system alerts.">
                     <Grid>
                         <FontIcon Glyph="&#xEA8F;" FontSize="14" />
                         <!-- Red dot badge -->
-                        <Border x:Name="NotificationBadge" Background="{ThemeResource AppStatusDangerBrush}" Width="7" Height="7" CornerRadius="3.5" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="3,-1,-1,3" Visibility="Collapsed" />
+                        <Border x:Name="NotificationBadge" Background="{ThemeResource AppStatusDangerBrush}" Width="7" Height="7" CornerRadius="3.5" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="3,-1,-1,3" Visibility="Collapsed" AutomationProperties.Name="Unread notification alert" AutomationProperties.LiveSetting="Polite"/>
                     </Grid>
                 </Button>
 
                 <!-- Exit App Button with Native Fluent MenuFlyout -->
-                <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="34" Height="34" CornerRadius="8" Padding="0" ToolTipService.ToolTip="Power Options">
+                <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="34" Height="34" CornerRadius="8" Padding="0" ToolTipService.ToolTip="Power Options" AutomationProperties.Name="Power Options" AutomationProperties.HelpText="Open power options to minimize to tray or close application.">
                     <FontIcon Glyph="&#xE7E8;" FontSize="14" Foreground="{ThemeResource AppStatusDangerBrush}" />
                     <Button.Flyout>
                         <MenuFlyout x:Name="ExitPowerFlyout" Placement="BottomEdgeAlignedRight" Opening="ExitPowerFlyout_Opening">
-                            <MenuFlyoutItem x:Name="MenuMinimizeToTray" Text="Minimize to Tray" Click="OnMinimizeToTrayClick">
+                            <MenuFlyoutItem x:Name="MenuMinimizeToTray" Text="Minimize to Tray" Click="OnMinimizeToTrayClick" AutomationProperties.Name="Minimize to Tray">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE718;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem x:Name="MenuShutdown" Text="Shutdown" Click="OnConfirmShutdownClick">
+                            <MenuFlyoutItem x:Name="MenuShutdown" Text="Shutdown" Click="OnConfirmShutdownClick" AutomationProperties.Name="Shutdown Application">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE7E8;" FontSize="14" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                                 </MenuFlyoutItem.Icon>

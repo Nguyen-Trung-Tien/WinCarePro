@@ -28,7 +28,7 @@ public sealed partial class MainPage : Page
         // Populate user chip with system info
         NavUserName.Text = Environment.UserName;
         NavMachineName.Text = Environment.MachineName;
-        ToolTipService.SetToolTip(UserProfileBorder, $"{Environment.UserName} • {Environment.MachineName}");
+        ToolTipService.SetToolTip(UserProfileButton, $"{Environment.UserName} • {Environment.MachineName}");
 
         // Register to theme changes to force update RequestedTheme for this page, children, and navigated content
         ThemeManager.Instance.RegisterPage(this);
@@ -187,12 +187,12 @@ public sealed partial class MainPage : Page
             _splitView.PaneBackground = paneBg;
         }
 
-        // Synchronize UserProfileBorder in PaneFooter
+        // Synchronize UserProfileButton in PaneFooter
         byte userChipAlpha = (byte)Math.Clamp(paneAlpha + 30, 35, 220);
-        UserProfileBorder.Background = isDark
+        UserProfileButton.Background = isDark
             ? new SolidColorBrush(Windows.UI.Color.FromArgb(userChipAlpha, 26, 28, 38))
             : new SolidColorBrush(Windows.UI.Color.FromArgb(userChipAlpha, 255, 255, 255));
-        UserProfileBorder.BorderBrush = isDark
+        UserProfileButton.BorderBrush = isDark
             ? new SolidColorBrush(Windows.UI.Color.FromArgb(35, 255, 255, 255))
             : new SolidColorBrush(Windows.UI.Color.FromArgb(35, 0, 0, 0));
     }
@@ -201,7 +201,7 @@ public sealed partial class MainPage : Page
     {
         this.RequestedTheme = theme;
         NavView.RequestedTheme = theme;
-        UserProfileBorder.RequestedTheme = theme;
+        UserProfileButton.RequestedTheme = theme;
 
         bool isDark = (theme == ElementTheme.Dark);
         var cur = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
@@ -504,7 +504,7 @@ public sealed partial class MainPage : Page
         });
     }
 
-    private void OnUserProfileClick(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+    private void OnUserProfileClick(object sender, RoutedEventArgs e)
     {
         NavigateToPageExternal("settings");
     }

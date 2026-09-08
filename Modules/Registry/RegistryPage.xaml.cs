@@ -7,6 +7,10 @@ using WinCarePro.ViewModels;
 using WinCarePro.Services;
 using WinCarePro.Shared.Animations;
 
+using WinCarePro.Core.Helpers;
+using WinCarePro.Shared.Components;
+using System.Linq;
+
 namespace WinCarePro.Views;
 
 public sealed partial class RegistryPage : Page
@@ -64,6 +68,18 @@ public sealed partial class RegistryPage : Page
 
     private async void OnRepairClick(object sender, RoutedEventArgs e)
     {
+        var count = ViewModel.Issues.Count(i => i.IsSelected);
+        if (count == 0) return;
+
+        var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            XamlRoot,
+            $"Are you sure you want to repair {count} selected registry entries?\n\n• Impact Scope: Invalid paths, orphaned shell entries, and missing MUI references.\n• Backup Availability: An automated registry backup (.reg) will be created before modifying any keys.",
+            $"Repair {count} Registry Entries",
+            "Repair Registry Now",
+            "Cancel");
+
+        if (!confirmed) return;
+
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
         await ViewModel.RepairSelectedAsync();
     }

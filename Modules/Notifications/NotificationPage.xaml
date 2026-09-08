@@ -83,8 +83,8 @@
                 <!-- Metric 1: Alerts -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <FontIcon Glyph="&#xE7BA;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                    <TextBlock Text="Alerts:" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="DeckAlertsCountText" Text="0" FontSize="12.5" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                    <TextBlock Text="Alerts:" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Name="DeckAlertsCountText" Text="0" FontSize="12.5" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{StaticResource PrimaryAccentBrush}" AutomationProperties.LiveSetting="Polite"/>
                     <Border x:Name="DeckAlertsPill" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
                         <TextBlock x:Name="DeckAlertsPillText" Text="All clear" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
                     </Border>
@@ -96,8 +96,8 @@
                 <!-- Metric 2: Shield Operations Today -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <FontIcon Glyph="&#xEA1F;" FontSize="13" Foreground="#FF10B981"/>
-                    <TextBlock Text="Operations Today:" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="DeckOperationsCountText" Text="0" FontSize="12.5" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                    <TextBlock Text="Operations Today:" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Name="DeckOperationsCountText" Text="0" FontSize="12.5" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.LiveSetting="Polite"/>
                     <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
                         <TextBlock Text="🛡️ Sentinel Active" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                     </Border>
@@ -109,8 +109,8 @@
                 <!-- Metric 3: Recent Activity Pulse -->
                 <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" HorizontalAlignment="Right">
                     <FontIcon Glyph="&#xE916;" FontSize="13" Foreground="#FF3B82F6"/>
-                    <TextBlock Text="Recent:" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    <TextBlock x:Name="DeckRecentPulseText" Text="Just Now" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                    <TextBlock Text="Recent:" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    <TextBlock x:Name="DeckRecentPulseText" Text="Just Now" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.LiveSetting="Polite"/>
                     <TextBlock x:Name="DeckRecentModuleText" Text="• System Idle" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
             </Grid>
@@ -118,100 +118,96 @@
 
         <!-- Main Content Area (Maximizes Viewport to 80%+) -->
         <Grid Grid.Row="2">
-            
-            <!-- SECTION 1: SYSTEM ALERTS -->
-            <Grid x:Name="SectionAlerts" Visibility="Visible" RowSpacing="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+            <!-- SECTION 1: SYSTEM NOTIFICATIONS & ALERTS -->
+            <Grid x:Name="SectionAlerts" RowSpacing="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-                <!-- Alert Controls Filter Bar (Compact 34px) -->
-                <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="10,6" CornerRadius="10">
-                    <Grid ColumnSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        
-                        <TextBox x:Name="NotificationSearchBox" PlaceholderText="Search alerts by title or description..." TextChanged="OnNotificationSearchChanged" VerticalAlignment="Center" Height="32" CornerRadius="6" FontSize="12"/>
-                        
-                        <ComboBox x:Name="NotificationLevelFilter" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnNotificationFilterChanged" SelectedIndex="0" VerticalAlignment="Center" Height="32" CornerRadius="6" FontSize="12">
-                            <ComboBoxItem x:Name="LevelAllItem" Content="All Levels" Tag="All"/>
-                            <ComboBoxItem x:Name="LevelInfoItem" Content="Info" Tag="Info"/>
-                            <ComboBoxItem x:Name="LevelWarningItem" Content="Warning" Tag="Warning"/>
-                            <ComboBoxItem x:Name="LevelCriticalItem" Content="Critical" Tag="Critical"/>
-                        </ComboBox>
-                        
-                        <Button x:Name="ClearAlertsBtn" Grid.Column="2" Content="Clear All Alerts" Click="OnClearNotificationsClick" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Padding="12,0" Height="32" CornerRadius="6" FontSize="12"/>
-                    </Grid>
-                </Border>
+                        <!-- Alert Controls Filter Bar (Compact 34px) -->
+                        <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="10,6" CornerRadius="10">
+                            <Grid ColumnSpacing="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBox x:Name="NotificationSearchBox" PlaceholderText="Search alerts by title or description..." TextChanged="OnNotificationSearchChanged" VerticalAlignment="Center" Height="32" CornerRadius="6" FontSize="12" AutomationProperties.Name="Search Alerts"/>
+                                
+                                <ComboBox x:Name="NotificationLevelFilter" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnNotificationFilterChanged" SelectedIndex="0" VerticalAlignment="Center" Height="32" CornerRadius="6" FontSize="12" AutomationProperties.Name="Filter by Alert Level">
+                                    <ComboBoxItem x:Name="LevelAllItem" Content="All Levels" Tag="All"/>
+                                    <ComboBoxItem x:Name="LevelInfoItem" Content="Info" Tag="Info"/>
+                                    <ComboBoxItem x:Name="LevelWarningItem" Content="Warning" Tag="Warning"/>
+                                    <ComboBoxItem x:Name="LevelCriticalItem" Content="Critical" Tag="Critical"/>
+                                </ComboBox>
+                                
+                                <Button x:Name="ClearAlertsBtn" Grid.Column="2" Content="Clear All Alerts" Click="OnClearNotificationsClick" Style="{StaticResource DangerButtonStyle}" VerticalAlignment="Center" Padding="12,0" Height="32" CornerRadius="6" FontSize="12" AutomationProperties.Name="Clear All Alerts" AutomationProperties.HelpText="Permanently purge all notifications and alerts from history."/>
+                            </Grid>
+                        </Border>
 
-                <!-- System Notifications List (Expanded & Scrollable) -->
-                <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="10" CornerRadius="12">
-                    <Grid>
-                        <ListView x:Name="NotificationsListView" ItemsSource="{x:Bind GroupedNotificationsCVS.View, Mode=OneWay}" SelectionMode="None">
-                            <ListView.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.HeaderTemplate>
+                        <!-- System Notifications List (Expanded & Scrollable) -->
+                        <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="10" CornerRadius="12">
+                            <Grid>
+                                <ListView x:Name="NotificationsListView" ItemsSource="{x:Bind GroupedNotificationsCVS.View, Mode=OneWay}" SelectionMode="None">
+                                    <ListView.GroupStyle>
+                                        <GroupStyle>
+                                            <GroupStyle.HeaderTemplate>
+                                                <DataTemplate>
+                                                    <Grid Padding="6,10,6,6">
+                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13.5" Foreground="{StaticResource PrimaryAccentBrush}" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </GroupStyle.HeaderTemplate>
+                                        </GroupStyle>
+                                    </ListView.GroupStyle>
+                                    <ListView.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Padding="6,10,6,6">
-                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13.5" Foreground="{StaticResource PrimaryAccentBrush}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </GroupStyle.HeaderTemplate>
-                                </GroupStyle>
-                            </ListView.GroupStyle>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    <Setter Property="Padding" Value="0" />
-                                    <Setter Property="Margin" Value="0,3" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="14,12" Margin="0,3"
-                                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
+                                            <Border Margin="0,2,0,4" Padding="12,8" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="38"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
 
-                                            <!-- Severity Glowing Icon Circle with 3D Elevation -->
-                                            <Grid Grid.Column="0" Width="38" Height="38" VerticalAlignment="Center" Margin="0,0,14,0">
-                                                <Border Width="38" Height="38" CornerRadius="12" Background="{Binding LevelTintBrush}" BorderBrush="{Binding LevelBrush}" BorderThickness="1.2"/>
-                                                <FontIcon Glyph="{Binding LevelGlyph}" FontSize="16" Foreground="{Binding LevelBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Grid>
-
-                                            <!-- Text Stack -->
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3" Margin="0,0,16,0">
-                                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="13.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                                    <!-- NEW Badge with 3D Glow -->
-                                                    <Border Visibility="{Binding UnreadVisibility}" Background="#FFEF4444" CornerRadius="5" Padding="6,2" VerticalAlignment="Center">
-                                                        <TextBlock Text="NEW" FontSize="9" FontWeight="ExtraBold" Foreground="White"/>
+                                                    <!-- Level Icon with glowing badge -->
+                                                    <Border Grid.Column="0" Width="30" Height="30" CornerRadius="15" Background="{Binding LevelBadgeBg}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                        <FontIcon Glyph="{Binding LevelGlyph}" FontSize="12" Foreground="{Binding LevelColor}"/>
                                                     </Border>
-                                                </StackPanel>
-                                                <TextBlock Text="{Binding Message}" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" LineHeight="17"/>
-                                            </StackPanel>
 
-                                            <!-- Relative Timestamp -->
-                                            <TextBlock Grid.Column="2" Text="{Binding RelativeTimeAgo}" ToolTipService.ToolTip="{Binding CreatedAtFormatted}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="0,0,14,0" Typography.NumeralAlignment="Tabular"/>
+                                                    <!-- Title & Message -->
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="0,0,12,0">
+                                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="13" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.Name="{Binding Title}"/>
+                                                            <!-- Source Tag -->
+                                                            <Border Background="{ThemeResource AppBadgeNeutralBg}" BorderBrush="{ThemeResource AppBadgeNeutralBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1" VerticalAlignment="Center">
+                                                                <TextBlock Text="{Binding Source}" FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource AppBadgeNeutralFg}"/>
+                                                            </Border>
+                                                            <!-- NEW Badge with 3D Glow -->
+                                                            <Border Visibility="{Binding UnreadVisibility}" Background="#FFEF4444" CornerRadius="5" Padding="6,2" VerticalAlignment="Center">
+                                                                <TextBlock Text="NEW" FontSize="9" FontWeight="ExtraBold" Foreground="White"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <TextBlock Text="{Binding Message}" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" LineHeight="17"/>
+                                                    </StackPanel>
 
-                                            <!-- Action: Delete button -->
-                                            <Button Grid.Column="3" Click="OnDeleteSingleNotificationClick" DataContext="{Binding}" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="30" Height="30" CornerRadius="15" VerticalAlignment="Center">
-                                                <FontIcon Glyph="&#xE711;" FontSize="11" Foreground="#FFEF4444"/>
-                                            </Button>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                                                    <!-- Relative Timestamp -->
+                                                    <TextBlock Grid.Column="2" Text="{Binding RelativeTimeAgo}" ToolTipService.ToolTip="{Binding CreatedAtFormatted}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="0,0,14,0" Typography.NumeralAlignment="Tabular"/>
+
+                                                    <!-- Action: Delete button -->
+                                                    <Button Grid.Column="3" Click="OnDeleteSingleNotificationClick" DataContext="{Binding}" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="30" Height="30" CornerRadius="15" VerticalAlignment="Center" ToolTipService.ToolTip="Delete Notification" AutomationProperties.Name="Delete Notification">
+                                                        <FontIcon Glyph="&#xE711;" FontSize="11" Foreground="#FFEF4444"/>
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </Border>
                         
                         <!-- Empty State (Cyber Zen Shield) -->
                         <StackPanel x:Name="NotificationsEmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="14" Visibility="Collapsed" Margin="0,40,0,40">
@@ -222,8 +218,6 @@
                             <TextBlock Text="WinCare Pro Sentinel is continuously monitoring your system health." FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
-                </Border>
-            </Grid>
 
             <!-- SECTION 2: ACTIVITY LOGS & OPERATIONS TIMELINE -->
             <Grid x:Name="SectionLogs" Visibility="Collapsed" RowSpacing="10">

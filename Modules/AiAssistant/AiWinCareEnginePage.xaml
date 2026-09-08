@@ -70,20 +70,26 @@
             </StackPanel>
 
             <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <Button x:Name="ExportReportBtn" Click="OnExportReportClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" ToolTipService.ToolTip="Export diagnostic report to file">
+                <Button x:Name="ExportReportBtn" Click="OnExportReportClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" ToolTipService.ToolTip="Export diagnostic report to file"
+                        AutomationProperties.Name="Export Diagnostic Report"
+                        AutomationProperties.HelpText="Exports diagnostic analysis report to a file.">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE8A7;" FontSize="13"/>
                         <TextBlock Text="Export Report" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="AutoRemedyAllBtn" Click="OnAutoRemedyAllClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="16,0" ToolTipService.ToolTip="Execute all safe optimization fixes in one click">
+                <Button x:Name="AutoRemedyAllBtn" Click="OnAutoRemedyAllClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="16,0" ToolTipService.ToolTip="Execute all safe optimization fixes in one click"
+                        AutomationProperties.Name="1-Click Smart Remedy"
+                        AutomationProperties.HelpText="Executes all safe optimization fixes in one click.">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="AutoRemedyProgressRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                         <FontIcon x:Name="AutoRemedyIcon" Glyph="&#xE777;" FontSize="13"/>
                         <TextBlock x:Name="AutoRemedyText" Text="1-Click Smart Remedy" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="RunAiDiagnosticsBtn" Click="OnRunAiScanClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" MinWidth="150" Padding="14,0" ToolTipService.ToolTip="Trigger a deep neural diagnostics scan">
+                <Button x:Name="RunAiDiagnosticsBtn" Click="OnRunAiScanClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" MinWidth="150" Padding="14,0" ToolTipService.ToolTip="Trigger a deep neural diagnostics scan"
+                        AutomationProperties.Name="Run AI Diagnostics"
+                        AutomationProperties.HelpText="Triggers deep AI diagnostics scan on system stability and resources.">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="RunAiProgressRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
                         <FontIcon x:Name="RunAiIcon" Glyph="&#xE721;" FontSize="13"/>
@@ -118,7 +124,8 @@
                         <!-- Score Details & Status -->
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="8">
                             <StackPanel Orientation="Horizontal" Spacing="10">
-                                <TextBlock x:Name="StatusTitleText" Text="Status: Optimal Health" FontSize="18" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Name="StatusTitleText" Text="Status: Optimal Health" FontSize="18" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                           AutomationProperties.LiveSetting="Polite"/>
                                 <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="7,2.5">
                                     <StackPanel Orientation="Horizontal" Spacing="4">
                                         <Ellipse Width="6" Height="6" Fill="#FF10B981"/>
@@ -128,7 +135,8 @@
                             </StackPanel>
 
                             <TextBlock x:Name="SummaryMessageText" Text="WinCare AI Assistant predicts maximum system stability with 0 critical bottlenecks detected." 
-                                       FontSize="13.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="20"/>
+                                       FontSize="13.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="20"
+                                       AutomationProperties.LiveSetting="Polite"/>
 
                             <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
                                 <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3">
@@ -255,7 +263,8 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Action 1: RAM Cache Purge -->
-                            <Button Grid.Column="0" Click="OnQuickPurgeRamClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <Button Grid.Column="0" Click="OnQuickPurgeRamClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                    AutomationProperties.Name="Purge RAM Cache" AutomationProperties.HelpText="Free working set memory">
                                 <Border Style="{StaticResource QuickStatCardStyle}" Padding="12,10" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1">
                                     <Grid ColumnSpacing="10">
                                         <Grid.ColumnDefinitions>
@@ -267,14 +276,15 @@
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                             <TextBlock Text="Purge RAM Cache" FontSize="12" FontWeight="Bold"/>
-                                            <TextBlock Text="Free Working Set" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="Free Working Set" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
                             </Button>
 
                             <!-- Action 2: Clean Temp Junk -->
-                            <Button Grid.Column="1" Click="OnQuickCleanJunkClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <Button Grid.Column="1" Click="OnQuickCleanJunkClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                    AutomationProperties.Name="Clean Temp Junk" AutomationProperties.HelpText="Purge cache and temporary debris">
                                 <Border Style="{StaticResource QuickStatCardStyle}" Padding="12,10" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1">
                                     <Grid ColumnSpacing="10">
                                         <Grid.ColumnDefinitions>
@@ -286,14 +296,15 @@
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                             <TextBlock Text="Clean Temp Junk" FontSize="12" FontWeight="Bold"/>
-                                            <TextBlock Text="Purge Cache &amp; Debris" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="Purge Cache &amp; Debris" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
                             </Button>
 
                             <!-- Action 3: Optimize Startup -->
-                            <Button Grid.Column="2" Click="OnQuickOptimizeStartupClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <Button Grid.Column="2" Click="OnQuickOptimizeStartupClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                    AutomationProperties.Name="Optimize Startup Apps" AutomationProperties.HelpText="Trim boot overhead">
                                 <Border Style="{StaticResource QuickStatCardStyle}" Padding="12,10" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1">
                                     <Grid ColumnSpacing="10">
                                         <Grid.ColumnDefinitions>
@@ -305,14 +316,15 @@
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                             <TextBlock Text="Optimize Startup Apps" FontSize="12" FontWeight="Bold"/>
-                                            <TextBlock Text="Trim Boot Overhead" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="Trim Boot Overhead" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
                             </Button>
 
                             <!-- Action 4: Flush DNS & Winsock -->
-                            <Button Grid.Column="3" Click="OnQuickFlushDnsClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <Button Grid.Column="3" Click="OnQuickFlushDnsClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                                    AutomationProperties.Name="Flush DNS and Winsock" AutomationProperties.HelpText="Repair socket cache">
                                 <Border Style="{StaticResource QuickStatCardStyle}" Padding="12,10" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1">
                                     <Grid ColumnSpacing="10">
                                         <Grid.ColumnDefinitions>
@@ -324,7 +336,7 @@
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                             <TextBlock Text="Flush DNS &amp; Winsock" FontSize="12" FontWeight="Bold"/>
-                                            <TextBlock Text="Repair Socket Cache" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="Repair Socket Cache" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
@@ -419,10 +431,11 @@
                                     </StackPanel>
 
                                     <Button Grid.Column="2" Click="OnRecommendationActionClick" Tag="{Binding ActionKey}" 
-                                            Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="14,0" VerticalAlignment="Center" Margin="12,0,0,0">
+                                            Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="14,0" VerticalAlignment="Center" Margin="12,0,0,0"
+                                            AutomationProperties.Name="Apply Fix" AutomationProperties.HelpText="Applies this AI recommendation to the system">
                                         <StackPanel Orientation="Horizontal" Spacing="6">
                                             <FontIcon Glyph="&#xE721;" FontSize="11" Foreground="White"/>
-                                            <TextBlock Text="Apply Fix" FontSize="11.5" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Apply Fix" FontSize="12" FontWeight="SemiBold"/>
                                         </StackPanel>
                                     </Button>
                                 </Grid>

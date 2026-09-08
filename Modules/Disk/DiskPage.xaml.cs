@@ -169,6 +169,24 @@ public sealed partial class DiskPage : Page
         }
     }
 
+    private async void OnStorageItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is WinCarePro.Models.StorageItem item && item.IsDirectory)
+        {
+            ViewModel.StorageScanPath = item.Path;
+            await ViewModel.AnalyzeStorageAsync();
+        }
+    }
+
+    private async void OnStorageItemDrillDownClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.DataContext is WinCarePro.Models.StorageItem item && item.IsDirectory)
+        {
+            ViewModel.StorageScanPath = item.Path;
+            await ViewModel.AnalyzeStorageAsync();
+        }
+    }
+
     public bool IsNot(bool val) => !val;
 
     public static Brush GetHealthColor(string status)

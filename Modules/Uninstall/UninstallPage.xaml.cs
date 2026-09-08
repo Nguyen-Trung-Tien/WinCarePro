@@ -9,6 +9,7 @@ using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Shared.Components;
 
 namespace WinCarePro.Views;
 
@@ -166,7 +167,17 @@ public sealed partial class UninstallPage : Page
     {
         if (sender is Button btn && btn.DataContext is InstalledAppInfo app)
         {
-            await ViewModel.UninstallAppAsync(app);
+            var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+                XamlRoot,
+                $"Are you sure you want to uninstall '{app.DisplayName}'?\n\n• Impact Scope: The official application uninstaller will be executed.\n• Leftovers: WinCare Pro will scan for remnant files and registry entries.\n• Undo Availability: Application removal cannot be automatically reversed.",
+                $"Uninstall {app.DisplayName}",
+                "Uninstall Now",
+                "Keep Application");
+
+            if (confirmed)
+            {
+                await ViewModel.UninstallAppAsync(app);
+            }
         }
     }
 
@@ -177,6 +188,15 @@ public sealed partial class UninstallPage : Page
 
     private async void OnDeleteLeftoversClick(object sender, RoutedEventArgs e)
     {
+        var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            XamlRoot,
+            "Are you sure you want to permanently delete all discovered leftover items?\n\n• Impact Scope: Leftover files, folders, and registry keys associated with the uninstalled application.\n• Caution: Permanently deleted items cannot be restored from the Recycle Bin.",
+            "Wipe Remnant Leftovers",
+            "Wipe Leftovers Now",
+            "Keep Leftovers");
+
+        if (!confirmed) return;
+
         var btn = WipeLeftoversBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, WipeLeftoversRing, WipeLeftoversText, null,
@@ -208,7 +228,18 @@ public sealed partial class UninstallPage : Page
     {
         if (ViewModel.SelectedApp != null)
         {
-            await ViewModel.UninstallAppAsync(ViewModel.SelectedApp);
+            var app = ViewModel.SelectedApp;
+            var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+                XamlRoot,
+                $"Are you sure you want to uninstall '{app.DisplayName}'?\n\n• Impact Scope: The official application uninstaller will be executed.\n• Leftovers: WinCare Pro will scan for remnant files and registry entries.\n• Undo Availability: Application removal cannot be automatically reversed.",
+                $"Uninstall {app.DisplayName}",
+                "Uninstall Now",
+                "Keep Application");
+
+            if (confirmed)
+            {
+                await ViewModel.UninstallAppAsync(app);
+            }
         }
     }
 
@@ -216,25 +247,60 @@ public sealed partial class UninstallPage : Page
     {
         if (ViewModel.SelectedApp != null)
         {
+            var app = ViewModel.SelectedApp;
+            var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+                XamlRoot,
+                $"Are you sure you want to force remove '{app.DisplayName}'?\n\n• Impact Scope: All application folders, processes, and registry registrations will be forcibly purged.\n• Caution: Recommended only for broken or unresponsive software.",
+                $"Force Remove {app.DisplayName}",
+                "Force Remove Now",
+                "Cancel");
+
+            if (!confirmed) return;
+
             // Clear other selections, check only the selected one, and force uninstall
-            foreach (var app in ViewModel.FilteredApps)
+            foreach (var a in ViewModel.FilteredApps)
             {
-                app.IsSelected = false;
+                a.IsSelected = false;
             }
-            ViewModel.SelectedApp.IsSelected = true;
+            app.IsSelected = true;
             await ViewModel.UninstallSelectedAppsAsync(forceUninstall: true);
         }
     }
 
-    // Batch Actions
     private async void OnBatchUninstallClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.UninstallSelectedAppsAsync(forceUninstall: false);
+        var count = ViewModel.SelectedAppsCount;
+        if (count == 0) return;
+
+        var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            XamlRoot,
+            $"Are you sure you want to batch uninstall {count} selected application(s)?\n\n• Impact Scope: Uninstallers will run in sequence for each selected application.\n• Undo Availability: Cannot be automatically reversed.",
+            $"Batch Uninstall ({count} Apps)",
+            "Uninstall Selected",
+            "Cancel");
+
+        if (confirmed)
+        {
+            await ViewModel.UninstallSelectedAppsAsync(forceUninstall: false);
+        }
     }
 
     private async void OnBatchForceUninstallClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.UninstallSelectedAppsAsync(forceUninstall: true);
+        var count = ViewModel.SelectedAppsCount;
+        if (count == 0) return;
+
+        var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            XamlRoot,
+            $"Are you sure you want to force remove {count} selected application(s)?\n\n• Impact Scope: All installed files and registry entries for {count} applications will be forcibly removed.\n• Caution: Use only for stubborn software that fails normal uninstallation.",
+            $"Force Remove ({count} Apps)",
+            "Force Remove All Selected",
+            "Cancel");
+
+        if (confirmed)
+        {
+            await ViewModel.UninstallSelectedAppsAsync(forceUninstall: true);
+        }
     }
 
     // UI Helpers

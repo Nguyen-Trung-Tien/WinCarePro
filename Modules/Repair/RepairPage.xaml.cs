@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.ViewModels;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Shared.Components;
 using WinCarePro.Services;
 
 namespace WinCarePro.Views;
@@ -290,6 +291,15 @@ public sealed partial class RepairPage : Page
     private async void OnDismCleanClick(object sender, RoutedEventArgs e)
     {
         if (ViewModel == null) return;
+
+        var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            XamlRoot,
+            "Are you sure you want to clean the WinSxS Component Store?\n\n• Impact Scope: Superseded update packages and unreferenced component files will be discarded.\n• Notice: Once cleaned, previously installed Windows Updates cannot be uninstalled.",
+            "Clean WinSxS Component Store",
+            "Start Component Cleanup",
+            "Cancel");
+        if (!confirmed) return;
+
         var btn = DismCleanBtn ?? (sender as Button);
         await UiLoadingHelper.ExecuteWithLoadingAsync(
             btn, DismCleanRing, DismCleanText, null,
@@ -303,11 +313,27 @@ public sealed partial class RepairPage : Page
 
     private async void OnResetUpdateClick(object sender, RoutedEventArgs e)
     {
+        var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            XamlRoot,
+            "Are you sure you want to reset Windows Update components?\n\n• Impact Scope: Stops update services, flushes the SoftwareDistribution download cache, and reregisters update DLLs.\n• Benefit: Resolves stuck update downloads and 0x800* update error codes.",
+            "Reset Windows Update Components",
+            "Reset Components Now",
+            "Cancel");
+        if (!confirmed) return;
+
         try { if (ViewModel != null) await ViewModel.RepairWindowsUpdateAsync(); } catch { }
     }
 
     private async void OnRestoreServicesClick(object sender, RoutedEventArgs e)
     {
+        var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            XamlRoot,
+            "Are you sure you want to restore critical Windows services to default configurations?\n\n• Impact Scope: Core networking, cryptographic, audio, and diagnostic service start types will be set to Windows factory defaults.",
+            "Restore Core System Services",
+            "Restore Defaults Now",
+            "Cancel");
+        if (!confirmed) return;
+
         try { if (ViewModel != null) await ViewModel.RepairServicesConfigAsync(); } catch { }
     }
 

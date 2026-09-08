@@ -218,7 +218,8 @@
                     <Grid>
                         <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
                             <ProgressRing Width="15" Height="15" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
-                            <TextBlock Text="{x:Bind ViewModel.CurrentScanStepText, Mode=OneWay}" FontSize="12.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center" />
+                            <TextBlock Text="{x:Bind ViewModel.CurrentScanStepText, Mode=OneWay}" FontSize="12.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"
+                                       AutomationProperties.LiveSetting="Polite"/>
                         </StackPanel>
                         <TextBlock Text="{x:Bind GetProgressText(ViewModel.RepairProgressPercent), Mode=OneWay}" FontSize="12.5" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     </Grid>
@@ -377,14 +378,16 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <Button x:Name="SfcScanBtn" Grid.Column="0" Click="OnSfcScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,10" HorizontalAlignment="Stretch">
+                                <Button x:Name="SfcScanBtn" Grid.Column="0" Click="OnSfcScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,10" HorizontalAlignment="Stretch"
+                                        AutomationProperties.Name="SFC Verification" AutomationProperties.HelpText="Runs System File Checker in verification mode without making repairs.">
                                     <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                                         <ProgressRing x:Name="SfcScanRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" VerticalAlignment="Center"/>
                                         <FontIcon Glyph="&#xE721;" FontSize="13" />
                                         <TextBlock x:Name="SfcScanText" Text="SFC Verification (/verifyonly)" FontWeight="SemiBold" />
                                     </StackPanel>
                                 </Button>
-                                <Button x:Name="SfcRepairBtn" Grid.Column="1" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnSfcRepairClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,10" FontWeight="Bold" HorizontalAlignment="Stretch">
+                                <Button x:Name="SfcRepairBtn" Grid.Column="1" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnSfcRepairClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,10" FontWeight="Bold" HorizontalAlignment="Stretch"
+                                        AutomationProperties.Name="SFC Auto-Repair" AutomationProperties.HelpText="Runs System File Checker and restores corrupted system files.">
                                     <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                                         <ProgressRing x:Name="SfcRepairRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                                         <FontIcon Glyph="&#xE9F5;" FontSize="13" Foreground="White" />
@@ -417,28 +420,32 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 
-                                <Button x:Name="DismCheckBtn" Grid.Column="0" Click="OnDismCheckClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch">
+                                <Button x:Name="DismCheckBtn" Grid.Column="0" Click="OnDismCheckClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch"
+                                        AutomationProperties.Name="DISM Check Health" AutomationProperties.HelpText="Checks whether component store corruption has been flagged.">
                                     <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                         <ProgressRing x:Name="DismCheckRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
                                         <TextBlock x:Name="DismCheckText" Text="DISM Check" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
                                 
-                                <Button x:Name="DismScanBtn" Grid.Column="1" Click="OnDismScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch">
+                                <Button x:Name="DismScanBtn" Grid.Column="1" Click="OnDismScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch"
+                                        AutomationProperties.Name="DISM Scan Health" AutomationProperties.HelpText="Scans the component store for corruption without fixing.">
                                     <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                         <ProgressRing x:Name="DismScanRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
                                         <TextBlock x:Name="DismScanText" Text="DISM Scan" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
                                 
-                                <Button x:Name="DismRestoreBtn" Grid.Column="2" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDismRestoreClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" FontWeight="Bold" HorizontalAlignment="Stretch">
+                                <Button x:Name="DismRestoreBtn" Grid.Column="2" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnDismRestoreClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" FontWeight="Bold" HorizontalAlignment="Stretch"
+                                        AutomationProperties.Name="DISM Restore Health" AutomationProperties.HelpText="Repairs damaged component store files using Windows Update payloads.">
                                     <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                         <ProgressRing x:Name="DismRestoreRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" Foreground="White" VerticalAlignment="Center"/>
                                         <TextBlock x:Name="DismRestoreText" Text="DISM Restore" FontWeight="Bold"/>
                                     </StackPanel>
                                 </Button>
 
-                                <Button x:Name="DismCleanBtn" Grid.Column="3" Click="OnDismCleanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch">
+                                <Button x:Name="DismCleanBtn" Grid.Column="3" Click="OnDismCleanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch"
+                                        AutomationProperties.Name="DISM Clean WinSxS" AutomationProperties.HelpText="Reclaims disk space by removing superseded component packages.">
                                     <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                         <ProgressRing x:Name="DismCleanRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
                                         <TextBlock x:Name="DismCleanText" Text="Clean WinSxS" FontWeight="SemiBold"/>
@@ -580,7 +587,8 @@
                         </Border>
                     </StackPanel>
                     
-                    <Button Click="OnCancelOperationClick" Content="Cancel Operation" HorizontalAlignment="Center" CornerRadius="8" Padding="18,6" Margin="0,4,0,0" Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" Foreground="{ThemeResource AppStatusDangerBrush}" FontWeight="Bold"/>
+                    <Button Click="OnCancelOperationClick" Content="Cancel Operation" HorizontalAlignment="Center" CornerRadius="8" Padding="18,6" Margin="0,4,0,0" Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" Foreground="{ThemeResource AppStatusDangerBrush}" FontWeight="Bold"
+                            AutomationProperties.Name="Cancel Operation" AutomationProperties.HelpText="Cancels the active system diagnostic or repair process."/>
                 </StackPanel>
             </Border>
         </Grid>

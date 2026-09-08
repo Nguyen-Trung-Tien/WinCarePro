@@ -309,6 +309,104 @@
                     <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#F1F5F9" />
                     <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
                 </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <!-- High Contrast Theme Tokens (Full WCAG 2.2 AAA System Contrast Compliance) -->
+                    <StaticResource x:Key="AppCardBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppCardBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppCardSubtleBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppSecondaryCardBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppStatChipBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppStatChipBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppTerminalBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppTerminalForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppBadgeGoodBg" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppBadgeGoodBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppBadgeGoodFg" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppBadgeWarningBg" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppBadgeWarningBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppBadgeWarningFg" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppBadgeCriticalBg" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppBadgeCriticalBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppBadgeCriticalFg" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppBadgeNeutralBg" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppBadgeNeutralBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppBadgeNeutralFg" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppCpuChipBg" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppCpuChipBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppCpuChipFg" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppRamChipBg" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppRamChipBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppRamChipFg" ResourceKey="SystemColorHighlightBrush" />
+
+                    <!-- Semantic Status Brushes (High Contrast) -->
+                    <StaticResource x:Key="AppStatusGoodBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppStatusGoodBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppStatusGoodBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppStatusWarningBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppStatusWarningBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppStatusWarningBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppStatusDangerBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppStatusDangerBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppStatusDangerBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppStatusInfoBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppStatusInfoBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppStatusInfoBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppStatusPurpleBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppStatusPurpleBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppStatusPurpleBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppStatusCyanBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppStatusCyanBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppStatusCyanBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppLoadingOverlayBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppModalBackdropBrush" ResourceKey="SystemColorWindowBrush" />
+
+                    <!-- Hardware Telemetry Brushes (High Contrast) -->
+                    <StaticResource x:Key="CpuAccentBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="RamAccentBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="GpuAccentBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="DiskAccentBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="CpuTrackBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="RamTrackBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="GpuTrackBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="DiskTrackBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+
+                    <!-- System Text & Control Overrides (High Contrast) -->
+                    <StaticResource x:Key="SystemControlPageTextBaseHighBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="SystemControlPageTextBaseMediumBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="SystemControlForegroundBaseHighBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="SystemControlForegroundBaseMediumBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="SystemControlForegroundBaseMediumHighBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="TextFillColorPrimaryBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="TextFillColorSecondaryBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="TextFillColorTertiaryBrush" ResourceKey="SystemColorGrayTextColorBrush" />
+                    <StaticResource x:Key="CardBackgroundFillColorDefaultBrush" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="CardBackgroundFillColorSecondaryBrush" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="LayerFillColorDefaultBrush" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="SolidBackgroundFillColorBaseBrush" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="ControlStrokeColorDefaultBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="CardStrokeColorDefaultBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+
+                    <!-- Flyout & Popup (High Contrast) -->
+                    <StaticResource x:Key="AppFlyoutBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppFlyoutBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppFlyoutItemBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppFlyoutItemPointerOver" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppFlyoutItemBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+
+                    <!-- NavigationView Tokens (High Contrast) -->
+                    <StaticResource x:Key="NavigationViewItemForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelected" ResourceKey="SystemColorHighlightTextColorBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelectedPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelectedPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+                    <StaticResource x:Key="NavigationViewItemHeaderForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="NavigationViewPaneBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="SplitViewPaneBackground" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="NavigationViewContentBackground" ResourceKey="SystemColorWindowBrush" />
+                </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
             <!-- Brand Linear Gradients (Refined Windows 11 Azure & Deep Blue) -->
@@ -670,6 +768,11 @@
             <!-- Global default style for standard buttons -->
             <Style TargetType="Button">
                 <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+                <Setter Property="FocusVisualMargin" Value="-2" />
+                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource FocusStrokeColorOuterBrush}" />
+                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource FocusStrokeColorInnerBrush}" />
             </Style>
 
             <!-- Custom transparent button style for title bars and round icon buttons -->
@@ -684,6 +787,11 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+                <Setter Property="FocusVisualMargin" Value="-2" />
+                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource FocusStrokeColorOuterBrush}" />
+                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource FocusStrokeColorInnerBrush}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -898,6 +1006,11 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+                <Setter Property="FocusVisualMargin" Value="-2" />
+                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource FocusStrokeColorOuterBrush}" />
+                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource FocusStrokeColorInnerBrush}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -1260,6 +1373,11 @@
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+                <Setter Property="FocusVisualMargin" Value="-2" />
+                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource FocusStrokeColorOuterBrush}" />
+                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource FocusStrokeColorInnerBrush}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -1399,11 +1517,16 @@
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="14,6" />
-                <Setter Property="FontSize" Value="11.5" />
+                <Setter Property="FontSize" Value="12" />
                 <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+                <Setter Property="FocusVisualMargin" Value="-2" />
+                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource FocusStrokeColorOuterBrush}" />
+                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource FocusStrokeColorInnerBrush}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">

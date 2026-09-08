@@ -295,7 +295,7 @@ public sealed partial class SettingsPage
             var mRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
             mRow.Children.Add(new TextBlock
             {
-                Text = "v4.9.0 Nova",
+                Text = "v4.9.1 Nova",
                 FontSize = 13,
                 FontWeight = Microsoft.UI.Text.FontWeights.Bold,
                 Foreground = (Brush)Application.Current.Resources["PrimaryAccentBrush"]
@@ -414,7 +414,7 @@ public sealed partial class SettingsPage
 
             var dialog = new ContentDialog
             {
-                Title = "What's New in v4.9".T(),
+                Title = "What's New in v4.9.1".T(),
                 Content = rootStack,
                 CloseButtonText = "Close".T(),
                 DefaultButton = ContentDialogButton.Close,

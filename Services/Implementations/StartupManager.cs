@@ -158,6 +158,9 @@ public static class StartupManager
             using var ts = new Microsoft.Win32.TaskScheduler.TaskService();
             ts.RootFolder.DeleteTask(AutoStartTaskName, false);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("StartupManager.RemoveTaskScheduler", ex);
+        }
     }
 }

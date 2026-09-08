@@ -115,6 +115,42 @@ public static class SafeRegistryGuard
     }
 
     /// <summary>
+    /// Validates if a registry key is safe to modify (open writable or alter values).
+    /// Prevents modification of root hives, core system security configurations, LSA, and boot components.
+    /// </summary>
+    public static bool IsSafeToModifyKey(string rawPath)
+    {
+        if (string.IsNullOrWhiteSpace(rawPath)) return false;
+
+        string normalized = NormalizePath(rawPath);
+
+        // 1. Direct match on blacklisted root or critical keys
+        if (ProtectedRootKeys.Contains(normalized))
+        {
+            return false;
+        }
+
+        // 2. Check protected critical prefixes
+        foreach (var prefix in ProtectedPrefixes)
+        {
+            if (normalized.Equals(prefix, StringComparison.OrdinalIgnoreCase) ||
+                normalized.StartsWith(prefix + "\\", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        // 3. Prevent modifying top-level hive roots directly (e.g. HKCU, HKLM)
+        var parts = normalized.Split('\\', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length < 2)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
     /// Validates if a registry value can be deleted safely without breaking critical OS boot parameters.
     /// </summary>
     private static readonly HashSet<string> CriticalValueNames = new(StringComparer.OrdinalIgnoreCase)
@@ -130,6 +166,8 @@ public static class SafeRegistryGuard
         if (string.IsNullOrWhiteSpace(keyPath)) return false;
         if (string.IsNullOrWhiteSpace(valueName)) return false;
 
+        if (!IsSafeToModifyKey(keyPath)) return false;
+
         string normalized = NormalizePath(keyPath);
 
         if (CriticalValueNames.Contains(valueName.Trim()))
@@ -139,6 +177,24 @@ public static class SafeRegistryGuard
 
         // Core system startup or boot keys: allow deleting specific app value entries, but not default/critical values
         if (string.IsNullOrEmpty(valueName) && ProtectedRootKeys.Contains(normalized))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Validates if a registry value can be safely modified or set during snapshot rollback or repair.
+    /// </summary>
+    public static bool IsSafeToModifyValue(string keyPath, string valueName)
+    {
+        if (string.IsNullOrWhiteSpace(keyPath)) return false;
+        if (string.IsNullOrWhiteSpace(valueName)) return false;
+
+        if (!IsSafeToModifyKey(keyPath)) return false;
+
+        if (CriticalValueNames.Contains(valueName.Trim()))
         {
             return false;
         }

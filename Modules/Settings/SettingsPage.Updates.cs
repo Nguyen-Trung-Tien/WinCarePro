@@ -283,7 +283,7 @@ public sealed partial class SettingsPage
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
 
-        string latestVerStr = root.GetProperty("version").GetString() ?? "4.9.0";
+        string latestVerStr = root.GetProperty("version").GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString;
         string currentVerStr = WinCarePro.Core.AppConstants.VersionString;
 
         bool hasUpdate = false;
@@ -390,6 +390,11 @@ public sealed partial class SettingsPage
         if (string.IsNullOrEmpty(ext)) ext = ".exe";
         string targetFile = Path.Combine(tempFolder, $"WinCarePro_Setup_v{version}{ext}");
 
+        if (!WinCarePro.Infrastructure.Security.UpdateSecurityValidator.IsTrustedDownloadUrl(downloadUrl, out string? urlError))
+        {
+            throw new System.Security.SecurityException(string.Format("Insecure or untrusted download URL: {0}".T(), urlError));
+        }
+
         try
         {
             UpdateProgressStepLabel.Text = "Downloading Setup Package...".T();
@@ -457,34 +462,20 @@ public sealed partial class SettingsPage
             fileStream.Close();
             UpdateProgressBar.IsIndeterminate = false;
 
-            // Integrity Verification
+            // Integrity & Authenticode Signature Verification via UpdateSecurityValidator
             UpdateProgressStepLabel.Text = "Verifying Package Cryptography & Integrity...".T();
             UpdateStatusLabel.Text = "Validating cryptographic signature & SHA-256 digest...".T();
             SetUpdateBadgeState("Verifying...".T(), "Syncing");
 
-            if (!string.IsNullOrEmpty(expectedSha256))
-            {
-                bool shaValid = await Task.Run(() => VerifyFileSha256(targetFile, expectedSha256));
-                if (!shaValid)
-                {
-                    // Fallback to PE structure verification before failing
-                    bool isPeValid = await Task.Run(() => VerifyExecutableStructure(targetFile));
-                    if (!isPeValid)
-                    {
-                        throw new InvalidOperationException("Cryptographic verification failed: Downloaded package SHA-256 checksum does not match expected release digest!".T());
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine($"[Updater] Warning: SHA256 mismatch, but PE binary structure is valid. Proceeding with installation.");
-                    }
-                }
-            }
+            var validation = await Task.Run(() =>
+                WinCarePro.Infrastructure.Security.UpdateSecurityValidator.ValidatePackageForInstallation(
+                    targetFile,
+                    expectedSha256,
+                    WinCarePro.Infrastructure.Security.UpdateSecurityValidator.DefaultExpectedPublisher));
 
-            // Verify Authenticode / PE Signature Structure
-            bool isBinaryValid = await Task.Run(() => VerifyExecutableStructure(targetFile));
-            if (!isBinaryValid)
+            if (!validation.IsSuccess)
             {
-                throw new InvalidOperationException("Binary verification failed: Downloaded installer executable header corrupted or invalid.".T());
+                throw new InvalidOperationException(validation.Message);
             }
 
             UpdateProgressBar.Value = 100;
@@ -535,7 +526,7 @@ public sealed partial class SettingsPage
                 UpdateDetailsText.Text = "Ready for new update check.".T();
                 SetUpdateBadgeState("CDN Connected".T(), "Online");
             });
-            try { if (File.Exists(targetFile)) File.Delete(targetFile); } catch { }
+            WinCarePro.Infrastructure.Security.UpdateSecurityValidator.SecureDeleteFile(targetFile);
         }
         catch (Exception ex)
         {
@@ -563,7 +554,7 @@ public sealed partial class SettingsPage
                     }
                 }
             });
-            try { if (File.Exists(targetFile)) File.Delete(targetFile); } catch { }
+            WinCarePro.Infrastructure.Security.UpdateSecurityValidator.SecureDeleteFile(targetFile);
         }
         finally
         {
@@ -572,56 +563,6 @@ public sealed partial class SettingsPage
                 CancelUpdatesBtn.Visibility = Visibility.Collapsed;
                 CheckUpdatesBtn.IsEnabled = true;
             });
-        }
-    }
-
-    private static bool VerifyFileSha256(string filePath, string expectedHash)
-    {
-        try
-        {
-            using var sha = SHA256.Create();
-            using var stream = File.OpenRead(filePath);
-            byte[] hash = sha.ComputeHash(stream);
-            string actualHash = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-            return actualHash.Equals(expectedHash.Trim().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase);
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    private static bool VerifyExecutableStructure(string filePath)
-    {
-        try
-        {
-            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            if (fs.Length < 1024) return false;
-            
-            // Check 'MZ' magic header
-            byte[] mz = new byte[2];
-            fs.ReadExactly(mz);
-            if (mz[0] != 0x4D || mz[1] != 0x5A) return false;
-            
-            // Authenticode verification test
-            try
-            {
-                using var cert = X509CertificateLoader.LoadCertificateFromFile(filePath);
-                if (cert != null)
-                {
-                    return true;
-                }
-            }
-            catch
-            {
-                // Non-signed PE setup executable or non-standard cert structure — verified valid PE binary header above
-            }
-
-            return true;
-        }
-        catch
-        {
-            return false;
         }
     }
 }

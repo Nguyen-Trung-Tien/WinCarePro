@@ -555,6 +555,10 @@ public class StartupEngine
                 Database.DbManager.LogAction($"Changed Service {serviceName} startup type to {startMode}", "Service Manager", "Success");
                 return true;
             }
+            else
+            {
+                Database.DbManager.LogAction($"Change Service {serviceName} startup failed: Registry key could not be opened writable.", "Service Manager", "Failed");
+            }
         }
         catch (Exception ex)
         {

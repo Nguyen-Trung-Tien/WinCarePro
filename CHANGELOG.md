@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.9.1] - 2026-09-08 (Nova Maintenance & Security Hardening Release)
+
+### Security & Reliability
+- **Self-Update Security Hardening:** Mandated SHA-256 verification (rejects missing or mismatched hashes), enforced WinVerifyTrust Authenticode signature checking with publisher verification (`Nguyen Trung Tien`), restricted update downloads to trusted HTTPS release endpoints, eliminated PE-header fallback checks, and implemented fail-closed secure cleanup with comprehensive audit logging.
+- **Installer Process Safety:** Updated Inno Setup configuration (`setup.iss`) to restrict `CloseApplicationsFilter` exclusively to `WinCarePro.exe`, preventing unintended termination of third-party applications during installation.
+- **UndoManager Registry Rollback Hardening:** Enforced `SafeRegistryGuard` pre-validation before registry write/delete operations in `UndoManagerService`, safely rejecting protected keys, critical startup values, and malformed snapshots with audit tracking.
+- **Robust System Error Handling:** Eliminated silent catch blocks across updater, registry, startup, and background services, logging actionable diagnostics to prevent false-positive success reporting.
+
+---
+
 ## [4.9.0] - 2026-09-05 (Nova Production Hardening & Safety Architecture Release)
 
 ### What's New

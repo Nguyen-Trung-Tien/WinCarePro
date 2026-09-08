@@ -67,6 +67,43 @@ public class ProductionHardeningTests
         Assert.True(isSafe);
     }
 
+    [Theory]
+    [InlineData(@"HKLM\SAM", false)]
+    [InlineData(@"HKLM\SECURITY", false)]
+    [InlineData(@"HKLM\SYSTEM\CurrentControlSet\Control\Lsa", false)]
+    [InlineData(@"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon", false)]
+    [InlineData(@"HKCU", false)]
+    [InlineData(@"HKLM", false)]
+    [InlineData(@"", false)]
+    [InlineData(null, false)]
+    public void SafeRegistryGuard_IsSafeToModifyKey_RejectsCriticalKeys(string? keyPath, bool expected)
+    {
+        bool isSafe = SafeRegistryGuard.IsSafeToModifyKey(keyPath!);
+        Assert.Equal(expected, isSafe);
+    }
+
+    [Theory]
+    [InlineData(@"HKCU\Software\MyTestApp\Settings", true)]
+    [InlineData(@"HKLM\Software\MyTestApp\Config", true)]
+    public void SafeRegistryGuard_IsSafeToModifyKey_AcceptsSafeKeys(string keyPath, bool expected)
+    {
+        bool isSafe = SafeRegistryGuard.IsSafeToModifyKey(keyPath);
+        Assert.Equal(expected, isSafe);
+    }
+
+    [Theory]
+    [InlineData(@"HKLM\Software\Test", "Shell", false)]
+    [InlineData(@"HKLM\Software\Test", "Userinit", false)]
+    [InlineData(@"HKLM\Software\Test", "AppInit_DLLs", false)]
+    [InlineData(@"HKLM\Software\Test", "BootExecute", false)]
+    [InlineData(@"HKLM\SYSTEM\CurrentControlSet\Control\Lsa", "AnyValue", false)]
+    [InlineData(@"HKCU\Software\MyApp\Settings", "SafeSetting1", true)]
+    public void SafeRegistryGuard_IsSafeToModifyValue_EnforcesSecurityRules(string keyPath, string valueName, bool expected)
+    {
+        bool isSafe = SafeRegistryGuard.IsSafeToModifyValue(keyPath, valueName);
+        Assert.Equal(expected, isSafe);
+    }
+
     // ============================================================
     // 2. SafePathGuard Tests
     // ============================================================

@@ -1,10 +1,37 @@
-# 📝 Nhật ký Phát hành (Release Notes) — WinCare Pro v4.9.0
+# 📝 Nhật ký Phát hành (Release Notes) — WinCare Pro v4.9.1
+
+---
+
+## 🚀 WinCare Pro v4.9.1 (Codename: Nova) — Bản Cập Nhật Bảo Mật & Nâng Cao Độ Tin Cậy (Maintenance & Security Hardening Release)
+
+> **Phiên bản:** v4.9.1 (Codename: Nova) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Chính Thức (Official Production Release) · **Chứng nhận:** 397/397 Tests PASS · 0 Warnings / 0 Errors
+
+**WinCare Pro v4.9.1 (Codename: Nova)** tập trung gia cố toàn diện các chốt chặn an ninh, bảo vệ tính toàn vẹn của chuỗi cập nhật tự động (Secure Auto-Update Chain), kiểm soát chặt chẽ quy trình khôi phục Registry (Registry Rollback Guard) và chuẩn hóa xử lý tiến trình cài đặt của hệ thống.
+
+### 🛡️ Điểm Cải Tiến & Vá Bảo Mật Nổi Bật (Security & Maintenance in v4.9.1)
+
+1. **🔐 Khóa Chặt Chuỗi Tự Cập Nhật (Self-Update Cryptographic Hardening):**
+   - **Bắt buộc băm SHA-256:** Từ chối tuyệt đối việc tải hoặc cài đặt nếu thiếu hash SHA-256 hoặc hash không trùng khớp.
+   - **Xóa bỏ fallback PE Header:** Loại trừ hoàn toàn cơ chế kiểm tra sơ bộ PE header không an toàn.
+   - **Xác thực chữ ký số Authenticode:** Kiểm tra nghiêm ngặt chữ ký điện tử qua Win32 `WinVerifyTrust` và xác minh danh tính nhà phát hành (`Nguyen Trung Tien`).
+   - **Giới hạn tên miền phát hành an toàn:** Chỉ chấp nhận giao thức HTTPS và các endpoint phát hành chính thức (`github.com/Nguyen-Trung-Tien/WinCarePro/`, `objects.githubusercontent.com`, `raw.githubusercontent.com`).
+   - **Cơ chế Fail-Closed:** Khi gặp bất kỳ lỗi xác thực nào, ứng dụng tự động xóa an toàn tệp tải về tạm thời, ghi nhật ký kiểm toán (audit log), thông báo lỗi rõ ràng và tuyệt đối không kích hoạt tiến trình cài đặt.
+
+2. **⚙️ An Toàn Tiến Trình Cài Đặt (Installer Process Isolation):**
+   - Trong `setup.iss`, chuẩn hóa cấu hình `CloseApplicationsFilter` chỉ đóng duy nhất tiến trình `WinCarePro.exe`, chấm dứt hoàn toàn nguy cơ vô tình đóng nhầm ứng dụng bên thứ ba.
+
+3. **🗄️ Bảo Vệ Khôi Phục Registry (UndoManager Rollback Barrier):**
+   - Kiểm tra bộ lọc an toàn `SafeRegistryGuard` trước mọi thao tác `DeleteValue`, `SetValue`, `OpenSubKey` có quyền ghi khi hoàn tác snapshot.
+   - Ngăn chặn hoàn tác can thiệp vào các nhánh Registry hệ thống sống còn hoặc các giá trị nhạy cảm (`Shell`, `Userinit`, `BootExecute`, `AppInit_DLLs`).
+
+4. **⚡ Xử Lý Lỗi Toàn Diện & Minh Bạch:**
+   - Rà soát và loại bỏ các khối `catch {}` nuốt lỗi trong các luồng tác động hệ thống, bổ sung ghi nhật ký chẩn đoán và trả về mã kết quả `OperationResult` chính xác, không báo thành công giả.
 
 ---
 
 ## 🚀 WinCare Pro v4.9.0 (Codename: Nova) — Bộ Ứng Dụng Tối Ưu, Chăm Sóc & Bảo Mật Windows Toàn Diện
 
-> **Phiên bản:** v4.9.0 (Codename: Nova) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Chính Thức (Official Production Release) · **Chứng nhận:** 300/300 Tests PASS · 0 Warnings / 0 Errors
+> **Phiên bản:** v4.9.0 (Codename: Nova) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Cũ (Previous Production Release) · **Chứng nhận:** 300/300 Tests PASS · 0 Warnings / 0 Errors
 
 **WinCare Pro v4.9.0 (Codename: Nova)** là phiên bản nâng cấp sản xuất đỉnh cao (Production Hardening & Safety Architecture), củng cố toàn diện độ an toàn cấp doanh nghiệp, bảo vệ tuyệt đối hệ thống Windows khỏi các nguy cơ xóa nhầm hoặc xung đột luồng, đồng thời tối ưu hóa vòng đời tác vụ ngầm và phản hồi giao diện WinUI 3 đạt mức hoàn thiện 100%.
 
@@ -85,5 +112,5 @@
 ---
 
 <div align="center">
-  <sub>WinCare Pro Suite v4.9.0 Nova • Phát triển bởi <b>Nguyễn Trung Tiến</b></sub>
+  <sub>WinCare Pro Suite v4.9.1 Nova • Phát triển bởi <b>Nguyễn Trung Tiến</b></sub>
 </div>

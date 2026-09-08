@@ -1,4 +1,4 @@
-# 🚀 WinCare Pro Suite v4.9 (Codename: Nova)
+# 🚀 WinCare Pro Suite v4.9.1 (Codename: Nova)
 
 <div align="center">
   <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(0, 120, 212, 0.45); margin-bottom: 20px;" />
@@ -9,8 +9,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.0/WinCareProSetup.exe">
-      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v4.9-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v4.9" />
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.1/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v4.9.1-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v4.9.1" />
     </a>
   </p>
 
@@ -23,7 +23,7 @@
     <img src="https://img.shields.io/badge/Database-SQLite_3_(WAL)-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite 3" />
     <img src="https://img.shields.io/badge/Architecture-Modular_MVVM-008080?style=flat-square" alt="MVVM Pattern" />
     <img src="https://img.shields.io/badge/OS_Support-Windows_10_%2F_11-0078D6?style=flat-square&logo=windows" alt="Windows 10/11" />
-    <img src="https://img.shields.io/badge/Tests-100%25%20Passed%20(300%2F300)-success?style=flat-square&logo=xunit" alt="Tests Passed (300/300)" />
+    <img src="https://img.shields.io/badge/Tests-100%25%20Passed%20(397%2F397)-success?style=flat-square&logo=xunit" alt="Tests Passed (397/397)" />
     <img src="https://img.shields.io/badge/Security-Zero--Bug%20Hardened-green?style=flat-square&logo=shield" alt="Zero-Bug Hardened" />
   </p>
 </div>
@@ -32,7 +32,7 @@
 
 ## 📖 Tổng Quan Dự Án
 
-**WinCare Pro v4.9 (Codename: Nova)** là giải pháp tối ưu hóa, chăm sóc và khắc phục sự cố hệ điều hành Windows toàn diện. Với ngôn ngữ thiết kế **Aura Glass 2.0**, hiệu ứng kính mờ Mica/Acrylic, chuyển động mượt mà **Windows Composition 120 FPS**, cùng các trạng thái **Shimmer Skeleton Loading** và **Staggered Entrance Animation**, ứng dụng mang lại trải nghiệm thị giác cao cấp và hiện đại bậc nhất.
+**WinCare Pro v4.9.1 (Codename: Nova)** là giải pháp tối ưu hóa, chăm sóc và khắc phục sự cố hệ điều hành Windows toàn diện. Với ngôn ngữ thiết kế **Aura Glass 2.0**, hiệu ứng kính mờ Mica/Acrylic, chuyển động mượt mà **Windows Composition 120 FPS**, cùng các trạng thái **Shimmer Skeleton Loading** và **Staggered Entrance Animation**, ứng dụng mang lại trải nghiệm thị giác cao cấp và hiện đại bậc nhất.
 
 Ứng dụng tích hợp **Trợ lý AI WinCare Engine** chẩn đoán Heuristic không gửi dữ liệu ra ngoài, cửa sổ nổi **Desktop HUD Widget**, hệ thống phòng vệ kép **SafePathGuard** và **SafeRegistryGuard**, cơ chế **Bảo vệ Dịch vụ Hệ thống (Service Safety Whitelist)**, cơ chế hủy tác vụ đa luồng an toàn **CancellationToken Lifecycle**, và khả năng **tự động thu nhỏ RAM nền (< 15MB)** khi chạy ngầm dưới khay hệ thống.
 

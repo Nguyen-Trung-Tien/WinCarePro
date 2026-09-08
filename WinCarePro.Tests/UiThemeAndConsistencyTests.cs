@@ -331,7 +331,9 @@ public class UiThemeAndConsistencyTests
 
         // Dynamic regex tests
         Assert.Equal("Lần kiểm tra cuối: Vừa xong", manager.GetTranslationForLanguage("Last Checked: Just now", AppLanguage.Vietnamese));
+        Assert.Equal("Phiên bản 4.9.1 (Nova) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.9.1 (Nova) • 64-bit Native System Suite", AppLanguage.Vietnamese));
         Assert.Equal("Phiên bản 4.9.0 (Nova) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.9.0 (Nova) • 64-bit Native System Suite", AppLanguage.Vietnamese));
+        Assert.Equal("Điểm mới trong v4.9.1", manager.GetTranslationForLanguage("What's New in v4.9.1", AppLanguage.Vietnamese));
         Assert.Equal("Điểm mới trong v4.9", manager.GetTranslationForLanguage("What's New in v4.9", AppLanguage.Vietnamese));
     }
 

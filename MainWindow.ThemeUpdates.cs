@@ -152,6 +152,12 @@ public sealed partial class MainWindow : Window
             {
                 DbManager.LogAction($"Update available: v{remoteVerStr}", "Software Updater", "Success");
                 
+                if (string.IsNullOrWhiteSpace(expectedHash))
+                {
+                    DbManager.LogAction($"Update v{remoteVerStr} rejected: Missing required SHA-256 checksum in update manifest.", "Software Updater", "Failed");
+                    return;
+                }
+
                 // Read configuration to determine if we should auto install
                 bool autoInstall = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.AutoInstallUpdates;
 
@@ -165,7 +171,11 @@ public sealed partial class MainWindow : Window
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[SilentUpdateCheck] Error: {ex.Message}");
+            DbManager.LogAction($"Silent update check failed: {ex.Message}", "Software Updater", "Failed");
+        }
     }
 
     private string _expectedUpdateHash = "";
@@ -173,6 +183,18 @@ public sealed partial class MainWindow : Window
     private async Task DownloadBackgroundUpdateAsync(string downloadUrl, string remoteVerStr, string expectedHash = "", bool autoInstall = false)
     {
         if (string.IsNullOrEmpty(downloadUrl)) return;
+
+        if (!Infrastructure.Security.UpdateSecurityValidator.IsTrustedDownloadUrl(downloadUrl, out string? urlError))
+        {
+            DbManager.LogAction($"Update download rejected: Insecure or untrusted URL '{downloadUrl}'. Reason: {urlError}", "Software Updater", "Failed");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(expectedHash))
+        {
+            DbManager.LogAction($"Update download rejected: Missing required SHA-256 checksum for v{remoteVerStr}.", "Software Updater", "Failed");
+            return;
+        }
         
         _expectedUpdateHash = expectedHash;
 
@@ -198,35 +220,30 @@ public sealed partial class MainWindow : Window
             }
             fileStream.Close();
 
-            // SECURITY v4.2: Verify SHA-256 hash of downloaded file before accepting
-            if (!string.IsNullOrEmpty(expectedHash))
+            // Strict Security Validation via UpdateSecurityValidator (SHA-256 + Authenticode + Publisher)
+            var validation = Infrastructure.Security.UpdateSecurityValidator.ValidatePackageForInstallation(
+                setupFilePath,
+                expectedHash,
+                Infrastructure.Security.UpdateSecurityValidator.DefaultExpectedPublisher);
+
+            if (!validation.IsSuccess)
             {
-                string actualHash = Infrastructure.Security.CryptoHelper.ComputeFileHash(setupFilePath);
-                if (!string.Equals(actualHash, expectedHash, StringComparison.OrdinalIgnoreCase))
+                this.DispatcherQueue.TryEnqueue(() =>
                 {
-                    // Hash mismatch — delete the compromised file immediately
-                    try { File.Delete(setupFilePath); } catch { }
-                    DbManager.LogAction(
-                        $"Update v{remoteVerStr} REJECTED: SHA-256 hash mismatch. Expected: {expectedHash}, Actual: {actualHash}. File deleted for security.",
-                        "Software Updater", "Failed");
-                    
-                    this.DispatcherQueue.TryEnqueue(() =>
-                    {
-                        DbManager.AddNotification(
-                            "Update Security Alert".T(),
-                            "Downloaded update failed integrity check and was rejected. The file may have been tampered with.".T(),
-                            "Error");
-                    });
-                    return;
-                }
-                DbManager.LogAction($"Update v{remoteVerStr} hash verified successfully.", "Software Updater", "Success");
+                    DbManager.AddNotification(
+                        "Update Security Alert".T(),
+                        validation.Message,
+                        "Error");
+                });
+                _downloadedSetupPath = null;
+                return;
             }
 
             _downloadedSetupPath = setupFilePath;
 
             if (autoInstall)
             {
-                DbManager.LogAction($"Update v{remoteVerStr} downloaded. Initiating silent background update installation...", "Software Updater", "Success");
+                DbManager.LogAction($"Update v{remoteVerStr} downloaded and verified. Initiating silent background update installation...", "Software Updater", "Success");
                 this.DispatcherQueue.TryEnqueue(() =>
                 {
                     var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
@@ -361,17 +378,18 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        // SECURITY v4.2: Re-verify file integrity before execution
-        if (!string.IsNullOrEmpty(_expectedUpdateHash))
+        // Strict Authenticode and SHA-256 pre-execution validation
+        var validation = Infrastructure.Security.UpdateSecurityValidator.ValidatePackageForInstallation(
+            _downloadedSetupPath,
+            _expectedUpdateHash,
+            Infrastructure.Security.UpdateSecurityValidator.DefaultExpectedPublisher);
+
+        if (!validation.IsSuccess)
         {
-            if (!Infrastructure.Security.CryptoHelper.VerifyFileIntegrity(_downloadedSetupPath, _expectedUpdateHash))
-            {
-                var service = App.Services.GetService<Services.Contracts.INotificationService>();
-                service?.ShowError("Security Alert".T(), "Installer integrity verification failed. The file may have been modified after download.");
-                try { File.Delete(_downloadedSetupPath); } catch { }
-                DbManager.LogAction("Update installer rejected: hash mismatch on pre-execution verify.", "Software Updater", "Failed");
-                return;
-            }
+            var service = App.Services.GetService<Services.Contracts.INotificationService>();
+            service?.ShowError("Security Alert".T(), validation.Message);
+            _downloadedSetupPath = null;
+            return;
         }
 
         try

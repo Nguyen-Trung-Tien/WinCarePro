@@ -67,14 +67,14 @@ File cài đặt sau khi hoàn tất sẽ nằm tại: `PublishOutput/WinCarePro
 
 ```json
 {
-  "version": "4.9.0",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.0/WinCareProSetup.exe",
+  "version": "4.9.1",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.1/WinCareProSetup.exe",
   "sha256": "6a4fbc46540a539b45a74016c119ef64398f98dabbf3be1266c2aadd1b4119a4",
-  "changelog": "Cập nhật v4.9.0 (Codename: Nova): Production Hardening toàn diện, SafeRegistryGuard & SafePathGuard chống can thiệp hệ điều hành, ServiceSafetyService bảo vệ dịch vụ cốt lõi, quản lý vòng đời CancellationToken triệt tiêu rò rỉ tác vụ.",
-  "beta_version": "4.9.0-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.0-beta/WinCareProSetup_Beta.exe",
+  "changelog": "Cập nhật v4.9.1 (Codename: Nova): Bảo Mật & Ổn Định, Authenticode WinVerifyTrust, kiểm tra SHA-256 fail-closed, cách ly tiến trình installer và kiểm soát an toàn registry rollback.",
+  "beta_version": "4.9.1-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.1-beta/WinCareProSetup_Beta.exe",
   "beta_sha256": "6a4fbc46540a539b45a74016c119ef64398f98dabbf3be1266c2aadd1b4119a4",
-  "beta_changelog": "WinCare Pro v4.9 (Nova Production Hardening & Safety Architecture Release)"
+  "beta_changelog": "WinCare Pro v4.9.1 (Nova Maintenance & Security Hardening Release)"
 }
 ```
 

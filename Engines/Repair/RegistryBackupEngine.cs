@@ -72,7 +72,11 @@ public class RegistryBackupEngine
                 }
             }
         }
-        catch { }
+        catch (OperationCanceledException) { throw; }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] Scan file associations error: {ex.Message}");
+        }
 
         return issues;
     }
@@ -106,7 +110,11 @@ public class RegistryBackupEngine
                 }
             }
         }
-        catch { }
+        catch (OperationCanceledException) { throw; }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] ScanRunKeyPaths error: {ex.Message}");
+        }
     }
 
     private static bool SafeFileExists(string? path)
@@ -218,9 +226,10 @@ public class RegistryBackupEngine
                         }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
                     allOk = false;
+                    System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] Failed to delete {issue.KeyPath}\\{issue.ValueName}: {ex.Message}");
                 }
             }
 
@@ -275,7 +284,10 @@ public class RegistryBackupEngine
                         }
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] Export {path} error: {ex.Message}");
+                }
                 finally
                 {
                     try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
@@ -285,8 +297,9 @@ public class RegistryBackupEngine
             Database.DbManager.LogAction($"Created Registry Backup: {name}", "Registry Tools", success ? "Success" : "Failed");
             return success;
         }
-        catch
+        catch (Exception ex)
         {
+            Database.DbManager.LogAction($"Registry backup failed: {ex.Message}", "Registry Tools", "Failed");
             return false;
         }
     }
@@ -315,8 +328,9 @@ public class RegistryBackupEngine
             Database.DbManager.LogAction($"Restored Registry Backup: {Path.GetFileName(filePath)}", "Registry Tools", success ? "Success" : "Failed");
             return success;
         }
-        catch
+        catch (Exception ex)
         {
+            Database.DbManager.LogAction($"Registry restore failed: {ex.Message}", "Registry Tools", "Failed");
             return false;
         }
     }
@@ -404,6 +418,9 @@ public class RegistryBackupEngine
             });
             Database.DbManager.LogAction("Launched Windows System Restore Wizard", "Backup & Restore", "Success");
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Database.DbManager.LogAction($"Failed to launch Windows System Restore Wizard: {ex.Message}", "Backup & Restore", "Failed");
+        }
     }
 }

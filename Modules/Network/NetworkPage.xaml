@@ -1192,10 +1192,10 @@
                                 <TextBlock Text="Live command output and instant network test tools" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
-                                <Button Click="OnCopyConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="28" Padding="8,0" ToolTipService.ToolTip="Copy Console Output">
+                                <Button Click="OnCopyConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="28" Padding="8,0" ToolTipService.ToolTip="Copy Console Output" AutomationProperties.Name="Copy Console Output">
                                     <FontIcon Glyph="&#xE8C8;" FontSize="11"/>
                                 </Button>
-                                <Button Click="OnClearConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="28" Padding="8,0" ToolTipService.ToolTip="Clear Console">
+                                <Button Click="OnClearConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="28" Padding="8,0" ToolTipService.ToolTip="Clear Console" AutomationProperties.Name="Clear Console Output">
                                     <FontIcon Glyph="&#xE74D;" FontSize="11"/>
                                 </Button>
                             </StackPanel>

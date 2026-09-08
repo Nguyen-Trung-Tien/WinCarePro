@@ -319,10 +319,9 @@ public sealed partial class NotificationPage : Page
                 await LoadNotificationsAsync();
             }
         }
-        catch
+        catch (Exception ex)
         {
-            DbManager.ClearAllNotifications();
-            await LoadNotificationsAsync();
+            Infrastructure.Logging.CrashLogger.LogException("OnClearNotificationsClick", ex);
         }
     }
 
@@ -344,10 +343,9 @@ public sealed partial class NotificationPage : Page
                 await LoadLogsAsync();
             }
         }
-        catch
+        catch (Exception ex)
         {
-            DbManager.CleanupOldLogs(0);
-            await LoadLogsAsync();
+            Infrastructure.Logging.CrashLogger.LogException("OnClearOldLogsClick", ex);
         }
     }
 

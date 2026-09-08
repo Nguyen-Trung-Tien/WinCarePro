@@ -228,7 +228,7 @@
                                             <ToggleSwitch Grid.Column="3" IsOn="{x:Bind IsEnabled, Mode=OneWay}" Toggled="OnStartupToggled" CornerRadius="4" MinWidth="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,16,0"/>
 
                                             <!-- Action (Delete) -->
-                                            <Button Grid.Column="4" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="32" Height="32" Click="OnDeleteStartupClick" VerticalAlignment="Center" ToolTipService.ToolTip="Permanently delete from startup">
+                                            <Button Grid.Column="4" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="32" Height="32" Click="OnDeleteStartupClick" VerticalAlignment="Center" ToolTipService.ToolTip="Permanently delete from startup" AutomationProperties.Name="Permanently delete from startup">
                                                 <FontIcon Glyph="&#xE74D;" FontSize="13.5" Foreground="#FFEF4444" />
                                             </Button>
                                         </Grid>
@@ -400,7 +400,7 @@
                                         <ToggleSwitch Grid.Column="4" IsOn="{x:Bind IsEnabled, Mode=OneWay}" Toggled="OnTaskToggled" CornerRadius="4" MinWidth="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,16,0"/>
 
                                         <!-- Action (Delete) -->
-                                        <Button Grid.Column="5" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="32" Height="32" Click="OnDeleteTaskClick" VerticalAlignment="Center" ToolTipService.ToolTip="Permanently delete scheduled task">
+                                        <Button Grid.Column="5" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="32" Height="32" Click="OnDeleteTaskClick" VerticalAlignment="Center" ToolTipService.ToolTip="Permanently delete scheduled task" AutomationProperties.Name="Permanently delete scheduled task">
                                             <FontIcon Glyph="&#xE74D;" FontSize="13.5" Foreground="#FFEF4444" />
                                         </Button>
                                     </Grid>

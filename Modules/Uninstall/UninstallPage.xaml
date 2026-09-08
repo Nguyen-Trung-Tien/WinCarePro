@@ -459,7 +459,7 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <TextBox Text="{x:Bind ViewModel.SelectedApp.InstallLocation, Mode=OneWay}" IsReadOnly="True" FontSize="10.5" CornerRadius="6" VerticalAlignment="Center" Height="28" Padding="6,4"/>
-                                            <Button Grid.Column="1" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="4,0,0,0" Padding="8,4" Click="OnOpenFolderClick" ToolTipService.ToolTip="Open Installation Folder" VerticalAlignment="Center"/>
+                                            <Button Grid.Column="1" Content="&#xE8B7;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="4,0,0,0" Padding="8,4" Click="OnOpenFolderClick" ToolTipService.ToolTip="Open Installation Folder" AutomationProperties.Name="Open Installation Folder" VerticalAlignment="Center"/>
                                         </Grid>
                                     </StackPanel>
 
@@ -471,7 +471,7 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <TextBox Text="{x:Bind ViewModel.SelectedApp.RegistryPath, Mode=OneWay}" IsReadOnly="True" FontSize="10.5" CornerRadius="6" VerticalAlignment="Center" Height="28" Padding="6,4"/>
-                                            <Button Grid.Column="1" Content="&#xE945;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="4,0,0,0" Padding="8,4" Click="OnOpenRegistryClick" ToolTipService.ToolTip="Jump to Registry Key" VerticalAlignment="Center"/>
+                                            <Button Grid.Column="1" Content="&#xE945;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="4,0,0,0" Padding="8,4" Click="OnOpenRegistryClick" ToolTipService.ToolTip="Jump to Registry Key" AutomationProperties.Name="Jump to Registry Key" VerticalAlignment="Center"/>
                                         </Grid>
                                     </StackPanel>
                                 </StackPanel>

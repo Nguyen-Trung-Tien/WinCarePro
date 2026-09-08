@@ -1360,13 +1360,25 @@
 
             <!-- Compact Dialog Action Styles for ContentDialogs with 3 Buttons -->
             <Style x:Key="CompactDialogAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
-                <Setter Property="Padding" Value="6,5" />
+                <Setter Property="Padding" Value="8,5" />
                 <Setter Property="FontSize" Value="11" />
+                <Setter Property="MinWidth" Value="72" />
+                <Setter Property="MaxWidth" Value="240" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
             </Style>
             <Style x:Key="CompactDialogDefaultButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
-                <Setter Property="Padding" Value="6,5" />
+                <Setter Property="Padding" Value="8,5" />
                 <Setter Property="FontSize" Value="11" />
+                <Setter Property="MinWidth" Value="72" />
+                <Setter Property="MaxWidth" Value="240" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
             </Style>
+
+            <!-- Global ContentDialog sizing tokens so 3-button and wide dialogs don't clip -->
+            <x:Double x:Key="ContentDialogMaxWidth">660</x:Double>
+            <x:Double x:Key="ContentDialogMinWidth">480</x:Double>
+            <x:Double x:Key="ContentDialogButtonMaxWidth">260</x:Double>
+            <x:Double x:Key="ContentDialogButtonMinWidth">80</x:Double>
 
             <!-- Tile Action Secondary Button Style (Unified Secondary Button for compact modular repair & tool tiles matching system theme) -->
             <Style x:Key="RepairTileButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">

@@ -689,7 +689,14 @@
                             helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="14">
                         <Grid>
                             <!-- Ambient Pulsing Glow Reactor -->
-                            <Ellipse x:Name="UpdateCardGlow" Fill="{StaticResource PrimaryAccentGradient}" Opacity="0.18" HorizontalAlignment="Right" VerticalAlignment="Top" Width="260" Height="160" Margin="0,-40,-40,0" IsHitTestVisible="False"/>
+                            <Ellipse x:Name="UpdateCardGlow" HorizontalAlignment="Right" VerticalAlignment="Top" Width="280" Height="180" Margin="0,-40,-40,0" IsHitTestVisible="False" Opacity="0.18">
+                                <Ellipse.Fill>
+                                    <RadialGradientBrush Center="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+                                        <GradientStop Color="#506366F1" Offset="0"/>
+                                        <GradientStop Color="#006366F1" Offset="1"/>
+                                    </RadialGradientBrush>
+                                </Ellipse.Fill>
+                            </Ellipse>
 
                             <StackPanel Spacing="16">
                                 <!-- Card Header with version, status badge and action triggers -->
@@ -761,16 +768,20 @@
                                                 <FontIcon Glyph="&#xE895;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                                 <TextBlock x:Name="UpdateProgressStepLabel" Text="Data Synchronization Status" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Grid.Column="1" x:Name="UpdatePercentText" Text="100%" FontSize="13" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" x:Name="UpdatePercentText" Text="0%" FontSize="13" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
                                         </Grid>
 
                                         <!-- Modern Data Progress Bar -->
-                                        <ProgressBar x:Name="UpdateProgressBar" Maximum="100" Value="100" Height="8" CornerRadius="4" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Foreground="{StaticResource PrimaryAccentGradient}" />
+                                        <ProgressBar x:Name="UpdateProgressBar" Maximum="100" Value="0" Height="8" CornerRadius="4" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Foreground="{StaticResource PrimaryAccentGradient}" />
 
                                         <!-- Bottom Telemetry Detail -->
                                         <Grid>
-                                            <TextBlock x:Name="UpdateDetailsText" Text="CDN Manifest Sync: Complete • Channel: Stable • Digital Signature: Verified" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                            <TextBlock x:Name="UpdateDataRateText" Text="Ready" HorizontalAlignment="Right" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" x:Name="UpdateDetailsText" Text="CDN Manifest Sync: Complete • Channel: Stable • Digital Signature: Verified" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" Margin="0,0,12,0"/>
+                                            <TextBlock Grid.Column="1" x:Name="UpdateDataRateText" Text="Ready" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                         </Grid>
                                     </StackPanel>
                                 </Border>

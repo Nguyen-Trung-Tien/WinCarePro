@@ -239,6 +239,8 @@ public sealed partial class SettingsPage
                         UpdateStatusLabel.Text = "Failed to connect to update repository. Please try again later.".T();
                         UpdateProgressStepLabel.Text = "CDN Offline".T();
                         UpdateDataRateText.Text = "Error".T();
+                        UpdateProgressBar.Value = 0;
+                        UpdatePercentText.Text = "0%";
                         UpdateDetailsText.Text = $"Connection refused by remote host ({httpEx.StatusCode?.ToString() ?? "Timeout"}).".T();
                         SetUpdateBadgeState("Connection Refused".T(), "Offline");
                         ManualDownloadWebBtn.Visibility = Visibility.Visible;
@@ -252,6 +254,8 @@ public sealed partial class SettingsPage
                         UpdateStatusLabel.Text = "Error checking for updates.".T();
                         UpdateProgressStepLabel.Text = "Error".T();
                         UpdateDataRateText.Text = "Failed".T();
+                        UpdateProgressBar.Value = 0;
+                        UpdatePercentText.Text = "0%";
                         UpdateDetailsText.Text = ex.Message;
                         SetUpdateBadgeState("Error".T(), "Offline");
                         ManualDownloadWebBtn.Visibility = Visibility.Visible;
@@ -344,10 +348,11 @@ public sealed partial class SettingsPage
     {
         try
         {
-            if (this.Content?.XamlRoot == null) return;
+            var targetXamlRoot = (App.MainWindowInstance?.Content as FrameworkElement)?.XamlRoot ?? this.Content?.XamlRoot;
+            if (targetXamlRoot == null) return;
 
             var result = await UpdateDialogHelper.ShowUpdateAvailableAsync(
-                this.Content.XamlRoot,
+                targetXamlRoot,
                 ThemeManager.Instance.CurrentTheme,
                 version,
                 WinCarePro.Core.AppConstants.VersionString,
@@ -535,15 +540,18 @@ public sealed partial class SettingsPage
                 UpdateStatusLabel.Text = "Download or Installation Failed".T();
                 UpdateProgressStepLabel.Text = "Failed".T();
                 UpdateDataRateText.Text = "Error".T();
+                UpdateProgressBar.Value = 0;
+                UpdatePercentText.Text = "0%";
                 UpdateDetailsText.Text = ex.Message;
                 SetUpdateBadgeState("Failed".T(), "Offline");
                 ManualDownloadWebBtn.Visibility = Visibility.Visible;
                 App.MainWindowInstance?.ShowToastNotification("Update Failed".T(), ex.Message, "Critical");
 
-                if (this.Content?.XamlRoot != null)
+                var targetXamlRoot = (App.MainWindowInstance?.Content as FrameworkElement)?.XamlRoot ?? this.Content?.XamlRoot;
+                if (targetXamlRoot != null)
                 {
                     var dialogRes = await UpdateDialogHelper.ShowDownloadFailedAsync(
-                        this.Content.XamlRoot,
+                        targetXamlRoot,
                         ThemeManager.Instance.CurrentTheme,
                         ex.Message,
                         downloadUrl);

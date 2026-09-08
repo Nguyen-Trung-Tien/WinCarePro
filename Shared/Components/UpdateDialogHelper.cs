@@ -27,6 +27,11 @@ public static class UpdateDialogHelper
         return ThemeManager.Instance.IsDark;
     }
 
+    private static XamlRoot? ResolveXamlRoot(XamlRoot? fallbackRoot)
+    {
+        return (App.MainWindowInstance?.Content as FrameworkElement)?.XamlRoot ?? fallbackRoot;
+    }
+
     private static Brush GetDialogBackground(bool isDark)
     {
         return isDark
@@ -118,14 +123,16 @@ public static class UpdateDialogHelper
         string changelog,
         string channel = "Stable")
     {
-        if (xamlRoot == null) return ContentDialogResult.None;
+        var effectiveXamlRoot = ResolveXamlRoot(xamlRoot);
+        if (effectiveXamlRoot == null) return ContentDialogResult.None;
 
         bool isDark = ResolveIsDark(theme);
 
         var rootStack = new StackPanel
         {
             Spacing = 16,
-            Width = 480
+            MaxWidth = 480,
+            HorizontalAlignment = HorizontalAlignment.Center
         };
 
         // --- 1. Header Banner ---
@@ -381,7 +388,9 @@ public static class UpdateDialogHelper
             PrimaryButtonText = "Update Now".T(),
             CloseButtonText = "Later".T(),
             DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = xamlRoot,
+            XamlRoot = effectiveXamlRoot,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
             CornerRadius = new CornerRadius(16)
@@ -404,14 +413,16 @@ public static class UpdateDialogHelper
         string currentVersion,
         string channel = "Stable")
     {
-        if (xamlRoot == null) return;
+        var effectiveXamlRoot = ResolveXamlRoot(xamlRoot);
+        if (effectiveXamlRoot == null) return;
 
         bool isDark = ResolveIsDark(theme);
 
         var rootStack = new StackPanel
         {
             Spacing = 16,
-            Width = 440
+            MaxWidth = 440,
+            HorizontalAlignment = HorizontalAlignment.Center
         };
 
         // Header with Emerald Checkmark Circle
@@ -515,7 +526,9 @@ public static class UpdateDialogHelper
             Content = rootStack,
             CloseButtonText = "OK".T(),
             DefaultButton = ContentDialogButton.Close,
-            XamlRoot = xamlRoot,
+            XamlRoot = effectiveXamlRoot,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
             CornerRadius = new CornerRadius(16)
@@ -537,14 +550,16 @@ public static class UpdateDialogHelper
         ElementTheme theme,
         string errorMessage)
     {
-        if (xamlRoot == null) return ContentDialogResult.None;
+        var effectiveXamlRoot = ResolveXamlRoot(xamlRoot);
+        if (effectiveXamlRoot == null) return ContentDialogResult.None;
 
         bool isDark = ResolveIsDark(theme);
 
         var rootStack = new StackPanel
         {
             Spacing = 16,
-            Width = 560
+            MaxWidth = 560,
+            HorizontalAlignment = HorizontalAlignment.Center
         };
 
         // Header with Amber Warning Badge
@@ -624,7 +639,6 @@ public static class UpdateDialogHelper
             FontSize = 11,
             Foreground = GetTextSecondary(isDark),
             TextWrapping = TextWrapping.Wrap,
-            LineHeight = 16,
             Margin = new Thickness(0, 4, 0, 0)
         });
 
@@ -638,13 +652,20 @@ public static class UpdateDialogHelper
             SecondaryButtonText = "Download from Website".T(),
             CloseButtonText = "Close".T(),
             DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = xamlRoot,
+            XamlRoot = effectiveXamlRoot,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
             CornerRadius = new CornerRadius(16),
             MinWidth = 560,
-            MaxWidth = 640
+            MaxWidth = 660
         };
+
+        dialog.Resources["ContentDialogMaxWidth"] = 660.0;
+        dialog.Resources["ContentDialogMinWidth"] = 520.0;
+        dialog.Resources["ContentDialogButtonMaxWidth"] = 260.0;
+        dialog.Resources["ContentDialogButtonMinWidth"] = 80.0;
 
         if (Application.Current.Resources.TryGetValue("CompactDialogAccentButtonStyle", out var styleObj3) && styleObj3 is Style accentStyle3)
         {
@@ -687,14 +708,16 @@ public static class UpdateDialogHelper
         string errorMessage,
         string? directDownloadUrl = null)
     {
-        if (xamlRoot == null) return ContentDialogResult.None;
+        var effectiveXamlRoot = ResolveXamlRoot(xamlRoot);
+        if (effectiveXamlRoot == null) return ContentDialogResult.None;
 
         bool isDark = ResolveIsDark(theme);
 
         var rootStack = new StackPanel
         {
             Spacing = 16,
-            Width = 560
+            MaxWidth = 560,
+            HorizontalAlignment = HorizontalAlignment.Center
         };
 
         // Header with Amber Warning Badge
@@ -773,8 +796,7 @@ public static class UpdateDialogHelper
             Text = "If automated updates cannot reach the CDN, you can download the installer manually from the official release page.".T(),
             FontSize = 11.5,
             Foreground = GetTextPrimary(isDark),
-            TextWrapping = TextWrapping.Wrap,
-            LineHeight = 16
+            TextWrapping = TextWrapping.Wrap
         });
 
         errCard.Child = errStack;
@@ -787,13 +809,20 @@ public static class UpdateDialogHelper
             SecondaryButtonText = "Retry".T(),
             CloseButtonText = "Close".T(),
             DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = xamlRoot,
+            XamlRoot = effectiveXamlRoot,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
             CornerRadius = new CornerRadius(16),
             MinWidth = 560,
-            MaxWidth = 640
+            MaxWidth = 660
         };
+
+        dialog.Resources["ContentDialogMaxWidth"] = 660.0;
+        dialog.Resources["ContentDialogMinWidth"] = 520.0;
+        dialog.Resources["ContentDialogButtonMaxWidth"] = 260.0;
+        dialog.Resources["ContentDialogButtonMinWidth"] = 80.0;
 
         if (Application.Current.Resources.TryGetValue("CompactDialogAccentButtonStyle", out var styleObj4) && styleObj4 is Style accentStyle4)
         {

@@ -19,8 +19,23 @@ public class ThemeManager
     public bool IsDark => CurrentTheme == ElementTheme.Dark;
     public string CurrentAccent { get; private set; } = "Default";
 
+    /// <summary>
+    /// Gets whether Reduced Motion is requested by the user or system accessibility settings.
+    /// When true, fluid 3D transformations, mesh glows, and continuous transitions should degrade to static/instant rendering.
+    /// </summary>
+    public bool IsReducedMotion => !WinCarePro.Shared.Animations.ReducedMotionHelper.AreAnimationsEnabled;
+
     public event EventHandler? ThemeChanged;
     public event EventHandler? AccentChanged;
+    public event EventHandler? MotionPreferenceChanged;
+
+    /// <summary>
+    /// Notifies registered subscribers that animation or motion settings have changed.
+    /// </summary>
+    public void NotifyMotionPreferenceChanged()
+    {
+        MotionPreferenceChanged?.Invoke(this, EventArgs.Empty);
+    }
 
     public Color GetPrimaryAccentColor()
     {

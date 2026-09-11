@@ -1,4 +1,29 @@
-# 📝 Nhật ký Phát hành (Release Notes) — WinCare Pro v4.9.1
+# 📝 Nhật ký Phát hành (Release Notes) — WinCare Pro v4.9.2
+
+---
+
+## 🚀 WinCare Pro v4.9.2 (Codename: Orion) — Bản Nâng Cấp Bảo Mật & Tinh Chỉnh Giao Diện (Security Hardening & UI/UX Polish Release)
+
+> **Phiên bản:** v4.9.2 (Codename: Orion) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Sẵn Sàng (Release Ready) · **Chứng nhận:** 422/422 Tests PASS · 0 Warnings / 0 Errors
+
+**WinCare Pro v4.9.2 (Codename: Orion)** tập trung khắc phục lỗ hổng bảo mật liên kết tượng trưng (Junction/Reparse Points) trong cơ chế dọn dẹp cache Delivery Optimization, đồng thời hiện đại hóa toàn diện hệ thống thiết kế giao diện WinUI 3 Fluent Design, nâng cao tính công thái học và hỗ trợ tính năng tiếp cận Reduced Motion theo tiêu chuẩn Windows.
+
+### 🛡️ Điểm Cải Tiến & Vá Bảo Mật Nổi Bật (Security & Enhancements in v4.9.2)
+
+1. **🔒 Phòng Vệ Lỗ Hổng Directory Traversal & Reparse Points:**
+   - Trong `SystemOptimizerEngine.cs`, phương thức `CleanDeliveryOptimizationCacheAsync` được gia cố toàn diện: loại bỏ việc duyệt thư mục đệ quy mù quáng, chủ động kiểm tra cờ `FileAttributes.ReparsePoint` trên mọi thư mục con.
+   - Thư mục liên kết ngoài (Junction/Symlink) bị từ chối tuyệt đối, và toàn bộ đường dẫn con được xác minh nghiêm ngặt qua rào chắn `SafePathGuard.IsPathSafe()` trước khi thực hiện thao tác xóa.
+
+2. **🎨 Chuẩn Hóa Hệ Thống Thiết Kế UI/UX (Fluent Design System):**
+   - Đồng bộ hóa các chỉ số lề (Margin), đệm (Padding) và bán kính bo góc (CornerRadius) giữa các view chính (`MainWindow`, `MainPage`, `DiskPage`, `RegistryPage`, `RepairPage`, `SettingsPage`, `UninstallPage`).
+   - Bổ sung `DangerButtonStyle` trong `App.xaml` cho các tác vụ mang tính rủi ro hoặc không thể hoàn tác, hiển thị cảnh báo đỏ trực quan khi hover.
+
+3. **♿ Khả Năng Tiếp Cận & Giảm Chuyển Động (Reduced Motion Support):**
+   - `ThemeManager` được tích hợp khả năng lắng nghe động cấu hình hệ thống `UISettings.AnimationsEnabled` và phát sự kiện `ReducedMotionChanged`.
+   - Giảm thiểu hoặc tắt các hiệu ứng chuyển động nặng khi người dùng kích hoạt chế độ Reduced Motion trong cài đặt Windows Accessibility, đảm bảo sự thoải mái tối đa cho mắt.
+
+4. **🧪 Chất Lượng Kiểm Thử & Ổn Định Tuyệt Đối:**
+   - Toàn bộ 422 ca kiểm thử tự động (Unit Tests, Security Validators, UI Consistency) đạt kết quả **PASS 100%** với 0 Cảnh báo và 0 Lỗi biên dịch (`-warnaserror`).
 
 ---
 

@@ -67,14 +67,14 @@ File cài đặt sau khi hoàn tất sẽ nằm tại: `PublishOutput/WinCarePro
 
 ```json
 {
-  "version": "4.9.1",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.1/WinCareProSetup.exe",
+  "version": "4.9.2",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.2/WinCareProSetup.exe",
   "sha256": "6a4fbc46540a539b45a74016c119ef64398f98dabbf3be1266c2aadd1b4119a4",
-  "changelog": "Cập nhật v4.9.1 (Codename: Nova): Bảo Mật & Ổn Định, Authenticode WinVerifyTrust, kiểm tra SHA-256 fail-closed, cách ly tiến trình installer và kiểm soát an toàn registry rollback.",
-  "beta_version": "4.9.1-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.1-beta/WinCareProSetup_Beta.exe",
+  "changelog": "Cập nhật v4.9.2 (Codename: Orion): Bảo Mật & Ổn Định, SafePathGuard reparse point validation, chuẩn hóa giao diện WinUI 3 và hỗ trợ tiếp cận Reduced Motion.",
+  "beta_version": "4.9.2-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.2-beta/WinCareProSetup_Beta.exe",
   "beta_sha256": "6a4fbc46540a539b45a74016c119ef64398f98dabbf3be1266c2aadd1b4119a4",
-  "beta_changelog": "WinCare Pro v4.9.1 (Nova Maintenance & Security Hardening Release)"
+  "beta_changelog": "WinCare Pro v4.9.2 (Orion Maintenance, Security Hardening & UI/UX Polish Release)"
 }
 ```
 

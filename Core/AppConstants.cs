@@ -11,10 +11,10 @@ public static class AppConstants
 {
     public const string AppName = "WinCare Pro";
     public const string Publisher = "Nguyen Trung Tien";
-    public const string Codename = "Nova";
-    public const string DefaultVersionString = "4.9.1";
-    public const string DefaultAssemblyVersionString = "4.9.1.0";
-    public const string DefaultBuildDate = "2026-09-08";
+    public const string Codename = "Orion";
+    public const string DefaultVersionString = "4.9.2";
+    public const string DefaultAssemblyVersionString = "4.9.2.0";
+    public const string DefaultBuildDate = "2026-09-11";
     public const string TargetWindowsVersion = "Windows 10 / 11 (64-bit)";
     public const string Architecture = "x64 Native";
     public const string CompanyName = "WinCare Pro";
@@ -24,16 +24,16 @@ public static class AppConstants
     /// The runtime assembly version.
     /// </summary>
     public static readonly Version CurrentVersion = 
-        typeof(AppConstants).Assembly.GetName().Version ?? new Version(4, 9, 1, 0);
+        typeof(AppConstants).Assembly.GetName().Version ?? new Version(4, 9, 2, 0);
 
     /// <summary>
-    /// Standard semantic version string (e.g., "4.9.1").
+    /// Standard semantic version string (e.g., "4.9.2").
     /// </summary>
     public static readonly string VersionString = 
         $"{CurrentVersion.Major}.{CurrentVersion.Minor}.{CurrentVersion.Build}";
 
     /// <summary>
-    /// Compact display version string (e.g., "v4.9.1").
+    /// Compact display version string (e.g., "v4.9.2").
     /// </summary>
     public static readonly string DisplayVersion = 
         CurrentVersion.Build > 0 
@@ -41,7 +41,7 @@ public static class AppConstants
             : $"v{CurrentVersion.Major}.{CurrentVersion.Minor}";
 
     /// <summary>
-    /// Full display version string (e.g., "v4.9.0").
+    /// Full display version string (e.g., "v4.9.2").
     /// </summary>
     public static readonly string DisplayVersionFull = 
         $"v{VersionString}";

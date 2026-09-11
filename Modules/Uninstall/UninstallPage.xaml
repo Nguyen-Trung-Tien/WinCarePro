@@ -335,7 +335,7 @@
 
                                         <TextBlock Grid.Column="4" Text="{x:Bind SizeFormatted, Mode=OneWay}" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" FontWeight="SemiBold"/>
 
-                                        <Button Grid.Column="5" Content="Uninstall" FontSize="10.5" Padding="10,4" Click="OnSingleUninstallClick" Foreground="{ThemeResource AppStatusDangerBrush}" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" VerticalAlignment="Center"/>
+                                        <Button Grid.Column="5" Content="Uninstall" FontSize="10.5" Padding="10,4" Click="OnSingleUninstallClick" Style="{StaticResource DangerButtonStyle}" CornerRadius="6" VerticalAlignment="Center" ToolTipService.ToolTip="Uninstall this application" AutomationProperties.Name="Uninstall Application"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
@@ -479,16 +479,16 @@
 
                             <!-- Actions Buttons -->
                             <StackPanel Grid.Row="2" Spacing="8">
-                                <Button Click="OnDetailsUninstallClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Padding="12,8">
+                                <Button Click="OnDetailsUninstallClick" Style="{StaticResource DangerButtonStyle}" HorizontalAlignment="Stretch" Padding="12,8" ToolTipService.ToolTip="Launch standard uninstaller" AutomationProperties.Name="Standard Uninstall">
                                     <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                                         <FontIcon Glyph="&#xE74D;" FontSize="13" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                                         <TextBlock Text="Standard Uninstall" FontWeight="SemiBold" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Click="OnDetailsForceUninstallClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Padding="12,8">
+                                <Button Click="OnDetailsForceUninstallClick" Style="{StaticResource DangerButtonStyle}" HorizontalAlignment="Stretch" Padding="12,8" ToolTipService.ToolTip="Force remove application files, registry entries, and leftovers" AutomationProperties.Name="Force Wipe and Residual Clean">
                                     <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                                        <FontIcon Glyph="&#xE894;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}"/>
-                                        <TextBlock Text="Force Wipe &amp; Residual Clean" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                        <FontIcon Glyph="&#xE894;" FontSize="13" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                                        <TextBlock Text="Force Wipe &amp; Residual Clean" FontWeight="SemiBold" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                                     </StackPanel>
                                 </Button>
                                 <Button Click="OnSearchOnlineClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Padding="12,8">
@@ -529,8 +529,8 @@
                     </StackPanel>
                     
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                        <Button Content="Standard Uninstall Selected" Click="OnBatchUninstallClick" Style="{StaticResource DefaultButtonStyle}" FontSize="12" Padding="16,6" CornerRadius="6"/>
-                        <Button Content="Force Wipe Selected" Click="OnBatchForceUninstallClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" FontWeight="Bold" FontSize="12" Padding="16,6" CornerRadius="6"/>
+                        <Button Content="Standard Uninstall Selected" Click="OnBatchUninstallClick" Style="{StaticResource DangerButtonStyle}" FontSize="12" Padding="16,6" CornerRadius="6" ToolTipService.ToolTip="Run sequential uninstaller for all selected apps" AutomationProperties.Name="Standard Uninstall Selected Applications"/>
+                        <Button Content="Force Wipe Selected" Click="OnBatchForceUninstallClick" Style="{StaticResource DangerButtonStyle}" FontSize="12" Padding="16,6" CornerRadius="6" ToolTipService.ToolTip="Force remove all selected apps and residuals" AutomationProperties.Name="Force Wipe Selected Applications"/>
                     </StackPanel>
                 </Grid>
             </Border>

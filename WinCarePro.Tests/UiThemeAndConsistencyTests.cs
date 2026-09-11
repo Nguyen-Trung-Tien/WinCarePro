@@ -331,8 +331,10 @@ public class UiThemeAndConsistencyTests
 
         // Dynamic regex tests
         Assert.Equal("Lần kiểm tra cuối: Vừa xong", manager.GetTranslationForLanguage("Last Checked: Just now", AppLanguage.Vietnamese));
+        Assert.Equal("Phiên bản 4.9.2 (Orion) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.9.2 (Orion) • 64-bit Native System Suite", AppLanguage.Vietnamese));
         Assert.Equal("Phiên bản 4.9.1 (Nova) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.9.1 (Nova) • 64-bit Native System Suite", AppLanguage.Vietnamese));
         Assert.Equal("Phiên bản 4.9.0 (Nova) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.9.0 (Nova) • 64-bit Native System Suite", AppLanguage.Vietnamese));
+        Assert.Equal("Điểm mới trong v4.9.2", manager.GetTranslationForLanguage("What's New in v4.9.2", AppLanguage.Vietnamese));
         Assert.Equal("Điểm mới trong v4.9.1", manager.GetTranslationForLanguage("What's New in v4.9.1", AppLanguage.Vietnamese));
         Assert.Equal("Điểm mới trong v4.9", manager.GetTranslationForLanguage("What's New in v4.9", AppLanguage.Vietnamese));
     }
@@ -383,4 +385,63 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("Network Center & Diagnostics", manager.GetTranslationForLanguage("Trung tâm Mạng & Chẩn đoán", AppLanguage.English));
         Assert.Equal("All Applications Up to Date", manager.GetTranslationForLanguage("Tất cả ứng dụng đã mới nhất", AppLanguage.English));
     }
+
+    [Fact]
+    public void ThemeManager_MotionPreferenceChanged_FiresEvent()
+    {
+        var manager = ThemeManager.Instance;
+        bool motionEventFired = false;
+        EventHandler handler = (s, e) => motionEventFired = true;
+
+        manager.MotionPreferenceChanged += handler;
+        try
+        {
+            manager.NotifyMotionPreferenceChanged();
+            Assert.True(motionEventFired);
+            _ = manager.IsReducedMotion;
+        }
+        finally
+        {
+            manager.MotionPreferenceChanged -= handler;
+        }
+    }
+
+    [Fact]
+    public void AppXaml_DesignTokens_CornerRadiusAndSpacingMustBeDefined()
+    {
+        var current = AppContext.BaseDirectory;
+        string? root = null;
+        while (!string.IsNullOrEmpty(current))
+        {
+            if (System.IO.File.Exists(System.IO.Path.Combine(current, "WinCarePro.csproj")))
+            {
+                root = current;
+                break;
+            }
+            var parent = System.IO.Directory.GetParent(current);
+            if (parent == null) break;
+            current = parent.FullName;
+        }
+
+        Assert.NotNull(root);
+        var appXamlPath = System.IO.Path.Combine(root, "App.xaml");
+        Assert.True(System.IO.File.Exists(appXamlPath));
+
+        var xdoc = System.Xml.Linq.XDocument.Load(appXamlPath);
+        var keys = xdoc.Descendants()
+            .Select(e => e.Attributes().FirstOrDefault(a => a.Name.LocalName == "Key")?.Value)
+            .Where(k => !string.IsNullOrEmpty(k))
+            .ToHashSet();
+
+        Assert.Contains("AppControlCornerRadius", keys);
+        Assert.Contains("AppCardCornerRadius", keys);
+        Assert.Contains("AppSubCardCornerRadius", keys);
+        Assert.Contains("AppBadgeCornerRadius", keys);
+        Assert.Contains("AppDialogCornerRadius", keys);
+        Assert.Contains("AppPillCornerRadius", keys);
+        Assert.Contains("AppPagePadding", keys);
+        Assert.Contains("AppCardPadding", keys);
+        Assert.Contains("DestructiveButtonStyle", keys);
+    }
 }
+

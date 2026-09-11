@@ -444,7 +444,8 @@
                                     </StackPanel>
                                 </Button>
 
-                                <Button x:Name="DismCleanBtn" Grid.Column="3" Click="OnDismCleanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch"
+                                <Button x:Name="DismCleanBtn" Grid.Column="3" Style="{StaticResource DangerButtonStyle}" Click="OnDismCleanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="12,8" HorizontalAlignment="Stretch"
+                                        ToolTipService.ToolTip="Reclaims disk space by purging superseded component packages"
                                         AutomationProperties.Name="DISM Clean WinSxS" AutomationProperties.HelpText="Reclaims disk space by removing superseded component packages.">
                                     <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                         <ProgressRing x:Name="DismCleanRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>

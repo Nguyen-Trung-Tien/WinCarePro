@@ -107,6 +107,8 @@ public sealed partial class MainWindow : Window
         // Centralized Theme & Multi-Language Synchronization
         ThemeManager.Instance.RegisterWindow(this);
         TranslationManager.Instance.RegisterWindow(this);
+        ThemeManager.Instance.MotionPreferenceChanged += OnMotionPreferenceChanged;
+        ApplyMotionPreferences();
 
         // Decoupled notification listener from Database layer
         DbManager.OnNotificationAdded += OnDbNotificationAdded;
@@ -405,6 +407,7 @@ public sealed partial class MainWindow : Window
 
         ThemeManager.Instance.UnregisterWindow(this);
         TranslationManager.Instance.UnregisterWindow(this);
+        ThemeManager.Instance.MotionPreferenceChanged -= OnMotionPreferenceChanged;
         DbManager.OnNotificationAdded -= OnDbNotificationAdded;
         CleanupTrayIcon();
         UnsubclassWindow();
@@ -726,6 +729,24 @@ public sealed partial class MainWindow : Window
             else
             {
                 NotificationBadge.Visibility = Visibility.Collapsed;
+            }
+        });
+    }
+
+    private void OnMotionPreferenceChanged(object? sender, EventArgs e)
+    {
+        ApplyMotionPreferences();
+    }
+
+    public void ApplyMotionPreferences()
+    {
+        DispatcherQueue?.TryEnqueue(() =>
+        {
+            if (AmbientAuraMesh != null)
+            {
+                AmbientAuraMesh.Visibility = WinCarePro.Shared.Animations.ReducedMotionHelper.AreAnimationsEnabled
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             }
         });
     }

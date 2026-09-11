@@ -944,6 +944,34 @@
                 <Setter Property="CornerRadius" Value="10" />
             </Style>
 
+            <!-- ======================================================== -->
+            <!-- GLOBAL DESIGN SYSTEM TOKENS (WinUI 3 Modern Suite)        -->
+            <!-- ======================================================== -->
+
+            <!-- Standard Corner Radius Tokens -->
+            <CornerRadius x:Key="AppControlCornerRadius">8</CornerRadius>
+            <CornerRadius x:Key="AppCardCornerRadius">12</CornerRadius>
+            <CornerRadius x:Key="AppSubCardCornerRadius">8</CornerRadius>
+            <CornerRadius x:Key="AppBadgeCornerRadius">6</CornerRadius>
+            <CornerRadius x:Key="AppDialogCornerRadius">14</CornerRadius>
+            <CornerRadius x:Key="AppPillCornerRadius">18</CornerRadius>
+
+            <!-- Standard Spacing & Padding Tokens -->
+            <Thickness x:Key="AppPagePadding">24,20,24,24</Thickness>
+            <Thickness x:Key="AppPagePaddingCompact">16,12,16,16</Thickness>
+            <Thickness x:Key="AppCardPadding">16</Thickness>
+            <Thickness x:Key="AppCardPaddingCompact">12</Thickness>
+            <Thickness x:Key="AppCardPaddingComfortable">20</Thickness>
+            <Thickness x:Key="AppSectionMargin">0,0,0,20</Thickness>
+            <Thickness x:Key="AppItemSpacingBottom">0,0,0,8</Thickness>
+
+            <!-- Standard Typography Scale Tokens -->
+            <x:Double x:Key="AppPageTitleFontSize">22</x:Double>
+            <x:Double x:Key="AppSectionTitleFontSize">16</x:Double>
+            <x:Double x:Key="AppCardTitleFontSize">14</x:Double>
+            <x:Double x:Key="AppBodyFontSize">12.5</x:Double>
+            <x:Double x:Key="AppCaptionFontSize">11</x:Double>
+
             <!-- Fluent Card Border Brushes -->
             <SolidColorBrush x:Key="AuroraGlowBorderBrush" Color="#250F6CBD" />
 
@@ -1578,6 +1606,9 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+            <!-- Destructive Action Button Style (Semantic Alias to DangerButtonStyle with focus visuals) -->
+            <Style x:Key="DestructiveButtonStyle" TargetType="Button" BasedOn="{StaticResource DangerButtonStyle}" />
 
             <!-- Success Action Button Style (Emerald Glass Glow) -->
             <Style x:Key="SuccessButtonStyle" TargetType="Button">

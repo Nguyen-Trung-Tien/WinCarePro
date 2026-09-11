@@ -98,9 +98,11 @@
                         <TextBlock Text="Scan Registry" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button Click="OnRepairClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="16,0">
+                <Button Click="OnRepairClick" Style="{StaticResource DangerButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="16,0"
+                        ToolTipService.ToolTip="Safely clean and repair selected invalid registry entries"
+                        AutomationProperties.Name="Clean Selected Registry Issues" AutomationProperties.HelpText="Safely removes or repairs selected invalid Windows registry entries with automatic rollback backup.">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="White" />
+                        <FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="{ThemeResource AppBadgeCriticalFg}" />
                         <TextBlock Text="Clean Selected" VerticalAlignment="Center" FontSize="12" FontWeight="Bold" />
                     </StackPanel>
                 </Button>

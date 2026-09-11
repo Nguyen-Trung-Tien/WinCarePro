@@ -386,7 +386,7 @@
                                 <Slider x:Name="TransparencySlider" ValueChanged="OnTransparencyChanged" Minimum="10" Maximum="100" Value="10" Width="340" HorizontalAlignment="Left"/>
                             </StackPanel>
 
-                            <components:LoadingToggleSwitch x:Name="EnableAnimationsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Enable UI fluid translation and hover animations" />
+                            <components:LoadingToggleSwitch x:Name="EnableAnimationsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Enable UI fluid translation and animations (Turn off for Reduced Motion)" ToolTipService.ToolTip="Controls smooth transitions, acrylic mesh and glow effects. Turn off to enforce Reduced Motion for accessibility and lower GPU usage." />
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -729,7 +729,7 @@
                                     <!-- Top Left: Version & Title -->
                                     <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                         <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
-                                            <TextBlock Text="v4.9.1" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                            <TextBlock Text="v4.9.2" FontSize="11" FontWeight="Bold" Foreground="White"/>
                                         </Border>
                                         <TextBlock Text="WinCare Pro Distribution Channel" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                     </StackPanel>
@@ -859,6 +859,21 @@
                             <MenuFlyoutSeparator />
 
                             <components:LoadingToggleSwitch x:Name="EnableExperimentalAiToggle" Toggled="OnSettingsChanged" HeaderText="Enable experimental AI diagnostics auto-remediations (Pre-release)" ToolTipService.ToolTip="Uses heuristic rules to automatically attempt fixing found system issues without user confirmation." />
+                            
+                            <!-- Heuristic Auto-Remediation Risk Advisory Callout -->
+                            <Border Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,4,0,0">
+                                <Grid ColumnSpacing="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Grid.Column="0" Glyph="&#xE7BA;" FontSize="15" Foreground="{ThemeResource AppStatusWarningBrush}" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                                    <StackPanel Grid.Column="1" Spacing="2">
+                                        <TextBlock Text="Experimental Risk Advisory" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusWarningBrush}"/>
+                                        <TextBlock Text="Heuristic auto-remediations execute background system adjustments without prompt confirmations. Keep disabled for stable enterprise production environments." FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
                         </StackPanel>
                     </Border>
 
@@ -1019,7 +1034,7 @@
                             </StackPanel>
                         </StackPanel>
                         <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                            <TextBlock Text="v4.9.1 Nova" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="v4.9.2 Orion" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                         </Border>
                     </Grid>
                     
@@ -1053,11 +1068,11 @@
                                             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                                 <TextBlock Text="WinCare Pro" FontSize="22" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" />
                                                 <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="8,2" VerticalAlignment="Center">
-                                                    <TextBlock Text="Nova Suite" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                                    <TextBlock Text="Orion Suite" FontSize="11" FontWeight="Bold" Foreground="White"/>
                                                 </Border>
                                             </StackPanel>
                                             <TextBlock Text="Next-Generation System Optimizer, Security Shield &amp; Care Suite" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            <TextBlock Text="Version 4.9.1 (Codename: Nova) • 64-bit Native System Suite" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
+                                            <TextBlock Text="Version 4.9.2 (Codename: Orion) • 64-bit Native System Suite" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
                                         </StackPanel>
                                     </StackPanel>
 
@@ -1065,7 +1080,7 @@
                                     <Button Grid.Column="1" Click="OnViewChangelogClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="14,8" VerticalAlignment="Center" ToolTipService.ToolTip="View official release notes &amp; new features changelog">
                                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE789;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}"/>
-                                            <TextBlock Text="What's New in v4.9.1" FontSize="12" FontWeight="SemiBold"/>
+                                            <TextBlock Text="What's New in v4.9.2" FontSize="12" FontWeight="SemiBold"/>
                                         </StackPanel>
                                     </Button>
                                 </Grid>

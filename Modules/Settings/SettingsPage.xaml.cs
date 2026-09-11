@@ -324,7 +324,8 @@ public sealed partial class SettingsPage : Page
             App.MainWindowInstance.ApplyTransparency(profile.TransparencyLevel);
         }
 
-        // 3. Animations
+        // 3. Animations & Reduced Motion
+        ThemeManager.Instance.NotifyMotionPreferenceChanged();
         if (App.MainWindowInstance != null)
         {
             if (App.MainWindowInstance.MainFrame.Content is MainPage mainPage)

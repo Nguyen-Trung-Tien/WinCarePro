@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.9.2] - 2026-09-11 (Orion Security Hardening & UI/UX Modernization Release)
+
+### Security & Filesystem Protection
+- **Delivery Optimization Cache Traversal Defense:** Hardened `CleanDeliveryOptimizationCacheAsync` in `SystemOptimizerEngine` against junction/symlink reparse point breakouts. Directory traversal now strictly inspects reparse point attributes and validates directory boundaries with `SafePathGuard.IsPathSafe()` before processing or purging cache files.
+
+### UI/UX & Design System
+- **Design System Token Standardization:** Standardized card padding, uniform spacing, and high-contrast typography across all primary views (`MainWindow`, `MainPage`, `DiskPage`, `RegistryPage`, `RepairPage`, `SettingsPage`, `UninstallPage`).
+- **Destructive Action Safety:** Introduced a centralized `DangerButtonStyle` in `App.xaml` providing distinct visual feedback for irreversible actions.
+- **Reduced Motion & Accessibility:** Integrated `Windows.UI.ViewManagement.UISettings.AnimationsEnabled` tracking in `ThemeManager`, triggering `ReducedMotionChanged` events to seamlessly disable intensive animations when Windows Reduced Motion is enabled.
+
+### Quality Assurance
+- **Comprehensive Test Verification:** 422 / 422 automated unit, regression, UI consistency, and security tests passing with 0 warnings and 0 errors.
+
+---
+
 ## [4.9.1] - 2026-09-08 (Nova Maintenance & Security Hardening Release)
 
 ### Security & Reliability

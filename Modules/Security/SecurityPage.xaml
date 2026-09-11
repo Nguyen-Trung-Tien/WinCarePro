@@ -34,6 +34,7 @@
                         <Setter Target="PrivRightPanel.(Grid.Column)" Value="0" />
                         <Setter Target="PrivRightPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="PrivRightPanel.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="PrivCol1.Width" Value="0" />
                         <Setter Target="StatCol0.Width" Value="*" />
                         <Setter Target="StatCol1.Width" Value="*" />
                         <Setter Target="StatCol2.Width" Value="0" />

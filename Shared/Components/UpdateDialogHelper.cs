@@ -29,7 +29,7 @@ public static class UpdateDialogHelper
 
     private static XamlRoot? ResolveXamlRoot(XamlRoot? fallbackRoot)
     {
-        return (App.MainWindowInstance?.Content as FrameworkElement)?.XamlRoot ?? fallbackRoot;
+        return fallbackRoot ?? (App.MainWindowInstance?.Content as FrameworkElement)?.XamlRoot;
     }
 
     private static Brush GetDialogBackground(bool isDark)
@@ -389,10 +389,10 @@ public static class UpdateDialogHelper
             CloseButtonText = "Later".T(),
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = effectiveXamlRoot,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
+            BorderBrush = GetCardBorder(isDark),
+            BorderThickness = new Thickness(1),
             CornerRadius = new CornerRadius(16)
         };
 
@@ -527,10 +527,10 @@ public static class UpdateDialogHelper
             CloseButtonText = "OK".T(),
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = effectiveXamlRoot,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
+            BorderBrush = GetCardBorder(isDark),
+            BorderThickness = new Thickness(1),
             CornerRadius = new CornerRadius(16)
         };
 
@@ -653,13 +653,11 @@ public static class UpdateDialogHelper
             CloseButtonText = "Close".T(),
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = effectiveXamlRoot,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
-            CornerRadius = new CornerRadius(16),
-            MinWidth = 560,
-            MaxWidth = 660
+            BorderBrush = GetCardBorder(isDark),
+            BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(16)
         };
 
         dialog.Resources["ContentDialogMaxWidth"] = 660.0;
@@ -810,13 +808,11 @@ public static class UpdateDialogHelper
             CloseButtonText = "Close".T(),
             DefaultButton = ContentDialogButton.Primary,
             XamlRoot = effectiveXamlRoot,
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
             RequestedTheme = theme,
             Background = GetDialogBackground(isDark),
-            CornerRadius = new CornerRadius(16),
-            MinWidth = 560,
-            MaxWidth = 660
+            BorderBrush = GetCardBorder(isDark),
+            BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(16)
         };
 
         dialog.Resources["ContentDialogMaxWidth"] = 660.0;

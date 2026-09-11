@@ -34,12 +34,16 @@
                         <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
+                        <Setter Target="StatCol0.Width" Value="*" />
+                        <Setter Target="StatCol1.Width" Value="0" />
+                        <Setter Target="StatCol2.Width" Value="0" />
                         <Setter Target="StatCard2.(Grid.Row)" Value="1" />
                         <Setter Target="StatCard2.(Grid.Column)" Value="0" />
                         <Setter Target="StatCard3.(Grid.Row)" Value="2" />
                         <Setter Target="StatCard3.(Grid.Column)" Value="0" />
                         <Setter Target="LeftCol.Width" Value="*" />
                         <Setter Target="RightCol.Width" Value="0" />
+                        <Setter Target="WorkspaceRow1.Height" Value="*" />
                         <Setter Target="RightPanel.(Grid.Row)" Value="1" />
                         <Setter Target="RightPanel.(Grid.Column)" Value="0" />
                         <Setter Target="RightPanel.(Grid.ColumnSpan)" Value="2" />
@@ -111,10 +115,15 @@
 
         <!-- ==================== 1. 3-CARD STAT RIBBON ==================== -->
         <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="StatCol0" Width="*" />
+                <ColumnDefinition x:Name="StatCol1" Width="*" />
+                <ColumnDefinition x:Name="StatCol2" Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- Card 0: Detected Issues -->
@@ -180,6 +189,10 @@
 
         <!-- ==================== 2. MAIN WORKSPACE ==================== -->
         <Grid Grid.Row="2" ColumnSpacing="16" RowSpacing="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" x:Name="WorkspaceRow0" />
+                <RowDefinition Height="Auto" x:Name="WorkspaceRow1" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="LeftCol" Width="*" />
                 <ColumnDefinition x:Name="RightCol" Width="360" />

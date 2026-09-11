@@ -316,9 +316,9 @@
                                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
                                             <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="13" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
                                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                                <TextBlock Text="{x:Bind Publisher}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                <TextBlock Text="{x:Bind Publisher}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxWidth="220" ToolTipService.ToolTip="{x:Bind Publisher}"/>
                                                 <TextBlock Text="•" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                                <TextBlock Text="{x:Bind Version}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                <TextBlock Text="{x:Bind Version}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxWidth="120" ToolTipService.ToolTip="{x:Bind Version}"/>
                                             </StackPanel>
                                         </StackPanel>
 

@@ -27,12 +27,17 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="WorkspaceCol0.Width" Value="*" />
+                        <Setter Target="WorkspaceCol1.Width" Value="0" />
                         <Setter Target="LeftPanel.(Grid.Row)" Value="0" />
                         <Setter Target="LeftPanel.(Grid.Column)" Value="0" />
                         <Setter Target="LeftPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="RightPanel.(Grid.Row)" Value="1" />
                         <Setter Target="RightPanel.(Grid.Column)" Value="0" />
                         <Setter Target="RightPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="StatCol0.Width" Value="*" />
+                        <Setter Target="StatCol1.Width" Value="0" />
+                        <Setter Target="StatCol2.Width" Value="0" />
                         <Setter Target="StatCard1.(Grid.Row)" Value="1" />
                         <Setter Target="StatCard1.(Grid.Column)" Value="0" />
                         <Setter Target="StatCard2.(Grid.Row)" Value="2" />
@@ -85,10 +90,15 @@
 
         <!-- ==================== 1. 3-CARD STAT RIBBON ==================== -->
         <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="StatCol0" Width="*" />
+                <ColumnDefinition x:Name="StatCol1" Width="*" />
+                <ColumnDefinition x:Name="StatCol2" Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- Card 0: Total Handlers -->
@@ -148,9 +158,13 @@
 
         <!-- ==================== 2. MAIN WORKSPACE ==================== -->
         <Grid Grid.Row="2" ColumnSpacing="16" RowSpacing="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="320" />
+                <ColumnDefinition x:Name="WorkspaceCol0" Width="*" />
+                <ColumnDefinition x:Name="WorkspaceCol1" Width="320" />
             </Grid.ColumnDefinitions>
 
             <!-- Left: Handlers List Card -->

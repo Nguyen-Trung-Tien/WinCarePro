@@ -36,11 +36,13 @@
                     <VisualState.Setters>
                         <Setter Target="GaugeRingGrid.(Grid.Row)" Value="0" />
                         <Setter Target="GaugeRingGrid.(Grid.Column)" Value="0" />
+                        <Setter Target="GaugeRingGrid.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="GaugeRingGrid.HorizontalAlignment" Value="Center" />
                         <Setter Target="GaugeRingGrid.Margin" Value="0,0,0,16" />
 
                         <Setter Target="GaugeDescPanel.(Grid.Row)" Value="1" />
                         <Setter Target="GaugeDescPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="GaugeDescPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="GaugeDescPanel.HorizontalAlignment" Value="Center" />
                     </VisualState.Setters>
                 </VisualState>

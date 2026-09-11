@@ -202,19 +202,23 @@
                                             </Grid.ColumnDefinitions>
                                             
                                             <!-- Application details -->
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Grid Grid.Column="0" VerticalAlignment="Center">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
                                                 <!-- App Icon with 3D Elevation -->
-                                                <Border Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                                                <Border Grid.Column="0" Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
                                                     <Grid>
                                                         <Image Source="{x:Bind IconImageSource, Mode=OneWay}" Width="24" Height="24" Stretch="Uniform" Visibility="{x:Bind HasIcon, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                         <FontIcon Glyph="&#xE71D;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}" Visibility="{x:Bind HasIcon, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                     </Grid>
                                                 </Border>
-                                                <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5"/>
-                                                    <TextBlock Text="{x:Bind Path}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" MaxWidth="320" ToolTipService.ToolTip="{x:Bind Path}" />
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind Name}"/>
+                                                    <TextBlock Text="{x:Bind Path}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind Path}" />
                                                 </StackPanel>
-                                            </StackPanel>
+                                            </Grid>
 
                                             <!-- Publisher -->
                                             <TextBlock Grid.Column="1" Text="{x:Bind Publisher}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}"/>
@@ -377,15 +381,19 @@
                                         </Grid.ColumnDefinitions>
 
                                         <!-- Task details -->
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <Border Width="30" Height="30" CornerRadius="6" Background="#1E8B5CF6" Margin="0,0,10,0" VerticalAlignment="Center">
+                                        <Grid Grid.Column="0" VerticalAlignment="Center">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Border Grid.Column="0" Width="30" Height="30" CornerRadius="6" Background="#1E8B5CF6" Margin="0,0,10,0" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xE787;" FontSize="15" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
-                                            <StackPanel VerticalAlignment="Center" Width="230">
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                                 <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind Name}"/>
                                                 <TextBlock Text="{x:Bind Action}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind Action}" />
                                             </StackPanel>
-                                        </StackPanel>
+                                        </Grid>
 
                                         <!-- Author -->
                                         <TextBlock Grid.Column="1" Text="{x:Bind Author}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>

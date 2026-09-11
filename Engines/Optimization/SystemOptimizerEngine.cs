@@ -609,38 +609,9 @@ public class SystemOptimizerEngine
         {
             try
             {
-                var files = Directory.GetFiles(doPath, "*", SearchOption.AllDirectories);
-                foreach (var file in files)
-                {
-                    try
-                    {
-                        if (SafePathGuard.IsSafeToDelete(file))
-                        {
-                            var info = new FileInfo(file);
-                            long size = info.Length;
-                            File.Delete(file);
-                            bytesFreed += size;
-                            count++;
-                        }
-                    }
-                    catch { } // Skip locked files
-                }
-
-                foreach (var dir in Directory.GetDirectories(doPath))
-                {
-                    try
-                    {
-                        if (SafePathGuard.IsSafeToDelete(dir))
-                        {
-                            var dirInfo = new DirectoryInfo(dir);
-                            if (!dirInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
-                            {
-                                Directory.Delete(dir, true);
-                            }
-                        }
-                    }
-                    catch { }
-                }
+                var (freed, filesCount) = SafePathGuard.SafeCleanDirectoryWithStats(doPath, recursive: true);
+                bytesFreed = freed;
+                count = filesCount;
             }
             catch (Exception ex)
             {

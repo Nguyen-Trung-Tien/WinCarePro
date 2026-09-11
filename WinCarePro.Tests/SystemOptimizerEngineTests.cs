@@ -1,8 +1,11 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 using WinCarePro.Engines;
 using WinCarePro.Models;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Tests;
 
@@ -80,5 +83,88 @@ public class SystemOptimizerEngineTests
         Assert.True(availGb >= 0, "Available RAM should be non-negative");
         Assert.True(usedGb >= 0, "Used RAM should be non-negative");
         Assert.True(pct >= 0 && pct <= 100, "RAM percentage should be between 0 and 100");
+    }
+
+    [Fact]
+    public async Task CleanDeliveryOptimizationCacheAsync_ExecutesSafelyAndReturnsBytes()
+    {
+        // Act
+        long freedBytes = await _engine.CleanDeliveryOptimizationCacheAsync();
+
+        // Assert - Delivery Optimization cache cleaning must safely succeed without throwing
+        Assert.True(freedBytes >= 0, "Freed bytes must be non-negative");
+    }
+
+    [Fact]
+    public void SafeCleanDirectoryWithStats_AccuratelyCleansSubdirectoriesWithoutCrossingJunctions()
+    {
+        string tempRoot = Path.Combine(Path.GetTempPath(), $"WinCare_StatsTest_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempRoot);
+
+        try
+        {
+            // Level 1 file
+            string rootFile = Path.Combine(tempRoot, "root.tmp");
+            File.WriteAllText(rootFile, "Hello root file");
+            long rootFileSize = new FileInfo(rootFile).Length;
+
+            // Level 2 subfolder and file
+            string subDir = Path.Combine(tempRoot, "SubLevel1");
+            Directory.CreateDirectory(subDir);
+            string subFile = Path.Combine(subDir, "nested.tmp");
+            File.WriteAllText(subFile, "Nested file data");
+            long subFileSize = new FileInfo(subFile).Length;
+
+            // Target external folder to simulate junction target
+            string outsideDir = Path.Combine(Path.GetTempPath(), $"WinCare_Outside_{Guid.NewGuid():N}");
+            Directory.CreateDirectory(outsideDir);
+            string outsideFile = Path.Combine(outsideDir, "critical_do_not_delete.dat");
+            File.WriteAllText(outsideFile, "Critical data outside tree");
+
+            string junctionInTree = Path.Combine(tempRoot, "JunctionToOutside");
+            bool junctionCreated = false;
+            try
+            {
+                var psi = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = $"/c mklink /J \"{junctionInTree}\" \"{outsideDir}\"",
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+                using var p = System.Diagnostics.Process.Start(psi);
+                p?.WaitForExit(3000);
+                junctionCreated = Directory.Exists(junctionInTree);
+            }
+            catch { }
+
+            try
+            {
+                // Act: SafeCleanDirectoryWithStats
+                var (deletedBytes, filesDeleted) = SafePathGuard.SafeCleanDirectoryWithStats(tempRoot, recursive: true);
+
+                // Assert
+                Assert.Equal(2, filesDeleted);
+                Assert.Equal(rootFileSize + subFileSize, deletedBytes);
+                Assert.False(File.Exists(rootFile), "Root file should be deleted");
+                Assert.False(File.Exists(subFile), "Sub file should be deleted");
+                Assert.False(Directory.Exists(subDir), "Empty subfolder should be deleted");
+
+                // Critical safety assertion: files inside junction target MUST remain intact
+                Assert.True(File.Exists(outsideFile), "Files in junction target must NOT be deleted!");
+            }
+            finally
+            {
+                if (junctionCreated && Directory.Exists(junctionInTree))
+                {
+                    try { Directory.Delete(junctionInTree, false); } catch { }
+                }
+                try { Directory.Delete(outsideDir, true); } catch { }
+            }
+        }
+        finally
+        {
+            try { Directory.Delete(tempRoot, true); } catch { }
+        }
     }
 }

@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WinCarePro.Models;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
@@ -879,7 +880,7 @@ public class SoftwareUpdaterEngine
             Log("Verifying Authenticode digital signature of the downloaded installer...");
             if (!VerifyDigitalSignature(filePath, app.ExpectedPublisher))
             {
-                try { File.Delete(filePath); } catch {}
+                try { if (SafePathGuard.IsSafeToDelete(filePath)) File.Delete(filePath); } catch (Exception ex) { Log($"Notice: Failed to remove unverified installer file: {ex.Message}"); }
                 throw new System.Security.SecurityException("The installer does not have a valid, trusted Authenticode digital signature or publisher mismatch.");
             }
             Log("Authenticode verification successful. The installer is signed and trusted.");
@@ -932,7 +933,7 @@ public class SoftwareUpdaterEngine
             Log($"Installation finished for {app.Name}. Exit code: {process.ExitCode}");
             Database.DbManager.LogAction($"Update Software {appId}", "Software Updater", ok ? "Success" : "Failed");
             
-            try { File.Delete(filePath); } catch {}
+            try { if (SafePathGuard.IsSafeToDelete(filePath)) File.Delete(filePath); } catch (Exception ex) { Log($"Notice: Failed to clean up installer file: {ex.Message}"); }
 
             if (!ok)
             {

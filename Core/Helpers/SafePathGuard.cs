@@ -14,6 +14,7 @@ public static class SafePathGuard
 {
     private static readonly HashSet<string> BlacklistedExactPaths = new(StringComparer.OrdinalIgnoreCase);
     private static readonly List<string> BlacklistedPathPrefixes = new();
+    private static readonly List<string> AllowedExceptionPrefixes = new();
     private static readonly HashSet<string> ProtectedSensitiveFileNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "pagefile.sys", "hiberfil.sys", "swapfile.sys", "NTUSER.DAT",
@@ -30,79 +31,140 @@ public static class SafePathGuard
         InitializeBlacklist();
     }
 
+    /// <summary>
+    /// Canonicalizes a path and strips redundant trailing directory separators, preserving root drive format.
+    /// </summary>
+    public static string NormalizePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            return string.Empty;
+
+        string fullPath = Path.GetFullPath(path);
+        string? root = Path.GetPathRoot(fullPath);
+        if (!string.IsNullOrEmpty(root) && string.Equals(fullPath, root, StringComparison.OrdinalIgnoreCase))
+        {
+            return fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+        }
+
+        return fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    }
+
+    /// <summary>
+    /// Checks whether candidatePath is equal to or a genuine subdirectory/subfile of basePath.
+    /// Uses boundary-aware comparison so "C:\Windows\System32_backup" is NOT considered part of "C:\Windows\System32".
+    /// </summary>
+    public static bool IsSameOrChildPath(string basePath, string candidatePath)
+    {
+        if (string.IsNullOrWhiteSpace(basePath) || string.IsNullOrWhiteSpace(candidatePath))
+            return false;
+
+        string normBase = NormalizePath(basePath);
+        string normCandidate = NormalizePath(candidatePath);
+
+        if (string.Equals(normBase, normCandidate, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        string baseWithSep = normBase.EndsWith(Path.DirectorySeparatorChar)
+            ? normBase
+            : normBase + Path.DirectorySeparatorChar;
+
+        return normCandidate.StartsWith(baseWithSep, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Checks whether the specified path is inside an allowed maintenance zone (Windows Temp, Windows Logs, SoftwareDistribution\Download).
+    /// </summary>
+    public static bool IsAllowedExceptionPath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            return false;
+
+        string norm = NormalizePath(path);
+        foreach (var allowed in AllowedExceptionPrefixes)
+        {
+            if (IsSameOrChildPath(allowed, norm))
+                return true;
+        }
+        return false;
+    }
+
     private static void InitializeBlacklist()
     {
         try
         {
             // System root & core drives
             var systemDrive = Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\";
-            BlacklistedExactPaths.Add(systemDrive);
+            BlacklistedExactPaths.Add(NormalizePath(systemDrive));
 
             var winDir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
             if (!string.IsNullOrEmpty(winDir))
             {
-                BlacklistedExactPaths.Add(winDir);
-                BlacklistedExactPaths.Add(Path.Combine(winDir, "System32"));
-                BlacklistedExactPaths.Add(Path.Combine(winDir, "SysWOW64"));
-                BlacklistedExactPaths.Add(Path.Combine(winDir, "WinSxS"));
-                BlacklistedExactPaths.Add(Path.Combine(winDir, "system.ini"));
-                BlacklistedExactPaths.Add(Path.Combine(winDir, "win.ini"));
+                BlacklistedExactPaths.Add(NormalizePath(winDir));
+                BlacklistedExactPaths.Add(NormalizePath(Path.Combine(winDir, "System32")));
+                BlacklistedExactPaths.Add(NormalizePath(Path.Combine(winDir, "SysWOW64")));
+                BlacklistedExactPaths.Add(NormalizePath(Path.Combine(winDir, "WinSxS")));
+                BlacklistedExactPaths.Add(NormalizePath(Path.Combine(winDir, "system.ini")));
+                BlacklistedExactPaths.Add(NormalizePath(Path.Combine(winDir, "win.ini")));
                 
-                BlacklistedPathPrefixes.Add(Path.Combine(winDir, "System32"));
-                BlacklistedPathPrefixes.Add(Path.Combine(winDir, "SysWOW64"));
-                BlacklistedPathPrefixes.Add(Path.Combine(winDir, "WinSxS"));
-                BlacklistedPathPrefixes.Add(Path.Combine(winDir, "Boot"));
-                BlacklistedPathPrefixes.Add(Path.Combine(winDir, "system32\\config"));
+                BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(winDir, "System32")));
+                BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(winDir, "SysWOW64")));
+                BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(winDir, "WinSxS")));
+                BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(winDir, "Boot")));
+                BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(winDir, @"system32\config")));
+
+                AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "Temp")));
+                AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "Logs")));
+                AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, @"SoftwareDistribution\Download")));
             }
 
             // System Drive root critical boot components
-            BlacklistedExactPaths.Add(Path.Combine(systemDrive, "bootmgr"));
-            BlacklistedExactPaths.Add(Path.Combine(systemDrive, "BOOTNXT"));
-            BlacklistedExactPaths.Add(Path.Combine(systemDrive, "autoexec.bat"));
-            BlacklistedExactPaths.Add(Path.Combine(systemDrive, "config.sys"));
-            BlacklistedPathPrefixes.Add(Path.Combine(systemDrive, "Boot"));
-            BlacklistedPathPrefixes.Add(Path.Combine(systemDrive, "Recovery"));
-            BlacklistedPathPrefixes.Add(Path.Combine(systemDrive, "System Volume Information"));
+            BlacklistedExactPaths.Add(NormalizePath(Path.Combine(systemDrive, "bootmgr")));
+            BlacklistedExactPaths.Add(NormalizePath(Path.Combine(systemDrive, "BOOTNXT")));
+            BlacklistedExactPaths.Add(NormalizePath(Path.Combine(systemDrive, "autoexec.bat")));
+            BlacklistedExactPaths.Add(NormalizePath(Path.Combine(systemDrive, "config.sys")));
+            BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(systemDrive, "Boot")));
+            BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(systemDrive, "Recovery")));
+            BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(systemDrive, "System Volume Information")));
 
             var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             if (!string.IsNullOrEmpty(programFiles))
             {
-                BlacklistedExactPaths.Add(programFiles);
-                BlacklistedPathPrefixes.Add(Path.Combine(programFiles, "Windows Defender"));
-                BlacklistedPathPrefixes.Add(Path.Combine(programFiles, "Windows Defender Advanced Threat Protection"));
+                BlacklistedExactPaths.Add(NormalizePath(programFiles));
+                BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(programFiles, "Windows Defender")));
+                BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(programFiles, "Windows Defender Advanced Threat Protection")));
             }
 
             var programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
             if (!string.IsNullOrEmpty(programFilesX86))
             {
-                BlacklistedExactPaths.Add(programFilesX86);
-                BlacklistedPathPrefixes.Add(Path.Combine(programFilesX86, "Windows Defender"));
+                BlacklistedExactPaths.Add(NormalizePath(programFilesX86));
+                BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(programFilesX86, "Windows Defender")));
             }
 
             var programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
             if (!string.IsNullOrEmpty(programData))
             {
-                BlacklistedExactPaths.Add(programData);
+                BlacklistedExactPaths.Add(NormalizePath(programData));
             }
 
             var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             if (!string.IsNullOrEmpty(userProfile))
             {
                 // Protect user profile root itself (e.g. C:\Users\Admin)
-                BlacklistedExactPaths.Add(userProfile);
+                BlacklistedExactPaths.Add(NormalizePath(userProfile));
                 var usersDir = Directory.GetParent(userProfile)?.FullName;
                 if (!string.IsNullOrEmpty(usersDir))
                 {
-                    BlacklistedExactPaths.Add(usersDir);
+                    BlacklistedExactPaths.Add(NormalizePath(usersDir));
                 }
             }
         }
         catch
         {
             // Fallback safety defaults
-            BlacklistedExactPaths.Add("C:\\");
-            BlacklistedExactPaths.Add("C:\\Windows");
-            BlacklistedExactPaths.Add("C:\\Windows\\System32");
+            BlacklistedExactPaths.Add(NormalizePath("C:\\"));
+            BlacklistedExactPaths.Add(NormalizePath("C:\\Windows"));
+            BlacklistedExactPaths.Add(NormalizePath("C:\\Windows\\System32"));
         }
     }
 
@@ -124,30 +186,41 @@ public static class SafePathGuard
         if (rawPath.Contains(".."))
             return false;
 
+        string trimmedRaw = rawPath.Trim();
+        // Disallow bare drive letter references (e.g. "C:", "D:")
+        if (trimmedRaw.Length == 2 && char.IsLetter(trimmedRaw[0]) && trimmedRaw[1] == ':')
+            return false;
+
         try
         {
             // Normalize to full canonical path
-            string fullPath = Path.GetFullPath(rawPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-            // Never allow root drive deletion (e.g., "C:", "C:\", "D:")
-            if (Path.GetPathRoot(fullPath)?.TrimEnd('\\', '/') == fullPath)
+            string fullPath = NormalizePath(rawPath);
+            if (string.IsNullOrEmpty(fullPath))
                 return false;
+
+            // Never allow root drive deletion (e.g., "C:\", "D:\", "\\server\share")
+            string? root = Path.GetPathRoot(fullPath);
+            if (!string.IsNullOrEmpty(root))
+            {
+                string rootTrimmed = root.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                string fullTrimmed = fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                if (string.Equals(rootTrimmed, fullTrimmed, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
 
             // Check exact blacklisted paths
             if (BlacklistedExactPaths.Contains(fullPath))
                 return false;
 
-            // Check critical protected system prefixes
+            // Check critical protected system prefixes using boundary-aware check
             foreach (var prefix in BlacklistedPathPrefixes)
             {
-                if (fullPath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                if (IsSameOrChildPath(prefix, fullPath))
                 {
-                    // Exception: Temp subfolders inside Windows (e.g., C:\Windows\Temp, C:\Windows\Logs\CBS) are allowed
-                    if (fullPath.StartsWith(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Temp"), StringComparison.OrdinalIgnoreCase) ||
-                        fullPath.StartsWith(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Logs"), StringComparison.OrdinalIgnoreCase) ||
-                        fullPath.StartsWith(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "SoftwareDistribution\\Download"), StringComparison.OrdinalIgnoreCase))
+                    // Exceptions: Specific maintenance subfolders (Temp, Logs, SoftwareDistribution\Download)
+                    if (IsAllowedExceptionPath(fullPath))
                     {
-                        return true;
+                        break; // Allowed to continue to sensitive name and reparse checks
                     }
 
                     return false;
@@ -156,28 +229,36 @@ public static class SafePathGuard
 
             // Check if file is critical system or credential store file
             string fileName = Path.GetFileName(fullPath);
-            if (ProtectedSensitiveFileNames.Contains(fileName))
+            if (!string.IsNullOrEmpty(fileName) && ProtectedSensitiveFileNames.Contains(fileName))
             {
                 return false;
             }
 
-            // Check for symlinks / junction reparse points to prevent following links to sensitive folders
+            // Check for symlinks / junction reparse points to prevent following links to sensitive folders.
+            // Both files and directories possessing FileAttributes.ReparsePoint MUST be rejected.
             if (File.Exists(fullPath))
             {
                 var fileInfo = new FileInfo(fullPath);
-                if (fileInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                if ((fileInfo.Attributes & FileAttributes.ReparsePoint) != 0)
                 {
-                    // Reparse points should be unlinked rather than traversed recursively
-                    return true; 
+                    return false;
                 }
             }
             else if (Directory.Exists(fullPath))
             {
                 var dirInfo = new DirectoryInfo(fullPath);
-                if (dirInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
                 {
-                    // Junction points must not be wiped recursively
-                    return false; 
+                    return false;
+                }
+            }
+            else if (Path.Exists(fullPath))
+            {
+                // Handles broken symlinks / dangling reparse points where target doesn't exist
+                var attr = File.GetAttributes(fullPath);
+                if ((attr & FileAttributes.ReparsePoint) != 0)
+                {
+                    return false;
                 }
             }
 
@@ -221,20 +302,22 @@ public static class SafePathGuard
     }
 
     /// <summary>
-    /// Safely cleans files in a directory without deleting the directory itself or violating safety rules.
+    /// Safely cleans files and subdirectories in a directory with full boundary checks,
+    /// level-by-level traversal, reparse point rejection, and accurate accounting.
     /// </summary>
-    public static long SafeCleanDirectoryContents(string dirPath, bool recursive = true)
+    public static (long deletedBytes, int filesDeleted) SafeCleanDirectoryWithStats(string dirPath, bool recursive = true)
     {
         if (string.IsNullOrWhiteSpace(dirPath) || !Directory.Exists(dirPath))
-            return 0;
+            return (0, 0);
 
         long deletedBytes = 0;
+        int filesDeleted = 0;
 
         try
         {
             var dirInfo = new DirectoryInfo(dirPath);
-            if (dirInfo.Attributes.HasFlag(FileAttributes.ReparsePoint))
-                return 0; // Skip junction folders
+            if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
+                return (0, 0); // Never enter reparse points
 
             foreach (var file in dirInfo.EnumerateFiles("*", SearchOption.TopDirectoryOnly))
             {
@@ -243,9 +326,13 @@ public static class SafePathGuard
                     if (IsPathSafeForDeletion(file.FullName))
                     {
                         long size = file.Length;
-                        file.Attributes = FileAttributes.Normal;
+                        if (file.IsReadOnly)
+                        {
+                            file.Attributes = FileAttributes.Normal;
+                        }
                         file.Delete();
                         deletedBytes += size;
+                        filesDeleted++;
                     }
                 }
                 catch { }
@@ -257,9 +344,11 @@ public static class SafePathGuard
                 {
                     try
                     {
-                        if (IsPathSafeForDeletion(subDir.FullName) && !subDir.Attributes.HasFlag(FileAttributes.ReparsePoint))
+                        if ((subDir.Attributes & FileAttributes.ReparsePoint) == 0 && IsPathSafeForDeletion(subDir.FullName))
                         {
-                            deletedBytes += SafeCleanDirectoryContents(subDir.FullName, true);
+                            var (subBytes, subFiles) = SafeCleanDirectoryWithStats(subDir.FullName, true);
+                            deletedBytes += subBytes;
+                            filesDeleted += subFiles;
                             try
                             {
                                 subDir.Delete(false); // Only delete if empty
@@ -273,6 +362,14 @@ public static class SafePathGuard
         }
         catch { }
 
-        return deletedBytes;
+        return (deletedBytes, filesDeleted);
+    }
+
+    /// <summary>
+    /// Safely cleans files in a directory without deleting the directory itself or violating safety rules.
+    /// </summary>
+    public static long SafeCleanDirectoryContents(string dirPath, bool recursive = true)
+    {
+        return SafeCleanDirectoryWithStats(dirPath, recursive).deletedBytes;
     }
 }

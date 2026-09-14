@@ -56,7 +56,7 @@ public class AppVersionManagementTests
             Assert.Contains($"\"version\": \"{AppConstants.VersionString}\"", updateJsonText);
             var match = Regex.Match(updateJsonText, "\"sha256\":\\s*\"([a-fA-F0-9]{64})\"");
             Assert.True(match.Success, "update.json must contain a valid 64-character SHA-256 hash");
-            Assert.Equal("e1ad0a1bc467cab6bff9ba15996cc114d54584bc9ced277c0952c3bea6a4ad34", match.Groups[1].Value.ToLowerInvariant());
+            Assert.Equal("5eb2c2bf6cbb89ea094adf2241b38df4d59c1fea016cc135d739be6213288c09", match.Groups[1].Value.ToLowerInvariant());
         }
 
         // 4. Check app.manifest

@@ -69,12 +69,12 @@ File cài đặt sau khi hoàn tất sẽ nằm tại: `PublishOutput/WinCarePro
 {
   "version": "4.9.2",
   "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.2/WinCareProSetup.exe",
-  "sha256": "e1ad0a1bc467cab6bff9ba15996cc114d54584bc9ced277c0952c3bea6a4ad34",
+  "sha256": "5eb2c2bf6cbb89ea094adf2241b38df4d59c1fea016cc135d739be6213288c09",
   "changelog": "Cập nhật v4.9.2 (Codename: Orion): Bảo Mật & Ổn Định, SafePathGuard reparse point validation, chuẩn hóa giao diện WinUI 3 và hỗ trợ tiếp cận Reduced Motion.",
   "beta_version": "4.9.2-beta",
   "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.2-beta/WinCareProSetup_Beta.exe",
   "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.2-beta/WinCareProSetup_Beta.exe",
-  "beta_sha256": "e1ad0a1bc467cab6bff9ba15996cc114d54584bc9ced277c0952c3bea6a4ad34",
+  "beta_sha256": "5eb2c2bf6cbb89ea094adf2241b38df4d59c1fea016cc135d739be6213288c09",
   "beta_changelog": "WinCare Pro v4.9.2 (Orion Maintenance, Security Hardening & UI/UX Polish Release)"
 }
 ```

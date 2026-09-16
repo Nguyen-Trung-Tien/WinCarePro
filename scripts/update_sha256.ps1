@@ -29,19 +29,10 @@ $computedHash = $hashResult.Hash.ToLowerInvariant()
 Write-Host "  Computed SHA-256: $computedHash" -ForegroundColor Green
 
 Write-Host "[2/3] Updating '$ManifestPath'..." -ForegroundColor Yellow
-$manifestContent = Get-Content -Path $ManifestPath -Raw -Encoding utf8
-$updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
-    $manifestContent,
-    '("sha256"\s*:\s*")[a-fA-F0-9]{64}(")',
-    "${1}$computedHash${2}"
-)
-$updatedContent = [System.Text.RegularExpressions.Regex]::Replace(
-    $updatedContent,
-    '("beta_sha256"\s*:\s*")[a-fA-F0-9]{64}(")',
-    "${1}$computedHash${2}"
-)
-
-[System.IO.File]::WriteAllText($ManifestPath, $updatedContent, [System.Text.Encoding]::UTF8)
+$json = Get-Content -Path $ManifestPath -Raw -Encoding utf8 | ConvertFrom-Json
+$json.sha256 = $computedHash
+$json.beta_sha256 = $computedHash
+$json | ConvertTo-Json -Depth 10 | Set-Content -Path $ManifestPath -Encoding utf8
 Write-Host "  Successfully synced SHA-256 into $ManifestPath" -ForegroundColor Green
 
 Write-Host "[3/3] Exporting standalone checksum file..." -ForegroundColor Yellow

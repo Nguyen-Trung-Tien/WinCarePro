@@ -1,12 +1,12 @@
 ﻿{
-  "version": "4.9.3",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3/WinCareProSetup.exe",
-  "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3/WinCareProSetup.exe",
-  01df38e0902d0a73a42c20849f1efe84fa44ef0fcf50a52683bff5c2c7bd7e76,
-  "changelog": "Cập nhật v4.9.3 (Orion Maintenance & System Hardening): Khắc phục triệt để lỗi mã SHA-256 khi cập nhật qua cơ chế tự động đồng bộ hóa và chuẩn hóa Hash-Pinned Integrity; vá lỗi crash ServiceController và Startup BootTime; tối ưu hóa toàn diện hiệu năng và xử lý đa luồng WinUI 3.",
-  "beta_version": "4.9.3-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3-beta/WinCareProSetup_Beta.exe",
-  "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3-beta/WinCareProSetup_Beta.exe",
-  01df38e0902d0a73a42c20849f1efe84fa44ef0fcf50a52683bff5c2c7bd7e76,
-  "beta_changelog": "WinCare Pro v4.9.3 (SHA-256 Update Fix, Architecture Hardening & Stability Release)"
+    "version":  "4.9.3",
+    "url":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3/WinCareProSetup.exe",
+    "downloadUrl":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3/WinCareProSetup.exe",
+    "sha256":  "ead1209ac79f9a92c1c133da84c3e4824cd2eb9e20ebddc599f8ed918d72dc06",
+    "changelog":  "Cập nhật v4.9.3 (Orion Maintenance \u0026 System Hardening): Khắc phục triệt để lỗi mã SHA-256 khi cập nhật qua cơ chế tự động đồng bộ hóa và chuẩn hóa Hash-Pinned Integrity; vá lỗi crash ServiceController và Startup BootTime; tối ưu hóa toàn diện hiệu năng và xử lý đa luồng WinUI 3.",
+    "beta_version":  "4.9.3-beta",
+    "beta_url":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3-beta/WinCareProSetup_Beta.exe",
+    "beta_downloadUrl":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3-beta/WinCareProSetup_Beta.exe",
+    "beta_sha256":  "ead1209ac79f9a92c1c133da84c3e4824cd2eb9e20ebddc599f8ed918d72dc06",
+    "beta_changelog":  "WinCare Pro v4.9.3 (SHA-256 Update Fix, Architecture Hardening \u0026 Stability Release)"
 }

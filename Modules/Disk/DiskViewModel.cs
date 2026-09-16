@@ -150,14 +150,21 @@ public class DiskViewModel : ViewModelBase, IDisposable
     public async Task LoadDrivesAsync()
     {
         IsBusy = true;
-        Drives.Clear();
         try
         {
             var list = await Task.Run(() => _engine.GetDiskHealthStatus());
-            foreach (var d in list)
+            RunOnUI(() =>
             {
-                Drives.Add(d);
-            }
+                Drives.Clear();
+                foreach (var d in list)
+                {
+                    Drives.Add(d);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("DiskViewModel.LoadDrivesAsync", ex);
         }
         finally
         {

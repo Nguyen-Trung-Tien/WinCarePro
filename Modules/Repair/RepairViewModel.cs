@@ -328,52 +328,59 @@ public class RepairViewModel : ViewModelBase, IDisposable
 
         Task.Run(() =>
         {
-            var targetServices = new[]
+            try
             {
-                new { Name = "wuauserv", Display = "Windows Update (wuauserv)" },
-                new { Name = "bits", Display = "Background Intelligent Transfer (bits)" },
-                new { Name = "cryptsvc", Display = "Cryptographic Services (cryptsvc)" },
-                new { Name = "winmgmt", Display = "Windows Management Instrumentation (winmgmt)" },
-                new { Name = "mpssvc", Display = "Windows Defender Firewall (mpssvc)" }
-            };
-
-            var tempServices = new List<RepairServiceItem>();
-            int runningCount = 0;
-            foreach (var ts in targetServices)
-            {
-                string status = "Not Found".T();
-                string startupType = "Unknown".T();
-                bool isRunning = false;
-                try
+                var targetServices = new[]
                 {
-                    using var svc = new System.ServiceProcess.ServiceController(ts.Name);
-                    status = svc.Status.ToString().T();
-                    startupType = svc.StartType.ToString().T();
-                    isRunning = svc.Status == System.ServiceProcess.ServiceControllerStatus.Running;
+                    new { Name = "wuauserv", Display = "Windows Update (wuauserv)" },
+                    new { Name = "bits", Display = "Background Intelligent Transfer (bits)" },
+                    new { Name = "cryptsvc", Display = "Cryptographic Services (cryptsvc)" },
+                    new { Name = "winmgmt", Display = "Windows Management Instrumentation (winmgmt)" },
+                    new { Name = "mpssvc", Display = "Windows Defender Firewall (mpssvc)" }
+                };
+
+                var tempServices = new List<RepairServiceItem>();
+                int runningCount = 0;
+                foreach (var ts in targetServices)
+                {
+                    string status = "Not Found".T();
+                    string startupType = "Unknown".T();
+                    bool isRunning = false;
+                    try
+                    {
+                        using var svc = new System.ServiceProcess.ServiceController(ts.Name);
+                        status = svc.Status.ToString().T();
+                        startupType = svc.StartType.ToString().T();
+                        isRunning = svc.Status == System.ServiceProcess.ServiceControllerStatus.Running;
+                    }
+                    catch { }
+
+                    if (isRunning) runningCount++;
+
+                    tempServices.Add(new RepairServiceItem
+                    {
+                        Name = ts.Name,
+                        DisplayName = ts.Display,
+                        Status = status,
+                        StartupType = startupType,
+                        IsSelected = false
+                    });
                 }
-                catch { }
 
-                if (isRunning) runningCount++;
-
-                tempServices.Add(new RepairServiceItem
+                RunOnUI(() =>
                 {
-                    Name = ts.Name,
-                    DisplayName = ts.Display,
-                    Status = status,
-                    StartupType = startupType,
-                    IsSelected = false
+                    Services.Clear();
+                    foreach (var item in tempServices)
+                    {
+                        Services.Add(item);
+                    }
+                    ServicesHealthyCount = runningCount;
                 });
             }
-
-            dispatcher.TryEnqueue(() =>
+            catch (Exception ex)
             {
-                Services.Clear();
-                foreach (var item in tempServices)
-                {
-                    Services.Add(item);
-                }
-                ServicesHealthyCount = runningCount;
-            });
+                Infrastructure.Logging.CrashLogger.LogException("RepairViewModel.LoadServices", ex);
+            }
         });
     }
 

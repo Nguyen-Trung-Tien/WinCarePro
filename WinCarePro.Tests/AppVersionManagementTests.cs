@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using WinCarePro.Core;
+using WinCarePro.Infrastructure.Security;
 using Xunit;
 
 namespace WinCarePro.Tests;
@@ -9,18 +10,18 @@ namespace WinCarePro.Tests;
 public class AppVersionManagementTests
 {
     [Fact]
-    public void AppConstants_VersionProperties_AreStandardizedTo492()
+    public void AppConstants_VersionProperties_AreStandardizedTo493()
     {
         Assert.Equal(4, AppConstants.CurrentVersion.Major);
         Assert.Equal(9, AppConstants.CurrentVersion.Minor);
-        Assert.Equal(2, AppConstants.CurrentVersion.Build);
-        Assert.Equal("4.9.2", AppConstants.VersionString);
-        Assert.Equal("v4.9.2", AppConstants.DisplayVersion);
-        Assert.Equal("v4.9.2", AppConstants.DisplayVersionFull);
+        Assert.Equal(3, AppConstants.CurrentVersion.Build);
+        Assert.Equal("4.9.3", AppConstants.VersionString);
+        Assert.Equal("v4.9.3", AppConstants.DisplayVersion);
+        Assert.Equal("v4.9.3", AppConstants.DisplayVersionFull);
         Assert.Equal("WinCare Pro", AppConstants.AppName);
         Assert.Equal("Orion", AppConstants.Codename);
-        Assert.Contains("WinCare Pro v4.9.2", AppConstants.TitleWithVersion);
-        Assert.Contains("Version 4.9.2 (Codename: Orion)", AppConstants.SystemBadgeText);
+        Assert.Contains("WinCare Pro v4.9.3", AppConstants.TitleWithVersion);
+        Assert.Contains("Version 4.9.3 (Codename: Orion)", AppConstants.SystemBadgeText);
     }
 
     [Fact]
@@ -56,7 +57,14 @@ public class AppVersionManagementTests
             Assert.Contains($"\"version\": \"{AppConstants.VersionString}\"", updateJsonText);
             var match = Regex.Match(updateJsonText, "\"sha256\":\\s*\"([a-fA-F0-9]{64})\"");
             Assert.True(match.Success, "update.json must contain a valid 64-character SHA-256 hash");
-            Assert.Equal("5eb2c2bf6cbb89ea094adf2241b38df4d59c1fea016cc135d739be6213288c09", match.Groups[1].Value.ToLowerInvariant());
+
+            // If a compiled installer exists in PublishOutput, verify hash matches exactly
+            string setupPath = Path.Combine(projectDir, "PublishOutput", "WinCareProSetup.exe");
+            if (File.Exists(setupPath))
+            {
+                string actualSetupHash = CryptoHelper.ComputeFileHash(setupPath);
+                Assert.Equal(actualSetupHash.ToLowerInvariant(), match.Groups[1].Value.ToLowerInvariant());
+            }
         }
 
         // 4. Check app.manifest

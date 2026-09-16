@@ -135,18 +135,6 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
         DisabledCount = Items.Count(x => !x.IsEnabled);
     }
 
-    private void RunOnUI(Action action)
-    {
-        if (_dispatcherQueue != null)
-        {
-            _dispatcherQueue.TryEnqueue(() => action());
-        }
-        else
-        {
-            action();
-        }
-    }
-
     public void CancelScan()
     {
         try

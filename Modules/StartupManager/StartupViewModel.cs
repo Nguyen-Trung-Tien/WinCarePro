@@ -272,7 +272,16 @@ public class StartupViewModel : ViewModelBase, IDisposable
         {
             // 1. Boot Performance Analytics
             LoadingStatus = "Analyzing last system boot performance...".T();
-            double bootSec = await Task.Run(() => _startupEngine.GetLastBootTimeSeconds(), token);
+            double bootSec = -1;
+            try
+            {
+                bootSec = await Task.Run(() => _startupEngine.GetLastBootTimeSeconds(), token);
+            }
+            catch (Exception bootEx)
+            {
+                CrashLogger.LogMessage("StartupViewModel", $"Boot performance analysis skipped: {bootEx.Message}");
+            }
+
             if (token.IsCancellationRequested || _isDisposed)
             {
                 SetOperationState(OperationState.Idle);

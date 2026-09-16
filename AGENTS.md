@@ -1,5 +1,5 @@
 # 🤖 WinCare Pro Suite — AI Agent Operational Directive
-> **Phiên bản:** v4.9.2 (Codename: Orion) | **Nền tảng:** Windows 10/11 x64  
+> **Phiên bản:** v4.9.3 (Codename: Orion) | **Nền tảng:** Windows 10/11 x64  
 > **Công nghệ lõi:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite 3 WAL • CommunityToolkit.Mvvm  
 > **Tài liệu tham chiếu chuyên sâu:** [10 Bộ Quy Chuẩn Kỹ Thuật](file:///d:/WinCare/rules/README.md) • [11 Chương Tài Liệu Kỹ Thuật](file:///d:/WinCare/docs/README.md)
 

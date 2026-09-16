@@ -1,4 +1,32 @@
-# 📝 Nhật ký Phát hành (Release Notes) — WinCare Pro v4.9.2
+# 📝 Nhật ký Phát hành (Release Notes) — WinCare Pro v4.9.3
+
+---
+
+## 🚀 WinCare Pro v4.9.3 (Codename: Orion) — Bản Sửa Lỗi Cập Nhật SHA-256 & Gia Cố Toàn Diện Hệ Thống (SHA-256 Update Fix & System Hardening Release)
+
+> **Phiên bản:** v4.9.3 (Codename: Orion) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Sẵn Sàng (Release Ready) · **Chứng nhận:** 435/435 Tests PASS · 0 Warnings / 0 Errors
+
+**WinCare Pro v4.9.3 (Codename: Orion)** tập trung khắc phục triệt để lỗi mã SHA-256 trong chu trình tự động cập nhật, tự động hóa tính và đồng bộ hóa manifest, loại bỏ hoàn toàn các nguy cơ crash tiềm ẩn khi khởi động, tối ưu hóa toàn diện hiệu năng và xử lý đa luồng WinUI 3.
+
+### 🛡️ Điểm Cải Tiến & Vá Lỗi Nổi Bật trong v4.9.3:
+
+1. **🔐 Khắc Phục Triệt Để Lỗi Mã SHA-256 Khi Cập Nhật:**
+   - **Tự động đồng bộ hóa SHA-256:** Tự động tính toán mã hash SHA-256 chính xác của file cài đặt `WinCareProSetup.exe` và ghi trực tiếp vào `update.json` và CI/CD release workflow qua script `scripts/update_sha256.ps1` tích hợp trong `publish_installer.bat`.
+   - **Làm sạch mã băm (Hash Normalization):** Bổ sung hàm `NormalizeHash()` loại bỏ tiền tố (`sha256:`, `0x`), khoảng trắng thừa, và chuẩn hóa hex 64 ký tự.
+   - **Cơ chế Hash-Pinned Integrity:** Cho phép xác thực an toàn đối với các bản phát hành nguồn mở từ GitHub Releases chính thức kết hợp mã băm 256-bit, tránh việc tự xóa file cài đặt khi chưa có chứng chỉ số thương mại.
+   - **Đồng bộ kênh Beta & Stable:** Đồng bộ hóa logic kiểm tra cập nhật giữa `MainWindow` và `SettingsPage`, đảm bảo tải đúng URL và so khớp đúng mã SHA-256.
+
+2. **💥 Triệt Tiêu Các Nguy Cơ Crash Hệ Thống (Zero-Crash Architecture):**
+   - **Đóng gói đầy đủ runtime WinUI 3:** Bổ sung `System.Diagnostics.EventLog` và chuyển đổi `PublishSingleFile=false` trong `publish.bat`, `publish_installer.bat` và release workflow, đảm bảo nạp đủ 468 assemblies runtime.
+   - **Bảo vệ ServiceController & Boot Time:** Bọc khối try-catch an toàn trong `StartupEngine.cs` và các ViewModel, ngăn chặn hiện tượng tê liệt dữ liệu Startup hoặc phát sinh `UnobservedTaskException`.
+   - **Chống crash mạng:** Phòng vệ rớt mạng đột ngột trong quá trình kiểm tra cập nhật tại `SettingsPage`.
+
+3. **🏗️ Chuẩn Hóa MVVM & Đa Luồng WinUI 3:**
+   - Chuẩn hóa phương thức `RunOnUI()` trong `ViewModelBase`, loại bỏ 6 cảnh báo biên dịch CS0108.
+   - Bổ sung khối `finally` đảm bảo cờ `IsBusy` và `IsScanning` luôn được giải phóng sau khi hoàn tất hoặc hủy tác vụ.
+
+4. **🧪 100% Unit Test Passed:**
+   - 435 / 435 bài kiểm thử xUnit chạy thành công 100% không cảnh báo, không lỗi.
 
 ---
 

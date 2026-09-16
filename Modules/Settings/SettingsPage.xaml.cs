@@ -65,11 +65,18 @@ public sealed partial class SettingsPage : Page
             ApplyAccentColorSelection(currentAccent);
 
             // Real-time network connectivity monitoring
-            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= OnNetworkStatusChanged;
-            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged += OnNetworkStatusChanged;
-            System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged -= OnNetworkAvailabilityChanged;
-            System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged += OnNetworkAvailabilityChanged;
-            _ = RefreshNetworkBadgeStateAsync();
+            try
+            {
+                System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= OnNetworkStatusChanged;
+                System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged += OnNetworkStatusChanged;
+                System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged -= OnNetworkAvailabilityChanged;
+                System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged += OnNetworkAvailabilityChanged;
+                _ = RefreshNetworkBadgeStateAsync();
+            }
+            catch (Exception netEx)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogMessage("SettingsPage", $"NetworkChange registration skipped: {netEx.Message}");
+            }
 
             try { PulsingUpdateGlowAnimation?.Begin(); } catch {}
 
@@ -89,8 +96,12 @@ public sealed partial class SettingsPage : Page
             ThemeManager.Instance.ThemeChanged -= OnThemeChangedExternally;
             SettingsService.Instance.SettingsChanged -= OnSettingsChangedExternally;
             TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
-            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= OnNetworkStatusChanged;
-            System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged -= OnNetworkAvailabilityChanged;
+            try
+            {
+                System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= OnNetworkStatusChanged;
+                System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged -= OnNetworkAvailabilityChanged;
+            }
+            catch { }
             _aboutTelemetryTimer?.Stop();
         };
     }

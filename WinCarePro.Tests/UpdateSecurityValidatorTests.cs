@@ -231,4 +231,70 @@ public class UpdateSecurityValidatorTests
             Assert.Contains("Publisher certificate mismatch", wrongReason ?? "");
         }
     }
+
+    // ============================================================
+    // 8. Hash Normalization & Prefixed SHA-256 Tests
+    // ============================================================
+
+    [Theory]
+    [InlineData("1604A371A37DCAFE9F11A9804E159E98297CDE38ECB6DC262AD0B25F74B2B41A", "1604a371a37dcafe9f11a9804e159e98297cde38ecb6dc262ad0b25f74b2b41a")]
+    [InlineData("sha256:1604a371a37dcafe9f11a9804e159e98297cde38ecb6dc262ad0b25f74b2b41a", "1604a371a37dcafe9f11a9804e159e98297cde38ecb6dc262ad0b25f74b2b41a")]
+    [InlineData("0x1604a371a37dcafe9f11a9804e159e98297cde38ecb6dc262ad0b25f74b2b41a", "1604a371a37dcafe9f11a9804e159e98297cde38ecb6dc262ad0b25f74b2b41a")]
+    [InlineData("  SHA256: 1604a371a37dcafe9f11a9804e159e98297cde38ecb6dc262ad0b25f74b2b41a  ", "1604a371a37dcafe9f11a9804e159e98297cde38ecb6dc262ad0b25f74b2b41a")]
+    [InlineData("", "")]
+    [InlineData(null, "")]
+    public void NormalizeHash_StripsPrefixesAndWhitespace(string? input, string expected)
+    {
+        string normalized = UpdateSecurityValidator.NormalizeHash(input);
+        Assert.Equal(expected, normalized);
+    }
+
+    [Fact]
+    public void ValidatePackage_RejectsMalformedSha256Format()
+    {
+        string tempFile = Path.Combine(Path.GetTempPath(), $"WinCare_Test_MalformedSha_{Guid.NewGuid():N}.exe");
+        File.WriteAllBytes(tempFile, new byte[] { 0x4D, 0x5A, 0x90, 0x00 });
+
+        try
+        {
+            var result = UpdateSecurityValidator.ValidatePackageForInstallation(
+                tempFile,
+                "not-a-valid-64-char-hash",
+                "Nguyen Trung Tien");
+
+            Assert.False(result.IsSuccess);
+            Assert.Contains("invalid", result.Message, StringComparison.OrdinalIgnoreCase);
+        }
+        finally
+        {
+            try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
+        }
+    }
+
+    [Fact]
+    public void ValidatePackage_AcceptsUnsignedPackage_WhenAuthenticodeNotRequired()
+    {
+        string tempFile = Path.Combine(Path.GetTempPath(), $"WinCare_Test_UnsignedValid_{Guid.NewGuid():N}.exe");
+        File.WriteAllBytes(tempFile, new byte[] { 0x4D, 0x5A, 0x90, 0x00, 0xAA, 0xBB });
+
+        try
+        {
+            string correctHash = CryptoHelper.ComputeFileHash(tempFile);
+
+            // With requireAuthenticode = false, unsigned binary with matching hash should pass
+            var result = UpdateSecurityValidator.ValidatePackageForInstallation(
+                tempFile,
+                correctHash,
+                "Nguyen Trung Tien",
+                requireAuthenticode: false);
+
+            Assert.True(result.IsSuccess);
+            Assert.Contains("verified successfully", result.Message, StringComparison.OrdinalIgnoreCase);
+            Assert.True(File.Exists(tempFile));
+        }
+        finally
+        {
+            try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
+        }
+    }
 }

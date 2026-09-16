@@ -1,4 +1,4 @@
-# 🚀 WinCare Pro Suite v4.9.2 (Codename: Orion)
+# 🚀 WinCare Pro Suite v4.9.3 (Codename: Orion)
 
 <div align="center">
   <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(0, 120, 212, 0.45); margin-bottom: 20px;" />
@@ -9,8 +9,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.2/WinCareProSetup.exe">
-      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v4.9.2-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v4.9.2" />
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v4.9.3-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v4.9.3" />
     </a>
   </p>
 
@@ -23,7 +23,7 @@
     <img src="https://img.shields.io/badge/Database-SQLite_3_(WAL)-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite 3" />
     <img src="https://img.shields.io/badge/Architecture-Modular_MVVM-008080?style=flat-square" alt="MVVM Pattern" />
     <img src="https://img.shields.io/badge/OS_Support-Windows_10_%2F_11-0078D6?style=flat-square&logo=windows" alt="Windows 10/11" />
-    <img src="https://img.shields.io/badge/Tests-100%25%20Passed%20(422%2F422)-success?style=flat-square&logo=xunit" alt="Tests Passed (422/422)" />
+    <img src="https://img.shields.io/badge/Tests-100%25%20Passed%20(435%2F435)-success?style=flat-square&logo=xunit" alt="Tests Passed (435/435)" />
     <img src="https://img.shields.io/badge/Security-Zero--Bug%20Hardened-green?style=flat-square&logo=shield" alt="Zero-Bug Hardened" />
   </p>
 </div>

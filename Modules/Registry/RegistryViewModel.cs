@@ -88,18 +88,6 @@ public class RegistryViewModel : ViewModelBase, IDisposable
         Cleanup();
     }
 
-    private void RunOnUI(Action action)
-    {
-        if (_dispatcherQueue != null)
-        {
-            _dispatcherQueue.TryEnqueue(() => action());
-        }
-        else
-        {
-            action();
-        }
-    }
-
     public void CancelScan()
     {
         try

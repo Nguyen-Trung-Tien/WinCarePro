@@ -297,18 +297,6 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         _ = ScanAppsAsync();
     }
 
-    private void RunOnUI(Action action)
-    {
-        if (_dispatcherQueue != null)
-        {
-            _dispatcherQueue.TryEnqueue(() => action());
-        }
-        else
-        {
-            action();
-        }
-    }
-
     public void CancelScan()
     {
         try

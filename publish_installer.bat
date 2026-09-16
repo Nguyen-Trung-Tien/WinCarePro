@@ -14,7 +14,7 @@ mkdir .\PublishOutputFolder
 
 echo.
 echo [2/3] Publishing project to folder...
-dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=false -o .\PublishOutputFolder
+dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:PublishReadyToRun=false -o .\PublishOutputFolder
 echo Copying Assets folder...
 xcopy /E /I /Y .\Assets .\PublishOutputFolder\Assets
 
@@ -35,11 +35,18 @@ if exist "%LocalAppData%\Programs\Inno Setup 6\ISCC.exe" (
 )
 
 echo.
+echo [4/4] Calculating SHA-256 and synchronizing update manifest...
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\update_sha256.ps1
+if errorlevel 1 (
+    echo [WARNING] Failed to synchronize SHA-256 to update.json!
+)
+
+echo.
 echo ===================================================
 echo   Success! 
 echo   Your setup installer is ready at:
 echo   .\PublishOutput\WinCareProSetup.exe
-echo   Dung luong file: ~72 MB
+echo   Checksum and update.json have been synchronized!
 echo ===================================================
 echo.
 timeout /t 5

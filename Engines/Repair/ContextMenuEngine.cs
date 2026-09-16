@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.Win32;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Core.Helpers;
+using WinCarePro.Infrastructure.Logging;
 
 namespace WinCarePro.Engines;
 
@@ -240,6 +242,13 @@ public class ContextMenuEngine
 
     private static void RenameSubKey(RegistryKey parentKey, string oldName, string newName)
     {
+        string fullKeyPath = Path.Combine(parentKey.Name, oldName);
+        if (!SafeRegistryGuard.IsSafeToDeleteKey(fullKeyPath))
+        {
+            CrashLogger.LogMessage("ContextMenuEngine", $"Blocked unsafe registry key rename/deletion: {fullKeyPath}");
+            return;
+        }
+
         using var oldKey = parentKey.OpenSubKey(oldName);
         if (oldKey == null) return;
 

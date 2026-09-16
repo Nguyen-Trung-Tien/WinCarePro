@@ -405,8 +405,11 @@ public class JunkViewModel : ViewModelBase, IDisposable
             await RunOnUIActionAsync(() =>
             {
                 ProgressMessage = "Cleanup failed:".T() + " " + ex.Message;
-                IsCleaning = false;
             });
+        }
+        finally
+        {
+            IsCleaning = false;
         }
     }
 

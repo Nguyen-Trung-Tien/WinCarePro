@@ -104,8 +104,12 @@ public sealed partial class SettingsPage
     {
         try
         {
-            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
-                return false;
+            try
+            {
+                if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+                    return false;
+            }
+            catch { }
 
             using var cts = new CancellationTokenSource(timeoutMs);
             using var client = new HttpClient { Timeout = TimeSpan.FromMilliseconds(timeoutMs) };
@@ -287,7 +291,30 @@ public sealed partial class SettingsPage
         using var doc = JsonDocument.Parse(json);
         var root = doc.RootElement;
 
-        string latestVerStr = root.GetProperty("version").GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString;
+        bool betaEnabled = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.BetaUpdates;
+        string latestVerStr;
+        string downloadUrl;
+        string expectedSha256;
+        string changelog;
+        string releaseNotes = root.TryGetProperty("releaseNotes", out var rnProp) ? rnProp.GetString() ?? "" : "";
+
+        if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
+        {
+            latestVerStr = betaVerProp.GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString;
+            downloadUrl = (root.TryGetProperty("beta_downloadUrl", out var bdlProp) ? bdlProp.GetString() : null)
+                ?? (root.TryGetProperty("beta_url", out var buProp) ? buProp.GetString() : "") ?? "";
+            expectedSha256 = root.TryGetProperty("beta_sha256", out var bshaProp) ? bshaProp.GetString() ?? "" : "";
+            changelog = root.TryGetProperty("beta_changelog", out var bclProp) ? bclProp.GetString() ?? "" : "";
+        }
+        else
+        {
+            latestVerStr = root.TryGetProperty("version", out var verProp) ? verProp.GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString : WinCarePro.Core.AppConstants.DefaultVersionString;
+            downloadUrl = (root.TryGetProperty("downloadUrl", out var dlProp) ? dlProp.GetString() : null)
+                ?? (root.TryGetProperty("url", out var uProp) ? uProp.GetString() : "") ?? "";
+            expectedSha256 = root.TryGetProperty("sha256", out var shaProp) ? shaProp.GetString() ?? "" : "";
+            changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
+        }
+
         string currentVerStr = WinCarePro.Core.AppConstants.VersionString;
 
         bool hasUpdate = false;
@@ -304,12 +331,6 @@ public sealed partial class SettingsPage
 
         if (hasUpdate)
         {
-            string changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
-            string downloadUrl = (root.TryGetProperty("downloadUrl", out var dlProp) ? dlProp.GetString() : null)
-                ?? (root.TryGetProperty("url", out var uProp) ? uProp.GetString() : "") ?? "";
-            string expectedSha256 = root.TryGetProperty("sha256", out var shaProp) ? shaProp.GetString() ?? "" : "";
-            string releaseNotes = root.TryGetProperty("releaseNotes", out var rnProp) ? rnProp.GetString() ?? "" : "";
-
             DispatcherQueue.TryEnqueue(() =>
             {
                 UpdateProgressBar.Value = 100;
@@ -476,7 +497,8 @@ public sealed partial class SettingsPage
                 WinCarePro.Infrastructure.Security.UpdateSecurityValidator.ValidatePackageForInstallation(
                     targetFile,
                     expectedSha256,
-                    WinCarePro.Infrastructure.Security.UpdateSecurityValidator.DefaultExpectedPublisher));
+                    WinCarePro.Infrastructure.Security.UpdateSecurityValidator.DefaultExpectedPublisher,
+                    requireAuthenticode: false));
 
             if (!validation.IsSuccess)
             {

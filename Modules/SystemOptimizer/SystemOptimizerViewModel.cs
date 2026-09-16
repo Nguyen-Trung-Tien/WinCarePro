@@ -148,18 +148,6 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _isAiScanning, value);
     }
 
-    private void RunOnUI(Action action)
-    {
-        if (_dispatcherQueue != null)
-        {
-            _dispatcherQueue.TryEnqueue(() => action());
-        }
-        else
-        {
-            action();
-        }
-    }
-
     public void CancelAiScan()
     {
         try
@@ -545,23 +533,30 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         var serviceNames = BackgroundServices.Select(s => s.ServiceName).ToList();
         Task.Run(() =>
         {
-            if (_isDisposed) return;
-            var statuses = new Dictionary<string, string>();
-            foreach (var name in serviceNames)
-            {
-                statuses[name] = GetServiceStatus(name);
-            }
-            _dispatcherQueue?.TryEnqueue(() =>
+            try
             {
                 if (_isDisposed) return;
-                foreach (var svc in BackgroundServices)
+                var statuses = new Dictionary<string, string>();
+                foreach (var name in serviceNames)
                 {
-                    if (statuses.TryGetValue(svc.ServiceName, out string? status))
-                    {
-                        svc.Status = status;
-                    }
+                    statuses[name] = GetServiceStatus(name);
                 }
-            });
+                RunOnUI(() =>
+                {
+                    if (_isDisposed) return;
+                    foreach (var svc in BackgroundServices)
+                    {
+                        if (statuses.TryGetValue(svc.ServiceName, out string? status))
+                        {
+                            svc.Status = status;
+                        }
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("SystemOptimizerViewModel.UpdateRamAndServices", ex);
+            }
         });
 
         if (AutoBoostEnabled && pct > 85 && !IsBoosting && !IsLoading)
@@ -575,44 +570,54 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     {
         if (IsBoosting || _isDisposed) return;
         IsBoosting = true;
-        if (!silent)
+        try
         {
-            RamOptimizedText = "Purging memory cache...".T();
-            Log("RAM Booster: Purging process working sets and system memory cache...".T());
-        }
-
-        var (procs, reclaimed) = await _optimizerEngine.OptimizeRamAsync();
-        double mb = reclaimed / 1024.0 / 1024.0;
-
-        _dispatcherQueue?.TryEnqueue(() =>
-        {
-            if (_isDisposed) return;
-
-            var (total, avail, used, pct) = _optimizerEngine.GetRamStatus();
-            RamUsagePercentage = pct;
-            RamUsageText = string.Format("{0:F1} GB / {1:F1} GB ({2:F0}%)", used, total, pct);
-            
-            TotalRamText = string.Format("{0:F1} GB", total);
-            AvailableRamText = string.Format("{0:F1} GB", avail);
-            UsedRamText = string.Format("{0:F1} GB", used);
-
-            IsBoosting = false;
-            RecalculateEfficiencyScore();
-
             if (!silent)
             {
-                string res = string.Format("Reclaimed {0} MB of physical memory.".T(), mb.ToString("F1"));
-                RamOptimizedText = res;
-                Log(string.Format("RAM Booster completed. Purged {0} processes and freed {1} MB.".T(), procs, mb.ToString("F1")));
-
-                var notificationService = _notificationService ?? App.Services?.GetService<INotificationService>();
-                notificationService?.ShowToast(
-                    "RAM Booster".T(), 
-                    string.Format("Successfully reclaimed {0} MB of physical memory across {1} processes.".T(), mb.ToString("F1"), procs),
-                    NotificationSeverity.Success
-                );
+                RamOptimizedText = "Purging memory cache...".T();
+                Log("RAM Booster: Purging process working sets and system memory cache...".T());
             }
-        });
+
+            var (procs, reclaimed) = await _optimizerEngine.OptimizeRamAsync();
+            double mb = reclaimed / 1024.0 / 1024.0;
+
+            RunOnUI(() =>
+            {
+                if (_isDisposed) return;
+
+                var (total, avail, used, pct) = _optimizerEngine.GetRamStatus();
+                RamUsagePercentage = pct;
+                RamUsageText = string.Format("{0:F1} GB / {1:F1} GB ({2:F0}%)", used, total, pct);
+                
+                TotalRamText = string.Format("{0:F1} GB", total);
+                AvailableRamText = string.Format("{0:F1} GB", avail);
+                UsedRamText = string.Format("{0:F1} GB", used);
+
+                RecalculateEfficiencyScore();
+
+                if (!silent)
+                {
+                    string res = string.Format("Reclaimed {0} MB of physical memory.".T(), mb.ToString("F1"));
+                    RamOptimizedText = res;
+                    Log(string.Format("RAM Booster completed. Purged {0} processes and freed {1} MB.".T(), procs, mb.ToString("F1")));
+
+                    var notificationService = _notificationService ?? App.Services?.GetService<INotificationService>();
+                    notificationService?.ShowToast(
+                        "RAM Booster".T(), 
+                        string.Format("Successfully reclaimed {0} MB of physical memory across {1} processes.".T(), mb.ToString("F1"), procs),
+                        NotificationSeverity.Success
+                    );
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("SystemOptimizerViewModel.BoostRamAsync", ex);
+        }
+        finally
+        {
+            IsBoosting = false;
+        }
     }
 
     private string GetServiceStatus(string name)
@@ -622,8 +627,9 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
             using var sc = new ServiceController(name);
             return sc.Status.ToString().T();
         }
-        catch
+        catch (Exception ex)
         {
+            Infrastructure.Logging.CrashLogger.LogMessage("SystemOptimizerViewModel", $"GetServiceStatus({name}) unavailable: {ex.Message}");
             return "Unavailable".T();
         }
     }

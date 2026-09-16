@@ -194,4 +194,40 @@ public class ViewModelBase : ObservableObject
 
         return tcs.Task;
     }
+
+    public void RunOnUI(Action action)
+    {
+        var dispatcher = DispatcherQueueInstance ?? App.MainDispatcherQueue;
+        if (dispatcher == null || dispatcher.HasThreadAccess)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("ViewModelBase.RunOnUI.Direct", ex);
+            }
+            return;
+        }
+
+        try
+        {
+            dispatcher.TryEnqueue(() =>
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("ViewModelBase.RunOnUI.Enqueued", ex);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("ViewModelBase.RunOnUI.TryEnqueue", ex);
+        }
+    }
 }

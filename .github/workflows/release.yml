@@ -28,7 +28,7 @@ jobs:
 
       - name: Publish portable application (win-x64)
         run: |
-          dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=false -o ./PublishOutputFolder
+          dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -p:PublishReadyToRun=false -o ./PublishOutputFolder
 
       - name: Copy Assets folder
         shell: pwsh
@@ -44,6 +44,11 @@ jobs:
         run: |
           iscc setup.iss
 
+      - name: Calculate SHA-256 Checksum and Sync Manifest
+        shell: pwsh
+        run: |
+          ./scripts/update_sha256.ps1
+
       - name: Compress Portable package
         shell: pwsh
         run: |
@@ -54,6 +59,7 @@ jobs:
         with:
           files: |
             PublishOutput/WinCareProSetup.exe
+            PublishOutput/WinCareProSetup.exe.sha256
             PublishOutput/WinCarePro-Portable-x64.zip
           generate_release_notes: true
         env:

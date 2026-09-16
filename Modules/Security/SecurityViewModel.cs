@@ -236,19 +236,25 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
                 if (!sbEnabled) SecurityAlerts.Add("Secure Boot is disabled. Enable it in your system BIOS/UEFI for rootkit defense.".T());
 
                 StatusMessage = string.Format("Scan complete. Security Score: {0}/100".T(), SecurityScore);
-                IsScanning = false;
                 SetOperationState(OperationState.Completed);
             });
         }
         catch (Exception ex)
         {
             CrashLogger.LogException("SecurityViewModel.ScanSecurity", ex);
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 StatusMessage = string.Format("Security analysis failed: {0}".T(), ex.Message);
-                IsScanning = false;
                 SetOperationState(OperationState.Failed);
             });
+        }
+        finally
+        {
+            IsScanning = false;
+            if (CurrentOperationState == OperationState.Running)
+            {
+                SetOperationState(OperationState.Idle);
+            }
         }
     }
 

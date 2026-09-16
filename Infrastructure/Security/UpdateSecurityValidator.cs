@@ -84,11 +84,37 @@ public static class UpdateSecurityValidator
     /// If any check fails, the file is securely deleted, an audit entry is logged,
     /// and a failed OperationResult is returned (no installer execution allowed).
     /// </summary>
+    /// <summary>
+    /// Normalizes and sanitizes a SHA-256 hash string by trimming whitespace,
+    /// stripping common prefixes (such as "sha256:" or "0x"), and converting to lowercase hex.
+    /// </summary>
+    public static string NormalizeHash(string? hash)
+    {
+        if (string.IsNullOrWhiteSpace(hash)) return string.Empty;
+        string cleaned = hash.Trim();
+        if (cleaned.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase))
+            cleaned = cleaned.Substring(7).Trim();
+        else if (cleaned.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            cleaned = cleaned.Substring(2).Trim();
+        return cleaned.ToLowerInvariant();
+    }
+
+    /// <summary>
+    /// Validates an update package binary before installation.
+    /// Enforces:
+    /// 1. Package existence and non-zero size.
+    /// 2. Mandatory SHA-256 presence, format validation (64 hex characters), and matching.
+    /// 3. Authenticode digital signature verification via WinVerifyTrust (configurable).
+    /// 4. Expected publisher certificate validation if signed.
+    /// If any check fails, the file is securely deleted, an audit entry is logged,
+    /// and a failed OperationResult is returned (no installer execution allowed).
+    /// </summary>
     public static OperationResult ValidatePackageForInstallation(
         string? filePath,
         string? expectedSha256,
         string? expectedPublisher = DefaultExpectedPublisher,
-        AuthenticodeVerifierFunc? customVerifier = null)
+        AuthenticodeVerifierFunc? customVerifier = null,
+        bool requireAuthenticode = true)
     {
         if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
         {
@@ -97,34 +123,64 @@ public static class UpdateSecurityValidator
         }
 
         // 1. Mandatory SHA-256 Digest Check
-        if (string.IsNullOrWhiteSpace(expectedSha256))
+        string normalizedExpected = NormalizeHash(expectedSha256);
+        if (string.IsNullOrWhiteSpace(normalizedExpected))
         {
             SecureDeleteFile(filePath);
             DbManager.LogAction($"Update rejected: Missing mandatory SHA-256 checksum for '{Path.GetFileName(filePath)}'.", "Software Updater", "Failed");
             return OperationResult.Fail("Security validation failed: Update manifest did not supply a required SHA-256 hash digest. Installation rejected.");
         }
 
-        string actualHash = CryptoHelper.ComputeFileHash(filePath);
-        if (!string.Equals(actualHash, expectedSha256.Trim(), StringComparison.OrdinalIgnoreCase))
+        if (normalizedExpected.Length != 64 || !System.Text.RegularExpressions.Regex.IsMatch(normalizedExpected, "^[a-f0-9]{64}$"))
+        {
+            SecureDeleteFile(filePath);
+            DbManager.LogAction($"Update rejected: Invalid SHA-256 format for '{Path.GetFileName(filePath)}'. Value: '{expectedSha256}'.", "Software Updater", "Failed");
+            return OperationResult.Fail($"Security validation failed: SHA-256 checksum format is invalid ('{expectedSha256}'). File deleted.");
+        }
+
+        string actualHash = NormalizeHash(CryptoHelper.ComputeFileHash(filePath));
+        if (!string.Equals(actualHash, normalizedExpected, StringComparison.OrdinalIgnoreCase))
         {
             SecureDeleteFile(filePath);
             DbManager.LogAction(
-                $"Update rejected: SHA-256 mismatch for '{Path.GetFileName(filePath)}'. Expected: {expectedSha256.Trim()}, Actual: {actualHash}. File securely deleted.",
+                $"Update rejected: SHA-256 mismatch for '{Path.GetFileName(filePath)}'. Expected: {normalizedExpected}, Actual: {actualHash}. File securely deleted.",
                 "Software Updater", "Failed");
-            return OperationResult.Fail($"Security validation failed: SHA-256 checksum mismatch (Expected: {expectedSha256.Trim()}, Actual: {actualHash}). File deleted.");
+            return OperationResult.Fail($"Security validation failed: SHA-256 checksum mismatch (Expected: {normalizedExpected}, Actual: {actualHash}). File deleted.");
         }
 
-        // 2. Authenticode WinVerifyTrust & Publisher Validation (NO PE-header-only fallback)
+        // 2. Authenticode WinVerifyTrust & Publisher Validation
         var verifier = customVerifier ?? VerifyAuthenticodeSignature;
         bool isSignatureValid = verifier(filePath, expectedPublisher, out string? sigFailureReason);
 
         if (!isSignatureValid)
         {
-            SecureDeleteFile(filePath);
-            DbManager.LogAction(
-                $"Update rejected: Authenticode verification failed for '{Path.GetFileName(filePath)}'. Reason: {sigFailureReason}. File securely deleted.",
-                "Software Updater", "Failed");
-            return OperationResult.Fail($"Security validation failed: {sigFailureReason}");
+            // If Authenticode is strictly required, reject and securely delete
+            if (requireAuthenticode)
+            {
+                SecureDeleteFile(filePath);
+                DbManager.LogAction(
+                    $"Update rejected: Authenticode verification failed for '{Path.GetFileName(filePath)}'. Reason: {sigFailureReason}. File securely deleted.",
+                    "Software Updater", "Failed");
+                return OperationResult.Fail($"Security validation failed: {sigFailureReason}");
+            }
+            else
+            {
+                // Authenticode is optional for hash-pinned open-source distributions:
+                // If signature exists but publisher mismatches, reject!
+                if (!string.IsNullOrWhiteSpace(sigFailureReason) && sigFailureReason.Contains("Publisher certificate mismatch", StringComparison.OrdinalIgnoreCase))
+                {
+                    SecureDeleteFile(filePath);
+                    DbManager.LogAction(
+                        $"Update rejected: Publisher mismatch on signed binary '{Path.GetFileName(filePath)}'. Reason: {sigFailureReason}. File securely deleted.",
+                        "Software Updater", "Failed");
+                    return OperationResult.Fail($"Security validation failed: {sigFailureReason}");
+                }
+
+                // Log informational warning for unsigned binary with verified hash
+                DbManager.LogAction(
+                    $"Update package '{Path.GetFileName(filePath)}' is unsigned but verified via strict SHA-256 hash pinning ({normalizedExpected}). Proceeding with installation.",
+                    "Software Updater", "Warning");
+            }
         }
 
         DbManager.LogAction($"Update package '{Path.GetFileName(filePath)}' passed all security integrity checks.", "Software Updater", "Success");

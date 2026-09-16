@@ -213,7 +213,10 @@ public class StartupEngine
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogMessage("StartupEngine", $"Failed to read boot time from EventLog: {ex.Message}");
+        }
         return -1;
     }
 

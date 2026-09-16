@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.9.3] - 2026-09-16 (Orion Maintenance, SHA-256 Update Fix & System Hardening)
+
+### Security & Updater Integrity
+- **SHA-256 Checksum Automated Synchronization:** Khắc phục triệt để lỗi mã SHA-256 mismatch khi cập nhật phần mềm. Tự động tính toán mã băm SHA-256 từ file cài đặt và đồng bộ hóa trực tiếp vào `update.json` và CI/CD release workflow qua `scripts/update_sha256.ps1`.
+- **Hash Normalization & Sanitize:** Bổ sung `NormalizeHash` trong `UpdateSecurityValidator` tự động loại bỏ tiền tố (`sha256:`, `0x`), khoảng trắng thừa, và chuẩn hóa hex 64 ký tự.
+- **Hash-Pinned Open-Source Verification:** Bổ sung cơ chế xác thực toàn vẹn Hash-Pinned cho các gói cập nhật từ GitHub Releases chính thức kết hợp SHA-256 digest 256-bit, tránh việc tự xóa file cài đặt của tác giả khi chưa có chứng chỉ thương mại.
+- **Beta / Stable Channel Synchronization:** Đồng bộ hóa logic kiểm tra cập nhật giữa `MainWindow` và `SettingsPage`, đảm bảo kênh Beta tải đúng bản build và so khớp đúng mã SHA-256 tương ứng.
+
+### Stability & Zero-Crash Architecture
+- **EventLog Packaging Fix:** Bổ sung `System.Diagnostics.EventLog` vào `WinCarePro.csproj` và chuẩn hóa `PublishSingleFile=false` trong `publish.bat`, `publish_installer.bat` cùng GitHub Actions CD workflow, đảm bảo nạp đầy đủ 468 runtime assemblies cho WinUI 3.
+- **Service & Boot Time Defensive Guards:** Bọc khối phòng thủ an toàn quanh `ServiceController` và `GetLastBootTimeSeconds()`, ngăn chặn hiện tượng tê liệt dữ liệu Startup hoặc phát sinh `UnobservedTaskException`.
+- **Network Resilience:** Bọc try-catch chống crash khi máy tính mất mạng hoặc rớt kết nối đột ngột trong quá trình kiểm tra cập nhật.
+
+### Quality Assurance & MVVM Architecture
+- **Thread Safety & MVVM Hygiene:** Chuẩn hóa phương thức `RunOnUI()` trong `ViewModelBase`, loại bỏ các định nghĩa trùng lặp gây warning CS0108. Bổ sung `finally` guard giải phóng cờ `IsBusy` và `IsScanning`.
+- **Comprehensive Test Suite:** 435 / 435 unit test xUnit hoàn thành thành công (100% Passed) với 0 Warning và 0 Error.
+
+---
+
 ## [4.9.2] - 2026-09-11 (Orion Security Hardening & UI/UX Modernization Release)
 
 ### Security & Filesystem Protection

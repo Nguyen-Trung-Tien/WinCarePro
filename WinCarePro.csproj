@@ -16,11 +16,11 @@
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
-    <Version>4.9.2</Version>
-    <AssemblyVersion>4.9.2.0</AssemblyVersion>
-    <FileVersion>4.9.2.0</FileVersion>
-    <InformationalVersion>4.9.2 (Codename: Orion)</InformationalVersion>
-    <Product>WinCare Pro v4.9.2</Product>
+    <Version>4.9.3</Version>
+    <AssemblyVersion>4.9.3.0</AssemblyVersion>
+    <FileVersion>4.9.3.0</FileVersion>
+    <InformationalVersion>4.9.3 (Codename: Orion)</InformationalVersion>
+    <Product>WinCare Pro v4.9.3</Product>
   </PropertyGroup>
 
   <ItemGroup>
@@ -101,6 +101,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="0.3.2" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.0" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="10.0.9" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="10.0.0" />
     <PackageReference Include="System.Management" Version="10.0.9" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.9" />

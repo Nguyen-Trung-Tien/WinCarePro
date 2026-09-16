@@ -224,7 +224,8 @@ public sealed partial class MainWindow : Window
             var validation = Infrastructure.Security.UpdateSecurityValidator.ValidatePackageForInstallation(
                 setupFilePath,
                 expectedHash,
-                Infrastructure.Security.UpdateSecurityValidator.DefaultExpectedPublisher);
+                Infrastructure.Security.UpdateSecurityValidator.DefaultExpectedPublisher,
+                requireAuthenticode: false);
 
             if (!validation.IsSuccess)
             {

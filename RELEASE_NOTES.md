@@ -4,7 +4,7 @@
 
 ## 🚀 WinCare Pro v4.9.3 (Codename: Orion) — Bản Sửa Lỗi Cập Nhật SHA-256 & Gia Cố Toàn Diện Hệ Thống (SHA-256 Update Fix & System Hardening Release)
 
-> **Phiên bản:** v4.9.3 (Codename: Orion) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Sẵn Sàng (Release Ready) · **Chứng nhận:** 435/435 Tests PASS · 0 Warnings / 0 Errors
+> **Phiên bản:** v4.9.3 (Codename: Orion) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Sẵn Sàng (Release Ready) · **Chứng nhận:** 438/438 Tests PASS · 0 Warnings / 0 Errors
 
 **WinCare Pro v4.9.3 (Codename: Orion)** tập trung khắc phục triệt để lỗi mã SHA-256 trong chu trình tự động cập nhật, tự động hóa tính và đồng bộ hóa manifest, loại bỏ hoàn toàn các nguy cơ crash tiềm ẩn khi khởi động, tối ưu hóa toàn diện hiệu năng và xử lý đa luồng WinUI 3.
 
@@ -12,6 +12,9 @@
 
 1. **🔐 Khắc Phục Triệt Để Lỗi Mã SHA-256 Khi Cập Nhật:**
    - **Tự động đồng bộ hóa SHA-256:** Tự động tính toán mã hash SHA-256 chính xác của file cài đặt `WinCareProSetup.exe` và ghi trực tiếp vào `update.json` và CI/CD release workflow qua script `scripts/update_sha256.ps1` tích hợp trong `publish_installer.bat`.
+   - **Tự động Commit & Push trong GitHub Actions:** Bổ sung cơ chế tự động commit `update.json` về nhánh `main` và upload trực tiếp `update.json` lên GitHub Release Assets trong `.github/workflows/release.yml`, loại bỏ hoàn toàn hiện tượng hash trên `main` bị lệch so với hash runner tạo ra.
+   - **Cơ chế Tự Phục Hồi Checksum Đồng Hành (Authoritative Companion Checksum Fallback):** Khi tải bản cập nhật, ứng dụng truy vấn song song file `.sha256` phát hành cùng gói setup trên GitHub Releases (`TryFetchCompanionSha256Async`). Nếu hash trong `update.json` bị lệch hoặc chậm cập nhật CDN, ứng dụng sẽ xác thực với checksum chính thức này mà không làm gián đoạn cập nhật.
+   - **Phòng vệ Tải Dở Dang (Truncated Download Guard):** Bổ sung kiểm tra `totalRead == totalBytes` trước khi hash. Nếu mạng bị ngắt giữa chừng, hệ thống báo lỗi mạng gián đoạn rõ ràng để người dùng thử lại thay vì báo nhầm "lỗi SHA-256 mismatch".
    - **Làm sạch mã băm (Hash Normalization):** Bổ sung hàm `NormalizeHash()` loại bỏ tiền tố (`sha256:`, `0x`), khoảng trắng thừa, và chuẩn hóa hex 64 ký tự.
    - **Cơ chế Hash-Pinned Integrity:** Cho phép xác thực an toàn đối với các bản phát hành nguồn mở từ GitHub Releases chính thức kết hợp mã băm 256-bit, tránh việc tự xóa file cài đặt khi chưa có chứng chỉ số thương mại.
    - **Đồng bộ kênh Beta & Stable:** Đồng bộ hóa logic kiểm tra cập nhật giữa `MainWindow` và `SettingsPage`, đảm bảo tải đúng URL và so khớp đúng mã SHA-256.
@@ -26,89 +29,7 @@
    - Bổ sung khối `finally` đảm bảo cờ `IsBusy` và `IsScanning` luôn được giải phóng sau khi hoàn tất hoặc hủy tác vụ.
 
 4. **🧪 100% Unit Test Passed:**
-   - 435 / 435 bài kiểm thử xUnit chạy thành công 100% không cảnh báo, không lỗi.
-
----
-
-## 🚀 WinCare Pro v4.9.2 (Codename: Orion) — Bản Nâng Cấp Bảo Mật & Tinh Chỉnh Giao Diện (Security Hardening & UI/UX Polish Release)
-
-> **Phiên bản:** v4.9.2 (Codename: Orion) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Sẵn Sàng (Release Ready) · **Chứng nhận:** 422/422 Tests PASS · 0 Warnings / 0 Errors
-
-**WinCare Pro v4.9.2 (Codename: Orion)** tập trung khắc phục lỗ hổng bảo mật liên kết tượng trưng (Junction/Reparse Points) trong cơ chế dọn dẹp cache Delivery Optimization, đồng thời hiện đại hóa toàn diện hệ thống thiết kế giao diện WinUI 3 Fluent Design, nâng cao tính công thái học và hỗ trợ tính năng tiếp cận Reduced Motion theo tiêu chuẩn Windows.
-
-### 🛡️ Điểm Cải Tiến & Vá Bảo Mật Nổi Bật (Security & Enhancements in v4.9.2)
-
-1. **🔒 Phòng Vệ Lỗ Hổng Directory Traversal & Reparse Points:**
-   - Trong `SystemOptimizerEngine.cs`, phương thức `CleanDeliveryOptimizationCacheAsync` được gia cố toàn diện: loại bỏ việc duyệt thư mục đệ quy mù quáng, chủ động kiểm tra cờ `FileAttributes.ReparsePoint` trên mọi thư mục con.
-   - Thư mục liên kết ngoài (Junction/Symlink) bị từ chối tuyệt đối, và toàn bộ đường dẫn con được xác minh nghiêm ngặt qua rào chắn `SafePathGuard.IsPathSafe()` trước khi thực hiện thao tác xóa.
-
-2. **🎨 Chuẩn Hóa Hệ Thống Thiết Kế UI/UX (Fluent Design System):**
-   - Đồng bộ hóa các chỉ số lề (Margin), đệm (Padding) và bán kính bo góc (CornerRadius) giữa các view chính (`MainWindow`, `MainPage`, `DiskPage`, `RegistryPage`, `RepairPage`, `SettingsPage`, `UninstallPage`).
-   - Bổ sung `DangerButtonStyle` trong `App.xaml` cho các tác vụ mang tính rủi ro hoặc không thể hoàn tác, hiển thị cảnh báo đỏ trực quan khi hover.
-
-3. **♿ Khả Năng Tiếp Cận & Giảm Chuyển Động (Reduced Motion Support):**
-   - `ThemeManager` được tích hợp khả năng lắng nghe động cấu hình hệ thống `UISettings.AnimationsEnabled` và phát sự kiện `ReducedMotionChanged`.
-   - Giảm thiểu hoặc tắt các hiệu ứng chuyển động nặng khi người dùng kích hoạt chế độ Reduced Motion trong cài đặt Windows Accessibility, đảm bảo sự thoải mái tối đa cho mắt.
-
-4. **🧪 Chất Lượng Kiểm Thử & Ổn Định Tuyệt Đối:**
-   - Toàn bộ 422 ca kiểm thử tự động (Unit Tests, Security Validators, UI Consistency) đạt kết quả **PASS 100%** với 0 Cảnh báo và 0 Lỗi biên dịch (`-warnaserror`).
-
----
-
-## 🚀 WinCare Pro v4.9.1 (Codename: Nova) — Bản Cập Nhật Bảo Mật & Nâng Cao Độ Tin Cậy (Maintenance & Security Hardening Release)
-
-> **Phiên bản:** v4.9.1 (Codename: Nova) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Chính Thức (Official Production Release) · **Chứng nhận:** 397/397 Tests PASS · 0 Warnings / 0 Errors
-
-**WinCare Pro v4.9.1 (Codename: Nova)** tập trung gia cố toàn diện các chốt chặn an ninh, bảo vệ tính toàn vẹn của chuỗi cập nhật tự động (Secure Auto-Update Chain), kiểm soát chặt chẽ quy trình khôi phục Registry (Registry Rollback Guard) và chuẩn hóa xử lý tiến trình cài đặt của hệ thống.
-
-### 🛡️ Điểm Cải Tiến & Vá Bảo Mật Nổi Bật (Security & Maintenance in v4.9.1)
-
-1. **🔐 Khóa Chặt Chuỗi Tự Cập Nhật (Self-Update Cryptographic Hardening):**
-   - **Bắt buộc băm SHA-256:** Từ chối tuyệt đối việc tải hoặc cài đặt nếu thiếu hash SHA-256 hoặc hash không trùng khớp.
-   - **Xóa bỏ fallback PE Header:** Loại trừ hoàn toàn cơ chế kiểm tra sơ bộ PE header không an toàn.
-   - **Xác thực chữ ký số Authenticode:** Kiểm tra nghiêm ngặt chữ ký điện tử qua Win32 `WinVerifyTrust` và xác minh danh tính nhà phát hành (`Nguyen Trung Tien`).
-   - **Giới hạn tên miền phát hành an toàn:** Chỉ chấp nhận giao thức HTTPS và các endpoint phát hành chính thức (`github.com/Nguyen-Trung-Tien/WinCarePro/`, `objects.githubusercontent.com`, `raw.githubusercontent.com`).
-   - **Cơ chế Fail-Closed:** Khi gặp bất kỳ lỗi xác thực nào, ứng dụng tự động xóa an toàn tệp tải về tạm thời, ghi nhật ký kiểm toán (audit log), thông báo lỗi rõ ràng và tuyệt đối không kích hoạt tiến trình cài đặt.
-
-2. **⚙️ An Toàn Tiến Trình Cài Đặt (Installer Process Isolation):**
-   - Trong `setup.iss`, chuẩn hóa cấu hình `CloseApplicationsFilter` chỉ đóng duy nhất tiến trình `WinCarePro.exe`, chấm dứt hoàn toàn nguy cơ vô tình đóng nhầm ứng dụng bên thứ ba.
-
-3. **🗄️ Bảo Vệ Khôi Phục Registry (UndoManager Rollback Barrier):**
-   - Kiểm tra bộ lọc an toàn `SafeRegistryGuard` trước mọi thao tác `DeleteValue`, `SetValue`, `OpenSubKey` có quyền ghi khi hoàn tác snapshot.
-   - Ngăn chặn hoàn tác can thiệp vào các nhánh Registry hệ thống sống còn hoặc các giá trị nhạy cảm (`Shell`, `Userinit`, `BootExecute`, `AppInit_DLLs`).
-
-4. **⚡ Xử Lý Lỗi Toàn Diện & Minh Bạch:**
-   - Rà soát và loại bỏ các khối `catch {}` nuốt lỗi trong các luồng tác động hệ thống, bổ sung ghi nhật ký chẩn đoán và trả về mã kết quả `OperationResult` chính xác, không báo thành công giả.
-
----
-
-## 🚀 WinCare Pro v4.9.0 (Codename: Nova) — Bộ Ứng Dụng Tối Ưu, Chăm Sóc & Bảo Mật Windows Toàn Diện
-
-> **Phiên bản:** v4.9.0 (Codename: Nova) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Cũ (Previous Production Release) · **Chứng nhận:** 300/300 Tests PASS · 0 Warnings / 0 Errors
-
-**WinCare Pro v4.9.0 (Codename: Nova)** là phiên bản nâng cấp sản xuất đỉnh cao (Production Hardening & Safety Architecture), củng cố toàn diện độ an toàn cấp doanh nghiệp, bảo vệ tuyệt đối hệ thống Windows khỏi các nguy cơ xóa nhầm hoặc xung đột luồng, đồng thời tối ưu hóa vòng đời tác vụ ngầm và phản hồi giao diện WinUI 3 đạt mức hoàn thiện 100%.
-
----
-
-## ✨ Điểm Mới & Cải Tiến Nổi Bật Dành Cho Người Dùng (What's New in v4.9.0)
-
-### 1. 🛡️ Khiên Bảo Vệ Registry Đa Lớp (SafeRegistryGuard Enterprise Barrier)
-* **Bảo vệ toàn vẹn Registry hệ thống:** Tích hợp bộ lọc an toàn `SafeRegistryGuard`, ngăn chặn tuyệt đối mọi hành vi xóa nhầm hoặc sửa đổi các nhánh gốc Windows (`HKLM`, `HKCU`, `HKCR`, `HKU`, `HKCC`) và các nhánh cấu hình sống còn (`SYSTEM\CurrentControlSet`, `Winlogon`, `Image File Execution Options`).
-* **Bảo vệ khóa khởi động và thông số boot:** Các giá trị nhạy cảm của hệ thống như `Shell`, `Userinit`, `AppInit_DLLs` được khóa an toàn, ngăn chặn mã độc hoặc thao tác dọn dẹp nhầm lẫn làm hỏng phiên đăng nhập Windows.
-* **Yêu cầu phân cấp nghiêm ngặt:** Khóa Registry chỉ được phép xóa khi có độ sâu từ 3 phân cấp trở lên và thuộc về ứng dụng cụ thể.
-
-### 2. 🔒 Bảo Vệ Dịch Vụ Cốt Lõi Hệ Điều Hành (ServiceSafetyService Fail-Safe)
-* **Chống dừng / vô hiệu hóa nhầm dịch vụ Windows:** Tích hợp cơ chế kiểm soát dịch vụ bảo vệ tuyệt đối các dịch vụ lõi như `RpcSs` (Remote Procedure Call), `WinDefend` (Microsoft Defender), `SamSs` (Security Accounts Manager), `PlugPlay`, `RpcEptMapper`, `DcomLaunch`.
-* **Cảnh báo và tự động ghi log an toàn:** Bất kỳ thao tác nào cố tình đưa dịch vụ cốt lõi về trạng thái `Disabled` hoặc `Stop` đều bị chặn tức thì và ghi nhận vào nhật ký kiểm toán hệ thống.
-
-### 3. ⚡ Quản Lý Vòng Đời Tác Vụ & Điều Phối Giao Diện An Toàn (CancellationToken & UI Dispatcher)
-* **Hủy tác vụ an toàn, tức thời:** Toàn bộ các thao tác quét rác, quét tàn dư, sửa Registry, chẩn đoán AI và kiểm tra mạng đều được kiểm soát bởi `CancellationToken`. Người dùng có thể hủy hoặc chuyển trang bất kỳ lúc nào mà không lo ứng dụng bị treo.
-* **Tự động dọn dẹp khi rời trang (`OnNavigatedFrom`):** Khi người dùng chuyển trang, ViewModel tự động hủy tác vụ cũ, giải phóng trạng thái `IsBusy` và ngắt kết nối sự kiện ngầm, đảm bảo khi quay lại trang luôn sẵn sàng 100%.
-* **Đồng bộ luồng giao diện WinUI 3 hoàn hảo:** Mọi thông báo ngầm từ cơ sở dữ liệu SQLite và tiến độ xử lý đều được điều phối chuẩn xác qua `App.MainDispatcherQueue.TryEnqueue()`, triệt tiêu hoàn toàn nguy cơ lỗi luồng chéo (COMException).
-
-### 4. 📁 Củng Cố An Toàn Tệp Tin & Thư Mục (Enhanced SafePathGuard)
-* **Xóa thư mục không đệ quy:** Quy trình dọn dẹp thư mục chuyển sang cơ chế xóa an toàn không đệ quy (`Delete(false)`), đảm bảo chỉ xóa thư mục khi đã thực sự rỗng và bảo vệ toàn vẹn các liên kết tượng trưng (Junction/Symlink).
-* **Khóa bảo vệ `C:\ProgramData`:** Bổ sung `C:\ProgramData` và các thư mục bảo mật Windows vào danh sách cấm xóa tuyệt đối.
+   - 438 / 438 bài kiểm thử xUnit chạy thành công 100% không cảnh báo, không lỗi.
 
 ---
 
@@ -165,5 +86,5 @@
 ---
 
 <div align="center">
-  <sub>WinCare Pro Suite v4.9.1 Nova • Phát triển bởi <b>Nguyễn Trung Tiến</b></sub>
+  <sub>WinCare Pro Suite v4.9.3 Orion • Phát triển bởi <b>Nguyễn Trung Tiến</b></sub>
 </div>

@@ -297,4 +297,82 @@ public class UpdateSecurityValidatorTests
             try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
         }
     }
+
+    // ============================================================
+    // 9. Alternate & Companion Hash Validation Tests
+    // ============================================================
+
+    [Fact]
+    public void ValidatePackage_AcceptsPackage_WhenHashMatchesAlternateAuthoritativeHash()
+    {
+        string tempFile = Path.Combine(Path.GetTempPath(), $"WinCare_Test_AltHash_{Guid.NewGuid():N}.exe");
+        File.WriteAllBytes(tempFile, new byte[] { 0x4D, 0x5A, 0x90, 0x00, 0x11, 0x22, 0x33 });
+
+        try
+        {
+            string actualHash = CryptoHelper.ComputeFileHash(tempFile);
+            string staleManifestHash = "0000000000000000000000000000000000000000000000000000000000000000";
+
+            var result = UpdateSecurityValidator.ValidatePackageForInstallation(
+                tempFile,
+                staleManifestHash,
+                "Nguyen Trung Tien",
+                requireAuthenticode: false,
+                alternateAcceptableHashes: new[] { actualHash });
+
+            Assert.True(result.IsSuccess);
+            Assert.Contains("verified successfully", result.Message, StringComparison.OrdinalIgnoreCase);
+            Assert.True(File.Exists(tempFile));
+        }
+        finally
+        {
+            try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
+        }
+    }
+
+    [Fact]
+    public void ValidatePackage_RejectsPackage_WhenNeitherPrimaryNorAlternateMatches()
+    {
+        string tempFile = Path.Combine(Path.GetTempPath(), $"WinCare_Test_RejectBoth_{Guid.NewGuid():N}.exe");
+        File.WriteAllBytes(tempFile, new byte[] { 0x4D, 0x5A, 0x90, 0x00, 0x99, 0x88 });
+
+        try
+        {
+            string wrong1 = "1111111111111111111111111111111111111111111111111111111111111111";
+            string wrong2 = "2222222222222222222222222222222222222222222222222222222222222222";
+
+            var result = UpdateSecurityValidator.ValidatePackageForInstallation(
+                tempFile,
+                wrong1,
+                "Nguyen Trung Tien",
+                requireAuthenticode: false,
+                alternateAcceptableHashes: new[] { wrong2 });
+
+            Assert.False(result.IsSuccess);
+            Assert.Contains("mismatch", result.Message, StringComparison.OrdinalIgnoreCase);
+            Assert.False(File.Exists(tempFile), "Untrusted binary must be deleted.");
+        }
+        finally
+        {
+            try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
+        }
+    }
+
+    [Fact]
+    public async Task TryFetchCompanionSha256Async_RejectsUntrustedOrEmptyUrls()
+    {
+        using var client = new System.Net.Http.HttpClient();
+        
+        // Null or empty URL
+        string hash1 = await UpdateSecurityValidator.TryFetchCompanionSha256Async(client, null);
+        Assert.Equal(string.Empty, hash1);
+
+        // Insecure or untrusted URL
+        string hash2 = await UpdateSecurityValidator.TryFetchCompanionSha256Async(client, "http://evil.com/setup.exe");
+        Assert.Equal(string.Empty, hash2);
+
+        // Non-existent GitHub release file
+        string hash3 = await UpdateSecurityValidator.TryFetchCompanionSha256Async(client, "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v99.99.99/FakeSetup.exe");
+        Assert.Equal(string.Empty, hash3);
+    }
 }

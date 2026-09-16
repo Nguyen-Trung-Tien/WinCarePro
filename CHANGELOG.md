@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security & Updater Integrity
 - **SHA-256 Checksum Automated Synchronization:** Khắc phục triệt để lỗi mã SHA-256 mismatch khi cập nhật phần mềm. Tự động tính toán mã băm SHA-256 từ file cài đặt và đồng bộ hóa trực tiếp vào `update.json` và CI/CD release workflow qua `scripts/update_sha256.ps1`.
+- **CI/CD Auto-Commit & Release Asset Upload:** Tự động commit `update.json` về lại nhánh `main` và upload trực tiếp `update.json` lên GitHub Release Assets trong `.github/workflows/release.yml`, đảm bảo remote manifest luôn khớp tuyệt đối với installer do GitHub Actions biên dịch.
+- **Authoritative Companion Checksum Fallback:** Tự động truy vấn file `.sha256` đi kèm gói setup trên GitHub Releases (`TryFetchCompanionSha256Async`). Nếu `update.json` bị trễ do CDN cache hoặc chưa kịp đồng bộ, ứng dụng sẽ xác thực dựa trên companion hash chính thức.
+- **Truncated Download Guard:** Ngăn chặn việc báo sai lỗi SHA-256 khi file tải về bị dở dang do đứt mạng (`totalRead < totalBytes`). Báo lỗi rõ ràng để người dùng retry hoặc tự động kết nối lại.
 - **Hash Normalization & Sanitize:** Bổ sung `NormalizeHash` trong `UpdateSecurityValidator` tự động loại bỏ tiền tố (`sha256:`, `0x`), khoảng trắng thừa, và chuẩn hóa hex 64 ký tự.
 - **Hash-Pinned Open-Source Verification:** Bổ sung cơ chế xác thực toàn vẹn Hash-Pinned cho các gói cập nhật từ GitHub Releases chính thức kết hợp SHA-256 digest 256-bit, tránh việc tự xóa file cài đặt của tác giả khi chưa có chứng chỉ thương mại.
 - **Beta / Stable Channel Synchronization:** Đồng bộ hóa logic kiểm tra cập nhật giữa `MainWindow` và `SettingsPage`, đảm bảo kênh Beta tải đúng bản build và so khớp đúng mã SHA-256 tương ứng.

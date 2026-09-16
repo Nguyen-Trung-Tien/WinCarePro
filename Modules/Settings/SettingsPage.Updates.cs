@@ -488,6 +488,20 @@ public sealed partial class SettingsPage
             fileStream.Close();
             UpdateProgressBar.IsIndeterminate = false;
 
+            // Guard against truncated or incomplete downloads
+            if (totalBytes > 0 && totalRead < totalBytes)
+            {
+                try { if (File.Exists(targetFile)) File.Delete(targetFile); } catch { }
+                throw new IOException(string.Format("Download interrupted: received {0} of {1}. Please check your network connection and retry.".T(), 
+                    FormatHelper.FormatBytes(totalRead), 
+                    FormatHelper.FormatBytes(totalBytes)));
+            }
+
+            // Query authoritative companion sha256 as secondary valid hash candidate
+            string companionHash = await WinCarePro.Infrastructure.Security.UpdateSecurityValidator.TryFetchCompanionSha256Async(_httpClient, downloadUrl, token);
+            var acceptableHashes = new List<string>();
+            if (!string.IsNullOrWhiteSpace(companionHash)) acceptableHashes.Add(companionHash);
+
             // Integrity & Authenticode Signature Verification via UpdateSecurityValidator
             UpdateProgressStepLabel.Text = "Verifying Package Cryptography & Integrity...".T();
             UpdateStatusLabel.Text = "Validating cryptographic signature & SHA-256 digest...".T();
@@ -498,7 +512,8 @@ public sealed partial class SettingsPage
                     targetFile,
                     expectedSha256,
                     WinCarePro.Infrastructure.Security.UpdateSecurityValidator.DefaultExpectedPublisher,
-                    requireAuthenticode: false));
+                    requireAuthenticode: false,
+                    alternateAcceptableHashes: acceptableHashes));
 
             if (!validation.IsSuccess)
             {

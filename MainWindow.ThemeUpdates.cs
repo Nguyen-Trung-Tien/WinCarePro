@@ -112,9 +112,11 @@ public sealed partial class MainWindow : Window
             else
 #endif
             {
-                string jsonUrl = "https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json";
+                string jsonUrl = $"https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json?t={DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
                 using var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(10));
-                using var resp = await _updateHttpClient.GetAsync(jsonUrl, cts.Token);
+                using var req = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get, jsonUrl);
+                req.Headers.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true, NoStore = true, MustRevalidate = true };
+                using var resp = await _updateHttpClient.SendAsync(req, cts.Token);
                 resp.EnsureSuccessStatusCode();
                 response = await resp.Content.ReadAsStringAsync(cts.Token);
             }
@@ -200,8 +202,12 @@ public sealed partial class MainWindow : Window
 
         try
         {
-            using var response = await _updateHttpClient.GetAsync(downloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead);
+            using var req = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get, downloadUrl);
+            req.Headers.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true, NoStore = true };
+            using var response = await _updateHttpClient.SendAsync(req, System.Net.Http.HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
+
+            long totalBytes = response.Content.Headers.ContentLength ?? -1L;
 
             string tempFolder = Path.Combine(Path.GetTempPath(), "WinCareProUpdates");
             if (!Directory.Exists(tempFolder))
@@ -214,18 +220,34 @@ public sealed partial class MainWindow : Window
             using var contentStream = await response.Content.ReadAsStreamAsync();
             var buffer = new byte[8192];
             int read;
+            long totalRead = 0;
             while ((read = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
             {
                 await fileStream.WriteAsync(buffer, 0, read);
+                totalRead += read;
             }
             fileStream.Close();
+
+            // Guard against truncated or incomplete downloads
+            if (totalBytes > 0 && totalRead < totalBytes)
+            {
+                try { if (File.Exists(setupFilePath)) File.Delete(setupFilePath); } catch { }
+                DbManager.LogAction($"Update download truncated: received {totalRead} of {totalBytes} bytes. Connection interrupted.", "Software Updater", "Failed");
+                return;
+            }
+
+            // Resolve authoritative companion SHA-256 from release asset if available
+            string companionHash = await Infrastructure.Security.UpdateSecurityValidator.TryFetchCompanionSha256Async(_updateHttpClient, downloadUrl);
+            var acceptableHashes = new List<string>();
+            if (!string.IsNullOrWhiteSpace(companionHash)) acceptableHashes.Add(companionHash);
 
             // Strict Security Validation via UpdateSecurityValidator (SHA-256 + Authenticode + Publisher)
             var validation = Infrastructure.Security.UpdateSecurityValidator.ValidatePackageForInstallation(
                 setupFilePath,
                 expectedHash,
                 Infrastructure.Security.UpdateSecurityValidator.DefaultExpectedPublisher,
-                requireAuthenticode: false);
+                requireAuthenticode: false,
+                alternateAcceptableHashes: acceptableHashes);
 
             if (!validation.IsSuccess)
             {

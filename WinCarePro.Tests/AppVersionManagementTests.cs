@@ -82,5 +82,22 @@ public class AppVersionManagementTests
             string appxText = File.ReadAllText(appxManifestPath);
             Assert.Contains($"Version=\"{AppConstants.DefaultAssemblyVersionString}\"", appxText);
         }
+
+        // 6. Check MainWindow.xaml
+        string mainWindowPath = Path.Combine(projectDir, "MainWindow.xaml");
+        if (File.Exists(mainWindowPath))
+        {
+            string mainWindowText = File.ReadAllText(mainWindowPath);
+            Assert.Contains($"x:Name=\"AppTitleVersionBadge\" Text=\"{AppConstants.DisplayVersion}\"", mainWindowText);
+        }
+
+        // 7. Check SettingsPage.xaml
+        string settingsPagePath = Path.Combine(projectDir, "Modules", "Settings", "SettingsPage.xaml");
+        if (File.Exists(settingsPagePath))
+        {
+            string settingsPageText = File.ReadAllText(settingsPagePath);
+            Assert.Contains($"Text=\"{AppConstants.DisplayVersion}\"", settingsPageText);
+            Assert.Contains($"Text=\"{AppConstants.DisplayVersion} {AppConstants.Codename}\"", settingsPageText);
+        }
     }
 }

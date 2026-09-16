@@ -67,15 +67,16 @@ File cài đặt sau khi hoàn tất sẽ nằm tại: `PublishOutput/WinCarePro
 
 ```json
 {
-  "version": "4.9.2",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.2/WinCareProSetup.exe",
-  "sha256": "5eb2c2bf6cbb89ea094adf2241b38df4d59c1fea016cc135d739be6213288c09",
-  "changelog": "Cập nhật v4.9.2 (Codename: Orion): Bảo Mật & Ổn Định, SafePathGuard reparse point validation, chuẩn hóa giao diện WinUI 3 và hỗ trợ tiếp cận Reduced Motion.",
-  "beta_version": "4.9.2-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.2-beta/WinCareProSetup_Beta.exe",
-  "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.2-beta/WinCareProSetup_Beta.exe",
-  "beta_sha256": "5eb2c2bf6cbb89ea094adf2241b38df4d59c1fea016cc135d739be6213288c09",
-  "beta_changelog": "WinCare Pro v4.9.2 (Orion Maintenance, Security Hardening & UI/UX Polish Release)"
+  "version": "4.9.3",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3/WinCareProSetup.exe",
+  "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3/WinCareProSetup.exe",
+  "sha256": "99fd2e278f7c359901099dd683913458a2408e5abbbaa9eed874516dac41e6e5",
+  "changelog": "Cập nhật v4.9.3 (Orion Maintenance & System Hardening): Khắc phục triệt để lỗi mã SHA-256 khi cập nhật qua cơ chế tự động đồng bộ hóa và chuẩn hóa Hash-Pinned Integrity; vá lỗi crash ServiceController và Startup BootTime; tối ưu hóa toàn diện hiệu năng và xử lý đa luồng WinUI 3.",
+  "beta_version": "4.9.3-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3-beta/WinCareProSetup_Beta.exe",
+  "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3-beta/WinCareProSetup_Beta.exe",
+  "beta_sha256": "99fd2e278f7c359901099dd683913458a2408e5abbbaa9eed874516dac41e6e5",
+  "beta_changelog": "WinCare Pro v4.9.3 (SHA-256 Update Fix, Architecture Hardening & Stability Release)"
 }
 ```
 

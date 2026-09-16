@@ -27,13 +27,13 @@ public static class AppConstants
         typeof(AppConstants).Assembly.GetName().Version ?? new Version(4, 9, 3, 0);
 
     /// <summary>
-    /// Standard semantic version string (e.g., "4.9.2").
+    /// Standard semantic version string (e.g., "4.9.3").
     /// </summary>
     public static readonly string VersionString = 
         $"{CurrentVersion.Major}.{CurrentVersion.Minor}.{CurrentVersion.Build}";
 
     /// <summary>
-    /// Compact display version string (e.g., "v4.9.2").
+    /// Compact display version string (e.g., "v4.9.3").
     /// </summary>
     public static readonly string DisplayVersion = 
         CurrentVersion.Build > 0 
@@ -41,7 +41,7 @@ public static class AppConstants
             : $"v{CurrentVersion.Major}.{CurrentVersion.Minor}";
 
     /// <summary>
-    /// Full display version string (e.g., "v4.9.2").
+    /// Full display version string (e.g., "v4.9.3").
     /// </summary>
     public static readonly string DisplayVersionFull = 
         $"v{VersionString}";

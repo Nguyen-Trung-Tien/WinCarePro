@@ -75,6 +75,37 @@ public static class UpdateSecurityValidator
     }
 
     /// <summary>
+    /// Attempts to fetch the authoritative companion SHA-256 checksum from '{downloadUrl}.sha256' if available on GitHub Releases.
+    /// Returns the normalized 64-hex SHA-256 hash string, or empty string if unreachable or invalid.
+    /// </summary>
+    public static async Task<string> TryFetchCompanionSha256Async(
+        System.Net.Http.HttpClient httpClient,
+        string? downloadUrl,
+        System.Threading.CancellationToken token = default)
+    {
+        if (string.IsNullOrWhiteSpace(downloadUrl) || !IsTrustedDownloadUrl(downloadUrl, out _))
+            return string.Empty;
+
+        try
+        {
+            string checksumUrl = $"{downloadUrl}.sha256";
+            using var req = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get, checksumUrl);
+            req.Headers.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true, NoStore = true };
+
+            using var res = await httpClient.SendAsync(req, token).ConfigureAwait(false);
+            if (!res.IsSuccessStatusCode) return string.Empty;
+
+            string content = await res.Content.ReadAsStringAsync(token).ConfigureAwait(false);
+            var match = System.Text.RegularExpressions.Regex.Match(content, @"\b([a-fA-F0-9]{64})\b");
+            return match.Success ? match.Groups[1].Value.ToLowerInvariant() : string.Empty;
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
+
+    /// <summary>
     /// Validates an update package binary before installation.
     /// Enforces:
     /// 1. Package existence and non-zero size.
@@ -103,7 +134,7 @@ public static class UpdateSecurityValidator
     /// Validates an update package binary before installation.
     /// Enforces:
     /// 1. Package existence and non-zero size.
-    /// 2. Mandatory SHA-256 presence, format validation (64 hex characters), and matching.
+    /// 2. Mandatory SHA-256 presence, format validation (64 hex characters), and matching (primary or companion authoritative hashes).
     /// 3. Authenticode digital signature verification via WinVerifyTrust (configurable).
     /// 4. Expected publisher certificate validation if signed.
     /// If any check fails, the file is securely deleted, an audit entry is logged,
@@ -114,7 +145,8 @@ public static class UpdateSecurityValidator
         string? expectedSha256,
         string? expectedPublisher = DefaultExpectedPublisher,
         AuthenticodeVerifierFunc? customVerifier = null,
-        bool requireAuthenticode = true)
+        bool requireAuthenticode = true,
+        IEnumerable<string>? alternateAcceptableHashes = null)
     {
         if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
         {
@@ -122,30 +154,56 @@ public static class UpdateSecurityValidator
             return OperationResult.Fail("Update installer file not found.");
         }
 
-        // 1. Mandatory SHA-256 Digest Check
+        // 1. Mandatory SHA-256 Digest Check (Primary Manifest Hash + Alternate Authoritative Hashes)
         string normalizedExpected = NormalizeHash(expectedSha256);
-        if (string.IsNullOrWhiteSpace(normalizedExpected))
+        var acceptableHashes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        if (!string.IsNullOrWhiteSpace(normalizedExpected))
+        {
+            if (normalizedExpected.Length == 64 && System.Text.RegularExpressions.Regex.IsMatch(normalizedExpected, "^[a-f0-9]{64}$"))
+            {
+                acceptableHashes.Add(normalizedExpected);
+            }
+            else if (alternateAcceptableHashes == null || !alternateAcceptableHashes.Any())
+            {
+                SecureDeleteFile(filePath);
+                DbManager.LogAction($"Update rejected: Invalid SHA-256 format for '{Path.GetFileName(filePath)}'. Value: '{expectedSha256}'.", "Software Updater", "Failed");
+                return OperationResult.Fail($"Security validation failed: SHA-256 checksum format is invalid ('{expectedSha256}'). File deleted.");
+            }
+        }
+
+        if (alternateAcceptableHashes != null)
+        {
+            foreach (var alt in alternateAcceptableHashes)
+            {
+                string normAlt = NormalizeHash(alt);
+                if (!string.IsNullOrWhiteSpace(normAlt) && normAlt.Length == 64 && System.Text.RegularExpressions.Regex.IsMatch(normAlt, "^[a-f0-9]{64}$"))
+                {
+                    acceptableHashes.Add(normAlt);
+                }
+            }
+        }
+
+        if (acceptableHashes.Count == 0)
         {
             SecureDeleteFile(filePath);
             DbManager.LogAction($"Update rejected: Missing mandatory SHA-256 checksum for '{Path.GetFileName(filePath)}'.", "Software Updater", "Failed");
             return OperationResult.Fail("Security validation failed: Update manifest did not supply a required SHA-256 hash digest. Installation rejected.");
         }
 
-        if (normalizedExpected.Length != 64 || !System.Text.RegularExpressions.Regex.IsMatch(normalizedExpected, "^[a-f0-9]{64}$"))
-        {
-            SecureDeleteFile(filePath);
-            DbManager.LogAction($"Update rejected: Invalid SHA-256 format for '{Path.GetFileName(filePath)}'. Value: '{expectedSha256}'.", "Software Updater", "Failed");
-            return OperationResult.Fail($"Security validation failed: SHA-256 checksum format is invalid ('{expectedSha256}'). File deleted.");
-        }
-
         string actualHash = NormalizeHash(CryptoHelper.ComputeFileHash(filePath));
-        if (!string.Equals(actualHash, normalizedExpected, StringComparison.OrdinalIgnoreCase))
+        if (!acceptableHashes.Contains(actualHash))
         {
             SecureDeleteFile(filePath);
             DbManager.LogAction(
                 $"Update rejected: SHA-256 mismatch for '{Path.GetFileName(filePath)}'. Expected: {normalizedExpected}, Actual: {actualHash}. File securely deleted.",
                 "Software Updater", "Failed");
             return OperationResult.Fail($"Security validation failed: SHA-256 checksum mismatch (Expected: {normalizedExpected}, Actual: {actualHash}). File deleted.");
+        }
+
+        if (!string.Equals(actualHash, normalizedExpected, StringComparison.OrdinalIgnoreCase))
+        {
+            DbManager.LogAction($"Package '{Path.GetFileName(filePath)}' validated against authoritative companion release hash ({actualHash}).", "Software Updater", "Success");
         }
 
         // 2. Authenticode WinVerifyTrust & Publisher Validation

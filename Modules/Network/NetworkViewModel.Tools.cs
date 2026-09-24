@@ -21,7 +21,7 @@ public partial class NetworkViewModel
             var internetTask = Task.Run(() => _engine.CheckInternetConnection());
             var gwTask = Task.Run(() => _engine.GetGatewayAddress());
             var gwReachTask = Task.Run(() => _engine.CheckGatewayReachability());
-            var dnsTask = Task.Run(() => _engine.CheckDnsResolution());
+            var dnsTask = _engine.CheckDnsResolutionAsync(_cts?.Token ?? default);
             var ipTask = Task.Run(() => _engine.CheckIpStatus());
             var pingTask = _engine.AnalyzePingQualityAsync("1.1.1.1", 3);
 
@@ -29,26 +29,33 @@ public partial class NetworkViewModel
 
             if (_cts == null || _cts.IsCancellationRequested) return;
 
-            InternetStatus = internetTask.Result ? "Connected" : "No Internet";
-            GatewayAddress = gwTask.Result;
-            GatewayReachability = gwReachTask.Result ? "Reachable" : "Unreachable";
-            DnsStatus = dnsTask.Result ? "Resolving" : "Failed";
+            var isInternet = await internetTask;
+            var gw = await gwTask;
+            var isGwReach = await gwReachTask;
+            var isDnsOk = await dnsTask;
+            var (v4, v6) = await ipTask;
+            var (loss, latency, jitter) = await pingTask;
 
-            var (v4, v6) = ipTask.Result;
-            IpStatus = $"IPv4: {(v4 ? "Active" : "Inactive")}, IPv6: {(v6 ? "Active" : "Inactive")}";
+            InternetStatus = isInternet ? "Connected".T() : "No Internet".T();
+            GatewayAddress = gw;
+            GatewayReachability = isGwReach ? "Reachable".T() : "Unreachable".T();
+            DnsStatus = isDnsOk ? "Resolving".T() : "Failed".T();
 
-            var (loss, latency, jitter) = pingTask.Result;
+            string v4Status = v4 ? "Active".T() : "Inactive".T();
+            string v6Status = v6 ? "Active".T() : "Inactive".T();
+            IpStatus = $"IPv4: {v4Status}, IPv6: {v6Status}";
+
             LatencyMs = Math.Round(latency, 1);
             PacketLossPercent = Math.Round(loss, 1);
             JitterMs = Math.Round(jitter, 1);
 
             // Connection quality mapping
             if (loss > 10.0 || latency > 150.0)
-                ConnectionQuality = "Poor";
+                ConnectionQuality = "Poor".T();
             else if (loss > 2.0 || latency > 60.0 || jitter > 15.0)
-                ConnectionQuality = "Moderate";
+                ConnectionQuality = "Moderate".T();
             else
-                ConnectionQuality = "Good";
+                ConnectionQuality = "Good".T();
             
             // Add point to history charts
             AddHistoryPoint(PingHistory, LatencyMs);

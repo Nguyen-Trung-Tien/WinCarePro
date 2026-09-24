@@ -165,17 +165,17 @@ public class RegistryBackupEngine
 
     public async Task<bool> FixRegistryIssuesAsync(List<RegistryIssue> issues, System.Threading.CancellationToken cancellationToken = default)
     {
+        // Backup registry hive before fixing if enabled
+        bool backupEnabled = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.BackupRegistryHive;
+
+        if (backupEnabled)
+        {
+            await CreateRegistryBackupAsync("AutoBackup_Before_Fix");
+        }
+
         return await Task.Run(() =>
         {
             bool allOk = true;
-            
-            // Backup registry hive before fixing if enabled
-            bool backupEnabled = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.BackupRegistryHive;
-
-            if (backupEnabled)
-            {
-                CreateRegistryBackup("AutoBackup_Before_Fix");
-            }
 
             foreach (var issue in issues)
             {

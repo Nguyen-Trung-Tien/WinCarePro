@@ -118,13 +118,13 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     public void Cleanup()
     {
         CancelScan();
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
     public void Dispose()
     {
         _isDisposed = true;
         Cleanup();
-        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
     public void LoadPrivacySettings()

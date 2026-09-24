@@ -11,6 +11,7 @@ using WinCarePro.Core.Models;
 using WinCarePro.Infrastructure.Logging;
 using WinCarePro.Services;
 using WinCarePro.Engines;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro.ViewModels;
 
@@ -353,7 +354,7 @@ public partial class DashboardViewModel
                 List<RegistryIssue> regIssues = new();
                 try
                 {
-                    regIssues = _registryEngine.ScanRegistryIssues();
+                    regIssues = _registryEngine.ScanRegistryIssues(scanToken);
                 }
                 catch (OperationCanceledException) { throw; }
                 catch (Exception ex)
@@ -395,7 +396,7 @@ public partial class DashboardViewModel
                 double pingLoss = 0.0;
                 try
                 {
-                    var netEngine = new NetworkEngine();
+                    var netEngine = App.Services?.GetService<NetworkEngine>() ?? new NetworkEngine();
                     var pingResult = await netEngine.AnalyzePingQualityAsync().ConfigureAwait(false);
                     avgLatency = pingResult.avgLatencyMs;
                     pingLoss = pingResult.packetLossPercent;

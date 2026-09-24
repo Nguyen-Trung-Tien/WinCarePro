@@ -98,11 +98,15 @@ public sealed partial class NetworkPage : Page
         SetActiveTab(ViewModel.ActiveTab ?? "quality");
         UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
         InitDohComboBox();
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+        TranslationManager.Instance.Translate(this);
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         ViewModel.Cleanup();
     }
 

@@ -68,16 +68,27 @@ public partial class NetworkEngine
         }
     }
 
+    public async Task<bool> CheckDnsResolutionAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            timeoutCts.CancelAfter(1500);
+            var addresses = await Dns.GetHostAddressesAsync("google.com", timeoutCts.Token).ConfigureAwait(false);
+            return addresses.Length > 0;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public bool CheckDnsResolution()
     {
         try
         {
-            var task = Dns.GetHostAddressesAsync("google.com");
-            if (task.Wait(1500))
-            {
-                return task.Result.Length > 0;
-            }
-            return false;
+            var addresses = Dns.GetHostAddresses("google.com");
+            return addresses.Length > 0;
         }
         catch
         {

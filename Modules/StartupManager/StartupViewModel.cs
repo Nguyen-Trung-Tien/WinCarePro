@@ -247,6 +247,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
         _loadCts = null;
         IsLoading = false;
         SetOperationState(OperationState.Idle);
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
     public void Dispose()

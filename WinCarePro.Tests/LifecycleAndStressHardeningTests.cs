@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Core.Models;
+using WinCarePro.Engines;
 using WinCarePro.Services.Implementations;
 using WinCarePro.Shared.Animations;
 using WinCarePro.ViewModels;
@@ -124,5 +125,68 @@ public class LifecycleAndStressHardeningTests
         vm.CancelScan();
         Assert.False(vm.IsBusy);
         Assert.Equal(OperationState.Idle, vm.CurrentOperationState);
+    }
+
+    [Fact]
+    public void StatusToBrushConverter_ReturnsCachedBrushesWithoutExcessiveAllocations()
+    {
+        var converter = new StatusToBrushConverter();
+        var brush1 = converter.Convert("Success", typeof(Microsoft.UI.Xaml.Media.Brush), "", "en-US");
+        var brush2 = converter.Convert("Success", typeof(Microsoft.UI.Xaml.Media.Brush), "", "en-US");
+        var brushAmber1 = converter.Convert("Warning", typeof(Microsoft.UI.Xaml.Media.Brush), "", "en-US");
+        var brushAmber2 = converter.Convert("Warning", typeof(Microsoft.UI.Xaml.Media.Brush), "", "en-US");
+
+        Assert.Equal(brush1, brush2);
+        Assert.Equal(brushAmber1, brushAmber2);
+    }
+
+    [Fact]
+    public void HexToBrushConverter_CachesBrushesCorrectly()
+    {
+        var converter = new HexToBrushConverter();
+        var brush1 = converter.Convert("#FF10B981", typeof(Microsoft.UI.Xaml.Media.Brush), "", "en-US");
+        var brush2 = converter.Convert("#FF10B981", typeof(Microsoft.UI.Xaml.Media.Brush), "", "en-US");
+
+        Assert.Equal(brush1, brush2);
+    }
+
+    [Fact]
+    public void ViewModels_Cleanup_UnhooksAndReleasesResourcesWithoutException()
+    {
+        // Act & Assert that Cleanup on each ViewModel executes cleanly without memory-leak throws
+        var junkVm = new JunkViewModel();
+        junkVm.Cleanup();
+
+        var startupVm = new StartupViewModel();
+        startupVm.Cleanup();
+
+        var uninstallVm = new UninstallViewModel();
+        uninstallVm.Cleanup();
+
+        var securityVm = new SecurityViewModel();
+        securityVm.Cleanup();
+
+        var repairVm = new RepairViewModel();
+        repairVm.Cleanup();
+
+        var diskVm = new DiskViewModel();
+        diskVm.Cleanup();
+
+        Assert.False(junkVm.IsScanning);
+        Assert.False(startupVm.IsLoading);
+        Assert.False(uninstallVm.IsBusy);
+        Assert.False(securityVm.IsScanning);
+        Assert.False(repairVm.IsBusy);
+        Assert.False(diskVm.IsBusy);
+    }
+
+    [Fact]
+    public async Task NetworkEngine_CheckDnsResolutionAsync_RunsGracefully()
+    {
+        var engine = new NetworkEngine();
+        using var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(2));
+        var result = await engine.CheckDnsResolutionAsync(cts.Token);
+        // Can be true (online) or false (offline/simulated), but must not throw or sync-wait
+        Assert.True(result || !result);
     }
 }

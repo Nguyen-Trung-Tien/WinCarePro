@@ -47,13 +47,13 @@ public class DiskViewModel : ViewModelBase, IDisposable
     {
         CancelOperations();
         UnsubscribeEvents();
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
     public void Dispose()
     {
         _isDisposed = true;
         Cleanup();
-        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
     private string _storageScanPath = "";

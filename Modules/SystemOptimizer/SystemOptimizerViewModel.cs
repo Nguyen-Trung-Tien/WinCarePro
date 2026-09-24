@@ -975,13 +975,13 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         IsCleaningCache = false;
         IsAiScanning = false;
         SetOperationState(OperationState.Idle);
+        _optimizerEngine.ProgressMessage -= _progressHandler;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
     public void Dispose()
     {
         _isDisposed = true;
         Cleanup();
-        _optimizerEngine.ProgressMessage -= _progressHandler;
-        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 }

@@ -56,13 +56,15 @@ public sealed partial class DashboardPage : Page
             TranslationManager.Instance.Translate(this);
         };
 
+        var langHandler = new EventHandler((s, e) =>
+        {
+            this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
+        });
+        TranslationManager.Instance.LanguageChanged += langHandler;
+
         this.Unloaded += (s, e) =>
         {
-        };
-
-        TranslationManager.Instance.LanguageChanged += (s, e) =>
-        {
-            TranslationManager.Instance.Translate(this);
+            TranslationManager.Instance.LanguageChanged -= langHandler;
         };
 
         this.SizeChanged += (s, e) =>

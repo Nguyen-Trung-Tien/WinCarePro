@@ -169,6 +169,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
     {
         _junkEngine.ProgressMessage -= OnProgressMessage;
         _junkEngine.ProgressChanged -= OnProgressChanged;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
 
         try
         {

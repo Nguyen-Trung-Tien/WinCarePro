@@ -314,6 +314,10 @@ public partial class DashboardViewModel
     {
         _monitorCts?.Cancel();
         CancelScanIfRunning();
+        if (_languageChangedHandler != null)
+        {
+            TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        }
     }
 
     /// <summary>Cancel scan đang chạy (gọi khi navigate away hoặc dispose).</summary>

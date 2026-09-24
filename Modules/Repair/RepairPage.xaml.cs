@@ -62,12 +62,15 @@ public sealed partial class RepairPage : Page
         this.DataContext = ViewModel;
         this.Bindings.Update();
         SetActiveTab(ViewModel?.ActiveTab ?? "diagnostics");
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
         TranslationManager.Instance.Translate(this);
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         if (ViewModel != null && ViewModel.IsBusy)
         {
             ViewModel.CancelCurrentOperation();

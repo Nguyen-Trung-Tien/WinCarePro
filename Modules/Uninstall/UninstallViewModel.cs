@@ -873,6 +873,10 @@ public class UninstallViewModel : ViewModelBase, IDisposable
 
     public void Cleanup()
     {
+        _uninstallEngine.OutputReceived -= _outputHandler;
+        _uninstallEngine.ProgressChanged -= _progressHandler;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+
         try
         {
             _scanCts?.Cancel();
@@ -888,8 +892,5 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     {
         _isDisposed = true;
         Cleanup();
-        _uninstallEngine.OutputReceived -= _outputHandler;
-        _uninstallEngine.ProgressChanged -= _progressHandler;
-        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 }

@@ -297,15 +297,15 @@ public class RepairViewModel : ViewModelBase, IDisposable
         IsBusy = false;
         IsScanningDiagnostics = false;
         SetOperationState(OperationState.Idle);
+        _repairEngine.OutputReceived -= LogText;
+        _repairEngine.ProgressChanged -= _progressChangedHandler;
+        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
     }
 
     public void Dispose()
     {
         _isDisposed = true;
-        CancelCurrentOperation();
-        _repairEngine.OutputReceived -= LogText;
-        _repairEngine.ProgressChanged -= _progressChangedHandler;
-        TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        Cleanup();
     }
 
     public void CancelCurrentOperation()

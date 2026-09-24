@@ -12,6 +12,7 @@ public interface INetworkService
     string GetGatewayAddress();
     bool CheckGatewayReachability();
     bool CheckDnsResolution();
+    Task<bool> CheckDnsResolutionAsync(System.Threading.CancellationToken cancellationToken = default);
     (bool ipv4, bool ipv6) CheckIpStatus();
     Task<(double packetLossPercent, double avgLatencyMs, double jitterMs)> AnalyzePingQualityAsync(string target = "8.8.8.8", int count = 5);
     Task RunPingTestAsync(string host, int count = 4);

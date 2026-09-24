@@ -190,7 +190,7 @@ public class RegistryViewModel : ViewModelBase, IDisposable
             }
 
             StatusText = "Creating safety backup before repair...".T();
-            await Task.Run(() => _engine.CreateRegistryBackup("AutoBeforeRepair"), token);
+            await _engine.CreateRegistryBackupAsync("AutoBeforeRepair");
             token.ThrowIfCancellationRequested();
 
             SetOperationState(OperationState.Running);
@@ -240,7 +240,7 @@ public class RegistryViewModel : ViewModelBase, IDisposable
 
         try
         {
-            await Task.Run(() => _engine.CreateRegistryBackup("UserBackup"));
+            await _engine.CreateRegistryBackupAsync("UserBackup");
             StatusText = "Registry backup created successfully.".T();
             LoadBackups();
             SetOperationState(OperationState.Completed);

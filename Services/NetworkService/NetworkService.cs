@@ -31,6 +31,9 @@ public class NetworkService : INetworkService
     public bool CheckGatewayReachability() => _engine.CheckGatewayReachability();
 
     public bool CheckDnsResolution() => _engine.CheckDnsResolution();
+    
+    public Task<bool> CheckDnsResolutionAsync(System.Threading.CancellationToken cancellationToken = default) => 
+        _engine.CheckDnsResolutionAsync(cancellationToken);
 
     public (bool ipv4, bool ipv6) CheckIpStatus() => _engine.CheckIpStatus();
 

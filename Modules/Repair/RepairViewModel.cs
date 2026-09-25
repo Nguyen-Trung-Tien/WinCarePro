@@ -64,36 +64,61 @@ public class DiagnosticIssueItem : ViewModelBase
 
     public bool IsNotFixed => Status != "Fixed";
 
-    private static readonly SolidColorBrush _grayBrush = new(Microsoft.UI.Colors.Gray);
-    private static readonly SolidColorBrush _redBrush = new(Windows.UI.Color.FromArgb(255, 239, 68, 68));
-    private static readonly SolidColorBrush _amberBrush = new(Windows.UI.Color.FromArgb(255, 245, 158, 11));
-    private static readonly SolidColorBrush _blueBrush = new(Windows.UI.Color.FromArgb(255, 59, 130, 246));
-    private static readonly SolidColorBrush _greenBrush = new(Windows.UI.Color.FromArgb(255, 16, 185, 129));
-    private static readonly SolidColorBrush _purpleBrush = new(Windows.UI.Color.FromArgb(255, 139, 92, 246));
-    private static readonly SolidColorBrush _pendingGrayBrush = new(Windows.UI.Color.FromArgb(255, 107, 114, 128));
+    private static SolidColorBrush? _grayBrush;
+    private static SolidColorBrush? _redBrush;
+    private static SolidColorBrush? _amberBrush;
+    private static SolidColorBrush? _blueBrush;
+    private static SolidColorBrush? _greenBrush;
+    private static SolidColorBrush? _purpleBrush;
+    private static SolidColorBrush? _pendingGrayBrush;
 
-    public Brush SeverityBrush
+    public Brush? SeverityBrush
     {
         get
         {
-            if (string.IsNullOrEmpty(Severity)) return _grayBrush;
-            string s = Severity.ToLowerInvariant();
-            if (s.Contains("critical") || s.Contains("nguy hiểm") || s.Contains("nghiêm trọng")) return _redBrush;
-            if (s.Contains("warning") || s.Contains("cảnh báo")) return _amberBrush;
-            return _blueBrush;
+            try
+            {
+                _grayBrush ??= new SolidColorBrush(Microsoft.UI.Colors.Gray);
+                _redBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68));
+                _amberBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11));
+                _blueBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246));
+
+                if (string.IsNullOrEmpty(Severity)) return _grayBrush;
+                string s = Severity.ToLowerInvariant();
+                if (s.Contains("critical") || s.Contains("nguy hiểm") || s.Contains("nghiêm trọng")) return _redBrush;
+                if (s.Contains("warning") || s.Contains("cảnh báo")) return _amberBrush;
+                return _blueBrush;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 
-    public Brush StatusBrush
+    public Brush? StatusBrush
     {
         get
         {
-            if (string.IsNullOrEmpty(Status)) return _grayBrush;
-            string s = Status.ToLowerInvariant();
-            if (s.Contains("fixed") || s.Contains("đã sửa") || s.Contains("success") || s.Contains("thành công")) return _greenBrush;
-            if (s.Contains("fixing") || s.Contains("đang sửa")) return _purpleBrush;
-            if (s.Contains("fail") || s.Contains("thất bại") || s.Contains("lỗi")) return _redBrush;
-            return _pendingGrayBrush;
+            try
+            {
+                _grayBrush ??= new SolidColorBrush(Microsoft.UI.Colors.Gray);
+                _greenBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                _purpleBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246));
+                _redBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68));
+                _pendingGrayBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 107, 114, 128));
+
+                if (string.IsNullOrEmpty(Status)) return _grayBrush;
+                string s = Status.ToLowerInvariant();
+                if (s.Contains("fixed") || s.Contains("đã sửa") || s.Contains("success") || s.Contains("thành công")) return _greenBrush;
+                if (s.Contains("fixing") || s.Contains("đang sửa")) return _purpleBrush;
+                if (s.Contains("fail") || s.Contains("thất bại") || s.Contains("lỗi")) return _redBrush;
+                return _pendingGrayBrush;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

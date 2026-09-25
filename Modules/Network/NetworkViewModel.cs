@@ -299,39 +299,61 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         }
     }
 
-    private static readonly Microsoft.UI.Xaml.Media.Brush _purpleBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246));
-    private static readonly Microsoft.UI.Xaml.Media.Brush _greenBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));
-    private static readonly Microsoft.UI.Xaml.Media.Brush _cyanBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 6, 182, 212));
+    private static Microsoft.UI.Xaml.Media.Brush? _purpleBrush;
+    private static Microsoft.UI.Xaml.Media.Brush? _greenBrush;
+    private static Microsoft.UI.Xaml.Media.Brush? _cyanBrush;
 
-    private static readonly Microsoft.UI.Xaml.Media.Brush _purpleBadgeBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 139, 92, 246));
-    private static readonly Microsoft.UI.Xaml.Media.Brush _greenBadgeBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129));
-    private static readonly Microsoft.UI.Xaml.Media.Brush _cyanBadgeBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 6, 182, 212));
+    private static Microsoft.UI.Xaml.Media.Brush? _purpleBadgeBrush;
+    private static Microsoft.UI.Xaml.Media.Brush? _greenBadgeBrush;
+    private static Microsoft.UI.Xaml.Media.Brush? _cyanBadgeBrush;
 
-    public Microsoft.UI.Xaml.Media.Brush SpeedPhaseAccentBrush
+    public Microsoft.UI.Xaml.Media.Brush? SpeedPhaseAccentBrush
     {
         get
         {
-            if (IsBusy)
+            try
             {
-                if (SpeedProgress > 52) return _purpleBrush;   // UPLOAD -> Electric Purple
-                if (SpeedProgress > 8) return _greenBrush;    // DOWNLOAD -> Emerald Green
-                return _cyanBrush;                            // PING -> Neon Cyan
+                _purpleBrush ??= new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246));
+                _greenBrush ??= new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                _cyanBrush ??= new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 6, 182, 212));
+
+                if (IsBusy)
+                {
+                    if (SpeedProgress > 52) return _purpleBrush;   // UPLOAD -> Electric Purple
+                    if (SpeedProgress > 8) return _greenBrush;    // DOWNLOAD -> Emerald Green
+                    return _cyanBrush;                            // PING -> Neon Cyan
+                }
+                return DownloadSpeed > 0 ? _greenBrush : _purpleBrush;
             }
-            return DownloadSpeed > 0 ? _greenBrush : _purpleBrush;
+            catch
+            {
+                return null;
+            }
         }
     }
 
-    public Microsoft.UI.Xaml.Media.Brush SpeedPhaseBadgeBgBrush
+    public Microsoft.UI.Xaml.Media.Brush? SpeedPhaseBadgeBgBrush
     {
         get
         {
-            if (IsBusy)
+            try
             {
-                if (SpeedProgress > 52) return _purpleBadgeBrush;
-                if (SpeedProgress > 8) return _greenBadgeBrush;
-                return _cyanBadgeBrush;
+                _purpleBadgeBrush ??= new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 139, 92, 246));
+                _greenBadgeBrush ??= new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129));
+                _cyanBadgeBrush ??= new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 6, 182, 212));
+
+                if (IsBusy)
+                {
+                    if (SpeedProgress > 52) return _purpleBadgeBrush;
+                    if (SpeedProgress > 8) return _greenBadgeBrush;
+                    return _cyanBadgeBrush;
+                }
+                return DownloadSpeed > 0 ? _greenBadgeBrush : _purpleBadgeBrush;
             }
-            return DownloadSpeed > 0 ? _greenBadgeBrush : _purpleBadgeBrush;
+            catch
+            {
+                return null;
+            }
         }
     }
 

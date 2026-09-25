@@ -379,10 +379,17 @@ public sealed partial class MainPage : Page
             // Senior Optimization: Release memory, event listeners, and timers of previously active page
             CleanupActivePage();
 
-            ContentFrame.Navigate(pageType);
-            
-            // Set header text using the centralized UpdateHeader method
-            UpdateHeader();
+            try
+            {
+                ContentFrame.Navigate(pageType);
+                
+                // Set header text using the centralized UpdateHeader method
+                UpdateHeader();
+            }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException($"MainPage.NavigateToPage({tag})", ex);
+            }
         }
     }
 

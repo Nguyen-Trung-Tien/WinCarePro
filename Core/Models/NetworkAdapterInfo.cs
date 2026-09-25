@@ -18,13 +18,44 @@ public class NetworkAdapterInfo
     public string DisplayStatus => Status.T();
     public string DisplaySpeed => Speed.T();
 
-    private static readonly Microsoft.UI.Xaml.Media.Brush _upBgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129));
-    private static readonly Microsoft.UI.Xaml.Media.Brush _downBgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 239, 68, 68));
-    private static readonly Microsoft.UI.Xaml.Media.Brush _upFgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));
-    private static readonly Microsoft.UI.Xaml.Media.Brush _downFgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68));
+    private static Microsoft.UI.Xaml.Media.Brush? _upBgBrush;
+    private static Microsoft.UI.Xaml.Media.Brush? _downBgBrush;
+    private static Microsoft.UI.Xaml.Media.Brush? _upFgBrush;
+    private static Microsoft.UI.Xaml.Media.Brush? _downFgBrush;
 
-    public Microsoft.UI.Xaml.Media.Brush StatusBadgeBg => Status == "Up" ? _upBgBrush : _downBgBrush;
-    public Microsoft.UI.Xaml.Media.Brush StatusBadgeFg => Status == "Up" ? _upFgBrush : _downFgBrush;
+    public Microsoft.UI.Xaml.Media.Brush? StatusBadgeBg
+    {
+        get
+        {
+            try
+            {
+                return Status == "Up"
+                    ? (_upBgBrush ??= new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129)))
+                    : (_downBgBrush ??= new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 239, 68, 68)));
+            }
+            catch
+            {
+                return null;
+            }
+        }
+    }
+
+    public Microsoft.UI.Xaml.Media.Brush? StatusBadgeFg
+    {
+        get
+        {
+            try
+            {
+                return Status == "Up"
+                    ? (_upFgBrush ??= new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)))
+                    : (_downFgBrush ??= new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)));
+            }
+            catch
+            {
+                return null;
+            }
+        }
+    }
 
     // New optimized telemetry fields
     public string CurrentDnsServers { get; set; } = "";

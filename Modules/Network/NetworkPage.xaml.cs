@@ -28,10 +28,17 @@ public sealed partial class NetworkPage : Page
 
         this.Loaded += (s, e) =>
         {
-            TranslationManager.Instance.Translate(this);
-            SetActiveTab(ViewModel.ActiveTab ?? "quality");
-            UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
-            InitDohComboBox();
+            try
+            {
+                TranslationManager.Instance.Translate(this);
+                SetActiveTab(ViewModel.ActiveTab ?? "quality");
+                UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
+                InitDohComboBox();
+            }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkPage.Loaded", ex);
+            }
         };
 
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
@@ -41,8 +48,15 @@ public sealed partial class NetworkPage : Page
         {
             DispatcherQueue?.TryEnqueue(() =>
             {
-                SetActiveTab(ViewModel.ActiveTab ?? "quality");
-                UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
+                try
+                {
+                    SetActiveTab(ViewModel.ActiveTab ?? "quality");
+                    UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
+                }
+                catch (Exception ex)
+                {
+                    WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkPage.ActualThemeChanged", ex);
+                }
             });
         };
 
@@ -66,8 +80,15 @@ public sealed partial class NetworkPage : Page
     {
         DispatcherQueue?.TryEnqueue(() =>
         {
-            TranslationManager.Instance.Translate(this);
-            UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
+            try
+            {
+                TranslationManager.Instance.Translate(this);
+                UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
+            }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkPage.OnLanguageChanged", ex);
+            }
         });
     }
 
@@ -93,14 +114,21 @@ public sealed partial class NetworkPage : Page
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        ViewModel.Initialize();
-        this.Bindings.Update();
-        SetActiveTab(ViewModel.ActiveTab ?? "quality");
-        UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
-        InitDohComboBox();
-        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
-        TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
-        TranslationManager.Instance.Translate(this);
+        try
+        {
+            ViewModel.Initialize();
+            this.Bindings.Update();
+            SetActiveTab(ViewModel.ActiveTab ?? "quality");
+            UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
+            InitDohComboBox();
+            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+            TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+            TranslationManager.Instance.Translate(this);
+        }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkPage.OnNavigatedTo", ex);
+        }
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)

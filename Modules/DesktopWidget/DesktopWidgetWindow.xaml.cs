@@ -115,10 +115,15 @@ namespace WinCarePro.Modules.DesktopWidget
         private int _cachedProcessCount = 0;
         private int _processCountTickCounter = 0;
 
-        private static readonly SolidColorBrush GreenBrush = new(Windows.UI.Color.FromArgb(255, 16, 185, 129));
-        private static readonly SolidColorBrush AmberBrush = new(Windows.UI.Color.FromArgb(255, 245, 158, 11));
-        private static readonly SolidColorBrush RedBrush = new(Windows.UI.Color.FromArgb(255, 239, 68, 68));
-        private static readonly SolidColorBrush BlueBrush = new(Windows.UI.Color.FromArgb(255, 59, 130, 246));
+        private static SolidColorBrush? _greenBrush;
+        private static SolidColorBrush? _amberBrush;
+        private static SolidColorBrush? _redBrush;
+        private static SolidColorBrush? _blueBrush;
+
+        private static SolidColorBrush GreenBrush => _greenBrush ??= new(Windows.UI.Color.FromArgb(255, 16, 185, 129));
+        private static SolidColorBrush AmberBrush => _amberBrush ??= new(Windows.UI.Color.FromArgb(255, 245, 158, 11));
+        private static SolidColorBrush RedBrush => _redBrush ??= new(Windows.UI.Color.FromArgb(255, 239, 68, 68));
+        private static SolidColorBrush BlueBrush => _blueBrush ??= new(Windows.UI.Color.FromArgb(255, 59, 130, 246));
 
         public static void ShowWindow()
         {

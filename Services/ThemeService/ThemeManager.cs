@@ -390,6 +390,18 @@ public class ThemeManager
                 auroraBrush.Color = Color.FromArgb(isDark ? (byte)45 : (byte)70, c0.R, c0.G, c0.B);
             }
 
+            if (Application.Current.Resources.TryGetValue("AppOverlayStartupProgressBrush", out var startupBrushObj) &&
+                startupBrushObj is SolidColorBrush startupBrush)
+            {
+                startupBrush.Color = c0;
+            }
+
+            if (Application.Current.Resources.TryGetValue("AppOverlayStartupPercentBrush", out var startupPercentBrushObj) &&
+                startupPercentBrushObj is SolidColorBrush startupPercentBrush)
+            {
+                startupPercentBrush.Color = c0;
+            }
+
             if (Application.Current.Resources.TryGetValue("AiWinCareEngineGradient", out var aiBrushObj) &&
                 aiBrushObj is LinearGradientBrush aiBrush && aiBrush.GradientStops.Count >= 2)
             {

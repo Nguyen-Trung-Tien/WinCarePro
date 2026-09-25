@@ -235,13 +235,8 @@
                     </Ellipse.Fill>
                 </Ellipse>
                 
-                <!-- Frosted Glass Acrylic Layer -->
-                <Border BorderThickness="0">
-                    <Border.BackgroundSizing>OuterBorderEdge</Border.BackgroundSizing>
-                    <Border.Background>
-                        <AcrylicBrush TintColor="#050508" TintOpacity="0.88" FallbackColor="#050508"/>
-                    </Border.Background>
-                </Border>
+                <!-- Frosted Glass Layer with Theme Adaptation -->
+                <Border BorderThickness="0" Background="{ThemeResource AppOverlayBackdropBrush}" />
             </Grid>
             
             <StackPanel x:Name="ExitOverlayContent" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24" Width="400">
@@ -264,18 +259,18 @@
                 </Grid>
                 
                 <StackPanel Spacing="6" HorizontalAlignment="Center">
-                    <TextBlock x:Name="ExitOverlayTitle" Text="Shutting Down" FontSize="24" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="0.5"/>
-                    <TextBlock x:Name="ExitOverlayMessage" Text="Closing database connections and freeing resources..." FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" FontWeight="Normal" TextAlignment="Center"/>
+                    <TextBlock x:Name="ExitOverlayTitle" Text="Shutting Down" FontSize="24" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="{ThemeResource AppOverlayTitleBrush}" CharacterSpacing="0.5"/>
+                    <TextBlock x:Name="ExitOverlayMessage" Text="Closing database connections and freeing resources..." FontSize="13" Foreground="{ThemeResource AppOverlaySubtitleBrush}" HorizontalAlignment="Center" FontWeight="Medium" TextAlignment="Center"/>
                 </StackPanel>
 
                 <!-- Exit Percentage Progress Bar Container -->
                 <StackPanel Spacing="8" Margin="0,4,0,0">
                     <Grid>
-                        <TextBlock x:Name="ExitProgressSubtext" Text="Finalizing shutdown..." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
-                        <TextBlock x:Name="ExitProgressPercent" Text="0%" FontSize="12.5" Foreground="{ThemeResource AppStatusDangerBrush}" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        <TextBlock x:Name="ExitProgressSubtext" Text="Finalizing shutdown..." FontSize="12.5" Foreground="{ThemeResource AppOverlayTextBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="ExitProgressPercent" Text="0%" FontSize="13" Foreground="{ThemeResource AppOverlayShutdownPercentBrush}" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                     </Grid>
-                    <Border Background="{ThemeResource ControlFillColorDefaultBrush}" CornerRadius="4" Height="8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" Padding="1">
-                        <ProgressBar x:Name="ExitProgressBar" Minimum="0" Maximum="100" Value="0" Height="4" CornerRadius="2" Foreground="{ThemeResource AppStatusDangerBrush}" Background="Transparent" HorizontalAlignment="Stretch"/>
+                    <Border Background="{ThemeResource AppOverlayTrackBgBrush}" CornerRadius="5" Height="10" BorderBrush="{ThemeResource AppOverlayTrackBorderBrush}" BorderThickness="1" Padding="1.5">
+                        <ProgressBar x:Name="ExitProgressBar" Minimum="0" Maximum="100" Value="0" Height="6" CornerRadius="3" Foreground="{ThemeResource AppOverlayShutdownProgressBrush}" Background="Transparent" HorizontalAlignment="Stretch"/>
                     </Border>
                 </StackPanel>
             </StackPanel>
@@ -314,13 +309,8 @@
                     </Ellipse.Fill>
                 </Ellipse>
                 
-                <!-- Frosted Glass Acrylic Layer -->
-                <Border BorderThickness="0">
-                    <Border.BackgroundSizing>OuterBorderEdge</Border.BackgroundSizing>
-                    <Border.Background>
-                        <AcrylicBrush TintColor="#050508" TintOpacity="0.88" FallbackColor="#050508"/>
-                    </Border.Background>
-                </Border>
+                <!-- Frosted Glass Layer with Theme Adaptation -->
+                <Border BorderThickness="0" Background="{ThemeResource AppOverlayBackdropBrush}" />
             </Grid>
             
             <StackPanel x:Name="StartupOverlayContent" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24" Width="380">
@@ -339,20 +329,20 @@
                 </Grid>
                 
                 <StackPanel Spacing="6" HorizontalAlignment="Center">
-                    <TextBlock Text="WinCare Pro" FontSize="26" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="White" CharacterSpacing="0.5"/>
-                    <TextBlock Text="System Optimization &amp; Care Suite" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" FontWeight="Normal"/>
+                    <TextBlock Text="WinCare Pro" FontSize="26" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="{ThemeResource AppOverlayTitleBrush}" CharacterSpacing="0.5"/>
+                    <TextBlock Text="System Optimization &amp; Care Suite" FontSize="13" Foreground="{ThemeResource AppOverlaySubtitleBrush}" HorizontalAlignment="Center" FontWeight="Medium"/>
                 </StackPanel>
 
                 <!-- Modern Percentage Progress Bar Container -->
                 <StackPanel Spacing="8" Margin="0,6,0,0">
                     <Grid>
-                        <TextBlock x:Name="StartupProgressText" Text="Loading systems..." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
-                        <TextBlock x:Name="StartupProgressPercent" Text="0%" FontSize="12.5" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        <TextBlock x:Name="StartupProgressText" Text="Loading systems..." FontSize="12.5" Foreground="{ThemeResource AppOverlayTextBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="StartupProgressPercent" Text="0%" FontSize="13" Foreground="{ThemeResource AppOverlayStartupPercentBrush}" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                     </Grid>
 
                     <!-- Glowing Linear Progress Bar Track -->
-                    <Border Background="{ThemeResource ControlFillColorDefaultBrush}" CornerRadius="4" Height="8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" Padding="1">
-                        <ProgressBar x:Name="StartupProgressBar" Minimum="0" Maximum="100" Value="0" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch"/>
+                    <Border Background="{ThemeResource AppOverlayTrackBgBrush}" CornerRadius="5" Height="10" BorderBrush="{ThemeResource AppOverlayTrackBorderBrush}" BorderThickness="1" Padding="1.5">
+                        <ProgressBar x:Name="StartupProgressBar" Minimum="0" Maximum="100" Value="0" Height="6" CornerRadius="3" Foreground="{ThemeResource AppOverlayStartupProgressBrush}" Background="Transparent" HorizontalAlignment="Stretch"/>
                     </Border>
                 </StackPanel>
             </StackPanel>

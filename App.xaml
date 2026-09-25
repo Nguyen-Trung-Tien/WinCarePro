@@ -109,6 +109,18 @@
                     <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#FF12141F" />
                     <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#FF12141F" />
                     <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+
+                    <!-- Aura Genesis Splash & Shutdown Overlay Tokens (Dark Mode) -->
+                    <SolidColorBrush x:Key="AppOverlayBackdropBrush" Color="#EE0A0C14" />
+                    <SolidColorBrush x:Key="AppOverlayTitleBrush" Color="#FFFFFFFF" />
+                    <SolidColorBrush x:Key="AppOverlaySubtitleBrush" Color="#FF94A3B8" />
+                    <SolidColorBrush x:Key="AppOverlayTextBrush" Color="#FFE2E8F0" />
+                    <SolidColorBrush x:Key="AppOverlayTrackBgBrush" Color="#22FFFFFF" />
+                    <SolidColorBrush x:Key="AppOverlayTrackBorderBrush" Color="#3DFFFFFF" />
+                    <SolidColorBrush x:Key="AppOverlayStartupProgressBrush" Color="#FF38BDF8" />
+                    <SolidColorBrush x:Key="AppOverlayShutdownProgressBrush" Color="#FFEF4444" />
+                    <SolidColorBrush x:Key="AppOverlayStartupPercentBrush" Color="#FF38BDF8" />
+                    <SolidColorBrush x:Key="AppOverlayShutdownPercentBrush" Color="#FFF87171" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <!-- Explicit Dark Theme Tokens for WinUI 3 controls requesting Dark -->
@@ -207,6 +219,18 @@
                     <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#FF12141F" />
                     <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#FF12141F" />
                     <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+
+                    <!-- Aura Genesis Splash & Shutdown Overlay Tokens (Dark Mode) -->
+                    <SolidColorBrush x:Key="AppOverlayBackdropBrush" Color="#EE0A0C14" />
+                    <SolidColorBrush x:Key="AppOverlayTitleBrush" Color="#FFFFFFFF" />
+                    <SolidColorBrush x:Key="AppOverlaySubtitleBrush" Color="#FF94A3B8" />
+                    <SolidColorBrush x:Key="AppOverlayTextBrush" Color="#FFE2E8F0" />
+                    <SolidColorBrush x:Key="AppOverlayTrackBgBrush" Color="#22FFFFFF" />
+                    <SolidColorBrush x:Key="AppOverlayTrackBorderBrush" Color="#3DFFFFFF" />
+                    <SolidColorBrush x:Key="AppOverlayStartupProgressBrush" Color="#FF38BDF8" />
+                    <SolidColorBrush x:Key="AppOverlayShutdownProgressBrush" Color="#FFEF4444" />
+                    <SolidColorBrush x:Key="AppOverlayStartupPercentBrush" Color="#FF38BDF8" />
+                    <SolidColorBrush x:Key="AppOverlayShutdownPercentBrush" Color="#FFF87171" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
                     <!-- Light Theme Tokens (Ultra Premium Modern Slate-Glass, High Definition & Crisp Vibrancy) -->
@@ -308,6 +332,18 @@
                     <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#F1F5F9" />
                     <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#F1F5F9" />
                     <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+
+                    <!-- Aura Genesis Splash & Shutdown Overlay Tokens (Light Mode - Crisp, High-Contrast & Beautiful) -->
+                    <SolidColorBrush x:Key="AppOverlayBackdropBrush" Color="#F5F8FAFC" />
+                    <SolidColorBrush x:Key="AppOverlayTitleBrush" Color="#FF0F172A" />
+                    <SolidColorBrush x:Key="AppOverlaySubtitleBrush" Color="#FF475569" />
+                    <SolidColorBrush x:Key="AppOverlayTextBrush" Color="#FF1E293B" />
+                    <SolidColorBrush x:Key="AppOverlayTrackBgBrush" Color="#FFE2E8F0" />
+                    <SolidColorBrush x:Key="AppOverlayTrackBorderBrush" Color="#FFCBD5E1" />
+                    <SolidColorBrush x:Key="AppOverlayStartupProgressBrush" Color="#FF0284C7" />
+                    <SolidColorBrush x:Key="AppOverlayShutdownProgressBrush" Color="#FFDC2626" />
+                    <SolidColorBrush x:Key="AppOverlayStartupPercentBrush" Color="#FF0284C7" />
+                    <SolidColorBrush x:Key="AppOverlayShutdownPercentBrush" Color="#FFDC2626" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="HighContrast">
                     <!-- High Contrast Theme Tokens (Full WCAG 2.2 AAA System Contrast Compliance) -->
@@ -406,6 +442,17 @@
                     <StaticResource x:Key="NavigationViewPaneBackground" ResourceKey="SystemColorWindowBrush" />
                     <StaticResource x:Key="SplitViewPaneBackground" ResourceKey="SystemColorWindowBrush" />
                     <StaticResource x:Key="NavigationViewContentBackground" ResourceKey="SystemColorWindowBrush" />
+
+                    <StaticResource x:Key="AppOverlayBackdropBrush" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppOverlayTitleBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppOverlaySubtitleBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppOverlayTextBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppOverlayTrackBgBrush" ResourceKey="SystemColorWindowBrush" />
+                    <StaticResource x:Key="AppOverlayTrackBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+                    <StaticResource x:Key="AppOverlayStartupProgressBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppOverlayShutdownProgressBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppOverlayStartupPercentBrush" ResourceKey="SystemColorHighlightBrush" />
+                    <StaticResource x:Key="AppOverlayShutdownPercentBrush" ResourceKey="SystemColorHighlightBrush" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 

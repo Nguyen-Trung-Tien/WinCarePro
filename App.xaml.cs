@@ -105,6 +105,7 @@ public partial class App : Application
         services.AddSingleton<IMaintenanceSchedulerService, MaintenanceSchedulerService>();
         services.AddSingleton<IBackgroundWatchdogService, BackgroundWatchdogService>();
         services.AddSingleton<UndoManagerService>();
+        services.AddSingleton<ISmartFixService, SmartFixService>();
         services.AddSingleton<SmartFixService>();
         services.AddSingleton<TaskSchedulerService>(TaskSchedulerService.Instance);
         services.AddSingleton<IconCacheService>();

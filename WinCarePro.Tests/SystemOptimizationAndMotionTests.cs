@@ -170,4 +170,30 @@ public class SystemOptimizationAndMotionTests
         Assert.False(SoftwareUpdaterEngine.VerifyDigitalSignature("", "Microsoft Corporation"));
         Assert.False(SoftwareUpdaterEngine.VerifyDigitalSignature(null!, "Microsoft Corporation"));
     }
+
+    [Fact]
+    public async Task SmartFixService_PreCancelledToken_AbortsPromptly()
+    {
+        var smartFix = new WinCarePro.Services.Implementations.SmartFixService();
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+
+        WinCarePro.Models.SmartFixProgress? reportedProgress = null;
+        await smartFix.ExecuteFixAsync("CleanJunk", p => reportedProgress = p, cts.Token);
+
+        Assert.NotNull(reportedProgress);
+        Assert.True(reportedProgress.IsCompleted);
+        Assert.False(reportedProgress.IsSuccess);
+    }
+
+    [Fact]
+    public void SecurityAlertItem_Properties_InitializeCorrectly()
+    {
+        var criticalItem = new SecurityAlertItem { Severity = "Critical", FixActionKey = "defender_realtime" };
+        var warnItem = new SecurityAlertItem { Severity = "Warning" };
+
+        Assert.Equal("Critical", criticalItem.Severity);
+        Assert.True(criticalItem.CanFix);
+        Assert.False(warnItem.CanFix);
+    }
 }

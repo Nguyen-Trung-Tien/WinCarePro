@@ -522,7 +522,10 @@ public class DbManager
                 CreatedAt = DateTime.Now
             });
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("DbManager.AddNotification.OnNotificationAdded", ex);
+        }
     }
 
     public static List<WinCarePro.Models.NotificationItem> GetRecentNotifications(int limit = 50)
@@ -557,9 +560,16 @@ public class DbManager
             using var cmd = connection.CreateCommand();
             cmd.CommandText = "UPDATE Notifications SET IsRead = 1 WHERE IsRead = 0";
             cmd.ExecuteNonQuery();
-
-            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
         });
+
+        try
+        {
+            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("DbManager.MarkAllNotificationsAsRead.Badge", ex);
+        }
     }
 
     public static int GetUnreadNotificationsCount()
@@ -579,9 +589,16 @@ public class DbManager
             using var cmd = connection.CreateCommand();
             cmd.CommandText = "DELETE FROM Notifications";
             cmd.ExecuteNonQuery();
-
-            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
         });
+
+        try
+        {
+            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("DbManager.ClearAllNotifications.Badge", ex);
+        }
     }
 
     public static void DeleteNotification(int id)
@@ -592,9 +609,16 @@ public class DbManager
             cmd.CommandText = "DELETE FROM Notifications WHERE Id = @id";
             cmd.Parameters.AddWithValue("@id", id);
             cmd.ExecuteNonQuery();
-
-            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
         });
+
+        try
+        {
+            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("DbManager.DeleteNotification.Badge", ex);
+        }
     }
 
     public static void RunDatabaseMaintenance()
@@ -624,29 +648,33 @@ public class DbManager
 
         if (!shouldRun) return;
 
-        ExecuteWithConnection(connection =>
+        int retentionDays = 30; // Default fallback
+        try
         {
-            int retentionDays = 30; // Default fallback
-            try
+            string raw = GetSettings();
+            if (!string.IsNullOrEmpty(raw))
             {
-                string raw = GetSettings();
-                if (!string.IsNullOrEmpty(raw))
+                using var doc = System.Text.Json.JsonDocument.Parse(raw);
+                if (doc.RootElement.TryGetProperty("PerformanceHistoryDurationIndex", out var durationProp))
                 {
-                    using var doc = System.Text.Json.JsonDocument.Parse(raw);
-                    if (doc.RootElement.TryGetProperty("PerformanceHistoryDurationIndex", out var durationProp))
+                    int index = durationProp.GetInt32();
+                    retentionDays = index switch
                     {
-                        int index = durationProp.GetInt32();
-                        retentionDays = index switch
-                        {
-                            0 => 7,   // 7 Days
-                            1 => 30,  // 30 Days
-                            2 => 90,  // 90 Days
-                            _ => 30
-                        };
-                    }
+                        0 => 7,   // 7 Days
+                        1 => 30,  // 30 Days
+                        2 => 90,  // 90 Days
+                        _ => 30
+                    };
                 }
             }
-            catch { }
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("DbManager.RunDatabaseMaintenance.Settings", ex);
+        }
+
+        ExecuteWithConnection(connection =>
+        {
 
             // 1. Auto clean logs older than retentionDays days before compaction
             try

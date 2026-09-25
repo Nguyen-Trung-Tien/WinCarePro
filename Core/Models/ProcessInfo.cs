@@ -96,6 +96,8 @@ public class ProcessInfo : System.ComponentModel.INotifyPropertyChanged
         {
             if (SetProperty(ref _iconPath, value))
             {
+                _iconSourceInitialized = false;
+                _cachedIconImageSource = null;
                 OnPropertyChanged(nameof(IconImageSource));
                 OnPropertyChanged(nameof(HasIcon));
                 OnPropertyChanged(nameof(FallbackVisibility));
@@ -104,23 +106,46 @@ public class ProcessInfo : System.ComponentModel.INotifyPropertyChanged
         }
     }
 
+    private Microsoft.UI.Xaml.Media.ImageSource? _cachedIconImageSource;
+    private bool _hasIcon;
+    private bool _iconSourceInitialized;
+
     public Microsoft.UI.Xaml.Media.ImageSource? IconImageSource
     {
         get
         {
-            if (string.IsNullOrWhiteSpace(IconPath) || !System.IO.File.Exists(IconPath)) return null;
-            try
+            if (!_iconSourceInitialized)
             {
-                return new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(new Uri(IconPath));
+                _iconSourceInitialized = true;
+                _hasIcon = !string.IsNullOrWhiteSpace(IconPath) && System.IO.File.Exists(IconPath);
+                if (_hasIcon)
+                {
+                    try
+                    {
+                        _cachedIconImageSource = new Microsoft.UI.Xaml.Media.Imaging.BitmapImage(new Uri(IconPath));
+                    }
+                    catch
+                    {
+                        _cachedIconImageSource = null;
+                        _hasIcon = false;
+                    }
+                }
             }
-            catch
-            {
-                return null;
-            }
+            return _cachedIconImageSource;
         }
     }
 
-    public bool HasIcon => !string.IsNullOrWhiteSpace(IconPath) && System.IO.File.Exists(IconPath);
+    public bool HasIcon
+    {
+        get
+        {
+            if (!_iconSourceInitialized)
+            {
+                _ = IconImageSource;
+            }
+            return _hasIcon;
+        }
+    }
 
     public Microsoft.UI.Xaml.Visibility IconVisibility => HasIcon 
         ? Microsoft.UI.Xaml.Visibility.Visible 

@@ -19,6 +19,11 @@ public interface IBackgroundWatchdogService : IDisposable
     void Stop();
 
     /// <summary>
+    /// Asynchronously stops the background watchdog monitoring loop.
+    /// </summary>
+    Task StopAsync();
+
+    /// <summary>
     /// Manually triggers an immediate health and resource check in the background.
     /// </summary>
     Task TriggerImmediateCheckAsync();

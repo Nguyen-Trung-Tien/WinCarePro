@@ -1,5 +1,5 @@
 using System;
-using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using WinCarePro.Engines;
 using WinCarePro.Infrastructure.Logging;
@@ -8,22 +8,25 @@ using WinCarePro.Services.Contracts;
 
 namespace WinCarePro.Services.Implementations;
 
-public class SmartFixService
+public class SmartFixService : ISmartFixService
 {
     private readonly JunkCleanerEngine _junkEngine;
     private readonly NetworkEngine _networkEngine;
     private readonly SystemOptimizerEngine _optimizerEngine;
+    private readonly SystemEngine _systemEngine;
     private readonly INotificationService _notificationService;
 
     public SmartFixService(
         JunkCleanerEngine junkEngine,
         NetworkEngine networkEngine,
         SystemOptimizerEngine optimizerEngine,
+        SystemEngine systemEngine,
         INotificationService notificationService)
     {
         _junkEngine = junkEngine ?? new JunkCleanerEngine();
         _networkEngine = networkEngine ?? new NetworkEngine();
         _optimizerEngine = optimizerEngine ?? new SystemOptimizerEngine();
+        _systemEngine = systemEngine ?? new SystemEngine();
         _notificationService = notificationService ?? new NotificationService();
     }
 
@@ -31,29 +34,36 @@ public class SmartFixService
         new JunkCleanerEngine(),
         new NetworkEngine(),
         new SystemOptimizerEngine(),
+        new SystemEngine(),
         new NotificationService())
     {
     }
 
-    public async Task ExecuteFixAsync(string actionKey, Action<SmartFixProgress>? progressCallback = null)
+    public async Task ExecuteFixAsync(string actionKey, Action<SmartFixProgress>? progressCallback = null, CancellationToken cancellationToken = default)
     {
         var progress = new SmartFixProgress { ActionName = actionKey, ProgressPercent = 10 };
         
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             switch (actionKey)
             {
                 case "CleanJunk":
                     progress.CurrentStep = "Scanning temporary files and system caches...";
                     progressCallback?.Invoke(progress);
                     
-                    var cats = await _junkEngine.ScanJunkAsync();
+                    var cats = await _junkEngine.ScanJunkAsync(cancellationToken);
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     progress.ProgressPercent = 50;
                     progress.CurrentStep = "Purging temporary junk files and logs...";
                     progressCallback?.Invoke(progress);
                     
-                    long cleanedBytes = await _junkEngine.CleanJunkAsync(cats);
+                    long cleanedBytes = await _junkEngine.CleanJunkAsync(cats, cancellationToken);
                     double freedMB = cleanedBytes / (1024.0 * 1024.0);
+
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     // Also optimize RAM
                     await _optimizerEngine.OptimizeRamAsync();
@@ -72,6 +82,8 @@ public class SmartFixService
                     progressCallback?.Invoke(progress);
                     
                     bool dnsOk = await _networkEngine.FlushDnsAsync();
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     progress.ProgressPercent = 60;
                     progress.CurrentStep = "Resetting TCP/IP network socket catalog...";
                     progressCallback?.Invoke(progress);
@@ -107,44 +119,52 @@ public class SmartFixService
                     progress.CurrentStep = "Initiating Windows System File Checker (SFC)...";
                     progressCallback?.Invoke(progress);
                     
-                    await Task.Run(() =>
-                    {
-                        try
-                        {
-                            var psi = new ProcessStartInfo("sfc", "/scannow")
-                            {
-                                CreateNoWindow = true,
-                                UseShellExecute = false
-                            };
-                            using var proc = Process.Start(psi);
-                            proc?.WaitForExit(5000); // Trigger background repair
-                        }
-                        catch { }
-                    });
+                    bool sfcOk = await _systemEngine.RunSfcScanAsync(repair: true, cancellationToken);
 
                     progress.ProgressPercent = 100;
                     progress.IsCompleted = true;
-                    progress.IsSuccess = true;
-                    progress.ResultMessage = "Windows system file repair task queued successfully.";
+                    progress.IsSuccess = sfcOk;
+                    progress.ResultMessage = sfcOk 
+                        ? "Windows system file verification and repair completed successfully."
+                        : "Windows SFC finished. Check system logs for repair details.";
                     progressCallback?.Invoke(progress);
                     
-                    _notificationService.ShowSuccess("System Repair", progress.ResultMessage);
+                    if (sfcOk)
+                    {
+                        _notificationService.ShowSuccess("System Repair", progress.ResultMessage);
+                    }
+                    else
+                    {
+                        _notificationService.ShowInfo("System Repair", progress.ResultMessage);
+                    }
                     break;
 
                 default:
                     progress.CurrentStep = "Executing quick maintenance...";
-                    await Task.Delay(500);
+                    progress.ProgressPercent = 50;
+                    progressCallback?.Invoke(progress);
+
+                    // Real maintenance: optimize RAM and trim system caches
+                    await _optimizerEngine.OptimizeRamAsync();
+
                     progress.ProgressPercent = 100;
                     progress.IsCompleted = true;
                     progress.IsSuccess = true;
-                    progress.ResultMessage = "Quick maintenance completed.";
+                    progress.ResultMessage = "Quick system maintenance completed successfully.";
                     progressCallback?.Invoke(progress);
                     break;
             }
         }
+        catch (OperationCanceledException)
+        {
+            progress.IsCompleted = true;
+            progress.IsSuccess = false;
+            progress.ResultMessage = "Operation cancelled by user.";
+            progressCallback?.Invoke(progress);
+        }
         catch (Exception ex)
         {
-            CrashLogger.LogException("SmartFixService", ex);
+            CrashLogger.LogException("SmartFixService.ExecuteFixAsync", ex);
             progress.IsCompleted = true;
             progress.IsSuccess = false;
             progress.ResultMessage = $"Fix encountered an error: {ex.Message}";

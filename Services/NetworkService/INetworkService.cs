@@ -33,7 +33,7 @@ public interface INetworkService
     Task<bool> DisableEnergyEfficientEthernetAsync();
     List<NetworkAdapterInfo> GetNetworkAdapters();
     Task<List<DnsServerInfo>> RunDnsBenchmarkAsync(System.Threading.CancellationToken cancellationToken = default);
-    Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp);
+    Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp, System.Threading.CancellationToken cancellationToken = default);
     List<ActiveConnectionInfo> GetActiveConnections();
     Task<bool> IsDohEnabledAsync();
     Task<bool> SetDohSettingsAsync(bool enable, string primaryDns, string secondaryDns, string dohTemplate);

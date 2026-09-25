@@ -302,28 +302,53 @@ public class HardwareDriverEngine
             if (temp > 10 && temp < 110) return Math.Round(temp, 1);
         }
 
-        // Simulation correlated with cpuUsage
+        // Deterministic thermal estimate correlated with cpuUsage when ACPI sensor is missing
         double baseTemp = 37.0;
         double loadTemp = cpuUsage * 0.35; // 100% usage adds 35C
-        var rand = new Random();
-        double fluctuation = (rand.NextDouble() - 0.5) * 3.0; // +- 1.5C
-        return Math.Round(Math.Clamp(baseTemp + loadTemp + fluctuation, 35.0, 95.0), 1);
+        return Math.Round(Math.Clamp(baseTemp + loadTemp, 35.0, 95.0), 1);
     }
 
     public double GetGpuTemperature(double gpuUsage)
     {
-        // Simulation correlated with gpuUsage
+        // Deterministic thermal estimate correlated with gpuUsage
         double baseTemp = 39.0;
         double loadTemp = gpuUsage * 0.4; // 100% usage adds 40C
-        var rand = new Random();
-        double fluctuation = (rand.NextDouble() - 0.5) * 2.0; // +- 1C
-        return Math.Round(Math.Clamp(baseTemp + loadTemp + fluctuation, 37.0, 90.0), 1);
+        return Math.Round(Math.Clamp(baseTemp + loadTemp, 37.0, 90.0), 1);
     }
 
     public double GetDiskTemperature()
     {
-        var rand = new Random();
-        return Math.Round(31.0 + rand.NextDouble() * 8.0, 1); // 31C to 39C
+        try
+        {
+            var tempValues = WmiHelper.Query("SELECT VendorSpecific FROM MSStorageDriver_FailurePredictData", tobj =>
+            {
+                var vendorSpecific = tobj["VendorSpecific"] as byte[];
+                if (vendorSpecific != null && vendorSpecific.Length >= 14)
+                {
+                    for (int i = 2; i + 12 <= vendorSpecific.Length; i += 12)
+                    {
+                        byte attrId = vendorSpecific[i];
+                        if (attrId == 194 || attrId == 190 || attrId == 231)
+                        {
+                            byte rawTemp = vendorSpecific[i + 5];
+                            if (rawTemp >= 10 && rawTemp <= 105)
+                            {
+                                return (double)rawTemp;
+                            }
+                        }
+                    }
+                }
+                return 0.0;
+            }, @"root\wmi");
+
+            foreach (var t in tempValues)
+            {
+                if (t > 0) return t;
+            }
+        }
+        catch { }
+
+        return 0.0;
     }
 
     public BatteryInfo GetBatteryInfo()

@@ -75,7 +75,8 @@ public partial class NetworkViewModel
         IsBusy = true;
         try
         {
-            bool ok = await _engine.ApplyDnsSettingsAsync(server.Name, server.PrimaryIp, server.SecondaryIp);
+            var token = _cts?.Token ?? default;
+            bool ok = await _engine.ApplyDnsSettingsAsync(server.Name, server.PrimaryIp, server.SecondaryIp, token);
             if (_cts == null || _cts.IsCancellationRequested) return;
             if (ok)
             {
@@ -88,6 +89,10 @@ public partial class NetworkViewModel
                 _notificationService?.ShowError("DNS Setup Failed".T(), "Administrative privileges required.".T());
             }
             await RunDiagnosticsAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            // Clean exit on cancellation
         }
         catch (Exception ex)
         {
@@ -109,7 +114,8 @@ public partial class NetworkViewModel
         LogText("Restoring DNS to Automatic (DHCP)...".T());
         try
         {
-            bool ok = await _engine.ApplyDnsSettingsAsync("DHCP (Automatic)", "", "");
+            var token = _cts?.Token ?? default;
+            bool ok = await _engine.ApplyDnsSettingsAsync("DHCP (Automatic)", "", "", token);
             if (_cts == null || _cts.IsCancellationRequested) return;
             if (ok)
             {
@@ -123,6 +129,10 @@ public partial class NetworkViewModel
             }
             await RunDiagnosticsAsync();
             LoadAdapters();
+        }
+        catch (OperationCanceledException)
+        {
+            // Clean exit on cancellation
         }
         catch (Exception ex)
         {

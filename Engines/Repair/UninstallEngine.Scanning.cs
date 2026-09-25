@@ -249,14 +249,26 @@ public partial class UninstallEngine
         Log("Attempting fallback uninstallation via PowerShell...");
         try
         {
-            var safePackage = packageFullName.Replace("'", "''").Replace("\"", "").Replace(";", "").Replace("$", "").Replace("`", "");
+            var safePackage = WinCarePro.Infrastructure.Security.InputSanitizer.Sanitize(packageFullName);
+            if (string.IsNullOrWhiteSpace(safePackage))
+            {
+                Log("Package name failed sanitization. Aborting PowerShell uninstall.");
+                return false;
+            }
+
             var psi = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = "powershell.exe",
-                Arguments = $"-NoProfile -NonInteractive -WindowStyle Hidden -Command \"Remove-AppxPackage -Package '{safePackage}'\"",
                 UseShellExecute = true,
                 Verb = "runas"
             };
+            psi.ArgumentList.Add("-NoProfile");
+            psi.ArgumentList.Add("-NonInteractive");
+            psi.ArgumentList.Add("-WindowStyle");
+            psi.ArgumentList.Add("Hidden");
+            psi.ArgumentList.Add("-Command");
+            psi.ArgumentList.Add($"Remove-AppxPackage -Package '{safePackage}'");
+
             using var process = System.Diagnostics.Process.Start(psi);
             if (process != null)
             {

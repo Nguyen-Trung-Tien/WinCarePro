@@ -109,7 +109,10 @@ public sealed partial class ToastNotification : UserControl
             {
                 RepeatPulseAnimation.Begin();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ToastNotification.RepeatPulseAnimation", ex);
+            }
         }
         else
         {
@@ -147,7 +150,10 @@ public sealed partial class ToastNotification : UserControl
             {
                 _currentActions[0].Action?.Invoke();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ToastNotification.ActionBtn_Click", ex);
+            }
         }
         DismissRequested?.Invoke(this);
     }
@@ -198,7 +204,10 @@ public sealed partial class ToastNotification : UserControl
             PulseAnimation.Stop();
             RepeatPulseAnimation.Stop();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ToastNotification.ResetAnimations", ex);
+        }
 
         TitleTextBlock.Text = "";
         DescTextBlock.Text = "";
@@ -349,7 +358,10 @@ public sealed partial class ToastNotification : UserControl
             {
                 PulseAnimation.Begin();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ToastNotification.PulseAnimation.Begin", ex);
+            }
         }
         else
         {
@@ -357,7 +369,10 @@ public sealed partial class ToastNotification : UserControl
             {
                 PulseAnimation.Stop();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ToastNotification.PulseAnimation.Stop", ex);
+            }
         }
     }
 

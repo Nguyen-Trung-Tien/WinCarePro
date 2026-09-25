@@ -273,17 +273,6 @@ public class SecurityPrivacyEngine
         return issues;
     }
 
-    private static Microsoft.UI.Xaml.Media.SolidColorBrush? SafeBrush(byte a, byte r, byte g, byte b)
-    {
-        try
-        {
-            return new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(a, r, g, b));
-        }
-        catch
-        {
-            return null;
-        }
-    }
 
     public List<SecurityAlertItem> RunSecurityAuditItems(List<StartupEntry>? startupEntries = null)
     {
@@ -298,8 +287,7 @@ public class SecurityPrivacyEngine
                 Description = "A group policy or registry tweak has turned off Defender real-time background scanning.",
                 Category = "Antivirus",
                 Severity = "Critical",
-                FixActionKey = "defender_realtime",
-                SeverityBrush = SafeBrush(255, 239, 68, 68)
+                FixActionKey = "defender_realtime"
             });
         }
 
@@ -312,8 +300,7 @@ public class SecurityPrivacyEngine
                 Description = "One or more network profiles (Domain, Private, Public) have Windows Firewall disabled.",
                 Category = "Firewall",
                 Severity = "Critical",
-                FixActionKey = "firewall",
-                SeverityBrush = SafeBrush(255, 239, 68, 68)
+                FixActionKey = "firewall"
             });
         }
 
@@ -326,8 +313,7 @@ public class SecurityPrivacyEngine
                 Description = "Applications can execute with full administrative privileges without prompting.",
                 Category = "Policy",
                 Severity = "Warning",
-                FixActionKey = "uac",
-                SeverityBrush = SafeBrush(255, 245, 158, 11)
+                FixActionKey = "uac"
             });
         }
 
@@ -341,8 +327,7 @@ public class SecurityPrivacyEngine
                 Description = "Secure Boot is not active in UEFI BIOS firmware. Enable it in BIOS to protect against bootkits.",
                 Category = "Hardware",
                 Severity = "Info",
-                FixActionKey = "",
-                SeverityBrush = SafeBrush(255, 59, 130, 246)
+                FixActionKey = ""
             });
         }
 
@@ -361,8 +346,7 @@ public class SecurityPrivacyEngine
                         Description = $"Entry executes via command shell interpreter or runs from temporary directory: {s.Command}",
                         Category = "Startup",
                         Severity = "Warning",
-                        FixActionKey = "",
-                        SeverityBrush = SafeBrush(255, 245, 158, 11)
+                        FixActionKey = ""
                     });
                 }
             }

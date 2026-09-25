@@ -20,7 +20,7 @@ public partial class NetworkEngine
     public async Task<bool> ResetWinsockAsync()
     {
         Log("Resetting Winsock Catalog (requires restart)...");
-        bool ok = await RunProcessAsync("netsh.exe", "winsock reset");
+        bool ok = await RunProcessAsync("netsh.exe", "winsock", "reset");
         Database.DbManager.LogAction("Reset Winsock", "Network Repair", ok ? "Success" : "Failed");
         return ok;
     }
@@ -28,7 +28,7 @@ public partial class NetworkEngine
     public async Task<bool> ResetTcpIpAsync()
     {
         Log("Resetting TCP/IP stack...");
-        bool ok = await RunProcessAsync("netsh.exe", "int ip reset");
+        bool ok = await RunProcessAsync("netsh.exe", "int", "ip", "reset");
         Database.DbManager.LogAction("Reset TCP/IP", "Network Repair", ok ? "Success" : "Failed");
         return ok;
     }
@@ -47,7 +47,7 @@ public partial class NetworkEngine
     public async Task<bool> ResetFirewallAsync()
     {
         Log("Resetting Windows Firewall to defaults...");
-        bool ok = await RunProcessAsync("netsh.exe", "advfirewall reset");
+        bool ok = await RunProcessAsync("netsh.exe", "advfirewall", "reset");
         Database.DbManager.LogAction("Reset Firewall", "Network Repair", ok ? "Success" : "Failed");
         return ok;
     }
@@ -58,7 +58,7 @@ public partial class NetworkEngine
         try
         {
             // Reset WinHTTP proxy
-            await RunProcessAsync("netsh.exe", "winhttp reset proxy");
+            await RunProcessAsync("netsh.exe", "winhttp", "reset", "proxy");
 
             // Disable internet settings proxy
             using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Internet Settings", true);
@@ -111,7 +111,7 @@ public partial class NetworkEngine
         return false;
     }
 
-    private async Task<bool> RunProcessAsync(string filename, string arguments)
+    private async Task<bool> RunProcessAsync(string filename, params string[] arguments)
     {
         try
         {

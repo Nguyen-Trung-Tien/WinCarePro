@@ -96,9 +96,9 @@ public class NetworkService : INetworkService
 
     public Task<List<DnsServerInfo>> RunDnsBenchmarkAsync(System.Threading.CancellationToken cancellationToken = default) => _engine.RunDnsBenchmarkAsync(cancellationToken);
 
-    public Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp)
+    public Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp, System.Threading.CancellationToken cancellationToken = default)
     {
-        return _engine.ApplyDnsSettingsAsync(dnsName, primaryIp, secondaryIp);
+        return _engine.ApplyDnsSettingsAsync(dnsName, primaryIp, secondaryIp, cancellationToken);
     }
 
     public List<ActiveConnectionInfo> GetActiveConnections() => _engine.GetActiveConnections();

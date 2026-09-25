@@ -164,11 +164,30 @@ public partial class SecurityAlertItem : ObservableObject
     [ObservableProperty]
     private string _statusText = "Open";
 
-    private SolidColorBrush? _severityBrush;
+    private static SolidColorBrush? _redBrush;
+    private static SolidColorBrush? _amberBrush;
+    private static SolidColorBrush? _blueBrush;
+    private static SolidColorBrush? _grayBrush;
+
     public SolidColorBrush? SeverityBrush
     {
-        get => _severityBrush;
-        set => SetProperty(ref _severityBrush, value);
+        get
+        {
+            try
+            {
+                return Severity switch
+                {
+                    "Critical" => _redBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)),
+                    "Warning" => _amberBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)),
+                    "Info" => _blueBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246)),
+                    _ => _grayBrush ??= new SolidColorBrush(Microsoft.UI.Colors.Gray)
+                };
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 
     public bool CanFix => !string.IsNullOrEmpty(FixActionKey) && !IsFixed;

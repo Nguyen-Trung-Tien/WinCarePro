@@ -299,19 +299,25 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private static readonly Microsoft.UI.Xaml.Media.Brush _purpleBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246));
+    private static readonly Microsoft.UI.Xaml.Media.Brush _greenBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));
+    private static readonly Microsoft.UI.Xaml.Media.Brush _cyanBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 6, 182, 212));
+
+    private static readonly Microsoft.UI.Xaml.Media.Brush _purpleBadgeBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 139, 92, 246));
+    private static readonly Microsoft.UI.Xaml.Media.Brush _greenBadgeBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129));
+    private static readonly Microsoft.UI.Xaml.Media.Brush _cyanBadgeBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 6, 182, 212));
+
     public Microsoft.UI.Xaml.Media.Brush SpeedPhaseAccentBrush
     {
         get
         {
             if (IsBusy)
             {
-                if (SpeedProgress > 52) return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246));   // UPLOAD -> Electric Purple
-                if (SpeedProgress > 8) return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));   // DOWNLOAD -> Emerald Green
-                return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 6, 182, 212));                             // PING -> Neon Cyan
+                if (SpeedProgress > 52) return _purpleBrush;   // UPLOAD -> Electric Purple
+                if (SpeedProgress > 8) return _greenBrush;    // DOWNLOAD -> Emerald Green
+                return _cyanBrush;                            // PING -> Neon Cyan
             }
-            return DownloadSpeed > 0 
-                ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129))
-                : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246));
+            return DownloadSpeed > 0 ? _greenBrush : _purpleBrush;
         }
     }
 
@@ -321,13 +327,11 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         {
             if (IsBusy)
             {
-                if (SpeedProgress > 52) return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 139, 92, 246));
-                if (SpeedProgress > 8) return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129));
-                return new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 6, 182, 212));
+                if (SpeedProgress > 52) return _purpleBadgeBrush;
+                if (SpeedProgress > 8) return _greenBadgeBrush;
+                return _cyanBadgeBrush;
             }
-            return DownloadSpeed > 0 
-                ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129))
-                : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 139, 92, 246));
+            return DownloadSpeed > 0 ? _greenBadgeBrush : _purpleBadgeBrush;
         }
     }
 

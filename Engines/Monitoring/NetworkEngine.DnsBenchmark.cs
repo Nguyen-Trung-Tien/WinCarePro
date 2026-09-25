@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using WinCarePro.Models;
+using WinCarePro.Core.Helpers;
 
 namespace WinCarePro.Engines;
 
@@ -118,11 +119,13 @@ public partial class NetworkEngine
         return dnsList;
     }
 
-    public async Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp)
+    public async Task<bool> ApplyDnsSettingsAsync(string dnsName, string primaryIp, string secondaryIp, System.Threading.CancellationToken cancellationToken = default)
     {
         Log($"Applying DNS settings for {dnsName} ({primaryIp}, {secondaryIp})...");
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             string script;
             bool isDhcp = string.IsNullOrWhiteSpace(primaryIp) || 
                           dnsName.Contains("DHCP", StringComparison.OrdinalIgnoreCase) || 
@@ -169,39 +172,23 @@ public partial class NetworkEngine
                          "}";
             }
 
-            var psi = new ProcessStartInfo
-            {
-                FileName = "powershell.exe",
-                Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"",
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
-            using var proc = Process.Start(psi);
-            if (proc != null)
-            {
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-                try
-                {
-                    await proc.WaitForExitAsync(cts.Token);
-                }
-                catch (OperationCanceledException)
-                {
-                    try { proc.Kill(true); } catch { }
-                    Log("DNS configuration timed out after 15 seconds.");
-                    return false;
-                }
+            var result = await ProcessRunner.RunAsync(
+                "powershell.exe",
+                new[] { "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", script },
+                TimeSpan.FromSeconds(15),
+                onOutput: Log,
+                onError: Log,
+                cancellationToken: cancellationToken
+            );
 
-                if (proc.ExitCode == 0)
-                {
-                    Log($"DNS configured successfully to {dnsName}.");
-                    return true;
-                }
-                else
-                {
-                    Log($"Failed to configure DNS. PowerShell exited with code {proc.ExitCode}.");
-                }
+            if (result.ExitCode == 0)
+            {
+                Log($"DNS configured successfully to {dnsName}.");
+                return true;
+            }
+            else
+            {
+                Log($"Failed to configure DNS. PowerShell exited with code {result.ExitCode}.");
             }
         }
         catch (Exception ex)

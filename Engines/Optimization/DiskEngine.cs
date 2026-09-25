@@ -57,19 +57,38 @@ public class DiskEngine
                     health = "Warning / Failing";
                 }
 
-                // Get Temperature from WMI MSStorageDriver_FailurePredictData or similar, fallback to standard mock
-                double temp = 35.0; 
+                // Query real SMART hardware temperature from MSStorageDriver_FailurePredictData (Zero mock)
+                double temp = 0.0; 
                 try
                 {
-                    var tempValues = WmiHelper.Query("SELECT VendorSpecific FROM MSStorageDriver_FailurePredictData", tobj => {
-                        var vendorSpecific = (byte[])tobj["VendorSpecific"];
-                        if (vendorSpecific != null && vendorSpecific.Length > 5)
+                    var tempValues = WmiHelper.Query("SELECT InstanceName, VendorSpecific FROM MSStorageDriver_FailurePredictData", tobj => {
+                        var vendorSpecific = tobj["VendorSpecific"] as byte[];
+                        if (vendorSpecific != null && vendorSpecific.Length >= 14)
                         {
-                            return 30 + new Random().Next(15);
+                            for (int i = 2; i + 12 <= vendorSpecific.Length; i += 12)
+                            {
+                                byte attrId = vendorSpecific[i];
+                                if (attrId == 194 || attrId == 190 || attrId == 231) // SMART Temperature Attributes
+                                {
+                                    byte rawTemp = vendorSpecific[i + 5];
+                                    if (rawTemp >= 10 && rawTemp <= 105)
+                                    {
+                                        return (double)rawTemp;
+                                    }
+                                }
+                            }
                         }
-                        return 35;
+                        return 0.0;
                     }, @"root\wmi");
-                    if (tempValues.Count > 0) temp = tempValues[0];
+
+                    foreach (var t in tempValues)
+                    {
+                        if (t > 0)
+                        {
+                            temp = t;
+                            break;
+                        }
+                    }
                 }
                 catch { }
 

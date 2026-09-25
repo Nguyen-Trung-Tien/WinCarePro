@@ -58,9 +58,41 @@ public sealed class BackgroundWatchdogService : IBackgroundWatchdogService
         try
         {
             _cts?.Cancel();
-            _monitoringTask?.Wait(TimeSpan.FromSeconds(2));
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("BackgroundWatchdogService.Stop", ex);
+        }
+        finally
+        {
+            _cts?.Dispose();
+            _cts = null;
+            _monitoringTask = null;
+        }
+
+        DbManager.LogAction("Background Watchdog Service deactivated.", "Background Watchdog", "Success");
+    }
+
+    public async Task StopAsync()
+    {
+        if (Interlocked.CompareExchange(ref _isRunningState, 0, 1) != 1)
+        {
+            return; // Already stopped
+        }
+
+        var task = _monitoringTask;
+        try
+        {
+            _cts?.Cancel();
+            if (task != null)
+            {
+                await Task.WhenAny(task, Task.Delay(2000));
+            }
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("BackgroundWatchdogService.StopAsync", ex);
+        }
         finally
         {
             _cts?.Dispose();

@@ -44,23 +44,63 @@ public class StartupEntry : INotifyPropertyChanged
         _ => "Critical"
     };
 
-    // New Properties
-    public string IconPath { get; set; } = "";
-    public bool HasIcon => !string.IsNullOrWhiteSpace(IconPath) && System.IO.File.Exists(IconPath);
+    private string _iconPath = "";
+    public string IconPath
+    {
+        get => _iconPath;
+        set
+        {
+            if (_iconPath != value)
+            {
+                _iconPath = value;
+                _cachedIconImageSource = null;
+                _iconSourceInitialized = false;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IconImageSource));
+                OnPropertyChanged(nameof(HasIcon));
+            }
+        }
+    }
+
+    private ImageSource? _cachedIconImageSource;
+    private bool _hasIcon;
+    private bool _iconSourceInitialized;
+
+    public bool HasIcon
+    {
+        get
+        {
+            if (!_iconSourceInitialized)
+            {
+                _ = IconImageSource;
+            }
+            return _hasIcon;
+        }
+    }
+
     [System.Text.Json.Serialization.JsonIgnore]
     public ImageSource? IconImageSource
     {
         get
         {
-            if (string.IsNullOrWhiteSpace(IconPath) || !System.IO.File.Exists(IconPath)) return null;
-            try
+            if (!_iconSourceInitialized)
             {
-                return new BitmapImage(new Uri(IconPath));
+                _iconSourceInitialized = true;
+                _hasIcon = !string.IsNullOrWhiteSpace(_iconPath) && System.IO.File.Exists(_iconPath);
+                if (_hasIcon)
+                {
+                    try
+                    {
+                        _cachedIconImageSource = new BitmapImage(new Uri(_iconPath));
+                    }
+                    catch
+                    {
+                        _cachedIconImageSource = null;
+                        _hasIcon = false;
+                    }
+                }
             }
-            catch
-            {
-                return null;
-            }
+            return _cachedIconImageSource;
         }
     }
     public string Publisher { get; set; } = "Unknown";

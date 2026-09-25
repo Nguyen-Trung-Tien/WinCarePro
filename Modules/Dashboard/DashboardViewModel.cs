@@ -44,6 +44,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
             if (value != null)
             {
                 _dispatcherQueue = value;
+                DispatcherQueueInstance = value;
             }
         }
     }
@@ -336,6 +337,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
         _schedulerService = schedulerService ?? App.Services?.GetService<IMaintenanceSchedulerService>() ?? new MaintenanceSchedulerService();
 
         _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
+        DispatcherQueueInstance = _dispatcherQueue;
 
         // Initialize historical values for rolling charts
         for (int i = 0; i < 30; i++)

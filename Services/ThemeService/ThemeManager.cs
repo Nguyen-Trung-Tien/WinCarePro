@@ -174,7 +174,10 @@ public class ThemeManager
                         DwmSetWindowAttribute(hwnd, 20, ref isDark, sizeof(int));
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ThemeManager.DwmSetWindowAttribute", ex);
+                }
 
                 // Title Bar customization
                 try
@@ -206,10 +209,16 @@ public class ThemeManager
                         }
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ThemeManager.TitleBarCustomization", ex);
+                }
             });
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ThemeManager.ApplyThemeDispatch", ex);
+        }
     }
 
     public void ApplyAccent(string tag)
@@ -433,9 +442,15 @@ public class ThemeManager
                 UpdateThemeDictionaryTokens("Dark", true, c0, c1, cyber0, cyber1);
                 UpdateThemeDictionaryTokens("Light", false, c0, c1, cyber0, cyber1);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ThemeManager.ApplyAccentTokens", ex);
+            }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ThemeManager.ApplyAccent", ex);
+        }
 
         AccentChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -459,7 +474,10 @@ public class ThemeManager
                 SetOrCreateBrush(dict, "AppRamChipFg", dictIsDark ? cyber1 : c1);
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ThemeManager.UpdateThemeDictionaryTokens", ex);
+        }
     }
 
     private static void SetOrCreateBrush(ResourceDictionary dict, string key, Color color)

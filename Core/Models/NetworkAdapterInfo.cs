@@ -18,13 +18,13 @@ public class NetworkAdapterInfo
     public string DisplayStatus => Status.T();
     public string DisplaySpeed => Speed.T();
 
-    public Microsoft.UI.Xaml.Media.Brush StatusBadgeBg => Status == "Up"
-        ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129))
-        : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 239, 68, 68));
+    private static readonly Microsoft.UI.Xaml.Media.Brush _upBgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129));
+    private static readonly Microsoft.UI.Xaml.Media.Brush _downBgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(35, 239, 68, 68));
+    private static readonly Microsoft.UI.Xaml.Media.Brush _upFgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129));
+    private static readonly Microsoft.UI.Xaml.Media.Brush _downFgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68));
 
-    public Microsoft.UI.Xaml.Media.Brush StatusBadgeFg => Status == "Up"
-        ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129))
-        : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68));
+    public Microsoft.UI.Xaml.Media.Brush StatusBadgeBg => Status == "Up" ? _upBgBrush : _downBgBrush;
+    public Microsoft.UI.Xaml.Media.Brush StatusBadgeFg => Status == "Up" ? _upFgBrush : _downFgBrush;
 
     // New optimized telemetry fields
     public string CurrentDnsServers { get; set; } = "";

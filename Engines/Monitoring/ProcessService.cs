@@ -47,6 +47,7 @@ public class ProcessService
     private readonly SemaphoreSlim _querySemaphore = new(1, 1);
     private readonly HashSet<int> _accessDeniedPids = new();
     private System.Collections.Concurrent.ConcurrentDictionary<int, (TimeSpan cpuTime, DateTime sampleTime)> _lastCpuSamples = new();
+    private System.Collections.Concurrent.ConcurrentDictionary<int, (ulong totalBytes, DateTime sampleTime)> _lastIoSamples = new();
     private static readonly Dictionary<int, ProcessMetadata> _metadataCache = new();
     private static readonly object _cacheLock = new();
     private const int CACHE_TTL_SECONDS = 60;
@@ -246,6 +247,7 @@ public class ProcessService
         {
             var sampleTime = DateTime.UtcNow;
             var currentSamples = new System.Collections.Concurrent.ConcurrentDictionary<int, (TimeSpan cpuTime, DateTime sampleTime)>();
+            var currentIoSamples = new System.Collections.Concurrent.ConcurrentDictionary<int, (ulong totalBytes, DateTime sampleTime)>();
 
             var activePids = new HashSet<int>(rawProcesses.Select(p => p.Id));
             _accessDeniedPids.IntersectWith(activePids);
@@ -406,18 +408,31 @@ public class ProcessService
                     }
                 }
 
-                // Estimated disk/network activity based on CPU resource behavior
-                // Note: These are heuristic approximations, not real-time ETW-based metrics
-                var random = new Random(p.Id);
-                if (info.CpuUsage > 5.0)
+                // Query real OS kernel I/O counters via P/Invoke (Zero mock/fake numbers)
+                IntPtr hProcess = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, p.Id);
+                if (hProcess != IntPtr.Zero)
                 {
-                    info.DiskUsageMb = random.NextDouble() * 5.2;
-                    info.NetworkUsageKb = random.NextDouble() * 120.0;
-                }
-                else if (info.CpuUsage > 0.5)
-                {
-                    info.DiskUsageMb = random.NextDouble() * 0.4;
-                    info.NetworkUsageKb = random.NextDouble() * 8.5;
+                    try
+                    {
+                        if (WinCarePro.Core.Interop.NativeApi.GetProcessIoCounters(hProcess, out var ioCounters))
+                        {
+                            ulong totalBytes = ioCounters.ReadTransferCount + ioCounters.WriteTransferCount;
+                            if (_lastIoSamples.TryGetValue(p.Id, out var prevIoSample))
+                            {
+                                double elapsedSec = (sampleTime - prevIoSample.sampleTime).TotalSeconds;
+                                if (elapsedSec > 0 && totalBytes >= prevIoSample.totalBytes)
+                                {
+                                    info.DiskUsageMb = Math.Round((totalBytes - prevIoSample.totalBytes) / (1024.0 * 1024.0) / elapsedSec, 2);
+                                }
+                            }
+                            currentIoSamples[p.Id] = (totalBytes, sampleTime);
+                        }
+                    }
+                    catch { }
+                    finally
+                    {
+                        CloseHandle(hProcess);
+                    }
                 }
 
                 result.Add(info);
@@ -425,6 +440,7 @@ public class ProcessService
 
             // Save current samples for next call
             _lastCpuSamples = currentSamples;
+            _lastIoSamples = currentIoSamples;
 
             return result.OrderByDescending(x => x.CpuUsage).ThenByDescending(x => x.RamUsageBytes).ToList();
         }

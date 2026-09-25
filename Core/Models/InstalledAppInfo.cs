@@ -38,23 +38,43 @@ public class InstalledAppInfo : INotifyPropertyChanged
     public string DisplayIcon { get; set; } = "";
     public bool IsStoreApp { get; set; } = false;
     public bool IsDesktopApp => !IsStoreApp;
-    public string IconPath { get; set; } = "";
+    private string _iconPath = "";
+    public string IconPath
+    {
+        get => _iconPath;
+        set
+        {
+            if (_iconPath != value)
+            {
+                _iconPath = value;
+                _cachedIconImageSource = null;
+                OnPropertyChanged(nameof(IconPath));
+                OnPropertyChanged(nameof(IconImageSource));
+                OnPropertyChanged(nameof(HasIcon));
+                OnPropertyChanged(nameof(IconVisibility));
+                OnPropertyChanged(nameof(FallbackVisibility));
+            }
+        }
+    }
     
+    private ImageSource? _cachedIconImageSource;
     public ImageSource? IconImageSource
     {
         get
         {
-            if (string.IsNullOrWhiteSpace(IconPath)) return null;
+            if (_cachedIconImageSource != null) return _cachedIconImageSource;
+            if (string.IsNullOrWhiteSpace(_iconPath)) return null;
             try
             {
-                if (Uri.TryCreate(IconPath, UriKind.Absolute, out var uri))
+                if (Uri.TryCreate(_iconPath, UriKind.Absolute, out var uri))
                 {
-                    return new BitmapImage(uri);
+                    _cachedIconImageSource = new BitmapImage(uri);
                 }
                 else
                 {
-                    return new BitmapImage(new Uri(System.IO.Path.GetFullPath(IconPath)));
+                    _cachedIconImageSource = new BitmapImage(new Uri(System.IO.Path.GetFullPath(_iconPath)));
                 }
+                return _cachedIconImageSource;
             }
             catch
             {
@@ -63,7 +83,7 @@ public class InstalledAppInfo : INotifyPropertyChanged
         }
     }
     
-    public bool HasIcon => !string.IsNullOrWhiteSpace(IconPath);
+    public bool HasIcon => !string.IsNullOrWhiteSpace(_iconPath);
 
     public Visibility IconVisibility => HasIcon 
         ? Visibility.Visible 
@@ -73,13 +93,18 @@ public class InstalledAppInfo : INotifyPropertyChanged
         ? Visibility.Collapsed 
         : Visibility.Visible;
 
+    private static SolidColorBrush? _storeBgBrush;
+    private static SolidColorBrush? _desktopBgBrush;
+    private static SolidColorBrush? _storeFgBrush;
+    private static SolidColorBrush? _desktopFgBrush;
+
     public Brush IconBackground => IsStoreApp 
-        ? new SolidColorBrush(Color.FromArgb(25, 0, 193, 238)) 
-        : new SolidColorBrush(Color.FromArgb(25, 127, 86, 217));
+        ? (_storeBgBrush ??= new SolidColorBrush(Color.FromArgb(25, 0, 193, 238)))
+        : (_desktopBgBrush ??= new SolidColorBrush(Color.FromArgb(25, 127, 86, 217)));
 
     public Brush IconForeground => IsStoreApp 
-        ? new SolidColorBrush(Color.FromArgb(255, 0, 193, 238)) 
-        : new SolidColorBrush(Color.FromArgb(255, 127, 86, 217));
+        ? (_storeFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 0, 193, 238)))
+        : (_desktopFgBrush ??= new SolidColorBrush(Color.FromArgb(255, 127, 86, 217)));
 
     public string DefaultIconGlyph => IsStoreApp ? "\uE719" : "\uE736";
     public string TypeBadgeText => IsStoreApp ? "Store App" : "Win32 Desktop";

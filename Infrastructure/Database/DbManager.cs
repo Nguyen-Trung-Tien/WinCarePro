@@ -12,6 +12,7 @@ public class DbManager
     private static readonly object DbLock = new();
 
     public static event Action<WinCarePro.Models.NotificationItem>? OnNotificationAdded;
+    public static event Action? OnNotificationsChanged;
     public static event Action<LogEntry>? OnLogAdded;
 
     private static readonly string AppDataPath = Path.Combine(
@@ -521,6 +522,7 @@ public class DbManager
                 ShowToast = showToast,
                 CreatedAt = DateTime.Now
             });
+            OnNotificationsChanged?.Invoke();
         }
         catch (Exception ex)
         {
@@ -564,11 +566,11 @@ public class DbManager
 
         try
         {
-            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
+            OnNotificationsChanged?.Invoke();
         }
         catch (Exception ex)
         {
-            Infrastructure.Logging.CrashLogger.LogException("DbManager.MarkAllNotificationsAsRead.Badge", ex);
+            Infrastructure.Logging.CrashLogger.LogException("DbManager.MarkAllNotificationsAsRead.OnNotificationsChanged", ex);
         }
     }
 
@@ -593,11 +595,11 @@ public class DbManager
 
         try
         {
-            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
+            OnNotificationsChanged?.Invoke();
         }
         catch (Exception ex)
         {
-            Infrastructure.Logging.CrashLogger.LogException("DbManager.ClearAllNotifications.Badge", ex);
+            Infrastructure.Logging.CrashLogger.LogException("DbManager.ClearAllNotifications.OnNotificationsChanged", ex);
         }
     }
 
@@ -613,11 +615,11 @@ public class DbManager
 
         try
         {
-            WinCarePro.App.MainWindowInstance?.UpdateNotificationBadge();
+            OnNotificationsChanged?.Invoke();
         }
         catch (Exception ex)
         {
-            Infrastructure.Logging.CrashLogger.LogException("DbManager.DeleteNotification.Badge", ex);
+            Infrastructure.Logging.CrashLogger.LogException("DbManager.DeleteNotification.OnNotificationsChanged", ex);
         }
     }
 

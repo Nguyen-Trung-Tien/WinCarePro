@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WinCarePro.Models;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Infrastructure.Security;
 
 namespace WinCarePro.Engines;
 
@@ -766,6 +767,7 @@ public class SoftwareUpdaterEngine
         UpdateProgressReported?.Invoke(startReport);
         ItemProgressChanged?.Invoke(appId, 0, "Connecting...");
 
+        string filePath = "";
         try
         {
             string tempDir = Path.Combine(Path.GetTempPath(), "WinCareUpdates");
@@ -774,8 +776,10 @@ public class SoftwareUpdaterEngine
                 Directory.CreateDirectory(tempDir);
             }
 
-            string fileName = $"{app.Id}_setup{app.FileExtension}";
-            string filePath = Path.Combine(tempDir, fileName);
+            string cleanAppId = InputSanitizer.SanitizeFileName(app.Id, "app_setup");
+            string cleanExt = app.FileExtension.Equals(".msi", StringComparison.OrdinalIgnoreCase) ? ".msi" : ".exe";
+            string fileName = $"{cleanAppId}_setup{cleanExt}";
+            filePath = Path.Combine(tempDir, fileName);
 
             int maxAttempts = 3;
             bool downloaded = false;
@@ -898,10 +902,11 @@ public class SoftwareUpdaterEngine
             UpdateProgressReported?.Invoke(installRep);
             ItemProgressChanged?.Invoke(appId, 98, "Installing...");
 
+            string msiexecPath = Path.Combine(Environment.SystemDirectory, "msiexec.exe");
             var psi = new ProcessStartInfo
             {
-                FileName = app.FileExtension.Equals(".msi", StringComparison.OrdinalIgnoreCase) ? "msiexec.exe" : filePath,
-                Arguments = app.FileExtension.Equals(".msi", StringComparison.OrdinalIgnoreCase) 
+                FileName = cleanExt.Equals(".msi", StringComparison.OrdinalIgnoreCase) ? msiexecPath : filePath,
+                Arguments = cleanExt.Equals(".msi", StringComparison.OrdinalIgnoreCase) 
                     ? $"/i \"{filePath}\" {app.SilentArguments}" 
                     : app.SilentArguments,
                 UseShellExecute = true,
@@ -988,6 +993,17 @@ public class SoftwareUpdaterEngine
             UpdateProgressReported?.Invoke(errRep);
             ItemProgressChanged?.Invoke(appId, 0, "Failed");
             return false;
+        }
+        finally
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath) && SafePathGuard.IsSafeToDelete(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+            catch { }
         }
     }
 

@@ -20,6 +20,50 @@ public class ProcessResult
 public static class ProcessRunner
 {
     /// <summary>
+    /// Resolves common Windows system executables to their canonical, fully qualified paths
+    /// in System32 / Windows directory to prevent DLL/EXE search-order and PATH hijacking.
+    /// </summary>
+    public static string ResolveSafeExecutablePath(string fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName)) return fileName;
+        if (Path.IsPathRooted(fileName)) return fileName;
+
+        string baseName = fileName.Trim();
+        string systemDir = Environment.SystemDirectory;
+        string winDir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+
+        if (baseName.Equals("powershell.exe", StringComparison.OrdinalIgnoreCase) || baseName.Equals("powershell", StringComparison.OrdinalIgnoreCase))
+        {
+            string psPath = Path.Combine(systemDir, @"WindowsPowerShell\v1.0\powershell.exe");
+            if (File.Exists(psPath)) return psPath;
+        }
+
+        if (baseName.Equals("explorer.exe", StringComparison.OrdinalIgnoreCase) || baseName.Equals("explorer", StringComparison.OrdinalIgnoreCase))
+        {
+            string expPath = Path.Combine(winDir, "explorer.exe");
+            if (File.Exists(expPath)) return expPath;
+        }
+
+        string exeName = baseName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || baseName.EndsWith(".msc", StringComparison.OrdinalIgnoreCase)
+            ? baseName
+            : baseName + ".exe";
+
+        string candidate = Path.Combine(systemDir, exeName);
+        if (File.Exists(candidate))
+        {
+            return candidate;
+        }
+
+        string winCandidate = Path.Combine(winDir, exeName);
+        if (File.Exists(winCandidate))
+        {
+            return winCandidate;
+        }
+
+        return fileName;
+    }
+
+    /// <summary>
     /// Executes a system process asynchronously with structured arguments (safe against command injection).
     /// </summary>
     public static async Task<ProcessResult> RunAsync(
@@ -47,14 +91,14 @@ public static class ProcessRunner
 
         var psi = new ProcessStartInfo
         {
-            FileName = fileName,
+            FileName = ResolveSafeExecutablePath(fileName),
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             StandardOutputEncoding = encoding,
             StandardErrorEncoding = encoding,
             CreateNoWindow = true,
-            WorkingDirectory = workingDirectory ?? ""
+            WorkingDirectory = string.IsNullOrWhiteSpace(workingDirectory) ? Environment.SystemDirectory : workingDirectory
         };
 
         if (argumentList != null)
@@ -98,7 +142,7 @@ public static class ProcessRunner
         {
             StartInfo = new ProcessStartInfo
             {
-                FileName = fileName,
+                FileName = ResolveSafeExecutablePath(fileName),
                 Arguments = arguments,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -106,7 +150,7 @@ public static class ProcessRunner
                 StandardOutputEncoding = encoding,
                 StandardErrorEncoding = encoding,
                 CreateNoWindow = true,
-                WorkingDirectory = workingDirectory ?? ""
+                WorkingDirectory = string.IsNullOrWhiteSpace(workingDirectory) ? Environment.SystemDirectory : workingDirectory
             }
         };
 

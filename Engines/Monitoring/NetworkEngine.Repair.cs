@@ -87,7 +87,7 @@ public partial class NetworkEngine
             // We run a powershell command to restart enabled network adapters
             var result = await ProcessRunner.RunAsync(
                 "powershell.exe",
-                "-NoProfile -ExecutionPolicy Bypass -Command \"Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Restart-NetAdapter -Confirm:$false\"",
+                new[] { "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Restart-NetAdapter -Confirm:$false" },
                 TimeSpan.FromSeconds(45),
                 onOutput: Log,
                 onError: Log
@@ -163,7 +163,7 @@ public partial class NetworkEngine
     public async Task<bool> OptimizeTcpAutoTuningAsync()
     {
         Log("Optimizing TCP Window Auto-Tuning level...");
-        bool ok = await RunProcessAsync("netsh.exe", "int tcp set global autotuninglevel=normal");
+        bool ok = await RunProcessAsync("netsh.exe", "int", "tcp", "set", "global", "autotuninglevel=normal");
         Database.DbManager.LogAction("Optimize TCP AutoTuning", "Network Repair", ok ? "Success" : "Failed");
         return ok;
     }
@@ -177,7 +177,7 @@ public partial class NetworkEngine
                             "foreach { Set-NetAdapterAdvancedProperty -Name $_.InterfaceAlias -RegistryKeyword $_.RegistryKeyword -RegistryValue '0' -NoRestart; }";
             var result = await ProcessRunner.RunAsync(
                 "powershell.exe",
-                $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"",
+                new[] { "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", script },
                 TimeSpan.FromSeconds(45),
                 onOutput: Log,
                 onError: Log
@@ -206,9 +206,10 @@ public partial class NetworkEngine
         Log("Checking DNS over HTTPS (DoH) status...");
         try
         {
+            string script = "if (Get-Command Get-DnsClientDohServerAddress -ErrorAction SilentlyContinue) { Get-DnsClientDohServerAddress | Where-Object { $_.DohState -eq 'Enabled' -or $_.DohState -eq 'Required' } | ConvertTo-Json } else { write-output '' }";
             var result = await ProcessRunner.RunAsync(
                 "powershell.exe",
-                "-NoProfile -ExecutionPolicy Bypass -Command \"if (Get-Command Get-DnsClientDohServerAddress -ErrorAction SilentlyContinue) { Get-DnsClientDohServerAddress | Where-Object { $_.DohState -eq 'Enabled' -or $_.DohState -eq 'Required' } | ConvertTo-Json } else { write-output '' }\"",
+                new[] { "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", script },
                 TimeSpan.FromSeconds(15)
             );
             return !string.IsNullOrWhiteSpace(result.Output) && result.Output.Contains("Enabled");
@@ -230,11 +231,33 @@ public partial class NetworkEngine
             string script;
             if (enable)
             {
+                if (!System.Net.IPAddress.TryParse(primaryDns?.Trim(), out _) ||
+                    !System.Net.IPAddress.TryParse(secondaryDns?.Trim(), out _))
+                {
+                    Log("Validation Error: Invalid IP address for Primary or Secondary DNS server.");
+                    Database.DbManager.LogAction(actionName, "Network Center", "Failed");
+                    return false;
+                }
+
+                if (string.IsNullOrWhiteSpace(dohTemplate) ||
+                    !Uri.TryCreate(dohTemplate, UriKind.Absolute, out var dohUri) ||
+                    dohUri.Scheme != Uri.UriSchemeHttps ||
+                    dohTemplate.IndexOfAny(new[] { '\'', '\"', ';', '&', '|', '`', '$', '<', '>', '\r', '\n' }) >= 0)
+                {
+                    Log("Validation Error: Invalid or unsafe DoH template URI. Must be a valid HTTPS URL without shell metacharacters.");
+                    Database.DbManager.LogAction(actionName, "Network Center", "Failed");
+                    return false;
+                }
+
+                string pDns = primaryDns.Trim();
+                string sDns = secondaryDns.Trim();
+                string template = dohTemplate.Trim();
+
                 script = "$adapters = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }; " +
-                         $"foreach ($adapter in $adapters) {{ Set-DnsClientServerAddress -InterfaceIndex $adapter.InterfaceIndex -ServerAddresses ('{primaryDns}', '{secondaryDns}') }}; " +
+                         $"foreach ($adapter in $adapters) {{ Set-DnsClientServerAddress -InterfaceIndex $adapter.InterfaceIndex -ServerAddresses ('{pDns}', '{sDns}') }}; " +
                          "if (Get-Command Set-DnsClientDohServerAddress -ErrorAction SilentlyContinue) { " +
-                         $"  Set-DnsClientDohServerAddress -ServerAddress '{primaryDns}' -DohTemplate '{dohTemplate}' -AllowFallbackToUdp $true -AutoUpgrade $true; " +
-                         $"  Set-DnsClientDohServerAddress -ServerAddress '{secondaryDns}' -DohTemplate '{dohTemplate}' -AllowFallbackToUdp $true -AutoUpgrade $true; " +
+                         $"  Set-DnsClientDohServerAddress -ServerAddress '{pDns}' -DohTemplate '{template}' -AllowFallbackToUdp $true -AutoUpgrade $true; " +
+                         $"  Set-DnsClientDohServerAddress -ServerAddress '{sDns}' -DohTemplate '{template}' -AllowFallbackToUdp $true -AutoUpgrade $true; " +
                          "}";
             }
             else
@@ -246,7 +269,7 @@ public partial class NetworkEngine
 
             var result = await ProcessRunner.RunAsync(
                 "powershell.exe",
-                $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"",
+                new[] { "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", script },
                 TimeSpan.FromSeconds(30),
                 onOutput: Log,
                 onError: Log

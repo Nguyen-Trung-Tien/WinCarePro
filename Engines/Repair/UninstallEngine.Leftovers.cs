@@ -355,8 +355,9 @@ public partial class UninstallEngine
                             {
                                 string parentPath = relativePath.Substring(0, lastSlash);
                                 string valueToDelete = relativePath.Substring(lastSlash + 1);
+                                string fullParentKey = $"{hiveStr}\\{parentPath}";
                                 
-                                if (!SafeRegistryGuard.IsSafeToDeleteValue(parentPath, valueToDelete))
+                                if (!SafeRegistryGuard.IsSafeToDeleteValue(fullParentKey, valueToDelete))
                                 {
                                     Log($"Safety Warning: Skipped protected registry value: {item.Path}");
                                     continue;

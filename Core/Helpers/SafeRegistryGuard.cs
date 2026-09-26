@@ -52,8 +52,25 @@ public static class SafeRegistryGuard
         @"HKLM\SECURITY",
         @"HKLM\BCD00000000",
         @"HKLM\HARDWARE",
-        @"HKLM\COMPONENTS"
+        @"HKLM\COMPONENTS",
+        @"HKLM\SOFTWARE\Policies",
+        @"HKCU\Software\Policies",
+        @"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies",
+        @"HKCU\Software\Microsoft\Windows\CurrentVersion\Policies"
     };
+
+    private static readonly HashSet<string> ValidHives = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "HKLM", "HKCU", "HKCR", "HKU", "HKCC"
+    };
+
+    private static bool HasValidHivePrefix(string normalized)
+    {
+        if (string.IsNullOrWhiteSpace(normalized)) return false;
+        int slash = normalized.IndexOf('\\');
+        string hive = slash > 0 ? normalized.Substring(0, slash) : normalized;
+        return ValidHives.Contains(hive);
+    }
 
     private static readonly string[] ProtectedPrefixes = new[]
     {
@@ -66,8 +83,14 @@ public static class SafeRegistryGuard
         @"HKLM\SYSTEM\CurrentControlSet\Control\Session Manager",
         @"HKLM\SYSTEM\CurrentControlSet\Control\SafeBoot",
         @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon",
+        @"HKCU\Software\Microsoft\Windows NT\CurrentVersion\Winlogon",
         @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList",
-        @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options"
+        @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options",
+        @"HKCU\Software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options",
+        @"HKLM\SOFTWARE\Policies",
+        @"HKCU\Software\Policies",
+        @"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies",
+        @"HKCU\Software\Microsoft\Windows\CurrentVersion\Policies"
     };
 
     /// <summary>
@@ -79,6 +102,12 @@ public static class SafeRegistryGuard
         if (string.IsNullOrWhiteSpace(rawPath)) return false;
 
         string normalized = NormalizePath(rawPath);
+
+        // 0. Ensure the key starts with a recognized root hive
+        if (!HasValidHivePrefix(normalized))
+        {
+            return false;
+        }
 
         // 1. Direct match on blacklisted root or critical keys
         if (ProtectedRootKeys.Contains(normalized))
@@ -123,6 +152,12 @@ public static class SafeRegistryGuard
         if (string.IsNullOrWhiteSpace(rawPath)) return false;
 
         string normalized = NormalizePath(rawPath);
+
+        // 0. Ensure the key starts with a recognized root hive
+        if (!HasValidHivePrefix(normalized))
+        {
+            return false;
+        }
 
         // 1. Direct match on blacklisted root or critical keys
         if (ProtectedRootKeys.Contains(normalized))

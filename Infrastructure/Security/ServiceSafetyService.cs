@@ -39,12 +39,21 @@ public class ServiceSafetyService
 
     public bool IsCriticalService(string serviceName)
     {
-        return ProtectedServices.Contains(serviceName);
+        if (string.IsNullOrWhiteSpace(serviceName)) return false;
+        return ProtectedServices.Contains(serviceName.Trim());
     }
 
     public bool IsSecurityService(string serviceName)
     {
-        return SecurityRelatedServices.Contains(serviceName) || serviceName.Contains("defender", StringComparison.OrdinalIgnoreCase) || serviceName.Contains("antivirus", StringComparison.OrdinalIgnoreCase);
+        if (string.IsNullOrWhiteSpace(serviceName)) return false;
+        string name = serviceName.Trim();
+        return SecurityRelatedServices.Contains(name) || name.Contains("defender", StringComparison.OrdinalIgnoreCase) || name.Contains("antivirus", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public bool IsProtectedService(string serviceName)
+    {
+        if (string.IsNullOrWhiteSpace(serviceName)) return false;
+        return IsCriticalService(serviceName) || IsSecurityService(serviceName);
     }
 
     public string GetSafetyWarning(string serviceName, string action)

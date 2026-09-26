@@ -23,17 +23,46 @@ public static class InputSanitizer
 
         uriString = uriString.Trim();
 
-        // Check for recognized prefix protocols or safe system executables
+        // Check for recognized prefix protocols
         if (uriString.StartsWith("windowsdefender:", StringComparison.OrdinalIgnoreCase) ||
-            uriString.StartsWith("ms-settings:", StringComparison.OrdinalIgnoreCase) ||
-            AllowedSystemTools.Contains(Path.GetFileName(uriString), StringComparer.OrdinalIgnoreCase))
+            uriString.StartsWith("ms-settings:", StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }
 
-        if (Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
+        // Web URLs: Must be valid http/https and cannot be checked as system tools
+        if (uriString.Contains("://"))
         {
-            return AllowedUriSchemes.Contains(uri.Scheme, StringComparer.OrdinalIgnoreCase);
+            if (Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
+            {
+                return (uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase) ||
+                        uri.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase)) &&
+                       uri.IsWellFormedOriginalString();
+            }
+            return false;
+        }
+
+        // System tools: Only allow bare filenames or verified paths inside Windows / System32
+        string fileName = Path.GetFileName(uriString);
+        if (AllowedSystemTools.Contains(fileName, StringComparer.OrdinalIgnoreCase))
+        {
+            if (!uriString.Contains('\\') && !uriString.Contains('/'))
+            {
+                return true;
+            }
+
+            try
+            {
+                string fullPath = Path.GetFullPath(uriString);
+                string sysDir = Environment.SystemDirectory;
+                string winDir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+                if (fullPath.StartsWith(sysDir, StringComparison.OrdinalIgnoreCase) ||
+                    fullPath.StartsWith(winDir, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            catch { }
         }
 
         return false;
@@ -80,8 +109,8 @@ public static class InputSanitizer
         if (string.IsNullOrEmpty(argument))
             return false;
 
-        // Shell delimiters, command separators, and stream redirections
-        char[] dangerousChars = { '&', '|', ';', '`', '$', '<', '>', '\n', '\r', '\0' };
+        // Shell delimiters, command separators, quotes, and stream redirections
+        char[] dangerousChars = { '&', '|', ';', '`', '$', '<', '>', '\n', '\r', '\0', '^', '"', '\'', '%' };
         return argument.IndexOfAny(dangerousChars) >= 0;
     }
 

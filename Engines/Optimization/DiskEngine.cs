@@ -533,50 +533,46 @@ public class DiskEngine
 
     public async Task<bool> RunChkdskAsync(string driveLetter, CancellationToken token = default)
     {
-        string drive = driveLetter.Trim().TrimEnd('\\').TrimEnd(':');
-        Log($"Scheduling CheckDisk for drive {drive}:...");
+        if (string.IsNullOrWhiteSpace(driveLetter))
+        {
+            Log("CheckDisk Error: Drive letter cannot be empty.");
+            return false;
+        }
+
+        string drive = driveLetter.Trim().TrimEnd('\\', '/').TrimEnd(':');
+        if (drive.Length != 1 || !char.IsLetter(drive[0]))
+        {
+            Log($"CheckDisk Safety Error: Invalid drive letter '{driveLetter}'. Must be a single alphabetic letter.");
+            return false;
+        }
+
+        char driveChar = char.ToUpperInvariant(drive[0]);
+        Log($"Scheduling CheckDisk for drive {driveChar}:...");
 
         try
         {
-            var psi = new ProcessStartInfo
+            var result = await ProcessRunner.RunAsync(
+                "chkdsk.exe",
+                new[] { $"{driveChar}:" },
+                TimeSpan.FromMinutes(10),
+                onOutput: Log,
+                onError: msg => Log($"ERROR: {msg}"),
+                cancellationToken: token
+            );
+
+            if (result.TimedOut)
             {
-                FileName = "chkdsk.exe",
-                Arguments = $"{drive}:", // Read only for quick testing/diagnostics, doesn't lock system!
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
-
-            using var process = new Process { StartInfo = psi };
-            process.OutputDataReceived += (s, e) => { if (e.Data != null) Log(e.Data); };
-            process.ErrorDataReceived += (s, e) => { if (e.Data != null) Log($"ERROR: {e.Data}"); };
-
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            using var reg = token.Register(() =>
-            {
-                try { if (!process.HasExited) process.Kill(true); } catch { }
-            });
-
-            var exitTask = process.WaitForExitAsync(token);
-            var completedTask = await Task.WhenAny(exitTask, Task.Delay(TimeSpan.FromMinutes(10), token));
-            if (completedTask != exitTask)
-            {
-                try { if (!process.HasExited) process.Kill(true); } catch { }
-                Log($"Chkdsk on {drive}: timed out after 10 minutes.");
+                Log($"Chkdsk on {driveChar}: timed out after 10 minutes.");
                 return false;
             }
 
-            Log($"Chkdsk on {drive}: finished. Exit Code: {process.ExitCode}");
-            Database.DbManager.LogAction($"Run CHKDSK on {drive}:", "Disk Tools", process.ExitCode == 0 ? "Success" : "Errors Logged");
-            return process.ExitCode == 0;
+            Log($"Chkdsk on {driveChar}: finished. Exit Code: {result.ExitCode}");
+            Database.DbManager.LogAction($"Run CHKDSK on {driveChar}:", "Disk Tools", result.ExitCode == 0 ? "Success" : "Errors Logged");
+            return result.ExitCode == 0;
         }
         catch (OperationCanceledException)
         {
-            Log($"Chkdsk on {drive}: cancelled by user.");
+            Log($"Chkdsk on {driveChar}: cancelled by user.");
             return false;
         }
         catch (Exception ex)

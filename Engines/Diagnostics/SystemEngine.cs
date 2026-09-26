@@ -194,7 +194,18 @@ public class SystemEngine
 
                 if (Directory.Exists(softDistOld))
                 {
-                    try { Directory.Delete(softDistOld, true); } catch { }
+                    try
+                    {
+                        if (SafePathGuard.IsPathSafeForDeletion(softDistOld))
+                        {
+                            SafePathGuard.SafeCleanDirectoryWithStats(softDistOld, true);
+                            Directory.Delete(softDistOld, true);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"Notice: Could not remove previous SoftwareDistribution.old: {ex.Message}");
+                    }
                 }
 
                 if (Directory.Exists(softDist))
@@ -215,7 +226,18 @@ public class SystemEngine
 
                 if (Directory.Exists(catroot2Old))
                 {
-                    try { Directory.Delete(catroot2Old, true); } catch { }
+                    try
+                    {
+                        if (SafePathGuard.IsPathSafeForDeletion(catroot2Old))
+                        {
+                            SafePathGuard.SafeCleanDirectoryWithStats(catroot2Old, true);
+                            Directory.Delete(catroot2Old, true);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log($"Notice: Could not remove previous catroot2.old: {ex.Message}");
+                    }
                 }
 
                 if (Directory.Exists(catroot2))

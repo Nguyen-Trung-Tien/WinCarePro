@@ -82,6 +82,18 @@ public static class SafePathGuard
         string norm = NormalizePath(path);
         foreach (var allowed in AllowedExceptionPrefixes)
         {
+            if (string.Equals(allowed, norm, StringComparison.OrdinalIgnoreCase))
+            {
+                // Never allow deleting the root container of critical maintenance directories itself
+                if (allowed.EndsWith("Temp", StringComparison.OrdinalIgnoreCase) ||
+                    allowed.EndsWith("Logs", StringComparison.OrdinalIgnoreCase) ||
+                    allowed.EndsWith("Download", StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+                return true;
+            }
+
             if (IsSameOrChildPath(allowed, norm))
                 return true;
         }
@@ -106,6 +118,8 @@ public static class SafePathGuard
                 BlacklistedExactPaths.Add(NormalizePath(Path.Combine(winDir, "system.ini")));
                 BlacklistedExactPaths.Add(NormalizePath(Path.Combine(winDir, "win.ini")));
                 
+                // Prefix protections: Protect Windows directory and all critical subdirectories
+                BlacklistedPathPrefixes.Add(NormalizePath(winDir));
                 BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(winDir, "System32")));
                 BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(winDir, "SysWOW64")));
                 BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(winDir, "WinSxS")));
@@ -115,6 +129,8 @@ public static class SafePathGuard
                 AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "Temp")));
                 AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "Logs")));
                 AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, @"SoftwareDistribution\Download")));
+                AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "SoftwareDistribution.old")));
+                AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, @"System32\catroot2.old")));
             }
 
             // System Drive root critical boot components
@@ -156,6 +172,26 @@ public static class SafePathGuard
                 if (!string.IsNullOrEmpty(usersDir))
                 {
                     BlacklistedExactPaths.Add(NormalizePath(usersDir));
+                }
+            }
+
+            // Protect user personal documents & library directories
+            var personalFolders = new[]
+            {
+                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                Environment.GetFolderPath(Environment.SpecialFolder.MyMusic),
+                Environment.GetFolderPath(Environment.SpecialFolder.MyVideos),
+                Environment.GetFolderPath(Environment.SpecialFolder.Favorites)
+            };
+
+            foreach (var folder in personalFolders)
+            {
+                if (!string.IsNullOrEmpty(folder))
+                {
+                    BlacklistedExactPaths.Add(NormalizePath(folder));
+                    BlacklistedPathPrefixes.Add(NormalizePath(folder));
                 }
             }
         }

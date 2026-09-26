@@ -14,10 +14,11 @@ public static class CrashLogger
 
     private static readonly SemaphoreSlim FileLock = new(1, 1);
 
-    // Regex to redact sensitive patterns (e.g. usernames, passwords, API tokens, file paths)
-    private static readonly Regex PasswordRegex = new(@"password\s*=\s*[^;\s&]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static readonly Regex TokenRegex = new(@"(bearer|token|secret)\s*[:=]\s*[^;\s&]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    // Regex to redact sensitive patterns (e.g. usernames, passwords, API tokens, file paths, JWTs)
+    private static readonly Regex PasswordRegex = new(@"(?:""password""\s*:\s*""[^""]+""|password\s*[:=]\s*[^;\s&]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex TokenRegex = new(@"(?:""(?:bearer|token|secret)""\s*:\s*""[^""]+""|(bearer|token|secret)\s*[:=]\s*[^;\s&]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
     private static readonly Regex ApiKeyRegex = new(@"(api[_\-]?key|apikey|x-api-key)\s*[:=]\s*[^;\s&]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex JwtRegex = new(@"eyJ[a-zA-Z0-9_\-]{10,}\.[a-zA-Z0-9_\-]{10,}\.[a-zA-Z0-9_\-]+", RegexOptions.Compiled);
     private static readonly Regex UserPathRegex = new(@"(C:\\Users\\|/home/)[^\\\s/]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
     private static readonly Regex EmailRegex = new(@"[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}", RegexOptions.Compiled);
 
@@ -98,8 +99,13 @@ public static class CrashLogger
     {
         if (string.IsNullOrEmpty(input)) return string.Empty;
         string result = PasswordRegex.Replace(input, "password=***REDACTED***");
-        result = TokenRegex.Replace(result, "$1=***REDACTED***");
+        result = TokenRegex.Replace(result, m =>
+        {
+            string key = m.Groups[1].Success && !string.IsNullOrEmpty(m.Groups[1].Value) ? m.Groups[1].Value : "token";
+            return $"{key}=***REDACTED***";
+        });
         result = ApiKeyRegex.Replace(result, "$1=***REDACTED***");
+        result = JwtRegex.Replace(result, "***REDACTED***");
         result = UserPathRegex.Replace(result, "$1***REDACTED***");
         result = EmailRegex.Replace(result, "***REDACTED_EMAIL***");
         return result;

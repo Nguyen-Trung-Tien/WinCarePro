@@ -230,7 +230,9 @@ public class ProcessService
             reason = "Kernel system processes cannot be modified.";
             return false;
         }
-        if (_criticalProcesses.Contains(name))
+
+        string cleanName = Path.GetFileNameWithoutExtension(name ?? "").Trim();
+        if (_criticalProcesses.Contains(cleanName) || _criticalProcesses.Contains(name ?? ""))
         {
             reason = "Action blocked. This is a critical Windows system process required for system stability.";
             return false;

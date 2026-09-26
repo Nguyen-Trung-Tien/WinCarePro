@@ -112,6 +112,7 @@ public sealed partial class MainWindow : Window
 
         // Decoupled notification listener from Database layer
         DbManager.OnNotificationAdded += OnDbNotificationAdded;
+        DbManager.OnNotificationsChanged += UpdateNotificationBadge;
 
         // Handle window resizing and start async application initialization on load
         if (RootGrid != null)
@@ -409,6 +410,7 @@ public sealed partial class MainWindow : Window
         TranslationManager.Instance.UnregisterWindow(this);
         ThemeManager.Instance.MotionPreferenceChanged -= OnMotionPreferenceChanged;
         DbManager.OnNotificationAdded -= OnDbNotificationAdded;
+        DbManager.OnNotificationsChanged -= UpdateNotificationBadge;
         CleanupTrayIcon();
         UnsubclassWindow();
         try

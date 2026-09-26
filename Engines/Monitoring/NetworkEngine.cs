@@ -432,11 +432,12 @@ public partial class NetworkEngine
 
             var psi = new ProcessStartInfo
             {
-                FileName = "netstat.exe",
+                FileName = Path.Combine(Environment.SystemDirectory, "netstat.exe"),
                 Arguments = "-ano",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.SystemDirectory
             };
             using var proc = Process.Start(psi);
             if (proc != null)

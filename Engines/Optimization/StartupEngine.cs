@@ -537,10 +537,23 @@ public class StartupEngine
     {
         try
         {
-            var safety = App.Services?.GetService<ServiceSafetyService>() ?? new ServiceSafetyService();
-            if (safety.IsCriticalService(serviceName) && startMode == ServiceStartMode.Disabled)
+            if (string.IsNullOrWhiteSpace(serviceName) || !ProcessRunner.IsValidServiceName(serviceName))
             {
-                Database.DbManager.LogAction($"Safety Block: Prevented setting critical core service '{serviceName}' to Disabled.", "Service Manager", "Warning");
+                Database.DbManager.LogAction($"Safety Block: Invalid service name '{serviceName}'.", "Service Manager", "Warning");
+                return false;
+            }
+
+            var safety = App.Services?.GetService<ServiceSafetyService>() ?? new ServiceSafetyService();
+            if (safety.IsProtectedService(serviceName) && startMode == ServiceStartMode.Disabled)
+            {
+                Database.DbManager.LogAction($"Safety Block: Prevented setting protected service '{serviceName}' to Disabled.", "Service Manager", "Warning");
+                return false;
+            }
+
+            string regPath = $@"HKLM\SYSTEM\CurrentControlSet\Services\{serviceName}";
+            if (!SafeRegistryGuard.IsSafeToModifyKey(regPath))
+            {
+                Database.DbManager.LogAction($"Safety Block: Protected registry path for service '{serviceName}'.", "Service Manager", "Warning");
                 return false;
             }
 
@@ -574,10 +587,16 @@ public class StartupEngine
     {
         try
         {
-            var safety = App.Services?.GetService<ServiceSafetyService>() ?? new ServiceSafetyService();
-            if (safety.IsCriticalService(serviceName) && action.Equals("Stop", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(serviceName) || !ProcessRunner.IsValidServiceName(serviceName))
             {
-                Database.DbManager.LogAction($"Safety Block: Prevented stopping critical core service '{serviceName}'.", "Service Manager", "Warning");
+                Database.DbManager.LogAction($"Safety Block: Invalid service name '{serviceName}'.", "Service Manager", "Warning");
+                return false;
+            }
+
+            var safety = App.Services?.GetService<ServiceSafetyService>() ?? new ServiceSafetyService();
+            if (safety.IsProtectedService(serviceName) && (action.Equals("Stop", StringComparison.OrdinalIgnoreCase) || action.Equals("Restart", StringComparison.OrdinalIgnoreCase)))
+            {
+                Database.DbManager.LogAction($"Safety Block: Prevented stopping or restarting protected service '{serviceName}'.", "Service Manager", "Warning");
                 return false;
             }
 
@@ -713,6 +732,12 @@ public class StartupEngine
             var task = ts.GetTask(path);
             if (task != null)
             {
+                if (task.Path.Contains(@"\Microsoft\Windows", StringComparison.OrdinalIgnoreCase))
+                {
+                    Database.DbManager.LogAction($"Safety Block: Prevented deleting Microsoft system task '{path}'.", "Startup Manager", "Warning");
+                    return false;
+                }
+
                 var folder = task.Folder;
                 folder.DeleteTask(task.Name);
                 Database.DbManager.LogAction($"Deleted Task {path}", "Startup Manager", "Success");

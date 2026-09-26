@@ -45,6 +45,9 @@ namespace WinCarePro.Modules.DesktopWidget
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool DestroyIcon(IntPtr hIcon);
+
         private const uint WM_SETICON = 0x0080;
         private static readonly IntPtr ICON_SMALL = (IntPtr)0;
         private static readonly IntPtr ICON_BIG = (IntPtr)1;
@@ -52,6 +55,8 @@ namespace WinCarePro.Modules.DesktopWidget
         private delegate IntPtr SUBCLASSPROC(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, uint uIdSubclass, IntPtr dwRefData);
 
         private SUBCLASSPROC? _subclassProc;
+        private IntPtr _hIconBig = IntPtr.Zero;
+        private IntPtr _hIconSmall = IntPtr.Zero;
 
         private IntPtr WndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam, uint uIdSubclass, IntPtr dwRefData)
         {
@@ -167,10 +172,10 @@ namespace WinCarePro.Modules.DesktopWidget
 
                     if (hwnd != IntPtr.Zero)
                     {
-                        var hIconBig = LoadImage(IntPtr.Zero, iconPath, 1, 256, 256, 0x00000010);
-                        var hIconSmall = LoadImage(IntPtr.Zero, iconPath, 1, 32, 32, 0x00000010);
-                        if (hIconBig != IntPtr.Zero) SendMessage(hwnd, WM_SETICON, ICON_BIG, hIconBig);
-                        if (hIconSmall != IntPtr.Zero) SendMessage(hwnd, WM_SETICON, ICON_SMALL, hIconSmall);
+                        _hIconBig = LoadImage(IntPtr.Zero, iconPath, 1, 256, 256, 0x00000010);
+                        _hIconSmall = LoadImage(IntPtr.Zero, iconPath, 1, 32, 32, 0x00000010);
+                        if (_hIconBig != IntPtr.Zero) SendMessage(hwnd, WM_SETICON, ICON_BIG, _hIconBig);
+                        if (_hIconSmall != IntPtr.Zero) SendMessage(hwnd, WM_SETICON, ICON_SMALL, _hIconSmall);
                     }
                 }
             }
@@ -245,6 +250,17 @@ namespace WinCarePro.Modules.DesktopWidget
                 if (hwnd != IntPtr.Zero && _subclassProc != null)
                 {
                     RemoveWindowSubclass(hwnd, _subclassProc, 101);
+                }
+
+                if (_hIconBig != IntPtr.Zero)
+                {
+                    DestroyIcon(_hIconBig);
+                    _hIconBig = IntPtr.Zero;
+                }
+                if (_hIconSmall != IntPtr.Zero)
+                {
+                    DestroyIcon(_hIconSmall);
+                    _hIconSmall = IntPtr.Zero;
                 }
 
                 ThemeManager.Instance.ThemeChanged -= _themeHandler;

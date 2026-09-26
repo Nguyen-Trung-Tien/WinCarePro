@@ -158,24 +158,47 @@ public sealed partial class LoadingToggleSwitch : UserControl
     {
         if (d is LoadingToggleSwitch control)
         {
-            bool isLoading = (bool)e.NewValue;
-            if (isLoading)
+            try
             {
-                control._loadingStartTimeTicks = Environment.TickCount64;
-                control.LoadingPanel.Visibility = Visibility.Visible;
-                control.InnerToggle.IsEnabled = false;
-            }
-            else
-            {
-                long elapsed = Environment.TickCount64 - control._loadingStartTimeTicks;
-                int minDuration = Math.Max(100, control.MinLoadingDurationMs);
-                if (elapsed < minDuration)
+                bool isLoading = (bool)e.NewValue;
+                if (isLoading)
                 {
-                    int remaining = (int)(minDuration - elapsed);
-                    await Task.Delay(remaining);
+                    control._loadingStartTimeTicks = Environment.TickCount64;
+                    control.LoadingPanel.Visibility = Visibility.Visible;
+                    control.InnerToggle.IsEnabled = false;
                 }
-                control.LoadingPanel.Visibility = Visibility.Collapsed;
-                control.InnerToggle.IsEnabled = control.UserControlIsEnabled;
+                else
+                {
+                    long elapsed = Environment.TickCount64 - control._loadingStartTimeTicks;
+                    int minDuration = Math.Max(100, control.MinLoadingDurationMs);
+                    if (elapsed < minDuration)
+                    {
+                        int remaining = (int)(minDuration - elapsed);
+                        await Task.Delay(remaining);
+                    }
+
+                    if (control.DispatcherQueue != null)
+                    {
+                        control.DispatcherQueue.TryEnqueue(() =>
+                        {
+                            try
+                            {
+                                control.LoadingPanel.Visibility = Visibility.Collapsed;
+                                control.InnerToggle.IsEnabled = control.UserControlIsEnabled;
+                            }
+                            catch { }
+                        });
+                    }
+                    else
+                    {
+                        control.LoadingPanel.Visibility = Visibility.Collapsed;
+                        control.InnerToggle.IsEnabled = control.UserControlIsEnabled;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[LoadingToggleSwitch] OnIsLoadingPropertyChanged error: {ex.Message}");
             }
         }
     }

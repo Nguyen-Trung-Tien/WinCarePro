@@ -87,7 +87,11 @@ public static class SafePathGuard
                 // Never allow deleting the root container of critical maintenance directories itself
                 if (allowed.EndsWith("Temp", StringComparison.OrdinalIgnoreCase) ||
                     allowed.EndsWith("Logs", StringComparison.OrdinalIgnoreCase) ||
-                    allowed.EndsWith("Download", StringComparison.OrdinalIgnoreCase))
+                    allowed.EndsWith("Download", StringComparison.OrdinalIgnoreCase) ||
+                    allowed.EndsWith("Minidump", StringComparison.OrdinalIgnoreCase) ||
+                    allowed.EndsWith("Prefetch", StringComparison.OrdinalIgnoreCase) ||
+                    allowed.EndsWith("DeliveryOptimization", StringComparison.OrdinalIgnoreCase) ||
+                    allowed.EndsWith("LogFiles", StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
@@ -128,9 +132,14 @@ public static class SafePathGuard
 
                 AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "Temp")));
                 AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "Logs")));
+                AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "Minidump")));
+                AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "MEMORY.DMP")));
+                AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "Prefetch")));
                 AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, @"SoftwareDistribution\Download")));
+                AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, @"SoftwareDistribution\DeliveryOptimization")));
                 AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, "SoftwareDistribution.old")));
                 AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, @"System32\catroot2.old")));
+                AllowedExceptionPrefixes.Add(NormalizePath(Path.Combine(winDir, @"System32\LogFiles")));
             }
 
             // System Drive root critical boot components
@@ -272,6 +281,27 @@ public static class SafePathGuard
 
             // Check for symlinks / junction reparse points to prevent following links to sensitive folders.
             // Both files and directories possessing FileAttributes.ReparsePoint MUST be rejected.
+            // Check link targets directly (handles broken / dangling symlinks whose targets do not exist)
+            try
+            {
+                if (File.ResolveLinkTarget(fullPath, returnFinalTarget: false) != null ||
+                    Directory.ResolveLinkTarget(fullPath, returnFinalTarget: false) != null)
+                {
+                    return false;
+                }
+            }
+            catch { }
+
+            try
+            {
+                var attr = File.GetAttributes(fullPath);
+                if ((attr & FileAttributes.ReparsePoint) != 0)
+                {
+                    return false;
+                }
+            }
+            catch { }
+
             if (File.Exists(fullPath))
             {
                 var fileInfo = new FileInfo(fullPath);
@@ -284,15 +314,6 @@ public static class SafePathGuard
             {
                 var dirInfo = new DirectoryInfo(fullPath);
                 if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
-                {
-                    return false;
-                }
-            }
-            else if (Path.Exists(fullPath))
-            {
-                // Handles broken symlinks / dangling reparse points where target doesn't exist
-                var attr = File.GetAttributes(fullPath);
-                if ((attr & FileAttributes.ReparsePoint) != 0)
                 {
                     return false;
                 }
@@ -311,6 +332,99 @@ public static class SafePathGuard
     /// Returns true if the path is safe to delete.
     /// </summary>
     public static bool IsSafeToDelete(string path) => IsPathSafeForDeletion(path);
+
+    /// <summary>
+    /// Validates if a directory container is safe to clean its internal contents.
+    /// Allows maintenance directories (e.g. Temp, Prefetch, Minidump, SoftwareDistribution)
+    /// and user cache directories to have their files cleaned, while strictly blocking
+    /// root drives, Windows core directories, personal documents, and junction/symlink reparse points.
+    /// </summary>
+    public static bool IsSafeToCleanDirectory(string rawPath)
+    {
+        if (string.IsNullOrWhiteSpace(rawPath))
+            return false;
+
+        if (rawPath.Contains(".."))
+            return false;
+
+        string trimmedRaw = rawPath.Trim();
+        if (trimmedRaw.Length == 2 && char.IsLetter(trimmedRaw[0]) && trimmedRaw[1] == ':')
+            return false;
+
+        try
+        {
+            string fullPath = NormalizePath(rawPath);
+            if (string.IsNullOrEmpty(fullPath))
+                return false;
+
+            // Never allow root drive content wiping (e.g., "C:\", "D:\")
+            string? root = Path.GetPathRoot(fullPath);
+            if (!string.IsNullOrEmpty(root))
+            {
+                string rootTrimmed = root.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                string fullTrimmed = fullPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                if (string.Equals(rootTrimmed, fullTrimmed, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+
+            // Check exact blacklisted paths (e.g. C:\Windows, C:\Windows\System32, C:\Program Files, C:\Users\Admin)
+            if (BlacklistedExactPaths.Contains(fullPath))
+                return false;
+
+            // Check if within blacklisted system prefix (e.g., C:\Windows, Personal Folders)
+            foreach (var prefix in BlacklistedPathPrefixes)
+            {
+                if (IsSameOrChildPath(prefix, fullPath))
+                {
+                    // Only allowed if fullPath is one of the allowed maintenance containers or inside one
+                    bool isAllowedMaintenance = false;
+                    foreach (var allowed in AllowedExceptionPrefixes)
+                    {
+                        if (IsSameOrChildPath(allowed, fullPath))
+                        {
+                            isAllowedMaintenance = true;
+                            break;
+                        }
+                    }
+
+                    if (!isAllowedMaintenance)
+                        return false;
+
+                    break;
+                }
+            }
+
+            // Must NOT be a reparse point (junction / symlink)
+            try
+            {
+                if (File.ResolveLinkTarget(fullPath, returnFinalTarget: false) != null ||
+                    Directory.ResolveLinkTarget(fullPath, returnFinalTarget: false) != null)
+                {
+                    return false;
+                }
+            }
+            catch { }
+
+            try
+            {
+                if (Directory.Exists(fullPath))
+                {
+                    var dirInfo = new DirectoryInfo(fullPath);
+                    if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch { }
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
     /// <summary>
     /// Safely deletes a file after verifying security constraints.

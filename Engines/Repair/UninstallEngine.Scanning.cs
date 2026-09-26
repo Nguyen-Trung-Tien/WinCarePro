@@ -256,41 +256,24 @@ public partial class UninstallEngine
                 return false;
             }
 
-            var psi = new System.Diagnostics.ProcessStartInfo
+            string psExe = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("powershell.exe");
+            var args = new[]
             {
-                FileName = "powershell.exe",
-                UseShellExecute = true,
-                Verb = "runas"
+                "-NoProfile",
+                "-NonInteractive",
+                "-WindowStyle", "Hidden",
+                "-Command", $"Remove-AppxPackage -Package '{safePackage}'"
             };
-            psi.ArgumentList.Add("-NoProfile");
-            psi.ArgumentList.Add("-NonInteractive");
-            psi.ArgumentList.Add("-WindowStyle");
-            psi.ArgumentList.Add("Hidden");
-            psi.ArgumentList.Add("-Command");
-            psi.ArgumentList.Add($"Remove-AppxPackage -Package '{safePackage}'");
 
-            using var process = System.Diagnostics.Process.Start(psi);
-            if (process != null)
+            var runResult = await WinCarePro.Core.Helpers.ProcessRunner.RunAsync(psExe, args, TimeSpan.FromSeconds(30));
+            if (runResult.Success && runResult.ExitCode == 0)
             {
-                using var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(30));
-                try
-                {
-                    await process.WaitForExitAsync(cts.Token);
-                    if (process.ExitCode == 0)
-                    {
-                        Log("Successfully uninstalled Microsoft Store package via PowerShell fallback.");
-                        return true;
-                    }
-                    else
-                    {
-                        Log($"PowerShell fallback exited with code: {process.ExitCode}");
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    try { process.Kill(); } catch { }
-                    Log("PowerShell fallback uninstall timed out after 30 seconds.");
-                }
+                Log("Successfully uninstalled Microsoft Store package via PowerShell fallback.");
+                return true;
+            }
+            else
+            {
+                Log($"PowerShell fallback exited with code: {runResult.ExitCode}, Error: {runResult.Error}");
             }
         }
         catch (Exception ex)

@@ -109,12 +109,6 @@ public class DiskEngine
             Log($"Disk Health read failed: {ex.Message}");
         }
 
-        if (list.Count == 0)
-        {
-            // Fallback for visual mock in VM environments where physical SMART is unsupported
-            list.Add(new DriveHealthInfo { Name = "\\\\.\\PhysicalDrive0", Model = "Virtual Disk Drive", HealthStatus = "Healthy", Temperature = 32.0, Interface = "SCSI" });
-        }
-
         return list;
     }
 
@@ -492,25 +486,41 @@ public class DiskEngine
     public async Task<int> ClearEmptyFoldersAsync(string rootPath)
     {
         int count = 0;
-        if (!Directory.Exists(rootPath)) return count;
+        if (string.IsNullOrWhiteSpace(rootPath) || !Directory.Exists(rootPath) || !SafePathGuard.IsSafeToCleanDirectory(rootPath)) 
+            return count;
+
+        string normalizedRoot = Path.GetFullPath(rootPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
         await Task.Run(() =>
         {
-            count = DeleteEmptyDirsRecursive(rootPath);
+            count = DeleteEmptyDirsRecursive(normalizedRoot, normalizedRoot);
         });
 
         Database.DbManager.LogAction($"Cleaned {count} empty directories under {rootPath}", "Disk Tools", "Success");
         return count;
     }
 
-    private int DeleteEmptyDirsRecursive(string path)
+    private int DeleteEmptyDirsRecursive(string path, string rootPath)
     {
         int deletedCount = 0;
         try
         {
+            var dirInfo = new DirectoryInfo(path);
+            if ((dirInfo.Attributes & FileAttributes.ReparsePoint) != 0)
+            {
+                return 0; // Never traverse into reparse points
+            }
+
             foreach (var subDir in Directory.GetDirectories(path))
             {
-                deletedCount += DeleteEmptyDirsRecursive(subDir);
+                deletedCount += DeleteEmptyDirsRecursive(subDir, rootPath);
+            }
+
+            // Never delete rootPath itself
+            string normalizedCurrent = Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            if (string.Equals(normalizedCurrent, rootPath, StringComparison.OrdinalIgnoreCase))
+            {
+                return deletedCount;
             }
 
             // Check if now empty and safe to remove

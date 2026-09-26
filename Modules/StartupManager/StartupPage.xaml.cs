@@ -113,8 +113,9 @@ public sealed partial class StartupPage : Page
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
-            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri("services.msc"))
-                Process.Start(new ProcessStartInfo("services.msc") { UseShellExecute = true });
+            string servicesMsc = System.IO.Path.Combine(Environment.SystemDirectory, "services.msc");
+            if (System.IO.File.Exists(servicesMsc))
+                Process.Start(new ProcessStartInfo(servicesMsc) { UseShellExecute = true, WorkingDirectory = Environment.SystemDirectory });
         }
         catch { }
     }
@@ -124,8 +125,9 @@ public sealed partial class StartupPage : Page
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
-            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri("taskmgr.exe"))
-                Process.Start(new ProcessStartInfo("taskmgr.exe") { UseShellExecute = true });
+            string? taskmgr = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("taskmgr.exe");
+            if (taskmgr != null)
+                Process.Start(new ProcessStartInfo(taskmgr) { UseShellExecute = true, WorkingDirectory = Environment.SystemDirectory });
         }
         catch { }
     }

@@ -34,11 +34,6 @@ public class JunkCleanerEngine
     private const uint SHERB_NOPROGRESSUI = 0x00000002;
     private const uint SHERB_NOSOUND = 0x00000004;
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern bool MoveFileEx(string lpExistingFileName, string? lpNewFileName, uint dwFlags);
-
-    private const uint MOVEFILE_DELAY_UNTIL_REBOOT = 0x00000004;
-
     private static string FormatSize(long bytes) => WinCarePro.Core.Helpers.FormatHelper.FormatBytes(bytes);
 
     private static bool IsFileLocked(string filePath)
@@ -547,9 +542,15 @@ public class JunkCleanerEngine
         return WinCarePro.Core.Helpers.SafePathGuard.IsPathSafeForDeletion(path);
     }
 
+    public static bool IsDirectorySafeToClean(string? dirPath)
+    {
+        if (string.IsNullOrWhiteSpace(dirPath)) return false;
+        return WinCarePro.Core.Helpers.SafePathGuard.IsSafeToCleanDirectory(dirPath);
+    }
+
     private long ClearDirectoryRecursively(string path, CancellationToken token = default)
     {
-        if (!IsPathSafeToClean(path) || !Directory.Exists(path)) return 0;
+        if (!IsDirectorySafeToClean(path) || !Directory.Exists(path)) return 0;
         long bytesDeleted = 0;
 
         token.ThrowIfCancellationRequested();
@@ -604,7 +605,10 @@ public class JunkCleanerEngine
                 bytesDeleted += ClearDirectoryRecursively(dir, token);
                 try
                 {
-                    Directory.Delete(dir, false); // only delete if directory is now empty
+                    if (IsPathSafeToClean(dir))
+                    {
+                        Directory.Delete(dir, false); // only delete if directory is now empty and safe
+                    }
                 }
                 catch { }
             }
@@ -617,14 +621,14 @@ public class JunkCleanerEngine
 
     private async Task<long> ClearDirectoryAsync(string path, CancellationToken token = default)
     {
-        if (!IsPathSafeToClean(path) || !Directory.Exists(path)) return 0;
+        if (!IsDirectorySafeToClean(path) || !Directory.Exists(path)) return 0;
         token.ThrowIfCancellationRequested();
         return await Task.Run(() => ClearDirectoryRecursively(path, token), token);
     }
 
     private async Task<long> ClearFilesMatchingAsync(string path, string searchPattern, CancellationToken token = default)
     {
-        if (!IsPathSafeToClean(path) || !Directory.Exists(path)) return 0;
+        if (!IsDirectorySafeToClean(path) || !Directory.Exists(path)) return 0;
         token.ThrowIfCancellationRequested();
         long bytesDeleted = 0;
         await Task.Run(() =>

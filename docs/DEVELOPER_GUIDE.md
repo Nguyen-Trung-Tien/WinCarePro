@@ -86,7 +86,7 @@ graph TD
 - **Danh mục dọn dẹp:** Temp Files của Windows và User, Bộ đệm trình duyệt (Chrome, Edge, Firefox), Nhật ký hệ thống (System Logs), Windows Error Reports, Bộ nhớ đệm Icon và Font.
 - **Giải pháp kỹ thuật an toàn:**
   - Bỏ qua các điểm liên kết cứng/mềm bằng cách kiểm tra thuộc tính `FileAttributes.ReparsePoint`. Tránh việc xóa đệ quy lặp vô hạn hoặc xóa dữ liệu người dùng bên ngoài đích.
-  - Sử dụng phương thức Win32 API `MoveFileEx(..., MOVEFILE_DELAY_UNTIL_REBOOT)` để lập lịch xóa các tệp tin đang bị khóa bởi tiến trình khác ngay trong lần khởi động máy tiếp theo.
+  - Chính sách Zero-Reboot-Queue: Tự động bỏ qua an toàn các tệp tin đang bị khóa bởi tiến trình khác mà không ghi vào hàng đợi khởi động lại của Windows (`MoveFileEx`), đảm bảo an toàn tuyệt đối cho hệ thống.
 
 ### 3.2. SoftwareUpdaterEngine (Cập nhật phần mềm bên thứ ba)
 - **Tập tin:** [SoftwareUpdaterEngine.cs](file:///d:/WinCare/Engines/Repair/SoftwareUpdaterEngine.cs)

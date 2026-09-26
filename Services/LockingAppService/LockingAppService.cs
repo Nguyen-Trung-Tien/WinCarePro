@@ -83,34 +83,44 @@ public class LockingAppService : ILockingAppService
                 try
                 {
                     var processes = Process.GetProcessesByName(kvp.Key);
-                    if (processes.Length > 0)
+                    try
                     {
-                        long size = GetEstimatedCacheSize(kvp.Key, localAppData, appData, tempPath);
-                        
-                        string iconPath = "";
-                        try
+                        if (processes.Length > 0)
                         {
-                            var firstProc = processes.FirstOrDefault();
-                            if (firstProc != null)
+                            long size = GetEstimatedCacheSize(kvp.Key, localAppData, appData, tempPath);
+                            
+                            string iconPath = "";
+                            try
                             {
-                                string exePath = GetProcessExecutablePath(firstProc);
-                                if (!string.IsNullOrEmpty(exePath) && File.Exists(exePath))
+                                var firstProc = processes.FirstOrDefault();
+                                if (firstProc != null)
                                 {
-                                    iconPath = _iconCache.GetIconForExecutable(exePath);
+                                    string exePath = GetProcessExecutablePath(firstProc);
+                                    if (!string.IsNullOrEmpty(exePath) && File.Exists(exePath))
+                                    {
+                                        iconPath = _iconCache.GetIconForExecutable(exePath);
+                                    }
                                 }
                             }
-                        }
-                        catch {}
+                            catch {}
 
-                        var info = new LockingAppInfo
+                            var info = new LockingAppInfo
+                            {
+                                Name = kvp.Value,
+                                ProcessCount = processes.Length,
+                                LockedSizeBytes = size,
+                                ProcessIds = processes.Select(p => p.Id).ToList(),
+                                IconPath = iconPath
+                            };
+                            lockingApps.Add(info);
+                        }
+                    }
+                    finally
+                    {
+                        foreach (var p in processes)
                         {
-                            Name = kvp.Value,
-                            ProcessCount = processes.Length,
-                            LockedSizeBytes = size,
-                            ProcessIds = processes.Select(p => p.Id).ToList(),
-                            IconPath = iconPath
-                        };
-                        lockingApps.Add(info);
+                            try { p.Dispose(); } catch { }
+                        }
                     }
                 }
                 catch {}

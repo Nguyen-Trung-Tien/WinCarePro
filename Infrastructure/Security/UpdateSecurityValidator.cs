@@ -353,6 +353,13 @@ public static class UpdateSecurityValidator
     {
         if (string.IsNullOrWhiteSpace(filePath)) return;
 
+        // Enforce SafePathGuard to prevent wiping or deleting protected system or personal files
+        if (!WinCarePro.Core.Helpers.SafePathGuard.IsSafeToDelete(filePath))
+        {
+            System.Diagnostics.Debug.WriteLine($"[UpdateSecurity] Blocked attempt to delete protected path: {filePath}");
+            return;
+        }
+
         try
         {
             if (File.Exists(filePath))

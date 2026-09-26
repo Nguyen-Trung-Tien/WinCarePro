@@ -443,11 +443,11 @@ public partial class NetworkEngine
             if (proc != null)
             {
                 string output = proc.StandardOutput.ReadToEnd();
-                proc.WaitForExit(4000);
+                try { proc.WaitForExit(4000); } catch { }
 
-                using var reader = new StringReader(output);
-                string? line;
-                while ((line = reader.ReadLine()) != null)
+                    using var reader = new StringReader(output);
+                    string? line;
+                    while ((line = reader.ReadLine()) != null)
                 {
                     line = line.Trim();
                     if (string.IsNullOrEmpty(line)) continue;

@@ -90,8 +90,9 @@ public sealed partial class RegistryPage : Page
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
-            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri("regedit.exe"))
-                Process.Start(new ProcessStartInfo("regedit.exe") { UseShellExecute = true });
+            string? safePath = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("regedit.exe");
+            if (safePath != null)
+                Process.Start(new ProcessStartInfo(safePath) { UseShellExecute = true, WorkingDirectory = Environment.SystemDirectory });
         }
         catch { }
     }
@@ -102,8 +103,9 @@ public sealed partial class RegistryPage : Page
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
         try
         {
-            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri("rstrui.exe"))
-                Process.Start(new ProcessStartInfo("rstrui.exe") { UseShellExecute = true });
+            string? safePath = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("rstrui.exe");
+            if (safePath != null)
+                Process.Start(new ProcessStartInfo(safePath) { UseShellExecute = true, WorkingDirectory = Environment.SystemDirectory });
         }
         catch { }
     }

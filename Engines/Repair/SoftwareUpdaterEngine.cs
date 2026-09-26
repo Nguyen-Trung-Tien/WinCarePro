@@ -223,18 +223,7 @@ public class SoftwareUpdaterEngine
                 Log($"Registry software scan failed: {ex.Message}");
             }
 
-#if DEBUG
-            if (list.Count == 0 && !cancellationToken.IsCancellationRequested)
-            {
-                Log("No installed outdated applications found in registry. Listing simulated updates for testing...");
-                await Task.Delay(500, cancellationToken);
-                AddSimulatedItem(list, updatedApps, "Git for Windows", "Git.Git", "2.40.1", "2.48.1", "direct");
-                AddSimulatedItem(list, updatedApps, "Visual Studio Code", "Microsoft.VisualStudioCode", "1.85.0", "1.98.2", "direct");
-                AddSimulatedItem(list, updatedApps, "Node.js (LTS)", "OpenJS.NodeJS.LTS", "20.10.0", "22.14.0", "direct");
-                AddSimulatedItem(list, updatedApps, "Mozilla Firefox", "Mozilla.Firefox", "120.0", "138.0.1", "direct");
-                AddSimulatedItem(list, updatedApps, "Google Chrome", "Google.Chrome", "121.0.6167.85", "136.0.7103.93", "direct");
-            }
-#endif
+
         }
         else
         {
@@ -311,7 +300,7 @@ public class SoftwareUpdaterEngine
                 foreach (var app in SupportedApps)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    AddSimulatedItem(list, updatedApps, app.Name, app.Id, "1.0.0", app.LatestVersion, "winget");
+                    AddRegistryFallbackItem(list, updatedApps, app, "winget");
                 }
             }
         }
@@ -320,17 +309,16 @@ public class SoftwareUpdaterEngine
         return list;
     }
 
-    private void AddSimulatedItem(List<SoftwareUpdateInfo> list, Dictionary<string, string> updatedApps, string name, string id, string installedVersion, string availableVersion, string source)
+    private void AddRegistryFallbackItem(List<SoftwareUpdateInfo> list, Dictionary<string, string> updatedApps, AppDefinition app, string source)
     {
-        var app = SupportedApps.FirstOrDefault(x => x.Id == id);
-        string? actualInstalledVer = app != null ? GetInstalledVersionFromRegistry(app.RegistryNameQuery) : null;
+        string? actualInstalledVer = GetInstalledVersionFromRegistry(app.RegistryNameQuery);
         
         if (string.IsNullOrEmpty(actualInstalledVer))
         {
             return; // App is not installed on the system, do not list it
         }
 
-        string realAvailableVersion = app?.LatestVersion ?? availableVersion;
+        string realAvailableVersion = app.LatestVersion;
         string currentVer = actualInstalledVer;
         
         if (!IsVersionOlder(actualInstalledVer, realAvailableVersion))
@@ -338,14 +326,14 @@ public class SoftwareUpdaterEngine
             return; // Already up to date or newer on the system
         }
 
-        if (updatedApps.TryGetValue(id, out string? storedVer))
+        if (updatedApps.TryGetValue(app.Id, out string? storedVer))
         {
             if (!IsVersionOlder(storedVer, realAvailableVersion))
             {
                 return; // Already updated to this or a newer version in DB
             }
         }
-        list.Add(new SoftwareUpdateInfo { Name = name, Id = id, InstalledVersion = currentVer, AvailableVersion = realAvailableVersion, Source = source });
+        list.Add(new SoftwareUpdateInfo { Name = app.Name, Id = app.Id, InstalledVersion = currentVer, AvailableVersion = realAvailableVersion, Source = source });
     }
 
 
@@ -910,7 +898,8 @@ public class SoftwareUpdaterEngine
                     ? $"/i \"{filePath}\" {app.SilentArguments}" 
                     : app.SilentArguments,
                 UseShellExecute = true,
-                Verb = "runas"
+                Verb = "runas",
+                WorkingDirectory = Path.GetDirectoryName(filePath) ?? Environment.SystemDirectory
             };
 
             using var process = Process.Start(psi);
@@ -1007,133 +996,11 @@ public class SoftwareUpdaterEngine
         }
     }
 
-    #region Win32 WinVerifyTrust Authenticode Validation
-
-    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-    private struct WINTRUST_FILE_INFO
-    {
-        public uint cbStruct;
-        [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)]
-        public string pcwszFilePath;
-        public IntPtr hFile;
-        public IntPtr pgKnownSubject;
-    }
-
-    [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-    private struct WINTRUST_DATA
-    {
-        public uint cbStruct;
-        public IntPtr pPolicyCallbackData;
-        public IntPtr pSIPClientData;
-        public uint dwUIChoice;
-        public uint fdwRevocationChecks;
-        public uint dwUnionChoice;
-        public IntPtr pFile;
-        public uint dwStateAction;
-        public IntPtr hWVTStateData;
-        [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)]
-        public string? pwszURLReference;
-        public uint dwProvFlags;
-        public uint dwUIContext;
-        public IntPtr pSignatureSettings;
-    }
-
-    private const uint WTD_UI_NONE = 2;
-    private const uint WTD_REVOKE_NONE = 0;
-    private const uint WTD_CHOICE_FILE = 1;
-    private const uint WTD_STATEACTION_IGNORE = 0;
-    private const uint WTD_REVOCATION_CHECK_NONE = 0x00000010;
-    private const uint WTD_SAFER_FLAG = 0x00000100;
-
-    private static readonly Guid WINTRUST_ACTION_GENERIC_VERIFY_V2 = new("{00AAC56B-CD44-11d0-8CC2-00C04FC295EE}");
-
-    [System.Runtime.InteropServices.DllImport("wintrust.dll", ExactSpelling = true, SetLastError = false, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-    private static extern int WinVerifyTrust(
-        IntPtr hwnd,
-        [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPStruct)] Guid pgActionID,
-        IntPtr pWVTData
-    );
+    #region Authenticode Validation Delegation
 
     public static bool VerifyDigitalSignature(string filePath, string? expectedPublisher = null)
     {
-        if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath)) return false;
-
-        var fileInfo = new WINTRUST_FILE_INFO
-        {
-            cbStruct = (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(WINTRUST_FILE_INFO)),
-            pcwszFilePath = filePath,
-            hFile = IntPtr.Zero,
-            pgKnownSubject = IntPtr.Zero
-        };
-
-        IntPtr pFileInfo = System.Runtime.InteropServices.Marshal.AllocHGlobal(System.Runtime.InteropServices.Marshal.SizeOf(typeof(WINTRUST_FILE_INFO)));
-        IntPtr pWVTData = System.Runtime.InteropServices.Marshal.AllocHGlobal(System.Runtime.InteropServices.Marshal.SizeOf(typeof(WINTRUST_DATA)));
-
-        try
-        {
-            System.Runtime.InteropServices.Marshal.StructureToPtr(fileInfo, pFileInfo, false);
-
-            var trustData = new WINTRUST_DATA
-            {
-                cbStruct = (uint)System.Runtime.InteropServices.Marshal.SizeOf(typeof(WINTRUST_DATA)),
-                pPolicyCallbackData = IntPtr.Zero,
-                pSIPClientData = IntPtr.Zero,
-                dwUIChoice = WTD_UI_NONE,
-                fdwRevocationChecks = WTD_REVOKE_NONE,
-                dwUnionChoice = WTD_CHOICE_FILE,
-                pFile = pFileInfo,
-                dwStateAction = WTD_STATEACTION_IGNORE,
-                hWVTStateData = IntPtr.Zero,
-                pwszURLReference = null,
-                dwProvFlags = WTD_REVOCATION_CHECK_NONE | WTD_SAFER_FLAG,
-                dwUIContext = 0,
-                pSignatureSettings = IntPtr.Zero
-            };
-
-            System.Runtime.InteropServices.Marshal.StructureToPtr(trustData, pWVTData, false);
-
-            int result = WinVerifyTrust(IntPtr.Zero, WINTRUST_ACTION_GENERIC_VERIFY_V2, pWVTData);
-            bool isTrustValid = (result == 0); // 0 = ERROR_SUCCESS
-
-            if (!isTrustValid)
-            {
-                return false;
-            }
-
-            // Verify expected publisher if specified
-            if (!string.IsNullOrEmpty(expectedPublisher))
-            {
-                try
-                {
-#pragma warning disable SYSLIB0057
-                    using var cert = new X509Certificate2(filePath);
-                    if (cert == null || string.IsNullOrEmpty(cert.Subject))
-                    {
-                        return false;
-                    }
-                    if (!cert.Subject.Contains(expectedPublisher, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
-#pragma warning restore SYSLIB0057
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-        finally
-        {
-            if (pFileInfo != IntPtr.Zero) System.Runtime.InteropServices.Marshal.FreeHGlobal(pFileInfo);
-            if (pWVTData != IntPtr.Zero) System.Runtime.InteropServices.Marshal.FreeHGlobal(pWVTData);
-        }
+        return WinCarePro.Infrastructure.Security.UpdateSecurityValidator.VerifyAuthenticodeSignature(filePath, expectedPublisher, out _);
     }
 
     #endregion

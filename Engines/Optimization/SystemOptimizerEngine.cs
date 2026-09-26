@@ -374,85 +374,100 @@ public class SystemOptimizerEngine
         return current == recommended;
     }
 
+    public bool ApplyTweak(SystemTweak tweak)
+    {
+        return ApplyTweakCore(tweak);
+    }
+
+    public bool RevertTweak(SystemTweak tweak)
+    {
+        return RevertTweakCore(tweak);
+    }
+
     public async Task<bool> ApplyTweakAsync(SystemTweak tweak, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
         return await Task.Run(() =>
         {
-            try
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                Log($"Applying optimization: {tweak.Name}...");
-                string originalValue = tweak.CurrentValue;
-                bool success = false;
-
-                switch (tweak.Id)
-                {
-                    case "MenuShowDelay":
-                        success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MenuShowDelay", "50", RegistryValueKind.String);
-                        break;
-                    case "AutoEndTasks":
-                        success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "AutoEndTasks", "1", RegistryValueKind.String);
-                        break;
-                    case "WaitToKillAppTimeout":
-                        success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "WaitToKillAppTimeout", "2000", RegistryValueKind.String);
-                        break;
-                    case "NtfsDisableLastAccessUpdate":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\FileSystem", "NtfsDisableLastAccessUpdate", 1, RegistryValueKind.DWord);
-                        break;
-                    case "NetworkThrottlingIndex":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "NetworkThrottlingIndex", -1, RegistryValueKind.DWord);
-                        break;
-                    case "SystemResponsiveness":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", 0, RegistryValueKind.DWord);
-                        break;
-                    case "HwSchMode":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", 2, RegistryValueKind.DWord);
-                        break;
-                    case "AllowTelemetry":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\DataCollection", "AllowTelemetry", 0, RegistryValueKind.DWord);
-                        break;
-                    case "AllowCortana":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCortana", 0, RegistryValueKind.DWord);
-                        break;
-                    case "WerDisabled":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", 1, RegistryValueKind.DWord);
-                        break;
-                    case "MinAnimate":
-                        success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MinAnimate", "0", RegistryValueKind.String);
-                        break;
-                    case "GameDVR_Enabled":
-                        success = SetRegistryValue(Registry.CurrentUser, @"System\GameConfigStore", "GameDVR_Enabled", 0, RegistryValueKind.DWord);
-                        break;
-                    case "DisableLocation":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors", "DisableLocation", 1, RegistryValueKind.DWord);
-                        break;
-                }
-
-                if (success)
-                {
-                    Database.DbManager.SaveSnapshot("SystemTweak", tweak.Id, originalValue, tweak.RecommendedValue);
-                    tweak.CurrentValue = tweak.RecommendedValue;
-                    tweak.IsOptimized = true;
-                    Database.DbManager.LogAction($"Applied System Tweak {tweak.Id}", "System Optimizer", "Success");
-                }
-                else
-                {
-                    Database.DbManager.LogAction($"Failed System Tweak {tweak.Id}", "System Optimizer", "Failed");
-                }
-
-                return success;
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Log($"Error applying {tweak.Id}: {ex.Message}");
-                return false;
-            }
+            cancellationToken.ThrowIfCancellationRequested();
+            return ApplyTweakCore(tweak);
         }, cancellationToken);
+    }
+
+    private bool ApplyTweakCore(SystemTweak tweak)
+    {
+        try
+        {
+            Log($"Applying optimization: {tweak.Name}...");
+            string originalValue = tweak.CurrentValue;
+            bool success = false;
+
+            switch (tweak.Id)
+            {
+                case "MenuShowDelay":
+                    success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MenuShowDelay", "50", RegistryValueKind.String);
+                    break;
+                case "AutoEndTasks":
+                    success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "AutoEndTasks", "1", RegistryValueKind.String);
+                    break;
+                case "WaitToKillAppTimeout":
+                    success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "WaitToKillAppTimeout", "2000", RegistryValueKind.String);
+                    break;
+                case "NtfsDisableLastAccessUpdate":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\FileSystem", "NtfsDisableLastAccessUpdate", 1, RegistryValueKind.DWord);
+                    break;
+                case "NetworkThrottlingIndex":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "NetworkThrottlingIndex", -1, RegistryValueKind.DWord);
+                    break;
+                case "SystemResponsiveness":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", 0, RegistryValueKind.DWord);
+                    break;
+                case "HwSchMode":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", 2, RegistryValueKind.DWord);
+                    break;
+                case "AllowTelemetry":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\DataCollection", "AllowTelemetry", 0, RegistryValueKind.DWord);
+                    break;
+                case "AllowCortana":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCortana", 0, RegistryValueKind.DWord);
+                    break;
+                case "WerDisabled":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", 1, RegistryValueKind.DWord);
+                    break;
+                case "MinAnimate":
+                    success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MinAnimate", "0", RegistryValueKind.String);
+                    break;
+                case "GameDVR_Enabled":
+                    success = SetRegistryValue(Registry.CurrentUser, @"System\GameConfigStore", "GameDVR_Enabled", 0, RegistryValueKind.DWord);
+                    break;
+                case "DisableLocation":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors", "DisableLocation", 1, RegistryValueKind.DWord);
+                    break;
+            }
+
+            if (success)
+            {
+                Database.DbManager.SaveSnapshot("SystemTweak", tweak.Id, originalValue, tweak.RecommendedValue);
+                tweak.CurrentValue = tweak.RecommendedValue;
+                tweak.IsOptimized = true;
+                Database.DbManager.LogAction($"Applied System Tweak {tweak.Id}", "System Optimizer", "Success");
+            }
+            else
+            {
+                Database.DbManager.LogAction($"Failed System Tweak {tweak.Id}", "System Optimizer", "Failed");
+            }
+
+            return success;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Log($"Error applying {tweak.Id}: {ex.Message}");
+            return false;
+        }
     }
 
     public async Task<bool> RevertTweakAsync(SystemTweak tweak, CancellationToken cancellationToken = default)
@@ -460,92 +475,97 @@ public class SystemOptimizerEngine
         cancellationToken.ThrowIfCancellationRequested();
         return await Task.Run(() =>
         {
-            try
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                Log($"Reverting optimization to default: {tweak.Name}...");
-                string originalValue = tweak.CurrentValue;
-                bool success = false;
-
-                switch (tweak.Id)
-                {
-                    case "MenuShowDelay":
-                        success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MenuShowDelay", "400", RegistryValueKind.String);
-                        tweak.CurrentValue = "400";
-                        break;
-                    case "AutoEndTasks":
-                        success = DeleteRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "AutoEndTasks");
-                        tweak.CurrentValue = "0";
-                        break;
-                    case "WaitToKillAppTimeout":
-                        success = DeleteRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "WaitToKillAppTimeout");
-                        tweak.CurrentValue = "20000";
-                        break;
-                    case "NtfsDisableLastAccessUpdate":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\FileSystem", "NtfsDisableLastAccessUpdate", 0, RegistryValueKind.DWord);
-                        tweak.CurrentValue = "0";
-                        break;
-                    case "NetworkThrottlingIndex":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "NetworkThrottlingIndex", 10, RegistryValueKind.DWord);
-                        tweak.CurrentValue = "10";
-                        break;
-                    case "SystemResponsiveness":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", 20, RegistryValueKind.DWord);
-                        tweak.CurrentValue = "20";
-                        break;
-                    case "HwSchMode":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", 1, RegistryValueKind.DWord);
-                        tweak.CurrentValue = "1";
-                        break;
-                    case "AllowTelemetry":
-                        success = DeleteRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\DataCollection", "AllowTelemetry");
-                        tweak.CurrentValue = "1";
-                        break;
-                    case "AllowCortana":
-                        success = DeleteRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCortana");
-                        tweak.CurrentValue = "1";
-                        break;
-                    case "WerDisabled":
-                        success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", 0, RegistryValueKind.DWord);
-                        tweak.CurrentValue = "0";
-                        break;
-                    case "MinAnimate":
-                        success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MinAnimate", "1", RegistryValueKind.String);
-                        tweak.CurrentValue = "1";
-                        break;
-                    case "GameDVR_Enabled":
-                        success = SetRegistryValue(Registry.CurrentUser, @"System\GameConfigStore", "GameDVR_Enabled", 1, RegistryValueKind.DWord);
-                        tweak.CurrentValue = "1";
-                        break;
-                    case "DisableLocation":
-                        success = DeleteRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors", "DisableLocation");
-                        tweak.CurrentValue = "0";
-                        break;
-                }
-
-                if (success)
-                {
-                    Database.DbManager.SaveSnapshot("SystemTweak", tweak.Id, originalValue, tweak.DefaultValue);
-                    tweak.IsOptimized = false;
-                    Database.DbManager.LogAction($"Reverted System Tweak {tweak.Id}", "System Optimizer", "Success");
-                }
-                else
-                {
-                    Database.DbManager.LogAction($"Failed to Revert System Tweak {tweak.Id}", "System Optimizer", "Failed");
-                }
-
-                return success;
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Log($"Error reverting {tweak.Id}: {ex.Message}");
-                return false;
-            }
+            cancellationToken.ThrowIfCancellationRequested();
+            return RevertTweakCore(tweak);
         }, cancellationToken);
+    }
+
+    private bool RevertTweakCore(SystemTweak tweak)
+    {
+        try
+        {
+            Log($"Reverting optimization to default: {tweak.Name}...");
+            string originalValue = tweak.CurrentValue;
+            bool success = false;
+
+            switch (tweak.Id)
+            {
+                case "MenuShowDelay":
+                    success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MenuShowDelay", "400", RegistryValueKind.String);
+                    tweak.CurrentValue = "400";
+                    break;
+                case "AutoEndTasks":
+                    success = DeleteRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "AutoEndTasks");
+                    tweak.CurrentValue = "0";
+                    break;
+                case "WaitToKillAppTimeout":
+                    success = DeleteRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "WaitToKillAppTimeout");
+                    tweak.CurrentValue = "20000";
+                    break;
+                case "NtfsDisableLastAccessUpdate":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\FileSystem", "NtfsDisableLastAccessUpdate", 0, RegistryValueKind.DWord);
+                    tweak.CurrentValue = "0";
+                    break;
+                case "NetworkThrottlingIndex":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "NetworkThrottlingIndex", 10, RegistryValueKind.DWord);
+                    tweak.CurrentValue = "10";
+                    break;
+                case "SystemResponsiveness":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile", "SystemResponsiveness", 20, RegistryValueKind.DWord);
+                    tweak.CurrentValue = "20";
+                    break;
+                case "HwSchMode":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SYSTEM\CurrentControlSet\Control\GraphicsDrivers", "HwSchMode", 1, RegistryValueKind.DWord);
+                    tweak.CurrentValue = "1";
+                    break;
+                case "AllowTelemetry":
+                    success = DeleteRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\DataCollection", "AllowTelemetry");
+                    tweak.CurrentValue = "1";
+                    break;
+                case "AllowCortana":
+                    success = DeleteRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\Windows Search", "AllowCortana");
+                    tweak.CurrentValue = "1";
+                    break;
+                case "WerDisabled":
+                    success = SetRegistryValue(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\Windows Error Reporting", "Disabled", 0, RegistryValueKind.DWord);
+                    tweak.CurrentValue = "0";
+                    break;
+                case "MinAnimate":
+                    success = SetRegistryValue(Registry.CurrentUser, @"Control Panel\Desktop", "MinAnimate", "1", RegistryValueKind.String);
+                    tweak.CurrentValue = "1";
+                    break;
+                case "GameDVR_Enabled":
+                    success = SetRegistryValue(Registry.CurrentUser, @"System\GameConfigStore", "GameDVR_Enabled", 1, RegistryValueKind.DWord);
+                    tweak.CurrentValue = "1";
+                    break;
+                case "DisableLocation":
+                    success = DeleteRegistryValue(Registry.LocalMachine, @"SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors", "DisableLocation");
+                    tweak.CurrentValue = "0";
+                    break;
+            }
+
+            if (success)
+            {
+                Database.DbManager.SaveSnapshot("SystemTweak", tweak.Id, originalValue, tweak.DefaultValue);
+                tweak.IsOptimized = false;
+                Database.DbManager.LogAction($"Reverted System Tweak {tweak.Id}", "System Optimizer", "Success");
+            }
+            else
+            {
+                Database.DbManager.LogAction($"Failed to Revert System Tweak {tweak.Id}", "System Optimizer", "Failed");
+            }
+
+            return success;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Log($"Error reverting {tweak.Id}: {ex.Message}");
+            return false;
+        }
     }
 
     private bool SetRegistryValue(RegistryKey rootKey, string subKeyPath, string valueName, object value, RegistryValueKind valueKind)

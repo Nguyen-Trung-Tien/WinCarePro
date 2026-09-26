@@ -239,47 +239,7 @@ public class HardwareDriverEngine
         return list;
     }
 
-    private static string GenerateRealisticVersionBump(string currentVer)
-    {
-        if (string.IsNullOrEmpty(currentVer)) return "1.0.1.0";
-        
-        // Try parsing as standard Version (A.B.C.D or A.B.C or A.B)
-        if (Version.TryParse(currentVer, out var ver))
-        {
-            int major = ver.Major;
-            int minor = ver.Minor;
-            int build = ver.Build;
-            int revision = ver.Revision;
-
-            if (revision >= 0)
-            {
-                return $"{major}.{minor}.{build}.{revision + 24}";
-            }
-            else if (build >= 0)
-            {
-                return $"{major}.{minor}.{build + 12}";
-            }
-            else if (minor >= 0)
-            {
-                return $"{major}.{minor + 1}";
-            }
-            else
-            {
-                return $"{major + 1}.0";
-            }
-        }
-
-        // Fallback: search for numbers and bump the last one
-        var match = System.Text.RegularExpressions.Regex.Match(currentVer, @"\d+$");
-        if (match.Success && int.TryParse(match.Value, out int lastVal))
-        {
-            return currentVer.Substring(0, match.Index) + (lastVal + 1).ToString();
-        }
-
-        return currentVer + ".1";
-    }
-
-    public double GetCpuTemperature(double cpuUsage)
+    public double GetCpuTemperature(double cpuUsage = 0)
     {
         var tempInfo = WmiHelper.Query("SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature", obj =>
         {
@@ -302,18 +262,14 @@ public class HardwareDriverEngine
             if (temp > 10 && temp < 110) return Math.Round(temp, 1);
         }
 
-        // Deterministic thermal estimate correlated with cpuUsage when ACPI sensor is missing
-        double baseTemp = 37.0;
-        double loadTemp = cpuUsage * 0.35; // 100% usage adds 35C
-        return Math.Round(Math.Clamp(baseTemp + loadTemp, 35.0, 95.0), 1);
+        // Zero mock policy (Rule 02): Return double.NaN when physical hardware sensor is unavailable
+        return double.NaN;
     }
 
-    public double GetGpuTemperature(double gpuUsage)
+    public double GetGpuTemperature(double gpuUsage = 0)
     {
-        // Deterministic thermal estimate correlated with gpuUsage
-        double baseTemp = 39.0;
-        double loadTemp = gpuUsage * 0.4; // 100% usage adds 40C
-        return Math.Round(Math.Clamp(baseTemp + loadTemp, 37.0, 90.0), 1);
+        // Zero mock policy (Rule 02): Return double.NaN when GPU hardware thermal sensor is unsupported
+        return double.NaN;
     }
 
     public double GetDiskTemperature()

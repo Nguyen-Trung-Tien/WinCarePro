@@ -206,8 +206,8 @@ public partial class DashboardViewModel
                                     _dispatcherQueue?.TryEnqueue(() =>
                                     {
                                         if (token.IsCancellationRequested) return;
-                                        CpuTemperature = cpuTemp;
-                                        CpuTempFormatted = $"{cpuTemp:F0}°C";
+                                        CpuTemperature = double.IsNaN(cpuTemp) ? 0 : cpuTemp;
+                                        CpuTempFormatted = double.IsNaN(cpuTemp) ? "N/A" : $"{cpuTemp:F0}°C";
                                     });
                                 }
                                 catch { }

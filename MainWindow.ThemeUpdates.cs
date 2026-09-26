@@ -425,7 +425,9 @@ public sealed partial class MainWindow : Window
             {
                 FileName = _downloadedSetupPath,
                 Arguments = args,
-                UseShellExecute = true
+                UseShellExecute = true,
+                Verb = "runas",
+                WorkingDirectory = Path.GetDirectoryName(_downloadedSetupPath) ?? Environment.SystemDirectory
             };
 
             DbManager.LogAction($"Launching update installer {(silent ? "(Silent Auto-Install)" : "")}...", "Software Updater", "Success");

@@ -29,6 +29,8 @@ public sealed partial class MainWindow : Window
     private IntPtr _hwnd = IntPtr.Zero;
     private bool _forceClose = false;
     private Microsoft.UI.Xaml.DispatcherTimer? _clockTimer;
+    private IntPtr _hIconBig = IntPtr.Zero;
+    private IntPtr _hIconSmall = IntPtr.Zero;
 
     public MainWindow()
     {
@@ -51,11 +53,11 @@ public sealed partial class MainWindow : Window
 
                 // Force-update taskbar and Alt+Tab icons via Win32 WM_SETICON with high-res icon frames.
                 // 256x256 for Taskbar/Alt+Tab (ICON_BIG), 32x32 for Titlebar (ICON_SMALL)
-                var hIconBig = LoadImage(IntPtr.Zero, iconPath, 1, 256, 256, 0x00000010); // IMAGE_ICON | LR_LOADFROMFILE
-                var hIconSmall = LoadImage(IntPtr.Zero, iconPath, 1, 32, 32, 0x00000010);   // IMAGE_ICON | LR_LOADFROMFILE
-                if (hIconBig != IntPtr.Zero || hIconSmall != IntPtr.Zero)
+                _hIconBig = LoadImage(IntPtr.Zero, iconPath, 1, 256, 256, 0x00000010); // IMAGE_ICON | LR_LOADFROMFILE
+                _hIconSmall = LoadImage(IntPtr.Zero, iconPath, 1, 32, 32, 0x00000010);   // IMAGE_ICON | LR_LOADFROMFILE
+                if (_hIconBig != IntPtr.Zero || _hIconSmall != IntPtr.Zero)
                 {
-                    SetTaskbarIcon(hIconBig, hIconSmall);
+                    SetTaskbarIcon(_hIconBig, _hIconSmall);
                 }
             }
             else
@@ -413,6 +415,16 @@ public sealed partial class MainWindow : Window
         DbManager.OnNotificationsChanged -= UpdateNotificationBadge;
         CleanupTrayIcon();
         UnsubclassWindow();
+        if (_hIconBig != IntPtr.Zero)
+        {
+            DestroyIcon(_hIconBig);
+            _hIconBig = IntPtr.Zero;
+        }
+        if (_hIconSmall != IntPtr.Zero)
+        {
+            DestroyIcon(_hIconSmall);
+            _hIconSmall = IntPtr.Zero;
+        }
         try
         {
             if (RootFrame.Content is MainPage mainPage)

@@ -78,21 +78,39 @@ public class DbManager
 
     public static void ExecuteInTransaction(Action<SqliteConnection, SqliteTransaction> operation)
     {
-        ExecuteWithConnection(connection =>
+        int maxRetries = 3;
+        for (int attempt = 0; attempt < maxRetries; attempt++)
         {
-            using var transaction = connection.BeginTransaction();
             try
             {
-                operation(connection, transaction);
-                transaction.Commit();
+                lock (DbLock)
+                {
+                    using var connection = CreateAndOpenConnection();
+                    using var transaction = connection.BeginTransaction();
+                    try
+                    {
+                        operation(connection, transaction);
+                        transaction.Commit();
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Infrastructure.Logging.CrashLogger.LogException("DbManager.ExecuteInTransaction: Rolled back due to error", ex);
+                        try { transaction.Rollback(); } catch (Exception rbEx) { Infrastructure.Logging.CrashLogger.LogException("DbManager.TransactionRollback", rbEx); }
+                        throw;
+                    }
+                }
             }
-            catch (Exception ex)
+            catch (SqliteException ex) when (ex.SqliteErrorCode == 5 || ex.Message.Contains("locked", StringComparison.OrdinalIgnoreCase) || ex.Message.Contains("busy", StringComparison.OrdinalIgnoreCase))
             {
-                Infrastructure.Logging.CrashLogger.LogException("DbManager.ExecuteInTransaction: Rolled back due to error", ex);
-                try { transaction.Rollback(); } catch (Exception rbEx) { Infrastructure.Logging.CrashLogger.LogException("DbManager.TransactionRollback", rbEx); }
-                throw;
+                if (attempt == maxRetries - 1)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException($"DbManager.ExecuteInTransaction (Locked/Busy after {maxRetries} attempts)", ex);
+                    throw;
+                }
+                Thread.Sleep(50 * (attempt + 1));
             }
-        });
+        }
     }
 
     private static void ExecuteWithConnection(Action<SqliteConnection> operation)

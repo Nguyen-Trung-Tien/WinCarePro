@@ -538,7 +538,8 @@ public sealed partial class SettingsPage
                 FileName = targetFile,
                 Arguments = "/SP- /VERYSILENT /SUPPRESSMSGBOXES /FORCECLOSEAPPLICATIONS /RESTARTAPPLICATIONS",
                 UseShellExecute = true,
-                Verb = "runas"
+                Verb = "runas",
+                WorkingDirectory = Path.GetDirectoryName(targetFile) ?? Environment.SystemDirectory
             };
 
             DbManager.LogAction($"Launched verified setup package for WinCare Pro v{version}", "Updates", "Success");

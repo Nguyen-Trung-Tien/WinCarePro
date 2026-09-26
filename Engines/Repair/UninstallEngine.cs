@@ -120,22 +120,35 @@ public partial class UninstallEngine
                 Verb = "runas"
             };
             
-            // Set working directory to installation folder if valid
-            if (!string.IsNullOrEmpty(app.InstallLocation) && Directory.Exists(app.InstallLocation))
+            bool isSystemTool = exe.Equals("msiexec", StringComparison.OrdinalIgnoreCase) || 
+                               exe.Equals("msiexec.exe", StringComparison.OrdinalIgnoreCase) ||
+                               exe.StartsWith(Environment.SystemDirectory, StringComparison.OrdinalIgnoreCase);
+
+            if (isSystemTool)
             {
-                psi.WorkingDirectory = app.InstallLocation;
+                exe = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath(Path.GetFileName(exe));
+                psi.FileName = exe;
+                psi.WorkingDirectory = Environment.SystemDirectory;
             }
-            else if (!string.IsNullOrEmpty(exe))
+            else
             {
-                try
+                // Set working directory to installation folder if valid
+                if (!string.IsNullOrEmpty(app.InstallLocation) && Directory.Exists(app.InstallLocation))
                 {
-                    string? dir = Path.GetDirectoryName(exe);
-                    if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
-                    {
-                        psi.WorkingDirectory = dir;
-                    }
+                    psi.WorkingDirectory = app.InstallLocation;
                 }
-                catch {}
+                else if (!string.IsNullOrEmpty(exe))
+                {
+                    try
+                    {
+                        string? dir = Path.GetDirectoryName(exe);
+                        if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
+                        {
+                            psi.WorkingDirectory = dir;
+                        }
+                    }
+                    catch {}
+                }
             }
             
             ProgressChanged?.Invoke(50);

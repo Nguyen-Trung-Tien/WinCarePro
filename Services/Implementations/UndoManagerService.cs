@@ -48,6 +48,39 @@ public class UndoManagerService
             return WinCarePro.Core.Models.OperationResult.Fail("Snapshot KeyName is null or whitespace.");
         }
 
+        // Special handling for SystemTweak category snapshots from SystemOptimizerEngine
+        if (string.Equals(snapshot.Category, "SystemTweak", StringComparison.OrdinalIgnoreCase))
+        {
+            try
+            {
+                var optimizer = new Engines.SystemOptimizerEngine();
+                var tweaks = optimizer.GetTweaks();
+                var matchedTweak = tweaks.Find(t => string.Equals(t.Id, snapshot.KeyName, StringComparison.OrdinalIgnoreCase));
+                if (matchedTweak != null)
+                {
+                    bool isRevertingToDefault = string.Equals(snapshot.OriginalValue, matchedTweak.DefaultValue, StringComparison.OrdinalIgnoreCase);
+                    bool ok = isRevertingToDefault 
+                        ? optimizer.RevertTweak(matchedTweak)
+                        : optimizer.ApplyTweak(matchedTweak);
+
+                    if (ok)
+                    {
+                        DbManager.LogAction($"Rollback SystemTweak '{snapshot.KeyName}' succeeded.", "UndoManager", "Success");
+                        return WinCarePro.Core.Models.OperationResult.Ok();
+                    }
+                    return WinCarePro.Core.Models.OperationResult.Fail($"Failed to rollback SystemTweak '{snapshot.KeyName}'.");
+                }
+
+                DbManager.LogAction($"Rollback SystemTweak '{snapshot.KeyName}' not found.", "UndoManager", "Failed");
+                return WinCarePro.Core.Models.OperationResult.Fail($"SystemTweak '{snapshot.KeyName}' was not found in tweak catalog.");
+            }
+            catch (Exception ex)
+            {
+                DbManager.LogAction($"Rollback SystemTweak '{snapshot.KeyName}' failed: {ex.Message}", "UndoManager", "Failed");
+                return WinCarePro.Core.Models.OperationResult.Fail($"Rollback SystemTweak '{snapshot.KeyName}' failed: {ex.Message}", ex);
+            }
+        }
+
         int lastSlash = snapshot.KeyName.LastIndexOf('\\');
         if (lastSlash <= 0 || lastSlash >= snapshot.KeyName.Length - 1)
         {

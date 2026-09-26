@@ -798,11 +798,13 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         
         try
         {
+            string explorerPath = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("explorer.exe") ?? "explorer.exe";
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
-                FileName = "explorer.exe",
+                FileName = explorerPath,
                 Arguments = WinCarePro.Infrastructure.Security.InputSanitizer.EscapeCommandLineArgument(path),
-                UseShellExecute = true
+                UseShellExecute = true,
+                WorkingDirectory = Environment.SystemDirectory
             });
         }
         catch (Exception ex)
@@ -830,7 +832,12 @@ public class UninstallViewModel : ViewModelBase, IDisposable
                 key.SetValue("LastKey", fullPath);
             }
             
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("regedit.exe") { UseShellExecute = true });
+            string regeditPath = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("regedit.exe") ?? "regedit.exe";
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(regeditPath)
+            {
+                UseShellExecute = true,
+                WorkingDirectory = Environment.SystemDirectory
+            });
         }
         catch (Exception ex)
         {

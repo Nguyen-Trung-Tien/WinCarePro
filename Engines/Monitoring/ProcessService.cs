@@ -52,8 +52,7 @@ public class ProcessService
     private static readonly object _cacheLock = new();
     private const int CACHE_TTL_SECONDS = 60;
     private const int MAX_CACHE_ENTRIES = 500;
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Task<string>> _activeIconTasks = new();
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, byte> _failedIconKeys = new();
+    private static readonly WinCarePro.Services.Implementations.IconCacheService _iconCacheService = new();
 
     // Strict OS process protection list
     private static readonly HashSet<string> _criticalProcesses = new(StringComparer.OrdinalIgnoreCase)
@@ -96,11 +95,6 @@ public class ProcessService
                     }
                 }
             }
-
-            if (_failedIconKeys.Count > 1000)
-            {
-                _failedIconKeys.Clear();
-            }
         }
     }
 
@@ -131,96 +125,12 @@ public class ProcessService
 
     private static async Task<string> ExtractProcessIconAsync(string filePath, string processName)
     {
-        if (filePath == "System Process" || !File.Exists(filePath)) return "";
-        try
-        {
-            string tempDir = Path.Combine(Path.GetTempPath(), "WinCareIcons");
-            if (!Directory.Exists(tempDir))
-            {
-                Directory.CreateDirectory(tempDir);
-            }
-            
-            string safeKeyName = string.Concat(processName.Split(Path.GetInvalidFileNameChars()));
-            string destPng = Path.Combine(tempDir, $"{safeKeyName}.png");
-            if (File.Exists(destPng))
-            {
-                return destPng;
-            }
-
-            var storageFile = await Windows.Storage.StorageFile.GetFileFromPathAsync(filePath);
-            if (storageFile != null)
-            {
-                using var thumbnail = await storageFile.GetThumbnailAsync(
-                    Windows.Storage.FileProperties.ThumbnailMode.SingleItem, 
-                    32, 
-                    Windows.Storage.FileProperties.ThumbnailOptions.None);
-                
-                if (thumbnail != null)
-                {
-                    using (var fileStream = new FileStream(destPng, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
-                    {
-                        using (var readStream = thumbnail.AsStreamForRead())
-                        {
-                            await readStream.CopyToAsync(fileStream);
-                        }
-                    }
-                    return destPng;
-                }
-            }
-        }
-        catch
-        {
-            // Fail silently
-        }
-        return "";
+        return await _iconCacheService.GetIconForExecutableAsync(filePath);
     }
 
     private static string ExtractProcessIcon(string filePath, string processName)
     {
-        if (filePath == "System Process" || !File.Exists(filePath)) return "";
-        try
-        {
-            string tempDir = Path.Combine(Path.GetTempPath(), "WinCareIcons");
-            string safeKeyName = string.Concat(processName.Split(Path.GetInvalidFileNameChars()));
-            string destPng = Path.Combine(tempDir, $"{safeKeyName}.png");
-            if (File.Exists(destPng))
-            {
-                return destPng;
-            }
-
-            if (_failedIconKeys.ContainsKey(safeKeyName))
-            {
-                return "";
-            }
-
-            // Extract asynchronously in background to prevent blocking, avoiding duplicate task writes
-            _activeIconTasks.GetOrAdd(destPng, key => Task.Run(async () =>
-            {
-                try
-                {
-                    string result = await ExtractProcessIconAsync(filePath, processName);
-                    if (string.IsNullOrEmpty(result))
-                    {
-                        _failedIconKeys.TryAdd(safeKeyName, 0);
-                    }
-                    return result;
-                }
-                catch
-                {
-                    _failedIconKeys.TryAdd(safeKeyName, 0);
-                    return "";
-                }
-                finally
-                {
-                    _activeIconTasks.TryRemove(key, out _);
-                }
-            }));
-        }
-        catch
-        {
-            // Fail silently
-        }
-        return "";
+        return _iconCacheService.GetIconForExecutable(filePath);
     }
 
     public bool IsActionAllowed(string name, int pid, out string reason)

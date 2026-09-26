@@ -304,9 +304,33 @@ public class RegistryBackupEngine
         }
     }
 
+    [Obsolete("Use CreateRegistryBackupAsync instead to avoid thread blocking.")]
     public bool CreateRegistryBackup(string name)
     {
-        return Task.Run(() => CreateRegistryBackupAsync(name)).GetAwaiter().GetResult();
+        try
+        {
+            string fileName = $"Backup_{name}_{DateTime.Now:yyyyMMdd_HHmmss}.reg";
+            string filePath = Path.Combine(BackupFolder, fileName);
+            if (!Directory.Exists(BackupFolder)) Directory.CreateDirectory(BackupFolder);
+
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = ProcessRunner.ResolveSafeExecutablePath("reg.exe"),
+                Arguments = $"export HKCU \"{filePath}\" /y",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.SystemDirectory
+            };
+            using var proc = System.Diagnostics.Process.Start(psi);
+            if (proc == null) return false;
+            proc.WaitForExit(30000);
+            return proc.ExitCode == 0;
+        }
+        catch (Exception ex)
+        {
+            Database.DbManager.LogAction($"Registry backup failed: {ex.Message}", "Registry Tools", "Failed");
+            return false;
+        }
     }
 
     public async Task<bool> RestoreRegistryBackupAsync(string filePath)
@@ -335,9 +359,38 @@ public class RegistryBackupEngine
         }
     }
 
+    [Obsolete("Use RestoreRegistryBackupAsync instead to avoid thread blocking.")]
     public bool RestoreRegistryBackup(string filePath)
     {
-        return Task.Run(() => RestoreRegistryBackupAsync(filePath)).GetAwaiter().GetResult();
+        if (!File.Exists(filePath)) return false;
+        try
+        {
+            string firstLine = File.ReadLines(filePath).FirstOrDefault() ?? "";
+            if (!firstLine.Trim().StartsWith("Windows Registry Editor", StringComparison.OrdinalIgnoreCase) &&
+                !firstLine.Trim().StartsWith("REGEDIT", StringComparison.OrdinalIgnoreCase))
+            {
+                Database.DbManager.LogAction($"Invalid registry backup file format: {Path.GetFileName(filePath)}", "Registry Tools", "Failed");
+                return false;
+            }
+
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = ProcessRunner.ResolveSafeExecutablePath("reg.exe"),
+                Arguments = $"import \"{filePath}\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.SystemDirectory
+            };
+            using var proc = System.Diagnostics.Process.Start(psi);
+            if (proc == null) return false;
+            proc.WaitForExit(15000);
+            return proc.ExitCode == 0;
+        }
+        catch (Exception ex)
+        {
+            Database.DbManager.LogAction($"Registry restore failed: {ex.Message}", "Registry Tools", "Failed");
+            return false;
+        }
     }
 
     public List<RegistryBackupItem> GetRegistryBackupsList()
@@ -411,10 +464,18 @@ public class RegistryBackupEngine
     {
         try
         {
+            string? rstruiPath = Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("rstrui.exe");
+            if (string.IsNullOrEmpty(rstruiPath))
+            {
+                Database.DbManager.LogAction("Windows System Restore Wizard (rstrui.exe) not found on system.", "Backup & Restore", "Failed");
+                return;
+            }
+
             Process.Start(new ProcessStartInfo
             {
-                FileName = "rstrui.exe",
-                UseShellExecute = true
+                FileName = rstruiPath,
+                UseShellExecute = true,
+                WorkingDirectory = Environment.SystemDirectory
             });
             Database.DbManager.LogAction("Launched Windows System Restore Wizard", "Backup & Restore", "Success");
         }

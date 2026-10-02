@@ -110,16 +110,6 @@ public class SecurityAuditingAndHardeningTests
         Assert.False(safety.IsProtectedService("RandomThirdPartyService"));
     }
 
-    [Fact]
-    public async Task DiskEngine_RunChkdskAsync_RejectsInvalidDriveLetters()
-    {
-        var engine = new DiskEngine();
-
-        Assert.False(await engine.RunChkdskAsync("C; format D:"));
-        Assert.False(await engine.RunChkdskAsync(""));
-        Assert.False(await engine.RunChkdskAsync("12"));
-        Assert.False(await engine.RunChkdskAsync("XYZ"));
-    }
 
     [Fact]
     public void CrashLogger_SanitizesJsonPasswordsAndJwtTokens()

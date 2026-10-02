@@ -169,15 +169,11 @@ public class LifecycleAndStressHardeningTests
         var repairVm = new RepairViewModel();
         repairVm.Cleanup();
 
-        var diskVm = new DiskViewModel();
-        diskVm.Cleanup();
-
         Assert.False(junkVm.IsScanning);
         Assert.False(startupVm.IsLoading);
         Assert.False(uninstallVm.IsBusy);
         Assert.False(securityVm.IsScanning);
         Assert.False(repairVm.IsBusy);
-        Assert.False(diskVm.IsBusy);
     }
 
     [Fact]

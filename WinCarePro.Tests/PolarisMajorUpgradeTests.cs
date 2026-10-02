@@ -11,34 +11,6 @@ namespace WinCarePro.Tests;
 
 public class PolarisMajorUpgradeTests
 {
-    [Fact]
-    public void DiskEngine_GetLogicalVolumes_ReturnsValidDrives()
-    {
-        var engine = new DiskEngine();
-        var volumes = engine.GetLogicalVolumes();
-        Assert.NotNull(volumes);
-        Assert.NotEmpty(volumes);
-
-        var systemDrive = volumes.FirstOrDefault(v => v.DriveLetter.StartsWith("C", StringComparison.OrdinalIgnoreCase));
-        if (systemDrive != null)
-        {
-            Assert.True(systemDrive.TotalBytes > 0);
-            Assert.True(systemDrive.PercentUsed >= 0.0 && systemDrive.PercentUsed <= 100.0);
-            Assert.False(string.IsNullOrEmpty(systemDrive.StatusBadge));
-        }
-    }
-
-    [Theory]
-    [InlineData(100L * 1024 * 1024 * 1024, 3L * 1024 * 1024 * 1024, true, 0)] // 3 GB free (<= 5 GB) => Critical (0)
-    [InlineData(100L * 1024 * 1024 * 1024, 10L * 1024 * 1024 * 1024, true, 6)] // 10 GB free (< 15%), burn 0.85 GB/day => (10-5)/0.85 = 5.88 -> 6 days
-    [InlineData(100L * 1024 * 1024 * 1024, 20L * 1024 * 1024 * 1024, false, 45)] // 20 GB free (< 25%) => Moderate (45 days)
-    [InlineData(100L * 1024 * 1024 * 1024, 50L * 1024 * 1024 * 1024, false, -1)] // 50 GB free (50%) => Safe (-1)
-    public void DiskEngine_CalculateVolumeExhaustion_ComputesCorrectDays(long totalBytes, long freeBytes, bool isSystem, int expectedDays)
-    {
-        var (days, forecast) = DiskEngine.CalculateVolumeExhaustion(totalBytes, freeBytes, isSystem);
-        Assert.Equal(expectedDays, days);
-        Assert.False(string.IsNullOrWhiteSpace(forecast));
-    }
 
     [Fact]
     public void SecurityPrivacyEngine_KernelIsolationAndDefenses_ReturnValidStatus()

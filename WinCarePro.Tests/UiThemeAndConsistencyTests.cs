@@ -344,21 +344,10 @@ public class UiThemeAndConsistencyTests
     }
 
     [Fact]
-    public void DiskPage_IsListEmpty_ShouldReturnCorrectVisibility()
-    {
-        Assert.Equal(Microsoft.UI.Xaml.Visibility.Visible, WinCarePro.Views.DiskPage.IsListEmpty(0, false));
-        Assert.Equal(Microsoft.UI.Xaml.Visibility.Collapsed, WinCarePro.Views.DiskPage.IsListEmpty(5, false));
-        Assert.Equal(Microsoft.UI.Xaml.Visibility.Collapsed, WinCarePro.Views.DiskPage.IsListEmpty(0, true));
-        Assert.Equal(Microsoft.UI.Xaml.Visibility.Collapsed, WinCarePro.Views.DiskPage.IsListEmpty(5, true));
-    }
-
-    [Fact]
-    public void Translations_StartupAndDiskEmptyStates_ShouldBeLocalized()
+    public void Translations_StartupEmptyStates_ShouldBeLocalized()
     {
         var manager = TranslationManager.Instance;
         Assert.Equal("Khởi động & Dịch vụ", manager.GetTranslationForLanguage("Startup & Services", AppLanguage.Vietnamese));
-        Assert.Equal("Sẵn sàng phân tích phân bổ dung lượng", manager.GetTranslationForLanguage("Ready to analyze storage distribution", AppLanguage.Vietnamese));
-        Assert.Equal("Không phát hiện tệp tin trùng lặp nào", manager.GetTranslationForLanguage("No duplicate files detected", AppLanguage.Vietnamese));
     }
 
     [Fact]
@@ -469,33 +458,6 @@ public class UiThemeAndConsistencyTests
         // ConvertBack returns UnsetValue
         var back = converter.ConvertBack("val", typeof(string), null!, "vi-VN");
         Assert.NotNull(back);
-    }
-
-    [Fact]
-    public void DiskModels_DisplayProperties_ShouldFormatCorrectly()
-    {
-        var volume = new WinCarePro.Models.LogicalVolumeInfo
-        {
-            DriveLetter = "C:",
-            VolumeLabel = "Windows",
-            TotalBytes = 500L * 1024 * 1024 * 1024,
-            FreeBytes = 200L * 1024 * 1024 * 1024,
-            FileSystem = "NTFS"
-        };
-
-        Assert.Equal(300L * 1024 * 1024 * 1024, volume.UsedBytes);
-        Assert.False(string.IsNullOrWhiteSpace(volume.UsedDisplay));
-        Assert.False(string.IsNullOrWhiteSpace(volume.FreeDisplay));
-        Assert.False(string.IsNullOrWhiteSpace(volume.CapacityDisplay));
-
-        var health = new WinCarePro.Models.DriveHealthInfo
-        {
-            Model = "Samsung 980 Pro",
-            SsdWearLevel = 95,
-            Temperature = 38
-        };
-
-        Assert.Equal("Health: 95%", health.SsdWearDisplay);
     }
 }
 

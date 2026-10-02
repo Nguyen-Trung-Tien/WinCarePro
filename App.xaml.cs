@@ -123,7 +123,6 @@ public partial class App : Application
         services.AddSingleton<Engines.RegistryBackupEngine>();
         services.AddSingleton<Engines.SoftwareUpdaterEngine>();
         services.AddSingleton<Engines.HardwareDriverEngine>();
-        services.AddSingleton<Engines.DiskEngine>();
         services.AddSingleton<Engines.ProcessService>();
         services.AddSingleton<Engines.NetworkEngine>();
         services.AddSingleton<Engines.ContextMenuEngine>();
@@ -137,7 +136,6 @@ public partial class App : Application
         services.AddTransient<RepairViewModel>();
         services.AddTransient<SystemOptimizerViewModel>();
         services.AddTransient<StartupViewModel>();
-        services.AddTransient<DiskViewModel>();
         services.AddTransient<RegistryViewModel>();
         services.AddTransient<UpdaterViewModel>();
         services.AddTransient<ContextMenuViewModel>();

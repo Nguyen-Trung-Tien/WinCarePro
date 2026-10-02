@@ -60,46 +60,6 @@ public class ComprehensiveReAuditHardeningTests
         Assert.False(SafePathGuard.IsPathSafeForDeletion(system32LogsDir));
     }
 
-    // =========================================================================
-    // 2. DiskEngine ClearEmptyFoldersAsync Root Folder Protection (SAFE-01)
-    // =========================================================================
-
-    [Fact]
-    public async Task DiskEngine_ClearEmptyFoldersAsync_PreservesRootFolder()
-    {
-        var diskEngine = new DiskEngine();
-        string tempRoot = Path.Combine(Path.GetTempPath(), $"WinCare_EmptyFolderTest_{Guid.NewGuid():N}");
-        
-        try
-        {
-            // Create root and nested empty subdirectories
-            Directory.CreateDirectory(tempRoot);
-            string sub1 = Path.Combine(tempRoot, "EmptySub1");
-            string sub2 = Path.Combine(tempRoot, "EmptySub2", "NestedEmpty");
-            Directory.CreateDirectory(sub1);
-            Directory.CreateDirectory(sub2);
-
-            Assert.True(Directory.Exists(tempRoot));
-            Assert.True(Directory.Exists(sub1));
-            Assert.True(Directory.Exists(sub2));
-
-            // Run clean
-            int deleted = await diskEngine.ClearEmptyFoldersAsync(tempRoot);
-
-            // Subdirectories should be cleaned, but root MUST still exist
-            Assert.True(deleted >= 2);
-            Assert.True(Directory.Exists(tempRoot), "Root folder must never be deleted by ClearEmptyFoldersAsync!");
-            Assert.False(Directory.Exists(sub1));
-            Assert.False(Directory.Exists(sub2));
-        }
-        finally
-        {
-            if (Directory.Exists(tempRoot))
-            {
-                try { Directory.Delete(tempRoot, true); } catch { }
-            }
-        }
-    }
 
     // =========================================================================
     // 3. UpdateSecurityValidator Blocks Sensitive File Deletion (SEC-01)
@@ -186,23 +146,6 @@ public class ComprehensiveReAuditHardeningTests
         }
     }
 
-    // =========================================================================
-    // 7. DiskEngine Physical Drive Correctness (CORR-02)
-    // =========================================================================
-
-    [Fact]
-    public void DiskEngine_GetDiskHealthStatus_DoesNotReturnMockVirtualDrive()
-    {
-        var diskEngine = new DiskEngine();
-        var disks = diskEngine.GetDiskHealthStatus();
-
-        Assert.NotNull(disks);
-        foreach (var disk in disks)
-        {
-            // Verify mock virtual fallback was purged
-            Assert.NotEqual("Virtual Disk Drive", disk.Model);
-        }
-    }
 
     // =========================================================================
     // 8. SafePathGuard Maintenance Directory Cleaning Safety (ROOT-CAUSE-01)

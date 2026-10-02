@@ -667,68 +667,7 @@
             </Border>
 
             <!-- 10. Startup & Services -->
-            <!-- 11. Disk Tools -->
-            <Border x:Name="Card_Disk" Tag="Care|All|Disk|ssd|storage" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                <StackPanel Spacing="14">
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="SkyBlue" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="11. Disk Tools &amp; Storage Sustainability" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Space Analyzer • SSD TRIM Optimization • Predictive Life Metrics" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="100% Safe (No System Impact)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Disk" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE7F1;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="SkyBlue"/>
-                                <TextBlock Text="Analyzes disk space consumption, predicts storage sustainability timelines, and provides drive optimization tools." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="SkyBlue"/>
-                                <TextBlock Text="• Disk space analyzer with folder size visualization.&#x0a;• AI-driven Storage Sustainability timeline prediction.&#x0a;• TRIM optimization for SSDs and defragmentation trigger for HDDs." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Select [Disk Tools] from menu." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. View storage breakdown and sustainability report." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Run TRIM or Clean Drive to reclaim space." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- 12. Registry Center -->
+            <!-- 11. Registry Center -->
             <Border x:Name="Card_Registry" Tag="System|All|Registry|cleaner" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                 <StackPanel Spacing="14">
                     <Grid ColumnSpacing="12">

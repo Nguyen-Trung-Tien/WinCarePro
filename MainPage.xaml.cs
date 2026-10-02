@@ -278,7 +278,6 @@ public sealed partial class MainPage : Page
             nameof(SystemOptimizerPage) => "Optimizer",
             nameof(StartupPage) => "Startup",
             nameof(ContextMenuPage) => "ContextMenu",
-            nameof(DiskPage) => "Disk",
             nameof(RegistryPage) => "Registry",
             nameof(UpdaterPage) => "Updater",
             _ => null
@@ -364,7 +363,6 @@ public sealed partial class MainPage : Page
             "optimizer" => typeof(SystemOptimizerPage),
             "contextmenu" => typeof(ContextMenuPage),
             "startup" => typeof(StartupPage),
-            "disk" => typeof(DiskPage),
             "registry" => typeof(RegistryPage),
             "updater" => typeof(UpdaterPage),
             "settings" => typeof(SettingsPage),

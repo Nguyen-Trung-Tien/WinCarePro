@@ -223,26 +223,6 @@ public class SystemAuditValidationTests
         vm.Cleanup();
     }
 
-    [Fact]
-    public void DiskViewModel_NavigationCycle_AbortsPromptlyAndResetsState()
-    {
-        // Arrange
-        var vm = new WinCarePro.ViewModels.DiskViewModel();
-        vm.IsBusy = true;
-
-        // Act 1: Simulate leaving DiskPage
-        vm.Cleanup();
-
-        // Assert 1: IsBusy must be reset
-        Assert.False(vm.IsBusy);
-
-        // Act 2: Simulate returning to DiskPage
-        vm.Initialize();
-
-        // Assert 2: Ready for operations
-        Assert.False(vm.IsBusy);
-        vm.Cleanup();
-    }
 
     [Fact]
     public void SecurityViewModel_NavigationCycle_CancelsPromptlyAndPreservesSubsequentScan()

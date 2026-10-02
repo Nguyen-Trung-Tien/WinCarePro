@@ -106,12 +106,6 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Tag="Disk" Content="Disk &amp; Storage" AutomationProperties.Name="Disk &amp; Storage" AutomationProperties.HelpText="Drive S.M.A.R.T. health, duplicate finder, and large files analyzer.">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7F1;" Foreground="{ThemeResource AppStatusCyanBrush}" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
                 <NavigationViewItem Tag="Registry" Content="Registry Center" AutomationProperties.Name="Registry Center" AutomationProperties.HelpText="Registry backup, defragmentation, and cleanup.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEDA2;" Foreground="{ThemeResource AppStatusDangerBrush}" />

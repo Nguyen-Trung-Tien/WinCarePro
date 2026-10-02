@@ -160,6 +160,15 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private bool _isExtendedLayerLoaded;
 
+    [ObservableProperty]
+    private string _resourceInsightsText = "System resource headroom is optimal with stable average load.".T();
+
+    [ObservableProperty]
+    private string _resourceDominantBottleneck = "None".T();
+
+    [ObservableProperty]
+    private string _resourceAverageLoadText = "Telemetry history ready".T();
+
     public ObservableCollection<string> Recommendations { get; } = new();
     public ObservableCollection<DiagnosticResult> DiagnosticItems { get; } = new();
     public ObservableCollection<LogEntry> ActionLogs { get; } = new();

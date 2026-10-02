@@ -98,6 +98,42 @@ public class DiskViewModel : ViewModelBase, IDisposable
     public ObservableCollection<DriveHealthInfo> Drives { get; } = new();
     public ObservableCollection<StorageItem> StorageItems { get; } = new();
     public ObservableCollection<StorageDuplicateGroup> DuplicateGroups { get; } = new();
+    public ObservableCollection<LargeFileItem> LargeFiles { get; } = new();
+    private readonly System.Collections.Generic.List<LargeFileItem> _allLargeFiles = new();
+
+    private bool _sendToRecycleBin = true;
+    public bool SendToRecycleBin
+    {
+        get => _sendToRecycleBin;
+        set => SetProperty(ref _sendToRecycleBin, value);
+    }
+
+    private string _selectedCategoryFilter = "All";
+    public string SelectedCategoryFilter
+    {
+        get => _selectedCategoryFilter;
+        set
+        {
+            if (SetProperty(ref _selectedCategoryFilter, value))
+            {
+                ApplyLargeFilesFilter();
+            }
+        }
+    }
+
+    private int _minSizeMb = 100;
+    public int MinSizeMb
+    {
+        get => _minSizeMb;
+        set => SetProperty(ref _minSizeMb, value);
+    }
+
+    private string _largeFilesTotalSizeFormatted = "0.0 B";
+    public string LargeFilesTotalSizeFormatted
+    {
+        get => _largeFilesTotalSizeFormatted;
+        set => SetProperty(ref _largeFilesTotalSizeFormatted, value);
+    }
 
     public DiskViewModel() : this(null, null)
     {
@@ -199,11 +235,14 @@ public class DiskViewModel : ViewModelBase, IDisposable
         {
             var list = await TaskSchedulerService.Instance.RunTaskAsync("disk", t => _engine.AnalyzeStorageAsync(StorageScanPath, t), token);
             token.ThrowIfCancellationRequested();
-            foreach (var item in list)
+            RunOnUI(() =>
             {
-                StorageItems.Add(item);
-            }
-            LogText(string.Format("Analysis complete. Found {0} items.".T(), StorageItems.Count));
+                foreach (var item in list)
+                {
+                    StorageItems.Add(item);
+                }
+            });
+            LogText(string.Format("Analysis complete. Found {0} items.".T(), list.Count));
             SetOperationState(OperationState.Completed);
         }
         catch (OperationCanceledException)
@@ -241,7 +280,7 @@ public class DiskViewModel : ViewModelBase, IDisposable
         var token = _diskCts.Token;
 
         IsBusy = true;
-        DuplicateGroups.Clear();
+        RunOnUI(() => DuplicateGroups.Clear());
         LogText(string.Format("Searching duplicate files in: {0}...".T(), StorageScanPath));
 
         try
@@ -249,6 +288,7 @@ public class DiskViewModel : ViewModelBase, IDisposable
             var list = await TaskSchedulerService.Instance.RunTaskAsync("disk_dup", t => _engine.FindDuplicateFilesAsync(StorageScanPath, t), token);
             token.ThrowIfCancellationRequested();
 
+            var mappedGroups = new List<StorageDuplicateGroup>();
             foreach (var group in list)
             {
                 var uiGroup = new StorageDuplicateGroup { SizeFormatted = group.SizeFormatted };
@@ -277,9 +317,18 @@ public class DiskViewModel : ViewModelBase, IDisposable
                     uiGroup.Items.Add(item);
                 }
 
-                DuplicateGroups.Add(uiGroup);
+                mappedGroups.Add(uiGroup);
             }
-            LogText(string.Format("Scan complete. Found {0} duplicate groups.".T(), DuplicateGroups.Count));
+
+            RunOnUI(() =>
+            {
+                foreach (var g in mappedGroups)
+                {
+                    DuplicateGroups.Add(g);
+                }
+            });
+
+            LogText(string.Format("Scan complete. Found {0} duplicate groups.".T(), mappedGroups.Count));
         }
         catch (OperationCanceledException)
         {
@@ -347,7 +396,7 @@ public class DiskViewModel : ViewModelBase, IDisposable
         if (IsBusy || DuplicateGroups.Count == 0) return;
 
         IsBusy = true;
-        LogText("Starting duplicate files cleanup...".T());
+        LogText(string.Format("Starting duplicate files cleanup (Recycle Bin: {0})...".T(), SendToRecycleBin));
         int count = 0;
         int failedCount = 0;
         long bytesSaved = 0;
@@ -379,9 +428,16 @@ public class DiskViewModel : ViewModelBase, IDisposable
                                         continue;
                                     }
 
-                                    File.Delete(item.Path);
-                                    count++;
-                                    bytesSaved += item.SizeBytes;
+                                    var delRes = SafeFileRecycler.Delete(item.Path, SendToRecycleBin);
+                                    if (delRes.IsSuccess)
+                                    {
+                                        count++;
+                                        bytesSaved += item.SizeBytes;
+                                    }
+                                    else
+                                    {
+                                        failedCount++;
+                                    }
                                 }
                             }
                             catch (Exception ex)
@@ -401,6 +457,160 @@ public class DiskViewModel : ViewModelBase, IDisposable
         catch (Exception ex)
         {
             LogText("Cleanup error: ".T() + ex.Message);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task ScanLargeFilesAsync()
+    {
+        if (IsBusy || !Directory.Exists(StorageScanPath)) return;
+
+        try
+        {
+            _diskCts?.Cancel();
+            _diskCts?.Dispose();
+        }
+        catch { }
+
+        _diskCts = new System.Threading.CancellationTokenSource();
+        var token = _diskCts.Token;
+
+        IsBusy = true;
+        SetOperationState(OperationState.Running);
+        RunOnUI(() =>
+        {
+            LargeFiles.Clear();
+            _allLargeFiles.Clear();
+        });
+
+        long minBytes = (long)MinSizeMb * 1024 * 1024;
+        LogText(string.Format("Scanning for large files (>{0} MB) in: {1}...".T(), MinSizeMb, StorageScanPath));
+
+        try
+        {
+            var list = await TaskSchedulerService.Instance.RunTaskAsync("disk_large", t => _engine.FindLargeFilesAsync(StorageScanPath, minBytes, t), token);
+            token.ThrowIfCancellationRequested();
+
+            RunOnUI(() =>
+            {
+                _allLargeFiles.Clear();
+                _allLargeFiles.AddRange(list);
+                ApplyLargeFilesFilter();
+            });
+
+            long totalBytes = list.Sum(x => x.SizeBytes);
+            LogText(string.Format("Found {0} large files totalling {1}.".T(), list.Count, FormatHelper.FormatBytes(totalBytes)));
+            SetOperationState(OperationState.Completed);
+        }
+        catch (OperationCanceledException)
+        {
+            LogText("Large files scan cancelled.".T());
+            SetOperationState(OperationState.Idle);
+        }
+        catch (Exception ex)
+        {
+            LogText("Large files scan error:".T() + " " + ex.Message);
+            SetOperationState(OperationState.Failed);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public void ApplyLargeFilesFilter()
+    {
+        RunOnUI(() =>
+        {
+            LargeFiles.Clear();
+            var filtered = _selectedCategoryFilter == "All"
+                ? _allLargeFiles
+                : _allLargeFiles.Where(x => string.Equals(x.Category, _selectedCategoryFilter, StringComparison.OrdinalIgnoreCase));
+
+            foreach (var file in filtered)
+            {
+                LargeFiles.Add(file);
+            }
+
+            long totalBytes = LargeFiles.Sum(x => x.SizeBytes);
+            LargeFilesTotalSizeFormatted = FormatHelper.FormatBytes(totalBytes);
+        });
+    }
+
+    public void SelectAllLargeFiles()
+    {
+        foreach (var file in LargeFiles)
+        {
+            file.IsSelected = true;
+        }
+    }
+
+    public void DeselectAllLargeFiles()
+    {
+        foreach (var file in LargeFiles)
+        {
+            file.IsSelected = false;
+        }
+    }
+
+    public async Task DeleteSelectedLargeFilesAsync()
+    {
+        var selected = LargeFiles.Where(x => x.IsSelected).ToList();
+        if (IsBusy || selected.Count == 0) return;
+
+        IsBusy = true;
+        LogText(string.Format("Deleting {0} selected large files (Recycle Bin: {1})...".T(), selected.Count, SendToRecycleBin));
+
+        int deleted = 0;
+        int failed = 0;
+        long reclaimedBytes = 0;
+
+        try
+        {
+            await Task.Run(() =>
+            {
+                foreach (var item in selected)
+                {
+                    if (!SafePathGuard.IsSafeToDelete(item.Path))
+                    {
+                        failed++;
+                        LogText(string.Format("Skipped protected file: {0}".T(), Path.GetFileName(item.Path)));
+                        continue;
+                    }
+
+                    var res = SafeFileRecycler.Delete(item.Path, SendToRecycleBin);
+                    if (res.IsSuccess)
+                    {
+                        deleted++;
+                        reclaimedBytes += item.SizeBytes;
+                    }
+                    else
+                    {
+                        failed++;
+                    }
+                }
+            });
+
+            RunOnUI(() =>
+            {
+                foreach (var item in selected.Where(x => !File.Exists(x.Path)))
+                {
+                    _allLargeFiles.Remove(item);
+                    LargeFiles.Remove(item);
+                }
+                long totalBytes = LargeFiles.Sum(x => x.SizeBytes);
+                LargeFilesTotalSizeFormatted = FormatHelper.FormatBytes(totalBytes);
+            });
+
+            LogText(string.Format("Cleaned {0} large files. Reclaimed {1}.".T(), deleted, FormatHelper.FormatBytes(reclaimedBytes)));
+            Database.DbManager.LogAction($"Cleaned {deleted} large files, Reclaimed {FormatHelper.FormatBytes(reclaimedBytes)}", "Disk Tools", "Success");
+        }
+        catch (Exception ex)
+        {
+            LogText("Error deleting large files:".T() + " " + ex.Message);
         }
         finally
         {
@@ -449,3 +659,4 @@ public class DiskViewModel : ViewModelBase, IDisposable
         }
     }
 }
+

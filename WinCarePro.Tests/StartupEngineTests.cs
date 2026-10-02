@@ -31,4 +31,17 @@ public class StartupEngineTests
         // Assert
         Assert.Equal(expectedImpact, impact);
     }
+
+    [Fact]
+    public void GetBootDiagnostics_ReturnsValidDiagnostics()
+    {
+        var engine = new StartupEngine();
+        var diag = engine.GetBootDiagnostics();
+
+        Assert.NotNull(diag);
+        Assert.True(diag.TotalBootTimeSeconds >= 0);
+        Assert.True(diag.MainPathBootTimeSeconds >= 0);
+        Assert.False(string.IsNullOrEmpty(diag.Rating));
+        Assert.False(string.IsNullOrEmpty(diag.Recommendation));
+    }
 }

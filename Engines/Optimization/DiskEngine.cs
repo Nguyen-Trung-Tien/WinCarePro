@@ -591,4 +591,87 @@ public class DiskEngine
             return false;
         }
     }
+
+    public async Task<List<LargeFileItem>> FindLargeFilesAsync(string scanPath, long minSizeBytes = 104857600 /* 100MB */, System.Threading.CancellationToken token = default)
+    {
+        var largeFiles = new List<LargeFileItem>();
+        if (string.IsNullOrWhiteSpace(scanPath) || !Directory.Exists(scanPath)) return largeFiles;
+
+        await Task.Run(() =>
+        {
+            try
+            {
+                foreach (var file in EnumerateFilesSafe(scanPath, token))
+                {
+                    token.ThrowIfCancellationRequested();
+                    try
+                    {
+                        var fi = new FileInfo(file);
+                        if (fi.Length >= minSizeBytes)
+                        {
+                            string ext = fi.Extension.ToLowerInvariant();
+                            string category = DetermineFileCategory(ext);
+                            string icon = DetermineFileIcon(category);
+
+                            largeFiles.Add(new LargeFileItem
+                            {
+                                Path = file,
+                                SizeBytes = fi.Length,
+                                Category = category,
+                                IconGlyph = icon,
+                                LastModified = fi.LastWriteTime
+                            });
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch (OperationCanceledException) { throw; }
+            catch { }
+        }, token);
+
+        return largeFiles.OrderByDescending(x => x.SizeBytes).ToList();
+    }
+
+    public int DeleteLargeFiles(IEnumerable<string> filePaths, bool sendToRecycleBin = true)
+    {
+        int deletedCount = 0;
+        foreach (var path in filePaths)
+        {
+            if (string.IsNullOrWhiteSpace(path)) continue;
+            var result = SafeFileRecycler.Delete(path, sendToRecycleBin);
+            if (result.IsSuccess)
+            {
+                deletedCount++;
+            }
+        }
+        return deletedCount;
+    }
+
+    private static string DetermineFileCategory(string ext)
+    {
+        return ext switch
+        {
+            ".mp4" or ".mkv" or ".avi" or ".mov" or ".wmv" or ".flv" or ".webm" or ".mp3" or ".wav" or ".flac" => "Media",
+            ".zip" or ".rar" or ".7z" or ".tar" or ".gz" or ".bz2" or ".xz" => "Archive",
+            ".iso" or ".img" or ".vhd" or ".vhdx" or ".vmdk" or ".wim" => "Disk Image",
+            ".exe" or ".msi" or ".pkg" or ".appx" or ".msix" => "Installer",
+            ".pdf" or ".docx" or ".xlsx" or ".pptx" or ".csv" or ".txt" => "Document",
+            _ => "Other"
+        };
+    }
+
+    private static string DetermineFileIcon(string category)
+    {
+        return category switch
+        {
+            "Media" => "\uE714",
+            "Archive" => "\uF012",
+            "Disk Image" => "\uE7B8",
+            "Installer" => "\uE896",
+            "Document" => "\uE8A5",
+            _ => "\uE7C3"
+        };
+    }
 }
+

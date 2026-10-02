@@ -257,6 +257,31 @@ public partial class DashboardViewModel
                         }
                     });
 
+                    // Periodic snapshot recording for Resource History & Insights (Every ~30s or during bottlenecks)
+                    if (tickCount % 30 == 0 || (HasBottleneck && tickCount % 10 == 0))
+                    {
+                        string? reason = HasBottleneck ? BottleneckStatus : null;
+                        double curCpu = cpu;
+                        double curRam = ram;
+                        double curDisk = DiskUsage;
+                        double curGpu = GpuUsage;
+                        _ = Task.Run(() =>
+                        {
+                            try
+                            {
+                                Database.DbManager.SaveResourceSnapshot(curCpu, curRam, curDisk, curGpu, reason);
+                                var insights = Database.DbManager.GetResourceInsights();
+                                _dispatcherQueue?.TryEnqueue(() =>
+                                {
+                                    ResourceInsightsText = insights.HealthInsight.T();
+                                    ResourceDominantBottleneck = insights.DominantBottleneck.T();
+                                    ResourceAverageLoadText = string.Format("Avg CPU: {0}% | RAM: {1}%".T(), insights.AverageCpu, insights.AverageRam);
+                                });
+                            }
+                            catch { }
+                        });
+                    }
+
                     // Trigger Smart Boost if RAM exceeds 90%
                     if (ram > 90.0 && (DateTime.Now - _lastSmartBoostTime).TotalMinutes >= 2.0)
                     {

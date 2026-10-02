@@ -3768,6 +3768,47 @@ public partial class TranslationManager
         _translations["Analyzes disk space consumption, predicts storage sustainability timelines, and provides drive optimization tools."] = "Phân tích dung lượng đĩa sử dụng, dự báo thời hạn lưu trữ và cung cấp công cụ tối ưu ổ đĩa.";
         _translations["Applies safe Microsoft-compliant Registry tweaks to optimize CPU scheduling priority, reduce interface delay, and maintain optimal physical RAM usage."] = "Áp dụng các tinh chỉnh Registry an toàn theo tiêu chuẩn Microsoft để tối ưu độ ưu tiên CPU, giảm độ trễ giao diện và tối ưu RAM vật lý.";
 
+        // --- Feature: Large File Analyzer & Safe Recycling ---
+        _translations["Large Files Analyzer"] = "Phân tích tệp dung lượng lớn";
+        _translations["Find and safely remove massive files taking up disk space."] = "Tìm kiếm và dọn dẹp an toàn các tệp dung lượng lớn chiếm dụng ổ đĩa.";
+        _translations["Large Files Found"] = "Tệp lớn phát hiện";
+        _translations["Min Size:"] = "Dung lượng tối thiểu:";
+        _translations["Category Filter:"] = "Lọc theo danh mục:";
+        _translations["Scan Large Files"] = "Quét tệp lớn";
+        _translations["Delete Selected"] = "Xóa đã chọn";
+        _translations["Send to Recycle Bin (Safe)"] = "Chuyển vào Thùng rác (An toàn)";
+        _translations["No large files found matching your criteria."] = "Không tìm thấy tệp lớn nào khớp với tiêu chí của bạn.";
+        _translations["Scanning drive for large files..."] = "Đang quét ổ đĩa tìm tệp lớn...";
+        _translations["Safely deleted {0} large file(s) ({1:F1} MB)."] = "Đã xóa an toàn {0} tệp lớn ({1:F1} MB).";
+        _translations["Media"] = "Đa phương tiện";
+        _translations["Archive"] = "Tệp nén";
+        _translations["Disk Image"] = "Ảnh đĩa";
+        _translations["Installer"] = "Bộ cài đặt";
+        _translations["Document"] = "Tài liệu";
+        _translations["Other"] = "Khác";
+
+        // --- Feature: System Resource History & Insights ---
+        _translations["System Resource Insights"] = "Thông tin chuyên sâu tài nguyên hệ thống";
+        _translations["Continuous 7-day resource telemetry shows balanced CPU/RAM performance."] = "Dữ liệu đo đạc tài nguyên liên tục 7 ngày cho thấy CPU/RAM hoạt động cân bằng.";
+        _translations["Historical Load"] = "Tải lịch sử";
+        _translations["Primary Bottleneck"] = "Điểm nghẽn chính";
+        _translations["Average Load"] = "Tải trung bình";
+        _translations["High Memory Usage"] = "Bộ nhớ RAM cao";
+        _translations["Elevated CPU Utilization"] = "CPU hoạt động cao";
+        _translations["Intense Disk Activity"] = "Ổ đĩa hoạt động mạnh";
+        _translations["Balanced Performance"] = "Hoạt động cân bằng";
+
+        // --- Feature: Deep Startup Boot Timeline ---
+        _translations["Core OS Initialization Time"] = "Thời gian khởi tạo nhân hệ điều hành";
+        _translations["Desktop & Apps Startup Time"] = "Thời gian khởi động màn hình chính & ứng dụng";
+        _translations["Boot analytics derived from startup payload and system metrics."] = "Phân tích khởi động được tính toán từ các ứng dụng tự khởi động và số liệu hệ thống.";
+        _translations["Excellent startup speed. Core system initialization is optimal."] = "Tốc độ khởi động xuất sắc. Khởi tạo nhân hệ thống đạt mức tối ưu.";
+        _translations["Moderate boot duration. Disabling non-essential startup apps will boost boot speed."] = "Thời gian khởi động trung bình. Vô hiệu hóa ứng dụng không cần thiết sẽ tăng tốc mở máy.";
+        _translations["Slow boot duration detected. High startup workload delaying desktop readiness."] = "Phát hiện tốc độ khởi động chậm. Tải khởi động lớn đang làm trễ khả năng sẵn sàng của màn hình chính.";
+        _translations["Fast"] = "Nhanh";
+        _translations["Moderate"] = "Bình thường";
+        _translations["Slow"] = "Chậm";
+
         BuildReverseTranslations();
     }
 }

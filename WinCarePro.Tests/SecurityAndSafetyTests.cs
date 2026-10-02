@@ -41,7 +41,7 @@ public class SecurityAndSafetyTests
     }
 
     [Fact]
-    public void RestoreRegistryBackup_RejectsFileWithInvalidHeader()
+    public async Task RestoreRegistryBackup_RejectsFileWithInvalidHeader()
     {
         // Arrange
         string tempRegFile = Path.Combine(Path.GetTempPath(), $"invalid_{Guid.NewGuid():N}.reg");
@@ -52,7 +52,7 @@ public class SecurityAndSafetyTests
             var engine = new RegistryBackupEngine();
 
             // Act
-            bool result = engine.RestoreRegistryBackup(tempRegFile);
+            bool result = await engine.RestoreRegistryBackupAsync(tempRegFile);
 
             // Assert
             Assert.False(result);

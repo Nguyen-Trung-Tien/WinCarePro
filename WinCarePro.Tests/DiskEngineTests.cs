@@ -111,4 +111,44 @@ public class DiskEngineTests
             if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
         }
     }
+
+    [Fact]
+    public async Task FindLargeFilesAsync_FiltersBySizeAndCategorizes()
+    {
+        var engine = new DiskEngine();
+        string tempDir = Path.Combine(Path.GetTempPath(), "WinCare_Test_LargeFiles_" + Guid.NewGuid());
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            string zipFile = Path.Combine(tempDir, "archive.zip");
+            string mp4File = Path.Combine(tempDir, "video.mp4");
+            string tinyFile = Path.Combine(tempDir, "small.txt");
+
+            // Write 1.5MB to archive and video, 10KB to small
+            byte[] largeBuf = new byte[1536 * 1024];
+            File.WriteAllBytes(zipFile, largeBuf);
+            File.WriteAllBytes(mp4File, largeBuf);
+            File.WriteAllBytes(tinyFile, new byte[10 * 1024]);
+
+            // Min size 1MB
+            var largeFiles = await engine.FindLargeFilesAsync(tempDir, minSizeBytes: 1024 * 1024);
+
+            Assert.NotNull(largeFiles);
+            Assert.Equal(2, largeFiles.Count);
+            Assert.Contains(largeFiles, f => f.Category == "Archive" && f.Name == "archive.zip");
+            Assert.Contains(largeFiles, f => f.Category == "Media" && f.Name == "video.mp4");
+            Assert.DoesNotContain(largeFiles, f => f.Name == "small.txt");
+
+            // Test deletion
+            int deleted = engine.DeleteLargeFiles(new[] { largeFiles.First(f => f.Name == "archive.zip").Path }, sendToRecycleBin: false);
+            Assert.Equal(1, deleted);
+            Assert.False(File.Exists(zipFile));
+            Assert.True(File.Exists(mp4File));
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
+        }
+    }
 }

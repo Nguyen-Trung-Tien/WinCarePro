@@ -204,4 +204,47 @@ public class DbAndReportTests
         Assert.NotNull(updateJson);
         Assert.Contains("Mozilla.Firefox", updateJson);
     }
+
+    [Fact]
+    public void DbManager_ResourceSnapshots_SavesAndAggregatesInsights()
+    {
+        // Act - Save sample snapshots
+        DbManager.SaveResourceSnapshot(85.0, 40.0, 10.0, 5.0, "High CPU Load");
+        DbManager.SaveResourceSnapshot(90.0, 45.0, 15.0, 10.0, "High CPU Load");
+
+        var recent = DbManager.GetRecentResourceSnapshots(10);
+        Assert.NotNull(recent);
+        Assert.NotEmpty(recent);
+
+        var insights = DbManager.GetResourceInsights();
+        Assert.NotNull(insights);
+        Assert.True(insights.TotalSnapshotsRecorded > 0);
+        Assert.False(string.IsNullOrEmpty(insights.HealthInsight));
+    }
+
+    [Fact]
+    public void SafeFileRecycler_ProtectedSystemPath_RejectsSafely()
+    {
+        string sysPath = Environment.GetFolderPath(Environment.SpecialFolder.System);
+        var res = WinCarePro.Core.Helpers.SafeFileRecycler.Delete(sysPath);
+        Assert.False(res.IsSuccess);
+    }
+
+    [Fact]
+    public void SafeFileRecycler_RecycleActualTempFile_Succeeds()
+    {
+        string tempFile = Path.Combine(Path.GetTempPath(), "WinCare_Recycler_Test_" + Guid.NewGuid().ToString("N") + ".tmp");
+        File.WriteAllText(tempFile, "Temporary test payload for recycling.");
+
+        try
+        {
+            var res = WinCarePro.Core.Helpers.SafeFileRecycler.Delete(tempFile, sendToRecycleBin: false);
+            Assert.True(res.IsSuccess);
+            Assert.False(File.Exists(tempFile));
+        }
+        finally
+        {
+            if (File.Exists(tempFile)) File.Delete(tempFile);
+        }
+    }
 }

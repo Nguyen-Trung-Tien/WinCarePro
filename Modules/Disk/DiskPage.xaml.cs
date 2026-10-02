@@ -17,10 +17,10 @@ public sealed partial class DiskPage : Page
 
     public DiskPage()
     {
-        InitializeComponent();
-        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         ViewModel = App.Services.GetRequiredService<DiskViewModel>();
         this.DataContext = ViewModel;
+        InitializeComponent();
+        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.Loaded += (s, e) => TranslationManager.Instance.Translate(this);
 
         var langHandler = new EventHandler((s, e) =>
@@ -151,6 +151,58 @@ public sealed partial class DiskPage : Page
     private void OnDeselectAllClick(object sender, RoutedEventArgs e) => ViewModel.DeselectAllDuplicates();
     private void OnKeepNewestClick(object sender, RoutedEventArgs e) => ViewModel.SelectKeepNewest();
     private void OnKeepOldestClick(object sender, RoutedEventArgs e) => ViewModel.SelectKeepOldest();
+
+    private async void OnScanLargeFilesClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
+        await ViewModel.ScanLargeFilesAsync();
+    }
+
+    private async void OnDeleteLargeFilesClick(object sender, RoutedEventArgs e)
+    {
+        var selected = ViewModel.LargeFiles.Where(x => x.IsSelected).ToList();
+        if (selected.Count == 0)
+        {
+            await ResultDialogHelper.ShowWarningAsync(
+                this.XamlRoot,
+                "No Files Selected",
+                "Please select at least one large file to delete.");
+            return;
+        }
+
+        string method = ViewModel.SendToRecycleBin ? "move to Windows Recycle Bin" : "permanently delete";
+        bool confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            this.XamlRoot,
+            "Confirm Large File Deletion",
+            $"Are you sure you want to {method} {selected.Count} selected file(s)?",
+            confirmText: "Delete",
+            cancelText: "Cancel",
+            isDestructive: !ViewModel.SendToRecycleBin);
+
+        if (confirmed)
+        {
+            await ViewModel.DeleteSelectedLargeFilesAsync();
+        }
+    }
+
+    private void OnSelectAllLargeFilesClick(object sender, RoutedEventArgs e) => ViewModel.SelectAllLargeFiles();
+    private void OnDeselectAllLargeFilesClick(object sender, RoutedEventArgs e) => ViewModel.DeselectAllLargeFiles();
+
+    private void OnMinSizeSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ViewModel != null && sender is ComboBox cb && cb.SelectedItem is ComboBoxItem item && int.TryParse(item.Tag?.ToString(), out int mb))
+        {
+            ViewModel.MinSizeMb = mb;
+        }
+    }
+
+    private void OnCategoryFilterClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is string cat)
+        {
+            ViewModel.SelectedCategoryFilter = cat;
+        }
+    }
 
     private void OnPivotSelectionChanged(object sender, SelectionChangedEventArgs e)
     {

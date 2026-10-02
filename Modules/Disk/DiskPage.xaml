@@ -454,6 +454,112 @@
                     </Border>
                 </Grid>
             </PivotItem>
+
+            <!-- Tab 4: Large File Analyzer -->
+            <PivotItem Header="Large Files">
+                <Grid Margin="0,12,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Margin="0,0,0,12" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,10">
+                        <Grid x:Name="LargeFilesHeaderGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Spacing="4">
+                                <TextBlock Text="Identify and safely clean space-consuming large files (videos, archives, ISO disk images)." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="Target:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,2">
+                                        <TextBlock Text="{x:Bind ViewModel.CurrentAnalysisPath, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="Min Size:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                    <ComboBox x:Name="MinSizeCombo" SelectionChanged="OnMinSizeSelectionChanged" SelectedIndex="1" Height="28" FontSize="11" CornerRadius="6" Padding="8,2">
+                                        <ComboBoxItem Content="50 MB" Tag="50"/>
+                                        <ComboBoxItem Content="100 MB" Tag="100"/>
+                                        <ComboBoxItem Content="500 MB" Tag="500"/>
+                                        <ComboBoxItem Content="1 GB" Tag="1000"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <ToggleSwitch x:Name="RecycleBinToggle" IsOn="{x:Bind ViewModel.SendToRecycleBin, Mode=TwoWay}" OnContent="Recycle Bin (Safe)" OffContent="Permanent Delete" Margin="0,0,8,0" FontSize="11"/>
+                                <Button Content="Scan Large Files" Click="OnScanLargeFilesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource VibrantPrimaryButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Height="34" CornerRadius="8" Padding="14,0" FontWeight="Bold"/>
+                                <Button Content="Delete Selected" Style="{StaticResource DangerButtonStyle}" Click="OnDeleteLargeFilesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="14,0" FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <!-- Category Filter Chips -->
+                            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="6" Margin="0,10,0,0">
+                                <Button Content="Select All" Click="OnSelectAllLargeFilesClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="26" FontSize="10.5" Padding="8,2" CornerRadius="6"/>
+                                <Button Content="Deselect All" Click="OnDeselectAllLargeFilesClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="26" FontSize="10.5" Padding="8,2" CornerRadius="6"/>
+                                <AppBarSeparator Margin="4,0"/>
+                                <TextBlock Text="Category:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                <Button Content="All" Click="OnCategoryFilterClick" Tag="All" Height="26" FontSize="10.5" Padding="8,2" CornerRadius="6"/>
+                                <Button Content="Media" Click="OnCategoryFilterClick" Tag="Media" Height="26" FontSize="10.5" Padding="8,2" CornerRadius="6"/>
+                                <Button Content="Archives" Click="OnCategoryFilterClick" Tag="Archive" Height="26" FontSize="10.5" Padding="8,2" CornerRadius="6"/>
+                                <Button Content="Disk Images" Click="OnCategoryFilterClick" Tag="Disk Image" Height="26" FontSize="10.5" Padding="8,2" CornerRadius="6"/>
+                                <Button Content="Installers" Click="OnCategoryFilterClick" Tag="Installer" Height="26" FontSize="10.5" Padding="8,2" CornerRadius="6"/>
+                                <Button Content="Documents" Click="OnCategoryFilterClick" Tag="Document" Height="26" FontSize="10.5" Padding="8,2" CornerRadius="6"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,12">
+                        <Grid>
+                            <!-- Empty / Ready State -->
+                            <StackPanel Visibility="{x:Bind views:DiskPage.IsListEmpty(ViewModel.LargeFiles.Count, ViewModel.IsBusy), Mode=OneWay}"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Margin="0,40,0,40">
+                                <Border Width="56" Height="56" CornerRadius="28" Background="{ThemeResource AppStatChipBackground}" HorizontalAlignment="Center">
+                                    <FontIcon Glyph="&#xE8A5;" FontSize="24" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="No large files currently listed" FontSize="15" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Click [Scan Large Files] to locate large storage items across the selected directory." FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center" TextWrapping="Wrap" MaxWidth="380" TextAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <ListView ItemsSource="{x:Bind ViewModel.LargeFiles, Mode=OneWay}" SelectionMode="None">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="10,8" Margin="0,0,0,4">
+                                            <Grid ColumnSpacing="12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center" MinWidth="20"/>
+                                                <FontIcon Grid.Column="1" Glyph="{Binding IconGlyph}" FontSize="16" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                                <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="1">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="12.5" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Path}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                                <Border Grid.Column="3" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Category}" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                                </Border>
+                                                <TextBlock Grid.Column="4" Text="{Binding LastModifiedFormatted}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="8,0"/>
+                                                <TextBlock Grid.Column="5" Text="{Binding SizeFormatted}" FontWeight="ExtraBold" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </PivotItem>
         </Pivot>
     </Grid>
 </Page>

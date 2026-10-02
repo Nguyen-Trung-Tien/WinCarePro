@@ -161,3 +161,17 @@ public class StartupEntry : INotifyPropertyChanged
         }
     }
 }
+
+public class BootDiagnosticsInfo
+{
+    public double TotalBootTimeSeconds { get; set; }
+    public double MainPathBootTimeSeconds { get; set; }
+    public double PostBootTimeSeconds { get; set; }
+    public string Rating { get; set; } = "Good";
+    public string Recommendation { get; set; } = "";
+
+    public string TotalBootFormatted => TotalBootTimeSeconds > 0 ? $"{TotalBootTimeSeconds:F1}s" : "-- s";
+    public string MainPathFormatted => MainPathBootTimeSeconds > 0 ? $"{MainPathBootTimeSeconds:F1}s" : "-- s";
+    public string PostBootFormatted => PostBootTimeSeconds > 0 ? $"{PostBootTimeSeconds:F1}s" : "-- s";
+}
+

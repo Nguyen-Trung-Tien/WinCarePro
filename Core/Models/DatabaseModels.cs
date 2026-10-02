@@ -99,3 +99,26 @@ public class LogEntry
         return "\uE946";
     }
 }
+
+public class ResourceSnapshotEntry
+{
+    public int Id { get; set; }
+    public double CpuPercent { get; set; }
+    public double RamPercent { get; set; }
+    public double DiskPercent { get; set; }
+    public double GpuPercent { get; set; }
+    public string? BottleneckReason { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
+public class ResourceInsightsSummary
+{
+    public double AverageCpu { get; set; }
+    public double AverageRam { get; set; }
+    public double AverageDisk { get; set; }
+    public double PeakCpu { get; set; }
+    public double PeakRam { get; set; }
+    public string DominantBottleneck { get; set; } = "None";
+    public int TotalSnapshotsRecorded { get; set; }
+    public string HealthInsight { get; set; } = "Resource consumption is stable across recorded history.";
+}

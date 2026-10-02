@@ -567,6 +567,21 @@
                                     <TextBlock Text="Performance Trend History" FontSize="16" FontWeight="Bold" />
                                     <TextBlock Text="Rolling history of resource load levels (CPU, RAM, GPU, Disk)" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                 </StackPanel>
+
+                                <!-- Resource Insights Telemetry Banner -->
+                                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,6" Margin="0,2,0,2">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <FontIcon Grid.Column="0" Glyph="&#xE9D9;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.ResourceInsightsText, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Grid.Column="2" Text="{x:Bind ViewModel.ResourceAverageLoadText, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                    </Grid>
+                                </Border>
+
                                 <VariableSizedWrapGrid x:Name="PerformanceFiltersPanel" Orientation="Horizontal" VerticalAlignment="Center">
                                     <CheckBox x:Name="CpuFilterCheck" Content="CPU" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" Margin="0,0,16,8" />
                                     <CheckBox x:Name="RamFilterCheck" Content="RAM" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" Margin="0,0,16,8" />

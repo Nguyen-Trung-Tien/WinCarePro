@@ -220,6 +220,82 @@ public class StartupEngine
         return -1;
     }
 
+    public BootDiagnosticsInfo GetBootDiagnostics()
+    {
+        var info = new BootDiagnosticsInfo();
+        try
+        {
+            string query = "*[System/EventID=100]";
+            var logQuery = new EventLogQuery(
+                "Microsoft-Windows-Diagnostics-Performance/Operational", 
+                PathType.LogName, 
+                query)
+            {
+                ReverseDirection = true
+            };
+            using var reader = new EventLogReader(logQuery);
+            var eventInstance = reader.ReadEvent();
+            if (eventInstance != null)
+            {
+                string xml = eventInstance.ToXml();
+                var doc = new XmlDocument();
+                doc.LoadXml(xml);
+                var nsmgr = new XmlNamespaceManager(doc.NameTable);
+                nsmgr.AddNamespace("ns", "http://schemas.microsoft.com/win/2004/08/events/event");
+
+                var bootNode = doc.SelectSingleNode("//ns:EventData/ns:Data[@Name='BootTime']", nsmgr);
+                if (bootNode != null && double.TryParse(bootNode.InnerText, out double bootMs))
+                {
+                    info.TotalBootTimeSeconds = bootMs / 1000.0;
+                }
+
+                var mainPathNode = doc.SelectSingleNode("//ns:EventData/ns:Data[@Name='MainPathBootTime']", nsmgr);
+                if (mainPathNode != null && double.TryParse(mainPathNode.InnerText, out double mainPathMs))
+                {
+                    info.MainPathBootTimeSeconds = mainPathMs / 1000.0;
+                }
+
+                var postBootNode = doc.SelectSingleNode("//ns:EventData/ns:Data[@Name='BootPostBootTime']", nsmgr);
+                if (postBootNode != null && double.TryParse(postBootNode.InnerText, out double postBootMs))
+                {
+                    info.PostBootTimeSeconds = postBootMs / 1000.0;
+                }
+
+                if (info.TotalBootTimeSeconds < 18.0)
+                {
+                    info.Rating = "Fast";
+                    info.Recommendation = "Windows startup velocity is excellent. Fast boot sequences detected.";
+                }
+                else if (info.TotalBootTimeSeconds < 35.0)
+                {
+                    info.Rating = "Good";
+                    info.Recommendation = "Boot duration is within normal standard range.";
+                }
+                else if (info.TotalBootTimeSeconds < 60.0)
+                {
+                    info.Rating = "Moderate";
+                    info.Recommendation = "Elevated startup duration. Disabling non-essential startup apps will boost boot speed.";
+                }
+                else
+                {
+                    info.Rating = "Slow";
+                    info.Recommendation = "Critical boot lag detected. Multiple background startup programs are causing post-boot freezing.";
+                }
+
+                return info;
+            }
+        }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogMessage("StartupEngine", $"Failed to read boot diagnostics: {ex.Message}");
+        }
+
+        info.TotalBootTimeSeconds = 0;
+        info.Rating = "Unknown";
+        info.Recommendation = "Boot telemetry log is not accessible or event log is disabled.";
+        return info;
+    }
+
     // Startup Apps Management
     public List<StartupEntry> GetStartupEntries()
     {

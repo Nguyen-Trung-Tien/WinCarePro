@@ -146,7 +146,7 @@ public class DbManager
 
     private static volatile string? _cachedSettings;
 
-    private const int CurrentSchemaVersion = 2;
+    private const int CurrentSchemaVersion = 3;
 
     private static void ApplyMigrations(SqliteConnection connection)
     {
@@ -226,6 +226,28 @@ public class DbManager
                 cmd.ExecuteNonQuery();
             }
             currentVersion = 2;
+        }
+
+        if (currentVersion < 3)
+        {
+            // Migration to Version 3: ResourceSnapshots table and index
+            using (var cmd = new SqliteCommand(@"
+                CREATE TABLE IF NOT EXISTS ResourceSnapshots (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    CpuPercent REAL NOT NULL,
+                    RamPercent REAL NOT NULL,
+                    DiskPercent REAL NOT NULL,
+                    GpuPercent REAL NOT NULL,
+                    BottleneckReason TEXT,
+                    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE INDEX IF NOT EXISTS idx_resourcesnapshots_createdat ON ResourceSnapshots (CreatedAt DESC);
+                PRAGMA user_version = 3;
+            ", connection))
+            {
+                cmd.ExecuteNonQuery();
+            }
+            currentVersion = 3;
         }
     }
 
@@ -810,7 +832,111 @@ public class DbManager
         }, new List<StateSnapshotEntry>());
     }
 
+    #region Resource History & Bottleneck Insights
+
+    private static int _resourceSnapshotCounter = 0;
+
+    public static void SaveResourceSnapshot(double cpu, double ram, double disk, double gpu, string? bottleneckReason)
+    {
+        ExecuteWithConnection(connection =>
+        {
+            var query = "INSERT INTO ResourceSnapshots (CpuPercent, RamPercent, DiskPercent, GpuPercent, BottleneckReason) VALUES ($cpu, $ram, $disk, $gpu, $reason);";
+            using var command = new SqliteCommand(query, connection);
+            command.Parameters.AddWithValue("$cpu", Math.Round(cpu, 1));
+            command.Parameters.AddWithValue("$ram", Math.Round(ram, 1));
+            command.Parameters.AddWithValue("$disk", Math.Round(disk, 1));
+            command.Parameters.AddWithValue("$gpu", Math.Round(gpu, 1));
+            command.Parameters.AddWithValue("$reason", (object?)bottleneckReason ?? DBNull.Value);
+            command.ExecuteNonQuery();
+
+            // Auto-purge old snapshots every 50 inserts to maintain zero database bloat
+            if (Interlocked.Increment(ref _resourceSnapshotCounter) % 50 == 0)
+            {
+                using var purgeCmd = new SqliteCommand("DELETE FROM ResourceSnapshots WHERE CreatedAt < datetime('now', '-7 days');", connection);
+                purgeCmd.ExecuteNonQuery();
+            }
+        });
+    }
+
+    public static List<ResourceSnapshotEntry> GetRecentResourceSnapshots(int limit = 60)
+    {
+        return ExecuteWithConnection(connection =>
+        {
+            var list = new List<ResourceSnapshotEntry>();
+            var query = "SELECT Id, CpuPercent, RamPercent, DiskPercent, GpuPercent, BottleneckReason, CreatedAt FROM ResourceSnapshots ORDER BY CreatedAt DESC LIMIT $limit;";
+            using var command = new SqliteCommand(query, connection);
+            command.Parameters.AddWithValue("$limit", limit);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(new ResourceSnapshotEntry
+                {
+                    Id = reader.GetInt32(0),
+                    CpuPercent = reader.GetDouble(1),
+                    RamPercent = reader.GetDouble(2),
+                    DiskPercent = reader.GetDouble(3),
+                    GpuPercent = reader.GetDouble(4),
+                    BottleneckReason = reader.IsDBNull(5) ? null : reader.GetString(5),
+                    CreatedAt = reader.IsDBNull(6) ? DateTime.Now : reader.GetDateTime(6)
+                });
+            }
+            return list;
+        }, new List<ResourceSnapshotEntry>());
+    }
+
+    public static ResourceInsightsSummary GetResourceInsights()
+    {
+        var snapshots = GetRecentResourceSnapshots(120);
+        if (snapshots.Count == 0)
+        {
+            return new ResourceInsightsSummary();
+        }
+
+        double avgCpu = System.Linq.Enumerable.Average(snapshots, s => s.CpuPercent);
+        double avgRam = System.Linq.Enumerable.Average(snapshots, s => s.RamPercent);
+        double avgDisk = System.Linq.Enumerable.Average(snapshots, s => s.DiskPercent);
+        double peakCpu = System.Linq.Enumerable.Max(snapshots, s => s.CpuPercent);
+        double peakRam = System.Linq.Enumerable.Max(snapshots, s => s.RamPercent);
+
+        var bottlenecks = System.Linq.Enumerable.FirstOrDefault(
+            System.Linq.Enumerable.OrderByDescending(
+                System.Linq.Enumerable.GroupBy(
+                    System.Linq.Enumerable.Where(snapshots, s => !string.IsNullOrEmpty(s.BottleneckReason)),
+                    s => s.BottleneckReason!),
+                g => System.Linq.Enumerable.Count(g)));
+
+        string dominant = bottlenecks?.Key ?? "None";
+        string insight = "System resource headroom is optimal with stable average load.";
+        if (peakCpu > 90 || avgCpu > 70)
+        {
+            insight = "High processor demand observed. Optimize background services and startup applications.";
+        }
+        else if (peakRam > 85 || avgRam > 80)
+        {
+            insight = "Memory pressure detected. Recommend working set optimization and clearing memory standby lists.";
+        }
+        else if (avgDisk > 75)
+        {
+            insight = "Heavy storage I/O detected. Check for active background disk indexing or duplicate file scans.";
+        }
+
+        return new ResourceInsightsSummary
+        {
+            AverageCpu = Math.Round(avgCpu, 1),
+            AverageRam = Math.Round(avgRam, 1),
+            AverageDisk = Math.Round(avgDisk, 1),
+            PeakCpu = Math.Round(peakCpu, 1),
+            PeakRam = Math.Round(peakRam, 1),
+            DominantBottleneck = dominant,
+            TotalSnapshotsRecorded = snapshots.Count,
+            HealthInsight = insight
+        };
+    }
+
+    #endregion
+
     #region Database Lifecycle & Graceful Shutdown
+
 
     public static void ShutdownDatabase()
     {

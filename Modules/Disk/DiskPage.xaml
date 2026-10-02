@@ -210,55 +210,141 @@
             
             <!-- Tab 1: Disk Hardware Overview -->
             <PivotItem Header="Disk Overview">
-                <Grid Margin="0,12,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="16" Margin="0,12,0,0">
+                        <!-- Section 1: Logical Storage Volumes -->
+                        <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                            <StackPanel Spacing="12">
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xEDA2;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                    <TextBlock Text="Logical Volumes &amp; Partitions" FontSize="14" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                    <TextBlock Text="Space distribution and predictive storage exhaustion forecast" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                </StackPanel>
 
-                    <Border Grid.Row="0" Margin="0,0,0,12" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,10">
-                        <TextBlock Text="Local storage volumes health, physical S.M.A.R.T attributes, and hardware controller diagnostics." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                    </Border>
+                                <ItemsControl ItemsSource="{x:Bind ViewModel.Volumes, Mode=OneWay}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="models:LogicalVolumeInfo">
+                                            <Border Style="{StaticResource Tilt3DCardStyle}" Margin="0,0,0,10" Padding="16,14"
+                                                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
+                                                <Grid RowSpacing="10">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
 
-                    <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.Drives, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Border Style="{StaticResource Tilt3DCardStyle}" Margin="0,0,0,8" Padding="16,14"
-                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
-                                    <Grid ColumnSpacing="14">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
+                                                    <!-- Volume Icon Badge -->
+                                                    <Border Grid.Row="0" Grid.Column="0" Width="44" Height="44" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" CornerRadius="12" VerticalAlignment="Center" Margin="0,0,14,0">
+                                                        <FontIcon Glyph="{x:Bind IconGlyph}" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
 
-                                        <!-- Drive Icon Badge with 3D Elevation -->
-                                        <Border Grid.Column="0" Width="42" Height="42" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" CornerRadius="12" VerticalAlignment="Center">
-                                            <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        </Border>
+                                                    <!-- Volume Info -->
+                                                    <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                                            <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                                                                <TextBlock Text="{x:Bind FileSystem}" FontSize="10.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                                            </Border>
+                                                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                                                                <TextBlock Text="{x:Bind DriveType}" FontSize="10.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" Spacing="12">
+                                                            <TextBlock Text="{x:Bind ExhaustionForecast}" FontSize="11.5" Foreground="{StaticResource PrimaryAccentBrush}" FontWeight="SemiBold"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
 
-                                        <!-- Drive Info -->
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
-                                            <TextBlock Text="{Binding Model}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis"/>
-                                            <StackPanel Orientation="Horizontal" Spacing="14">
-                                                <TextBlock Text="{Binding Name}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                                <TextBlock Text="{Binding Interface}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                                <TextBlock Text="{Binding TemperatureFormatted}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
-                                            </StackPanel>
-                                        </StackPanel>
+                                                    <!-- Status Badge & Quick Action -->
+                                                    <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                                        <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center">
+                                                            <TextBlock Text="{x:Bind StatusBadge}" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold" FontSize="11"/>
+                                                        </Border>
+                                                        <Button Content="Analyze Space" Click="OnAnalyzeVolumeClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Height="32" CornerRadius="8" Padding="12,0" FontSize="11.5" FontWeight="SemiBold"/>
+                                                    </StackPanel>
 
-                                        <!-- Status Badge -->
-                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="8">
-                                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="10,4">
-                                                <TextBlock Text="{Binding HealthStatus}" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold" FontSize="11.5"/>
+                                                    <!-- Space Allocation Bar -->
+                                                    <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" ColumnSpacing="12" Margin="0,4,0,0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Grid.Column="0" Spacing="4">
+                                                            <ProgressBar Value="{x:Bind PercentUsed}" Maximum="100" Height="6" CornerRadius="3" Foreground="{StaticResource PrimaryAccentGradient}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                                                            <Grid>
+                                                                <TextBlock Text="{x:Bind UsedDisplay, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Left" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                                                <TextBlock Text="{x:Bind FreeDisplay, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Right" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                                            </Grid>
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Right">
+                                                            <TextBlock Text="{x:Bind CapacityDisplay, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Grid>
                                             </Border>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Section 2: Physical Hardware & SMART Telemetry -->
+                        <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                            <StackPanel Spacing="12">
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE7F1;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                    <TextBlock Text="Physical Drives &amp; S.M.A.R.T Hardware Telemetry" FontSize="14" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                    <TextBlock Text="Controller telemetry, hardware temperature, and wear estimation" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                </StackPanel>
+
+                                <ListView ItemsSource="{x:Bind ViewModel.Drives, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource Tilt3DCardStyle}" Margin="0,0,0,8" Padding="16,14"
+                                                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
+                                                <Grid ColumnSpacing="14">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <!-- Drive Icon Badge with 3D Elevation -->
+                                                    <Border Grid.Column="0" Width="42" Height="42" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" CornerRadius="12" VerticalAlignment="Center">
+                                                        <FontIcon Glyph="&#xE7F1;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+
+                                                    <!-- Drive Info -->
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                                        <TextBlock Text="{Binding Model}" FontWeight="Bold" FontSize="14" TextTrimming="CharacterEllipsis"/>
+                                                        <StackPanel Orientation="Horizontal" Spacing="14">
+                                                            <TextBlock Text="{Binding Name}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                            <TextBlock Text="{Binding Interface}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                            <TextBlock Text="{Binding DriveType}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
+                                                            <TextBlock Text="{Binding TemperatureFormatted}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontWeight="SemiBold"/>
+                                                            <TextBlock Text="{Binding SsdWearDisplay}" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}" FontWeight="SemiBold"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+
+                                                    <!-- Status Badge & Tools -->
+                                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                        <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="10,4">
+                                                            <TextBlock Text="{Binding HealthStatus}" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold" FontSize="11.5"/>
+                                                        </Border>
+                                                        <Button Content="CHKDSK" Click="OnRunChkdskClick" Height="30" CornerRadius="6" Padding="10,0" FontSize="11" FontWeight="SemiBold"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
             </PivotItem>
 
             <!-- Tab 2: Disk Space Analyzer -->

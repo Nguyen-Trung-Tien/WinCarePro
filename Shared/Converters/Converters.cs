@@ -150,3 +150,20 @@ public class HexToBrushConverter : IValueConverter
     }
 }
 
+public class StringFormatConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (parameter is string format && !string.IsNullOrEmpty(format))
+        {
+            return string.Format(format, value ?? string.Empty);
+        }
+        return value?.ToString() ?? string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        return Microsoft.UI.Xaml.DependencyProperty.UnsetValue;
+    }
+}
+

@@ -3809,6 +3809,43 @@ public partial class TranslationManager
         _translations["Moderate"] = "Bình thường";
         _translations["Slow"] = "Chậm";
 
+        // --- WinCare Pro v5.0.0 Polaris: Logical Volumes & Predictive Exhaustion ---
+        _translations["Logical Volumes (Storage Space)"] = "Phân vùng hợp lý (Dung lượng ổ đĩa)";
+        _translations["System & Data Partitions with predictive exhaustion"] = "Phân vùng Hệ thống & Dữ liệu với dự đoán cạn kiệt";
+        _translations["System &amp; Data Partitions with predictive exhaustion"] = "Phân vùng Hệ thống & Dữ liệu với dự đoán cạn kiệt";
+        _translations["Analyze Space"] = "Phân tích dung lượng";
+        _translations["Stable storage headroom"] = "Dung lượng ổn định an toàn";
+        _translations["Space critical (< 5% free)"] = "Nguy cấp dung lượng (< 5% trống)";
+        _translations["Space critical (&lt; 5% free)"] = "Nguy cấp dung lượng (< 5% trống)";
+        _translations["Low space warning (< 15% free)"] = "Cảnh báo dung lượng thấp (< 15% trống)";
+        _translations["Low space warning (&lt; 15% free)"] = "Cảnh báo dung lượng thấp (< 15% trống)";
+        _translations["Logical Volumes"] = "Phân vùng ổ đĩa";
+        _translations["Predictive Days to Full"] = "Dự đoán số ngày đến khi đầy";
+        _translations["Drive Health & Exhaustion"] = "Sức khỏe ổ đĩa & Dự báo cạn kiệt";
+        _translations["Drive Health &amp; Exhaustion"] = "Sức khỏe ổ đĩa & Dự báo cạn kiệt";
+        _translations["Critical Storage Alert"] = "Cảnh báo lưu trữ nguy cấp";
+        _translations["Low Battery Threshold"] = "Ngưỡng pin thấp";
+        _translations["Battery level is below 20%. Background maintenance deferred to conserve power."] = "Mức pin dưới 20%. Tác vụ bảo trì nền được tạm hoãn để tiết kiệm năng lượng.";
+
+        // --- WinCare Pro v5.0.0 Polaris: Platform Security & Kernel Isolation ---
+        _translations["Platform Security & Kernel Isolation"] = "Bảo mật nền tảng & Cô lập nhân";
+        _translations["Platform Security &amp; Kernel Isolation"] = "Bảo mật nền tảng & Cô lập nhân";
+        _translations["Core system defenses, hypervisor memory integrity & tamper protection"] = "Phòng thủ hệ thống lõi, tính toàn vẹn bộ nhớ siêu giám sát & bảo vệ chống can thiệp";
+        _translations["Core system defenses, hypervisor memory integrity &amp; tamper protection"] = "Phòng thủ hệ thống lõi, tính toàn vẹn bộ nhớ siêu giám sát & bảo vệ chống can thiệp";
+        _translations["Memory Integrity (HVCI)"] = "Toàn vẹn bộ nhớ (HVCI)";
+        _translations["Protects core system processes from malicious code injection."] = "Bảo vệ các tiến trình hệ thống lõi khỏi việc chèn mã độc hại.";
+        _translations["Tamper Protection"] = "Bảo vệ chống can thiệp";
+        _translations["Prevents malicious apps from disabling Microsoft Defender."] = "Ngăn ứng dụng độc hại vô hiệu hóa Microsoft Defender.";
+        _translations["RDP Network Level Auth"] = "Xác thực cấp mạng RDP";
+        _translations["Requires user authentication before Remote Desktop connects."] = "Yêu cầu xác thực người dùng trước khi kết nối Remote Desktop.";
+        _translations["Protected"] = "Được bảo vệ";
+        _translations["Unprotected"] = "Chưa bảo vệ";
+
+        // --- WinCare Pro v5.0.0 Polaris Release & Codename ---
+        _translations["v5.0.0 (Polaris)"] = "v5.0.0 (Polaris)";
+        _translations["Polaris"] = "Polaris";
+        _translations["Major upgrade with AI predictive storage exhaustion, platform kernel isolation & battery-aware background watchdog."] = "Bản nâng cấp lớn với AI dự đoán cạn kiệt ổ đĩa, bảo mật cô lập nhân nền tảng & giám sát nền nhận biết nguồn pin.";
+
         BuildReverseTranslations();
     }
 }

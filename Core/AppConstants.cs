@@ -11,10 +11,10 @@ public static class AppConstants
 {
     public const string AppName = "WinCare Pro";
     public const string Publisher = "Nguyen Trung Tien";
-    public const string Codename = "Orion";
-    public const string DefaultVersionString = "4.9.3";
-    public const string DefaultAssemblyVersionString = "4.9.3.0";
-    public const string DefaultBuildDate = "2026-09-16";
+    public const string Codename = "Polaris";
+    public const string DefaultVersionString = "5.0.0";
+    public const string DefaultAssemblyVersionString = "5.0.0.0";
+    public const string DefaultBuildDate = "2026-10-02";
     public const string TargetWindowsVersion = "Windows 10 / 11 (64-bit)";
     public const string Architecture = "x64 Native";
     public const string CompanyName = "WinCare Pro";
@@ -24,24 +24,22 @@ public static class AppConstants
     /// The runtime assembly version.
     /// </summary>
     public static readonly Version CurrentVersion = 
-        typeof(AppConstants).Assembly.GetName().Version ?? new Version(4, 9, 3, 0);
+        typeof(AppConstants).Assembly.GetName().Version ?? new Version(5, 0, 0, 0);
 
     /// <summary>
-    /// Standard semantic version string (e.g., "4.9.3").
+    /// Standard semantic version string (e.g., "5.0.0").
     /// </summary>
     public static readonly string VersionString = 
         $"{CurrentVersion.Major}.{CurrentVersion.Minor}.{CurrentVersion.Build}";
 
     /// <summary>
-    /// Compact display version string (e.g., "v4.9.3").
+    /// Compact display version string (e.g., "v5.0.0").
     /// </summary>
     public static readonly string DisplayVersion = 
-        CurrentVersion.Build > 0 
-            ? $"v{CurrentVersion.Major}.{CurrentVersion.Minor}.{CurrentVersion.Build}" 
-            : $"v{CurrentVersion.Major}.{CurrentVersion.Minor}";
+        $"v{VersionString}";
 
     /// <summary>
-    /// Full display version string (e.g., "v4.9.3").
+    /// Full display version string (e.g., "v5.0.0").
     /// </summary>
     public static readonly string DisplayVersionFull = 
         $"v{VersionString}";

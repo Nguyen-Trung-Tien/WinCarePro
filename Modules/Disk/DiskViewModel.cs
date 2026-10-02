@@ -96,6 +96,7 @@ public class DiskViewModel : ViewModelBase, IDisposable
     public bool IsNotBusy => !_isBusy;
 
     public ObservableCollection<DriveHealthInfo> Drives { get; } = new();
+    public ObservableCollection<LogicalVolumeInfo> Volumes { get; } = new();
     public ObservableCollection<StorageItem> StorageItems { get; } = new();
     public ObservableCollection<StorageDuplicateGroup> DuplicateGroups { get; } = new();
     public ObservableCollection<LargeFileItem> LargeFiles { get; } = new();
@@ -188,13 +189,21 @@ public class DiskViewModel : ViewModelBase, IDisposable
         IsBusy = true;
         try
         {
-            var list = await Task.Run(() => _engine.GetDiskHealthStatus());
+            var physicalDrives = await Task.Run(() => _engine.GetDiskHealthStatus());
+            var logicalVolumes = await Task.Run(() => _engine.GetLogicalVolumes());
+
             RunOnUI(() =>
             {
                 Drives.Clear();
-                foreach (var d in list)
+                foreach (var d in physicalDrives)
                 {
                     Drives.Add(d);
+                }
+
+                Volumes.Clear();
+                foreach (var v in logicalVolumes)
+                {
+                    Volumes.Add(v);
                 }
             });
         }
@@ -206,6 +215,13 @@ public class DiskViewModel : ViewModelBase, IDisposable
         {
             IsBusy = false;
         }
+    }
+
+    public void SelectVolumeForAnalysis(LogicalVolumeInfo volume)
+    {
+        if (volume == null || string.IsNullOrWhiteSpace(volume.DriveLetter)) return;
+        StorageScanPath = volume.DriveLetter;
+        _ = AnalyzeStorageAsync();
     }
 
     public async Task AnalyzeStorageAsync()

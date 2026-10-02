@@ -67,16 +67,16 @@ File cài đặt sau khi hoàn tất sẽ nằm tại: `PublishOutput/WinCarePro
 
 ```json
 {
-  "version": "4.9.3",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3/WinCareProSetup.exe",
-  "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3/WinCareProSetup.exe",
+  "version": "5.0.0",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe",
+  "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe",
   "sha256": "99fd2e278f7c359901099dd683913458a2408e5abbbaa9eed874516dac41e6e5",
-  "changelog": "Cập nhật v4.9.3 (Orion Maintenance & System Hardening): Khắc phục triệt để lỗi mã SHA-256 khi cập nhật qua cơ chế tự động đồng bộ hóa và chuẩn hóa Hash-Pinned Integrity; vá lỗi crash ServiceController và Startup BootTime; tối ưu hóa toàn diện hiệu năng và xử lý đa luồng WinUI 3.",
-  "beta_version": "4.9.3-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3-beta/WinCareProSetup_Beta.exe",
-  "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v4.9.3-beta/WinCareProSetup_Beta.exe",
+  "changelog": "Cập nhật v5.0.0 (Polaris Major Upgrade): Nâng cấp lớn phân tích phân vùng ổ đĩa Logical Volumes với mô hình dự báo cạn kiệt dung lượng (Days to Full), kiểm tra bảo mật nền tảng & cô lập nhân (HVCI Memory Integrity, Defender Tamper Protection, RDP NLA), giám sát nền nhận biết nguồn pin (Battery-aware Watchdog) và dẹp bỏ hoàn toàn dữ liệu telemetry giả lập (Zero-Mock Telemetry).",
+  "beta_version": "5.0.0-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0-beta/WinCareProSetup_Beta.exe",
+  "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0-beta/WinCareProSetup_Beta.exe",
   "beta_sha256": "99fd2e278f7c359901099dd683913458a2408e5abbbaa9eed874516dac41e6e5",
-  "beta_changelog": "WinCare Pro v4.9.3 (SHA-256 Update Fix, Architecture Hardening & Stability Release)"
+  "beta_changelog": "WinCare Pro v5.0.0 (Polaris Major Release)"
 }
 ```
 

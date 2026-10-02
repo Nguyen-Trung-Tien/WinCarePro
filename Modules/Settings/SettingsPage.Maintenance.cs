@@ -201,12 +201,12 @@ public sealed partial class SettingsPage
         {
             var releaseItems = new (string Tag, string Title, string Description, string Glyph, string ColorHex)[]
             {
-                ("🎨 UI/UX", "Aura Glassmorphic Fluent 2.0 Theme Studio", "Synchronized semantic tokens across dark and light modes with Cyberpunk Neon & Cyan/Teal accent gradients.", "\uE790", "#FF06B6D4"),
-                ("⚡ PERF", "120 FPS Fluid Animations & Reduced Motion", "Staggered entrance delays capped to <=200ms to eliminate UI lag, with automated low-power and accessibility fallbacks.", "\uE745", "#FFF59E0B"),
-                ("💬 POPUP", "Standardized Aura ResultDialog Engine", "High-contrast result popups with telemetry breakdowns, collapsible log expander, and jitter-free tabular figures.", "\uE8BD", "#FF8B5CF6"),
-                ("💾 DRIVER", "Hardware Driver Backup & Rollback Manager", "Comprehensive hardware component inspection, health auditing, and one-click rollback snapshot generation.", "\uE9A6", "#FF3B82F6"),
-                ("🛡️ SECURE", "SafePathGuard Defense & Local Audit Trail", "Multi-layered filesystem protection, path traversal defenses, input sanitization, and tamper-resistant SQLite logs.", "\uE727", "#FF10B981"),
-                ("🧹 BOOST", "1-Click Smart Boost & Memory Purging", "Instant RAM working set optimization and DNS cache flushing in under 800ms for peak gaming and productivity.", "\uE9D9", "#FFEC4899")
+                ("🔮 POLARIS", "AI Volume Exhaustion & Predictive Space Analytics", "Linear empirical modeling forecasting storage depletion timelines, low space safeguards, and SSD wear telemetry.", "\uE7F1", "#FF06B6D4"),
+                ("🛡️ KERNEL", "Platform Security & Kernel Isolation Defenses", "Deep inspection of HVCI Hypervisor-Protected Code Integrity, Defender Tamper Protection, and RDP NLA authentication.", "\uE727", "#FF10B981"),
+                ("🔋 ECO", "Battery-Aware Background Watchdog Throttling", "Dynamic throttling of high-overhead background maintenance tasks when device is on battery below 20% threshold.", "\uEBB5", "#FFF59E0B"),
+                ("📊 TELEMETRY", "Zero-Mock Precision Telemetry & SQLite Snapshots", "Pure native Win32/PInvoke performance monitors with 100% elimination of pseudo-random data and historical trend graphs.", "\uE9D9", "#FF8B5CF6"),
+                ("💬 POPUP", "Standardized Aura ResultDialog Engine", "High-contrast result popups with telemetry breakdowns, collapsible log expander, and jitter-free tabular figures.", "\uE8BD", "#FF3B82F6"),
+                ("🧹 BOOST", "1-Click Smart Boost & Memory Purging", "Instant RAM working set optimization and DNS cache flushing in under 800ms for peak gaming and productivity.", "\uE777", "#FFEC4899")
             };
 
             var currentTheme = ThemeManager.Instance.CurrentTheme;
@@ -295,14 +295,14 @@ public sealed partial class SettingsPage
             var mRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
             mRow.Children.Add(new TextBlock
             {
-                Text = "v4.9.3 Orion",
+                Text = "v5.0.0 Polaris",
                 FontSize = 13,
                 FontWeight = Microsoft.UI.Text.FontWeights.Bold,
                 Foreground = (Brush)Application.Current.Resources["PrimaryAccentBrush"]
             });
             mRow.Children.Add(new TextBlock
             {
-                Text = "• 2026.09 (Current)".T(),
+                Text = "• 2026.10 (Current)".T(),
                 FontSize = 11,
                 Foreground = textSecondary,
                 VerticalAlignment = VerticalAlignment.Center
@@ -310,7 +310,7 @@ public sealed partial class SettingsPage
             mStack.Children.Add(mRow);
             mStack.Children.Add(new TextBlock
             {
-                Text = "Streamlined modular architecture, Settings Page decomposition, complete DI standardization, zero-allocation reduced motion checks, and optimized Windows 11 responsiveness.".T(),
+                Text = "Major upgrade with AI predictive storage exhaustion, platform kernel isolation & battery-aware background watchdog.".T(),
                 FontSize = 11.5,
                 Foreground = textSecondary,
                 TextWrapping = TextWrapping.Wrap
@@ -414,7 +414,7 @@ public sealed partial class SettingsPage
 
             var dialog = new ContentDialog
             {
-                Title = "What's New in v4.9.3".T(),
+                Title = "What's New in v5.0.0".T(),
                 Content = rootStack,
                 CloseButtonText = "Close".T(),
                 DefaultButton = ContentDialogButton.Close,

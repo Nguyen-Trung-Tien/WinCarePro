@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.0.0] - 2026-10-02 (Polaris Major Upgrade & Deep System Diagnostics)
+
+### Predictive Storage & Volume Analytics
+- **Logical Volumes Deep Inspection:** Khởi tạo bảng điều khiển phân vùng logic (`LogicalVolumeInfo`) hiển thị chi tiết từng ổ đĩa C:, D:,... với dung lượng thực tế, tỷ lệ phân bổ, file system, và nhãn hệ thống.
+- **Predictive Days-to-Full Modeling:** Thuật toán hồi quy tuyến tính dự báo chính xác số ngày còn lại trước khi phân vùng bị cạn kiệt dung lượng (`CalculateVolumeExhaustion`).
+- **Interactive Space Analysis Transition:** Tích hợp nút phân tích nhanh 1-click "Analyze Space" trên từng phân vùng, tự động chuyển vùng chọn sang tab Space Analyzer và bắt đầu quét sâu tệp tin.
+
+### Platform Security & Kernel Isolation
+- **Hypervisor-Protected Code Integrity (HVCI):** Bổ sung cơ chế kiểm tra trạng thái bảo vệ bộ nhớ mức ảo hóa (Memory Integrity) chống chèn mã độc vào tiến trình nhân Windows.
+- **Microsoft Defender Tamper Protection:** Kiểm tra trạng thái bảo vệ chống can thiệp, ngăn chặn phần mềm độc hại tự ý vô hiệu hóa tính năng phòng thủ của Windows Security.
+- **Remote Desktop Network Level Authentication (NLA):** Phát hiện lỗ hổng kết nối từ xa khi RDP chưa bật xác thực cấp mạng.
+
+### Intelligent Background Watchdog & Eco Optimization
+- **Battery-Aware Dynamic Throttling:** Tích hợp Win32 `GetSystemPowerStatus` kiểm tra trạng thái nguồn pin laptop; tự động hoãn các tác vụ bảo trì ngầm có tải CPU/RAM cao khi pin dưới ngưỡng 20%.
+- **Proactive Storage Exhaustion Alerts:** Tự động giám sát ổ đĩa hệ thống định kỳ mỗi 60 giây và gửi thông báo khẩn cấp kèm đề xuất dọn dẹp khi dung lượng khả dụng dưới 5GB.
+- **Zero Database Bloat Telemetry Snapshots:** Ghi nhận lịch sử tài nguyên vào SQLite WAL và tự động dọn dẹp dữ liệu cũ quá 7 ngày.
+
+### Zero-Mock Telemetry Enforcement
+- **Elimination of Pseudo-Random Data:** Loại bỏ triệt để việc sinh số ngẫu nhiên (`Random`) trong toàn bộ tầng giám sát và ViewModel; cam kết 100% dữ liệu telemetry lấy trực tiếp từ kernel và Win32 APIs.
+
+---
+
 ## [4.9.3] - 2026-09-16 (Orion Maintenance, SHA-256 Update Fix & System Hardening)
 
 ### Security & Updater Integrity

@@ -162,4 +162,23 @@ public static class NativeApi
     }
 
     #endregion
+
+    #region Power & Battery Status
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct SYSTEM_POWER_STATUS
+    {
+        public byte ACLineStatus;       // 0 = Offline, 1 = Online, 255 = Unknown
+        public byte BatteryFlag;        // 1 = High, 2 = Low, 4 = Critical, 8 = Charging, 128 = No system battery, 255 = Unknown
+        public byte BatteryLifePercent; // 0-100, 255 = Unknown
+        public byte SystemStatusFlag;   // 1 = Battery saver on
+        public int BatteryLifeTime;
+        public int BatteryFullLifeTime;
+    }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS lpSystemPowerStatus);
+
+    #endregion
 }

@@ -1829,6 +1829,7 @@
             <local:StatusToBrushConverter x:Key="StatusToBrushConverter" />
             <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
             <local:HexToBrushConverter x:Key="HexToBrushConverter" />
+            <local:StringFormatConverter x:Key="StringFormatConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

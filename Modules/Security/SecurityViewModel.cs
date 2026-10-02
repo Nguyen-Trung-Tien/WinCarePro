@@ -56,6 +56,24 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private string _tpmStatusText = "Checking...".T();
 
+    [ObservableProperty]
+    private bool _isCoreIsolationEnabled;
+
+    [ObservableProperty]
+    private string _coreIsolationStatusText = "Checking...".T();
+
+    [ObservableProperty]
+    private bool _isTamperProtectionEnabled;
+
+    [ObservableProperty]
+    private string _tamperProtectionStatusText = "Checking...".T();
+
+    [ObservableProperty]
+    private bool _isRdpNlaEnabled;
+
+    [ObservableProperty]
+    private string _rdpNlaStatusText = "Checking...".T();
+
     // Privacy Toggles
     [ObservableProperty]
     private bool _advertisingIdEnabled;
@@ -170,9 +188,12 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             var blTask = Task.Run(() => _securityEngine.GetBitLockerStatus());
             var sbTask = Task.Run(() => _securityEngine.CheckSecureBootStatus());
             var tpmTask = Task.Run(() => _securityEngine.CheckTpmStatus());
+            var ciTask = Task.Run(() => _securityEngine.CheckCoreIsolationStatus());
+            var tpTask = Task.Run(() => _securityEngine.CheckTamperProtectionStatus());
+            var nlaTask = Task.Run(() => _securityEngine.CheckRdpNlaStatus());
             var auditTask = Task.Run(() => _securityEngine.RunSecurityAudits());
 
-            await Task.WhenAll(avTask, fwTask, blTask, sbTask, tpmTask, auditTask);
+            await Task.WhenAll(avTask, fwTask, blTask, sbTask, tpmTask, ciTask, tpTask, nlaTask, auditTask);
 
             if (ct.IsCancellationRequested || _isDisposed)
             {
@@ -186,14 +207,19 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             var bl = await blTask;
             var (sbEnabled, sbText) = await sbTask;
             var (tpmOk, tpmText) = await tpmTask;
+            var (ciOk, ciText) = await ciTask;
+            var (tpOk, tpText) = await tpTask;
+            var (nlaOk, nlaText) = await nlaTask;
             var alerts = await auditTask;
 
             // Calculate Security Score
             int score = 100;
-            if (!av.Contains("Enabled") && !av.Contains("Running")) score -= 30;
-            if (!fw) score -= 25;
-            if (!sbEnabled) score -= 15;
-            if (!tpmOk) score -= 15;
+            if (!av.Contains("Enabled") && !av.Contains("Running")) score -= 25;
+            if (!fw) score -= 20;
+            if (!sbEnabled) score -= 10;
+            if (!tpmOk) score -= 10;
+            if (!ciOk) score -= 10;
+            if (!tpOk) score -= 10;
             if (alerts.Count > 0) score -= Math.Min(15, alerts.Count * 5);
             score = Math.Clamp(score, 10, 100);
 
@@ -207,6 +233,12 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
                 SecureBootStatusText = sbText;
                 IsTpmEnabled = tpmOk;
                 TpmStatusText = tpmText;
+                IsCoreIsolationEnabled = ciOk;
+                CoreIsolationStatusText = ciText;
+                IsTamperProtectionEnabled = tpOk;
+                TamperProtectionStatusText = tpText;
+                IsRdpNlaEnabled = nlaOk;
+                RdpNlaStatusText = nlaText;
                 SecurityScore = score;
 
                 foreach (var alert in alerts)

@@ -1,6 +1,6 @@
 # 📚 WinCare Pro Suite — Documentation Hub (Trung Tâm Tài Liệu)
 
-> **Phiên bản hệ thống:** v4.9.3 (Codename: Orion)  
+> **Phiên bản hệ thống:** v5.0.0 (Codename: Polaris)  
 > **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64)  
 > **Công nghệ cốt lõi:** .NET 10.0 • Windows App SDK (WinUI 3) • SQLite WAL • Modular MVVM  
 > **Ngôn ngữ tài liệu:** Tiếng Việt (Chính thức) & English Technical References  

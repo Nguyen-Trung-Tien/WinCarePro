@@ -134,6 +134,15 @@ public sealed partial class DiskPage : Page
         }
     }
 
+    private void OnAnalyzeVolumeClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.DataContext is WinCarePro.Models.LogicalVolumeInfo volume)
+        {
+            ViewModel.SelectVolumeForAnalysis(volume);
+            DiskPivot.SelectedIndex = 1; // Seamlessly jump to Space Analyzer tab
+        }
+    }
+
     private async void OnRunChkdskClick(object sender, RoutedEventArgs e)
     {
         if (sender is Button btn && btn.DataContext is WinCarePro.Models.DriveHealthInfo drive)

@@ -331,10 +331,12 @@ public class UiThemeAndConsistencyTests
 
         // Dynamic regex tests
         Assert.Equal("Lần kiểm tra cuối: Vừa xong", manager.GetTranslationForLanguage("Last Checked: Just now", AppLanguage.Vietnamese));
+        Assert.Equal("Phiên bản 5.0.0 (Polaris) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 5.0.0 (Polaris) • 64-bit Native System Suite", AppLanguage.Vietnamese));
         Assert.Equal("Phiên bản 4.9.3 (Orion) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.9.3 (Orion) • 64-bit Native System Suite", AppLanguage.Vietnamese));
         Assert.Equal("Phiên bản 4.9.2 (Orion) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.9.2 (Orion) • 64-bit Native System Suite", AppLanguage.Vietnamese));
         Assert.Equal("Phiên bản 4.9.1 (Nova) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.9.1 (Nova) • 64-bit Native System Suite", AppLanguage.Vietnamese));
         Assert.Equal("Phiên bản 4.9.0 (Nova) • Bộ Công Cụ Hệ Thống 64-bit Native", manager.GetTranslationForLanguage("Version 4.9.0 (Nova) • 64-bit Native System Suite", AppLanguage.Vietnamese));
+        Assert.Equal("Điểm mới trong v5.0.0", manager.GetTranslationForLanguage("What's New in v5.0.0", AppLanguage.Vietnamese));
         Assert.Equal("Điểm mới trong v4.9.3", manager.GetTranslationForLanguage("What's New in v4.9.3", AppLanguage.Vietnamese));
         Assert.Equal("Điểm mới trong v4.9.2", manager.GetTranslationForLanguage("What's New in v4.9.2", AppLanguage.Vietnamese));
         Assert.Equal("Điểm mới trong v4.9.1", manager.GetTranslationForLanguage("What's New in v4.9.1", AppLanguage.Vietnamese));
@@ -444,6 +446,56 @@ public class UiThemeAndConsistencyTests
         Assert.Contains("AppPagePadding", keys);
         Assert.Contains("AppCardPadding", keys);
         Assert.Contains("DestructiveButtonStyle", keys);
+        Assert.Contains("StringFormatConverter", keys);
+    }
+
+    [Fact]
+    public void StringFormatConverter_ShouldFormatStringProperly()
+    {
+        var converter = new WinCarePro.StringFormatConverter();
+
+        // With parameter
+        var formatted = converter.Convert("120 GB", typeof(string), "Đã dùng: {0}", "vi-VN");
+        Assert.Equal("Đã dùng: 120 GB", formatted);
+
+        // With null value
+        var formattedNull = converter.Convert(null!, typeof(string), "Đã dùng: {0}", "vi-VN");
+        Assert.Equal("Đã dùng: ", formattedNull);
+
+        // Without parameter
+        var formattedNoParam = converter.Convert("TestVal", typeof(string), null!, "vi-VN");
+        Assert.Equal("TestVal", formattedNoParam);
+
+        // ConvertBack returns UnsetValue
+        var back = converter.ConvertBack("val", typeof(string), null!, "vi-VN");
+        Assert.NotNull(back);
+    }
+
+    [Fact]
+    public void DiskModels_DisplayProperties_ShouldFormatCorrectly()
+    {
+        var volume = new WinCarePro.Models.LogicalVolumeInfo
+        {
+            DriveLetter = "C:",
+            VolumeLabel = "Windows",
+            TotalBytes = 500L * 1024 * 1024 * 1024,
+            FreeBytes = 200L * 1024 * 1024 * 1024,
+            FileSystem = "NTFS"
+        };
+
+        Assert.Equal(300L * 1024 * 1024 * 1024, volume.UsedBytes);
+        Assert.False(string.IsNullOrWhiteSpace(volume.UsedDisplay));
+        Assert.False(string.IsNullOrWhiteSpace(volume.FreeDisplay));
+        Assert.False(string.IsNullOrWhiteSpace(volume.CapacityDisplay));
+
+        var health = new WinCarePro.Models.DriveHealthInfo
+        {
+            Model = "Samsung 980 Pro",
+            SsdWearLevel = 95,
+            Temperature = 38
+        };
+
+        Assert.Equal("Health: 95%", health.SsdWearDisplay);
     }
 }
 

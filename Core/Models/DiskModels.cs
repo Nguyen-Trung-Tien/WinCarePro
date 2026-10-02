@@ -12,8 +12,40 @@ public class DriveHealthInfo
     public string Model { get; set; } = "";
     public string HealthStatus { get; set; } = "Unknown";
     public double Temperature { get; set; }
-    public string TemperatureFormatted => $"{Temperature:F0}°C";
+    public string TemperatureFormatted => Temperature > 0 ? $"{Temperature:F0}°C" : "--";
     public string Interface { get; set; } = "";
+    public string DriveType { get; set; } = "Fixed";
+    public double SsdWearLevel { get; set; } = 100.0;
+    public string SsdWearFormatted => $"{SsdWearLevel:F0}%";
+    public string SsdWearDisplay => $"Health: {SsdWearFormatted}";
+}
+
+[Microsoft.UI.Xaml.Data.Bindable]
+public class LogicalVolumeInfo : ViewModelBase
+{
+    public string DriveLetter { get; set; } = "";
+    public string VolumeLabel { get; set; } = "";
+    public string DisplayName => string.IsNullOrWhiteSpace(VolumeLabel) ? DriveLetter : $"{VolumeLabel} ({DriveLetter.TrimEnd('\\')})";
+    public string FileSystem { get; set; } = "NTFS";
+    public string DriveType { get; set; } = "Fixed";
+    public bool IsSystemDrive { get; set; }
+    public long TotalBytes { get; set; }
+    public long FreeBytes { get; set; }
+    public long UsedBytes => Math.Max(0, TotalBytes - FreeBytes);
+    public double PercentUsed => TotalBytes > 0 ? ((double)UsedBytes / TotalBytes) * 100.0 : 0.0;
+    public double PercentFree => Math.Max(0.0, 100.0 - PercentUsed);
+    public string TotalFormatted => WinCarePro.Core.Helpers.FormatHelper.FormatBytes(TotalBytes);
+    public string FreeFormatted => WinCarePro.Core.Helpers.FormatHelper.FormatBytes(FreeBytes);
+    public string UsedFormatted => WinCarePro.Core.Helpers.FormatHelper.FormatBytes(UsedBytes);
+    public string UsedDisplay => $"Used: {UsedFormatted}";
+    public string FreeDisplay => $"Free: {FreeFormatted}";
+    public string CapacityDisplay => $"Capacity: {TotalFormatted}";
+    public string PercentUsedFormatted => $"{PercentUsed:F1}%";
+    public int DaysUntilFull { get; set; } = -1;
+    public string ExhaustionForecast { get; set; } = "Safe (> 90 days)";
+    public bool IsLowSpaceWarning => PercentFree < 12.0 || FreeBytes < (5L * 1024 * 1024 * 1024);
+    public string StatusBadge => IsLowSpaceWarning ? "Warning (Low Space)" : "Optimal";
+    public string IconGlyph => IsSystemDrive ? "\uEDA2" : "\uE7F1";
 }
 
 [Microsoft.UI.Xaml.Data.Bindable]

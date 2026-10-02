@@ -78,11 +78,11 @@ public partial class DashboardViewModel
 
         if (!cpuReadSuccess)
         {
-            cpu = 2.0 + _rand.NextDouble() * 8.0;
+            cpu = 0.0;
         }
         if (!ramReadSuccess)
         {
-            ramPercent = 45.0 + _rand.NextDouble() * 5.0;
+            ramPercent = 0.0;
         }
 
         return (cpu, ramPercent);

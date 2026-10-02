@@ -79,9 +79,6 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     private bool _isDiskQueryRunning = false;
     private bool _isTempQueryRunning = false;
 
-    // Dùng static Random thay vì new Random() mỗi lần gọi
-    private static readonly Random _rand = new();
-
     private List<JunkCategory>? _scannedJunkCategories;
     private List<RegistryIssue>? _scannedRegistryIssues;
 

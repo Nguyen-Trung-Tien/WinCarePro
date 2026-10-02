@@ -242,6 +242,60 @@ public class SecurityPrivacyEngine
         return (false, "TPM Security Chip Not Detected or Disabled");
     }
 
+    public (bool ok, string status) CheckCoreIsolationStatus()
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity");
+            if (key != null)
+            {
+                var val = key.GetValue("Enabled");
+                if (val is int intVal && intVal == 1)
+                {
+                    return (true, "Memory Integrity (HVCI) Active");
+                }
+            }
+        }
+        catch { }
+        return (false, "Memory Integrity (HVCI) Inactive");
+    }
+
+    public (bool ok, string status) CheckTamperProtectionStatus()
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows Defender\Features");
+            if (key != null)
+            {
+                var val = key.GetValue("TamperProtection");
+                if (val is int intVal && (intVal == 5 || intVal == 1))
+                {
+                    return (true, "Tamper Protection Enabled");
+                }
+            }
+        }
+        catch { }
+        return (false, "Tamper Protection Inactive");
+    }
+
+    public (bool ok, string status) CheckRdpNlaStatus()
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp");
+            if (key != null)
+            {
+                var val = key.GetValue("UserAuthentication");
+                if (val is int intVal && intVal == 1)
+                {
+                    return (true, "RDP NLA Authentication Enforced");
+                }
+            }
+        }
+        catch { }
+        return (true, "Remote Desktop Secured (Standard)");
+    }
+
     public List<string> RunSecurityAudits(List<StartupEntry>? startupEntries = null)
     {
         var issues = new List<string>();

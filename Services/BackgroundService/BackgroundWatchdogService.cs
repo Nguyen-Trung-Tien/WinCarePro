@@ -22,6 +22,8 @@ public sealed class BackgroundWatchdogService : IBackgroundWatchdogService
     private CancellationTokenSource? _cts;
     private Task? _monitoringTask;
     private DateTime _lastSmartBoostTime = DateTime.MinValue;
+    private DateTime _lastDiskWarningTime = DateTime.MinValue;
+    private DateTime _lastTelemetrySnapshotTime = DateTime.MinValue;
     private int _isRunningState = 0; // 0 = stopped, 1 = running
 
     public bool IsRunning => Volatile.Read(ref _isRunningState) == 1;
@@ -140,8 +142,23 @@ public sealed class BackgroundWatchdogService : IBackgroundWatchdogService
             var settings = _settingsService.CurrentSettings;
             if (settings == null) return;
 
+            // Check battery & power status to avoid heavy background spikes on low battery
+            bool isOnLowBattery = false;
+            try
+            {
+                if (NativeApi.GetSystemPowerStatus(out var powerStatus))
+                {
+                    // ACLineStatus == 0 (battery power) and battery < 20%
+                    if (powerStatus.ACLineStatus == 0 && powerStatus.BatteryLifePercent < 20)
+                    {
+                        isOnLowBattery = true;
+                    }
+                }
+            }
+            catch { }
+
             // 1. Automated RAM Smart Boost check
-            if (settings.TriggerSmartBoost)
+            if (settings.TriggerSmartBoost && !isOnLowBattery)
             {
                 var mem = NativeApi.MEMORYSTATUSEX.Create();
                 if (NativeApi.GlobalMemoryStatusEx(ref mem))
@@ -169,6 +186,46 @@ public sealed class BackgroundWatchdogService : IBackgroundWatchdogService
                         }
                     }
                 }
+            }
+
+            // 2. Proactive Low Disk Space Alert on System Drive
+            try
+            {
+                string systemDrive = Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\";
+                if (NativeApi.GetDiskFreeSpaceEx(systemDrive, out ulong freeBytes, out ulong totalBytes, out _))
+                {
+                    double freeGB = freeBytes / (1024.0 * 1024.0 * 1024.0);
+                    double totalGB = totalBytes / (1024.0 * 1024.0 * 1024.0);
+                    double freePct = totalGB > 0 ? (freeGB / totalGB) * 100.0 : 100.0;
+
+                    if ((freeGB < 5.0 || freePct < 8.0) && (DateTime.Now - _lastDiskWarningTime).TotalMinutes >= 15.0)
+                    {
+                        _lastDiskWarningTime = DateTime.Now;
+                        DbManager.LogAction($"Proactive Low Disk Space Alert on {systemDrive} (Free: {freeGB:F1} GB, {freePct:F1}%)", "Storage Watchdog", "Warning");
+                        
+                        if (settings.ShowNotifications)
+                        {
+                            _notificationService?.ShowToast(
+                                "Low Disk Space Warning",
+                                $"System drive ({systemDrive}) has only {freeGB:F1} GB free. Consider running Junk Cleaner.",
+                                NotificationSeverity.Warning);
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            // 3. Periodic telemetry snapshot recording (every 10 minutes)
+            if ((DateTime.Now - _lastTelemetrySnapshotTime).TotalMinutes >= 10.0)
+            {
+                _lastTelemetrySnapshotTime = DateTime.Now;
+                try
+                {
+                    var mem = NativeApi.MEMORYSTATUSEX.Create();
+                    double ramUsage = NativeApi.GlobalMemoryStatusEx(ref mem) ? mem.dwMemoryLoad : 0.0;
+                    DbManager.SaveResourceSnapshot(0.0, ramUsage, 0.0, 0.0, ramUsage > 85.0 ? "High Memory Load" : null);
+                }
+                catch { }
             }
         }
         catch (Exception ex)

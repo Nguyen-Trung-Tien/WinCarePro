@@ -1,12 +1,12 @@
-{
-  "version": "5.0.0",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe",
-  "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe",
-  "sha256": "99fd2e278f7c359901099dd683913458a2408e5abbbaa9eed874516dac41e6e5",
-  "changelog": "Cập nhật v5.0.0 (Polaris Major Upgrade): Nâng cấp lớn phân tích phân vùng ổ đĩa Logical Volumes với mô hình dự báo cạn kiệt dung lượng (Days to Full), kiểm tra bảo mật nền tảng & cô lập nhân (HVCI Memory Integrity, Defender Tamper Protection, RDP NLA), giám sát nền nhận biết nguồn pin (Battery-aware Watchdog) và dẹp bỏ hoàn toàn dữ liệu telemetry giả lập (Zero-Mock Telemetry).",
-  "beta_version": "5.0.0-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0-beta/WinCareProSetup_Beta.exe",
-  "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0-beta/WinCareProSetup_Beta.exe",
-  "beta_sha256": "99fd2e278f7c359901099dd683913458a2408e5abbbaa9eed874516dac41e6e5",
-  "beta_changelog": "WinCare Pro v5.0.0 (Polaris Major Release)"
+﻿{
+    "version":  "5.0.0",
+    "url":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe",
+    "downloadUrl":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe",
+    "sha256":  "5d89930848473ce20e0485ee94c84cb4bc74af06243c5685bcca35521ebd8040",
+    "changelog":  "Cập nhật v5.0.0 (Polaris Major Upgrade): Nâng cấp lớn phân tích phân vùng ổ đĩa Logical Volumes với mô hình dự báo cạn kiệt dung lượng (Days to Full), kiểm tra bảo mật nền tảng \u0026 cô lập nhân (HVCI Memory Integrity, Defender Tamper Protection, RDP NLA), giám sát nền nhận biết nguồn pin (Battery-aware Watchdog) và dẹp bỏ hoàn toàn dữ liệu telemetry giả lập (Zero-Mock Telemetry).",
+    "beta_version":  "5.0.0-beta",
+    "beta_url":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0-beta/WinCareProSetup_Beta.exe",
+    "beta_downloadUrl":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0-beta/WinCareProSetup_Beta.exe",
+    "beta_sha256":  "5d89930848473ce20e0485ee94c84cb4bc74af06243c5685bcca35521ebd8040",
+    "beta_changelog":  "WinCare Pro v5.0.0 (Polaris Major Release)"
 }

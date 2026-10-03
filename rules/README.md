@@ -74,7 +74,7 @@ graph TD
 | **08** | [**08. Đóng Gói, Phát Hành & CI/CD**](08_RELEASE_PACKAGING_AND_CICD_RULES.md) | Xuất bản Self-Contained x64, Inno Setup Mutex & Admin, SemVer 2.0, GitHub Actions Validation. | 🔴 **Bắt Buộc 100%** |
 | **09** | [**09. Tương Tác Registry & Win32 Interop**](09_REGISTRY_AND_OS_INTEROP_RULES.md) | SafeRegistryGuard kiểm soát độ sâu khóa & cấm xóa Root Hive, xuất `.reg` trước khi sửa, SafeHandle. | 🔴 **Bắt Buộc 100%** |
 | **10** | [**10. Quản Lý Sự Cố & Ghi Log**](10_INCIDENT_MANAGEMENT_AND_LOGGING_RULES.md) | Phân tầng Audit Log vs Crash Logger, bảo vệ Zero-PII, xoay vòng file log (max 5MB, 30 ngày), Global Exception hooks. | 🔴 **Bắt Buộc 100%** |
-| **11** | [**11. Tối Ưu Token & Chuẩn Cho AI**](11_AI_AGENT_EFFICIENCY_AND_PRECISION_RULES.md) | Tiết kiệm token ngữ cảnh & đầu ra, Targeted Slicing, In-Place Patching, tái sử dụng Core Guards, Zero-Hallucination. | 🔴 **Bắt Buộc 100%** |
+| **11** | [**11. Tối Ưu Token & Chuẩn Cho AI**](11_AI_AGENT_EFFICIENCY_AND_PRECISION_RULES.md) | Tiết kiệm token ngữ cảnh & đầu ra, Targeted Slicing (30-60 dòng), Minimal-Anchor Patching, triệt tiêu log terminal (`--logger "console;verbosity=minimal"`), Zero-Hallucination API Verification. | 🔴 **Bắt Buộc 100%** |
 
 ---
 

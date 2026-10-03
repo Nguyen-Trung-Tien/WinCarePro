@@ -43,10 +43,17 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 9. **Đa Ngôn Ngữ Bắt Buộc (i18n):** Cấm hardcode chuỗi text trên UI. Mọi text phải khai báo đầy đủ cả 2 từ điển `vi-VN` và `en-US` trong [TranslationManager.Translations.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.Translations.cs).
 10. **Tối Ưu Bộ Nhớ & Tài Nguyên:** Gỡ bỏ event (`-=`) khi `Unloaded`/`Dispose()`. Dừng animation 3D khi chuyển trang. Cache icon qua `IconCacheService`. Dùng `Typography.NumeralAlignment="Tabular"` cho telemetry.
 11. **Tối Ưu Hóa Token & Kỹ Thuật Chính Xác Của AI (Token Economy & Targeted Precision):**
-    - **Context Economy:** Dùng `grep_search` định vị và chỉ đọc lát cắt hẹp qua `view_file` (30-80 dòng); tuyệt đối CẤM đọc toàn bộ file lớn (> 150 dòng).
-    - **In-Place Patching:** Tuyệt đối CẤM dùng `write_to_file (Overwrite = true)` để viết lại toàn bộ file nguồn cũ. Bắt buộc dùng `replace_file_content` hoặc `multi_replace_file_content`.
-    - **Focused Testing:** Khi đang lập trình sửa lỗi, chỉ kiểm thử theo bộ lọc lớp/phương thức: `dotnet test --filter "FullyQualifiedName~TênLớp"`. Chỉ chạy full 465 bài test khi nghiệm thu chất lượng.
-    - **Tái Sử Dụng Khiên Bản Địa:** Bắt buộc dùng `ProcessRunner`, `SafePathGuard`, `SafeRegistryGuard`, `CryptoHelper`, `ServiceSafetyService`, `RunOnUI`, `lock (_dbLock)`. Không sinh code tạo lại bánh xe giả mạo.
+    - **Context Economy & Log Suppression:**
+      - Định vị mục tiêu bằng `grep_search` (kèm lọc `Includes: ["*.cs"]`), đọc lát cắt hẹp qua `view_file` (30-60 dòng xung quanh target symbol); tuyệt đối CẤM đọc toàn bộ file lớn (> 150 dòng).
+      - Triệt tiêu token rác từ terminal: Khi chạy test, bắt buộc thêm bộ lọc và logger tối giản `dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~TênLớp" --logger "console;verbosity=minimal"`. Khi build kiểm tra cú pháp, dùng `dotnet build WinCarePro.csproj -c Debug -v q --nologo`.
+    - **In-Place Patching & Minimal Anchors:**
+      - Tuyệt đối CẤM dùng `write_to_file (Overwrite = true)` để viết lại toàn bộ file nguồn cũ. Bắt buộc dùng `replace_file_content` hoặc `multi_replace_file_content` với mỏ neo ngắn (2-4 dòng context duy nhất).
+    - **Chống Ảo Giác Chữ Ký (Zero-Hallucination API Verification):**
+      - Trước khi gọi Engine, Service hoặc Helper, bắt buộc tra cứu chữ ký thực tế bằng `grep_search` để xác nhận đúng parameters, kiểu trả về (`OperationResult<T>`) và `CancellationToken ct = default`. Không tự suy đoán API.
+    - **Tái Sử Dụng Khiên Bản Địa:**
+      - Bắt buộc dùng `ProcessRunner`, `SafePathGuard`, `SafeRegistryGuard`, `CryptoHelper`, `ServiceSafetyService`, `RunOnUI`, `lock (_dbLock)`. Tuyệt đối không tự viết lại logic thao tác OS.
+    - **Báo Cáo Súc Tích (Concise Reporting):**
+      - Không copy-paste lại toàn bộ khối mã nguồn vào tin nhắn chat nếu diff đã thể hiện; tóm tắt trực diện vào nguyên nhân, vị trí sửa và kết quả kiểm thử.
 
 ---
 
@@ -54,7 +61,7 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 
 | Tình huống | ❌ CẤM TUYỆT ĐỐI | ✅ BẮT BUỘC SỬ DỤNG |
 | :--- | :--- | :--- |
-| **Gọi lệnh Shell** | `Process.Start("cmd.exe", "/c " + arg)` | `ProcessRunner.RunAsync("app.exe", new[] { arg })` |
+| **Gọi lệnh Shell** | `Process.Start("cmd.exe", "/c " + arg)` | `ProcessRunner.RunAsync("app.exe", new[] { arg }, ct)` |
 | **Xóa Tệp Tin** | `File.Delete(path)` | `if (SafePathGuard.IsSafeToDelete(path)) File.Delete(path);` |
 | **Xóa/Sửa Registry** | `regKey.DeleteSubKeyTree(name)` | `if (SafeRegistryGuard.IsSafeToDeleteKey(k)) ...` (có Backup) |
 | **Cập nhật UI từ Thread** | `Items.Add(item);` | `RunOnUI(() => Items.Add(item));` |
@@ -63,9 +70,11 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 | **Chuỗi Hiển Thị UI** | `<TextBlock Text="Quét rác"/>` | `<TextBlock Text="{Binding Key, Converter={StaticResource TranslationConverter}}"/>` |
 | **Dọn Trạng Thái Busy** | Bỏ qua hoặc quên reset khi throw | `try { IsBusy = true; ... } finally { IsBusy = false; }` |
 | **Truy Cập SQLite** | Mở query trực tiếp đa luồng | `lock (_dbLock) { /* query */ }` |
-| **Đọc File Mã Nguồn** | `view_file` toàn bộ file > 150 dòng | `grep_search` định vị $\rightarrow$ `view_file` lát cắt 30-80 dòng |
-| **Sửa File Mã Nguồn** | `write_to_file (Overwrite = true)` | `replace_file_content` / `multi_replace_file_content` |
-| **Chạy Test Lặp Khi Code** | `dotnet test` toàn bộ 465 tests | `dotnet test --filter "FullyQualifiedName~..."` |
+| **Đọc File Mã Nguồn** | `view_file` toàn bộ file > 150 dòng | `grep_search` định vị $\rightarrow$ `view_file` lát cắt 30-60 dòng |
+| **Sửa File Mã Nguồn** | `write_to_file (Overwrite = true)` | `replace_file_content` / `multi_replace_file_content` (anchor ngắn) |
+| **Chạy Test Lặp Khi Code** | `dotnet test` toàn bộ 465 tests (phun log dài) | `dotnet test --filter "..." --logger "console;verbosity=minimal"` |
+| **Kiểm Tra Build Lỗi** | `dotnet build` mặc định (phun hàng chục dòng) | `dotnet build -c Debug -v q --nologo` |
+| **Gọi Phương Thức Cũ** | Tự suy đoán signature, overload | `grep_search` xác thực signature gốc trong `Core/` hoặc `Engines/` |
 
 ---
 

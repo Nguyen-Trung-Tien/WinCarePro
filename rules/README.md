@@ -43,6 +43,7 @@ graph TD
     R08["08. Đóng Gói, Phát Hành & CI/CD<br/>(08_RELEASE_PACKAGING_AND_CICD_RULES.md)"]:::arch
     R09["09. Tương Tác Registry & Win32 Interop<br/>(09_REGISTRY_AND_OS_INTEROP_RULES.md)"]:::sec
     R10["10. Quản Lý Sự Cố & Ghi Log<br/>(10_INCIDENT_MANAGEMENT_AND_LOGGING_RULES.md)"]:::thread
+    R11["11. Tối Ưu Token & Chuẩn Cho AI<br/>(11_AI_AGENT_EFFICIENCY_AND_PRECISION_RULES.md)"]:::code
 
     Index --> R01
     Index --> R02
@@ -54,11 +55,12 @@ graph TD
     Index --> R08
     Index --> R09
     Index --> R10
+    Index --> R11
 ```
 
 ---
 
-## 📑 3. Danh Mục 10 Bộ Quy Chuẩn Chi Tiết
+## 📑 3. Danh Mục 11 Bộ Quy Chuẩn Chi Tiết
 
 | STT | Tập Tin Quy Chuẩn | Phạm Vi & Mục Tiêu Trọng Tâm | Mức Độ Bắt Buộc |
 | :---: | :--- | :--- | :--- :--- |
@@ -68,10 +70,11 @@ graph TD
 | **04** | [**04. Hiệu Năng & Quản Lý Bộ Nhớ**](04_PERFORMANCE_AND_MEMORY_RULES.md) | Trim RAM nền (< 15MB), Cold Start < 350ms, chống rò rỉ sự kiện XAML, Tabular figures, Caching I/O. | 🟡 **Nghiêm Ngặt** |
 | **05** | [**05. Chuẩn Lập Trình C# 13 & .NET 10**](05_CODING_STANDARDS_AND_CONVENTIONS.md) | Mẫu `OperationResult<T>`, Nullable Safety, No Empty Catch, Quy chuẩn tên gọi, bắt buộc dịch i18n. | 🔴 **Bắt Buộc 100%** |
 | **06** | [**06. Giao Diện Aura Glass & UI/UX**](06_UI_UX_AND_AESTHETICS_RULES.md) | Mica/Acrylic backdrop, Composition 120 FPS, Shimmer Loaders, WCAG AAA Contrast, Theme Studio. | 🟡 **Nghiêm Ngặt** |
-| **07** | [**07. Kiểm Thử Tự Động & Đảm Bảo QA**](07_TESTING_AND_QA_RULES.md) | Duy trì 100% Pass (339/339 Tests), In-Memory SQLite, Mock Win32 nguy hiểm, kiểm thử biên Edge Cases & Stress Scenarios. | 🔴 **Bắt Buộc 100%** |
+| **07** | [**07. Kiểm Thử Tự Động & Đảm Bảo QA**](07_TESTING_AND_QA_RULES.md) | Duy trì 100% Pass (465/465 Tests), In-Memory SQLite, Mock Win32 nguy hiểm, kiểm thử biên Edge Cases & Stress Scenarios. | 🔴 **Bắt Buộc 100%** |
 | **08** | [**08. Đóng Gói, Phát Hành & CI/CD**](08_RELEASE_PACKAGING_AND_CICD_RULES.md) | Xuất bản Self-Contained x64, Inno Setup Mutex & Admin, SemVer 2.0, GitHub Actions Validation. | 🔴 **Bắt Buộc 100%** |
 | **09** | [**09. Tương Tác Registry & Win32 Interop**](09_REGISTRY_AND_OS_INTEROP_RULES.md) | SafeRegistryGuard kiểm soát độ sâu khóa & cấm xóa Root Hive, xuất `.reg` trước khi sửa, SafeHandle. | 🔴 **Bắt Buộc 100%** |
 | **10** | [**10. Quản Lý Sự Cố & Ghi Log**](10_INCIDENT_MANAGEMENT_AND_LOGGING_RULES.md) | Phân tầng Audit Log vs Crash Logger, bảo vệ Zero-PII, xoay vòng file log (max 5MB, 30 ngày), Global Exception hooks. | 🔴 **Bắt Buộc 100%** |
+| **11** | [**11. Tối Ưu Token & Chuẩn Cho AI**](11_AI_AGENT_EFFICIENCY_AND_PRECISION_RULES.md) | Tiết kiệm token ngữ cảnh & đầu ra, Targeted Slicing, In-Place Patching, tái sử dụng Core Guards, Zero-Hallucination. | 🔴 **Bắt Buộc 100%** |
 
 ---
 
@@ -80,7 +83,7 @@ graph TD
 Trước khi một Pull Request hoặc thay đổi mã nguồn được phép tích hợp vào nhánh chính (`main`):
 
 1. **Static Analysis:** Không còn bất kỳ cảnh báo hoặc lỗi biên dịch cấp độ nghiêm trọng nào (`0 Errors, 0 Warnings`).
-2. **Automated Test Suite:** Toàn bộ 339 bài kiểm thử xUnit trong `WinCarePro.Tests` phải hoàn thành `Passed 100%`.
+2. **Automated Test Suite:** Toàn bộ 465 bài kiểm thử xUnit trong `WinCarePro.Tests` phải hoàn thành `Passed 100%`.
 3. **Security Audit:** Xác nhận không phát sinh việc nối chuỗi câu lệnh thô (Raw string command) hoặc mở rộng quyền sai quy định.
 4. **Safety Check:** Mọi thao tác xóa tệp hoặc sửa Registry đều được bao bọc bởi `SafePathGuard` & `SafeRegistryGuard` và có cơ chế Snapshot/Undo.
 

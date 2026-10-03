@@ -1,7 +1,7 @@
 # 🤖 WinCare Pro Suite — AI Agent Operational Directive
 > **Phiên bản:** v5.0.0 (Codename: Polaris) | **Nền tảng:** Windows 10/11 x64  
 > **Công nghệ lõi:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite 3 WAL • CommunityToolkit.Mvvm  
-> **Tài liệu tham chiếu chuyên sâu:** [10 Bộ Quy Chuẩn Kỹ Thuật](file:///d:/WinCare/rules/README.md) • [11 Chương Tài Liệu Kỹ Thuật](file:///d:/WinCare/docs/README.md)
+> **Tài liệu tham chiếu chuyên sâu:** [11 Bộ Quy Chuẩn Kỹ Thuật](file:///d:/WinCare/rules/README.md) • [11 Chương Tài Liệu Kỹ Thuật](file:///d:/WinCare/docs/README.md)
 
 ---
 
@@ -28,7 +28,7 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 
 ---
 
-## 📋 3. Mười Quy Chuẩn Kỹ Thuật Bắt Buộc (Inviolable Rules)
+## 📋 3. Mười Một Quy Chuẩn Kỹ Thuật Bắt Buộc (Inviolable Rules)
 
 1. **Kiến Trúc & DI:** View $\rightarrow$ ViewModel $\rightarrow$ Engine $\rightarrow$ Core. Đăng ký Singleton (`DbManager`, `ThemeManager`, `TranslationManager`) hoặc Transient (`*Engine`, `*ViewModel`) tại [App.xaml.cs](file:///d:/WinCare/App.xaml.cs).
 2. **Khiên Bảo Vệ File & Registry:**
@@ -42,6 +42,11 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 8. **Mẫu Kết Quả & Zero-Silent Catch:** Mọi hàm có nguy cơ ngoại lệ phải trả về `OperationResult` hoặc `OperationResult<T>`. Tuyệt đối cấm `catch { }` nuốt lỗi; bắt buộc ghi log vào [CrashLogger.cs](file:///d:/WinCare/Infrastructure/Logging/CrashLogger.cs).
 9. **Đa Ngôn Ngữ Bắt Buộc (i18n):** Cấm hardcode chuỗi text trên UI. Mọi text phải khai báo đầy đủ cả 2 từ điển `vi-VN` và `en-US` trong [TranslationManager.Translations.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.Translations.cs).
 10. **Tối Ưu Bộ Nhớ & Tài Nguyên:** Gỡ bỏ event (`-=`) khi `Unloaded`/`Dispose()`. Dừng animation 3D khi chuyển trang. Cache icon qua `IconCacheService`. Dùng `Typography.NumeralAlignment="Tabular"` cho telemetry.
+11. **Tối Ưu Hóa Token & Kỹ Thuật Chính Xác Của AI (Token Economy & Targeted Precision):**
+    - **Context Economy:** Dùng `grep_search` định vị và chỉ đọc lát cắt hẹp qua `view_file` (30-80 dòng); tuyệt đối CẤM đọc toàn bộ file lớn (> 150 dòng).
+    - **In-Place Patching:** Tuyệt đối CẤM dùng `write_to_file (Overwrite = true)` để viết lại toàn bộ file nguồn cũ. Bắt buộc dùng `replace_file_content` hoặc `multi_replace_file_content`.
+    - **Focused Testing:** Khi đang lập trình sửa lỗi, chỉ kiểm thử theo bộ lọc lớp/phương thức: `dotnet test --filter "FullyQualifiedName~TênLớp"`. Chỉ chạy full 465 bài test khi nghiệm thu chất lượng.
+    - **Tái Sử Dụng Khiên Bản Địa:** Bắt buộc dùng `ProcessRunner`, `SafePathGuard`, `SafeRegistryGuard`, `CryptoHelper`, `ServiceSafetyService`, `RunOnUI`, `lock (_dbLock)`. Không sinh code tạo lại bánh xe giả mạo.
 
 ---
 
@@ -58,6 +63,9 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 | **Chuỗi Hiển Thị UI** | `<TextBlock Text="Quét rác"/>` | `<TextBlock Text="{Binding Key, Converter={StaticResource TranslationConverter}}"/>` |
 | **Dọn Trạng Thái Busy** | Bỏ qua hoặc quên reset khi throw | `try { IsBusy = true; ... } finally { IsBusy = false; }` |
 | **Truy Cập SQLite** | Mở query trực tiếp đa luồng | `lock (_dbLock) { /* query */ }` |
+| **Đọc File Mã Nguồn** | `view_file` toàn bộ file > 150 dòng | `grep_search` định vị $\rightarrow$ `view_file` lát cắt 30-80 dòng |
+| **Sửa File Mã Nguồn** | `write_to_file (Overwrite = true)` | `replace_file_content` / `multi_replace_file_content` |
+| **Chạy Test Lặp Khi Code** | `dotnet test` toàn bộ 465 tests | `dotnet test --filter "FullyQualifiedName~..."` |
 
 ---
 
@@ -74,8 +82,8 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 
 ### B. Sửa Lỗi (Bug Fixing)
 1. Định vị tầng lỗi (View, ViewModel, Engine, Core/Infra).
-2. Áp dụng chuẩn an toàn tương ứng (Rule 02/03/05/09).
-3. Chạy kiểm thử hồi quy (`dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj`).
+2. Áp dụng chuẩn an toàn tương ứng (Rule 02/03/05/09/11).
+3. Chạy kiểm thử hồi quy (`dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~..."`).
 4. Bổ sung ít nhất 1 bài test kiểm chứng lỗi không tái phát.
 
 ---
@@ -84,7 +92,7 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 
 ```powershell
 dotnet build WinCarePro.csproj -c Debug                         # Biên dịch kiểm tra lỗi
-dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal # Chạy bộ test (Mục tiêu: 100% Passed)
+dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal # Chạy bộ test (Mục tiêu: 100% Passed - 465 Tests)
 .\publish.bat                                                  # Đóng gói Self-Contained x64
 .\publish_installer.bat                                        # Tạo bộ cài đặt Inno Setup
 ```
@@ -99,4 +107,5 @@ dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal # Chạy
 - [ ] **7. Zero-Silent Catch:** Không có khối `catch` rỗng; trả về `OperationResult` hoặc ghi log.
 - [ ] **8. Đầy đủ i18n:** Đồng bộ đủ cặp key trên cả `vi-VN` và `en-US`.
 - [ ] **9. Bộ nhớ sạch:** Hủy đăng ký event XAML, dọn dẹp visual 3D, giải phóng `IDisposable`.
-- [ ] **10. 100% Unit Test Passed:** Tất cả bài test xUnit chạy thành công (`0 Failed`), không phát sinh build warning mới.
+- [ ] **10. 100% Unit Test Passed:** Tất cả 465 bài test xUnit chạy thành công (`0 Failed`), không phát sinh build warning mới.
+- [ ] **11. Tiết kiệm Token & Zero-Overwrite:** Sửa cục bộ qua diff/patch, chỉ đọc lát cắt dòng có mục tiêu, tái sử dụng Core Guards.

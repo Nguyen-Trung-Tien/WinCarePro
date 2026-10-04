@@ -26,5 +26,5 @@
 ---
 
 <div align="center">
-  <sub>WinCare Pro Suite v4.9.3 Orion • Phát triển bởi <b>Nguyễn Trung Tiến</b></sub>
+  <sub>WinCare Pro Suite v5.0.0 Polaris • Phát triển bởi <b>Nguyễn Trung Tiến</b></sub>
 </div>

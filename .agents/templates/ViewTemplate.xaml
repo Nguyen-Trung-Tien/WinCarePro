@@ -1,0 +1,86 @@
+<Page
+    x:Class="WinCarePro.Modules.Template.TemplateView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:WinCarePro.Converters"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <!-- TranslationConverter for i18n zero-hardcoding -->
+        <converters:TranslationConverter x:Key="TranslationConverter"/>
+    </Page.Resources>
+
+    <!-- Aura Glass Container with Fluent 2.0 Card Styling -->
+    <Grid Padding="24" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header Panel -->
+        <StackPanel Grid.Row="0" Spacing="4">
+            <TextBlock Text="{Binding Source='Nav_Template', Converter={StaticResource TranslationConverter}}"
+                       Style="{StaticResource TitleTextBlockStyle}"
+                       FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding Source='Desc_Template', Converter={StaticResource TranslationConverter}}"
+                       Style="{StaticResource BodySubtleTextBlockStyle}"/>
+        </StackPanel>
+
+        <!-- Primary Action Card (Aura Glass) -->
+        <Border Grid.Row="1"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16">
+            <Grid ColumnSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="4">
+                    <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
+                               Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    <ProgressBar Value="{x:Bind ViewModel.ProgressValue, Mode=OneWay}"
+                                 Maximum="100"
+                                 IsIndeterminate="{x:Bind ViewModel.IsBusy, Mode=OneWay}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <Button Content="{Binding Source='Btn_StartScan', Converter={StaticResource TranslationConverter}}"
+                            Command="{x:Bind ViewModel.StartOperationCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource InverseBoolConverter}}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            CornerRadius="6"/>
+                    <Button Content="{Binding Source='Btn_Cancel', Converter={StaticResource TranslationConverter}}"
+                            Command="{x:Bind ViewModel.CancelOperationCommand}"
+                            IsEnabled="{x:Bind ViewModel.IsBusy, Mode=OneWay}"
+                            CornerRadius="6"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Data List / Telemetry View -->
+        <Border Grid.Row="2"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12">
+            <ListView ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <TextBlock Text="{x:Bind}"
+                                   FontFamily="Segoe UI Variable Text"
+                                   Typography.NumeralAlignment="Tabular"
+                                   VerticalAlignment="Center"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+    </Grid>
+</Page>

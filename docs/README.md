@@ -53,10 +53,11 @@ graph TD
 
 ---
 
-## 📑 Danh Mục 11 Tài Liệu Chuyên Đề
+## 📑 Danh Mục Tài Liệu Kỹ Thuật
 
 | STT | Tài Liệu | Tóm Tắt Nội Dung | Đối Tượng |
 | :---: | :--- | :--- | :--- |
+| **00** | [**00. AI Symbol Index & Architecture Map**](00_AI_SYMBOL_INDEX.md) | Bản đồ tra cứu nhanh O(1) ký hiệu, lớp cốt lõi, Safe Guards, Engines, ViewModels và Tests cho AI Agents. | *AI Agents, Developers* |
 | **01** | [**01. Kiến Trúc Tổng Thể Hệ Thống**](01_SYSTEM_ARCHITECTURE.md) | Mô hình 4 tầng phân lớp, nguyên lý thiết kế, Dependency Injection và quản lý luồng dữ liệu an toàn. | *Architects, Developers* |
 | **02** | [**02. Chi Tiết 16 Phân Hệ Chức Năng**](02_CORE_MODULES_DETAILED.md) | Đặc tả 16 Modules: Dashboard, AI Assistant, Junk Cleaner, Uninstaller, Security, Turbo Game, Widget,... | *Developers, Product Owners* |
 | **03** | [**03. Tầng Động Cơ Nghiệp Vụ**](03_ENGINES_AND_BUSINESS_LOGIC.md) | Thuật toán Heuristic chẩn đoán AI, RAM booster, công thức chấm điểm sức khỏe, SFC/DISM wrapper. | *Engine Developers* |
@@ -64,7 +65,7 @@ graph TD
 | **05** | [**05. Tiêu Chuẩn An Toàn & Bảo Mật**](05_SECURITY_AND_SAFETY_ARCHITECTURE.md) | SafePathGuard, SafeRegistryGuard, Service Safety Whitelist, ProcessRunner ArgumentList chống Injection, CancellationToken Lifecycle. | *Security Engineers* |
 | **06** | [**06. Dịch Vụ Nền & Hạ Tầng Hệ Thống**](06_SERVICES_AND_INFRASTRUCTURE.md) | Background Workers, Theme Studio đa bảng màu, Bộ dịch thuật ngữ đa ngôn ngữ, UndoManager hoàn tác. | *Core Developers* |
 | **07** | [**07. Hệ Thống Thiết Kế UI/UX Aura Glass**](07_UI_UX_DESIGN_SYSTEM.md) | Fluent Design 2.0, Mica Backdrop, Acrylic, Shimmer Skeleton Loader, Composition 120 FPS Motion. | *UI/UX Designers & Devs* |
-| **08** | [**08. Kiểm Thử Tự Động & Đảm Bảo Chất Lượng**](08_TESTING_AND_QUALITY_ASSURANCE.md) | Bộ 339 bài kiểm thử xUnit (Release Candidate Hardening), kiểm thử đa luồng, stress test, Mocking và tiêu chuẩn Zero-Bug. | *QA & Testers* |
+| **08** | [**08. Kiểm Thử Tự Động & Đảm Bảo Chất Lượng**](08_TESTING_AND_QUALITY_ASSURANCE.md) | Bộ 465 bài kiểm thử xUnit (Production Hardening), kiểm thử đa luồng, stress test, Mocking và tiêu chuẩn Zero-Bug. | *QA & Testers* |
 | **09** | [**09. Đóng Gói, Triển Khai & CI/CD**](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) | Biên dịch Self-Contained x64, Đóng gói Inno Setup 6, cấu hình Auto-Update và GitHub Actions CI. | *DevOps, Release Managers* |
 | **10** | [**10. Hướng Dẫn Lập Trình Viên Mới**](10_DEVELOPER_ONBOARDING_GUIDE.md) | Setup môi trường Visual Studio 2022, quy chuẩn code C# 13, hướng dẫn từng bước thêm một Module mới. | *New Developers* |
 | **11** | [**11. Hướng Dẫn Sử Dụng Chi Tiết (Tiếng Việt)**](11_USER_MANUAL_VI.md) | Cẩm nang thao tác dành cho người dùng cuối: Dọn dẹp máy tính, tăng tốc game, khôi phục hệ thống. | *End Users, Support Team* |

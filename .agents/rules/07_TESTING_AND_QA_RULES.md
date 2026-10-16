@@ -6,11 +6,11 @@
 
 ## 🏆 1. Chính Sách Không Lỗi Tuyệt Đối (Zero-Bug Policy)
 
-Dự án duy trì tỷ lệ kiểm thử thành công **100% Passed (339/339 Tests)**. Không một bản build nào được phép xuất xưởng nếu có bất kỳ bài test nào bị `Failed`.
+Dự án duy trì tỷ lệ kiểm thử thành công **100% Passed (465/465 Tests)**. Không một bản build nào được phép xuất xưởng nếu có bất kỳ bài test nào bị `Failed`.
 
 ```powershell
 # Lệnh kiểm thử bắt buộc trước khi merge code:
-dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal
+dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --logger "console;verbosity=minimal"
 ```
 
 ---

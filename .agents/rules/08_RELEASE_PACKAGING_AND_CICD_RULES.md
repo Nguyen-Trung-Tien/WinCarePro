@@ -62,7 +62,7 @@ Mọi commit và Pull Request vào nhánh `main` phải vượt qua toàn bộ c
 ```mermaid
 graph LR
     Step1["1. dotnet restore"] --> Step2["2. dotnet build -c Release"]
-    Step2 --> Step3["3. dotnet test (300 Tests Passed)"]
+    Step2 --> Step3["3. dotnet test (465 Tests Passed)"]
     Step3 --> Step4["4. Inno Setup ISCC Compile"]
     Step4 --> Step5["5. Hash SHA-256 & Release Assets"]
 ```

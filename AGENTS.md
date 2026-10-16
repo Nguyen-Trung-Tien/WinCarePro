@@ -1,7 +1,7 @@
 # 🤖 WinCare Pro Suite — AI Agent Operational Directive
 > **Phiên bản:** v5.0.0 (Codename: Polaris) | **Nền tảng:** Windows 10/11 x64  
 > **Công nghệ lõi:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite 3 WAL • CommunityToolkit.Mvvm  
-> **Tài liệu tham chiếu chuyên sâu:** [11 Bộ Quy Chuẩn Kỹ Thuật](file:///d:/WinCare/rules/README.md) • [11 Chương Tài Liệu Kỹ Thuật](file:///d:/WinCare/docs/README.md)
+> **Tài liệu tham chiếu chuyên sâu:** [AI Symbol Index & Architecture Map](file:///d:/WinCare/docs/00_AI_SYMBOL_INDEX.md) • [11 Bộ Quy Chuẩn Kỹ Thuật](file:///d:/WinCare/.agents/rules/README.md) • [11 Chương Tài Liệu Kỹ Thuật](file:///d:/WinCare/docs/README.md) • [Workspace Skills](file:///d:/WinCare/.agents/skills)
 
 ---
 

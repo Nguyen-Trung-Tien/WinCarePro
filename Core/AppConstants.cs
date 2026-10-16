@@ -41,11 +41,10 @@ public static class AppConstants
     /// <summary>
     /// Full display version string (e.g., "v5.0.0").
     /// </summary>
-    public static readonly string DisplayVersionFull = 
-        $"v{VersionString}";
+    public static readonly string DisplayVersionFull = DisplayVersion;
 
     /// <summary>
-    /// Formatted title with version (e.g., "WinCare Pro v4.9").
+    /// Formatted title with version (e.g., "WinCare Pro v5.0").
     /// </summary>
     public static readonly string TitleWithVersion = 
         $"{AppName} {DisplayVersion}";

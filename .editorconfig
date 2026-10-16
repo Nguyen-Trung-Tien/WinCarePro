@@ -1,0 +1,84 @@
+# ==============================================================================
+# WinCare Pro Suite - .editorconfig
+# Standards: .NET 10.0 • C# 13 • WinUI 3 • Windows App SDK
+# Standardized coding styles for developers and AI agents without redundancy
+# ==============================================================================
+
+root = true
+
+# ------------------------------------------------------------------------------
+# 1. Global Defaults (Inherited by all file types unless overridden)
+# ------------------------------------------------------------------------------
+[*]
+charset = utf-8
+end_of_line = crlf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# ------------------------------------------------------------------------------
+# 2. C# Coding Conventions (.NET 10 / C# 13)
+# ------------------------------------------------------------------------------
+[*.cs]
+# Indentation & Braces
+csharp_indent_braces = false
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+
+# Modern C# 13 Language Features
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_style_prefer_primary_constructors = true:suggestion
+csharp_style_prefer_pattern_matching = true:suggestion
+csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
+csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_null_coalescing_operator = true:warning
+csharp_style_prefer_null_propagation = true:warning
+csharp_style_throw_expression = true:suggestion
+
+# 'var' Preferences
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = false:suggestion
+
+# Expression-bodied members
+csharp_style_expression_bodied_methods = when_on_single_line:suggestion
+csharp_style_expression_bodied_constructors = false:suggestion
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_accessors = true:suggestion
+
+# Nullability & Code Safety
+dotnet_diagnostic.CS8600.severity = warning
+dotnet_diagnostic.CS8602.severity = warning
+dotnet_diagnostic.CS8603.severity = warning
+dotnet_diagnostic.CS8604.severity = warning
+dotnet_diagnostic.CS8618.severity = warning
+dotnet_diagnostic.CS8625.severity = warning
+
+# Quality & Performance Rules
+dotnet_style_readonly_field = true:warning
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
+dotnet_style_predefined_type_for_member_access = true:suggestion
+dotnet_style_qualification_for_field = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+dotnet_style_qualification_for_method = false:suggestion
+dotnet_style_qualification_for_event = false:suggestion
+
+# Organize Usings
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# ------------------------------------------------------------------------------
+# 3. Compact Indentations (Overriding indent_size = 4 from [*])
+# ------------------------------------------------------------------------------
+[*.{json,yml,yaml,bat,cmd}]
+indent_size = 2
+
+[*.md]
+indent_size = 2
+trim_trailing_whitespace = false

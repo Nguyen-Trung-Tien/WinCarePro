@@ -1,5 +1,5 @@
 # 🧠 WinCare Pro — Quy Chuẩn 11: Tối Ưu Token & Kỹ Thuật Lập Trình Chính Xác Cho AI Agent
-> **Tập tin quy chuẩn:** `rules/11_AI_AGENT_EFFICIENCY_AND_PRECISION_RULES.md`  
+> **Tập tin quy chuẩn:** `.agents/rules/11_AI_AGENT_EFFICIENCY_AND_PRECISION_RULES.md`  
 > **Phạm vi áp dụng:** Toàn bộ AI Agents (Antigravity/Gemini), Trợ lý lập trình tự động & Nhà phát triển  
 > **Mục tiêu cốt lõi:** Tối thiểu hóa lượng token tiêu thụ (Context & Output Token Economy), loại trừ ảo giác (Zero-Hallucination), tuân thủ 100% kiến trúc và bảo đảm tính chính xác tuyệt đối cho hệ thống WinCare Pro Suite.
 

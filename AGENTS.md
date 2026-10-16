@@ -1,7 +1,7 @@
 # 🤖 WinCare Pro Suite — AI Agent Operational Directive
 > **Phiên bản:** v5.0.0 (Codename: Polaris) | **Nền tảng:** Windows 10/11 x64  
 > **Công nghệ lõi:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite 3 WAL • CommunityToolkit.Mvvm  
-> **Tài liệu tham chiếu chuyên sâu:** [AI Symbol Index & Architecture Map](file:///d:/WinCare/docs/00_AI_SYMBOL_INDEX.md) • [11 Bộ Quy Chuẩn Kỹ Thuật](file:///d:/WinCare/.agents/rules/README.md) • [11 Chương Tài Liệu Kỹ Thuật](file:///d:/WinCare/docs/README.md) • [Workspace Skills](file:///d:/WinCare/.agents/skills)
+> **Tài liệu tham chiếu chuyên sâu:** [AI Symbol Index & Architecture Map](file:///d:/WinCare/docs/00_AI_SYMBOL_INDEX.md) • [11 Bộ Quy Chuẩn Kỹ Thuật](file:///d:/WinCare/.agents/rules/README.md) • [11 Chương Tài Liệu Kỹ Thuật](file:///d:/WinCare/docs/README.md) • [10 Kỹ Năng Kỹ Thuật (Skills)](file:///d:/WinCare/.agents/skills/README.md)
 
 ---
 
@@ -97,7 +97,25 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 
 ---
 
-## ⚡ 6. Lệnh Vận Hành & Bản Kiểm Kê Hoàn Tất
+## 🧰 6. Bộ 10 Kỹ Năng Kỹ Thuật Chuyên Sâu (Workspace Skills)
+Tra cứu nhanh hướng dẫn tác vụ tương ứng trước khi code tại [skills/README.md](file:///d:/WinCare/.agents/skills/README.md):
+
+| Tên Kỹ Năng (Skill) | Đường dẫn tập tin | Phạm vi nhiệm vụ trọng yếu |
+| :--- | :--- | :--- |
+| `wincare-module-creator` | [wincare-module-creator/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-module-creator/SKILL.md) | Triển khai phân hệ mới chuẩn 7 bước (Model $\rightarrow$ Engine $\rightarrow$ DI $\rightarrow$ ViewModel $\rightarrow$ Aura $\rightarrow$ i18n $\rightarrow$ Test). |
+| `wincare-safe-ops` | [wincare-safe-ops/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-safe-ops/SKILL.md) | Thao tác OS Zero-Trust: SafePathGuard, SafeRegistryGuard, sao lưu registry, ProcessRunner, ServiceSafetyService, DPAPI. |
+| `wincare-concurrency-guard`| [wincare-concurrency-guard/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-concurrency-guard/SKILL.md)| Đa luồng WinUI 3: RunOnUI, DispatcherQueue, RelayCommands, CancellationToken, triệt tiêu Sync-over-Async. |
+| `wincare-ui-aura` | [wincare-ui-aura/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-ui-aura/SKILL.md) | Giao diện Aura Glass Fluent 2.0: Tabular figures, Mica Alt, gỡ bỏ event Unloaded, zero memory leak. |
+| `wincare-i18n-sync` | [wincare-i18n-sync/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-i18n-sync/SKILL.md) | Đa ngôn ngữ song song: vi-VN & en-US trong TranslationManager.Translations.cs, TranslationConverter, zero hardcode text. |
+| `wincare-db-wal` | [wincare-db-wal/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-db-wal/SKILL.md) | SQLite WAL: lock (_dbLock) tập trung, chống SQL Injection bằng tham số, DatabaseTestCollection cho xUnit. |
+| `wincare-error-resilience` | [wincare-error-resilience/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-error-resilience/SKILL.md) | Quản lý lỗi chuẩn: Mẫu OperationResult<T>, Zero-Silent Catch, CrashLogger.LogError, phục hồi mềm dẻo. |
+| `wincare-test-verifier` | [wincare-test-verifier/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-test-verifier/SKILL.md) | Kiểm thử tiết kiệm token: Test lọc theo lớp (--filter), giải mã lỗi hồi quy, bảo đảm 100% Passed. |
+| `wincare-token-guard` | [wincare-token-guard/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-token-guard/SKILL.md) | Tối ưu token AI: grep_search định vị, đọc lát cắt hẹp 30-60 dòng, in-place patching, triệt tiêu log thừa. |
+| `wincare-ci-packaging` | [wincare-ci-packaging/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-ci-packaging/SKILL.md) | Đóng gói & Phát hành: publish.bat (Self-Contained x64 .NET 10), publish_installer.bat (Inno Setup), SSOT AppConstants. |
+
+---
+
+## ⚡ 7. Lệnh Vận Hành & Bản Kiểm Kê Hoàn Tất
 
 ```powershell
 dotnet build WinCarePro.csproj -c Debug                         # Biên dịch kiểm tra lỗi

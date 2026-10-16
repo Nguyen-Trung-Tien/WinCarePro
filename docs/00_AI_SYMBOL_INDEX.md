@@ -94,3 +94,13 @@ Các bài test kiểm thử nằm tại [WinCarePro.Tests/](file:///d:/WinCare/W
   ```powershell
   dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~TênModule" --logger "console;verbosity=minimal"
   ```
+
+---
+
+## 🧰 5. Tra Cứu 10 Kỹ Năng Kỹ Thuật (Workspace Skills)
+Xem hướng dẫn chi tiết từng lĩnh vực tại [skills/README.md](file:///d:/WinCare/.agents/skills/README.md):
+- **Kiến trúc & Module:** [wincare-module-creator](file:///d:/WinCare/.agents/skills/wincare-module-creator/SKILL.md) • [wincare-ci-packaging](file:///d:/WinCare/.agents/skills/wincare-ci-packaging/SKILL.md)
+- **Hệ thống & An toàn:** [wincare-safe-ops](file:///d:/WinCare/.agents/skills/wincare-safe-ops/SKILL.md) • [wincare-db-wal](file:///d:/WinCare/.agents/skills/wincare-db-wal/SKILL.md) • [wincare-error-resilience](file:///d:/WinCare/.agents/skills/wincare-error-resilience/SKILL.md)
+- **Giao diện & Đa luồng:** [wincare-concurrency-guard](file:///d:/WinCare/.agents/skills/wincare-concurrency-guard/SKILL.md) • [wincare-ui-aura](file:///d:/WinCare/.agents/skills/wincare-ui-aura/SKILL.md) • [wincare-i18n-sync](file:///d:/WinCare/.agents/skills/wincare-i18n-sync/SKILL.md)
+- **Kiểm thử & Tiết kiệm Token:** [wincare-test-verifier](file:///d:/WinCare/.agents/skills/wincare-test-verifier/SKILL.md) • [wincare-token-guard](file:///d:/WinCare/.agents/skills/wincare-token-guard/SKILL.md)
+

@@ -1,138 +1,148 @@
 # 🤖 WinCare Pro Suite — AI Agent Operational Directive
-> **Phiên bản:** v5.0.0 (Codename: Polaris) | **Nền tảng:** Windows 10/11 x64  
-> **Công nghệ lõi:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite 3 WAL • CommunityToolkit.Mvvm  
-> **Tài liệu tham chiếu chuyên sâu:** [AI Symbol Index & Architecture Map](file:///d:/WinCare/docs/00_AI_SYMBOL_INDEX.md) • [11 Bộ Quy Chuẩn Kỹ Thuật](file:///d:/WinCare/.agents/rules/README.md) • [11 Chương Tài Liệu Kỹ Thuật](file:///d:/WinCare/docs/README.md) • [10 Kỹ Năng Kỹ Thuật (Skills)](file:///d:/WinCare/.agents/skills/README.md)
+
+> **Version:** v5.0.0 (Codename: Polaris) | **Target Platform:** Windows 10/11 x64  
+> **Core Stack:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite 3 WAL • CommunityToolkit.Mvvm  
+> **Deep Reference Docs:** [AI Symbol Index & Architecture Map](file:///d:/WinCare/docs/00_AI_SYMBOL_INDEX.md) • [11 Technical Rulebooks](file:///d:/WinCare/.agents/rules/README.md) • [11 Technical Architecture Chapters](file:///d:/WinCare/docs/README.md) • [10 Specialized Skills](file:///d:/WinCare/.agents/skills/README.md)
 
 ---
 
-## 🧭 1. Thứ Bậc Ưu Tiên Tuyệt Đối
+## 🧭 1. Absolute Priority Hierarchy
+
 $$\mathbf{Safety} > \mathbf{Correctness} > \mathbf{Security} > \mathbf{Stability} > \mathbf{Performance} > \mathbf{Maintainability} > \mathbf{UX} > \mathbf{Aesthetics}$$
 
-1. **Safety:** Tuyệt đối không làm hỏng OS, không xóa nhầm dữ liệu người dùng, không tắt service sống còn.
-2. **Correctness:** Dữ liệu dung lượng, telemetry và chẩn đoán phải chuẩn xác, không mock giả mạo.
-3. **Security:** Zero-Trust. Không ghép chuỗi CLI, cô lập đối số qua `ArgumentList`, mã hóa nhạy cảm bằng DPAPI.
-4. **Stability:** Zero-Crash. Luôn dùng `RunOnUI`, xử lý triệt để I/O & Win32, quản lý `CancellationToken`.
-5. **Performance:** RAM nền $\le 15\text{ MB}$, Foreground $\le 85\text{ MB}$, Cold Start $\le 350\text{ ms}$, CPU Idle $\le 0.3\%$.
-6. **Maintainability & UX:** Phân tầng MVVM nghiêm ngặt, chuẩn C# 13, giao diện Aura Glass (Fluent 2.0).
+1. **Safety:** NEVER corrupt OS files, NEVER delete user personal data, NEVER terminate critical system services.
+2. **Correctness:** Telemetry, capacity metrics, and diagnostic data MUST be exact; NEVER fabricate or mock data.
+3. **Security:** Zero-Trust. NEVER concatenate CLI commands. ALWAYS isolate arguments via `ArgumentList`. ALWAYS encrypt sensitive data with DPAPI.
+4. **Stability:** Zero-Crash. ALWAYS wrap UI mutations in `RunOnUI()`. ALWAYS handle I/O and Win32 faults. ALWAYS propagate `CancellationToken`.
+5. **Performance:** Background RAM $\le 15\text{ MB}$, Foreground RAM $\le 85\text{ MB}$, Cold Start $\le 350\text{ ms}$, CPU Idle $\le 0.3\%$.
+6. **Maintainability & UX:** Strict MVVM segregation, idiomatic C# 13, Fluent 2.0 Aura Glass UI.
 
 ---
 
-## 🏛️ 2. Kiến Trúc 4 Tầng (4-Tier Modular Architecture)
-Chi nhánh phụ thuộc một chiều từ ngoài vào trong:  
+## 🏛️ 2. 4-Tier Modular Architecture
+
+Unidirectional dependency branch from exterior to core:  
 $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightarrow \text{Engines (Business Logic)} \longrightarrow \text{Infrastructure / Core}$$
 
-- **Presentation:** Chỉ tương tác với ViewModel qua Data Binding & RelayCommands. Tuyệt đối không gọi thẳng Engine/Infra.
-- **ViewModel:** Kế thừa [ViewModelBase.cs](file:///d:/WinCare/Core/Helpers/ViewModelBase.cs), bọc mọi cập nhật UI trong `RunOnUI()`. Giao tiếp chéo qua `WeakReferenceMessenger`, không giữ tham chiếu ViewModel khác.
-- **Engines:** Xử lý nghiệp vụ độc lập. **CẤM** chứa bất kỳ WinUI type nào (`Button`, `Window`, `SolidColorBrush`,...).
-- **Infrastructure / Core:** Lưu trữ SQLite [DbManager.cs](file:///d:/WinCare/Infrastructure/Database/DbManager.cs), bảo vệ file/reg ([SafePathGuard.cs](file:///d:/WinCare/Core/Helpers/SafePathGuard.cs), [SafeRegistryGuard.cs](file:///d:/WinCare/Core/Helpers/SafeRegistryGuard.cs)), P/Invoke, mã hóa DPAPI.
+- **Presentation:** Interacts exclusively with ViewModels via Data Binding & `RelayCommand`. MUST NOT reference Engine or Infrastructure layers directly.
+- **ViewModel:** Inherits [ViewModelBase.cs](file:///d:/WinCare/Core/Helpers/ViewModelBase.cs). ALWAYS wrap UI updates in `RunOnUI()`. Cross-VM messaging MUST use `WeakReferenceMessenger`. MUST NOT hold direct references to other ViewModels.
+- **Engines:** Isolated business logic. MUST NOT reference any WinUI types (`Button`, `Window`, `SolidColorBrush`, etc.).
+- **Infrastructure / Core:** SQLite persistence [DbManager.cs](file:///d:/WinCare/Infrastructure/Database/DbManager.cs), file/registry guards ([SafePathGuard.cs](file:///d:/WinCare/Core/Helpers/SafePathGuard.cs), [SafeRegistryGuard.cs](file:///d:/WinCare/Core/Helpers/SafeRegistryGuard.cs)), P/Invoke (`[LibraryImport]`), DPAPI encryption.
 
 ---
 
-## 📋 3. Mười Một Quy Chuẩn Kỹ Thuật Bắt Buộc (Inviolable Rules)
+## 📋 3. Eleven Inviolable Technical Rules
 
-1. **Kiến Trúc & DI:** View $\rightarrow$ ViewModel $\rightarrow$ Engine $\rightarrow$ Core. Đăng ký Singleton (`DbManager`, `ThemeManager`, `TranslationManager`) hoặc Transient (`*Engine`, `*ViewModel`) tại [App.xaml.cs](file:///d:/WinCare/App.xaml.cs).
-2. **Khiên Bảo Vệ File & Registry:**
-   - Xóa file/thư mục: Bắt buộc gọi `SafePathGuard.IsSafeToDelete(path)`. Cấm xóa thư mục gốc, hệ thống, tệp người dùng, Reparse Points.
-   - Sửa/Xóa Registry: Bắt buộc gọi `SafeRegistryGuard.IsSafeToDeleteKey(key)` và sao lưu trước qua `RegistryBackupEngine.BackupKey()`. Cấm xóa Root Hives, độ sâu $\ge 3$.
-3. **An Toàn CLI (Chống Injection):** Cấm ghép chuỗi `cmd.exe /c "..."`. Dùng [ProcessRunner.cs](file:///d:/WinCare/Core/Helpers/ProcessRunner.cs) và đưa tham số vào `ArgumentList`. Lọc input qua [InputSanitizer.cs](file:///d:/WinCare/Core/Helpers/InputSanitizer.cs).
-4. **Bảo Vệ Windows Services & DPAPI:** Cấm tắt các dịch vụ lõi (`RpcSs`, `DcomLaunch`, `WinDefend`, `CryptSvc`,...). Dùng `ServiceSafetyService.IsProtectedService()`. Mã hóa dữ liệu nhạy cảm bằng [CryptoHelper.cs](file:///d:/WinCare/Core/Helpers/CryptoHelper.cs) (DPAPI).
-5. **Đa Luồng & WinUI 3 Threading:** Mọi cập nhật UI / `ObservableCollection` phải bọc trong `RunOnUI(() => { ... })`. Cấm Sync-over-Async (`.Result`, `.Wait()`). Cấm `async void` (trừ UI Event Handlers).
-6. **Quản Lý Tác Vụ & Hủy Bỏ:** Tác vụ async nặng phải nhận `CancellationToken ct = default` và kiểm tra `ThrowIfCancellationRequested()`. Luôn có khối `finally { IsBusy = false; OperationState = OperationState.Idle; }`.
-7. **Đồng Thời SQLite (WAL Mode):** Mọi thao tác đọc/ghi SQLite trong [DbManager.cs](file:///d:/WinCare/Infrastructure/Database/DbManager.cs) bắt buộc bọc trong `lock (_dbLock)`. Không gọi logic ngoại vi trong lock.
-8. **Mẫu Kết Quả & Zero-Silent Catch:** Mọi hàm có nguy cơ ngoại lệ phải trả về `OperationResult` hoặc `OperationResult<T>`. Tuyệt đối cấm `catch { }` nuốt lỗi; bắt buộc ghi log vào [CrashLogger.cs](file:///d:/WinCare/Infrastructure/Logging/CrashLogger.cs).
-9. **Đa Ngôn Ngữ Bắt Buộc (i18n):** Cấm hardcode chuỗi text trên UI. Mọi text phải khai báo đầy đủ cả 2 từ điển `vi-VN` và `en-US` trong [TranslationManager.Translations.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.Translations.cs).
-10. **Tối Ưu Bộ Nhớ & Tài Nguyên:** Gỡ bỏ event (`-=`) khi `Unloaded`/`Dispose()`. Dừng animation 3D khi chuyển trang. Cache icon qua `IconCacheService`. Dùng `Typography.NumeralAlignment="Tabular"` cho telemetry.
-11. **Tối Ưu Hóa Token & Kỹ Thuật Chính Xác Của AI (Token Economy & Targeted Precision):**
+1. **Architecture & DI:** Enforce View $\rightarrow$ ViewModel $\rightarrow$ Engine $\rightarrow$ Core. Register Singletons (`DbManager`, `ThemeManager`, `TranslationManager`) and Transients (`*Engine`, `*ViewModel`) in [App.xaml.cs](file:///d:/WinCare/App.xaml.cs).
+2. **File & Registry Armor:**
+   - File/Directory Deletion: MUST pass `SafePathGuard.IsSafeToDelete(path)`. NEVER delete root directories, system trees, user data, or Reparse Points.
+   - Registry Mutation/Deletion: MUST pass `SafeRegistryGuard.IsSafeToDeleteKey(key)` and ALWAYS create a restore point first via `RegistryBackupEngine.BackupKey()`. Root hives are STRICTLY FORBIDDEN; key path depth MUST be $\ge 3$.
+3. **CLI Safety (Zero Command Injection):** NEVER concatenate shell commands via `cmd.exe /c "..."`. ALWAYS execute via [ProcessRunner.cs](file:///d:/WinCare/Core/Helpers/ProcessRunner.cs) passing parameters through `ArgumentList`. ALWAYS sanitize inputs using [InputSanitizer.cs](file:///d:/WinCare/Core/Helpers/InputSanitizer.cs).
+4. **Windows Service Protection & DPAPI:** NEVER stop or disable protected core services (`RpcSs`, `DcomLaunch`, `WinDefend`, `CryptSvc`, etc.). ALWAYS verify via `ServiceSafetyService.IsProtectedService()`. ALWAYS encrypt credentials/secrets using [CryptoHelper.cs](file:///d:/WinCare/Core/Helpers/CryptoHelper.cs) (DPAPI).
+5. **WinUI 3 Concurrency & Threading:** UI and `ObservableCollection` mutations MUST be dispatched via `RunOnUI(() => { ... })`. NEVER use sync-over-async (`.Result`, `.Wait()`). NEVER declare `async void` except in UI event handlers.
+6. **Task Lifecycle & Cancellation:** Heavy async routines MUST accept `CancellationToken ct = default` and periodically invoke `ThrowIfCancellationRequested()`. ALWAYS ensure state cleanup inside `finally { IsBusy = false; OperationState = OperationState.Idle; }`.
+7. **SQLite WAL Concurrency:** ALL SQLite read/write operations in [DbManager.cs](file:///d:/WinCare/Infrastructure/Database/DbManager.cs) MUST be guarded with `lock (_dbLock)`. MUST NOT invoke external I/O or long-running logic inside the lock.
+8. **Result Pattern & Zero-Silent Catch:** Fallible methods MUST return `OperationResult` or `OperationResult<T>`. NEVER swallow exceptions with empty `catch { }`. Unexpected errors MUST be recorded to [CrashLogger.cs](file:///d:/WinCare/Infrastructure/Logging/CrashLogger.cs).
+9. **Mandatory Internationalization (i18n):** Hardcoded UI strings are STRICTLY FORBIDDEN. ALL display text MUST be registered in both `vi-VN` and `en-US` dictionaries in [TranslationManager.Translations.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.Translations.cs).
+10. **Resource & Memory Discipline:** ALWAYS detach event handlers (`-=`) during `Unloaded`/`Dispose()`. MUST pause 3D/canvas animations when navigating away. Cache shell icons via `IconCacheService`. ALWAYS set `Typography.NumeralAlignment="Tabular"` on telemetry metrics.
+11. **Token Economy & Targeted Precision:**
     - **Context Economy & Log Suppression:**
-      - Định vị mục tiêu bằng `grep_search` (kèm lọc `Includes: ["*.cs"]`), đọc lát cắt hẹp qua `view_file` (30-60 dòng xung quanh target symbol); tuyệt đối CẤM đọc toàn bộ file lớn (> 150 dòng).
-      - Triệt tiêu token rác từ terminal: Khi chạy test, bắt buộc thêm bộ lọc và logger tối giản `dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~TênLớp" --logger "console;verbosity=minimal"`. Khi build kiểm tra cú pháp, dùng `dotnet build WinCarePro.csproj -c Debug -v q --nologo`.
+      - Pinpoint symbols via `grep_search` (`Includes: ["*.cs"]`). Read narrow slices (30-60 lines around symbol) via `view_file`. NEVER read entire large files (> 150 lines).
+      - Suppress noisy terminal output: Run tests with minimal loggers: `dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~ClassName" --logger "console;verbosity=minimal"`. Run syntax builds with quiet verbosity: `dotnet build WinCarePro.csproj -c Debug -v q --nologo`.
     - **In-Place Patching & Minimal Anchors:**
-      - Tuyệt đối CẤM dùng `write_to_file (Overwrite = true)` để viết lại toàn bộ file nguồn cũ. Bắt buộc dùng `replace_file_content` hoặc `multi_replace_file_content` với mỏ neo ngắn (2-4 dòng context duy nhất).
-    - **Chống Ảo Giác Chữ Ký (Zero-Hallucination API Verification):**
-      - Trước khi gọi Engine, Service hoặc Helper, bắt buộc tra cứu chữ ký thực tế bằng `grep_search` để xác nhận đúng parameters, kiểu trả về (`OperationResult<T>`) và `CancellationToken ct = default`. Không tự suy đoán API.
-    - **Tái Sử Dụng Khiên Bản Địa:**
-      - Bắt buộc dùng `ProcessRunner`, `SafePathGuard`, `SafeRegistryGuard`, `CryptoHelper`, `ServiceSafetyService`, `RunOnUI`, `lock (_dbLock)`. Tuyệt đối không tự viết lại logic thao tác OS.
-    - **Báo Cáo Súc Tích (Concise Reporting):**
-      - Không copy-paste lại toàn bộ khối mã nguồn vào tin nhắn chat nếu diff đã thể hiện; tóm tắt trực diện vào nguyên nhân, vị trí sửa và kết quả kiểm thử.
+      - NEVER overwrite entire existing source files using `write_to_file (Overwrite = true)`. ALWAYS use `replace_file_content` or `multi_replace_file_content` with concise 2-4 line context anchors.
+    - **Zero-Hallucination API Verification:**
+      - ALWAYS verify canonical signatures in `docs/00_AI_SYMBOL_INDEX.md` or through `grep_search` before invoking methods. NEVER guess parameters, return types (`OperationResult<T>`), or `CancellationToken` support.
+    - **Native Shield Reuse:**
+      - ALWAYS leverage existing infrastructure: `ProcessRunner`, `SafePathGuard`, `SafeRegistryGuard`, `CryptoHelper`, `ServiceSafetyService`, `RunOnUI`, and `lock (_dbLock)`. NEVER re-implement OS-level operations.
+    - **Concise Reporting:**
+      - DO NOT copy-paste full source blocks into chat when diffs suffice. Provide focused rationale, modified locations, and test outcomes.
 
 ---
 
-## 🛑 4. Bảng Đối Chiếu Anti-Patterns Thường Gặp
+## 🛑 4. Anti-Pattern Reference Matrix
 
-| Tình huống | ❌ CẤM TUYỆT ĐỐI | ✅ BẮT BUỘC SỬ DỤNG |
+| Scenario | ❌ STRICTLY FORBIDDEN | ✅ MANDATORY PATTERN |
 | :--- | :--- | :--- |
-| **Gọi lệnh Shell** | `Process.Start("cmd.exe", "/c " + arg)` | `ProcessRunner.RunAsync("app.exe", new[] { arg }, ct)` |
-| **Xóa Tệp Tin** | `File.Delete(path)` | `if (SafePathGuard.IsSafeToDelete(path)) File.Delete(path);` |
-| **Xóa/Sửa Registry** | `regKey.DeleteSubKeyTree(name)` | `if (SafeRegistryGuard.IsSafeToDeleteKey(k)) ...` (có Backup) |
-| **Cập nhật UI từ Thread** | `Items.Add(item);` | `RunOnUI(() => Items.Add(item));` |
-| **Xử lý Ngoại lệ** | `catch { }` | `catch (Exception ex) { CrashLogger.LogError(ex); return OperationResult.Fail(ex); }` |
-| **Chờ Tác Vụ Async** | `var r = task.Result;` | `var r = await task;` |
-| **Chuỗi Hiển Thị UI** | `<TextBlock Text="Quét rác"/>` | `<TextBlock Text="{Binding Key, Converter={StaticResource TranslationConverter}}"/>` |
-| **Dọn Trạng Thái Busy** | Bỏ qua hoặc quên reset khi throw | `try { IsBusy = true; ... } finally { IsBusy = false; }` |
-| **Truy Cập SQLite** | Mở query trực tiếp đa luồng | `lock (_dbLock) { /* query */ }` |
-| **Đọc File Mã Nguồn** | `view_file` toàn bộ file > 150 dòng | `grep_search` định vị $\rightarrow$ `view_file` lát cắt 30-60 dòng |
-| **Sửa File Mã Nguồn** | `write_to_file (Overwrite = true)` | `replace_file_content` / `multi_replace_file_content` (anchor ngắn) |
-| **Chạy Test Lặp Khi Code** | `dotnet test` toàn bộ 465 tests (phun log dài) | `dotnet test --filter "..." --logger "console;verbosity=minimal"` |
-| **Kiểm Tra Build Lỗi** | `dotnet build` mặc định (phun hàng chục dòng) | `dotnet build -c Debug -v q --nologo` |
-| **Gọi Phương Thức Cũ** | Tự suy đoán signature, overload | `grep_search` xác thực signature gốc trong `Core/` hoặc `Engines/` |
+| **Shell Invocation** | `Process.Start("cmd.exe", "/c " + arg)` | `ProcessRunner.RunAsync("app.exe", new[] { arg }, ct)` |
+| **File Deletion** | `File.Delete(path)` | `if (SafePathGuard.IsSafeToDelete(path)) File.Delete(path);` |
+| **Registry Mutation** | `regKey.DeleteSubKeyTree(name)` | `if (SafeRegistryGuard.IsSafeToDeleteKey(k)) ...` (with backup) |
+| **UI Updates from Thread** | `Items.Add(item);` | `RunOnUI(() => Items.Add(item));` |
+| **Exception Handling** | `catch { }` | `catch (Exception ex) { CrashLogger.LogError(ex); return OperationResult.Fail(ex); }` |
+| **Async Synchronization** | `var r = task.Result;` | `var r = await task;` |
+| **UI Display Strings** | `<TextBlock Text="Quét rác"/>` | `<TextBlock Text="{Binding Key, Converter={StaticResource TranslationConverter}}"/>` |
+| **Busy State Reset** | Unset or omitted on exception | `try { IsBusy = true; ... } finally { IsBusy = false; }` |
+| **SQLite Access** | Direct concurrent un-synchronized queries | `lock (_dbLock) { /* query */ }` |
+| **Source Inspection** | `view_file` whole file > 150 lines | `grep_search` target $\rightarrow$ `view_file` 30-60 line slice |
+| **Code Modification** | `write_to_file (Overwrite = true)` | `replace_file_content` / `multi_replace_file_content` (short anchor) |
+| **Test Execution** | `dotnet test` entire 465 suite (verbose) | `dotnet test --filter "..." --logger "console;verbosity=minimal"` |
+| **Syntax Verification** | `dotnet build` default verbosity | `dotnet build -c Debug -v q --nologo` |
+| **Legacy Symbol Calling** | Guessing signature or parameter overloads | `grep_search` original signature in `Core/` or `Engines/` |
 
 ---
 
-## 🛠️ 5. Quy Trình Triển Khai (SOPs Tinh Gọn)
+## 🛠️ 5. Standard Operating Procedures (SOPs)
 
-### A. Thêm Phân Hệ / Tính Năng Mới
-1. **Model:** Khai báo DTO tại `Core/Models/`, sử dụng `OperationResult<T>`.
-2. **Engine:** Tạo tại `Engines/<Category>/`, bọc Guard an toàn, nhận `CancellationToken`.
-3. **DI:** Đăng ký Engine & ViewModel trong `App.xaml.cs`.
-4. **ViewModel:** Tạo tại `Modules/<Feature>/`, kế thừa `ViewModelBase`, bọc UI bằng `RunOnUI()`, xử lý `finally`.
-5. **View:** Tạo XAML với Aura Glass, bo góc, Tabular figures, liên kết qua TranslationConverter.
-6. **i18n:** Thêm cặp key vào cả `vi-VN` và `en-US` trong `TranslationManager.Translations.cs`.
-7. **Test & Verify:** Viết unit test xUnit trong `WinCarePro.Tests/` và chạy `dotnet test`.
+### A. New Module / Feature Implementation
 
-### B. Sửa Lỗi (Bug Fixing)
-1. Định vị tầng lỗi (View, ViewModel, Engine, Core/Infra).
-2. Áp dụng chuẩn an toàn tương ứng (Rule 02/03/05/09/11).
-3. Chạy kiểm thử hồi quy (`dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~..."`).
-4. Bổ sung ít nhất 1 bài test kiểm chứng lỗi không tái phát.
+1. **Model:** Define DTOs in `Core/Models/` returning `OperationResult<T>`.
+2. **Engine:** Author in `Engines/<Category>/`, wrap with native safety guards, accept `CancellationToken ct = default`.
+3. **DI:** Register Engine and ViewModel dependencies in `App.xaml.cs`.
+4. **ViewModel:** Implement in `Modules/<Feature>/`, inherit `ViewModelBase`, wrap UI bindings in `RunOnUI()`, handle `finally`.
+5. **View:** Create XAML with Fluent 2.0 Aura Glass, 8px corner radii, Tabular figures, and `TranslationConverter`.
+6. **i18n:** Synchronize identical key pairs across `vi-VN` and `en-US` in `TranslationManager.Translations.cs`.
+7. **Test & Verify:** Implement xUnit unit tests in `WinCarePro.Tests/` and validate via `dotnet test`.
+
+### B. Bug Fixing SOP
+
+1. Isolate the target failure tier (`View`, `ViewModel`, `Engine`, or `Core/Infra`).
+2. Enforce relevant architectural invariant (Rule 02/03/05/09/11).
+3. Execute regression test: `dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~..."`.
+4. Add at least one regression test to guarantee zero recurrence.
 
 ---
 
-## 🧰 6. Bộ 10 Kỹ Năng Kỹ Thuật Chuyên Sâu (Workspace Skills)
-Tra cứu nhanh hướng dẫn tác vụ tương ứng trước khi code tại [skills/README.md](file:///d:/WinCare/.agents/skills/README.md):
+## 🧰 6. Technical Playbooks Directory (Workspace Skills)
 
-| Tên Kỹ Năng (Skill) | Đường dẫn tập tin | Phạm vi nhiệm vụ trọng yếu |
+Quick lookup before implementation at [skills/README.md](file:///d:/WinCare/.agents/skills/README.md):
+
+| Skill Name | Path | Core Scope & Responsibilities |
 | :--- | :--- | :--- |
-| `wincare-module-creator` | [wincare-module-creator/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-module-creator/SKILL.md) | Triển khai phân hệ mới chuẩn 7 bước (Model $\rightarrow$ Engine $\rightarrow$ DI $\rightarrow$ ViewModel $\rightarrow$ Aura $\rightarrow$ i18n $\rightarrow$ Test). |
-| `wincare-safe-ops` | [wincare-safe-ops/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-safe-ops/SKILL.md) | Thao tác OS Zero-Trust: SafePathGuard, SafeRegistryGuard, sao lưu registry, ProcessRunner, ServiceSafetyService, DPAPI. |
-| `wincare-concurrency-guard`| [wincare-concurrency-guard/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-concurrency-guard/SKILL.md)| Đa luồng WinUI 3: RunOnUI, DispatcherQueue, RelayCommands, CancellationToken, triệt tiêu Sync-over-Async. |
-| `wincare-ui-aura` | [wincare-ui-aura/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-ui-aura/SKILL.md) | Giao diện Aura Glass Fluent 2.0: Tabular figures, Mica Alt, gỡ bỏ event Unloaded, zero memory leak. |
-| `wincare-i18n-sync` | [wincare-i18n-sync/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-i18n-sync/SKILL.md) | Đa ngôn ngữ song song: vi-VN & en-US trong TranslationManager.Translations.cs, TranslationConverter, zero hardcode text. |
-| `wincare-db-wal` | [wincare-db-wal/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-db-wal/SKILL.md) | SQLite WAL: lock (_dbLock) tập trung, chống SQL Injection bằng tham số, DatabaseTestCollection cho xUnit. |
-| `wincare-error-resilience` | [wincare-error-resilience/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-error-resilience/SKILL.md) | Quản lý lỗi chuẩn: Mẫu OperationResult<T>, Zero-Silent Catch, CrashLogger.LogError, phục hồi mềm dẻo. |
-| `wincare-test-verifier` | [wincare-test-verifier/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-test-verifier/SKILL.md) | Kiểm thử tiết kiệm token: Test lọc theo lớp (--filter), giải mã lỗi hồi quy, bảo đảm 100% Passed. |
-| `wincare-token-guard` | [wincare-token-guard/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-token-guard/SKILL.md) | Tối ưu token AI: grep_search định vị, đọc lát cắt hẹp 30-60 dòng, in-place patching, triệt tiêu log thừa. |
-| `wincare-ci-packaging` | [wincare-ci-packaging/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-ci-packaging/SKILL.md) | Đóng gói & Phát hành: publish.bat (Self-Contained x64 .NET 10), publish_installer.bat (Inno Setup), SSOT AppConstants. |
+| `wincare-module-creator` | [wincare-module-creator/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-module-creator/SKILL.md) | Standardized 7-step modular workflow (`Model` $\rightarrow$ `Engine` $\rightarrow$ `DI` $\rightarrow$ `ViewModel` $\rightarrow$ `Aura` $\rightarrow$ `i18n` $\rightarrow$ `Test`). |
+| `wincare-safe-ops` | [wincare-safe-ops/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-safe-ops/SKILL.md) | Zero-Trust OS operations: `SafePathGuard`, `SafeRegistryGuard`, registry backups, `ProcessRunner`, `ServiceSafetyService`, DPAPI. |
+| `wincare-concurrency-guard` | [wincare-concurrency-guard/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-concurrency-guard/SKILL.md) | WinUI 3 threading: `RunOnUI()`, `DispatcherQueue`, RelayCommands, `CancellationToken`, eliminating sync-over-async. |
+| `wincare-ui-aura` | [wincare-ui-aura/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-ui-aura/SKILL.md) | Aura Glass Fluent 2.0 UI: Tabular figures, Mica Alt, unsubscribe `Unloaded` events, zero memory leaks. |
+| `wincare-i18n-sync` | [wincare-i18n-sync/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-i18n-sync/SKILL.md) | Dual-language synchronization: `vi-VN` & `en-US` in `TranslationManager.Translations.cs`, `TranslationConverter`, zero hardcoded text. |
+| `wincare-db-wal` | [wincare-db-wal/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-db-wal/SKILL.md) | SQLite WAL management: centralized `lock (_dbLock)`, parameterized SQL, `DatabaseTestCollection` for xUnit. |
+| `wincare-error-resilience` | [wincare-error-resilience/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-error-resilience/SKILL.md) | Resilience: `OperationResult<T>` pattern, Zero-Silent Catch, `CrashLogger.LogError`, graceful fallback. |
+| `wincare-test-verifier` | [wincare-test-verifier/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-test-verifier/SKILL.md) | Token-efficient testing: filtered test runs (`--filter`), regression analysis, target 100% Passed. |
+| `wincare-token-guard` | [wincare-token-guard/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-token-guard/SKILL.md) | Token optimization: `grep_search` targeted lookups, narrow 30-60 line slicing, in-place patching, quiet logs. |
+| `wincare-ci-packaging` | [wincare-ci-packaging/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-ci-packaging/SKILL.md) | CI & packaging: `publish.bat` (Self-Contained x64 .NET 10), `publish_installer.bat` (Inno Setup), SSOT `AppConstants`. |
 
 ---
 
-## ⚡ 7. Lệnh Vận Hành & Bản Kiểm Kê Hoàn Tất
+## ⚡ 7. Operational Commands & Completion Checklist
 
 ```powershell
-dotnet build WinCarePro.csproj -c Debug                         # Biên dịch kiểm tra lỗi
-dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal # Chạy bộ test (Mục tiêu: 100% Passed - 465 Tests)
-.\publish.bat                                                  # Đóng gói Self-Contained x64
-.\publish_installer.bat                                        # Tạo bộ cài đặt Inno Setup
+dotnet build WinCarePro.csproj -c Debug                         # Syntax and compilation check
+dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal # Run full test suite (Target: 100% Passed - 465 Tests)
+.\publish.bat                                                  # Self-Contained x64 deployment
+.\publish_installer.bat                                        # Build Inno Setup installer package
 ```
 
-### ✅ Checklist Tự Rà Soát Trước Khi Bàn Giao:
-- [ ] **1. Thứ bậc ưu tiên:** Bảo đảm `Safety > Correctness > Security > Stability > Performance`.
-- [ ] **2. Phân tầng chuẩn:** View $\rightarrow$ ViewModel $\rightarrow$ Engine $\rightarrow$ Core; không lẫn WinUI vào Engine.
-- [ ] **3. An toàn Zero-Trust:** Dùng `ProcessRunner`, `SafePathGuard`, `SafeRegistryGuard`, DPAPI, không command injection.
-- [ ] **4. Đa luồng Zero-Crash:** 100% cập nhật UI qua `RunOnUI()`, không sync-over-async.
-- [ ] **5. CancellationToken & Finally:** Luôn giải phóng `IsBusy` và cờ trạng thái trong `finally`.
-- [ ] **6. SQLite WAL Safe:** Mọi tương tác SQLite đều bọc `lock (_dbLock)`.
-- [ ] **7. Zero-Silent Catch:** Không có khối `catch` rỗng; trả về `OperationResult` hoặc ghi log.
-- [ ] **8. Đầy đủ i18n:** Đồng bộ đủ cặp key trên cả `vi-VN` và `en-US`.
-- [ ] **9. Bộ nhớ sạch:** Hủy đăng ký event XAML, dọn dẹp visual 3D, giải phóng `IDisposable`.
-- [ ] **10. 100% Unit Test Passed:** Tất cả 465 bài test xUnit chạy thành công (`0 Failed`), không phát sinh build warning mới.
-- [ ] **11. Tiết kiệm Token & Zero-Overwrite:** Sửa cục bộ qua diff/patch, chỉ đọc lát cắt dòng có mục tiêu, tái sử dụng Core Guards.
+### ✅ Pre-Handoff Quality Checklist:
+
+- [ ] **1. Priority Order:** Enforce `Safety > Correctness > Security > Stability > Performance`.
+- [ ] **2. Clean Architecture:** View $\rightarrow$ ViewModel $\rightarrow$ Engine $\rightarrow$ Core; zero WinUI controls inside Engines.
+- [ ] **3. Zero-Trust Safety:** Use `ProcessRunner`, `SafePathGuard`, `SafeRegistryGuard`, DPAPI; zero command injection.
+- [ ] **4. Zero-Crash Concurrency:** 100% UI mutations marshaled through `RunOnUI()`; no sync-over-async deadlocks.
+- [ ] **5. Cancellation & Finally:** ALWAYS clear `IsBusy` and state flags in `finally` blocks.
+- [ ] **6. SQLite WAL Safe:** ALL database queries wrapped in `lock (_dbLock)`.
+- [ ] **7. Zero-Silent Catch:** No empty `catch` blocks; return `OperationResult` or log via `CrashLogger`.
+- [ ] **8. Full i18n:** Synchronized key pairs in both `vi-VN` and `en-US` dictionaries.
+- [ ] **9. Clean Memory:** Detach XAML event handlers, cleanup visual animations, dispose unmanaged resources.
+- [ ] **10. 100% Unit Tests Passed:** All 465 xUnit test cases pass (`0 Failed`); no new compiler warnings.
+- [ ] **11. Token Economy & Zero-Overwrite:** Localized diff/patching; targeted narrow line reads; reuse Core Guards.
+- [ ] **12. Native Interop:** MUST NOT use `[DllImport]`; all Win32 APIs MUST use source-generated `[LibraryImport]`.
+- [ ] **13. Test Suite Integrity:** NEVER weaken, mock away, or delete existing test cases in `WinCarePro.Tests/`.
+- [ ] **14. Clean Source Tree:** Clean `git status`; zero orphaned `.tmp`, `.orig`, or scratch files.

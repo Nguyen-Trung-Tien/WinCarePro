@@ -38,20 +38,12 @@ public sealed partial class SettingsPage
                 string dbPath = Path.Combine(appData, "wincaredb.db");
                 
                 // 1. Logs
-                long logsCount = 0;
+                long logsCount = DbManager.GetLogCount();
                 long dbSize = 0;
                 if (File.Exists(dbPath))
                 {
                     dbSize = new FileInfo(dbPath).Length;
                 }
-                try
-                {
-                    using var conn = new SqliteConnection($"Data Source={dbPath}");
-                    conn.Open();
-                    using var cmd = new SqliteCommand("SELECT COUNT(*) FROM Logs", conn);
-                    logsCount = (long)(cmd.ExecuteScalar() ?? 0L);
-                }
-                catch {}
                 string logsText = $"{logsCount} logs ({FormatHelper.FormatBytes(dbSize)})";
 
                 // 2. Reports

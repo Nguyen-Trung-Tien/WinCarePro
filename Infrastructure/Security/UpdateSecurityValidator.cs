@@ -14,7 +14,7 @@ namespace WinCarePro.Infrastructure.Security;
 /// Enforces trusted HTTPS sources, strict SHA-256 integrity, WinVerifyTrust Authenticode
 /// signature validation, and publisher identity checks prior to executing update packages.
 /// </summary>
-public static class UpdateSecurityValidator
+public static partial class UpdateSecurityValidator
 {
     public const string DefaultExpectedPublisher = "Nguyen Trung Tien";
 
@@ -425,10 +425,10 @@ public static class UpdateSecurityValidator
 
     private static readonly Guid WINTRUST_ACTION_GENERIC_VERIFY_V2 = new("{00AAC56B-CD44-11d0-8CC2-00C04FC295EE}");
 
-    [DllImport("wintrust.dll", ExactSpelling = true, SetLastError = false, CharSet = CharSet.Unicode)]
-    private static extern int WinVerifyTrust(
+    [LibraryImport("wintrust.dll", EntryPoint = "WinVerifyTrust")]
+    private static partial int WinVerifyTrust(
         IntPtr hwnd,
-        [MarshalAs(UnmanagedType.LPStruct)] Guid pgActionID,
+        in Guid pgActionID,
         IntPtr pWVTData
     );
 

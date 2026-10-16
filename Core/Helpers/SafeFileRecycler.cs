@@ -10,7 +10,7 @@ namespace WinCarePro.Core.Helpers;
 /// Provides safe file and directory deletion capabilities with Windows Recycle Bin support (Undoable),
 /// verified strictly against SafePathGuard before any deletion attempt.
 /// </summary>
-public static class SafeFileRecycler
+public static partial class SafeFileRecycler
 {
     private const uint FO_DELETE = 0x0003;
     private const ushort FOF_ALLOWUNDO = 0x0040;
@@ -23,20 +23,16 @@ public static class SafeFileRecycler
     {
         public IntPtr hwnd;
         public uint wFunc;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string pFrom;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string? pTo;
+        public IntPtr pFrom;
+        public IntPtr pTo;
         public ushort fFlags;
-        [MarshalAs(UnmanagedType.Bool)]
-        public bool fAnyOperationsAborted;
+        public int fAnyOperationsAborted;
         public IntPtr hNameMappings;
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string? lpszProgressTitle;
+        public IntPtr lpszProgressTitle;
     }
 
-    [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern int SHFileOperation(ref SHFILEOPSTRUCT lpFileOp);
+    [LibraryImport("shell32.dll", EntryPoint = "SHFileOperationW", SetLastError = true)]
+    private static partial int SHFileOperation(ref SHFILEOPSTRUCT lpFileOp);
 
     /// <summary>
     /// Safely deletes a file or directory. By default, moves it to the Windows Recycle Bin for safety.
@@ -72,21 +68,29 @@ public static class SafeFileRecycler
             if (sendToRecycleBin)
             {
                 // SHFileOperation requires double null-terminated string
-                var fileOp = new SHFILEOPSTRUCT
+                IntPtr pFromMem = Marshal.StringToHGlobalUni(fullPath + '\0' + '\0');
+                try
                 {
-                    wFunc = FO_DELETE,
-                    pFrom = fullPath + '\0' + '\0',
-                    fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_SILENT | FOF_NOERRORUI
-                };
+                    var fileOp = new SHFILEOPSTRUCT
+                    {
+                        wFunc = FO_DELETE,
+                        pFrom = pFromMem,
+                        fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_SILENT | FOF_NOERRORUI
+                    };
 
-                int result = SHFileOperation(ref fileOp);
-                if (result == 0 && !fileOp.fAnyOperationsAborted)
-                {
-                    return OperationResult.Ok();
+                    int result = SHFileOperation(ref fileOp);
+                    if (result == 0 && fileOp.fAnyOperationsAborted == 0)
+                    {
+                        return OperationResult.Ok();
+                    }
+
+                    // If SHFileOperation failed or was not supported on volume, fall back to permanent deletion if safe
+                    CrashLogger.LogMessage("SafeFileRecycler", $"SHFileOperation returned {result} for {fullPath}. Falling back to standard deletion.");
                 }
-
-                // If SHFileOperation failed or was not supported on volume, fall back to permanent deletion if safe
-                CrashLogger.LogMessage("SafeFileRecycler", $"SHFileOperation returned {result} for {fullPath}. Falling back to standard deletion.");
+                finally
+                {
+                    Marshal.FreeHGlobal(pFromMem);
+                }
             }
 
             if (isFile)

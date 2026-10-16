@@ -21,6 +21,7 @@
     <FileVersion>5.0.0.0</FileVersion>
     <InformationalVersion>5.0.0 (Codename: Polaris)</InformationalVersion>
     <Product>WinCare Pro v5.0.0</Product>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

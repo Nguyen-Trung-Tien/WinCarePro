@@ -17,6 +17,7 @@ namespace WinCarePro.Views;
 public sealed partial class NetworkPage : Page
 {
     public NetworkViewModel ViewModel { get; }
+    private readonly System.ComponentModel.PropertyChangedEventHandler _vmPropertyChangedHandler;
     public string[] DohProviders { get; } = new[] { "Cloudflare", "Google", "AdGuard", "NextDNS" };
 
     public NetworkPage()
@@ -25,6 +26,22 @@ public sealed partial class NetworkPage : Page
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
+
+        _vmPropertyChangedHandler = (s, e) =>
+        {
+            if (e.PropertyName == nameof(ViewModel.ConsoleOutput))
+            {
+                DispatcherQueue?.TryEnqueue(() =>
+                {
+                    try
+                    {
+                        TerminalScrollViewer?.ChangeView(null, TerminalScrollViewer.ScrollableHeight, null);
+                    }
+                    catch { }
+                });
+            }
+        };
+        ViewModel.PropertyChanged += _vmPropertyChangedHandler;
 
         this.Loaded += (s, e) =>
         {
@@ -60,20 +77,7 @@ public sealed partial class NetworkPage : Page
             });
         };
 
-        ViewModel.PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName == nameof(ViewModel.ConsoleOutput))
-            {
-                DispatcherQueue?.TryEnqueue(() =>
-                {
-                    try
-                    {
-                        TerminalScrollViewer?.ChangeView(null, TerminalScrollViewer.ScrollableHeight, null);
-                    }
-                    catch { }
-                });
-            }
-        };
+
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)
@@ -135,7 +139,11 @@ public sealed partial class NetworkPage : Page
     {
         base.OnNavigatedFrom(e);
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
-        ViewModel.Cleanup();
+        if (ViewModel != null)
+        {
+            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            ViewModel.Cleanup();
+        }
     }
 
     public void OnTabQualityClick(object sender, RoutedEventArgs e) => SetActiveTab("quality");

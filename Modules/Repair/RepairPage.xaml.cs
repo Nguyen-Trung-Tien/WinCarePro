@@ -12,6 +12,7 @@ namespace WinCarePro.Views;
 public sealed partial class RepairPage : Page
 {
     public RepairViewModel ViewModel { get; }
+    private readonly System.ComponentModel.PropertyChangedEventHandler _vmPropertyChangedHandler;
 
     public RepairPage()
     {
@@ -20,13 +21,14 @@ public sealed partial class RepairPage : Page
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
 
-        ViewModel.PropertyChanged += (s, e) =>
+        _vmPropertyChangedHandler = (s, e) =>
         {
             if (e.PropertyName == nameof(ViewModel.IsBusy) || e.PropertyName == nameof(ViewModel.IsScanningDiagnostics))
             {
                 DispatcherQueue?.TryEnqueue(UpdateProgressOverlayState);
             }
         };
+        ViewModel.PropertyChanged += _vmPropertyChangedHandler;
 
         this.Loaded += (s, e) =>
         {
@@ -71,11 +73,15 @@ public sealed partial class RepairPage : Page
     {
         base.OnNavigatedFrom(e);
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
-        if (ViewModel != null && ViewModel.IsBusy)
+        if (ViewModel != null)
         {
-            ViewModel.CancelCurrentOperation();
+            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            if (ViewModel.IsBusy)
+            {
+                ViewModel.CancelCurrentOperation();
+            }
+            ViewModel.Cleanup();
         }
-        ViewModel?.Cleanup();
     }
 
     public void OnTabDiagnosticsClick(object sender, RoutedEventArgs e) => SetActiveTab("diagnostics");

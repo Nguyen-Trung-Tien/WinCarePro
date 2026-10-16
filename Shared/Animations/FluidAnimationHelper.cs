@@ -749,5 +749,44 @@ namespace WinCarePro.Shared.Animations
             textBlock.Text = $"{from}{suffix}";
             timer.Start();
         }
+
+        // ============================================================
+        // 17. IMPLICIT COMPOSITION ANIMATIONS (Spring Physics & Layout)
+        // ============================================================
+
+        /// <summary>
+        /// Attaches implicit animations to Visual.Offset and Visual.Scale
+        /// for fluid physics-based movement when elements change size, position, or layout.
+        /// </summary>
+        public static void ApplyImplicitOffsetAndScale(UIElement element)
+        {
+            if (element == null) return;
+            try
+            {
+                Visual visual = ElementCompositionPreview.GetElementVisual(element);
+                Compositor compositor = visual.Compositor;
+                SafeSetCenterPoint(element, visual);
+
+                var implicitAnimations = compositor.CreateImplicitAnimationCollection();
+
+                var offsetAnim = compositor.CreateVector3KeyFrameAnimation();
+                offsetAnim.Target = nameof(Visual.Offset);
+                offsetAnim.InsertExpressionKeyFrame(1.0f, "this.FinalValue");
+                offsetAnim.Duration = TimeSpan.FromMilliseconds(250);
+
+                var scaleAnim = compositor.CreateVector3KeyFrameAnimation();
+                scaleAnim.Target = nameof(Visual.Scale);
+                scaleAnim.InsertExpressionKeyFrame(1.0f, "this.FinalValue");
+                scaleAnim.Duration = TimeSpan.FromMilliseconds(200);
+
+                implicitAnimations[nameof(Visual.Offset)] = offsetAnim;
+                implicitAnimations[nameof(Visual.Scale)] = scaleAnim;
+                visual.ImplicitAnimations = implicitAnimations;
+            }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ApplyImplicitOffsetAndScale", ex);
+            }
+        }
     }
 }

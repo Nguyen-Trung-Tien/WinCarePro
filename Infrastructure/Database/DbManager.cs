@@ -935,8 +935,17 @@ public class DbManager
 
     #endregion
 
-    #region Database Lifecycle & Graceful Shutdown
+    public static long GetLogCount()
+    {
+        return ExecuteWithConnection(connection =>
+        {
+            using var cmd = new SqliteCommand("SELECT COUNT(*) FROM Logs;", connection);
+            var result = cmd.ExecuteScalar();
+            return result is long l ? l : Convert.ToInt64(result ?? 0L);
+        }, 0L);
+    }
 
+    #region Database Lifecycle & Graceful Shutdown
 
     public static void ShutdownDatabase()
     {

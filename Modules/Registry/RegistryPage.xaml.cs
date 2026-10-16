@@ -16,6 +16,7 @@ namespace WinCarePro.Views;
 public sealed partial class RegistryPage : Page
 {
     public RegistryViewModel ViewModel { get; }
+    private readonly System.ComponentModel.PropertyChangedEventHandler _vmPropertyChangedHandler;
 
     public static readonly DependencyProperty WideLayoutVisibilityProperty =
         DependencyProperty.Register(nameof(WideLayoutVisibility), typeof(Visibility), typeof(RegistryPage), new PropertyMetadata(Visibility.Visible));
@@ -33,13 +34,14 @@ public sealed partial class RegistryPage : Page
         ViewModel = App.Services.GetRequiredService<RegistryViewModel>();
         this.DataContext = ViewModel;
 
-        ViewModel.PropertyChanged += (s, e) =>
+        _vmPropertyChangedHandler = (s, e) =>
         {
             if (e.PropertyName == nameof(ViewModel.IsBusy))
             {
                 UpdateLoadingOverlayState();
             }
         };
+        ViewModel.PropertyChanged += _vmPropertyChangedHandler;
 
         this.Loaded += (s, e) =>
         {
@@ -57,7 +59,11 @@ public sealed partial class RegistryPage : Page
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        ViewModel?.Cleanup();
+        if (ViewModel != null)
+        {
+            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            ViewModel.Cleanup();
+        }
     }
 
     private async void OnScanClick(object sender, RoutedEventArgs e)

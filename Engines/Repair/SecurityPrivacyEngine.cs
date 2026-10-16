@@ -12,7 +12,7 @@ using WinCarePro.Services;
 
 namespace WinCarePro.Engines;
 
-public class SecurityPrivacyEngine
+public partial class SecurityPrivacyEngine
 {
     // ==================== SECURITY MONITORING ====================
 
@@ -1072,14 +1072,17 @@ public class SecurityPrivacyEngine
 
     // ==================== ACTIVITY TRACES & PRIVACY CLEANER ====================
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool OpenClipboard(IntPtr hWndNewOwner);
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool OpenClipboard(IntPtr hWndNewOwner);
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool EmptyClipboard();
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool EmptyClipboard();
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool CloseClipboard();
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool CloseClipboard();
 
     public bool ClearClipboard()
     {

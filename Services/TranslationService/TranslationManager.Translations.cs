@@ -23,6 +23,11 @@ public partial class TranslationManager
         _translations["User Guide"] = "Hướng Dẫn Sử Dụng";
         _translations["Toggle Theme"] = "Đổi Giao Diện";
         _translations["Notifications"] = "Thông Báo";
+        _translations["Real-time Mini Floating HUD"] = "HUD mini nổi thời gian thực";
+        _translations["Interactive Storage Sunburst Chart"] = "Biểu đồ phân bổ dung lượng tương tác";
+        _translations["System Health Timeline"] = "Dòng thời gian sức khỏe hệ thống";
+        _translations["Visual disk breakdown & folder hierarchy analysis."] = "Phân tích trực quan dung lượng ổ đĩa & cấu trúc thư mục.";
+        _translations["Chronological log of system health events & repairs."] = "Nhật ký theo dòng thời gian về sự kiện sức khỏe & khắc phục.";
 
         // --- Operation States ---
         _translations["Idle"] = "Sẵn sàng";

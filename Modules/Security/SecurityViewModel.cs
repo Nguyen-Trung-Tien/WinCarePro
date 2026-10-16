@@ -311,15 +311,15 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         try
         {
             await Task.Run(() => _securityEngine.SetPrivacySetting(type, enabled));
-            _dispatcherQueue?.TryEnqueue(() =>
-            {
-                LoadPrivacySettings();
-                IsBusy = false;
-            });
+            RunOnUI(() => LoadPrivacySettings());
         }
-        catch
+        catch (Exception ex)
         {
-            _dispatcherQueue?.TryEnqueue(() => IsBusy = false);
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("SecurityViewModel.TogglePrivacySettingAsync", ex);
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -330,19 +330,22 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         try
         {
             await Task.Run(() => _securityEngine.ClearClipboard());
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 StatusMessage = "Clipboard history successfully cleared.".T();
-                IsBusy = false;
             });
         }
         catch (Exception ex)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("SecurityViewModel.ClearClipboardAsync", ex);
+            RunOnUI(() =>
             {
                 StatusMessage = string.Format("Failed to clear clipboard: {0}".T(), ex.Message);
-                IsBusy = false;
             });
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -353,19 +356,22 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         try
         {
             await Task.Run(() => _securityEngine.ClearRecentFiles() + _securityEngine.ClearExplorerRunHistory());
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 StatusMessage = "Recent items and Explorer Run history successfully cleared.".T();
-                IsBusy = false;
             });
         }
         catch (Exception ex)
         {
-            _dispatcherQueue?.TryEnqueue(() =>
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("SecurityViewModel.ClearRecentFilesAsync", ex);
+            RunOnUI(() =>
             {
                 StatusMessage = string.Format("Failed to clear recent files: {0}".T(), ex.Message);
-                IsBusy = false;
             });
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 }

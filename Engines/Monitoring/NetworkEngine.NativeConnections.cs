@@ -32,20 +32,20 @@ public partial class NetworkEngine
         UDP_TABLE_OWNER_MODULE
     }
 
-    [DllImport("iphlpapi.dll", SetLastError = true)]
-    private static extern uint GetExtendedTcpTable(
+    [LibraryImport("iphlpapi.dll", SetLastError = true)]
+    private static partial uint GetExtendedTcpTable(
         IntPtr pTcpTable,
         ref int pdwSize,
-        bool bOrder,
+        [MarshalAs(UnmanagedType.Bool)] bool bOrder,
         int ulAf,
         TCP_TABLE_CLASS tableClass,
         uint reserved = 0);
 
-    [DllImport("iphlpapi.dll", SetLastError = true)]
-    private static extern uint GetExtendedUdpTable(
+    [LibraryImport("iphlpapi.dll", SetLastError = true)]
+    private static partial uint GetExtendedUdpTable(
         IntPtr pUdpTable,
         ref int pdwSize,
-        bool bOrder,
+        [MarshalAs(UnmanagedType.Bool)] bool bOrder,
         int ulAf,
         UDP_TABLE_CLASS tableClass,
         uint reserved = 0);

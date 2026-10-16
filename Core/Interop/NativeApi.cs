@@ -8,7 +8,7 @@ namespace WinCarePro.Core.Interop;
 /// All native structs and imports are consolidated here to eliminate duplication and ensure
 /// a single source of truth for interop layout correctness.
 /// </summary>
-public static class NativeApi
+public static partial class NativeApi
 {
     #region Memory Status
 
@@ -36,9 +36,9 @@ public static class NativeApi
         }
     }
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
+    public static partial bool GlobalMemoryStatusEx(ref MEMORYSTATUSEX lpBuffer);
 
     #endregion
 
@@ -56,17 +56,17 @@ public static class NativeApi
         public readonly ulong ToUInt64() => ((ulong)dwHighDateTime << 32) | dwLowDateTime;
     }
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool GetSystemTimes(out FILETIME lpIdleTime, out FILETIME lpKernelTime, out FILETIME lpUserTime);
+    public static partial bool GetSystemTimes(out FILETIME lpIdleTime, out FILETIME lpKernelTime, out FILETIME lpUserTime);
 
     #endregion
 
     #region Disk Space
 
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [LibraryImport("kernel32.dll", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool GetDiskFreeSpaceEx(
+    public static partial bool GetDiskFreeSpaceEx(
         string lpDirectoryName,
         out ulong lpFreeBytesAvailable,
         out ulong lpTotalNumberOfBytes,
@@ -76,16 +76,16 @@ public static class NativeApi
 
     #region Process Memory Management
 
-    [DllImport("psapi.dll", SetLastError = true)]
+    [LibraryImport("psapi.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool EmptyWorkingSet(IntPtr hProcess);
+    public static partial bool EmptyWorkingSet(IntPtr hProcess);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    public static partial IntPtr OpenProcess(uint dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool CloseHandle(IntPtr hObject);
+    public static partial bool CloseHandle(IntPtr hObject);
 
     /// <summary>Required for EmptyWorkingSet.</summary>
     public const uint PROCESS_SET_QUOTA = 0x0100;
@@ -107,9 +107,9 @@ public static class NativeApi
         public ulong OtherTransferCount;
     }
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool GetProcessIoCounters(IntPtr hProcess, out IO_COUNTERS lpIoCounters);
+    public static partial bool GetProcessIoCounters(IntPtr hProcess, out IO_COUNTERS lpIoCounters);
 
     #endregion
 
@@ -176,9 +176,9 @@ public static class NativeApi
         public int BatteryFullLifeTime;
     }
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS lpSystemPowerStatus);
+    public static partial bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS lpSystemPowerStatus);
 
     #endregion
 }

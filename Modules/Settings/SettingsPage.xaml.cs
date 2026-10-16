@@ -22,8 +22,9 @@ public sealed partial class SettingsPage : Page
     private bool _loadingSettings = true; // Guard initialization events from saving settings early
     private DispatcherQueueTimer? _aboutTelemetryTimer;
 
-    [DllImport("kernel32.dll", EntryPoint = "SetProcessWorkingSetSize")]
-    private static extern bool SetProcessWorkingSetSize(IntPtr process, int minSize, int maxSize);
+    [LibraryImport("kernel32.dll", EntryPoint = "SetProcessWorkingSetSize", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetProcessWorkingSetSize(IntPtr process, int minSize, int maxSize);
 
     // Shared HttpClient singleton to prevent socket exhaustion from per-call instantiation
     private static readonly HttpClient _httpClient = new()

@@ -367,14 +367,14 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
         finally
         {
-            if (token.IsCancellationRequested || _isDisposed)
+            RunOnUI(() =>
             {
-                RunOnUI(() =>
+                IsBusy = false;
+                if (token.IsCancellationRequested || _isDisposed)
                 {
-                    IsBusy = false;
                     SetOperationState(OperationState.Idle);
-                });
-            }
+                }
+            });
         }
     }
 
@@ -799,13 +799,14 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         try
         {
             string explorerPath = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("explorer.exe") ?? "explorer.exe";
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            var psi = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = explorerPath,
-                Arguments = WinCarePro.Infrastructure.Security.InputSanitizer.EscapeCommandLineArgument(path),
                 UseShellExecute = true,
                 WorkingDirectory = Environment.SystemDirectory
-            });
+            };
+            psi.ArgumentList.Add(path);
+            System.Diagnostics.Process.Start(psi);
         }
         catch (Exception ex)
         {

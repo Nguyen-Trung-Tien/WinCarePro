@@ -8,7 +8,7 @@ using WinCarePro.Models;
 
 namespace WinCarePro.Engines;
 
-public class JunkCleanerEngine
+public partial class JunkCleanerEngine
 {
     public event Action<string>? ProgressMessage;
     public event Action<int>? ProgressChanged;
@@ -24,11 +24,11 @@ public class JunkCleanerEngine
         public long i64NumItems;
     }
 
-    [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-    private static extern int SHQueryRecycleBin(string? pszRootPath, ref SHQUERYRBINFO pSHQueryRBInfo);
+    [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
+    private static partial int SHQueryRecycleBin(string? pszRootPath, ref SHQUERYRBINFO pSHQueryRBInfo);
 
-    [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-    private static extern int SHEmptyRecycleBin(IntPtr hwnd, string? pszRootPath, uint dwFlags);
+    [LibraryImport("shell32.dll", StringMarshalling = StringMarshalling.Utf16)]
+    private static partial int SHEmptyRecycleBin(IntPtr hwnd, string? pszRootPath, uint dwFlags);
 
     private const uint SHERB_NOCONFIRMATION = 0x00000001;
     private const uint SHERB_NOPROGRESSUI = 0x00000002;

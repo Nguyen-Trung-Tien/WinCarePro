@@ -7,10 +7,11 @@ using WinCarePro.Services.Contracts;
 
 namespace WinCarePro.Services.Implementations;
 
-public class NotificationService : INotificationService
+public partial class NotificationService : INotificationService
 {
-    [System.Runtime.InteropServices.DllImport("user32.dll")]
-    private static extern bool MessageBeep(uint uType);
+    [System.Runtime.InteropServices.LibraryImport("user32.dll")]
+    [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+    private static partial bool MessageBeep(uint uType);
 
     private class QueuedNotification
     {

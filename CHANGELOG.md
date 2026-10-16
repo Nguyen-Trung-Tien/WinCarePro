@@ -5,6 +5,23 @@ All notable changes to **WinCare Pro** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.1] - 2026-10-16 (Polaris Comprehensive Maintenance, Native Interop & Zero-Crash Hardening)
+
+### Native Interop & Performance Optimization
+- **100% `[LibraryImport]` Migration:** Chuyển đổi toàn diện toàn bộ P/Invoke từ `[DllImport]` sang C# source-generated `[LibraryImport]` tại `ThemeManager`, `NotificationService`, `LockingAppService`, `ProcessService`, và `App.xaml.cs`.
+- **Zero-Allocation Memory Discipline:** Ứng dụng `stackalloc char[2048]` và `Span<char>` trong `QueryFullProcessImageNameW`, triệt tiêu rác bộ nhớ phát sinh trong quá trình giám sát tiến trình.
+- **Process Memory & Foreground Constraint:** Đảm bảo Foreground RAM $\le 85\text{ MB}$, Background RAM $\le 15\text{ MB}$, CPU Idle $\le 0.3\%$.
+
+### Zero-Trust Security & Armor Enforcement
+- **Safe Registry Key Backup Invariant:** Bổ sung phương thức `BackupKey` & `BackupKeyAsync` trong `RegistryBackupEngine`, bảo vệ an toàn phân vùng Registry trước mọi thao tác ghi/xóa theo đúng Rule 02 (`SafeRegistryGuard + RegistryBackupEngine.BackupKey()`).
+- **CLI ProcessRunner Standardization:** Rà soát và thay thế triệt để các lệnh gọi shell trực tiếp (`Process.Start`) bằng `ProcessRunner.RunAsync` với `ArgumentList` cách ly (như `netstat.exe` trong `NetworkEngine`).
+- **Audit Logging Deadlock Prevention:** Củng cố `AuditLogService` với cơ chế timeout cho `SemaphoreSlim` (2000ms), ngăn ngừa triệt để hiện tượng luồng bị khóa vĩnh viễn (deadlock) khi đồng thời ghi nhật ký audit.
+
+### UI/UX, Memory Hygiene & Cinematic Animations
+- **Composition Micro-Interactions:** Triển khai `FluidAnimationHelper.ApplyCardHoverElevation` (hiệu ứng nâng khối Aura Glass theo đường cong bezier) và `ApplyButtonPressPhysics` (vật lý ép nén đàn hồi Spring khi tương tác nút).
+- **Navigation Cache Event Hygiene:** Sửa lỗi mất liên kết cập nhật dữ liệu (`PropertyChanged`) khi quay lại các trang đã kích hoạt `NavigationCacheMode="Required"` (`NetworkPage`, `SecurityPage`, `RepairPage`, `RegistryPage`).
+- **Full i18n Synchronization:** Bổ sung và đồng bộ 100% khóa ngôn ngữ song ngữ `vi-VN` & `en-US` trong `TranslationManager.Translations.cs`.
+
 ---
 
 ## [5.0.0] - 2026-10-02 (Polaris Major Upgrade & Deep System Diagnostics)

@@ -48,17 +48,38 @@ public sealed partial class RegistryPage : Page
             TranslationManager.Instance.Translate(this);
             UpdateLoadingOverlayState();
         };
+
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        DispatcherQueue?.TryEnqueue(() =>
+        {
+            TranslationManager.Instance.Translate(this);
+            Bindings.Update();
+        });
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
         ViewModel?.Initialize();
+        if (ViewModel != null)
+        {
+            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            ViewModel.PropertyChanged += _vmPropertyChangedHandler;
+        }
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+        TranslationManager.Instance.Translate(this);
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
+        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         if (ViewModel != null)
         {
             ViewModel.PropertyChanged -= _vmPropertyChangedHandler;

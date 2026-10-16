@@ -430,24 +430,11 @@ public partial class NetworkEngine
             }
             catch { }
 
-            string netstatPath = Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("netstat.exe") ?? Path.Combine(Environment.SystemDirectory, "netstat.exe");
-            var psi = new ProcessStartInfo
+            var netstatResult = Core.Helpers.ProcessRunner.RunAsync("netstat.exe", new[] { "-ano" }, TimeSpan.FromSeconds(4)).GetAwaiter().GetResult();
+            if (netstatResult.Success && !string.IsNullOrWhiteSpace(netstatResult.Output))
             {
-                FileName = netstatPath,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                CreateNoWindow = true,
-                WorkingDirectory = Environment.SystemDirectory
-            };
-            psi.ArgumentList.Add("-ano");
-
-            using var proc = Process.Start(psi);
-            if (proc != null)
-            {
-                string output = proc.StandardOutput.ReadToEnd();
-                try { proc.WaitForExit(4000); } catch { }
-
-                    using var reader = new StringReader(output);
+                string output = netstatResult.Output;
+                using var reader = new StringReader(output);
                     string? line;
                     while ((line = reader.ReadLine()) != null)
                 {

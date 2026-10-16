@@ -67,16 +67,16 @@ The compiled output is saved to: `PublishOutput/WinCareProSetup.exe`.
 
 ```json
 {
-  "version": "5.0.0",
-  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe",
-  "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe",
+  "version": "5.1.1",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1/WinCareProSetup.exe",
+  "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1/WinCareProSetup.exe",
   "sha256": "99fd2e278f7c359901099dd683913458a2408e5abbbaa9eed874516dac41e6e5",
-  "changelog": "v5.0.0 (Polaris Major Upgrade): Comprehensive logical volume analysis with forecasting model (Days to Full), platform security checks (HVCI Memory Integrity, Defender Tamper Protection, RDP NLA), battery-aware background watchdog, and zero-mock hardware telemetry enforcement.",
-  "beta_version": "5.0.0-beta",
-  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0-beta/WinCareProSetup_Beta.exe",
-  "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0-beta/WinCareProSetup_Beta.exe",
+  "changelog": "v5.1.1 (Polaris Release): Comprehensive system maintenance, complete LibraryImport source-generation migration, Zero-Trust registry backups and composition micro-interactions.",
+  "beta_version": "5.1.1-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1-beta/WinCareProSetup_Beta.exe",
+  "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1-beta/WinCareProSetup_Beta.exe",
   "beta_sha256": "99fd2e278f7c359901099dd683913458a2408e5abbbaa9eed874516dac41e6e5",
-  "beta_changelog": "WinCare Pro v5.0.0 (Polaris Major Release)"
+  "beta_changelog": "WinCare Pro v5.1.1 (Polaris Release)"
 }
 ```
 

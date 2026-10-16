@@ -1,6 +1,6 @@
 # 📚 WinCare Pro Suite — Documentation Hub
 
-> **System Version:** v5.0.0 (Codename: Polaris)  
+> **System Version:** v5.1.1 (Codename: Polaris)  
 > **Target Platform:** Windows 10 (Build 19041+) & Windows 11 (x64)  
 > **Core Stack:** .NET 10.0 • Windows App SDK (WinUI 3) • SQLite WAL • Modular MVVM  
 > **Documentation Standard:** Production-Ready Technical English & Authoritative References  

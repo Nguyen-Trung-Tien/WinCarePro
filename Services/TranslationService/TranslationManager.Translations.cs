@@ -3852,6 +3852,13 @@ public partial class TranslationManager
         _translations["Polaris"] = "Polaris";
         _translations["Major upgrade with AI predictive storage exhaustion, platform kernel isolation & battery-aware background watchdog."] = "Bản nâng cấp lớn với AI dự đoán cạn kiệt ổ đĩa, bảo mật cô lập nhân nền tảng & giám sát nền nhận biết nguồn pin.";
 
+        // --- WinCare Pro v5.1.1 Polaris Maintenance & Optimization ---
+        _translations["v5.1.1 (Polaris)"] = "v5.1.1 (Polaris)";
+        _translations["v5.1.1 Polaris"] = "v5.1.1 Polaris";
+        _translations["Version 5.1.1 (Polaris) • 64-bit Native System Suite"] = "Phiên bản 5.1.1 (Polaris) • Bộ Công Cụ Hệ Thống 64-bit Native";
+        _translations["What's New in v5.1.1"] = "Điểm mới trong v5.1.1";
+        _translations["Comprehensive maintenance, full source-generated LibraryImport migration, zero-trust registry safety and cinematic composition animations."] = "Bảo trì toàn diện, hoàn tất chuyển đổi LibraryImport sinh mã nguồn, an toàn bảo mật Registry Zero-Trust và hiệu ứng chuyển động đồ họa Cinematic.";
+
         BuildReverseTranslations();
     }
 }

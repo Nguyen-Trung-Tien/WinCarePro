@@ -71,7 +71,11 @@ public class AuditLogService
 
             string entry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{cat}] Action: {act} | Target: {tgt} | Result: {res} | Details: {det}";
             
-            _logSemaphore.Wait();
+            if (!_logSemaphore.Wait(2000))
+            {
+                System.Diagnostics.Debug.WriteLine($"[AuditLogService] Timeout acquiring semaphore for {act}");
+                return;
+            }
             try
             {
                 EnsureLogRotation();
@@ -82,9 +86,9 @@ public class AuditLogService
                 _logSemaphore.Release();
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Fail silently
+            System.Diagnostics.Debug.WriteLine($"[AuditLogService] LogAction error: {ex.Message}");
         }
     }
 
@@ -101,7 +105,11 @@ public class AuditLogService
             string entry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{cat}] Action: {act} | Target: {tgt} | Result: {res} | Details: {det}";
             
             byte[] encodedText = Encoding.UTF8.GetBytes(entry + Environment.NewLine);
-            await _logSemaphore.WaitAsync();
+            if (!await _logSemaphore.WaitAsync(2000))
+            {
+                System.Diagnostics.Debug.WriteLine($"[AuditLogService] Timeout acquiring semaphore async for {act}");
+                return;
+            }
             try
             {
                 EnsureLogRotation();
@@ -115,9 +123,9 @@ public class AuditLogService
                 _logSemaphore.Release();
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Fail silently
+            System.Diagnostics.Debug.WriteLine($"[AuditLogService] LogActionAsync error: {ex.Message}");
         }
     }
 }

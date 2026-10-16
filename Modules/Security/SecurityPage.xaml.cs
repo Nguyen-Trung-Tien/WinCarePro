@@ -62,6 +62,11 @@ public sealed partial class SecurityPage : Page
     {
         base.OnNavigatedTo(e);
         ViewModel?.Initialize();
+        if (ViewModel != null)
+        {
+            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            ViewModel.PropertyChanged += _vmPropertyChangedHandler;
+        }
         this.DataContext = ViewModel;
         ViewModel?.LoadPrivacySettings();
         _ = ViewModel?.ScanSecurityAsync();

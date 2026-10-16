@@ -24,22 +24,24 @@ public class ProcessMetadata
     public DateTime CacheTime { get; set; } = DateTime.UtcNow;
 }
 
-public class ProcessService
+public partial class ProcessService
 {
-    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
-    private static extern IntPtr OpenProcess(int processAccess, bool bInheritHandle, int processId);
+    [System.Runtime.InteropServices.LibraryImport("kernel32.dll", SetLastError = true)]
+    private static partial IntPtr OpenProcess(int processAccess, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)] bool bInheritHandle, int processId);
 
-    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-    private static extern bool QueryFullProcessImageName(IntPtr hProcess, int dwFlags, System.Text.StringBuilder lpExeName, ref int lpdwSize);
+    [System.Runtime.InteropServices.LibraryImport("kernel32.dll", EntryPoint = "QueryFullProcessImageNameW", SetLastError = true)]
+    [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+    private static unsafe partial bool QueryFullProcessImageName(IntPtr hProcess, int dwFlags, char* lpExeName, ref int lpdwSize);
 
-    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool CloseHandle(IntPtr hObject);
+    [System.Runtime.InteropServices.LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+    private static partial bool CloseHandle(IntPtr hObject);
 
-    [System.Runtime.InteropServices.DllImport("ntdll.dll", EntryPoint = "NtSuspendProcess")]
-    private static extern int NtSuspendProcess(IntPtr processHandle);
+    [System.Runtime.InteropServices.LibraryImport("ntdll.dll", EntryPoint = "NtSuspendProcess")]
+    private static partial int NtSuspendProcess(IntPtr processHandle);
 
-    [System.Runtime.InteropServices.DllImport("ntdll.dll", EntryPoint = "NtResumeProcess")]
-    private static extern int NtResumeProcess(IntPtr processHandle);
+    [System.Runtime.InteropServices.LibraryImport("ntdll.dll", EntryPoint = "NtResumeProcess")]
+    private static partial int NtResumeProcess(IntPtr processHandle);
 
     private const int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
     private const int PROCESS_SUSPEND_RESUME = 0x0800;
@@ -98,7 +100,7 @@ public class ProcessService
         }
     }
 
-    private static string GetProcessExecutablePath(Process p)
+    private static unsafe string GetProcessExecutablePath(Process p)
     {
         if (p.Id <= 4) return "System Process";
 
@@ -107,11 +109,14 @@ public class ProcessService
         {
             try
             {
-                int capacity = 2048;
-                var builder = new System.Text.StringBuilder(capacity);
-                if (QueryFullProcessImageName(hProcess, 0, builder, ref capacity))
+                Span<char> buffer = stackalloc char[2048];
+                fixed (char* ptr = buffer)
                 {
-                    return builder.ToString();
+                    int capacity = buffer.Length;
+                    if (QueryFullProcessImageName(hProcess, 0, ptr, ref capacity))
+                    {
+                        return new string(ptr, 0, capacity);
+                    }
                 }
             }
             catch { }

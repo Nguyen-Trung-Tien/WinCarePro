@@ -22,7 +22,7 @@
 | :--- | :--- | :--- |
 | `OperationResult`, `OperationResult<T>` | [Core/Models/OperationResult.cs](../Core/Models/OperationResult.cs) | `Ok()`, `Ok(T data)`, `Fail(string msg)`, `Fail(Exception ex)`: Standardized result wrapper for fallible operations. |
 | `ViewModelBase` | [Core/Helpers/ViewModelBase.cs](../Core/Helpers/ViewModelBase.cs) | Inherits `ObservableObject`. Exposes `RunOnUI(Action)`, `IsBusy`, `OperationState`, `StatusMessage`. Mandatory for all ViewModels. |
-| `AppConstants` | [Core/AppConstants.cs](../Core/AppConstants.cs) | Single Source of Truth (SSOT) for product identity, version (`5.0.0`), codename (`Polaris`), build date, copyright. |
+| `AppConstants` | [Core/AppConstants.cs](../Core/AppConstants.cs) | Single Source of Truth (SSOT) for product identity, version (`5.1.1`), codename (`Polaris`), build date, copyright. |
 | `UndoManager` | [Core/Helpers/UndoManager.cs](../Core/Helpers/UndoManager.cs) | Manages Undo rollbacks, restores registry hives and quarantined files safely. |
 
 ### 🗄️ Infrastructure & Persistence

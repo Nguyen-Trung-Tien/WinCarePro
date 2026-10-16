@@ -23,11 +23,12 @@ public partial class App : Application
 
     public static Microsoft.UI.Dispatching.DispatcherQueue? MainDispatcherQueue { get; private set; }
 
-    [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
-    private static extern uint RegisterWindowMessage(string lpString);
+    [System.Runtime.InteropServices.LibraryImport("user32.dll", EntryPoint = "RegisterWindowMessageW", StringMarshalling = System.Runtime.InteropServices.StringMarshalling.Utf16, SetLastError = true)]
+    private static partial uint RegisterWindowMessage(string lpString);
 
-    [System.Runtime.InteropServices.DllImport("user32.dll")]
-    private static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+    [System.Runtime.InteropServices.LibraryImport("user32.dll")]
+    [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+    private static partial bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
     public const string SingleInstanceMutexName = @"Local\WinCarePro_SingleInstance_Mutex";
     public const string SingleInstanceMessageName = "WinCarePro_Activate_SingleInstance";

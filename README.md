@@ -1,4 +1,4 @@
-# 🚀 WinCare Pro Suite v5.0.0 (Codename: Polaris)
+# 🚀 WinCare Pro Suite v5.1.1 (Codename: Polaris)
 
 <div align="center">
   <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(0, 120, 212, 0.45); margin-bottom: 20px;" />
@@ -9,8 +9,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe">
-      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v5.0.0-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v5.0.0" />
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v5.1.1-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v5.1.1" />
     </a>
   </p>
 
@@ -31,7 +31,7 @@
 
 ## 📖 Tổng Quan Dự Án
 
-**WinCare Pro v5.0.0 (Codename: Polaris)** là bước nhảy vọt quan trọng trong khả năng chẩn đoán, tối ưu hóa và bảo vệ hệ thống. Phiên bản mang đến **mô hình AI dự báo cạn kiệt dung lượng phân vùng (Logical Volumes Predictive Exhaustion)**, **bảo mật nền tảng và cô lập nhân (HVCI Memory Integrity, Defender Tamper Protection, RDP NLA)**, **dịch vụ giám sát nền nhận biết pin (Battery-Aware Background Watchdog)**, và triệt tiêu 100% dữ liệu telemetry giả lập tuân thủ chuẩn **Zero-Mock Telemetry**. Ứng dụng tiếp tục hoàn thiện giao diện kính mờ **Aura Glass 2.0 (WinUI 3 Fluent 2)** với hiệu ứng chuyển động mượt mà **Windows Composition 120 FPS**.
+**WinCare Pro v5.1.1 (Codename: Polaris)** là phiên bản nâng cấp toàn diện về bảo mật, hiệu năng và trải nghiệm người dùng. Phiên bản hoàn tất 100% việc chuyển đổi các hàm gọi hệ thống Win32 sang **source-generated `[LibraryImport]`** siêu tốc, tối ưu hóa triệt để tài nguyên RAM/CPU, tăng cường chuẩn **Zero-Trust Registry & Services Protection** với sao lưu tự động `RegistryBackupEngine.BackupKey()`, giải quyết triệt để các nguy cơ race condition đa trang, và hoàn thiện hiệu ứng chuyển động kính mờ **Fluent 2.0 Aura Glass với Implicit Composition Micro-interactions 120 FPS**.
 
 Ứng dụng tích hợp **Trợ lý AI WinCare Engine** chẩn đoán Heuristic không gửi dữ liệu ra ngoài, cửa sổ nổi **Desktop HUD Widget**, hệ thống phòng vệ kép **SafePathGuard** và **SafeRegistryGuard**, cơ chế **Bảo vệ Dịch vụ Hệ thống (Service Safety Whitelist)**, cơ chế hủy tác vụ đa luồng an toàn **CancellationToken Lifecycle**, và khả năng **tự động thu nhỏ RAM nền (< 15MB)** khi chạy ngầm dưới khay hệ thống.
 

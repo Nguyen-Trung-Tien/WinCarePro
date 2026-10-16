@@ -788,5 +788,108 @@ namespace WinCarePro.Shared.Animations
                 WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ApplyImplicitOffsetAndScale", ex);
             }
         }
+
+        // ============================================================
+        // 18. HOVER ELEVATION & MICRO-INTERACTIONS
+        // ============================================================
+
+        /// <summary>
+        /// Adds fluent 2.0 micro-interaction elevation to card borders on pointer hover.
+        /// </summary>
+        public static void ApplyCardHoverElevation(FrameworkElement element, float elevationOffset = -2.0f)
+        {
+            if (element == null || WinCarePro.Services.ThemeManager.Instance.IsReducedMotion) return;
+            try
+            {
+                ElementCompositionPreview.SetIsTranslationEnabled(element, true);
+                Visual visual = ElementCompositionPreview.GetElementVisual(element);
+                Compositor compositor = visual.Compositor;
+
+                element.PointerEntered += (s, e) =>
+                {
+                    try
+                    {
+                        var anim = compositor.CreateVector3KeyFrameAnimation();
+                        anim.Target = "Translation";
+                        anim.InsertKeyFrame(1.0f, new Vector3(0, elevationOffset, 0), compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+                        anim.Duration = TimeSpan.FromMilliseconds(180);
+                        visual.StartAnimation("Translation", anim);
+                    }
+                    catch { }
+                };
+
+                element.PointerExited += (s, e) =>
+                {
+                    try
+                    {
+                        var anim = compositor.CreateVector3KeyFrameAnimation();
+                        anim.Target = "Translation";
+                        anim.InsertKeyFrame(1.0f, Vector3.Zero, compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+                        anim.Duration = TimeSpan.FromMilliseconds(220);
+                        visual.StartAnimation("Translation", anim);
+                    }
+                    catch { }
+                };
+            }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ApplyCardHoverElevation", ex);
+            }
+        }
+
+        // ============================================================
+        // 19. BUTTON SPRING CLICK PHYSICS
+        // ============================================================
+
+        /// <summary>
+        /// Adds tactile spring compression and bounce physics on click/press.
+        /// </summary>
+        public static void ApplyButtonPressPhysics(FrameworkElement element)
+        {
+            if (element == null || WinCarePro.Services.ThemeManager.Instance.IsReducedMotion) return;
+            try
+            {
+                Visual visual = ElementCompositionPreview.GetElementVisual(element);
+                Compositor compositor = visual.Compositor;
+                SafeSetCenterPoint(element, visual);
+
+                element.PointerPressed += (s, e) =>
+                {
+                    try
+                    {
+                        SafeSetCenterPoint(element, visual);
+                        var anim = compositor.CreateVector3KeyFrameAnimation();
+                        anim.Target = nameof(Visual.Scale);
+                        anim.InsertKeyFrame(1.0f, new Vector3(0.96f, 0.96f, 1.0f), compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+                        anim.Duration = TimeSpan.FromMilliseconds(90);
+                        visual.StartAnimation(nameof(Visual.Scale), anim);
+                    }
+                    catch { }
+                };
+
+                void ResetScale()
+                {
+                    try
+                    {
+                        SafeSetCenterPoint(element, visual);
+                        var spring = compositor.CreateSpringVector3Animation();
+                        spring.Target = nameof(Visual.Scale);
+                        spring.FinalValue = Vector3.One;
+                        spring.DampingRatio = 0.65f;
+                        spring.Period = TimeSpan.FromMilliseconds(200);
+                        visual.StartAnimation(nameof(Visual.Scale), spring);
+                    }
+                    catch { }
+                }
+
+                element.PointerReleased += (s, e) => ResetScale();
+                element.PointerCaptureLost += (s, e) => ResetScale();
+                element.PointerCanceled += (s, e) => ResetScale();
+            }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("ApplyButtonPressPhysics", ex);
+            }
+        }
     }
 }

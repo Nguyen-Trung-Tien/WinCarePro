@@ -7,7 +7,7 @@ using Windows.UI;
 
 namespace WinCarePro.Services;
 
-public class ThemeManager
+public partial class ThemeManager
 {
     private static ThemeManager? _instance;
     public static ThemeManager Instance => _instance ??= new ThemeManager();
@@ -504,6 +504,6 @@ public class ThemeManager
         }
     }
 
-    [System.Runtime.InteropServices.DllImport("dwmapi.dll")]
-    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+    [System.Runtime.InteropServices.LibraryImport("dwmapi.dll")]
+    private static partial int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 }

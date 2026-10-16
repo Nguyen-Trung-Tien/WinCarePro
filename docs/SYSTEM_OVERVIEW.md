@@ -2,7 +2,7 @@
 
 > [🏠 Main Documentation Hub](README.md) • [01. System Architecture](01_SYSTEM_ARCHITECTURE.md)
 >
-> **Version:** 5.0.0 Polaris (Production Release)  
+> **Version:** 5.1.1 Polaris (Production Release)  
 > **Platform:** Windows 10 (Build 19041+) & Windows 11 (x64)  
 > **Framework:** .NET 10.0 + Windows App SDK (WinUI 3)  
 > **Architecture Standard:** Layered Domain-Driven Architecture with Zero-Trust Security & Thread-Safe Concurrency

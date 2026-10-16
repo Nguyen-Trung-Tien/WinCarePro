@@ -61,6 +61,11 @@ public sealed partial class RepairPage : Page
     {
         base.OnNavigatedTo(e);
         ViewModel?.Initialize();
+        if (ViewModel != null)
+        {
+            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            ViewModel.PropertyChanged += _vmPropertyChangedHandler;
+        }
         this.DataContext = ViewModel;
         this.Bindings.Update();
         SetActiveTab(ViewModel?.ActiveTab ?? "diagnostics");

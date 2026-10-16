@@ -12,9 +12,9 @@ public static class AppConstants
     public const string AppName = "WinCare Pro";
     public const string Publisher = "Nguyen Trung Tien";
     public const string Codename = "Polaris";
-    public const string DefaultVersionString = "5.0.0";
-    public const string DefaultAssemblyVersionString = "5.0.0.0";
-    public const string DefaultBuildDate = "2026-10-02";
+    public const string DefaultVersionString = "5.1.1";
+    public const string DefaultAssemblyVersionString = "5.1.1.0";
+    public const string DefaultBuildDate = "2026-10-16";
     public const string TargetWindowsVersion = "Windows 10 / 11 (64-bit)";
     public const string Architecture = "x64 Native";
     public const string CompanyName = "WinCare Pro";
@@ -24,7 +24,7 @@ public static class AppConstants
     /// The runtime assembly version.
     /// </summary>
     public static readonly Version CurrentVersion = 
-        typeof(AppConstants).Assembly.GetName().Version ?? new Version(5, 0, 0, 0);
+        typeof(AppConstants).Assembly.GetName().Version ?? new Version(5, 1, 1, 0);
 
     /// <summary>
     /// Standard semantic version string (e.g., "5.0.0").

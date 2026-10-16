@@ -304,6 +304,45 @@ public class RegistryBackupEngine
         }
     }
 
+    /// <summary>
+    /// Backs up a specific registry key before mutation or deletion, satisfying Rule 02 and Rule 11.
+    /// </summary>
+    public static async Task<bool> BackupKeyAsync(string keyPath, string? targetFilePath = null)
+    {
+        if (string.IsNullOrWhiteSpace(keyPath)) return false;
+        try
+        {
+            if (!Directory.Exists(BackupFolder)) Directory.CreateDirectory(BackupFolder);
+            string safeKeyName = string.Join("_", keyPath.Split(Path.GetInvalidFileNameChars())).Trim('_');
+            string backupPath = targetFilePath ?? Path.Combine(BackupFolder, $"KeyBackup_{safeKeyName}_{DateTime.Now:yyyyMMdd_HHmmss}.reg");
+
+            var result = await ProcessRunner.RunAsync("reg.exe", new[] { "export", keyPath, backupPath, "/y" }, TimeSpan.FromSeconds(15));
+            bool ok = result.Success && File.Exists(backupPath);
+            Database.DbManager.LogAction($"Backup Key: {keyPath}", "Registry Tools", ok ? "Success" : "Failed");
+            return ok;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] BackupKeyAsync failed for {keyPath}: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Synchronous backup of a specific registry key for immediate guards.
+    /// </summary>
+    public static bool BackupKey(string keyPath, string? targetFilePath = null)
+    {
+        try
+        {
+            return BackupKeyAsync(keyPath, targetFilePath).GetAwaiter().GetResult();
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     [Obsolete("Use CreateRegistryBackupAsync instead to avoid thread blocking.")]
     public bool CreateRegistryBackup(string name)
     {
@@ -313,22 +352,8 @@ public class RegistryBackupEngine
             string filePath = Path.Combine(BackupFolder, fileName);
             if (!Directory.Exists(BackupFolder)) Directory.CreateDirectory(BackupFolder);
 
-            var psi = new System.Diagnostics.ProcessStartInfo
-            {
-                FileName = ProcessRunner.ResolveSafeExecutablePath("reg.exe") ?? "reg.exe",
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                WorkingDirectory = Environment.SystemDirectory
-            };
-            psi.ArgumentList.Add("export");
-            psi.ArgumentList.Add("HKCU");
-            psi.ArgumentList.Add(filePath);
-            psi.ArgumentList.Add("/y");
-
-            using var proc = System.Diagnostics.Process.Start(psi);
-            if (proc == null) return false;
-            proc.WaitForExit(30000);
-            return proc.ExitCode == 0;
+            var result = ProcessRunner.RunAsync("reg.exe", new[] { "export", "HKCU", filePath, "/y" }, TimeSpan.FromSeconds(30)).GetAwaiter().GetResult();
+            return result.Success;
         }
         catch (Exception ex)
         {
@@ -369,28 +394,7 @@ public class RegistryBackupEngine
         if (!File.Exists(filePath)) return false;
         try
         {
-            string firstLine = File.ReadLines(filePath).FirstOrDefault() ?? "";
-            if (!firstLine.Trim().StartsWith("Windows Registry Editor", StringComparison.OrdinalIgnoreCase) &&
-                !firstLine.Trim().StartsWith("REGEDIT", StringComparison.OrdinalIgnoreCase))
-            {
-                Database.DbManager.LogAction($"Invalid registry backup file format: {Path.GetFileName(filePath)}", "Registry Tools", "Failed");
-                return false;
-            }
-
-            var psi = new System.Diagnostics.ProcessStartInfo
-            {
-                FileName = ProcessRunner.ResolveSafeExecutablePath("reg.exe") ?? "reg.exe",
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                WorkingDirectory = Environment.SystemDirectory
-            };
-            psi.ArgumentList.Add("import");
-            psi.ArgumentList.Add(filePath);
-
-            using var proc = System.Diagnostics.Process.Start(psi);
-            if (proc == null) return false;
-            proc.WaitForExit(15000);
-            return proc.ExitCode == 0;
+            return RestoreRegistryBackupAsync(filePath).GetAwaiter().GetResult();
         }
         catch (Exception ex)
         {

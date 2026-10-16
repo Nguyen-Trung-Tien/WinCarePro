@@ -121,6 +121,8 @@ public sealed partial class NetworkPage : Page
         try
         {
             ViewModel.Initialize();
+            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            ViewModel.PropertyChanged += _vmPropertyChangedHandler;
             this.Bindings.Update();
             SetActiveTab(ViewModel.ActiveTab ?? "quality");
             UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);

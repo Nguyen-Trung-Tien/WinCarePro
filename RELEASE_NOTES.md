@@ -1,30 +1,30 @@
-# 📝 Nhật ký Phát hành (Release Notes) — WinCare Pro v5.0.0
+# 📝 Nhật ký Phát hành (Release Notes) — WinCare Pro v5.1.1
 
 ---
 
-## 🚀 WinCare Pro v5.0.0 (Codename: Polaris) — Bước Tiến Đột Phá: AI Dự Báo Lưu Trữ, Bảo Mật Cô Lập Nhân & Giám Sát Nhận Biết Nguồn Pin (Polaris Major Release)
+## 🚀 WinCare Pro v5.1.1 (Codename: Polaris) — Tối Ưu Hóa Toàn Diện, Native Interop [LibraryImport] & Cinematic Composition Animations
 
-> **Phiên bản:** v5.0.0 (Codename: Polaris) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Chính Thức (Official Release) · **Chứng nhận:** 100% Tests PASS · 0 Warnings / 0 Errors
+> **Phiên bản:** v5.1.1 (Codename: Polaris) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Trạng thái:** Bản Phát Hành Chính Thức (Official Release) · **Chứng nhận:** 100% Tests PASS · 0 Warnings / 0 Errors
 
-**WinCare Pro v5.0.0 (Codename: Polaris)** là bước phát triển nhảy vọt của WinCare Pro, nâng tầm ứng dụng từ một trình dọn dẹp hệ thống trở thành một **Bộ Tiện Ích Chẩn Đoán, Bảo Mật & Quản Trị Hệ Thống Chuyên Nghiệp Cao Cấp** trên Windows 10 & 11:
+**WinCare Pro v5.1.1 (Codename: Polaris)** là bản cập nhật nâng cấp và tối ưu hóa hệ thống toàn diện, củng cố kiến trúc Zero-Trust, chuyển đổi 100% Native Interop sang C# 13 `[LibraryImport]`, tăng tốc phản hồi giao diện với Windows Composition Animations và củng cố độ bền bỉ Zero-Crash:
 
-### 🌟 Điểm Nhấn Đột Phá Trong v5.0.0 (Polaris):
+### 🌟 Điểm Nhấn Đột Phá Trong v5.1.1:
 
-1. **🛡️ Kiểm Tra Bảo Mật Nền Tảng & Cô Lập Nhân (Platform Security & Kernel Isolation):**
-   - **Hypervisor-Protected Code Integrity (HVCI):** Kiểm tra tính toàn vẹn bộ nhớ được bảo vệ bởi ảo hóa phần cứng (Memory Integrity), ngăn chặn triệt để mã độc chèn vào nhân hệ điều hành.
-   - **Microsoft Defender Tamper Protection:** Giám sát trạng thái chống can thiệp của bộ phòng vệ Windows Defender, cảnh báo người dùng khi các thiết lập an ninh bị phần mềm lạ can thiệp.
-   - **RDP Network Level Authentication (NLA):** Phát hiện và khuyến nghị bật xác thực cấp mạng cho Remote Desktop nhằm ngăn chặn các đợt tấn công dò mật khẩu từ xa.
+1. **⚡ 100% Di Chuyển Sang `[LibraryImport]` (Zero P/Invoke Overhead):**
+   - Loại bỏ hoàn toàn `[DllImport]` cũ, chuyển đổi sang source-generated `[LibraryImport]` trên toàn bộ hệ thống (`ThemeManager`, `NotificationService`, `LockingAppService`, `ProcessService`, `App.xaml.cs`).
+   - Sử dụng `stackalloc char[2048]` và `Span<char>` an toàn trong `QueryFullProcessImageNameW`, giảm triệt để GC allocation và áp lực cấp phát bộ nhớ.
 
-2. **🔋 Giám Sát Nền Nhận Biết Nguồn Pin (Battery-Aware Background Watchdog):**
-   - **Cơ chế tiết kiệm pin thông minh:** Khi laptop ngắt sạc và mức pin dưới 20%, hệ thống tự động hoãn các tác vụ bảo trì định kỳ có phụ tải cao để tối đa hóa thời lượng sử dụng của người dùng.
-   - **Cảnh báo dung lượng ổ đĩa khẩn cấp:** Giám sát dung lượng ổ đĩa hệ thống định kỳ mỗi 60 giây và kích hoạt thông báo Toast kèm đường dẫn xử lý khi dung lượng dưới 5GB.
-   - **Nhật ký tài nguyên SQLite WAL không phình to:** Ghi nhận lịch sử tài nguyên CPU/RAM/Disk và tự động dọn dẹp các bản ghi cũ quá 7 ngày.
+2. **🛡️ Tăng Cường Bảo Mật Zero-Trust & Registry Armor:**
+   - Hoàn thiện `RegistryBackupEngine.BackupKey` & `BackupKeyAsync` đáp ứng triệt để quy chuẩn `SafeRegistryGuard + RegistryBackupEngine.BackupKey()`.
+   - Chuẩn hóa toàn bộ CLI execution với `ProcessRunner.RunAsync` và `ArgumentList` tách bạch (bao gồm `netstat.exe` và `reg.exe`), triệt tiêu 100% nguy cơ Command Injection.
+   - Bảo vệ phân luồng đa nhiệm an toàn: bổ sung semaphore timeout và chống deadlock trong `AuditLogService`.
 
-3. **⚡ Chuẩn Hóa Zero-Mock Telemetry Tuyệt Đối:**
-   - **100% dữ liệu thật từ Kernel & Win32 APIs:** Loại bỏ hoàn toàn mọi đoạn mã sinh số giả lập ngẫu nhiên (`Random`) trong toàn bộ tầng giám sát và ViewModel. Dữ liệu CPU, RAM, Disk, và Network phản ánh chính xác 100% hoạt động thực tế của máy tính.
+3. **🎨 Nâng Cấp Fluent 2.0 Aura Glass & Cinematic Composition Animations:**
+   - Bổ sung hiệu ứng Micro-Interactions: `ApplyCardHoverElevation` (nâng thẻ mượt mà với cubic bezier) và `ApplyButtonPressPhysics` (lực đàn hồi cơ học Spring physics khi nhấn nút).
+   - Khắc phục lỗi rò rỉ sự kiện và mất liên kết ViewModel khi chuyển trang: tự động tái đăng ký và hủy đăng ký `PropertyChanged` / `LanguageChanged` trong `OnNavigatedTo` và `Unloaded`.
 
 ---
 
 <div align="center">
-  <sub>WinCare Pro Suite v5.0.0 Polaris • Phát triển bởi <b>Nguyễn Trung Tiến</b></sub>
+  <sub>WinCare Pro Suite v5.1.1 Polaris • Phát triển bởi <b>Nguyễn Trung Tiến</b></sub>
 </div>

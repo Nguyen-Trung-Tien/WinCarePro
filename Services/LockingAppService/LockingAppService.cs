@@ -9,7 +9,7 @@ using WinCarePro.Services.Contracts;
 
 namespace WinCarePro.Services.Implementations;
 
-public class LockingAppService : ILockingAppService
+public partial class LockingAppService : ILockingAppService
 {
     private static readonly Dictionary<string, string> ProcessMap = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -24,18 +24,20 @@ public class LockingAppService : ILockingAppService
 
     private readonly IconCacheService _iconCache;
 
-    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
-    private static extern IntPtr OpenProcess(int processAccess, bool bInheritHandle, int processId);
+    [System.Runtime.InteropServices.LibraryImport("kernel32.dll", SetLastError = true)]
+    private static partial IntPtr OpenProcess(int processAccess, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)] bool bInheritHandle, int processId);
 
-    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true, CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-    private static extern bool QueryFullProcessImageName(IntPtr hProcess, int dwFlags, System.Text.StringBuilder lpExeName, ref int lpdwSize);
+    [System.Runtime.InteropServices.LibraryImport("kernel32.dll", EntryPoint = "QueryFullProcessImageNameW", SetLastError = true)]
+    [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+    private static unsafe partial bool QueryFullProcessImageName(IntPtr hProcess, int dwFlags, char* lpExeName, ref int lpdwSize);
 
-    [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool CloseHandle(IntPtr hObject);
+    [System.Runtime.InteropServices.LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+    private static partial bool CloseHandle(IntPtr hObject);
 
     private const int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
 
-    private static string GetProcessExecutablePath(Process p)
+    private static unsafe string GetProcessExecutablePath(Process p)
     {
         if (p.Id <= 4) return "";
 
@@ -44,11 +46,14 @@ public class LockingAppService : ILockingAppService
         {
             try
             {
-                int capacity = 2048;
-                var builder = new System.Text.StringBuilder(capacity);
-                if (QueryFullProcessImageName(hProcess, 0, builder, ref capacity))
+                Span<char> buffer = stackalloc char[2048];
+                fixed (char* ptr = buffer)
                 {
-                    return builder.ToString();
+                    int capacity = buffer.Length;
+                    if (QueryFullProcessImageName(hProcess, 0, ptr, ref capacity))
+                    {
+                        return new string(ptr, 0, capacity);
+                    }
                 }
             }
             catch { }

@@ -1,6 +1,6 @@
 # 🤖 WinCare Pro Suite — AI Agent Operational Directive
 
-> **Version:** v5.0.0 (Codename: Polaris) | **Target Platform:** Windows 10/11 x64  
+> **Version:** v5.1.1 (Codename: Polaris) | **Target Platform:** Windows 10/11 x64  
 > **Core Stack:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite 3 WAL • CommunityToolkit.Mvvm  
 > **Deep Reference Docs:** [AI Symbol Index & Architecture Map](docs/00_AI_SYMBOL_INDEX.md) • [11 Technical Rulebooks](.agents/rules/README.md) • [11 Technical Architecture Chapters](docs/README.md) • [10 Specialized Skills](.agents/skills/README.md)
 

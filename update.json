@@ -1,12 +1,12 @@
-﻿{
-    "version":  "5.1.1",
-    "url":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1/WinCareProSetup.exe",
-    "downloadUrl":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1/WinCareProSetup.exe",
-    "sha256":  "9bb823db44100ba39a59cbd41693be292d822ae5dfb7b9d521a47426ebf22cdc",
-    "changelog":  "Cập nhật v5.1.1 (Polaris Comprehensive Maintenance \u0026 Security Release): Hoàn tất chuyển đổi 100% Native Interop sang source-generated LibraryImport, tăng cường Zero-Trust an toàn Registry \u0026 Services, nâng cấp hiệu ứng chuyển động Cinematic Composition Micro-interactions và đồng bộ hóa toàn diện hệ thống.",
-    "beta_version":  "5.1.1-beta",
-    "beta_url":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1-beta/WinCareProSetup_Beta.exe",
-    "beta_downloadUrl":  "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1-beta/WinCareProSetup_Beta.exe",
-    "beta_sha256":  "9bb823db44100ba39a59cbd41693be292d822ae5dfb7b9d521a47426ebf22cdc",
-    "beta_changelog":  "WinCare Pro v5.1.1 (Polaris Release)"
+{
+  "version": "5.1.1",
+  "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1/WinCareProSetup.exe",
+  "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1/WinCareProSetup.exe",
+  "sha256": "4aa10dd33f64c8a1aded51f99b68e7b62f5f646be9681e4e48ec9117bc0fc762",
+  "changelog": "Cập nhật v5.1.1 (Polaris Comprehensive Maintenance & Security Release): Hoàn tất chuyển đổi 100% Native Interop sang source-generated LibraryImport, tăng cường Zero-Trust an toàn Registry & Services, nâng cấp hiệu ứng chuyển động Cinematic Composition Micro-interactions và đồng bộ hóa toàn diện hệ thống.",
+  "beta_version": "5.1.1-beta",
+  "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1-beta/WinCareProSetup_Beta.exe",
+  "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.1-beta/WinCareProSetup_Beta.exe",
+  "beta_sha256": "4aa10dd33f64c8a1aded51f99b68e7b62f5f646be9681e4e48ec9117bc0fc762",
+  "beta_changelog": "WinCare Pro v5.1.1 (Polaris Release)"
 }

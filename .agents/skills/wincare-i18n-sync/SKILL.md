@@ -4,74 +4,74 @@ description: >-
   Strict internationalization (i18n) and dual-language synchronization rules for WinCare Pro. Covers registering keys in TranslationManager.Translations.cs (vi-VN and en-US), XAML TranslationConverter binding, eliminating hardcoded strings, key naming taxonomy, and verifying translation completeness. Use whenever adding or editing UI labels, tooltips, placeholders, or dialog messages.
 ---
 
-# 🌐 WinCare Pro — Quy Chuẩn Đa Ngôn Ngữ & Đồng Bộ Từ Điển (i18n Sync)
+# 🌐 WinCare Pro — Internationalization & Dictionary Synchronization Standards (i18n Sync)
 
-WinCare Pro hỗ trợ 100% song ngữ Việt - Anh (**vi-VN** và **en-US**). Toàn bộ chuỗi hiển thị trên giao diện người dùng **bắt buộc** phải được nạp qua hệ thống `TranslationManager`.
+WinCare Pro mandates 100% dual-language coverage for Vietnamese and English (**vi-VN** and **en-US**). All user interface display strings **MUST** be loaded dynamically through `TranslationManager`.
 
 ---
 
-## 🚫 1. Bảng Đối Chiếu Quy Tắc Đa Ngôn Ngữ Bắt Buộc
+## 🚫 1. Internationalization Enforcement Matrix
 
-| Tình huống | ❌ CẤM TUYỆT ĐỐI | ✅ BẮT BUỘC SỬ DỤNG |
+| Scenario | ❌ STRICTLY FORBIDDEN | ✅ MANDATORY PATTERN |
 | :--- | :--- | :--- |
-| **Chuỗi text trong XAML** | `<TextBlock Text="Bắt đầu quét"/>` | `<TextBlock Text="{Binding 'Mod_Junk_StartScan', Converter={StaticResource TranslationConverter}}"/>` |
-| **Chuỗi thông báo trong ViewModel** | `StatusMessage = "Đang tối ưu hệ thống...";` | `StatusMessage = TranslationManager.Instance.Get("Mod_Opt_OptimizingStatus");` |
-| **Khai báo từ điển** | Chỉ thêm key vào `vi-VN` và bỏ quên `en-US` | Đồng bộ 100% key ở **cả 2 từ điển** trong `TranslationManager.Translations.cs` |
-| **Nối chuỗi hiển thị có tham số** | `$"Đã dọn dẹp {mb} MB rác"` | `TranslationManager.Instance.Format("Mod_Junk_CleanedSuccess", mb)` |
-| **Đặt tên key tùy tiện** | `btn1`, `txt_title`, `ScanText` | Tuân theo chuẩn phân nhóm: `Mod_{Module}_{TênKey}` hoặc `Common_{TênKey}` |
+| **XAML Text Literals** | `<TextBlock Text="Start Scan"/>` | `<TextBlock Text="{Binding 'Mod_Junk_StartScan', Converter={StaticResource TranslationConverter}}"/>` |
+| **ViewModel Display Strings** | `StatusMessage = "Optimizing system...";` | `StatusMessage = TranslationManager.Instance.Get("Mod_Opt_OptimizingStatus");` |
+| **Dictionary Definitions** | Adding a key to `vi-VN` while omitting `en-US` | Synchronize 100% of keys across **both dictionaries** in `TranslationManager.Translations.cs` |
+| **Parameterized String Formatting** | `$"Cleaned {mb} MB of junk"` | `TranslationManager.Instance.Format("Mod_Junk_CleanedSuccess", mb)` |
+| **Arbitrary Key Naming** | `btn1`, `txt_title`, `ScanText` | Strictly follow hierarchical taxonomy: `Mod_{Module}_{KeyName}` or `Common_{KeyName}` |
 
 ---
 
-## 🏷️ 2. Quy Chuẩn Đặt Tên Translation Key (Key Taxonomy)
+## 🏷️ 2. Translation Key Taxonomy Standards
 
-Mọi key phải tuân theo cấu trúc phân cấp rõ ràng:
+All translation keys MUST follow a strict hierarchical structure:
 
-1. **Chuỗi dùng chung toàn hệ thống (Common):**
-   - Tiền tố: `Common_`
-   - Ví dụ: `Common_Ok`, `Common_Cancel`, `Common_Close`, `Common_Save`, `Common_Refresh`, `Common_Error`, `Common_Warning`, `Common_Success`.
+1. **Shared System Strings (Common):**
+   - Prefix: `Common_`
+   - Canonical examples: `Common_Ok`, `Common_Cancel`, `Common_Close`, `Common_Save`, `Common_Refresh`, `Common_Error`, `Common_Warning`, `Common_Success`.
 
-2. **Chuỗi theo từng phân hệ giao diện (Modules):**
-   - Tiền tố: `Mod_{Module}_`
-   - Ví dụ:
+2. **Feature Module Strings (Modules):**
+   - Prefix: `Mod_{Module}_`
+   - Canonical examples:
      - Dashboard: `Mod_Dashboard_CpuUsage`, `Mod_Dashboard_RamStatus`, `Mod_Dashboard_QuickScan`
      - Junk Cleaner: `Mod_Junk_ScanTitle`, `Mod_Junk_CleanSuccess`, `Mod_Junk_EmptyTrash`
      - Registry: `Mod_Reg_DeepScan`, `Mod_Reg_BackupWarning`, `Mod_Reg_IssuesFound`
      - Network: `Mod_Net_FlushDns`, `Mod_Net_PingSuccess`, `Mod_Net_SpeedTest`
      - Settings: `Mod_Settings_Language`, `Mod_Settings_ThemeDark`, `Mod_Settings_Autostart`
 
-3. **Chuỗi thông báo lỗi & cảnh báo hệ thống (Errors & Dialogs):**
-   - Tiền tố: `Err_` hoặc `Dialog_`
-   - Ví dụ: `Err_AccessDenied`, `Err_PathNotFound`, `Dialog_ConfirmDeleteTitle`.
+3. **System Errors & Dialog Strings (Errors & Dialogs):**
+   - Prefix: `Err_` or `Dialog_`
+   - Canonical examples: `Err_AccessDenied`, `Err_PathNotFound`, `Dialog_ConfirmDeleteTitle`.
 
 ---
 
-## 📖 3. Quy Trình Khai Báo Song Ngữ Chuẩn
+## 📖 3. Standard Dual-Dictionary Registration Workflow
 
-Khi thêm chuỗi giao diện mới, mở tập tin [TranslationManager.Translations.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.Translations.cs) và bổ sung đồng thời vào hai từ điển:
+When introducing new UI strings, open [TranslationManager.Translations.cs](../../Services/TranslationService/TranslationManager.Translations.cs) and register them simultaneously in both language dictionaries:
 
 ```csharp
-// 1. Trong từ điển Tiếng Việt ("vi-VN"):
+// 1. In Vietnamese dictionary ("vi-VN"):
 ["Mod_Junk_ScanCompleted"] = "Quét hoàn tất! Tìm thấy {0} tệp rác ({1}).",
 ["Mod_Junk_CleanWarning"] = "Các tệp tạm sẽ bị xóa vĩnh viễn khỏi ổ đĩa.",
 
-// 2. Trong từ điển Tiếng Anh ("en-US"):
+// 2. In English dictionary ("en-US"):
 ["Mod_Junk_ScanCompleted"] = "Scan completed! Found {0} junk files ({1}).",
 ["Mod_Junk_CleanWarning"] = "Temporary files will be permanently deleted from disk.",
 ```
 
 ---
 
-## 🎨 4. Ràng Buộc Trong XAML (Data Binding)
+## 🎨 4. XAML Data Binding Patterns
 
-Sử dụng `TranslationConverter` đã được khai báo Resource toàn cục trong [App.xaml](file:///d:/WinCare/App.xaml):
+Utilize the global `TranslationConverter` defined in [App.xaml](../../App.xaml):
 
-### TextBlock tĩnh:
+### Static TextBlock:
 ```xml
 <TextBlock Text="{Binding 'Mod_Dashboard_Title', Converter={StaticResource TranslationConverter}}"
            Style="{StaticResource SubtitleTextBlockStyle}" />
 ```
 
-### Button có Content và ToolTip:
+### Button with Content and ToolTip:
 ```xml
 <Button Content="{Binding 'Common_Refresh', Converter={StaticResource TranslationConverter}}"
         ToolTipService.ToolTip="{Binding 'Mod_Dashboard_RefreshTooltip', Converter={StaticResource TranslationConverter}}"
@@ -86,13 +86,13 @@ Sử dụng `TranslationConverter` đã được khai báo Resource toàn cục 
 
 ---
 
-## 🧪 5. Kiểm Tra Tự Động & Chống Sót Key
+## 🧪 5. Automated Verification & Missing Key Prevention
 
-Trước khi bàn giao mã nguồn:
-1. Sử dụng `grep_search` kiểm tra file XAML mới xem có chữ tiếng Việt / tiếng Anh viết cứng (`Text="..."` không qua Converter) không.
-2. Kiểm tra bộ từ điển `vi-VN` và `en-US` đảm bảo:
+Before finalizing code changes:
+1. Execute `grep_search` across newly modified XAML files to detect hardcoded text literals (`Text="..."` without Converter).
+2. Validate dictionary cardinality:
    $$\text{Count}(vi\text{-}VN) == \text{Count}(en\text{-}US)$$
-3. Chạy kiểm thử translation nếu có trong bộ test suite:
+3. Execute translation test suite:
    ```powershell
    dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~Translation" --logger "console;verbosity=minimal"
    ```

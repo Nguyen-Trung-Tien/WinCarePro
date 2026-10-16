@@ -1,54 +1,54 @@
-# 👨‍💻 10. Hướng Dẫn Dành Cho Lập Trình Viên Mới (Developer Onboarding Guide)
+# 👨‍💻 10. Developer Onboarding Guide
 
-> [⬅️ 09. Đóng Gói & CI/CD](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) • [🏠 Mục Lục Docs](README.md) • **Chương 10** • [Trang Kế Tiếp: 11. Hướng Dẫn Sử Dụng Chi Tiết ➡️](11_USER_MANUAL_VI.md)
+> [⬅️ 09. Build, Deployment & CI/CD](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) • [🏠 Docs Index](README.md) • **Chapter 10** • [Next: 11. End-User Manual ➡️](11_USER_MANUAL_VI.md)
 
-Chào mừng bạn tham gia phát triển **WinCare Pro Suite v4.9 (Codename: Nova)**! Tài liệu này cung cấp hướng dẫn từng bước từ việc thiết lập môi trường đến quy trình xây dựng thêm một tính năng/phân hệ mới theo đúng chuẩn kiến trúc của dự án.
-
----
-
-## 💻 1. Thiết Lập Môi Trường Phát Triển (Setup Environment)
-
-1. **Cài đặt Visual Studio 2022:**
-   - Chọn tải phiên bản **Community**, **Professional**, hoặc **Enterprise** (v17.10 trở lên).
-   - Trong trình cài đặt *Visual Studio Installer*, tích chọn các Workload:
-     - **.NET Desktop Development** (Bao gồm .NET 10.0 SDK & C# 13).
-     - **Windows application development** (Bao gồm Windows App SDK C# Templates).
-2. **Cài đặt Inno Setup 6:** (Nếu cần kiểm tra đóng gói bộ cài đặt `WinCareProSetup.exe`).
-3. **Mở dự án:**
-   - Mở file giải pháp `WinCarePro.sln` hoặc mở thư mục `d:\WinCare` trong Visual Studio.
-   - Nhấn `Ctrl + Shift + B` để Rebuild Solution và xác nhận 0 lỗi biên dịch.
+Welcome to the **WinCare Pro Suite** engineering team. This guide outlines the development environment setup and provides a step-by-step walkthrough for creating a new feature module following our 4-tier architectural invariants.
 
 ---
 
-## 📐 2. Quy Chuẩn Đặt Tên & Lập Trình (Coding Standards)
+## 💻 1. Development Environment Setup
 
-Dự án áp dụng chặt chẽ các quy chuẩn lập trình C# hiện đại:
-
-- **Tính bất đồng bộ (Async/Await):** Tất cả các phương thức I/O, quét đĩa hoặc gọi Win32 API phải có hậu tố `Async` và nhận `CancellationToken` (ví dụ: `Task<OperationResult<T>> ScanItemsAsync(CancellationToken ct = default)`).
-- **Quy chuẩn giao tiếp luồng:** Tuyệt đối **không** gọi trực tiếp các control XAML từ background thread. Luôn sử dụng `RunOnUI(() => { ... })` trong `ViewModelBase`.
-- **Xử lý ngoại lệ:** Không nuốt lỗi (Silent Catch). Mọi lỗi phải được bọc vào `OperationResult.Fail(message, ex)` và ghi log qua `AuditLogService` hoặc `CrashLogger`.
-- **Tránh Hardcoded String:** Tất cả chuỗi giao diện hiển thị cho người dùng phải thông qua hệ thống dịch thuật `TranslationManager.Instance.GetString("Key")` hoặc phương thức mở rộng `"Key".Translate()`.
+1. **Visual Studio 2022 Installation:**
+   - Install **Community**, **Professional**, or **Enterprise** (v17.10+).
+   - In *Visual Studio Installer*, enable the following workloads:
+     - **.NET Desktop Development** (Includes .NET 10.0 SDK & C# 13).
+     - **Windows application development** (Includes Windows App SDK C# Templates).
+2. **Inno Setup 6 Installation:** (Required for packaging and testing `WinCareProSetup.exe`).
+3. **Open Solution:**
+   - Open `WinCarePro.sln` or the workspace directory in Visual Studio.
+   - Press `Ctrl + Shift + B` to rebuild the solution and ensure zero errors or warnings.
 
 ---
 
-## 🛠️ 3. Hướng Dẫn Từng Bước Thêm Một Phân Hệ Mới (Adding a New Module)
+## 📐 2. Coding Standards & Architectural Invariants
 
-Giả sử bạn cần tạo một phân hệ mới tên là **BatteryHealth** (Quản lý và chẩn đoán pin laptop):
+The project enforces strict modern C# and WinUI 3 architectural rules:
+
+- **Asynchronous Operations (Async/Await):** All I/O, disk traversal, or Win32 API calls MUST be suffixed with `Async` and accept `CancellationToken ct = default` (e.g., `Task<OperationResult<T>> ScanItemsAsync(CancellationToken ct = default)`).
+- **Thread Marshaling:** Direct modification of UI controls or `ObservableCollection<T>` from worker threads is STRICTLY FORBIDDEN. ALWAYS dispatch UI updates via `RunOnUI(() => { ... })` in `ViewModelBase`.
+- **Exception Discipline:** Silent exception swallowing (`catch { }`) is STRICTLY FORBIDDEN. All fallible routines MUST return `OperationResult.Fail(message, ex)` and log unexpected exceptions via `CrashLogger.LogError`.
+- **Zero Hardcoded Strings:** User-facing strings MUST be registered in both `vi-VN` and `en-US` dictionaries within `TranslationManager.Translations.cs` and resolved via `"Key".Translate()` or XAML `TranslationConverter`.
+
+---
+
+## 🛠️ 3. Step-by-Step Walkthrough: Adding a New Module
+
+Example scenario: Implementing a new **BatteryHealth** module (laptop battery diagnostics and health telemetry):
 
 ```mermaid
 graph TD
-    Step1["1. Tạo Data Model trong Core/Models/"] --> Step2["2. Tạo Engine trong Engines/"]
-    Step2 --> Step3["3. Đăng ký DI trong App.xaml.cs"]
-    Step3 --> Step4["4. Tạo ViewModel trong Modules/BatteryHealth/"]
-    Step4 --> Step5["5. Tạo View XAML trong Modules/BatteryHealth/"]
-    Step5 --> Step6["6. Thêm Menu Item vào MainPage.xaml"]
-    Step6 --> Step7["7. Bổ sung từ khóa tìm kiếm trong MainWindow.Search.cs"]
-    Step7 --> Step8["8. Thêm chuỗi dịch thuật trong TranslationManager.Translations.cs"]
-    Step8 --> Step9["9. Viết bài kiểm thử xUnit trong WinCarePro.Tests/"]
+    Step1["1. Define Data Model in Core/Models/"] --> Step2["2. Implement Engine in Engines/"]
+    Step2 --> Step3["3. Register DI in App.xaml.cs"]
+    Step3 --> Step4["4. Create ViewModel in Modules/BatteryHealth/"]
+    Step4 --> Step5["5. Author Aura Glass View in Modules/BatteryHealth/"]
+    Step5 --> Step6["6. Add Navigation Item in MainPage.xaml"]
+    Step6 --> Step7["7. Register Search Tokens in MainWindow.Search.cs"]
+    Step7 --> Step8["8. Register i18n Keys in TranslationManager.Translations.cs"]
+    Step8 --> Step9["9. Add xUnit Regression Tests in WinCarePro.Tests/"]
 ```
 
-### Bước 1: Tạo Data Model
-Tạo tệp `Core/Models/BatteryInfo.cs`:
+### Step 1: Define the Data Model
+Create `Core/Models/BatteryInfo.cs`:
 ```csharp
 namespace WinCarePro.Core.Models;
 
@@ -62,8 +62,8 @@ public class BatteryInfo
 }
 ```
 
-### Bước 2: Tạo Động Cơ Nghiệp Vụ (Engine)
-Tạo tệp `Engines/Diagnostics/BatteryEngine.cs`:
+### Step 2: Implement the Engine
+Create `Engines/Diagnostics/BatteryEngine.cs`:
 ```csharp
 namespace WinCarePro.Engines.Diagnostics;
 
@@ -73,7 +73,7 @@ public class BatteryEngine
     {
         try
         {
-            // Thực thi lệnh trích xuất báo cáo pin Windows an toàn
+            // Execute secure Windows battery report extraction
             var result = await ProcessRunner.RunAsync("powercfg", new[] { "/batteryreport", "/output", "battery.xml", "/xml" }, ct);
             if (!result.Success) return OperationResult<BatteryInfo>.Fail("Cannot query battery status");
 
@@ -88,15 +88,16 @@ public class BatteryEngine
 }
 ```
 
-### Bước 3: Đăng Ký Dependency Injection trong `App.xaml.cs`
-Mở [App.xaml.cs](file:///d:/WinCare/App.xaml.cs) và bổ sung:
+
+### Step 3: Register Dependency Injection in `App.xaml.cs`
+Open [App.xaml.cs](../App.xaml.cs) and register the services:
 ```csharp
 services.AddSingleton<BatteryEngine>();
 services.AddTransient<BatteryViewModel>();
 ```
 
-### Bước 4: Tạo ViewModel
-Tạo tệp `Modules/BatteryHealth/BatteryViewModel.cs`:
+### Step 4: Implement the ViewModel
+Create `Modules/BatteryHealth/BatteryViewModel.cs`:
 ```csharp
 namespace WinCarePro.Modules.BatteryHealth;
 
@@ -129,17 +130,17 @@ public partial class BatteryViewModel : ViewModelBase
 }
 ```
 
-### Bước 5: Tạo View XAML
-Tạo tệp `Modules/BatteryHealth/BatteryPage.xaml` và `BatteryPage.xaml.cs`:
+### Step 5: Author the Aura Glass View
+Create `Modules/BatteryHealth/BatteryPage.xaml` and `BatteryPage.xaml.cs`:
 ```xml
 <Page x:Class="WinCarePro.Modules.BatteryHealth.BatteryPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid Padding="24">
-        <!-- Áp dụng Aura Glass Card Design -->
+        <!-- Apply Aura Glass Card Style -->
         <Border Style="{StaticResource AuraGlassCardStyle}">
             <StackPanel Spacing="12">
-                <TextBlock Text="Battery Health" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind ViewModel.TitleText, Mode=OneWay}" Style="{StaticResource SubtitleTextBlockStyle}"/>
                 <ProgressBar Value="{x:Bind ViewModel.BatteryInfo.HealthPercentage, Mode=OneWay}" Maximum="100"/>
             </StackPanel>
         </Border>
@@ -147,19 +148,19 @@ Tạo tệp `Modules/BatteryHealth/BatteryPage.xaml` và `BatteryPage.xaml.cs`:
 </Page>
 ```
 
-### Bước 6 & 7: Tích Hợp Điều Hướng & Tìm Kiếm Toàn Cục
-- Mở [MainPage.xaml](file:///d:/WinCare/MainPage.xaml) thêm `NavigationViewItem` tương ứng.
-- Mở [MainWindow.Search.cs](file:///d:/WinCare/MainWindow.Search.cs) thêm thẻ tìm kiếm `"battery"`, `"pin"`, `"powercfg"` để người dùng gõ tìm nhanh trên TitleBar.
+### Steps 6 & 7: Navigation & Global Search Registration
+- Open [MainPage.xaml](../MainPage.xaml) and add the corresponding `NavigationViewItem`.
+- Open [MainWindow.Search.cs](../MainWindow.Search.cs) and register search keyword tags (`"battery"`, `"pin"`, `"powercfg"`) for quick TitleBar indexing.
 
-### Bước 8: Bổ Sung Từ Điển Dịch Thuật
-Mở [TranslationManager.Translations.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.Translations.cs):
+### Step 8: Register Bilingual Translation Keys
+Open [TranslationManager.Translations.cs](../Services/TranslationService/TranslationManager.Translations.cs):
 ```csharp
 ["vi-VN"]["Nav_Battery"] = "Sức Khỏe Pin";
 ["en-US"]["Nav_Battery"] = "Battery Health";
 ```
 
-### Bước 9: Viết Bài Kiểm Thử xUnit
-Tạo tệp `WinCarePro.Tests/BatteryEngineTests.cs`:
+### Step 9: Author xUnit Unit Tests
+Create `WinCarePro.Tests/BatteryEngineTests.cs`:
 ```csharp
 [Fact]
 public async Task BatteryEngine_ShouldParseReportCorrectly()
@@ -172,12 +173,13 @@ public async Task BatteryEngine_ShouldParseReportCorrectly()
 
 ---
 
-## 🐛 4. Gỡ Lỗi & Debugging Tips
+## 🐛 4. Diagnostics & Debugging Tips
 
-- **Xem log kiểm toán:** Mở tệp SQLite `%AppData%\WinCarePro\wincaredb.db` bằng công cụ *DB Browser for SQLite* để xem các bản ghi bảng `Logs`.
-- **Xem Crash Logs:** Xem thư mục `%AppData%\WinCarePro\CrashLogs\` nếu ứng dụng bị đóng đột ngột.
-- **XAML Live Preview:** Sử dụng tính năng XAML Hot Reload và Live Visual Tree trong Visual Studio 2022 để chỉnh sửa màu sắc và khoảng cách Padding trực tiếp trong khi ứng dụng đang chạy.
+- **Inspect Audit Logs:** Open `%LocalAppData%\WinCarePro\wincaredb.db` via *DB Browser for SQLite* to query records in the `Logs` table.
+- **Inspect Crash Logs:** Review `%LocalAppData%\WinCarePro\CrashLogs\` for unhandled exception stack traces.
+- **XAML Live Preview:** Leverage XAML Hot Reload and Live Visual Tree in Visual Studio 2022 to adjust paddings, brush opacities, and animations live at runtime.
 
 ---
 
-> [⬅️ 09. Đóng Gói & CI/CD](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) • [🏠 Mục Lục Docs](README.md) • **Chương 10** • [Trang Kế Tiếp: 11. Hướng Dẫn Sử Dụng Chi Tiết ➡️](11_USER_MANUAL_VI.md)
+> [⬅️ 09. Build, Deployment & CI/CD](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) • [🏠 Docs Index](README.md) • **Chapter 10** • [Next: 11. End-User Manual ➡️](11_USER_MANUAL_VI.md)
+

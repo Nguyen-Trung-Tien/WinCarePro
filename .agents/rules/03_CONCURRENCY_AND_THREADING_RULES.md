@@ -1,19 +1,19 @@
-# ⚡ 03. Quy Chuẩn Đa Luồng & Bất Đồng Bộ (Concurrency & Threading Rules)
+# ⚡ 03. Concurrency & Threading Rules
 
-> [⬅️ 02. An Toàn & Bảo Mật](02_SECURITY_AND_SAFETY_RULES.md) • [🏠 Mục Lục Rules](README.md) • **Rule 03** • [Quy Chuẩn Tiếp Theo: 04. Hiệu Năng & Quản Lý RAM ➡️](04_PERFORMANCE_AND_MEMORY_RULES.md)
+> [⬅️ 02. Security & Safety](02_SECURITY_AND_SAFETY_RULES.md) • [🏠 Rules Index](README.md) • **Rule 03** • [Next Rule: 04. Performance & Memory Management ➡️](04_PERFORMANCE_AND_MEMORY_RULES.md)
 
 ---
 
-## 🖥️ 1. Quy Tắc UI Dispatcher Thread (Zero-Crash Threading)
+## 🖥️ 1. UI Dispatcher Thread Invariants (Zero-Crash Threading)
 
-WinUI 3 (Windows App SDK) yêu cầu mọi cập nhật lên thuộc tính giao diện hoặc danh sách dữ liệu hiển thị (`ObservableCollection`) phải được thực thi trên **UI Thread**.
+WinUI 3 (Windows App SDK) requires all UI element mutations and observable collections (`ObservableCollection<T>`) to be executed strictly on the **UI Thread**.
 
-### 🔴 QUY TẮC BẮT BUỘC:
-1. **Không bao giờ cập nhật UI từ Background Thread:** Tuyệt đối không thay đổi thuộc tính `[ObservableProperty]` hoặc thao tác trên `ObservableCollection` trực tiếp bên trong `Task.Run()` mà không chuyển luồng.
-2. **Luôn sử dụng `RunOnUI` trong ViewModel:**
+### 🔴 MANDATORY INVARIANTS:
+1. **NEVER update UI state from a Background Thread:** Mutating `[ObservableProperty]` or modifying an `ObservableCollection` directly inside `Task.Run()` without thread marshaling is STRICTLY FORBIDDEN.
+2. **ALWAYS use `RunOnUI` in ViewModels:**
 
 ```csharp
-// Trong ViewModelBase.cs:
+// Inside ViewModelBase.cs:
 protected void RunOnUI(Action action)
 {
     if (App.MainWindow?.DispatcherQueue == null) return;
@@ -29,17 +29,17 @@ protected void RunOnUI(Action action)
 }
 ```
 
-### ✅ Ví dụ chuẩn mực trong ViewModel:
+### ✅ Production-Grade ViewModel Pattern:
 ```csharp
 [RelayCommand]
 public async Task ScanAsync()
 {
-    IsScanning = true; // Thuộc tính trên UI Thread
+    IsScanning = true; // Set on UI Thread
     
-    // Đẩy toàn bộ tác vụ I/O nặng xuống luồng nền
+    // Offload heavy I/O and scanning to thread pool
     var result = await Task.Run(() => _junkEngine.ScanJunkItemsAsync());
     
-    // Cập nhật kết quả an toàn lên UI Thread
+    // Safely marshal mutations back to UI Thread
     RunOnUI(() =>
     {
         JunkItems.Clear();
@@ -54,11 +54,11 @@ public async Task ScanAsync()
 
 ---
 
-## 🛑 2. Quy Chuẩn Hủy Tác Vụ Hợp Tác (`CancellationToken`)
+## 🛑 2. Cooperative Task Cancellation (`CancellationToken`)
 
-Mọi phương thức bất đồng bộ tốn thời gian (quét đĩa, tìm file trùng lặp, ping mạng, quét cập nhật) **bắt buộc** phải nhận tham số `CancellationToken ct = default` và kiểm tra định kỳ `ct.ThrowIfCancellationRequested()` hoặc truyền trực tiếp vào các lệnh I/O.
+All long-running asynchronous routines (disk scanning, duplicate file search, network diagnostics, update checking) **MUST** accept a `CancellationToken ct = default` parameter and periodically check `ct.ThrowIfCancellationRequested()` or pass it to underlying I/O APIs.
 
-### Quy tắc kiểm tra nhịp độ (Pacing):
+### Pacing & Cancellation Check Pattern:
 ```csharp
 public async Task<OperationResult<List<JunkItem>>> ScanDirectoryAsync(
     string folderPath, 
@@ -69,10 +69,10 @@ public async Task<OperationResult<List<JunkItem>>> ScanDirectoryAsync(
     
     foreach (var file in Directory.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories))
     {
-        // 1. Kiểm tra yêu cầu hủy từ người dùng
+        // 1. Cooperative cancellation check
         ct.ThrowIfCancellationRequested();
         
-        // 2. Thực hiện kiểm tra an toàn và tính toán
+        // 2. Perform safety inspection and computation
         if (SafePathGuard.IsSafeToDelete(file))
         {
             list.Add(new JunkItem(file));
@@ -83,20 +83,20 @@ public async Task<OperationResult<List<JunkItem>>> ScanDirectoryAsync(
 }
 ```
 
-### 🔴 Quy Chuẩn Vòng Đời Điều Hướng (Navigation Lifecycle & Cleanup):
-1. **Quản lý CancellationTokenSource:** Mọi ViewModel có tác vụ dài hạn phải duy trì `CancellationTokenSource? _cts`.
-2. **Hủy khi rời trang (OnNavigatedFrom / Cleanup):** Khi người dùng chuyển trang hoặc nhấn nút Hủy, ViewModel/Page **bắt buộc** phải gọi `_cts?.Cancel()` và `_cts?.Dispose()`.
-3. **Triệt tiêu Orphaned Tasks:** Tuyệt đối không để task nền tiếp tục chạy ngầm và gọi `RunOnUI` cập nhật dữ liệu sau khi View đã bị hủy hoặc điều hướng sang trang khác.
+### 🔴 Navigation Lifecycle & Cancellation Invariants:
+1. **CancellationTokenSource Governance:** ViewModels executing long-running tasks MUST maintain `CancellationTokenSource? _cts`.
+2. **Cancel on Departure (OnNavigatedFrom / Cleanup):** When the user navigates away or triggers cancellation, the ViewModel/Page **MUST** invoke `_cts?.Cancel()` and `_cts?.Dispose()`.
+3. **Eliminate Orphaned Tasks:** NEVER allow background tasks to continue executing and invoking `RunOnUI` after the associated View has been unloaded or disposed.
 
 ---
 
-## 💾 3. Quy Chuẩn Khóa Đồng Bộ CSDL (`_dbLock` & SQLite WAL)
+## 💾 3. Database Synchronization (`_dbLock` & SQLite WAL)
 
-Mặc dù SQLite ở chế độ **Write-Ahead Logging (WAL)** hỗ trợ nhiều luồng đọc đồng thời, thao tác ghi (INSERT, UPDATE, DELETE) vẫn yêu cầu quyền ghi độc quyền để tránh lỗi `SQLite busy (database is locked)`.
+Although SQLite in **Write-Ahead Logging (WAL)** mode supports concurrent readers, write operations (INSERT, UPDATE, DELETE) require serialized access to prevent `SQLite busy (database is locked)` errors.
 
-### 🔴 QUY TẮC BẮT BUỘC TRONG `DbManager`:
-1. **Khóa cục bộ toàn năng:** Mọi phương thức truy vấn hoặc thực thi lệnh CSDL phải nằm trong khối `lock (_dbLock)`.
-2. **Tránh Deadlock:** Không gọi lồng nhau các hàm bên ngoài (như gọi sự kiện giao diện hoặc gọi HTTP request) trong khi đang nắm giữ `lock (_dbLock)`.
+### 🔴 MANDATORY INVARIANTS IN `DbManager`:
+1. **Centralized Lock Guard:** ALL database queries and command executions MUST be guarded inside `lock (_dbLock)`.
+2. **Deadlock Elimination:** NEVER invoke external delegates, UI dispatchers, or HTTP requests while holding `lock (_dbLock)`.
 
 ```csharp
 private readonly object _dbLock = new();
@@ -119,24 +119,24 @@ public void InsertLog(string action, string module, string status)
 
 ---
 
-## 🚫 4. Cấm Sử Dụng Sync-Over-Async (`.Result` hoặc `.Wait()`)
+## 🚫 4. Sync-Over-Async Elimination (`.Result` or `.Wait()`)
 
-- ❌ **CẤM:** Gọi `task.Result` hoặc `task.Wait()` trên UI Thread — đây là nguyên nhân số 1 gây Deadlock trong môi trường Windows UI.
-- ✅ **LUÔN DÙNG:** Từ khóa `await` trong phương thức có chữ ký `async Task`.
-- ❌ **CẤM `async void`:** Ngoại trừ các bộ xử lý sự kiện UI XAML (Event Handlers), toàn bộ các phương thức bất đồng bộ phải trả về `Task` hoặc `Task<T>`.
+- ❌ **FORBIDDEN:** Calling `task.Result` or `task.Wait()` on the UI Thread — primary cause of UI deadlocks in Windows App SDK.
+- ✅ **ALWAYS USE:** The `await` keyword inside methods declared `async Task` or `async Task<T>`.
+- ❌ **FORBIDDEN `async void`:** Except for XAML UI Event Handlers, all asynchronous methods MUST return `Task` or `Task<T>`.
 
 ---
 
-## 🔒 5. Quy Chuẩn Đảm Bảo Phục Hồi Trạng Thái Khi Hủy (`finally` CancellationToken Pattern)
+## 🔒 5. State Restoration Invariant (`finally` Lifecycle Pattern)
 
-Khi ViewModel thực thi tác vụ bất đồng bộ thiết lập `IsBusy = true` hoặc `SetOperationState(OperationState.Running)`:
-1. **Bắt buộc có khối `finally`:** Mọi chu trình async có `CancellationToken` phải có khối `finally` để đảm bảo khi `token.IsCancellationRequested` hoặc `_isDisposed == true`, cờ `IsBusy` luôn được đặt lại thành `false` và `OperationState` trở về `OperationState.Idle`.
-2. **Không thoát sớm (early return) mà bỏ qua cleanup:** Tuyệt đối không viết `if (token.IsCancellationRequested) return;` ở giữa hàm mà không nằm trong cấu trúc `try / finally`.
-3. **Cơ chế Fallback `RunOnUI`:** Cung cấp fallback thực thi trực tiếp khi `DispatcherQueue == null` để hỗ trợ kiểm thử tự động (Unit / Stress Tests) độc lập với WinUI thread host.
+Whenever a ViewModel sets `IsBusy = true` or `SetOperationState(OperationState.Running)`:
+1. **Mandatory `finally` Block:** All async workflows MUST include a `finally` block ensuring that regardless of exceptions or cancellation, `IsBusy` is reset to `false` and `OperationState` returns to `OperationState.Idle`.
+2. **No Early Returns Without Cleanup:** NEVER return early upon cancellation check (e.g. `if (token.IsCancellationRequested) return;`) outside a `try / finally` structure.
+3. **`RunOnUI` Fallback for Unit Testing:** When `DispatcherQueue == null`, provide direct synchronous execution fallback to enable standalone xUnit / stress tests without a WinUI thread host.
 
 ---
 
 <div align="center">
-  <sub>[🏠 Mục Lục Rules](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
+  <sub>[🏠 Rules Index](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
 </div>
 

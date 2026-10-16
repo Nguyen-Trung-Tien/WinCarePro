@@ -2,7 +2,7 @@
 
 > **Version:** v5.0.0 (Codename: Polaris) | **Target Platform:** Windows 10/11 x64  
 > **Core Stack:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite 3 WAL • CommunityToolkit.Mvvm  
-> **Deep Reference Docs:** [AI Symbol Index & Architecture Map](file:///d:/WinCare/docs/00_AI_SYMBOL_INDEX.md) • [11 Technical Rulebooks](file:///d:/WinCare/.agents/rules/README.md) • [11 Technical Architecture Chapters](file:///d:/WinCare/docs/README.md) • [10 Specialized Skills](file:///d:/WinCare/.agents/skills/README.md)
+> **Deep Reference Docs:** [AI Symbol Index & Architecture Map](docs/00_AI_SYMBOL_INDEX.md) • [11 Technical Rulebooks](.agents/rules/README.md) • [11 Technical Architecture Chapters](docs/README.md) • [10 Specialized Skills](.agents/skills/README.md)
 
 ---
 
@@ -25,25 +25,25 @@ Unidirectional dependency branch from exterior to core:
 $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightarrow \text{Engines (Business Logic)} \longrightarrow \text{Infrastructure / Core}$$
 
 - **Presentation:** Interacts exclusively with ViewModels via Data Binding & `RelayCommand`. MUST NOT reference Engine or Infrastructure layers directly.
-- **ViewModel:** Inherits [ViewModelBase.cs](file:///d:/WinCare/Core/Helpers/ViewModelBase.cs). ALWAYS wrap UI updates in `RunOnUI()`. Cross-VM messaging MUST use `WeakReferenceMessenger`. MUST NOT hold direct references to other ViewModels.
+- **ViewModel:** Inherits [ViewModelBase.cs](Core/Helpers/ViewModelBase.cs). ALWAYS wrap UI updates in `RunOnUI()`. Cross-VM messaging MUST use `WeakReferenceMessenger`. MUST NOT hold direct references to other ViewModels.
 - **Engines:** Isolated business logic. MUST NOT reference any WinUI types (`Button`, `Window`, `SolidColorBrush`, etc.).
-- **Infrastructure / Core:** SQLite persistence [DbManager.cs](file:///d:/WinCare/Infrastructure/Database/DbManager.cs), file/registry guards ([SafePathGuard.cs](file:///d:/WinCare/Core/Helpers/SafePathGuard.cs), [SafeRegistryGuard.cs](file:///d:/WinCare/Core/Helpers/SafeRegistryGuard.cs)), P/Invoke (`[LibraryImport]`), DPAPI encryption.
+- **Infrastructure / Core:** SQLite persistence [DbManager.cs](Infrastructure/Database/DbManager.cs), file/registry guards ([SafePathGuard.cs](Core/Helpers/SafePathGuard.cs), [SafeRegistryGuard.cs](Core/Helpers/SafeRegistryGuard.cs)), P/Invoke (`[LibraryImport]`), DPAPI encryption.
 
 ---
 
 ## 📋 3. Eleven Inviolable Technical Rules
 
-1. **Architecture & DI:** Enforce View $\rightarrow$ ViewModel $\rightarrow$ Engine $\rightarrow$ Core. Register Singletons (`DbManager`, `ThemeManager`, `TranslationManager`) and Transients (`*Engine`, `*ViewModel`) in [App.xaml.cs](file:///d:/WinCare/App.xaml.cs).
+1. **Architecture & DI:** Enforce View $\rightarrow$ ViewModel $\rightarrow$ Engine $\rightarrow$ Core. Register Singletons (`DbManager`, `ThemeManager`, `TranslationManager`) and Transients (`*Engine`, `*ViewModel`) in [App.xaml.cs](App.xaml.cs).
 2. **File & Registry Armor:**
    - File/Directory Deletion: MUST pass `SafePathGuard.IsSafeToDelete(path)`. NEVER delete root directories, system trees, user data, or Reparse Points.
    - Registry Mutation/Deletion: MUST pass `SafeRegistryGuard.IsSafeToDeleteKey(key)` and ALWAYS create a restore point first via `RegistryBackupEngine.BackupKey()`. Root hives are STRICTLY FORBIDDEN; key path depth MUST be $\ge 3$.
-3. **CLI Safety (Zero Command Injection):** NEVER concatenate shell commands via `cmd.exe /c "..."`. ALWAYS execute via [ProcessRunner.cs](file:///d:/WinCare/Core/Helpers/ProcessRunner.cs) passing parameters through `ArgumentList`. ALWAYS sanitize inputs using [InputSanitizer.cs](file:///d:/WinCare/Core/Helpers/InputSanitizer.cs).
-4. **Windows Service Protection & DPAPI:** NEVER stop or disable protected core services (`RpcSs`, `DcomLaunch`, `WinDefend`, `CryptSvc`, etc.). ALWAYS verify via `ServiceSafetyService.IsProtectedService()`. ALWAYS encrypt credentials/secrets using [CryptoHelper.cs](file:///d:/WinCare/Core/Helpers/CryptoHelper.cs) (DPAPI).
+3. **CLI Safety (Zero Command Injection):** NEVER concatenate shell commands via `cmd.exe /c "..."`. ALWAYS execute via [ProcessRunner.cs](Core/Helpers/ProcessRunner.cs) passing parameters through `ArgumentList`. ALWAYS sanitize inputs using [InputSanitizer.cs](Core/Helpers/InputSanitizer.cs).
+4. **Windows Service Protection & DPAPI:** NEVER stop or disable protected core services (`RpcSs`, `DcomLaunch`, `WinDefend`, `CryptSvc`, etc.). ALWAYS verify via `ServiceSafetyService.IsProtectedService()`. ALWAYS encrypt credentials/secrets using [CryptoHelper.cs](Core/Helpers/CryptoHelper.cs) (DPAPI).
 5. **WinUI 3 Concurrency & Threading:** UI and `ObservableCollection` mutations MUST be dispatched via `RunOnUI(() => { ... })`. NEVER use sync-over-async (`.Result`, `.Wait()`). NEVER declare `async void` except in UI event handlers.
 6. **Task Lifecycle & Cancellation:** Heavy async routines MUST accept `CancellationToken ct = default` and periodically invoke `ThrowIfCancellationRequested()`. ALWAYS ensure state cleanup inside `finally { IsBusy = false; OperationState = OperationState.Idle; }`.
-7. **SQLite WAL Concurrency:** ALL SQLite read/write operations in [DbManager.cs](file:///d:/WinCare/Infrastructure/Database/DbManager.cs) MUST be guarded with `lock (_dbLock)`. MUST NOT invoke external I/O or long-running logic inside the lock.
-8. **Result Pattern & Zero-Silent Catch:** Fallible methods MUST return `OperationResult` or `OperationResult<T>`. NEVER swallow exceptions with empty `catch { }`. Unexpected errors MUST be recorded to [CrashLogger.cs](file:///d:/WinCare/Infrastructure/Logging/CrashLogger.cs).
-9. **Mandatory Internationalization (i18n):** Hardcoded UI strings are STRICTLY FORBIDDEN. ALL display text MUST be registered in both `vi-VN` and `en-US` dictionaries in [TranslationManager.Translations.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.Translations.cs).
+7. **SQLite WAL Concurrency:** ALL SQLite read/write operations in [DbManager.cs](Infrastructure/Database/DbManager.cs) MUST be guarded with `lock (_dbLock)`. MUST NOT invoke external I/O or long-running logic inside the lock.
+8. **Result Pattern & Zero-Silent Catch:** Fallible methods MUST return `OperationResult` or `OperationResult<T>`. NEVER swallow exceptions with empty `catch { }`. Unexpected errors MUST be recorded to [CrashLogger.cs](Infrastructure/Logging/CrashLogger.cs).
+9. **Mandatory Internationalization (i18n):** Hardcoded UI strings are STRICTLY FORBIDDEN. ALL display text MUST be registered in both `vi-VN` and `en-US` dictionaries in [TranslationManager.Translations.cs](Services/TranslationService/TranslationManager.Translations.cs).
 10. **Resource & Memory Discipline:** ALWAYS detach event handlers (`-=`) during `Unloaded`/`Dispose()`. MUST pause 3D/canvas animations when navigating away. Cache shell icons via `IconCacheService`. ALWAYS set `Typography.NumeralAlignment="Tabular"` on telemetry metrics.
 11. **Token Economy & Targeted Precision:**
     - **Context Economy & Log Suppression:**
@@ -70,7 +70,7 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 | **UI Updates from Thread** | `Items.Add(item);` | `RunOnUI(() => Items.Add(item));` |
 | **Exception Handling** | `catch { }` | `catch (Exception ex) { CrashLogger.LogError(ex); return OperationResult.Fail(ex); }` |
 | **Async Synchronization** | `var r = task.Result;` | `var r = await task;` |
-| **UI Display Strings** | `<TextBlock Text="Quét rác"/>` | `<TextBlock Text="{Binding Key, Converter={StaticResource TranslationConverter}}"/>` |
+| **UI Display Strings** | `<TextBlock Text="Clean junk"/>` | `<TextBlock Text="{Binding Key, Converter={StaticResource TranslationConverter}}"/>` |
 | **Busy State Reset** | Unset or omitted on exception | `try { IsBusy = true; ... } finally { IsBusy = false; }` |
 | **SQLite Access** | Direct concurrent un-synchronized queries | `lock (_dbLock) { /* query */ }` |
 | **Source Inspection** | `view_file` whole file > 150 lines | `grep_search` target $\rightarrow$ `view_file` 30-60 line slice |
@@ -104,20 +104,20 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 
 ## 🧰 6. Technical Playbooks Directory (Workspace Skills)
 
-Quick lookup before implementation at [skills/README.md](file:///d:/WinCare/.agents/skills/README.md):
+Quick lookup before implementation at [.agents/skills/README.md](.agents/skills/README.md):
 
 | Skill Name | Path | Core Scope & Responsibilities |
 | :--- | :--- | :--- |
-| `wincare-module-creator` | [wincare-module-creator/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-module-creator/SKILL.md) | Standardized 7-step modular workflow (`Model` $\rightarrow$ `Engine` $\rightarrow$ `DI` $\rightarrow$ `ViewModel` $\rightarrow$ `Aura` $\rightarrow$ `i18n` $\rightarrow$ `Test`). |
-| `wincare-safe-ops` | [wincare-safe-ops/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-safe-ops/SKILL.md) | Zero-Trust OS operations: `SafePathGuard`, `SafeRegistryGuard`, registry backups, `ProcessRunner`, `ServiceSafetyService`, DPAPI. |
-| `wincare-concurrency-guard` | [wincare-concurrency-guard/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-concurrency-guard/SKILL.md) | WinUI 3 threading: `RunOnUI()`, `DispatcherQueue`, RelayCommands, `CancellationToken`, eliminating sync-over-async. |
-| `wincare-ui-aura` | [wincare-ui-aura/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-ui-aura/SKILL.md) | Aura Glass Fluent 2.0 UI: Tabular figures, Mica Alt, unsubscribe `Unloaded` events, zero memory leaks. |
-| `wincare-i18n-sync` | [wincare-i18n-sync/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-i18n-sync/SKILL.md) | Dual-language synchronization: `vi-VN` & `en-US` in `TranslationManager.Translations.cs`, `TranslationConverter`, zero hardcoded text. |
-| `wincare-db-wal` | [wincare-db-wal/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-db-wal/SKILL.md) | SQLite WAL management: centralized `lock (_dbLock)`, parameterized SQL, `DatabaseTestCollection` for xUnit. |
-| `wincare-error-resilience` | [wincare-error-resilience/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-error-resilience/SKILL.md) | Resilience: `OperationResult<T>` pattern, Zero-Silent Catch, `CrashLogger.LogError`, graceful fallback. |
-| `wincare-test-verifier` | [wincare-test-verifier/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-test-verifier/SKILL.md) | Token-efficient testing: filtered test runs (`--filter`), regression analysis, target 100% Passed. |
-| `wincare-token-guard` | [wincare-token-guard/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-token-guard/SKILL.md) | Token optimization: `grep_search` targeted lookups, narrow 30-60 line slicing, in-place patching, quiet logs. |
-| `wincare-ci-packaging` | [wincare-ci-packaging/SKILL.md](file:///d:/WinCare/.agents/skills/wincare-ci-packaging/SKILL.md) | CI & packaging: `publish.bat` (Self-Contained x64 .NET 10), `publish_installer.bat` (Inno Setup), SSOT `AppConstants`. |
+| `wincare-module-creator` | [wincare-module-creator/SKILL.md](.agents/skills/wincare-module-creator/SKILL.md) | Standardized 7-step modular workflow (`Model` $\rightarrow$ `Engine` $\rightarrow$ `DI` $\rightarrow$ `ViewModel` $\rightarrow$ `Aura` $\rightarrow$ `i18n` $\rightarrow$ `Test`). |
+| `wincare-safe-ops` | [wincare-safe-ops/SKILL.md](.agents/skills/wincare-safe-ops/SKILL.md) | Zero-Trust OS operations: `SafePathGuard`, `SafeRegistryGuard`, registry backups, `ProcessRunner`, `ServiceSafetyService`, DPAPI. |
+| `wincare-concurrency-guard` | [wincare-concurrency-guard/SKILL.md](.agents/skills/wincare-concurrency-guard/SKILL.md) | WinUI 3 threading: `RunOnUI()`, `DispatcherQueue`, RelayCommands, `CancellationToken`, eliminating sync-over-async. |
+| `wincare-ui-aura` | [wincare-ui-aura/SKILL.md](.agents/skills/wincare-ui-aura/SKILL.md) | Aura Glass Fluent 2.0 UI: Tabular figures, Mica Alt, unsubscribe `Unloaded` events, zero memory leaks. |
+| `wincare-i18n-sync` | [wincare-i18n-sync/SKILL.md](.agents/skills/wincare-i18n-sync/SKILL.md) | Dual-language synchronization: `vi-VN` & `en-US` in `TranslationManager.Translations.cs`, `TranslationConverter`, zero hardcoded text. |
+| `wincare-db-wal` | [wincare-db-wal/SKILL.md](.agents/skills/wincare-db-wal/SKILL.md) | SQLite WAL management: centralized `lock (_dbLock)`, parameterized SQL, `DatabaseTestCollection` for xUnit. |
+| `wincare-error-resilience` | [wincare-error-resilience/SKILL.md](.agents/skills/wincare-error-resilience/SKILL.md) | Resilience: `OperationResult<T>` pattern, Zero-Silent Catch, `CrashLogger.LogError`, graceful fallback. |
+| `wincare-test-verifier` | [wincare-test-verifier/SKILL.md](.agents/skills/wincare-test-verifier/SKILL.md) | Token-efficient testing: filtered test runs (`--filter`), regression analysis, target 100% Passed. |
+| `wincare-token-guard` | [wincare-token-guard/SKILL.md](.agents/skills/wincare-token-guard/SKILL.md) | Token optimization: `grep_search` targeted lookups, narrow 30-60 line slicing, in-place patching, quiet logs. |
+| `wincare-ci-packaging` | [wincare-ci-packaging/SKILL.md](.agents/skills/wincare-ci-packaging/SKILL.md) | CI & packaging: `publish.bat` (Self-Contained x64 .NET 10), `publish_installer.bat` (Inno Setup), SSOT `AppConstants`. |
 
 ---
 

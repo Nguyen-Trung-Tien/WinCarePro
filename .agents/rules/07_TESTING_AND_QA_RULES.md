@@ -1,66 +1,66 @@
-# 🧪 07. Quy Chuẩn Kiểm Thử Tự Động & Đảm Bảo Chất Lượng (QA & Testing Rules)
+# 🧪 07. Testing & Quality Assurance Rules
 
-> [⬅️ 06. Giao Diện & UI/UX](06_UI_UX_AND_AESTHETICS_RULES.md) • [🏠 Mục Lục Rules](README.md) • **Rule 07** • [Quy Chuẩn Tiếp Theo: 08. Đóng Gói & CI/CD ➡️](08_RELEASE_PACKAGING_AND_CICD_RULES.md)
+> [⬅️ 06. UI/UX & Aesthetics](06_UI_UX_AND_AESTHETICS_RULES.md) • [🏠 Rules Index](README.md) • **Rule 07** • [Next Rule: 08. Release Packaging & CI/CD ➡️](08_RELEASE_PACKAGING_AND_CICD_RULES.md)
 
 ---
 
-## 🏆 1. Chính Sách Không Lỗi Tuyệt Đối (Zero-Bug Policy)
+## 🏆 1. Zero-Failure Quality Gate
 
-Dự án duy trì tỷ lệ kiểm thử thành công **100% Passed (465/465 Tests)**. Không một bản build nào được phép xuất xưởng nếu có bất kỳ bài test nào bị `Failed`.
+The project enforces a strict **100% Passed (465/465 Tests)** pass rate. Release candidate builds with any failing tests are STRICTLY REJECTED.
 
 ```powershell
-# Lệnh kiểm thử bắt buộc trước khi merge code:
+# Mandatory pre-merge test execution command:
 dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --logger "console;verbosity=minimal"
 ```
 
 ---
 
-## 🛡️ 2. Quy Tắc Cô Lập Kiểm Thử (Test Isolation & Safety)
+## 🛡️ 2. Test Isolation & Sandbox Safety
 
-1. **Không can thiệp vào máy tính thật của Developer:**
-   - Các bài kiểm thử CSDL **bắt buộc** sử dụng cơ sở dữ liệu tạm thời trong RAM (`Data Source=:memory:`) hoặc file SQLite độc lập trong thư mục `TestTemp/`, tự động dọn sạch sau khi test kết thúc.
-   - Các thao tác Win32 nguy hiểm (như dừng tiến trình thật, can thiệp Registry `HKLM`, chạy `sfc /scannow`) phải được bọc qua Mock Object hoặc kiểm tra trên tệp giả lập.
-2. **Kiểm thử độc lập đa luồng:**
-   - Các bài test không được phụ thuộc vào thứ tự chạy (Order-independent). Không dùng biến tĩnh toàn cục có thể gây xung đột trạng thái giữa các bài test chạy song song.
+1. **Host Environment Protection:**
+   - Database tests **MUST** execute against in-memory databases (`Data Source=:memory:`) or isolated scratch databases in `TestTemp/`, cleaned up automatically during test teardown.
+   - Hazardous Win32 calls (process termination, `HKLM` modifications, `sfc /scannow`) MUST be isolated behind mocks or tested against simulated virtual filesystems.
+2. **Order-Independent Concurrency:**
+   - Tests MUST remain order-independent. Shared mutable static state between concurrent test runners is STRICTLY FORBIDDEN.
 
 ---
 
-## 🎯 3. Yêu Cầu Phạm Vi Kiểm Thử Cho Tính Năng Mới (Coverage Requirements)
+## 🎯 3. Mandatory Coverage Matrix for New Features
 
-Khi lập trình viên thêm một Engine, ViewModel hoặc tính năng mới, **bắt buộc** phải viết kèm bộ test xUnit trong `WinCarePro.Tests`:
+Introducing any new Engine, ViewModel, or system module **REQUIRES** corresponding xUnit test cases in `WinCarePro.Tests`:
 
-| Phân loại tính năng | Yêu cầu bài test tối thiểu |
+| Feature Domain | Minimum Test Scenarios |
 | :--- | :--- |
-| **Vòng đời & Hủy tác vụ** | Test `CancelScan()` phục hồi `IsBusy == false` và `OperationState.Idle`, test không bị cờ khóa vĩnh viễn. |
-| **Thử nghiệm Stress thực tế** | Test chu trình `Scan → Cancel → Scan`, click dồn dập (rapid clicks), đổi theme/lang mid-scan. |
-| **Thuật toán quét & dọn dẹp** | Test nhận diện tệp, test bỏ qua file đang khóa, test kiểm tra an toàn `SafePathGuard`. |
-| **Chẩn đoán & Chấm điểm** | Test các trường hợp biên: 0% RAM, 100% CPU, ổ C: đầy, danh sách rỗng. |
-| **Bảo mật & CSDL** | Test chống SQL Injection, test di chuyển Schema Version, test mã hóa DPAPI. |
-| **Dịch thuật đa ngôn ngữ** | Test kiểm tra không thiếu bất kỳ Key dịch nào giữa `vi-VN` và `en-US`. |
+| **Lifecycle & Cancellation** | Verify `CancelScan()` restores `IsBusy == false` and `OperationState.Idle`; verify zero lock contention. |
+| **Realistic Stress Scenarios** | Cycle test `Scan → Cancel → Scan`, rapid multi-click execution, mid-scan theme/language transitions. |
+| **Scanning & File Operations** | Path classification, skipping locked handles, `SafePathGuard` safety barriers. |
+| **Diagnostics & Scoring** | Boundary cases: 0% RAM, 100% CPU, depleted disk storage, empty collection states. |
+| **Security & Persistence** | SQL injection resistance, database schema migration integrity, DPAPI round-trip encryption. |
+| **Internationalization (i18n)** | Zero missing translation keys between `vi-VN` and `en-US` dictionaries. |
 
 ---
 
-## 🔍 4. Cấu Trúc Bài Test Chuẩn Mực (Arrange - Act - Assert)
+## 🔍 4. Canonical Test Pattern (Arrange - Act - Assert)
 
-Mỗi phương thức kiểm thử phải tuân theo cấu trúc AAA rõ ràng và sử dụng `FluentAssertions`:
+All test methods MUST adhere to AAA structure and use `FluentAssertions`:
 
 ```csharp
 [Fact]
 public void SafePathGuard_ShouldBlockDeletion_WhenTargetIsSystem32()
 {
-    // 1. Arrange (Chuẩn bị dữ liệu)
+    // 1. Arrange
     string dangerousPath = @"C:\Windows\System32\drivers";
 
-    // 2. Act (Thực thi hành động)
+    // 2. Act
     bool isSafe = SafePathGuard.IsSafeToDelete(dangerousPath);
 
-    // 3. Assert (Xác nhận kết quả với FluentAssertions)
-    isSafe.Should().BeFalse("Thư mục System32 là thành phần sống còn của hệ điều hành, không được phép xóa.");
+    // 3. Assert
+    isSafe.Should().BeFalse("System32 is a vital operating system tree and must never be deleted.");
 }
 ```
 
 ---
 
 <div align="center">
-  <sub>[🏠 Mục Lục Rules](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
+  <sub>[🏠 Rules Index](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
 </div>

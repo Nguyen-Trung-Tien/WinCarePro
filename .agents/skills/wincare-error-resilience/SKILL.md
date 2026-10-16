@@ -4,29 +4,29 @@ description: >-
   Zero-Silent Catch and error resilience patterns for WinCare Pro. Covers OperationResult/OperationResult<T> usage, CrashLogger exception tracking, preventing empty catches, graceful degradation for Win32/WMI failures, and user-facing error reporting via InfoBar/NotificationCenter. Use whenever handling exceptions, designing API results, or writing fault-tolerant system code.
 ---
 
-# 🛡️ WinCare Pro — Quản Lý Lỗi & Chống Nuốt Ngoại Lệ (Error Resilience)
+# 🛡️ WinCare Pro — Fault Tolerance & Zero-Silent Catch Standards (Error Resilience)
 
-WinCare Pro can thiệp vào nhiều phân hệ nhạy cảm của Windows (Registry, File System, Win32 API, Services, WMI). Lỗi I/O, Access Denied hoặc Win32 Error là điều tất yếu. Hệ thống **tuyệt đối cấm** nuốt ngoại lệ (silent catch) và bắt buộc trả về kết quả qua mẫu `OperationResult`.
+WinCare Pro interacts directly with critical Windows subsystems (Registry, File System, Win32 APIs, Services, WMI). Fault conditions such as I/O exceptions, Access Denied errors, and Win32 failures are inevitable. The system **STRICTLY PROHIBITS** silent exception catching and mandates returning all diagnostic outcomes via the `OperationResult` pattern.
 
 ---
 
-## 🚫 1. Bảng Đối Chiếu Xử Lý Ngoại Lệ Bắt Buộc
+## 🚫 1. Exception Handling Enforcement Matrix
 
-| Tình huống | ❌ CẤM TUYỆT ĐỐI | ✅ BẮT BUỘC SỬ DỤNG |
+| Scenario | ❌ STRICTLY FORBIDDEN | ✅ MANDATORY PATTERN |
 | :--- | :--- | :--- |
-| **Bắt ngoại lệ** | `catch { }` hoặc `catch (Exception) { /* no-op */ }` | Luôn log qua `CrashLogger.LogError(ex)` và trả về `OperationResult.Fail(ex)` |
-| **Kiểu trả về của Engine** | Trả về `void` hoặc ném thẳng Exception không kiểm soát | Trả về `OperationResult` hoặc `OperationResult<T>` |
-| **Lỗi quyền hạn (UnauthorizedAccess)** | Để ứng dụng sập (Crash unhandled) | Bắt cụ thể `UnauthorizedAccessException`, thông báo cần quyền Administrator |
-| **Lỗi P/Invoke hoặc Win32 API** | Không kiểm tra mã trả về của Win32 | Kiểm tra `Marshal.GetLastWin32Error()` hoặc mã `HRESULT` |
-| **Hiển thị lỗi trên UI** | Bật `MessageBox.Show()` WinForms cũ kỹ | Dùng `InfoBar`, `ContentDialog` hoặc `NotificationCenter` theo chuẩn Fluent 2.0 |
+| **Exception Handling** | `catch { }` or `catch (Exception) { /* no-op */ }` | ALWAYS log via `CrashLogger.LogError(ex)` and return `OperationResult.Fail(ex)` |
+| **Engine Return Type** | Returning `void` or throwing unhandled exceptions across boundaries | Return `OperationResult` or `OperationResult<T>` |
+| **Authorization Failures (UnauthorizedAccess)** | Permitting unhandled crashes | Catch specific `UnauthorizedAccessException`, alert requirement for Administrator elevation |
+| **P/Invoke or Win32 API Errors** | Omitting return code checks | Inspect `Marshal.GetLastWin32Error()` or evaluate `HRESULT` |
+| **UI Error Presentation** | Modal popups via legacy WinForms `MessageBox.Show()` | Use `InfoBar`, `ContentDialog`, or `NotificationCenter` aligned with Fluent 2.0 |
 
 ---
 
-## 📦 2. Mẫu Kết Quả Chuẩn Hóa (`OperationResult<T>`)
+## 📦 2. Standardized Result Pattern (`OperationResult<T>`)
 
-Mọi phương thức trong tầng `Engines` và `Infrastructure` phải bọc kết quả qua [OperationResult.cs](file:///d:/WinCare/Core/Models/OperationResult.cs):
+All methods in `Engines` and `Infrastructure` layers MUST wrap outcomes using [OperationResult.cs](../../Core/Models/OperationResult.cs):
 
-### Phương thức không có giá trị trả về:
+### Method Without Return Payload:
 ```csharp
 public async Task<OperationResult> FlushDnsAsync(CancellationToken ct = default)
 {
@@ -53,7 +53,7 @@ public async Task<OperationResult> FlushDnsAsync(CancellationToken ct = default)
 }
 ```
 
-### Phương thức có dữ liệu trả về (`OperationResult<T>`):
+### Method Returning Data Payload (`OperationResult<T>`):
 ```csharp
 public OperationResult<DriveHealthInfo> GetDiskHealth(string driveLetter)
 {
@@ -75,25 +75,25 @@ public OperationResult<DriveHealthInfo> GetDiskHealth(string driveLetter)
 
 ---
 
-## 📝 3. Phân Cấp Ghi Log (Logging Strategy)
+## 📝 3. Logging Hierarchy & Discipline
 
-Toàn hệ thống phân định rõ ràng giữa hai cơ chế log:
+The system enforces a strict dichotomy between telemetry and crash logging:
 
 1. **`CrashLogger.LogError(Exception ex, string context)`**:
-   - Sử dụng khi: Có Exception không mong muốn, ngoại lệ I/O, lỗi CSDL, lỗi Win32, hoặc crash ngầm.
-   - Vị trí lưu: Thư mục `%AppData%\WinCare\Logs\crash_*.log` kèm stack trace chi tiết.
+   - Scope: Unexpected exceptions, I/O faults, SQLite corruptions, Win32 failures, or caught crashes.
+   - Storage: `%AppData%\WinCare\Logs\crash_*.log` containing comprehensive stack traces.
 
 2. **`AppLogger.LogInfo` / `AppLogger.LogWarning`**:
-   - Sử dụng khi: Ghi nhận sự kiện nghiệp vụ thông thường (bắt đầu quét, quét xong 150MB rác, người dùng hủy thao tác, phát hiện service bị bảo vệ).
+   - Scope: Operational business lifecycle events (scan initialization, 150 MB junk purged, user cancellation, protected service detection).
 
 ---
 
-## 🛡️ 4. Chiến Lược Giảm Cấp Mềm Dẻo (Graceful Degradation)
+## 🛡️ 4. Graceful Degradation Strategy
 
-Khi một API hệ thống cấp thấp không thể thực thi (do Windows thiếu tính năng, tài khoản người dùng chuẩn không phải Administrator, hoặc WMI bị hỏng repository):
+When low-level system APIs fail or are unavailable (e.g., missing OS optional features, non-elevated user accounts, corrupted WMI repository):
 
-1. **Không làm chết toàn bộ quy trình:** Thử cơ chế fallback thay thế (ví dụ: WMI hỏng $\rightarrow$ đọc qua Registry hoặc Performance Counters).
-2. **Cung cấp cảnh báo cụ thể cho người dùng:** 
+1. **Prevent cascading process failure:** Attempt alternative fallbacks (e.g., WMI corrupted $\rightarrow$ fallback to Registry probes or Performance Counters).
+2. **Surface explicit, actionable UI feedback:**
    ```csharp
    if (!IsAdministrator())
    {
@@ -105,4 +105,4 @@ Khi một API hệ thống cấp thấp không thể thực thi (do Windows thi�
        return OperationResult.Fail("Administrator privileges required.");
    }
    ```
-3. **Giữ ứng dụng tiếp tục hoạt động:** Các phân hệ khác không liên quan vẫn phải tương tác bình thường.
+3. **Preserve application responsiveness:** Unrelated modules and active views MUST continue functioning smoothly without degradation.

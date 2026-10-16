@@ -1,157 +1,157 @@
-# ⚙️ 03. Tầng Động Cơ Nghiệp Vụ (Engines & Business Logic)
+# ⚙️ 03. Business Logic Engines Architecture
 
-> [⬅️ 02. Chi Tiết 16 Phân Hệ](02_CORE_MODULES_DETAILED.md) • [🏠 Mục Lục Docs](README.md) • **Chương 03** • [Trang Kế Tiếp: 04. Cơ Sở Dữ Liệu & Lưu Trữ ➡️](04_DATABASE_AND_STORAGE.md)
+> [⬅️ 02. Core Modules](02_CORE_MODULES_DETAILED.md) • [🏠 Documentation Index](README.md) • **Chapter 03** • [Next: 04. Database & Storage Architecture ➡️](04_DATABASE_AND_STORAGE.md)
 
-Tài liệu này đi sâu vào kiến trúc, cấu trúc phương thức, thuật toán và cách hoạt động của toàn bộ các lớp Động cơ (Engines) trong thư mục `Engines/`.
+This document specifies the internal architecture, method contracts, algorithms, and operational mechanisms governing all business logic classes located within `Engines/`.
 
 ---
 
-## 🏗️ Phân Loại Tầng Engines
+## 🏗️ Engine Subsystem Taxonomy
 
-Các Engines được chia thành 4 nhóm nghiệp vụ chính:
+Business logic engines are partitioned across 4 functional domains:
 
 ```
 Engines/
-├── Diagnostics/         # Phân tích, chẩn đoán AI, chấm điểm và thông tin hệ thống
-├── Monitoring/          # Giám sát phần cứng, tiến trình, mạng và đo băng thông
-├── Optimization/        # Thuật toán dọn rác, dọn RAM, phân tích ổ đĩa, quản lý khởi động
-└── Repair/              # Gỡ bỏ ứng dụng, sao lưu Registry, bảo mật, driver và context menu
+├── Diagnostics/         # AI heuristic analysis, health scoring, predictive models, system repairs
+├── Monitoring/          # Hardware telemetry, process monitoring, network benchmarking
+├── Optimization/        # Junk deletion, memory compaction, disk analysis, startup management
+└── Repair/              # Deep uninstallation, registry backups, security policies, drivers
 ```
 
 ---
 
-## 1. 🔍 Nhóm Động Cơ Chẩn Đoán (Diagnostics Engines)
+## 1. 🔍 Diagnostics Engines Group
 
 ### 1.1. `AiDiagnosticsEngine`
-- **File:** [Engines/Diagnostics/AiDiagnosticsEngine.cs](file:///d:/WinCare/Engines/Diagnostics/AiDiagnosticsEngine.cs)
-- **Mục đích:** Bộ máy phân tích Heuristic không phụ thuộc vào đám mây (Cloud-free / Local Heuristic).
-- **Thuật toán cốt lõi:**
-  - `RunFullDiagnosticAsync(IProgress<DiagnosticProgress> progress, CancellationToken ct)`: Chạy song song 8 luồng chẩn đoán độc lập:
-    1. *Memory Pressure*: Kiểm tra tỷ lệ RAM sử dụng > 85% và tỷ lệ Paging File cao.
-    2. *Storage Warning*: Kiểm tra dung lượng trống ổ đĩa hệ thống (`C:`) < 15%.
-    3. *Junk Volume*: Đánh giá lượng file rác tích tụ trong các thư mục tạm.
-    4. *Process Hogging*: Phát hiện các tiến trình không phải hệ thống chiếm dụng CPU liên tục.
-    5. *Security Flaws*: Kiểm tra trạng thái Windows Defender, Firewall và UAC.
-    6. *Network Latency*: Kiểm tra độ trễ mạng và DNS responsiveness.
-    7. *Startup Congestion*: Đánh giá số lượng ứng dụng khởi động loại High Impact.
-    8. *Residual Folders*: Tìm kiếm các thư mục AppData mồ côi của các phần mềm đã gỡ.
-  - `ExecuteFixActionAsync(DiagnosticItem item)`: Thực thi giải pháp sửa chữa tự động tương ứng cho từng loại vấn đề phát hiện được.
+- **File:** [Engines/Diagnostics/AiDiagnosticsEngine.cs](../Engines/Diagnostics/AiDiagnosticsEngine.cs)
+- **Objective:** Cloud-free, offline heuristic diagnostic engine evaluating host system stability.
+- **Core Algorithms:**
+  - `RunFullDiagnosticAsync(IProgress<DiagnosticProgress> progress, CancellationToken ct)`: Dispatches 8 parallel diagnostic workers:
+    1. *Memory Pressure*: Verifies whether physical RAM utilization exceeds 85% with high Paging File commit ratios.
+    2. *Storage Warning*: Flags system drive (`C:`) free capacity dipping below 15%.
+    3. *Junk Volume*: Estimates ephemeral junk file accumulation across temporary volumes.
+    4. *Process Hogging*: Identifies runaway non-system processes sustaining prolonged CPU saturation.
+    5. *Security Flaws*: Audits real-time status of Windows Defender, Windows Firewall, and User Account Control (UAC).
+    6. *Network Latency*: Evaluates round-trip ICMP packet latency and DNS resolution responsiveness.
+    7. *Startup Congestion*: Analyzes concentration of High-Impact startup applications.
+    8. *Residual Folders*: Scans for orphaned AppData directories belonging to previously uninstalled software.
+  - `ExecuteFixActionAsync(DiagnosticItem item)`: Executes targeted automated remediation for identified diagnostic findings.
 
 ### 1.2. `AiWinCareScoringEngine`
-- **File:** [Engines/Diagnostics/AiWinCareScoringEngine.cs](file:///d:/WinCare/Engines/Diagnostics/AiWinCareScoringEngine.cs)
-- **Mục đích:** Tính toán chỉ số sức khỏe tổng hợp (Composite System Health Score) từ 0 đến 100 điểm.
-- **Công thức tính điểm trọng số:**
+- **File:** [Engines/Diagnostics/AiWinCareScoringEngine.cs](../Engines/Diagnostics/AiWinCareScoringEngine.cs)
+- **Objective:** Computes a composite system health score ranging from 0 to 100 points.
+- **Weighted Scoring Formula:**
   $$\text{Score} = 100 - (\mathbf{W}_{ram} \cdot P_{ram} + \mathbf{W}_{disk} \cdot P_{disk} + \mathbf{W}_{sec} \cdot P_{sec} + \mathbf{W}_{junk} \cdot P_{junk} + \mathbf{W}_{boot} \cdot P_{boot})$$
-  - Trong đó: Trọng số Bảo mật ($\mathbf{W}_{sec} = 0.30$), Trọng số Ổ đĩa ($\mathbf{W}_{disk} = 0.25$), Trọng số RAM ($\mathbf{W}_{ram} = 0.20$), Trọng số Rác ($\mathbf{W}_{junk} = 0.15$), Trọng số Khởi động ($\mathbf{W}_{boot} = 0.10$).
+  - Factor Weights: Security ($\mathbf{W}_{sec} = 0.30$), Storage ($\mathbf{W}_{disk} = 0.25$), RAM ($\mathbf{W}_{ram} = 0.20$), Junk ($\mathbf{W}_{junk} = 0.15$), Boot Delay ($\mathbf{W}_{boot} = 0.10$).
 
 ### 1.3. `PredictiveAnalysisEngine`
-- **File:** [Engines/Diagnostics/PredictiveAnalysisEngine.cs](file:///d:/WinCare/Engines/Diagnostics/PredictiveAnalysisEngine.cs)
-- **Mục đích:** Dự báo thời điểm ổ cứng hệ thống đầy và nguy cơ suy giảm tuổi thọ SSD.
-- **Phương thức chính:**
-  - `ForecastDiskFullDays(string driveLetter)`: Dựa trên lịch sử ghi dữ liệu trong CSDL SQLite để tính tốc độ tiêu thụ GB/ngày và ngoại suy số ngày còn lại.
+- **File:** [Engines/Diagnostics/PredictiveAnalysisEngine.cs](../Engines/Diagnostics/PredictiveAnalysisEngine.cs)
+- **Objective:** Projects system drive capacity exhaustion dates and SSD wear trends.
+- **Key Method:**
+  - `ForecastDiskFullDays(string driveLetter)`: Samples historical storage utilization rates stored in SQLite to compute GB/day growth vectors and extrapolate remaining days before drive depletion.
 
 ### 1.4. `SystemEngine`
-- **File:** [Engines/Diagnostics/SystemEngine.cs](file:///d:/WinCare/Engines/Diagnostics/SystemEngine.cs)
-- **Mục đích:** Tương tác với các công cụ bảo trì gốc của Windows qua [ProcessRunner.cs](file:///d:/WinCare/Core/Helpers/ProcessRunner.cs).
-- **Phương thức chính:**
-  - `RunSfcScanAsync(IProgress<string> outputProgress)`: Gọi `sfc.exe /scannow` bất đồng bộ và parse tiến độ %.
-  - `RunDismRestoreHealthAsync(IProgress<string> outputProgress)`: Gọi `DISM.exe /Online /Cleanup-Image /RestoreHealth`.
-  - `RunDismComponentCleanupAsync()`: Dọn dẹp kho `WinSxS` bằng `/StartComponentCleanup /ResetBase`.
-  - `RepairWindowsUpdateAsync()`: Khởi động lại dịch vụ Update và làm sạch `%windir%\SoftwareDistribution`.
+- **File:** [Engines/Diagnostics/SystemEngine.cs](../Engines/Diagnostics/SystemEngine.cs)
+- **Objective:** Orchestrates native Windows servicing and maintenance binaries via [ProcessRunner.cs](../Core/Helpers/ProcessRunner.cs).
+- **Key Methods:**
+  - `RunSfcScanAsync(IProgress<string> outputProgress)`: Asynchronously executes `sfc.exe /scannow` and parses stdout completion percentages.
+  - `RunDismRestoreHealthAsync(IProgress<string> outputProgress)`: Executes `DISM.exe /Online /Cleanup-Image /RestoreHealth`.
+  - `RunDismComponentCleanupAsync()`: Reclaims `WinSxS` component storage via `/StartComponentCleanup /ResetBase`.
+  - `RepairWindowsUpdateAsync()`: Restarts Windows Update services and purges corrupted `%windir%\SoftwareDistribution` caches.
 
 ---
 
-## 2. 📊 Nhóm Động Cơ Giám Sát (Monitoring Engines)
+## 2. 📊 Monitoring Engines Group
 
 ### 2.1. `ProcessService`
-- **File:** [Engines/Monitoring/ProcessService.cs](file:///d:/WinCare/Engines/Monitoring/ProcessService.cs)
-- **Mục đích:** Đọc danh sách và thông số hiệu năng của tất cả các tiến trình đang chạy.
-- **Phương thức chính:**
-  - `GetRunningProcessesAsync()`: Lấy danh sách kèm PID, Memory Working Set, CPU Usage %, Tên tiến trình, Đường dẫn thực thi và Icon (được cache qua `IconCacheService`).
-  - `KillProcessAsync(int processId)`: Kết thúc tiến trình an toàn bằng Win32 `OpenProcess` & `TerminateProcess`.
-  - `SetProcessPriority(int processId, ProcessPriorityClass priority)`: Thay đổi độ ưu tiên CPU (sử dụng trong Gaming Turbo).
+- **File:** [Engines/Monitoring/ProcessService.cs](../Engines/Monitoring/ProcessService.cs)
+- **Objective:** Ingests telemetry metrics and manages lifecycle states across all active system processes.
+- **Key Methods:**
+  - `GetRunningProcessesAsync()`: Enumerates running processes with PID, Working Set memory, CPU %, process name, image path, and cached icon handles (`IconCacheService`).
+  - `KillProcessAsync(int processId)`: Safely terminates target processes via native Win32 `OpenProcess` & `TerminateProcess` calls.
+  - `SetProcessPriority(int processId, ProcessPriorityClass priority)`: Adjusts process scheduling priority classes (leveraged by Gaming Turbo).
 
-### 2.2. `NetworkEngine` (Modular Partial Classes)
-- **File chính:** [Engines/Monitoring/NetworkEngine.cs](file:///d:/WinCare/Engines/Monitoring/NetworkEngine.cs)
-- **Các thành phần mở rộng:**
-  - [NetworkEngine.SpeedTest.cs](file:///d:/WinCare/Engines/Monitoring/NetworkEngine.SpeedTest.cs): Tải các tệp mẫu kích thước cố định qua `HttpClient` với bộ đệm stream để tính toán throughput Mbps thực tế và jitter.
-  - [NetworkEngine.DnsBenchmark.cs](file:///d:/WinCare/Engines/Monitoring/NetworkEngine.DnsBenchmark.cs): Gửi các gói truy vấn UDP DNS Socket tới danh sách máy chủ DNS công cộng và đo thời gian phản hồi (Round-Trip Time ms).
-  - [NetworkEngine.Repair.cs](file:///d:/WinCare/Engines/Monitoring/NetworkEngine.Repair.cs): Gọi tuần tự các lệnh `ipconfig /flushdns`, `netsh winsock reset`, `netsh int ip reset`, `ipconfig /renew`.
+### 2.2. `NetworkEngine` (Modular Partial Architecture)
+- **Primary Contract:** [Engines/Monitoring/NetworkEngine.cs](../Engines/Monitoring/NetworkEngine.cs)
+- **Component Implementations:**
+  - [NetworkEngine.SpeedTest.cs](../Engines/Monitoring/NetworkEngine.SpeedTest.cs): Downloads fixed-size test buffers over `HttpClient` using buffered streams to determine actual Mbps throughput and jitter.
+  - [NetworkEngine.DnsBenchmark.cs](../Engines/Monitoring/NetworkEngine.DnsBenchmark.cs): Dispatches UDP DNS query sockets to public resolver endpoints, calculating Round-Trip Time (RTT ms).
+  - [NetworkEngine.Repair.cs](../Engines/Monitoring/NetworkEngine.Repair.cs): Sequentially runs `ipconfig /flushdns`, `netsh winsock reset`, `netsh int ip reset`, and `ipconfig /renew`.
 
 ---
 
-## 3. ⚡ Nhóm Động Cơ Tối Ưu Hóa (Optimization Engines)
+## 3. ⚡ Optimization Engines Group
 
 ### 3.1. `JunkCleanerEngine`
-- **File:** [Engines/Optimization/JunkCleanerEngine.cs](file:///d:/WinCare/Engines/Optimization/JunkCleanerEngine.cs)
-- **Mục đích:** Tìm kiếm và dọn dẹp các tệp tin tạm, cache trên toàn bộ ổ đĩa.
-- **Cơ chế duyệt tệp:**
-  - Sử dụng `Directory.EnumerateFiles` kết hợp `SafePathGuard` để duyệt đệ quy.
-  - Kiểm tra đuôi tệp và đường dẫn xem có nằm trong danh sách đen không trước khi gọi `File.Delete`.
-  - Tự động bỏ qua lỗi `UnauthorizedAccessException` hoặc `IOException` (khi file đang được dùng) mà không gián đoạn toàn bộ tiến trình quét.
+- **File:** [Engines/Optimization/JunkCleanerEngine.cs](../Engines/Optimization/JunkCleanerEngine.cs)
+- **Objective:** Deep recursive enumeration and safe deletion of ephemeral cache and temporary files.
+- **Traversal Mechanics:**
+  - Employs `Directory.EnumerateFiles` with `SafePathGuard` filtering during recursive traversal.
+  - Verifies file extensions and folder paths against blacklists before invoking `File.Delete`.
+  - Catches and skips `UnauthorizedAccessException` and `IOException` without aborting active scan workflows.
 
 ### 3.2. `SystemOptimizerEngine`
-- **File:** [Engines/Optimization/SystemOptimizerEngine.cs](file:///d:/WinCare/Engines/Optimization/SystemOptimizerEngine.cs)
-- **Mục đích:** Tinh chỉnh Windows Registry, bộ nhớ RAM và cấu hình hiệu năng.
-- **Phương thức chính:**
-  - `FlushMemoryWorkingSet()`: Duyệt qua tất cả các tiến trình người dùng và gọi hàm Win32 API `EmptyWorkingSet(hProcess)` từ thư viện `psapi.dll`, giải phóng dung lượng RAM vật lý chưa được giải phóng.
-  - `ApplySystemTweaksAsync(List<SystemTweak> tweaks)`: Ghi các giá trị DWORD/String vào `HKEY_CURRENT_USER` hoặc `HKEY_LOCAL_MACHINE`.
-  - `EnableUltimatePerformancePowerPlan()`: Chạy lệnh `powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61`.
+- **File:** [Engines/Optimization/SystemOptimizerEngine.cs](../Engines/Optimization/SystemOptimizerEngine.cs)
+- **Objective:** Registry performance tuning, memory working set reclamation, and power plan configuration.
+- **Key Methods:**
+  - `FlushMemoryWorkingSet()`: Iterates through active user processes and invokes Win32 `EmptyWorkingSet(hProcess)` via `psapi.dll`, releasing unreferenced physical RAM.
+  - `ApplySystemTweaksAsync(List<SystemTweak> tweaks)`: Writes DWORD/String values into `HKEY_CURRENT_USER` or `HKEY_LOCAL_MACHINE`.
+  - `EnableUltimatePerformancePowerPlan()`: Executes `powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61`.
 
 ### 3.3. `DiskEngine`
-- **File:** [Engines/Optimization/DiskEngine.cs](file:///d:/WinCare/Engines/Optimization/DiskEngine.cs)
-- **Phương thức chính:**
-  - `GetDriveInfoList()`: Lấy thông tin dung lượng tổng, dung lượng trống, định dạng ổ đĩa (NTFS/FAT32).
-  - `GetSmartAttributesAsync(string driveLetter)`: Đọc S.M.A.R.T qua WMI `MSStorageDriver_FailurePredictData` và Win32 `DeviceIoControl`.
-  - `FindDuplicateFilesAsync(string searchPath, CancellationToken ct)`: Thuật toán quét 2 bước: Bước 1 gom nhóm theo kích thước file (Length); Bước 2 tính mã băm SHA-256 đối với các file cùng kích thước để xác định trùng lặp chính xác 100%.
+- **File:** [Engines/Optimization/DiskEngine.cs](../Engines/Optimization/DiskEngine.cs)
+- **Key Methods:**
+  - `GetDriveInfoList()`: Retrieves total capacity, free space, and volume formats (NTFS/FAT32).
+  - `GetSmartAttributesAsync(string driveLetter)`: Reads S.M.A.R.T attributes via WMI `MSStorageDriver_FailurePredictData` and Win32 `DeviceIoControl`.
+  - `FindDuplicateFilesAsync(string searchPath, CancellationToken ct)`: 2-stage duplicate detection algorithm: Stage 1 groups files by byte length; Stage 2 computes SHA-256 block hashes on identical-length files to guarantee 100% collision-free matching.
 
 ### 3.4. `StartupEngine`
-- **File:** [Engines/Optimization/StartupEngine.cs](file:///d:/WinCare/Engines/Optimization/StartupEngine.cs)
-- **Phương thức chính:**
-  - `GetStartupItemsAsync()`: Đọc các mục khởi động từ 4 vị trí:
+- **File:** [Engines/Optimization/StartupEngine.cs](../Engines/Optimization/StartupEngine.cs)
+- **Key Methods:**
+  - `GetStartupItemsAsync()`: Enumerates autorun registrations across 4 locations:
     1. `HKLM\Software\Microsoft\Windows\CurrentVersion\Run`
     2. `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`
-    3. Thư mục `shell:startup` (`%AppData%\Microsoft\Windows\Start Menu\Programs\Startup`)
-    4. Thư mục `shell:common startup` (`%ProgramData%\Microsoft\Windows\Start Menu\Programs\Startup`)
-  - `ToggleStartupItem(StartupItem item, bool isEnabled)`: Bật/tắt bằng cách di chuyển khóa sang nhánh `RunDisabled` hoặc đổi thuộc tính file shortcut.
-  - **Cơ chế phòng vệ:** Tích hợp kiểm tra [SafeRegistryGuard.cs](file:///d:/WinCare/Core/Helpers/SafeRegistryGuard.cs) và [ServiceSafetyService.cs](file:///d:/WinCare/Infrastructure/Security/ServiceSafetyService.cs) để ngăn chặn sửa đổi các dịch vụ hoặc khóa hệ điều hành thiết yếu.
+    3. User Startup Folder (`shell:startup` / `%AppData%\Microsoft\Windows\Start Menu\Programs\Startup`)
+    4. Common Startup Folder (`shell:common startup` / `%ProgramData%\Microsoft\Windows\Start Menu\Programs\Startup`)
+  - `ToggleStartupItem(StartupItem item, bool isEnabled)`: Toggles entries by moving registry keys to `RunDisabled` or modifying shortcut attributes.
+  - **Defensive Safeguards:** Validates mutations via [SafeRegistryGuard.cs](../Core/Helpers/SafeRegistryGuard.cs) and [ServiceSafetyService.cs](../Core/Helpers/ServiceSafetyService.cs) to protect essential system services and autoruns.
 
 ---
 
-## 4. 🛠️ Nhóm Động Cơ Sửa Chữa & Bảo Mật (Repair Engines)
+## 4. 🛠️ Repair & Security Engines Group
 
 ### 4.1. `UninstallEngine`
-- **Files:** [UninstallEngine.cs](file:///d:/WinCare/Engines/Repair/UninstallEngine.cs), [UninstallEngine.Scanning.cs](file:///d:/WinCare/Engines/Repair/UninstallEngine.Scanning.cs), [UninstallEngine.Leftovers.cs](file:///d:/WinCare/Engines/Repair/UninstallEngine.Leftovers.cs)
-- **Quy trình gỡ bỏ 3 bước (3-Step Uninstallation Flow):**
-  1. *Khởi chạy Uninstaller gốc:* Gọi chuỗi lệnh `UninstallString` hoặc `QuietUninstallString` lấy từ Registry.
-  2. *Chờ tiến trình kết thúc:* Giám sát PID của trình gỡ cài đặt với Timeout an toàn.
-  3. *Deep Leftover Scanning:* Duyệt đệ quy tìm các thư mục và khóa Registry chứa Tên phần mềm hoặc Tên nhà phát hành (Publisher), hiển thị cây tàn dư cho người dùng xác nhận trước khi xóa vĩnh viễn.
+- **Files:** [UninstallEngine.cs](../Engines/Repair/UninstallEngine.cs), [UninstallEngine.Scanning.cs](../Engines/Repair/UninstallEngine.Scanning.cs), [UninstallEngine.Leftovers.cs](../Engines/Repair/UninstallEngine.Leftovers.cs)
+- **3-Step Uninstallation Pipeline:**
+  1. *Launch Native Uninstaller:* Invokes `UninstallString` or `QuietUninstallString` retrieved from Registry hives.
+  2. *Wait for Process Exit:* Monitors native uninstaller PID under bounded timeouts.
+  3. *Deep Leftover Sweep:* Recursively scans for directories and registry keys matching Software Name or Publisher, presenting residual candidates to users before deletion.
 
 ### 4.2. `SecurityPrivacyEngine`
-- **File:** [Engines/Repair/SecurityPrivacyEngine.cs](file:///d:/WinCare/Engines/Repair/SecurityPrivacyEngine.cs)
-- **Phương thức chính:**
-  - `GetSecurityStatusAsync()`: Kiểm tra trạng thái Defender qua WMI `root\SecurityCenter2` và Registry.
-  - `ToggleTelemetry(bool disable)`: Cấu hình chính sách Group Policy / Registry `AllowTelemetry = 0` trong `HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection`.
-  - `VerifyDigitalSignature(string filePath)`: Sử dụng hàm Win32 API `WinVerifyTrust` từ `wintrust.dll` để kiểm tra chứng chỉ số và tính toàn vẹn của tệp thực thi.
+- **File:** [Engines/Repair/SecurityPrivacyEngine.cs](../Engines/Repair/SecurityPrivacyEngine.cs)
+- **Key Methods:**
+  - `GetSecurityStatusAsync()`: Audits Defender state via WMI `root\SecurityCenter2` and Registry.
+  - `ToggleTelemetry(bool disable)`: Sets policy keys `AllowTelemetry = 0` in `HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection`.
+  - `VerifyDigitalSignature(string filePath)`: Invokes native Win32 `WinVerifyTrust` via `wintrust.dll` to validate Authenticode digital signatures.
 
 ### 4.3. `SoftwareUpdaterEngine`
-- **File:** [Engines/Repair/SoftwareUpdaterEngine.cs](file:///d:/WinCare/Engines/Repair/SoftwareUpdaterEngine.cs)
-- **Phương thức chính:**
-  - `ScanForUpdatesAsync()`: Thực thi lệnh `winget upgrade --include-unknown` với output parser phân tích danh sách: Tên phần mềm, ID, Phiên bản hiện tại, Phiên bản mới nhất.
-  - `UpdatePackageAsync(string packageId, IProgress<string> logProgress)`: Thực thi `winget upgrade --id <packageId> --silent --accept-package-agreements --accept-source-agreements`.
+- **File:** [Engines/Repair/SoftwareUpdaterEngine.cs](../Engines/Repair/SoftwareUpdaterEngine.cs)
+- **Key Methods:**
+  - `ScanForUpdatesAsync()`: Executes `winget upgrade --include-unknown` and parses package tables: Name, ID, Current Version, Available Version.
+  - `UpdatePackageAsync(string packageId, IProgress<string> logProgress)`: Invokes `winget upgrade --id <packageId> --silent --accept-package-agreements --accept-source-agreements`.
 
 ### 4.4. `RegistryBackupEngine`
-- **File:** [Engines/Repair/RegistryBackupEngine.cs](file:///d:/WinCare/Engines/Repair/RegistryBackupEngine.cs)
-- **Phương thức chính:**
-  - `BackupKey(RegistryHive hive, string subKeyPath, string destinationRegFile)`: Gọi `reg.exe export` qua ProcessRunner để tạo file `.reg` tiêu chuẩn.
-  - `RestoreBackup(string regFilePath)`: Gọi `reg.exe import` để khôi phục trạng thái.
+- **File:** [Engines/Repair/RegistryBackupEngine.cs](../Engines/Repair/RegistryBackupEngine.cs)
+- **Key Methods:**
+  - `BackupKey(RegistryHive hive, string subKeyPath, string destinationRegFile)`: Invokes `reg.exe export` via ProcessRunner to export standard `.reg` snapshots.
+  - `RestoreBackup(string regFilePath)`: Invokes `reg.exe import` to rollback state.
 
 ### 4.5. `HardwareDriverEngine`
-- **File:** [Engines/Repair/HardwareDriverEngine.cs](file:///d:/WinCare/Engines/Repair/HardwareDriverEngine.cs)
-- **Phương thức chính:**
-  - `GetInstalledDriversAsync()`: Truy vấn WMI `Win32_PnPSignedDriver` để lấy danh sách driver thiết bị, phiên bản, ngày phát hành và nhà sản xuất.
-  - `BackupDriversAsync(string backupDirectory)`: Sử dụng lệnh `dism.exe /online /export-driver /destination:<path>` để sao lưu toàn bộ driver của bên thứ 3.
+- **File:** [Engines/Repair/HardwareDriverEngine.cs](../Engines/Repair/HardwareDriverEngine.cs)
+- **Key Methods:**
+  - `GetInstalledDriversAsync()`: Queries WMI `Win32_PnPSignedDriver` for device driver inventories, versions, dates, and signers.
+  - `BackupDriversAsync(string backupDirectory)`: Executes `dism.exe /online /export-driver /destination:<path>` to export third-party drivers.
 
 ---
 
-> [⬅️ 02. Chi Tiết 16 Phân Hệ](02_CORE_MODULES_DETAILED.md) • [🏠 Mục Lục Docs](README.md) • **Chương 03** • [Trang Kế Tiếp: 04. Cơ Sở Dữ Liệu & Lưu Trữ ➡️](04_DATABASE_AND_STORAGE.md)
+> [⬅️ 02. Core Modules](02_CORE_MODULES_DETAILED.md) • [🏠 Documentation Index](README.md) • **Chapter 03** • [Next: 04. Database & Storage Architecture ➡️](04_DATABASE_AND_STORAGE.md)

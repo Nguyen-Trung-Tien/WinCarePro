@@ -1,20 +1,20 @@
-# 🧪 08. Kiểm Thử Tự Động & Đảm Bảo Chất Lượng (QA & Testing)
+# 🧪 08. Automated Testing & Quality Assurance (QA & Testing)
 
-> [⬅️ 07. Thiết Kế UI/UX Aura Glass](07_UI_UX_DESIGN_SYSTEM.md) • [🏠 Mục Lục Docs](README.md) • **Chương 08** • [Trang Kế Tiếp: 09. Đóng Gói & CI/CD ➡️](09_BUILD_DEPLOYMENT_AND_PACKAGING.md)
+> [⬅️ 07. Aura Glass UI/UX Design System](07_UI_UX_DESIGN_SYSTEM.md) • [🏠 Docs Index](README.md) • **Chapter 08** • [Next: 09. Build, Deployment & CI/CD ➡️](09_BUILD_DEPLOYMENT_AND_PACKAGING.md)
 
-Chất lượng phần mềm và độ tin cậy tuyệt đối được đảm bảo thông qua bộ kiểm thử tự động toàn diện trong dự án `WinCarePro.Tests` với **465 bài kiểm thử xUnit đạt tỷ lệ vượt qua 100% (465/465 Passed — Zero-Bug Policy)**.
+Software quality and operational safety are verified through a comprehensive automated test suite in the `WinCarePro.Tests` project, featuring **465 xUnit test cases with a 100% pass rate (465/465 Passed — Zero-Bug Policy)**.
 
 ---
 
-## 📊 1. Tổng Quan Bộ Kiểm Thử (Test Suite Overview)
+## 📊 1. Test Suite Overview
 
 - **Framework:** `xUnit.net v2`
-- **Thư viện Mocking & Assertion:** `Moq`, `FluentAssertions`
-- **Môi trường chạy:** Windows 10/11 x64 (.NET 10.0 runtime)
-- **Vị trí thư mục:** [WinCarePro.Tests/](file:///d:/WinCare/WinCarePro.Tests/)
+- **Mocking & Assertion Libraries:** `Moq`, `FluentAssertions`
+- **Execution Target:** Windows 10/11 x64 (.NET 10.0 runtime)
+- **Directory Location:** [WinCarePro.Tests/](../WinCarePro.Tests/)
 
 ```mermaid
-pie title Phân Bổ 465 Tests Theo Danh Mục
+pie title 465 Tests Distribution by Category
     "Security & Sanitization" : 75
     "Engines & Business Logic" : 95
     "Production Hardening & Stress Testing" : 125
@@ -25,66 +25,67 @@ pie title Phân Bổ 465 Tests Theo Danh Mục
 
 ---
 
-## 🗂️ 2. Danh Mục Các Lớp Kiểm Thử (Test Classes & Coverage)
+## 🗂️ 2. Test Classes & Coverage Catalog
 
-| STT | Tập Tin Test | Danh Mục Kiểm Thử | Số Lượng Tests & Mục Tiêu |
+| # | Test File | Test Category | Target Scope & Invariants |
 | :---: | :--- | :--- | :--- |
-| **1** | [SecurityAndSafetyTests.cs](file:///d:/WinCare/WinCarePro.Tests/SecurityAndSafetyTests.cs) | An Toàn & Bảo Vệ | Kiểm thử `SafePathGuard` chặn xóa thư mục hệ điều hành, bỏ qua Junction Points, chặn xóa tệp Credential. |
-| **2** | [ProductionHardeningTests.cs](file:///d:/WinCare/WinCarePro.Tests/ProductionHardeningTests.cs) | Hardening & An Toàn Cao | Kiểm thử `SafeRegistryGuard`, `ServiceSafetyService` core services, `CancellationToken` ngắt luồng an toàn. |
-| **3** | [ProductionStressHardeningTests.cs](file:///d:/WinCare/WinCarePro.Tests/ProductionStressHardeningTests.cs) | Stress Testing & Concurrency | Kiểm thử chu kỳ Scan-Cancel liên tục trên mọi ViewModel, chuyển Theme/Language tức thời khi đang chạy tác vụ, chống Double-click đa luồng. |
-| **4** | [LifecycleAndStressHardeningTests.cs](file:///d:/WinCare/WinCarePro.Tests/LifecycleAndStressHardeningTests.cs) | Vòng Đời & Trạng Thái | Kiểm thử Dispose an toàn khi tác vụ đang chạy, State Machine không bị race condition khi switch view nhanh. |
-| **5** | [SecurityAndSanitizationTests.cs](file:///d:/WinCare/WinCarePro.Tests/SecurityAndSanitizationTests.cs) | Chống Injection | Xác thực `InputSanitizer` và `ProcessRunner.ArgumentList` loại bỏ hoàn toàn các chuỗi ký tự tấn công shell. |
-| **6** | [AppVersionManagementTests.cs](file:///d:/WinCare/WinCarePro.Tests/AppVersionManagementTests.cs) | Phiên Bản Hệ Thống | Kiểm tra đồng bộ version v5.0.0 (Polaris), DefaultVersionString, InformationalVersion và AppConstants. |
-| **7** | [DbManagerRegressionTests.cs](file:///d:/WinCare/WinCarePro.Tests/DbManagerRegressionTests.cs) | Cơ Sở Dữ Liệu | Kiểm thử nâng cấp migration `PRAGMA user_version`, kiểm thử khóa đồng bộ đa luồng `_dbLock`. |
-| **8** | [DbAndReportTests.cs](file:///d:/WinCare/WinCarePro.Tests/DbAndReportTests.cs) | Lưu Trữ & Lịch Sử | Kiểm tra ghi/đọc bảng `Logs`, `Users`, `Notifications` và các truy vấn tổng hợp báo cáo. |
-| **9** | [AiDiagnosticsEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/AiDiagnosticsEngineTests.cs) | Thuật Toán AI | Đánh giá tính chính xác của 8 luồng quét Heuristic và khả năng phân loại mức độ nghiêm trọng. |
-| **10** | [AiWinCareEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/AiWinCareEngineTests.cs) | Chấm Điểm Sức Khỏe | Kiểm thử công thức tính điểm `Composite Health Score` (0-100) với các trường hợp biên (Edge Cases). |
-| **11** | [DriverBackupAndAiForecastingTests.cs](file:///d:/WinCare/WinCarePro.Tests/DriverBackupAndAiForecastingTests.cs) | Dự Báo & Driver | Kiểm thử thuật toán ngoại suy số ngày đầy ổ đĩa và logic xuất danh sách Driver. |
-| **12** | [JunkCleanerEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/JunkCleanerEngineTests.cs) | Dọn Dẹp Rác | Kiểm tra tính toán dung lượng tệp rác, bỏ qua file đang bị khóa mà không làm dừng tiến trình quét. |
-| **13** | [SystemOptimizerEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/SystemOptimizerEngineTests.cs) | Tối Ưu RAM & Tweak | Kiểm thử gọi Win32 `EmptyWorkingSet`, cấu hình Registry DWORD an toàn. |
-| **14** | [SystemRepairTests.cs](file:///d:/WinCare/WinCarePro.Tests/SystemRepairTests.cs) | Sửa Lỗi Windows | Kiểm thử chuỗi lệnh SFC, DISM và cơ chế bắt mã trả về `ExitCode`. |
-| **15** | [NetworkCenterEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/NetworkCenterEngineTests.cs) | Mạng & DNS | Kiểm thử đo Ping, phân giải IP DNS Benchmark và chuỗi lệnh Reset Network Stack. |
-| **16** | [UninstallEngineTests.cs](file:///d:/WinCare/WinCarePro.Tests/UninstallEngineTests.cs) | Gỡ Phần Mềm | Kiểm tra phân tích tàn dư thư mục và khóa Registry mồ côi. |
-| **17** | [CryptoHelperTests.cs](file:///d:/WinCare/WinCarePro.Tests/CryptoHelperTests.cs) | Mã Hóa DPAPI | Kiểm thử tính đối xứng mã hóa `Protect` và giải mã `Unprotect`. |
-| **18** | [UiThemeAndConsistencyTests.cs](file:///d:/WinCare/WinCarePro.Tests/UiThemeAndConsistencyTests.cs) | Giao Diện & i18n | Kiểm tra tính nhất quán của từ điển dịch thuật ngữ Anh-Việt (Không bị thiếu Key dịch). |
+| **1** | [SecurityAndSafetyTests.cs](../WinCarePro.Tests/SecurityAndSafetyTests.cs) | Safety & Guard Rails | Tests `SafePathGuard` root tree protection, Reparse Point bypass, credential file exclusion. |
+| **2** | [ProductionHardeningTests.cs](../WinCarePro.Tests/ProductionHardeningTests.cs) | Hardening & OS Protection | Tests `SafeRegistryGuard`, `ServiceSafetyService` core whitelist, safe `CancellationToken` thread interruption. |
+| **3** | [ProductionStressHardeningTests.cs](../WinCarePro.Tests/ProductionStressHardeningTests.cs) | Stress Testing & Concurrency | Tests repeated Scan-Cancel cycles across ViewModels, theme/language hot-swapping during active jobs, double-click debounce. |
+| **4** | [LifecycleAndStressHardeningTests.cs](../WinCarePro.Tests/LifecycleAndStressHardeningTests.cs) | Lifecycle & State Transitions | Tests safe `Dispose()` during in-flight operations, state machine race condition prevention under rapid navigation. |
+| **5** | [SecurityAndSanitizationTests.cs](../WinCarePro.Tests/SecurityAndSanitizationTests.cs) | Injection Defense | Validates `InputSanitizer` and `ProcessRunner.ArgumentList` rejection of malicious shell metacharacters. |
+| **6** | [AppVersionManagementTests.cs](../WinCarePro.Tests/AppVersionManagementTests.cs) | Version Management | Verifies synchronized versioning: v5.0.0 (Polaris), DefaultVersionString, InformationalVersion, and AppConstants. |
+| **7** | [DbManagerRegressionTests.cs](../WinCarePro.Tests/DbManagerRegressionTests.cs) | SQLite Database & WAL | Tests `PRAGMA user_version` migrations and multithreaded `_dbLock` concurrency. |
+| **8** | [DbAndReportTests.cs](../WinCarePro.Tests/DbAndReportTests.cs) | Persistence & Reporting | Tests CRUD operations on `Logs`, `Users`, and `Notifications` tables, plus analytical queries. |
+| **9** | [AiDiagnosticsEngineTests.cs](../WinCarePro.Tests/AiDiagnosticsEngineTests.cs) | AI Diagnostics Engine | Assesses 8 concurrent heuristic diagnostic tasks and severity categorization accuracy. |
+| **10** | [AiWinCareEngineTests.cs](../WinCarePro.Tests/AiWinCareEngineTests.cs) | Health Scoring Algorithm | Validates `Composite Health Score` (0-100) formulas against boundary edge cases. |
+| **11** | [DriverBackupAndAiForecastingTests.cs](../WinCarePro.Tests/DriverBackupAndAiForecastingTests.cs) | AI Forecasting & Drivers | Tests disk space exhaustion forecasting extrapolation and driver backup export logic. |
+| **12** | [JunkCleanerEngineTests.cs](../WinCarePro.Tests/JunkCleanerEngineTests.cs) | Junk Cleaning Logic | Verifies byte capacity calculations and locked-file skipping without scan aborts. |
+| **13** | [SystemOptimizerEngineTests.cs](../WinCarePro.Tests/SystemOptimizerEngineTests.cs) | RAM Reclaim & Tweaks | Tests Win32 `EmptyWorkingSet` invocations and safe registry DWORD mutations. |
+| **14** | [SystemRepairTests.cs](../WinCarePro.Tests/SystemRepairTests.cs) | Windows System Repair | Tests SFC, DISM execution pipelines and `ExitCode` parsing resilience. |
+| **15** | [NetworkCenterEngineTests.cs](../WinCarePro.Tests/NetworkCenterEngineTests.cs) | Network & DNS Engine | Tests ICMP ping latency, DNS benchmark resolution, and network stack reset sequences. |
+| **16** | [UninstallEngineTests.cs](../WinCarePro.Tests/UninstallEngineTests.cs) | Software Uninstaller | Tests post-uninstall leftover file analysis and orphaned registry key cleanup. |
+| **17** | [CryptoHelperTests.cs](../WinCarePro.Tests/CryptoHelperTests.cs) | DPAPI Encryption | Tests DPAPI `Protect` encryption and `Unprotect` decryption symmetry. |
+| **18** | [UiThemeAndConsistencyTests.cs](../WinCarePro.Tests/UiThemeAndConsistencyTests.cs) | UI Consistency & i18n | Validates bilingual dictionary parity between `vi-VN` and `en-US` (zero missing keys). |
 
 ---
 
-## 🚀 3. Hướng Dẫn Chạy Kiểm Thử (Executing Tests)
+## 🚀 3. Test Execution Guidelines
 
-### 3.1. Chạy Toàn Bộ Bộ Kiểm Thử qua .NET CLI
+### 3.1. Execute Full Test Suite via .NET CLI
 
-Mở PowerShell tại thư mục gốc của dự án và thực thi lệnh:
+Open PowerShell at the project root directory and execute:
 
 ```powershell
 dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal
 ```
 
-### 3.2. Chạy Theo Từng Nhóm Kiểm Thử Cụ Thể
+### 3.2. Targeted Category Execution
 
-- **Chạy nhóm kiểm thử bảo mật:**
+- **Run Security & Safety Tests:**
   ```powershell
   dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~Security"
   ```
 
-- **Chạy nhóm kiểm thử cơ sở dữ liệu:**
+- **Run Database & Concurrency Tests:**
   ```powershell
   dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~Db"
   ```
 
-- **Chạy và xuất báo cáo kết quả:**
+- **Generate TRX Test Report:**
   ```powershell
   dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --logger "trx;LogFileName=TestResults.trx"
   ```
 
 ---
 
-## 🛡️ 4. Quy Chuẩn Đảm Bảo An Toàn Cho Từng Bài Test
+## 🛡️ 4. Test Safety Invariants & Execution Rules
 
-1. **Isolation & In-Memory Database:** Các bài test CSDL sử dụng cơ sở dữ liệu tạm thời trong RAM (`Data Source=:memory:`) hoặc file SQLite độc lập trong thư mục `TestTemp/`, tự động xóa sạch sau khi bài test hoàn tất.
-2. **Mocking External OS Calls:** Các lệnh có khả năng can thiệp hệ thống thật (như `sfc /scannow`, `EmptyWorkingSet`, `KillProcess`) được mock hoặc bọc trong môi trường kiểm thử an toàn, không làm thay đổi trạng thái máy của lập trình viên.
-3. **Assertive Invariants:** Luôn kiểm tra các giá trị biên (chuỗi rỗng, đường dẫn null, ký tự đặc biệt nguy hiểm, số âm) để đảm bảo không xảy ra hiện tượng ngoại lệ `NullReferenceException` hoặc `ArgumentException`.
+1. **Isolation & In-Memory Database:** Database unit tests utilize transient in-memory SQLite instances (`Data Source=:memory:`) or isolated test databases inside `TestTemp/`, cleaned up automatically upon test completion.
+2. **Mocking External OS Operations:** Operations that mutate host OS state (e.g., `sfc /scannow`, `EmptyWorkingSet`, `KillProcess`) MUST be mocked or executed within safe dummy harnesses to guarantee developer workstations remain untouched.
+3. **Assertive Invariants & Edge Cases:** All test cases MUST validate edge boundaries (empty strings, null paths, malicious injection metacharacters, negative integers) to ensure zero unhandled `NullReferenceException` or `ArgumentException` failures.
 
 ---
 
-> [⬅️ 07. Thiết Kế UI/UX Aura Glass](07_UI_UX_DESIGN_SYSTEM.md) • [🏠 Mục Lục Docs](README.md) • **Chương 08** • [Trang Kế Tiếp: 09. Đóng Gói & CI/CD ➡️](09_BUILD_DEPLOYMENT_AND_PACKAGING.md)
+> [⬅️ 07. Aura Glass UI/UX Design System](07_UI_UX_DESIGN_SYSTEM.md) • [🏠 Docs Index](README.md) • **Chapter 08** • [Next: 09. Build, Deployment & CI/CD ➡️](09_BUILD_DEPLOYMENT_AND_PACKAGING.md)
+

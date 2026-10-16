@@ -4,43 +4,43 @@ description: >-
   Token-efficient unit testing and regression verification workflow for WinCare Pro. Covers running targeted tests, handling SQLite DatabaseTestCollection fixtures, interpreting test failures, and ensuring 100% test passing before completion. Use when running tests, diagnosing test failures, or validating changes in WinCarePro.Tests.
 ---
 
-# 🧪 WinCare Pro — Quy Trình Kiểm Thử & Xác Thực Hồi Quy (Test Verifier)
+# 🧪 WinCare Pro — Regression Verification & Testing Standards (Test Verifier)
 
-WinCare Pro hiện có **465 bài kiểm thử xUnit** bảo vệ toàn diện hệ thống. Tài liệu này hướng dẫn cách chạy test chuẩn, tiết kiệm token tối đa và xử lý đồng thời SQLite an toàn.
+WinCare Pro contains **465 comprehensive xUnit unit tests** protecting system integrity. This guide details canonical testing commands, token conservation techniques, and safe SQLite concurrency rules.
 
 ---
 
-## ⚡ 1. Lệnh Kiểm Thử Mục Tiêu Tiết Kiệm Token (Targeted Execution)
+## ⚡ 1. Token-Efficient Targeted Test Execution
 
-### ❌ Anti-Pattern Cần Tránh:
-- Chạy `dotnet test` toàn bộ 465 test lặp đi lặp lại sau mỗi chỉnh sửa nhỏ. Điều này in ra hàng trăm dòng log vô ích, đốt từ 5.000 đến 15.000 token output không cần thiết.
+### ❌ Anti-Patterns to Avoid:
+- Running `dotnet test` across the entire 465-test suite repeatedly after every minor modification. This emits hundreds of lines of redundant terminal output, burning 5,000 to 15,000 unnecessary tokens.
 
-### ✅ Best Practice Chuẩn AI:
-1. **Chỉ chạy test cho module đang làm việc:**
+### ✅ Mandatory AI Workflow:
+1. **Target execution exclusively to the active test class:**
    ```powershell
-   dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~TênLớpTest" --logger "console;verbosity=minimal"
+   dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~ClassName" --logger "console;verbosity=minimal"
    ```
-   *Ví dụ:*
+   *Example:*
    ```powershell
    dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~JunkCleanerEngineTests" --logger "console;verbosity=minimal"
    ```
-2. **Kiểm tra biên dịch cú pháp nhanh trước khi chạy test:**
+2. **Execute rapid syntax compilation checks prior to running tests:**
    ```powershell
    dotnet build WinCarePro.csproj -c Debug -v q --nologo
    ```
-3. **Chỉ chạy toàn bộ test suite khi hoàn tất công việc (Final Smoke Test):**
+3. **Execute full test suite verification ONLY upon completing feature scope (Final Smoke Test):**
    ```powershell
    dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj -c Debug --logger "console;verbosity=minimal"
    ```
 
 ---
 
-## 🗄️ 2. Quy Chuẩn Đồng Thời SQLite Trong Test (`DatabaseTestCollection`)
+## 🗄️ 2. SQLite Test Concurrency Standards (`DatabaseTestCollection`)
 
-Do SQLite hoạt động ở chế độ Single-Writer WAL với `lock (_dbLock)`, nếu xUnit chạy song song nhiều test class cùng thao tác CSDL cục bộ sẽ phát sinh lỗi `database is locked` hoặc va chạm dữ liệu.
+Because SQLite operates in Single-Writer WAL mode with centralized `lock (_dbLock)`, unconstrained parallel test execution across multiple classes accessing SQLite will cause `database is locked` contention errors or data race conditions.
 
-### Quy Tắc Bắt Buộc:
-Mọi test class có gọi đến `DbManager` hoặc các Engine ghi nhận Audit/History **bắt buộc** phải gắn attribute:
+### Mandatory Rule:
+All test classes invoking `DbManager` or business engines recording Audit/History logs **MUST** apply the collection attribute:
 ```csharp
 [Collection(nameof(DatabaseTestCollection))]
 public class MyFeatureDbTests : IClassFixture<MyFixture>
@@ -48,23 +48,23 @@ public class MyFeatureDbTests : IClassFixture<MyFixture>
     // ...
 }
 ```
-Attribute này chỉ thị cho xUnit xếp các test class vào cùng một nhóm tuần tự, loại bỏ hoàn toàn hiện tượng race condition khi test.
+This attribute instructs xUnit to serialize database test executions sequentially, preventing race conditions and resource collisions.
 
 ---
 
-## 🔍 3. Quy Trình Chẩn Đoán Khi Test Thất Bại (Failure RCA)
+## 🔍 3. Root Cause Analysis (RCA) Protocol on Test Failure
 
-1. **Đọc đúng thông điệp lỗi:**
-   - Xem Assert mong đợi giá trị gì và thực tế nhận giá trị gì.
-   - Kiểm tra stack trace dòng phát sinh ngoại lệ.
-2. **Không tự suy đoán hoặc sửa mò:**
-   - Dùng `grep_search` kiểm tra phương thức thực tế và giá trị hằng số liên quan.
-   - Dùng `view_file` xem lát cắt hẹp xung quanh dòng fail (30-50 dòng).
-3. **Áp dụng bản vá tối thiểu:**
-   - Dùng `replace_file_content` sửa nguyên nhân gốc rễ.
-   - Chạy lại đúng bài test đơn lẻ đó:
+1. **Examine the exact diagnostic failure message:**
+   - Review expected vs. actual Assert values.
+   - Inspect the stack trace identifying the failing line number.
+2. **Eliminate speculation:**
+   - Execute `grep_search` to verify canonical signatures and referenced constant values.
+   - Execute `view_file` on a narrow 30-50 line slice around the failure site.
+3. **Apply surgical in-place patching:**
+   - Use `replace_file_content` to resolve the root cause.
+   - Re-run the isolated failing test:
      ```powershell
-     dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~TênClass.TênHàmTest" --logger "console;verbosity=minimal"
+     dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~ClassName.TestMethod" --logger "console;verbosity=minimal"
      ```
-4. **Cam kết bàn giao:**
+4. **Handoff Quality Gate:**
    - 100% Passed (465/465 Tests), 0 Failed, 0 Skipped.

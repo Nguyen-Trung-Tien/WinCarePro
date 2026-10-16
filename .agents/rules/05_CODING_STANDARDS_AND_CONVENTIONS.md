@@ -1,15 +1,15 @@
-# 💻 05. Quy Chuẩn Lập Trình C# 13 & .NET 10 (Coding Standards & Conventions)
+# 💻 05. C# 13 & .NET 10 Coding Standards & Conventions
 
-> [⬅️ 04. Hiệu Năng & Quản Lý RAM](04_PERFORMANCE_AND_MEMORY_RULES.md) • [🏠 Mục Lục Rules](README.md) • **Rule 05** • [Quy Chuẩn Tiếp Theo: 06. Giao Diện & UI/UX ➡️](06_UI_UX_AND_AESTHETICS_RULES.md)
+> [⬅️ 04. Performance & Memory Management](04_PERFORMANCE_AND_MEMORY_RULES.md) • [🏠 Rules Index](README.md) • **Rule 05** • [Next Rule: 06. UI/UX & Aesthetics ➡️](06_UI_UX_AND_AESTHETICS_RULES.md)
 
 ---
 
-## 🏗️ 1. Mẫu Kết Quả Hoạt Động Bắt Buộc (`OperationResult<T>`)
+## 🏗️ 1. Mandatory Operation Result Pattern (`OperationResult<T>`)
 
-Mọi phương thức trong tầng Engine và Service thực hiện các thao tác có khả năng thất bại (I/O, Registry, Win32 API, Network) **bắt buộc** trả về kiểu `OperationResult` hoặc `OperationResult<T>` thay vì ném ra ngoại lệ thô (Uncaught Exceptions).
+All methods in the Engine and Service layers performing fallible operations (I/O, Registry, Win32 API, Network) **MUST** return `OperationResult` or `OperationResult<T>` rather than throwing uncaught exceptions across layer boundaries.
 
 ```csharp
-// Chuẩn cấu trúc kết quả:
+// Canonical OperationResult structure:
 public class OperationResult
 {
     public bool Success { get; set; }
@@ -25,50 +25,50 @@ public class OperationResult
 
 ---
 
-## 🚫 2. Xử Lý Ngoại Lệ & Nhật Ký Sự Cố (Zero-Silent Catch Policy)
+## 🚫 2. Exception Handling Policy (Zero-Silent Catch)
 
-1. **Nghiêm cấm nuốt lỗi rỗng (No Empty Catch Blocks):**
-   - ❌ **CẤM:** `catch { }` hoặc `catch (Exception) { /* do nothing */ }`.
-   - Mọi ngoại lệ bắt được phải được ghi nhận vào `CrashLogger` hoặc `AuditLogService` hoặc trả về qua `OperationResult.Fail()`.
-2. **Ghi log có cấu trúc:**
-   - Sử dụng `AuditLogService.LogAction(action, module, status, details)` để lưu lại các hành động quan trọng của người dùng vào CSDL.
-
----
-
-## 🌐 3. Quy Chuẩn Đa Ngôn Ngữ (i18n & No Hardcoded Strings)
-
-1. **Tuyệt đối không gán cứng chuỗi hiển thị:**
-   - Mọi thông điệp giao diện, tiêu đề trang, nhãn nút bấm, thông báo Toast **bắt buộc** phải sử dụng mã định danh dịch thuật (Translation Key).
-2. **Cú pháp trong XAML & C#:**
-   - Trong XAML: Sử dụng `x:Uid` hoặc `Text="{Binding Key, Converter={StaticResource TranslationConverter}}"`
-   - Trong C#: Sử dụng `TranslationManager.Instance.GetString("Key")` hoặc extension method `"Key".Translate()`.
-3. **Bổ sung đủ cặp khóa dịch:**
-   - Mỗi Key mới phải được thêm đồng thời vào cả 2 từ điển `vi-VN` và `en-US` trong [TranslationManager.Translations.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.Translations.cs).
+1. **Empty Catch Blocks Strictly FORBIDDEN:**
+   - ❌ **FORBIDDEN:** `catch { }` or `catch (Exception) { /* do nothing */ }`.
+   - Every caught exception MUST be logged via `CrashLogger` or `AuditLogService`, or propagated through `OperationResult.Fail()`.
+2. **Structured Audit Logging:**
+   - Use `AuditLogService.LogAction(action, module, status, details)` to record high-impact user operations in SQLite.
 
 ---
 
-## 🔤 4. Quy Ước Đặt Tên & Cấu Trúc Mã Nguồn (Naming Conventions)
+## 🌐 3. Internationalization Governance (i18n & Zero Hardcoded Strings)
 
-| Đối tượng | Quy chuẩn | Ví dụ |
+1. **Zero Hardcoded Display Strings:**
+   - All UI labels, page headers, button text, dialog descriptions, and Toast notifications **MUST** resolve from translation keys.
+2. **Syntax Across XAML & C#:**
+   - In XAML: Use `x:Uid` or `Text="{Binding Key, Converter={StaticResource TranslationConverter}}"`.
+   - In C#: Use `TranslationManager.Instance.GetString("Key")` or `"Key".Translate()`.
+3. **Dual Dictionary Parity:**
+   - Every newly created translation key MUST be added simultaneously to both `vi-VN` and `en-US` dictionaries in [TranslationManager.Translations.cs](../../Services/TranslationService/TranslationManager.Translations.cs).
+
+---
+
+## 🔤 4. Identifier Naming Conventions
+
+| Symbol Type | Convention | Canonical Example |
 | :--- | :--- | :--- |
 | **Class, Struct, Record** | PascalCase | `JunkCleanerEngine`, `SafePathGuard` |
-| **Interface** | Tiền tố `I` + PascalCase | `IServiceSafetyService`, `IDbManager` |
-| **Method (Hàm)** | PascalCase (Thêm hậu tố `Async` nếu là bất đồng bộ) | `ScanJunkAsync()`, `EmptyWorkingSet()` |
-| **Private Field** | Tiền tố `_` + camelCase | `private readonly object _dbLock;` |
+| **Interface** | Prefix `I` + PascalCase | `IServiceSafetyService`, `IDbManager` |
+| **Method** | PascalCase (Async methods MUST have `Async` suffix) | `ScanJunkAsync()`, `EmptyWorkingSet()` |
+| **Private Field** | Prefix `_` + camelCase | `private readonly object _dbLock;` |
 | **Property** | PascalCase | `public double CpuUsagePercentage { get; set; }` |
-| **Constants** | PascalCase hoặc UPPER_SNAKE | `MaxHistoryEntries`, `DEFAULT_TIMEOUT_MS` |
-| **File Name** | Khớp chính xác với tên Class chính trong file | `SystemOptimizerEngine.cs` |
+| **Constants** | PascalCase or UPPER_SNAKE | `MaxHistoryEntries`, `DEFAULT_TIMEOUT_MS` |
+| **File Name** | Exact match with primary class declaration | `SystemOptimizerEngine.cs` |
 
 ---
 
-## 🛡️ 5. An Toàn Kiểu Null (Nullable Reference Types)
+## 🛡️ 5. Nullable Reference Safety
 
-Dự án kích hoạt chế độ `<Nullable>enable</Nullable>`.
-- Luôn kiểm tra `null` đối với các biến đầu vào hoặc sử dụng cú pháp an toàn `?.` / `??`.
-- Không sử dụng toán tử ép kiểu phủ định `!` (Null-forgiving operator) trừ khi có chứng minh toán học bất biến chắc chắn rằng biến không thể `null`.
+The solution enforces `<Nullable>enable</Nullable>`.
+- ALWAYS validate input references for `null` or utilize safe navigation operators (`?.`, `??`).
+- DO NOT use the null-forgiving operator (`!`) unless backed by provable architectural invariants guaranteeing non-null state.
 
 ---
 
 <div align="center">
-  <sub>[🏠 Mục Lục Rules](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
+  <sub>[🏠 Rules Index](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
 </div>

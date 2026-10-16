@@ -1,15 +1,15 @@
-# 📦 08. Quy Chuẩn Đóng Gói, Phát Hành & CI/CD (Release & CI/CD Rules)
+# 📦 08. Release Packaging & CI/CD Rules
 
-> [⬅️ 07. Kiểm Thử & QA](07_TESTING_AND_QA_RULES.md) • [🏠 Mục Lục Rules](README.md) • **Rule 08** • [Quy Chuẩn Tiếp Theo: 09. Tương Tác Registry & Win32 ➡️](09_REGISTRY_AND_OS_INTEROP_RULES.md)
+> [⬅️ 07. Testing & QA](07_TESTING_AND_QA_RULES.md) • [🏠 Rules Index](README.md) • **Rule 08** • [Next Rule: 09. Registry & OS Interop ➡️](09_REGISTRY_AND_OS_INTEROP_RULES.md)
 
 ---
 
-## 🚀 1. Quy Chuẩn Xuất Bản Bản Phát Hành (Self-Contained Publish)
+## 🚀 1. Production Publishing Specifications (Self-Contained Publish)
 
-1. **Kiến trúc đích:** `win-x64` (Khuyên dùng và hỗ trợ chính thức).
-2. **Cấu hình Self-Contained:**
-   - Bản phát hành chính thức **bắt buộc** phải là `--self-contained true` để nhúng sẵn toàn bộ .NET 10 Runtime, đảm bảo người dùng cuối có thể sử dụng ngay mà không gặp lỗi thiếu thư viện runtime.
-3. **Cờ tối ưu hóa biên dịch:**
+1. **Target Architecture:** `win-x64` (strictly supported and verified).
+2. **Self-Contained Deployment:**
+   - Production releases **MUST** specify `--self-contained true` to embed the complete .NET 10 Runtime, guaranteeing standalone execution without external framework dependencies.
+3. **Canonical Compilation Invocation:**
    ```powershell
    dotnet publish WinCarePro.csproj `
        -c Release `
@@ -23,41 +23,41 @@
 
 ---
 
-## 📦 2. Quy Chuẩn Bộ Cài Đặt Inno Setup (`setup.iss`)
+## 📦 2. Inno Setup Packaging Standards (`setup.iss`)
 
-1. **Yêu cầu quyền Quản trị viên:**
-   - Khai báo bắt buộc: `PrivilegesRequired=admin` và `PrivilegesRequiredOverridesAllowed=no`.
-2. **Cơ chế phát hiện và đóng tiến trình cũ:**
-   - Bộ cài đặt phải kiểm tra `Mutex` của WinCare Pro và Desktop Widget, hiển thị thông báo yêu cầu đóng hoặc tự động đóng an toàn trước khi sao chép đè tệp tin mới.
-3. **Gỡ cài đặt sạch sẽ (Clean Uninstall):**
-   - Trình gỡ cài đặt phải xóa sạch các tệp nhị phân trong thư mục cài đặt `Program Files\WinCarePro\`.
-   - Cung cấp tùy chọn hộp thoại hỏi người dùng có muốn xóa dữ liệu cấu hình `%AppData%\WinCarePro\` hay giữ lại cho lần cài đặt sau.
+1. **Elevation & Privileges:**
+   - Mandatory directives: `PrivilegesRequired=admin` and `PrivilegesRequiredOverridesAllowed=no`.
+2. **Process Detection & Mutex Coordination:**
+   - The installer MUST check the WinCare Pro and Desktop Widget mutex handles, prompting the user or gracefully terminating active processes before overwriting locked binaries.
+3. **Deterministic Uninstallation:**
+   - The uninstaller MUST cleanly purge all application binaries under `Program Files\WinCarePro\`.
+   - The uninstaller MUST provide an explicit prompt offering to retain or purge user configuration data in `%LocalAppData%\WinCarePro\`.
 
 ---
 
-## 🏷️ 3. Quy Chuẩn Đánh Số Phiên Bản (Semantic Versioning 2.0)
+## 🏷️ 3. Semantic Versioning Governance (SemVer 2.0)
 
-Hệ thống tuân thủ định dạng phiên bản: **`MAJOR.MINOR.PATCH`** (Ví dụ: `5.0.0`):
+Version strings strictly follow **`MAJOR.MINOR.PATCH`** (e.g. `5.0.0`):
 
-- **MAJOR (Số chính):** Khi có thay đổi đột phá về kiến trúc hoặc giao diện thế hệ mới.
-- **MINOR (Số phụ):** Khi bổ sung thêm phân hệ chức năng mới (New Module) hoặc nâng cấp lớn các Engine.
-- **PATCH (Bản vá):** Sửa lỗi, tối ưu hiệu năng, cập nhật cơ sở dữ liệu định nghĩa rác hoặc vá bảo mật.
+- **MAJOR:** Architectural rewrites or breaking UI paradigm shifts.
+- **MINOR:** New functional modules or major engine enhancements.
+- **PATCH:** Bug fixes, performance optimizations, definitions updates, or security patches.
 
-### Đồng bộ phiên bản:
-Khi nâng phiên bản, phải cập nhật đồng thời ở các vị trí:
+### Synchronized Single Source of Truth (SSOT):
+Version bumps MUST be updated atomically across:
 1. `Core/AppConstants.cs` (`DefaultVersionString`, `DefaultAssemblyVersionString`)
-2. `WinCarePro.csproj` (`<Version>5.0.0</Version>`, `<AssemblyVersion>`, `<FileVersion>`, `<InformationalVersion>`, `<Product>`)
+2. `WinCarePro.csproj` (`<Version>`, `<AssemblyVersion>`, `<FileVersion>`, `<InformationalVersion>`, `<Product>`)
 3. `setup.iss` (`#define MyAppVersion "5.0.0"`)
-4. `update.json` (`"version": "5.0.0"`, `"url"`, `"changelog"`)
+4. `update.json` (`"version"`, `"url"`, `"changelog"`)
 5. `Package.appxmanifest` (`Version="5.0.0.0"`)
-6. `MainWindow.xaml` và `SettingsPage.xaml` (Version badges & hero labels)
-7. `TranslationManager.Translations.cs` (Từ điển dịch thuật ngữ liên quan)
+6. `MainWindow.xaml` and `SettingsPage.xaml` (Version badges & hero labels)
+7. `TranslationManager.Translations.cs` (Matching translation keys)
 
 ---
 
-## 🤖 4. Quy Chuẩn Tích Hợp & Triển Khai Liên Tục (GitHub Actions CI/CD)
+## 🤖 4. Continuous Integration & Deployment (GitHub Actions CI/CD)
 
-Mọi commit và Pull Request vào nhánh `main` phải vượt qua toàn bộ các bước trong `.github/workflows/ci.yml`:
+All pull requests and commits to `main` MUST pass all steps defined in `.github/workflows/ci.yml`:
 
 ```mermaid
 graph LR
@@ -69,5 +69,7 @@ graph LR
 
 ---
 
-> [⬅️ 07. Kiểm Thử & QA](07_TESTING_AND_QA_RULES.md) • [🏠 Mục Lục Rules](README.md) • **Rule 08** • [Quy Chuẩn Tiếp Theo: 09. Tương Tác Registry & Win32 ➡️](09_REGISTRY_AND_OS_INTEROP_RULES.md)
+<div align="center">
+  <sub>[🏠 Rules Index](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
+</div>
 

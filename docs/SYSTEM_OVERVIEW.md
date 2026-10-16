@@ -1,6 +1,6 @@
 # WinCare Pro — System Architecture & Technical Overview
 
-> [🏠 Main Documentation Hub](README.md) • [01. Detailed System Architecture (Vietnamese)](01_SYSTEM_ARCHITECTURE.md)
+> [🏠 Main Documentation Hub](README.md) • [01. System Architecture](01_SYSTEM_ARCHITECTURE.md)
 >
 > **Version:** 5.0.0 Polaris (Production Release)  
 > **Platform:** Windows 10 (Build 19041+) & Windows 11 (x64)  
@@ -177,7 +177,7 @@ WinCare Pro includes a comprehensive xUnit test suite (`WinCarePro.Tests`):
 | `NetworkCenterEngineTests` | Network Engine | DNS benchmark, packet parsing, ping telemetry. |
 | `SettingsAndStateTests` | Config & Theme | Theme persistence, user settings caching, JSON serialization. |
 
-- **Test Suite Status:** **300 tests passing (100% success rate, 0 failures, 0 regressions)**.
+- **Test Suite Status:** **465 tests passing (100% success rate, 0 failures, 0 regressions)**.
 
 ---
 

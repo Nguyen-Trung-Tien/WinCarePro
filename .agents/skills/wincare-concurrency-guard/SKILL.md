@@ -4,32 +4,32 @@ description: >-
   WinUI 3 threading and concurrency rules for WinCare Pro. Covers RunOnUI dispatching, safe async/await, RelayCommands with cancellation, background worker thread safety, avoiding sync-over-async deadlocks, and WeakReferenceMessenger message passing. Use whenever writing async methods, background tasks, or UI-updating code.
 ---
 
-# ⚡ WinCare Pro — Quy Chuẩn Đa Luồng & Bất Đồng Bộ An Toàn (Concurrency Guard)
+# ⚡ WinCare Pro — Threading & Safe Concurrency Guard
 
-Môi trường **Windows App SDK (WinUI 3)** có mô hình Single-Threaded Apartment (STA) nghiêm ngặt cho UI Thread. Mọi vi phạm về luồng đều gây ra ngoại lệ `COMException (0x8001010E RPC_E_WRONG_THREAD)` hoặc gây đóng băng (freeze) giao diện người dùng.
+The **Windows App SDK (WinUI 3)** environment strictly enforces a Single-Threaded Apartment (STA) model for the UI Thread. Cross-thread access faults trigger `COMException (0x8001010E RPC_E_WRONG_THREAD)` or hardlock the presentation layer.
 
 ---
 
-## 🚫 1. Bảng Đối Chiếu Thao Tác Đa Luồng Bắt Buộc
+## 🚫 1. Concurrency Invariants Matrix
 
-| Tình huống | ❌ CẤM TUYỆT ĐỐI | ✅ BẮT BUỘC SỬ DỤNG |
+| Scenario | ❌ STRICTLY FORBIDDEN | ✅ MANDATORY PATTERN |
 | :--- | :--- | :--- |
-| **Cập nhật UI từ Background Thread** | `Items.Add(item);` hoặc `StatusText = "...";` | `RunOnUI(() => { Items.Add(item); StatusText = "..."; });` |
-| **Chờ tác vụ Async hoàn tất** | `var res = myTask.Result;` hoặc `myTask.Wait();` | `var res = await myTask;` (Không Sync-over-Async) |
-| **Khai báo phương thức bất đồng bộ** | `public async void DoWork()` (trừ event handler) | `public async Task DoWorkAsync(CancellationToken ct = default)` |
-| **Hủy bỏ tác vụ dài (Long-running)** | Bỏ qua `CancellationToken`, chạy ngầm không dừng | Nhận `CancellationToken ct`, kiểm tra `ct.ThrowIfCancellationRequested()` |
-| **Thu hồi trạng thái bận (Busy State)** | Quên reset khi có Exception | Luôn đặt trong khối `finally { IsBusy = false; OperationState = OperationState.Idle; }` |
-| **Giao tiếp giữa các ViewModel** | Giữ tham chiếu trực tiếp `_otherViewModel.DoSomething()` | Gửi thông điệp phân tán qua `WeakReferenceMessenger.Default.Send(...)` |
+| **UI Updates from Background Thread** | `Items.Add(item);` or `StatusText = "...";` | `RunOnUI(() => { Items.Add(item); StatusText = "..."; });` |
+| **Awaiting Async Tasks** | `var res = myTask.Result;` or `myTask.Wait();` | `var res = await myTask;` (Zero Sync-over-Async) |
+| **Async Method Signature** | `public async void DoWork()` (except UI events) | `public async Task DoWorkAsync(CancellationToken ct = default)` |
+| **Long-Running Task Cancellation** | Omitting `CancellationToken`, orphaned background workers | Accept `CancellationToken ct`, check `ct.ThrowIfCancellationRequested()` |
+| **Busy State Teardown** | Omitting state reset on exceptions | ALWAYS wrap in `finally { IsBusy = false; OperationState = OperationState.Idle; }` |
+| **Cross-ViewModel Messaging** | Direct references: `_otherViewModel.DoSomething()` | Decoupled messaging: `WeakReferenceMessenger.Default.Send(...)` |
 
 ---
 
-## 🧵 2. Quy Chuẩn `RunOnUI` & WinUI 3 DispatcherQueue
+## 🧵 2. `RunOnUI` Dispatching & WinUI 3 DispatcherQueue
 
-### Nguyên tắc vàng:
-Mọi thuộc tính kích hoạt thông báo `INotifyPropertyChanged` hiển thị trên giao diện hoặc bất kỳ thao tác nào thay đổi `ObservableCollection<T>` khi đang ở luồng nền (ThreadPool, Task.Run, Timer, Background Engine Callback) **bắt buộc** phải bọc trong `RunOnUI()`.
+### Golden Rule:
+Any property triggering `INotifyPropertyChanged` data-binding or modifying an `ObservableCollection<T>` from a background thread (ThreadPool, `Task.Run`, `Timer`, background callback) **MUST** be marshaled via `RunOnUI()`.
 
 ```csharp
-// Trong ViewModel kế thừa ViewModelBase:
+// Inside a ViewModel inheriting ViewModelBase:
 public async Task LoadTelemetryAsync(CancellationToken ct)
 {
     try
@@ -37,10 +37,10 @@ public async Task LoadTelemetryAsync(CancellationToken ct)
         IsBusy = true;
         OperationState = OperationState.Running;
 
-        // Xử lý tính toán nặng trên ThreadPool
+        // Execute compute-intensive retrieval on thread pool
         var report = await Task.Run(() => _telemetryEngine.CollectMetrics(ct), ct);
 
-        // Đẩy kết quả về UI Thread an toàn
+        // Safely marshal state mutations to UI Thread
         RunOnUI(() =>
         {
             CpuUsage = report.CpuPercent;
@@ -54,12 +54,12 @@ public async Task LoadTelemetryAsync(CancellationToken ct)
     }
     catch (OperationCanceledException)
     {
-        RunOnUI(() => StatusMessage = "Tác vụ đã được hủy bỏ.");
+        RunOnUI(() => StatusMessage = "Operation was canceled.");
     }
     catch (Exception ex)
     {
         CrashLogger.LogError(ex, nameof(LoadTelemetryAsync));
-        RunOnUI(() => StatusMessage = "Lỗi khi nạp dữ liệu telemetry.");
+        RunOnUI(() => StatusMessage = "Failed to retrieve telemetry metrics.");
     }
     finally
     {
@@ -74,25 +74,25 @@ public async Task LoadTelemetryAsync(CancellationToken ct)
 
 ---
 
-## 🛑 3. Triệt Tiêu Deadlock (Anti-Sync-over-Async)
+## 🛑 3. Deadlock Elimination (Anti-Sync-over-Async)
 
-### ❌ Sai lầm chết người:
+### ❌ Fatal Anti-Pattern:
 ```csharp
-// Gây DEADLOCK tức thì nếu gọi từ UI Thread!
+// INSTANT DEADLOCK when invoked from the UI thread!
 var data = _engine.ScanAsync().Result;
 _engine.CleanAsync().Wait();
 ```
 
-### ✅ Chuẩn hóa bất đồng bộ:
-1. Mọi phương thức I/O, Win32, Registry hoặc WMI có thời gian thực thi $> 50\text{ ms}$ phải được thiết kế dạng `Task` / `Task<T>`.
-2. Hậu tố phương thức bắt buộc có chữ `Async` (ví dụ: `ScanJunkAsync`, `RepairFilesAsync`).
-3. Luôn `await` từ đầu đến cuối chuỗi gọi (Async All The Way).
+### ✅ Asynchronous Standards:
+1. All I/O, Win32, Registry, or WMI routines with durations $> 50\text{ ms}$ MUST return `Task` or `Task<T>`.
+2. Method identifiers MUST include the `Async` suffix (e.g. `ScanJunkAsync`, `RepairFilesAsync`).
+3. Maintain `await` throughout the entire call graph (Async All The Way).
 
 ---
 
-## 🎮 4. Mô Hình `[RelayCommand]` & Hủy Tác Vụ Chuẩn
+## 🎮 4. `[RelayCommand]` & Cooperative Cancellation Pattern
 
-Sử dụng bộ công cụ `CommunityToolkit.Mvvm`:
+Utilizing `CommunityToolkit.Mvvm`:
 
 ```csharp
 [ObservableProperty]
@@ -101,7 +101,7 @@ private bool _isBusy;
 [ObservableProperty]
 private OperationState _operationState = OperationState.Idle;
 
-// Tự động sinh ScanCommand và ScanCancelCommand
+// Automatically generates ScanCommand and ScanCancelCommand
 [RelayCommand(IncludeCancelCommand = true)]
 private async Task ScanAsync(CancellationToken ct)
 {
@@ -109,7 +109,7 @@ private async Task ScanAsync(CancellationToken ct)
     {
         IsBusy = true;
         OperationState = OperationState.Running;
-        StatusMessage = "Đang quét hệ thống...";
+        StatusMessage = "Scanning system...";
 
         var result = await _engine.ExecuteScanAsync(progress: new Progress<int>(percent =>
         {
@@ -118,17 +118,17 @@ private async Task ScanAsync(CancellationToken ct)
 
         if (result.Success)
         {
-            RunOnUI(() => StatusMessage = "Quét hoàn tất.");
+            RunOnUI(() => StatusMessage = "Scan completed.");
         }
     }
     catch (OperationCanceledException)
     {
-        RunOnUI(() => StatusMessage = "Người dùng đã dừng quét.");
+        RunOnUI(() => StatusMessage = "Scan canceled by user.");
     }
     catch (Exception ex)
     {
         CrashLogger.LogError(ex, nameof(ScanAsync));
-        RunOnUI(() => StatusMessage = "Đã xảy ra sự cố trong quá trình quét.");
+        RunOnUI(() => StatusMessage = "An error occurred during system scan.");
     }
     finally
     {
@@ -143,11 +143,11 @@ private async Task ScanAsync(CancellationToken ct)
 
 ---
 
-## 📡 5. Giao Tiếp Lỏng Qua `WeakReferenceMessenger`
+## 📡 5. Decoupled Communication via `WeakReferenceMessenger`
 
-Để ngăn ngừa rò rỉ bộ nhớ (Memory Leaks do giữ tham chiếu cứng) giữa các trang:
+To eliminate strong-reference memory leaks across views:
 
-### Đăng ký nhận tin nhắn (trong ViewModel khởi tạo):
+### Register Message Subscriber (in ViewModel initialization):
 ```csharp
 WeakReferenceMessenger.Default.Register<SystemOptimizedMessage>(this, (r, m) =>
 {
@@ -158,7 +158,7 @@ WeakReferenceMessenger.Default.Register<SystemOptimizedMessage>(this, (r, m) =>
 });
 ```
 
-### Hủy đăng ký khi dọn dẹp hoặc Unloaded:
+### Unregister on Teardown or Unloaded:
 ```csharp
 public override void Cleanup()
 {
@@ -167,7 +167,7 @@ public override void Cleanup()
 }
 ```
 
-### Phát tin nhắn (Broadcast):
+### Broadcast Event:
 ```csharp
 WeakReferenceMessenger.Default.Send(new SystemOptimizedMessage(freedBytes));
 ```

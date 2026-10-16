@@ -4,36 +4,36 @@ description: >-
   SQLite 3 WAL Mode persistence and synchronization rules for WinCare Pro. Covers DbManager usage, mandatory lock (_dbLock) synchronization, parameterized queries, schema migrations, avoiding lock contention, and preventing test collisions via DatabaseTestCollection. Use whenever accessing, querying, or modifying the SQLite database.
 ---
 
-# 🗄️ WinCare Pro — Quy Chuẩn CSDL SQLite WAL & Đồng Thời An Toàn (Db WAL Guard)
+# 🗄️ WinCare Pro — SQLite WAL Persistence & Safe Concurrency Standards (Db WAL Guard)
 
-WinCare Pro sử dụng **SQLite 3** ở chế độ **Write-Ahead Logging (WAL)** làm CSDL cục bộ lưu trữ cấu hình, lịch sử quét dọn, nhật ký can thiệp hệ thống và điểm khôi phục Undo. 
+WinCare Pro utilizes **SQLite 3** in **Write-Ahead Logging (WAL)** mode as its local database to persist configuration settings, scan history, system intervention audit trails, and Undo rollback points.
 
-Do SQLite trong môi trường desktop là Single-Writer, mọi thao tác đọc/ghi **bắt buộc** phải tuân theo cơ chế đồng bộ hóa tập trung qua [DbManager.cs](file:///d:/WinCare/Infrastructure/Database/DbManager.cs).
+Because SQLite in desktop application environments operates on a Single-Writer model, all read/write operations **MUST** strictly adhere to centralized synchronization via [DbManager.cs](../../Infrastructure/Database/DbManager.cs).
 
 ---
 
-## 🚫 1. Bảng Đối Chiếu Quy Tắc Thao Tác CSDL Bắt Buộc
+## 🚫 1. Database Operations Enforcement Matrix
 
-| Tình huống | ❌ CẤM TUYỆT ĐỐI | ✅ BẮT BUỘC SỬ DỤNG |
+| Scenario | ❌ STRICTLY FORBIDDEN | ✅ MANDATORY PATTERN |
 | :--- | :--- | :--- |
-| **Truy cập SQLite** | Mở connection riêng lẻ ngoài `DbManager` | Luôn gọi qua `DbManager.Instance` hoặc DI service |
-| **Đồng bộ đa luồng** | Thực thi query mà không có lock | Bọc 100% trong `lock (_dbLock) { /* SQLite operations */ }` |
-| **Xử lý bên trong lock** | Chạy logic nặng, I/O mạng, cập nhật UI trong lock | Chỉ thực hiện các câu lệnh SQLite thuần túy trong lock |
-| **Truy vấn SQL** | Ghép chuỗi `$"SELECT * FROM Audit WHERE Path = '{p}'"` | Bắt buộc dùng Parameter: `cmd.Parameters.AddWithValue("$path", p)` |
-| **Unit Test CSDL** | Tạo test class CSDL chạy song song tự do | Gắn attribute `[Collection(nameof(DatabaseTestCollection))]` |
+| **SQLite Access** | Opening independent connections outside `DbManager` | ALWAYS route calls through `DbManager.Instance` or injected DI service |
+| **Multi-thread Synchronization** | Executing queries without synchronization | Enclose 100% of calls in `lock (_dbLock) { /* SQLite operations */ }` |
+| **Operations Inside Lock** | Long computations, network I/O, UI dispatching inside lock | Confine scope exclusively to native SQLite commands |
+| **SQL Query Construction** | String interpolation `$"SELECT * FROM Audit WHERE Path = '{p}'"` | Parameterized binding REQUIRED: `cmd.Parameters.AddWithValue("$path", p)` |
+| **Database Unit Testing** | Unconstrained parallel database test execution | Apply `[Collection(nameof(DatabaseTestCollection))]` attribute |
 
 ---
 
-## 🔒 2. Mô Thức Khóa Đồng Bộ Tập Trung (`lock (_dbLock)`)
+## 🔒 2. Centralized Synchronization Pattern (`lock (_dbLock)`)
 
-Mọi phương thức trong `DbManager` phải tuân thủ nghiêm ngặt mô thức sau:
+All operations within `DbManager` MUST strictly conform to the following pattern:
 
 ```csharp
 public OperationResult SaveAuditRecord(AuditRecord record)
 {
     if (record == null) return OperationResult.Fail("Audit record cannot be null.");
 
-    // Chuẩn bị dữ liệu bên NGOÀI lock
+    // Prepare data OUTSIDE the lock
     var timestamp = DateTime.UtcNow.ToString("o");
 
     lock (_dbLock)
@@ -66,42 +66,42 @@ public OperationResult SaveAuditRecord(AuditRecord record)
 
 ---
 
-## ⚡ 3. Chống Nghẽn Luồng (Zero-Blocking Inside Lock)
+## ⚡ 3. Thread Non-Blocking Discipline (Zero-Blocking Inside Lock)
 
-### ❌ Anti-Pattern gây treo ứng dụng:
+### ❌ Anti-Pattern Causing UI Deadlocks & Lock Contention:
 ```csharp
 lock (_dbLock)
 {
-    // CẤM: Gọi I/O đĩa hoặc I/O mạng bên trong lock SQLite!
+    // FORBIDDEN: Invoking disk or network I/O inside SQLite lock!
     var fileSize = new FileInfo(path).Length; 
     var hash = ComputeFileSha256(path); 
     
-    // CẤM: Đẩy cập nhật giao diện trong khi đang giữ lock CSDL!
-    RunOnUI(() => StatusText = "Đang lưu CSDL...");
+    // FORBIDDEN: Dispatching UI updates while holding database lock!
+    RunOnUI(() => StatusText = "Saving to database...");
     
     cmd.ExecuteNonQuery();
 }
 ```
 
-### ✅ Best Practice:
-1. Tính toán, băm SHA256, kiểm tra file tồn tại **trước** khi vào `lock (_dbLock)`.
-2. Vào lock, thực thi truy vấn SQLite nhanh gọn trong vài phần triệu giây.
-3. Rời khỏi lock, sau đó mới cập nhật UI qua `RunOnUI()`.
+### ✅ Mandatory Best Practices:
+1. Pre-compute SHA-256 hashes, file metrics, and path existence **prior** to acquiring `lock (_dbLock)`.
+2. Enter the lock, execute the SQLite transaction/command expeditiously within sub-millisecond budgets.
+3. Exit the lock before dispatching UI state changes via `RunOnUI()`.
 
 ---
 
-## 🛡️ 4. Chống Tấn Công SQL Injection
+## 🛡️ 4. Zero SQL Injection Armor
 
-Mọi tham số do người dùng nhập hoặc trích xuất từ hệ thống (đường dẫn, tên phần mềm, Registry key) **tuyệt đối không được nội suy chuỗi trực tiếp vào câu lệnh SQL**.
+All inputs supplied by users or retrieved from system states (paths, process names, registry keys) **MUST NEVER be interpolated directly into SQL command strings**.
 
-- Luôn dùng cú pháp tiền tố `$`, `@` hoặc `:` theo chuẩn `Microsoft.Data.Sqlite`.
-- Sử dụng `cmd.Parameters.AddWithValue("$paramName", value ?? DBNull.Value)`.
+- ALWAYS use `$`, `@`, or `:` prefix tokens compliant with `Microsoft.Data.Sqlite`.
+- Bind parameters explicitly via `cmd.Parameters.AddWithValue("$paramName", value ?? DBNull.Value)`.
 
 ---
 
-## 🧪 5. Kiểm Thử CSDL An Toàn (DatabaseTestCollection)
+## 🧪 5. Safe Concurrency Unit Testing (DatabaseTestCollection)
 
-Để ngăn ngừa lỗi `SQLite Error 5: 'database is locked'` khi xUnit chạy đa luồng:
+To eliminate `SQLite Error 5: 'database is locked'` exceptions when xUnit executes test runners concurrently:
 
 ```csharp
 using Xunit;
@@ -122,7 +122,7 @@ public class DbManagerTests : IClassFixture<DatabaseFixture>
     [Fact]
     public void SaveAndRetrieveAuditRecord_ShouldSucceed()
     {
-        // Thực thi test CSDL trong môi trường tuần tự an toàn
+        // Executes database tests sequentially in isolated SQLite WAL test fixture
     }
 }
 ```

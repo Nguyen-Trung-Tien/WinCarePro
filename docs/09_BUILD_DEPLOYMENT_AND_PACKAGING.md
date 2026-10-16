@@ -1,28 +1,28 @@
-# 📦 09. Đóng Gói, Triển Khai & Cập Nhật Tự Động (Build, Packaging & CI/CD)
+# 📦 09. Build, Deployment & Packaging (CI/CD)
 
-> [⬅️ 08. Kiểm Thử Tự Động & QA](08_TESTING_AND_QUALITY_ASSURANCE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 09** • [Trang Kế Tiếp: 10. Hướng Dẫn Lập Trình Viên Mới ➡️](10_DEVELOPER_ONBOARDING_GUIDE.md)
+> [⬅️ 08. Automated Testing & QA](08_TESTING_AND_QUALITY_ASSURANCE.md) • [🏠 Docs Index](README.md) • **Chapter 09** • [Next: 10. Developer Onboarding Guide ➡️](10_DEVELOPER_ONBOARDING_GUIDE.md)
 
-Tài liệu này hướng dẫn quy trình biên dịch mã nguồn, xuất bản bản phát hành (Publish), đóng gói bộ cài đặt cài qua **Inno Setup**, cấu hình hệ thống cập nhật tự động **Auto-Update**, và thiết lập đường ống tích hợp liên tục **CI/CD** trong **WinCare Pro Suite v4.9 (Codename: Nova)**.
-
----
-
-## 🛠️ 1. Yêu Cầu Môi Trường Biên Dịch (Build Prerequisites)
-
-Để biên dịch và đóng gói thành công WinCare Pro Suite, máy tính phát triển cần cài đặt:
-
-1. **Hệ điều hành:** Windows 10 (Build 19041 trở lên) hoặc Windows 11 (khuyên dùng x64).
-2. **SDK:** [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (hoặc mới nhất).
-3. **Windows App SDK:** Phiên bản 2.2.0 (được cấu hình trong `WinCarePro.csproj`).
-4. **Trình đóng gói:** [Inno Setup 6.x](https://jrsoftware.org/isdl.php) (đã thêm `ISCC.exe` vào biến môi trường PATH hệ thống).
-5. **IDE Khuyên dùng:** Visual Studio 2022 (v17.10 trở lên) với gói cài đặt *.NET Desktop Development* và *Windows App SDK C# Templates*.
+This chapter provides comprehensive instructions for compilation, release publishing, installer packaging via **Inno Setup**, **Auto-Update** configuration, and **GitHub Actions CI/CD** pipelines in **WinCare Pro Suite**.
 
 ---
 
-## 🚀 2. Quy Trình Xuất Bản Bản Phát Hành (Publish Pipeline)
+## 🛠️ 1. Build Prerequisites
 
-Dự án hỗ trợ xuất bản dạng **Self-Contained Single-File (x64)** (đã nhúng sẵn toàn bộ .NET 10 Runtime để người dùng cuối có thể chạy ngay mà không cần cài đặt thêm .NET).
+To compile and package WinCare Pro Suite locally, the development workstation requires:
 
-### 2.1. Lệnh Biên Dịch Nhanh qua .NET CLI
+1. **Operating System:** Windows 10 (Build 19041+) or Windows 11 (x64 recommended).
+2. **SDK:** [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (or latest).
+3. **Windows App SDK:** Version 2.2.0 (configured in `WinCarePro.csproj`).
+4. **Installer Packaging:** [Inno Setup 6.x](https://jrsoftware.org/isdl.php) with `ISCC.exe` added to system PATH.
+5. **Recommended IDE:** Visual Studio 2022 (v17.10+) with *.NET Desktop Development* and *Windows App SDK C# Templates*.
+
+---
+
+## 🚀 2. Release Publishing Pipeline
+
+WinCare Pro targets a **Self-Contained Single-File (x64)** deployment model, bundling the .NET 10 Runtime directly so end-users can run the application without external dependencies.
+
+### 2.1. Direct Compilation via .NET CLI
 
 ```powershell
 dotnet publish WinCarePro.csproj `
@@ -35,35 +35,35 @@ dotnet publish WinCarePro.csproj `
     -o "./PublishOutputFolder"
 ```
 
-### 2.2. Sử Dụng Kịch Bản Tự Động [publish.bat](file:///d:/WinCare/publish.bat)
-Chạy trực tiếp file `publish.bat` tại thư mục gốc để dọn dẹp các thư mục `bin/`, `obj/` cũ và biên dịch phiên bản Release vào thư mục `PublishOutputFolder`.
+### 2.2. Automated Build Script: [publish.bat](../publish.bat)
+Execute `publish.bat` from the repository root to clean legacy `bin/` and `obj/` output folders, build dependencies, and publish the Release binary to `PublishOutputFolder`.
 
 ---
 
-## 📦 3. Đóng Gói Bộ Cài Đặt (Inno Setup Installer)
+## 📦 3. Installer Packaging (Inno Setup)
 
-- **Tập tin cấu hình:** [setup.iss](file:///d:/WinCare/setup.iss)
-- **Tập tin thực thi kịch bản:** [publish_installer.bat](file:///d:/WinCare/publish_installer.bat)
+- **Configuration File:** [setup.iss](../setup.iss)
+- **Packaging Execution Script:** [publish_installer.bat](../publish_installer.bat)
 
-### 3.1. Các Đặc Điểm Của Bộ Cài Đặt WinCare Pro Setup:
-- **Tự động yêu cầu quyền Administrator:** `PrivilegesRequired=admin` đảm bảo ghi nhận các khóa Registry và Service.
-- **Tự động đóng tiến trình cũ:** Nếu WinCare Pro hoặc Desktop Widget đang chạy ngầm, bộ cài đặt sẽ tự động gửi thông điệp yêu cầu đóng ứng dụng trước khi ghi đè tệp tin.
-- **Tích hợp gỡ cài đặt sạch sẽ (Clean Uninstaller):** Tự động xóa các file tạm và cung cấp tùy chọn xóa toàn bộ cơ sở dữ liệu cấu hình `%AppData%\WinCarePro\`.
-- **Hỗ trợ biểu tượng và phím tắt Desktop & Start Menu:** Tạo phím tắt chuẩn Fluent Design.
+### 3.1. WinCare Pro Installer Features:
+- **Mandatory Elevation:** `PrivilegesRequired=admin` ensures registration of Registry keys, scheduled tasks, and service configurations.
+- **Process Mutex Shutdown:** If WinCare Pro or the Desktop HUD Widget is actively running, the installer signals shutdown before overwriting binary files.
+- **Clean Uninstaller Integration:** Cleans temporary caches with an optional prompt to remove `%LocalAppData%\WinCarePro\` databases.
+- **Fluent Desktop & Start Menu Shortcuts:** Creates compliant Fluent Design shortcuts and icons.
 
-### 3.2. Lệnh Đóng Gói File Cài Đặt `.exe`
+### 3.2. Packaging via Command Line
 
 ```powershell
 iscc setup.iss
 ```
-File cài đặt sau khi hoàn tất sẽ nằm tại: `PublishOutput/WinCareProSetup.exe`.
+The compiled output is saved to: `PublishOutput/WinCareProSetup.exe`.
 
 ---
 
-## 🔄 4. Cơ Chế Kiểm Tra Cập Nhật Tự Động (Auto-Update)
+## 🔄 4. Automated Update Architecture (Auto-Update)
 
-- **Tập tin cấu hình mẫu:** [update.json](file:///d:/WinCare/update.json)
-- **Cấu trúc dữ liệu JSON kiểm tra phiên bản:**
+- **Configuration Template:** [update.json](../update.json)
+- **JSON Version Verification Schema:**
 
 ```json
 {
@@ -71,7 +71,7 @@ File cài đặt sau khi hoàn tất sẽ nằm tại: `PublishOutput/WinCarePro
   "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe",
   "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0/WinCareProSetup.exe",
   "sha256": "99fd2e278f7c359901099dd683913458a2408e5abbbaa9eed874516dac41e6e5",
-  "changelog": "Cập nhật v5.0.0 (Polaris Major Upgrade): Nâng cấp lớn phân tích phân vùng ổ đĩa Logical Volumes với mô hình dự báo cạn kiệt dung lượng (Days to Full), kiểm tra bảo mật nền tảng & cô lập nhân (HVCI Memory Integrity, Defender Tamper Protection, RDP NLA), giám sát nền nhận biết nguồn pin (Battery-aware Watchdog) và dẹp bỏ hoàn toàn dữ liệu telemetry giả lập (Zero-Mock Telemetry).",
+  "changelog": "v5.0.0 (Polaris Major Upgrade): Comprehensive logical volume analysis with forecasting model (Days to Full), platform security checks (HVCI Memory Integrity, Defender Tamper Protection, RDP NLA), battery-aware background watchdog, and zero-mock hardware telemetry enforcement.",
   "beta_version": "5.0.0-beta",
   "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0-beta/WinCareProSetup_Beta.exe",
   "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.0.0-beta/WinCareProSetup_Beta.exe",
@@ -80,19 +80,19 @@ File cài đặt sau khi hoàn tất sẽ nằm tại: `PublishOutput/WinCarePro
 }
 ```
 
-### 4.1. Quy Trình Kiểm Tra & Tải Bản Cập Nhật:
-1. Ứng dụng gửi yêu cầu HTTP GET tới URL lưu trữ tệp `update.json` trên GitHub Releases.
-2. So sánh chuỗi phiên bản ngữ nghĩa `SemVer` (`NewVersion > CurrentVersion`).
-3. Nếu có bản mới, hiển thị hộp thoại cập nhật với nội dung Changelog tương ứng theo ngôn ngữ hiện tại của người dùng.
-4. Tải file `WinCareProSetup.exe` về thư mục tạm `%TEMP%\WinCareProUpdate\`, kiểm tra mã băm SHA-256 đối chiếu tính toàn vẹn.
-5. Khởi chạy file cài đặt với tham số `/SILENT` và tự động khởi động lại ứng dụng.
+### 4.1. Update Verification & Staging Workflow:
+1. Application transmits an HTTP GET request to `update.json` on GitHub Releases.
+2. Compares semantic versioning strings (`NewVersion > CurrentVersion`).
+3. If a newer build exists, prompts the user with localized release changelog notes.
+4. Stages `WinCareProSetup.exe` into `%TEMP%\WinCareProUpdate\`, validating binary integrity against the expected SHA-256 hash.
+5. Launches the installer with the `/SILENT` parameter and exits to allow seamless binary replacement.
 
 ---
 
-## 🔄 5. Đường Ống Tích Hợp Liên Tục (GitHub Actions CI/CD)
+## 🔄 5. Continuous Integration Pipeline (GitHub Actions CI/CD)
 
-- **Vị trí cấu hình:** `.github/workflows/ci.yml`
-- **Các bước thực thi tự động khi có commit hoặc Pull Request:**
+- **Workflow Configuration:** `.github/workflows/ci.yml`
+- **Automated Workflow Stages on Push/PR:**
 
 ```mermaid
 graph LR
@@ -106,4 +106,5 @@ graph LR
 
 ---
 
-> [⬅️ 08. Kiểm Thử Tự Động & QA](08_TESTING_AND_QUALITY_ASSURANCE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 09** • [Trang Kế Tiếp: 10. Hướng Dẫn Lập Trình Viên Mới ➡️](10_DEVELOPER_ONBOARDING_GUIDE.md)
+> [⬅️ 08. Automated Testing & QA](08_TESTING_AND_QUALITY_ASSURANCE.md) • [🏠 Docs Index](README.md) • **Chapter 09** • [Next: 10. Developer Onboarding Guide ➡️](10_DEVELOPER_ONBOARDING_GUIDE.md)
+

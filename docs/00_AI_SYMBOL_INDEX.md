@@ -1,106 +1,109 @@
-# 🧭 WinCare Pro — AI Symbol Index & Architecture Map (Bản Đồ Ký Hiệu & Kiến Trúc)
-> **Mục tiêu:** Cung cấp bản đồ tra cứu ký hiệu tức thì $O(1)$ cho AI Agent.  
-> **Nguyên tắc:** Ngăn chặn tuyệt đối ảo giác chữ ký (Zero-Hallucination), triệt tiêu việc phải đọc quét hàng chục file mã nguồn.
+# 🧭 WinCare Pro — AI Symbol Index & Architecture Map
+
+> **Objective:** Provide an $O(1)$ instantaneous symbol lookup index for AI Agents.  
+> **Mandate:** Guarantee Zero-Hallucination API invocation and eliminate broad codebase file ingestion.
 
 ---
 
-## 🏛️ 1. Cấu Trúc Phân Tầng & Bảng Tra Cứu Ký Hiệu Cốt Lõi (Core Index)
+## 🏛️ 1. Layered Architecture & Core Symbol Index
 
-### 🛡️ Khiên Bảo Vệ Hệ Thống (Core Safety Guards & Interop)
-| Lớp / Ký hiệu | Đường dẫn tập tin | Chức năng & Phương thức chính |
+### 🛡️ Core Safety Guards & Interop
+| Class / Symbol | File Path | Core Responsibilities & Canonical Signatures |
 | :--- | :--- | :--- |
-| `SafePathGuard` | [Core/Helpers/SafePathGuard.cs](file:///d:/WinCare/Core/Helpers/SafePathGuard.cs) | `bool IsSafeToDelete(string path)`: Chống xóa thư mục gốc, hệ thống, Windows, Reparse Points/Symlinks. |
-| `SafeRegistryGuard` | [Core/Helpers/SafeRegistryGuard.cs](file:///d:/WinCare/Core/Helpers/SafeRegistryGuard.cs) | `bool IsSafeToDeleteKey(RegistryKey root, string subKey)`: Ngăn chặn xóa Root Hive, độ sâu $\ge 3$, danh sách whitelist an toàn. |
-| `ServiceSafetyService` | [Core/Helpers/ServiceSafetyService.cs](file:///d:/WinCare/Core/Helpers/ServiceSafetyService.cs) | `bool IsProtectedService(string serviceName)`: Bảo vệ 45+ Windows Service sống còn (`RpcSs`, `WinDefend`, `CryptSvc`,...). |
-| `ProcessRunner` | [Core/Helpers/ProcessRunner.cs](file:///d:/WinCare/Core/Helpers/ProcessRunner.cs) | `Task<ProcessResult> RunAsync(string exe, IEnumerable<string> args, CancellationToken ct)`: Chống Command Injection, dùng `ArgumentList`. |
-| `CryptoHelper` | [Core/Helpers/CryptoHelper.cs](file:///d:/WinCare/Core/Helpers/CryptoHelper.cs) | `string Protect(string plainText)`, `string Unprotect(string cipherText)`: Mã hóa bảo mật bằng Windows DPAPI. |
-| `InputSanitizer` | [Core/Helpers/InputSanitizer.cs](file:///d:/WinCare/Core/Helpers/InputSanitizer.cs) | `string SanitizeFileName(string input)`, `string SanitizeCliArg(string input)`: Chuẩn hóa và làm sạch chuỗi đầu vào. |
+| `SafePathGuard` | [Core/Helpers/SafePathGuard.cs](../Core/Helpers/SafePathGuard.cs) | `bool IsSafeToDelete(string path)`: Blocks deletions of root volumes, system directories, Windows trees, Reparse Points/Symlinks. |
+| `SafeRegistryGuard` | [Core/Helpers/SafeRegistryGuard.cs](../Core/Helpers/SafeRegistryGuard.cs) | `bool IsSafeToDeleteKey(RegistryKey root, string subKey)`: Blocks Root Hive deletion, enforces subkey depth $\ge 3$, validates safe whitelist. |
+| `ServiceSafetyService` | [Core/Helpers/ServiceSafetyService.cs](../Core/Helpers/ServiceSafetyService.cs) | `bool IsProtectedService(string serviceName)`: Shields 45+ critical Windows infrastructure services (`RpcSs`, `WinDefend`, `CryptSvc`, ...). |
+| `ProcessRunner` | [Core/Helpers/ProcessRunner.cs](../Core/Helpers/ProcessRunner.cs) | `Task<ProcessResult> RunAsync(string exe, IEnumerable<string> args, CancellationToken ct)`: Zero Command Injection runner using `ArgumentList`. |
+| `CryptoHelper` | [Core/Helpers/CryptoHelper.cs](../Core/Helpers/CryptoHelper.cs) | `string Protect(string plainText)`, `string Unprotect(string cipherText)`: Secure encryption utilizing Windows DPAPI. |
+| `InputSanitizer` | [Core/Helpers/InputSanitizer.cs](../Core/Helpers/InputSanitizer.cs) | `string SanitizeFileName(string input)`, `string SanitizeCliArg(string input)`: Input normalization and sanitization. |
 
-### 🧩 Mô Hình Cơ Sở & Kết Quả (Base Models & Helpers)
-| Lớp / Ký hiệu | Đường dẫn tập tin | Chức năng & Phương thức chính |
+### 🧩 Base Models & Helpers
+| Class / Symbol | File Path | Core Responsibilities & Canonical Signatures |
 | :--- | :--- | :--- |
-| `OperationResult`, `OperationResult<T>` | [Core/Models/OperationResult.cs](file:///d:/WinCare/Core/Models/OperationResult.cs) | `Ok()`, `Ok(T data)`, `Fail(string msg)`, `Fail(Exception ex)`: Mẫu kết quả chuẩn hóa mọi phương thức có nguy cơ ngoại lệ. |
-| `ViewModelBase` | [Core/Helpers/ViewModelBase.cs](file:///d:/WinCare/Core/Helpers/ViewModelBase.cs) | Kế thừa `ObservableObject`. Chứa `RunOnUI(Action)`, `IsBusy`, `OperationState`, `StatusMessage`. Bắt buộc cho mọi ViewModel. |
-| `AppConstants` | [Core/AppConstants.cs](file:///d:/WinCare/Core/AppConstants.cs) | Single Source of Truth (SSOT) cho tên app, phiên bản (`5.0.0`), codename (`Polaris`), build date, bản quyền. |
-| `UndoManager` | [Core/Helpers/UndoManager.cs](file:///d:/WinCare/Core/Helpers/UndoManager.cs) | Quản lý lịch sử Undo, khôi phục registry backup và file backup an toàn. |
+| `OperationResult`, `OperationResult<T>` | [Core/Models/OperationResult.cs](../Core/Models/OperationResult.cs) | `Ok()`, `Ok(T data)`, `Fail(string msg)`, `Fail(Exception ex)`: Standardized result wrapper for fallible operations. |
+| `ViewModelBase` | [Core/Helpers/ViewModelBase.cs](../Core/Helpers/ViewModelBase.cs) | Inherits `ObservableObject`. Exposes `RunOnUI(Action)`, `IsBusy`, `OperationState`, `StatusMessage`. Mandatory for all ViewModels. |
+| `AppConstants` | [Core/AppConstants.cs](../Core/AppConstants.cs) | Single Source of Truth (SSOT) for product identity, version (`5.0.0`), codename (`Polaris`), build date, copyright. |
+| `UndoManager` | [Core/Helpers/UndoManager.cs](../Core/Helpers/UndoManager.cs) | Manages Undo rollbacks, restores registry hives and quarantined files safely. |
 
-### 🗄️ Hạ Tầng & Dữ Liệu (Infrastructure & Data)
-| Lớp / Ký hiệu | Đường dẫn tập tin | Chức năng & Phương thức chính |
+### 🗄️ Infrastructure & Persistence
+| Class / Symbol | File Path | Core Responsibilities & Canonical Signatures |
 | :--- | :--- | :--- |
-| `DbManager` | [Infrastructure/Database/DbManager.cs](file:///d:/WinCare/Infrastructure/Database/DbManager.cs) | Quản lý SQLite WAL. Mọi query bắt buộc bọc trong `lock (_dbLock)`. Chứa `SaveAuditRecord()`, `GetHistory()`, `SaveSetting()`. |
-| `CrashLogger` | [Infrastructure/Logging/CrashLogger.cs](file:///d:/WinCare/Infrastructure/Logging/CrashLogger.cs) | `LogError(Exception ex, string context)`: Ghi nhận sự cố và dump lỗi không nuốt ngoại lệ. |
-| `AppLogger` | [Infrastructure/Logging/AppLogger.cs](file:///d:/WinCare/Infrastructure/Logging/AppLogger.cs) | Ghi nhận telemetry và log nghiệp vụ thường quy theo cấp độ (Info, Warn, Error). |
+| `DbManager` | [Infrastructure/Database/DbManager.cs](../Infrastructure/Database/DbManager.cs) | Manages SQLite WAL. All operations MUST acquire `lock (_dbLock)`. Exposes `SaveAuditRecord()`, `GetHistory()`, `SaveSetting()`. |
+| `CrashLogger` | [Infrastructure/Logging/CrashLogger.cs](../Infrastructure/Logging/CrashLogger.cs) | `LogError(Exception ex, string context)`: Captures unhandled crashes, stack traces; enforces Zero-Silent Catch. |
+| `AppLogger` | [Infrastructure/Logging/AppLogger.cs](../Infrastructure/Logging/AppLogger.cs) | Records operational telemetry and business lifecycle events by level (Info, Warn, Error). |
 
-### 🌐 Dịch Vụ Hệ Thống (Services)
-| Lớp / Ký hiệu | Đường dẫn tập tin | Chức năng & Phương thức chính |
+### 🌐 System Services
+| Class / Symbol | File Path | Core Responsibilities & Canonical Signatures |
 | :--- | :--- | :--- |
-| `TranslationManager` | [Services/TranslationService/TranslationManager.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.cs) | Singleton i18n đa ngôn ngữ. Quản lý từ điển qua [TranslationManager.Translations.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.Translations.cs). |
-| `ThemeManager` | [Services/ThemeService/ThemeManager.cs](file:///d:/WinCare/Services/ThemeService/ThemeManager.cs) | Quản lý giao diện Aura Glass (Light, Dark, Windows Default, Mica Alt backdrop). |
-| `IconCacheService` | [Services/IconCacheService.cs](file:///d:/WinCare/Services/IconCacheService.cs) | Cache icon ứng dụng Win32/UWP tránh nghẽn I/O và rò rỉ GDI handle. |
-| `NavigationService` | [Services/NavigationService.cs](file:///d:/WinCare/Services/NavigationService.cs) | Điều hướng trang giữa các phân hệ WinUI 3. |
-| `UpdateManager` | [Services/UpdateManager.cs](file:///d:/WinCare/Services/UpdateManager.cs) | Kiểm tra cập nhật ứng dụng tự động, xác thực payload qua `UpdateSecurityValidator`. |
+| `TranslationManager` | [Services/TranslationService/TranslationManager.cs](../Services/TranslationService/TranslationManager.cs) | Dual-language i18n Singleton. Manages dictionaries in [TranslationManager.Translations.cs](../Services/TranslationService/TranslationManager.Translations.cs). |
+| `ThemeManager` | [Services/ThemeService/ThemeManager.cs](../Services/ThemeService/ThemeManager.cs) | Manages Aura Glass themes (Light, Dark, Windows Default, Mica Alt backdrop). |
+| `IconCacheService` | [Services/IconCacheService.cs](../Services/IconCacheService.cs) | Caches Win32/UWP application shell icons to eliminate disk I/O bottlenecks and GDI handle leaks. |
+| `NavigationService` | [Services/NavigationService.cs](../Services/NavigationService.cs) | Manages WinUI 3 page navigation and routing between feature views. |
+| `UpdateManager` | [Services/UpdateManager.cs](../Services/UpdateManager.cs) | Handles automated update checks and payload integrity validation via `UpdateSecurityValidator`. |
 
 ---
 
-## ⚙️ 2. Danh Mục Động Cơ Nghiệp Vụ (Engines Index)
+## ⚙️ 2. Business Logic Engines Index
 
-Tất cả các Engine độc lập 100% với WinUI 3, nhận `CancellationToken ct = default`, trả về `OperationResult<T>`:
+All engines operate completely isolated from WinUI 3, accept `CancellationToken ct = default`, and return `OperationResult<T>`:
 
-| Động Cơ (Engine) | Đường dẫn tập tin | Nghiệp vụ cốt lõi |
+| Engine | File Path | Core Domain Logic |
 | :--- | :--- | :--- |
-| `JunkCleanerEngine` | [Engines/JunkCleanerEngine.cs](file:///d:/WinCare/Engines/JunkCleanerEngine.cs) | Quét và dọn rác hệ thống (Temp, Prefetch, Log, Dump), bọc qua `SafePathGuard`. |
-| `RegistryEngine` | [Engines/RegistryEngine.cs](file:///d:/WinCare/Engines/RegistryEngine.cs) | Quét và tối ưu Registry, sao lưu tự động qua `RegistryBackupEngine`, bảo vệ qua `SafeRegistryGuard`. |
-| `SystemOptimizerEngine`| [Engines/SystemOptimizerEngine.cs](file:///d:/WinCare/Engines/SystemOptimizerEngine.cs)| Tinh chỉnh hiệu năng OS, quản lý Visual Effects, cấu hình mạng và dịch vụ. |
-| `UninstallEngine` | [Engines/UninstallEngine.cs](file:///d:/WinCare/Engines/UninstallEngine.cs) | Quét danh sách phần mềm cài đặt, gỡ cài đặt sạch sâu kèm quét tàn dư file/reg. |
-| `NetworkCenterEngine` | [Engines/NetworkCenterEngine.cs](file:///d:/WinCare/Engines/NetworkCenterEngine.cs) | Đo tốc độ mạng, flush DNS, reset TCP/IP stack, tối ưu MTU qua `ProcessRunner`. |
-| `StartupEngine` | [Engines/StartupEngine.cs](file:///d:/WinCare/Engines/StartupEngine.cs) | Quản lý tác vụ khởi động cùng Windows (Registry Run, Startup Folder, Task Scheduler). |
-| `SystemRepairEngine` | [Engines/SystemRepairEngine.cs](file:///d:/WinCare/Engines/SystemRepairEngine.cs) | Sửa lỗi hệ thống, kích hoạt SFC (`sfc /scannow`), DISM (`DISM /Online /Cleanup-Image /RestoreHealth`). |
-| `SecurityCenterEngine`| [Engines/SecurityCenterEngine.cs](file:///d:/WinCare/Engines/SecurityCenterEngine.cs)| Kiểm tra trạng thái Windows Defender, Firewall, UAC, BitLocker, Windows Update. |
-| `AiWinCareEngine` | [Engines/AiWinCareEngine.cs](file:///d:/WinCare/Engines/AiWinCareEngine.cs) | Lõi phân tích thông minh, dự đoán nguy cơ suy giảm hiệu năng và đề xuất tối ưu. |
-| `AiDiagnosticsEngine` | [Engines/AiDiagnosticsEngine.cs](file:///d:/WinCare/Engines/AiDiagnosticsEngine.cs)| Chẩn đoán chi tiết log hệ thống và phần cứng thông qua mô hình phân tích logic. |
+| `JunkCleanerEngine` | [Engines/JunkCleanerEngine.cs](../Engines/JunkCleanerEngine.cs) | Scans and purges system junk (Temp, Prefetch, Logs, Dumps); shielded by `SafePathGuard`. |
+| `RegistryEngine` | [Engines/RegistryEngine.cs](../Engines/RegistryEngine.cs) | Scans and optimizes Registry; automated backups via `RegistryBackupEngine`; shielded by `SafeRegistryGuard`. |
+| `SystemOptimizerEngine`| [Engines/SystemOptimizerEngine.cs](../Engines/SystemOptimizerEngine.cs)| OS performance tuning, Visual Effects configuration, network parameters, and service optimizations. |
+| `UninstallEngine` | [Engines/UninstallEngine.cs](../Engines/UninstallEngine.cs) | Program inventory detection, deep clean uninstallation with file/registry residual sweeps. |
+| `NetworkCenterEngine` | [Engines/NetworkCenterEngine.cs](../Engines/NetworkCenterEngine.cs) | Bandwidth benchmarking, DNS flush, TCP/IP stack resets, MTU optimization via `ProcessRunner`. |
+| `StartupEngine` | [Engines/StartupEngine.cs](../Engines/StartupEngine.cs) | Manages Windows autorun entries (Registry Run, Startup Folders, Task Scheduler). |
+| `SystemRepairEngine` | [Engines/SystemRepairEngine.cs](../Engines/SystemRepairEngine.cs) | OS integrity restoration, automated SFC (`sfc /scannow`), DISM (`DISM /Online /Cleanup-Image /RestoreHealth`). |
+| `SecurityCenterEngine`| [Engines/SecurityCenterEngine.cs](../Engines/SecurityCenterEngine.cs)| Inspects states for Windows Defender, Windows Firewall, UAC, BitLocker, Windows Update. |
+| `AiWinCareEngine` | [Engines/AiWinCareEngine.cs](../Engines/AiWinCareEngine.cs) | Intelligent heuristics engine predicting performance degradation and recommending optimizations. |
+| `AiDiagnosticsEngine` | [Engines/AiDiagnosticsEngine.cs](../Engines/AiDiagnosticsEngine.cs)| In-depth system log and hardware diagnostics using structured rule trees. |
 
 ---
 
-## 🖥️ 3. Danh Mục 14 Phân Hệ Giao Diện (Modules: ViewModel & View)
+## 🖥️ 3. Fourteen Presentation Modules (Modules: ViewModel & View)
 
-| Phân hệ (Module) | ViewModel | View (XAML) |
+| Module | ViewModel | View (XAML) |
 | :--- | :--- | :--- |
-| **Dashboard** | [Modules/Dashboard/DashboardViewModel.cs](file:///d:/WinCare/Modules/Dashboard/DashboardViewModel.cs) | [Modules/Dashboard/DashboardView.xaml](file:///d:/WinCare/Modules/Dashboard/DashboardView.xaml) |
-| **Junk Cleaner** | [Modules/JunkCleaner/JunkCleanerViewModel.cs](file:///d:/WinCare/Modules/JunkCleaner/JunkCleanerViewModel.cs) | [Modules/JunkCleaner/JunkCleanerView.xaml](file:///d:/WinCare/Modules/JunkCleaner/JunkCleanerView.xaml) |
-| **Registry** | [Modules/Registry/RegistryViewModel.cs](file:///d:/WinCare/Modules/Registry/RegistryViewModel.cs) | [Modules/Registry/RegistryView.xaml](file:///d:/WinCare/Modules/Registry/RegistryView.xaml) |
-| **System Optimizer**| [Modules/SystemOptimizer/SystemOptimizerViewModel.cs](file:///d:/WinCare/Modules/SystemOptimizer/SystemOptimizerViewModel.cs) | [Modules/SystemOptimizer/SystemOptimizerView.xaml](file:///d:/WinCare/Modules/SystemOptimizer/SystemOptimizerView.xaml) |
-| **Startup Manager** | [Modules/StartupManager/StartupManagerViewModel.cs](file:///d:/WinCare/Modules/StartupManager/StartupManagerViewModel.cs) | [Modules/StartupManager/StartupManagerView.xaml](file:///d:/WinCare/Modules/StartupManager/StartupManagerView.xaml) |
-| **Uninstall** | [Modules/Uninstall/UninstallViewModel.cs](file:///d:/WinCare/Modules/Uninstall/UninstallViewModel.cs) | [Modules/Uninstall/UninstallView.xaml](file:///d:/WinCare/Modules/Uninstall/UninstallView.xaml) |
-| **System Repair** | [Modules/Repair/SystemRepairViewModel.cs](file:///d:/WinCare/Modules/Repair/SystemRepairViewModel.cs) | [Modules/Repair/SystemRepairView.xaml](file:///d:/WinCare/Modules/Repair/SystemRepairView.xaml) |
-| **Security Center**| [Modules/Security/SecurityCenterViewModel.cs](file:///d:/WinCare/Modules/Security/SecurityCenterViewModel.cs) | [Modules/Security/SecurityCenterView.xaml](file:///d:/WinCare/Modules/Security/SecurityCenterView.xaml) |
-| **Network Center** | [Modules/Network/NetworkCenterViewModel.cs](file:///d:/WinCare/Modules/Network/NetworkCenterViewModel.cs) | [Modules/Network/NetworkCenterView.xaml](file:///d:/WinCare/Modules/Network/NetworkCenterView.xaml) |
-| **AI Assistant** | [Modules/AiAssistant/AiAssistantViewModel.cs](file:///d:/WinCare/Modules/AiAssistant/AiAssistantViewModel.cs) | [Modules/AiAssistant/AiAssistantView.xaml](file:///d:/WinCare/Modules/AiAssistant/AiAssistantView.xaml) |
-| **Desktop Widget** | [Modules/DesktopWidget/DesktopWidgetViewModel.cs](file:///d:/WinCare/Modules/DesktopWidget/DesktopWidgetViewModel.cs) | [Modules/DesktopWidget/DesktopWidgetWindow.xaml](file:///d:/WinCare/Modules/DesktopWidget/DesktopWidgetWindow.xaml) |
-| **Notifications** | [Modules/Notifications/NotificationCenterViewModel.cs](file:///d:/WinCare/Modules/Notifications/NotificationCenterViewModel.cs)| [Modules/Notifications/NotificationCenterView.xaml](file:///d:/WinCare/Modules/Notifications/NotificationCenterView.xaml)|
-| **Settings** | [Modules/Settings/SettingsViewModel.cs](file:///d:/WinCare/Modules/Settings/SettingsViewModel.cs) | [Modules/Settings/SettingsView.xaml](file:///d:/WinCare/Modules/Settings/SettingsView.xaml) |
-| **Updates** | [Modules/Updates/UpdateViewModel.cs](file:///d:/WinCare/Modules/Updates/UpdateViewModel.cs) | [Modules/Updates/UpdateView.xaml](file:///d:/WinCare/Modules/Updates/UpdateView.xaml) |
+| **Dashboard** | [Modules/Dashboard/DashboardViewModel.cs](../Modules/Dashboard/DashboardViewModel.cs) | [Modules/Dashboard/DashboardView.xaml](../Modules/Dashboard/DashboardView.xaml) |
+| **Junk Cleaner** | [Modules/JunkCleaner/JunkCleanerViewModel.cs](../Modules/JunkCleaner/JunkCleanerViewModel.cs) | [Modules/JunkCleaner/JunkCleanerView.xaml](../Modules/JunkCleaner/JunkCleanerView.xaml) |
+| **Registry** | [Modules/Registry/RegistryViewModel.cs](../Modules/Registry/RegistryViewModel.cs) | [Modules/Registry/RegistryView.xaml](../Modules/Registry/RegistryView.xaml) |
+| **System Optimizer**| [Modules/SystemOptimizer/SystemOptimizerViewModel.cs](../Modules/SystemOptimizer/SystemOptimizerViewModel.cs) | [Modules/SystemOptimizer/SystemOptimizerView.xaml](../Modules/SystemOptimizer/SystemOptimizerView.xaml) |
+| **Startup Manager** | [Modules/StartupManager/StartupManagerViewModel.cs](../Modules/StartupManager/StartupManagerViewModel.cs) | [Modules/StartupManager/StartupManagerView.xaml](../Modules/StartupManager/StartupManagerView.xaml) |
+| **Uninstall** | [Modules/Uninstall/UninstallViewModel.cs](../Modules/Uninstall/UninstallViewModel.cs) | [Modules/Uninstall/UninstallView.xaml](../Modules/Uninstall/UninstallView.xaml) |
+| **System Repair** | [Modules/Repair/SystemRepairViewModel.cs](../Modules/Repair/SystemRepairViewModel.cs) | [Modules/Repair/SystemRepairView.xaml](../Modules/Repair/SystemRepairView.xaml) |
+| **Security Center**| [Modules/Security/SecurityCenterViewModel.cs](../Modules/Security/SecurityCenterViewModel.cs) | [Modules/Security/SecurityCenterView.xaml](../Modules/Security/SecurityCenterView.xaml) |
+| **Network Center** | [Modules/Network/NetworkCenterViewModel.cs](../Modules/Network/NetworkCenterViewModel.cs) | [Modules/Network/NetworkCenterView.xaml](../Modules/Network/NetworkCenterView.xaml) |
+| **AI Assistant** | [Modules/AiAssistant/AiAssistantViewModel.cs](../Modules/AiAssistant/AiAssistantViewModel.cs) | [Modules/AiAssistant/AiAssistantView.xaml](../Modules/AiAssistant/AiAssistantView.xaml) |
+| **Desktop Widget** | [Modules/DesktopWidget/DesktopWidgetViewModel.cs](../Modules/DesktopWidget/DesktopWidgetViewModel.cs) | [Modules/DesktopWidget/DesktopWidgetWindow.xaml](../Modules/DesktopWidget/DesktopWidgetWindow.xaml) |
+| **Notifications** | [Modules/Notifications/NotificationCenterViewModel.cs](../Modules/Notifications/NotificationCenterViewModel.cs)| [Modules/Notifications/NotificationCenterView.xaml](../Modules/Notifications/NotificationCenterView.xaml)|
+| **Settings** | [Modules/Settings/SettingsViewModel.cs](../Modules/Settings/SettingsViewModel.cs) | [Modules/Settings/SettingsView.xaml](../Modules/Settings/SettingsView.xaml) |
+| **Updates** | [Modules/Updates/UpdateViewModel.cs](../Modules/Updates/UpdateViewModel.cs) | [Modules/Updates/UpdateView.xaml](../Modules/Updates/UpdateView.xaml) |
 
 ---
 
-## 🧪 4. Danh Mục Kiểm Thử (Unit Tests Index)
+## 🧪 4. Testing & Verification Suite
 
-Các bài test kiểm thử nằm tại [WinCarePro.Tests/](file:///d:/WinCare/WinCarePro.Tests):
-- **Quy chuẩn SQLite Test:** Các test tác động database bắt buộc dùng thuộc tính:
+All unit test fixtures reside in [WinCarePro.Tests/](../WinCarePro.Tests):
+- **SQLite Test Invariant:** Tests mutating database tables MUST configure the attribute:
   ```csharp
   [Collection(nameof(DatabaseTestCollection))]
   ```
-  nhằm ngăn chặn va chạm truy cập file SQLite `lock (_dbLock)` khi chạy song song.
-- **Lệnh chạy kiểm thử có định hướng (AI Standard):**
+  to eliminate concurrency contention on SQLite file locks (`lock (_dbLock)`).
+- **Targeted Execution Standard (AI Standard):**
   ```powershell
-  dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~TênModule" --logger "console;verbosity=minimal"
+  dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~ModuleName" --logger "console;verbosity=minimal"
   ```
 
 ---
 
-## 🧰 5. Tra Cứu 10 Kỹ Năng Kỹ Thuật (Workspace Skills)
-Xem hướng dẫn chi tiết từng lĩnh vực tại [skills/README.md](file:///d:/WinCare/.agents/skills/README.md):
-- **Kiến trúc & Module:** [wincare-module-creator](file:///d:/WinCare/.agents/skills/wincare-module-creator/SKILL.md) • [wincare-ci-packaging](file:///d:/WinCare/.agents/skills/wincare-ci-packaging/SKILL.md)
-- **Hệ thống & An toàn:** [wincare-safe-ops](file:///d:/WinCare/.agents/skills/wincare-safe-ops/SKILL.md) • [wincare-db-wal](file:///d:/WinCare/.agents/skills/wincare-db-wal/SKILL.md) • [wincare-error-resilience](file:///d:/WinCare/.agents/skills/wincare-error-resilience/SKILL.md)
-- **Giao diện & Đa luồng:** [wincare-concurrency-guard](file:///d:/WinCare/.agents/skills/wincare-concurrency-guard/SKILL.md) • [wincare-ui-aura](file:///d:/WinCare/.agents/skills/wincare-ui-aura/SKILL.md) • [wincare-i18n-sync](file:///d:/WinCare/.agents/skills/wincare-i18n-sync/SKILL.md)
-- **Kiểm thử & Tiết kiệm Token:** [wincare-test-verifier](file:///d:/WinCare/.agents/skills/wincare-test-verifier/SKILL.md) • [wincare-token-guard](file:///d:/WinCare/.agents/skills/wincare-token-guard/SKILL.md)
+## 🧰 5. Specialized Workspace Skills Index
+
+Consult specialized runbooks at [.agents/skills/README.md](../.agents/skills/README.md):
+- **Architecture & Modularity:** [wincare-module-creator](../.agents/skills/wincare-module-creator/SKILL.md) • [wincare-ci-packaging](../.agents/skills/wincare-ci-packaging/SKILL.md)
+- **System & Safety Armor:** [wincare-safe-ops](../.agents/skills/wincare-safe-ops/SKILL.md) • [wincare-db-wal](../.agents/skills/wincare-db-wal/SKILL.md) • [wincare-error-resilience](../.agents/skills/wincare-error-resilience/SKILL.md)
+- **Presentation & Threading:** [wincare-concurrency-guard](../.agents/skills/wincare-concurrency-guard/SKILL.md) • [wincare-ui-aura](../.agents/skills/wincare-ui-aura/SKILL.md) • [wincare-i18n-sync](../.agents/skills/wincare-i18n-sync/SKILL.md)
+- **Quality & Token Economy:** [wincare-test-verifier](../.agents/skills/wincare-test-verifier/SKILL.md) • [wincare-token-guard](../.agents/skills/wincare-token-guard/SKILL.md)
+
 

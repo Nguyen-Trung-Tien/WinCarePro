@@ -1,38 +1,38 @@
-# ⚡ 04. Quy Chuẩn Hiệu Năng & Quản Lý Bộ Nhớ (Performance & Memory Rules)
+# ⚡ 04. Performance & Memory Management Rules
 
-> [⬅️ 03. Đa Luồng & Bất Đồng Bộ](03_CONCURRENCY_AND_THREADING_RULES.md) • [🏠 Mục Lục Rules](README.md) • **Rule 04** • [Quy Chuẩn Tiếp Theo: 05. Chuẩn Mã Nguồn C# 13 ➡️](05_CODING_STANDARDS_AND_CONVENTIONS.md)
+> [⬅️ 03. Concurrency & Threading](03_CONCURRENCY_AND_THREADING_RULES.md) • [🏠 Rules Index](README.md) • **Rule 04** • [Next Rule: 05. C# 13 Coding Standards ➡️](05_CODING_STANDARDS_AND_CONVENTIONS.md)
 
 ---
 
-## 🏎️ 1. Ngân Sách Khởi Động & Tiêu Thụ Tài Nguyên (Performance Budgets)
+## 🏎️ 1. Startup & Resource Consumption Budgets
 
-Mọi bản build Production của WinCare Pro phải đáp ứng các chỉ tiêu khắt khe sau:
+All production builds of WinCare Pro MUST strictly conform to the following quantitative limits:
 
-| Chỉ số hiệu năng | Ngưỡng giới hạn (Budget) | Phương pháp đo lường |
+| Performance Metric | Threshold Budget | Measurement Criteria |
 | :--- | :--- | :--- |
-| **Cold Start (Khởi động lạnh)** | $\le 350\text{ ms}$ | Từ lúc gọi `.exe` đến khi xuất hiện khung giao diện chính |
-| **RAM khi chạy tiền cảnh** | $\le 85\text{ MB}$ | Đang mở Dashboard và hiển thị dữ liệu live |
-| **RAM khi thu nhỏ xuống khay hệ thống (System Tray)** | $\le 15\text{ MB}$ | Sau khi kích hoạt cơ chế `TrimProcessMemory()` |
-| **Mức chiếm dụng CPU khi Idle** | $\le 0.3\%$ | Khi ứng dụng chỉ giám sát nền |
-| **Độ mượt hoạt cảnh giao diện** | $120\text{ FPS}$ (hoặc tần số quét tối đa của màn hình) | Windows Composition Layer Render |
+| **Cold Start** | $\le 350\text{ ms}$ | Process invocation to initial primary frame render |
+| **Foreground RAM** | $\le 85\text{ MB}$ | Active Dashboard view with live telemetry streaming |
+| **System Tray Background RAM** | $\le 15\text{ MB}$ | Post-invocation of `TrimProcessMemory()` |
+| **Idle CPU Utilization** | $\le 0.3\%$ | Steady-state background telemetry monitoring |
+| **Animation Refresh Rate** | $120\text{ FPS}$ (or display maximum) | Windows Composition Layer frame dispatching |
 
 ---
 
-## 🧹 2. Cơ Chế Thu Gọn RAM Nền (`TrimProcessMemory`)
+## 🧹 2. Memory Compaction Pipeline (`TrimProcessMemory`)
 
-Khi ứng dụng được thu nhỏ xuống khay hệ thống (System Tray), hệ thống **bắt buộc** thực hiện quy trình giải phóng tài nguyên:
+When minimized to the Windows System Tray, the application **MUST** execute the memory compaction sequence:
 
 ```csharp
 public static void TrimProcessMemory()
 {
     try
     {
-        // 1. Kích hoạt thu gom rác thế hệ 2 đầy đủ
+        // 1. Force Gen2 GC collection and heap compaction
         GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
         GC.WaitForPendingFinalizers();
         GC.Collect(GC.MaxGeneration, GCCollectionMode.Aggressive, blocking: true, compacting: true);
 
-        // 2. Thu hồi Working Set bộ nhớ vật lý qua Win32 API
+        // 2. Release physical working set via Win32 API
         using var process = Process.GetCurrentProcess();
         NativeMethods.EmptyWorkingSet(process.Handle);
     }
@@ -45,38 +45,38 @@ public static void TrimProcessMemory()
 
 ---
 
-## 🚰 3. Chống Rò Rỉ Bộ Nhớ XAML (Memory Leak Prevention)
+## 🚰 3. XAML Memory Leak Elimination
 
-1. **Hủy đăng ký sự kiện (Event Unsubscription):**
-   - Mọi sự kiện đăng ký với các đối tượng sống lâu (Singleton Services, `Window`, `DispatcherTimer`, `NetworkChange.NetworkAddressChanged`) **bắt buộc** phải được hủy đăng ký trong sự kiện `Unloaded` của View hoặc hàm `Dispose()` của ViewModel.
-2. **Sử dụng `WeakReferenceMessenger`:**
-   - Khi gửi thông điệp giữa các ViewModel hoặc Service, luôn sử dụng cơ chế liên kết yếu (Weak Reference) của `CommunityToolkit.Mvvm` để tránh việc đối tượng nhận tin không được GC thu hồi.
-3. **Giải phóng tài nguyên không quản lý (`IDisposable`):**
-   - Mọi đối tượng thực thi `IDisposable` (như `SqliteConnection`, `FileStream`, `Process`, `BitmapImage`) phải được bọc trong khối `using var` hoặc gọi `Dispose()` tường minh.
-
----
-
-## 🖼️ 4. Quy Chuẩn Bộ Nhớ Đệm I/O & Icon (`IconCacheService`)
-
-- **Không đọc đĩa lặp lại:** Tuyệt đối không gọi `SHGetFileInfo` hoặc `ExtractIcon` nhiều lần cho cùng một tệp thực thi.
-- **Bộ nhớ đệm trong RAM:** Sử dụng `ConcurrentDictionary<string, ImageSource>` với giới hạn kích thước (LRU eviction nếu cần) để phục vụ việc hiển thị danh sách ứng dụng khởi động và tiến trình mượt mà $O(1)$.
+1. **Mandatory Event Unsubscription:**
+   - Event subscriptions attached to long-lived objects (Singleton Services, `Window`, `DispatcherTimer`, `NetworkChange.NetworkAddressChanged`) **MUST** be detached (`-=`) during the View's `Unloaded` event or ViewModel `Dispose()` method.
+2. **Utilize `WeakReferenceMessenger`:**
+   - Inter-component and cross-ViewModel communication MUST use weak references via `CommunityToolkit.Mvvm` to prevent subscriber retention by GC roots.
+3. **Deterministic Resource Disposal (`IDisposable`):**
+   - All types implementing `IDisposable` (e.g. `SqliteConnection`, `FileStream`, `Process`, `BitmapImage`) MUST be wrapped in `using var` blocks or explicitly disposed.
 
 ---
 
-## 📊 5. Chống Giật Số Giao Diện Telemetry (`Tabular Numerals`)
+## 🖼️ 4. I/O Caching & Shell Icon Optimization (`IconCacheService`)
 
-Để tránh hiện tượng các thẻ hiển thị CPU%, RAM%, Tốc độ mạng bị nhảy kích thước liên tục (Layout Jitter / Stutter) khi cập nhật dữ liệu mỗi giây:
-- **Bắt buộc** khai báo thuộc tính phông chữ `Typography.NumeralAlignment="Tabular"` trên các TextBlock hiển thị số liệu kỹ thuật.
+- **Zero Redundant Disk I/O:** NEVER invoke `SHGetFileInfo` or `ExtractIcon` repeatedly for the same executable or file type.
+- **In-Memory Cache:** Cache resolved icons using a `ConcurrentDictionary<string, ImageSource>` with LRU bounds to guarantee $O(1)$ retrieval for process and startup application lists.
 
 ---
 
-## 🎨 6. Vòng Đời Composition 3D Visuals & Hỗ Trợ Reduced Motion
+## 📊 5. Telemetry Layout Jitter Prevention (`Tabular Numerals`)
 
-1. **Dọn dẹp Animation khi chuyển trang:** Mọi hiệu ứng tia quét Composition SpriteVisual (`Start3DScanEffect`) phải được dừng và hủy (`Stop3DScanEffect`) trong `OnNavigatedFrom` của View và trong `MainPage.CleanupActivePage()`. Tuyệt đối không để animation chạy ngầm vô thời hạn trên GPU khi trang đã bị ẩn hoặc thay thế.
-2. **Tuân thủ Reduced Motion:** Trước khi khởi chạy animation 3D hoặc micro-interaction, bắt buộc kiểm tra `ReducedMotionHelper.AreAnimationsEnabled` (kết hợp cả Windows Accessibility và cấu hình người dùng `EnableAnimations`). Khi Reduced Motion bật, animation phải thực hiện tức thì hoặc chuyển đổi mờ tĩnh nhẹ nhàng.
+To prevent text bounds vibration (Layout Jitter / Stutter) during real-time updates of CPU%, RAM%, and network throughput:
+- **ALWAYS** declare `Typography.NumeralAlignment="Tabular"` on all telemetry TextBlock elements.
+
+---
+
+## 🎨 6. Composition 3D Visuals & Reduced Motion Governance
+
+1. **Animation Teardown on Navigation:** SpriteVisual scanning sweeps (`Start3DScanEffect`) MUST be halted and disposed (`Stop3DScanEffect`) in the View's `OnNavigatedFrom` handler and `MainPage.CleanupActivePage()`. Running GPU composition loops in background views is STRICTLY FORBIDDEN.
+2. **Reduced Motion Compliance:** Prior to initiating 3D sweeps or micro-interactions, verify `ReducedMotionHelper.AreAnimationsEnabled` (evaluating both Windows Accessibility settings and user preference `EnableAnimations`). When Reduced Motion is active, transitions MUST execute instantaneously or via static alpha crossfades.
 
 ---
 
 <div align="center">
-  <sub>[🏠 Mục Lục Rules](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
+  <sub>[🏠 Rules Index](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
 </div>

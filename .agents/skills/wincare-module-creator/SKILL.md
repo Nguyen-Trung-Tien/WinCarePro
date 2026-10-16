@@ -4,13 +4,13 @@ description: >-
   Standardized step-by-step workflow to implement or extend a module in WinCare Pro following the 4-tier architecture (Model -> Engine -> DI -> ViewModel -> Aura Glass View -> i18n -> xUnit Tests). Use whenever adding a new feature, page, or module to WinCare Pro.
 ---
 
-# 🚀 WinCare Pro — Quy Trình Xây Dựng Phân Hệ Chuẩn (Module Creator Workflow)
+# 🚀 WinCare Pro — Standardized Module Development Lifecycle (Module Creator Workflow)
 
-Quy chuẩn này bắt buộc áp dụng khi thêm mới hoặc mở rộng bất kỳ phân hệ nào trong WinCare Pro Suite. Mọi bước phải tuân thủ nghiêm ngặt mô hình 4 tầng phân lập.
+This standard governs the creation and extension of all modules across the WinCare Pro Suite. Every implementation step MUST strictly conform to the 4-tier decoupled architecture.
 
 ---
 
-## 📋 Quy Trình 7 Bước Triển Khai (7-Step SOP)
+## 📋 7-Step Implementation Workflow (7-Step SOP)
 
 ```mermaid
 graph TD
@@ -24,50 +24,50 @@ graph TD
 
 ---
 
-### Bước 1: Tạo DTO / Model
-- Vị trí: `Core/Models/<Feature>/` hoặc `Core/Models/`
-- Quy tắc:
-  - Bắt buộc trả về kết quả qua `OperationResult` hoặc `OperationResult<T>`.
-  - Khai báo kiểu dữ liệu rõ ràng, `record` hoặc `class`, hỗ trợ serialization nếu cần lưu SQLite.
+### Step 1: Author DTOs & Domain Models
+- Location: `Core/Models/<Feature>/` or `Core/Models/`
+- Rules:
+  - Methods MUST wrap results using `OperationResult` or `OperationResult<T>`.
+  - Declare explicit types (`record` or `class`); ensure SQLite serialization compatibility if persisted.
 
-### Bước 2: Xây Dựng Engine Nghiệp Vụ
-- Vị trí: `Engines/<Category>/<Feature>Engine.cs`
-- Quy tắc:
-  - **CẤM** chứa bất kỳ WinUI type nào (`UIElement`, `Window`, `SolidColorBrush`,...).
-  - Mọi phương thức async nặng **bắt buộc** nhận `CancellationToken ct = default`.
-  - Kiểm tra `ct.ThrowIfCancellationRequested()`.
-  - Tích hợp các Core Guards:
+### Step 2: Implement Business Logic Engine
+- Location: `Engines/<Category>/<Feature>Engine.cs`
+- Rules:
+  - **STRICTLY FORBIDDEN** to reference any WinUI types (`UIElement`, `Window`, `SolidColorBrush`, etc.).
+  - All resource-intensive asynchronous methods **MUST** accept `CancellationToken ct = default`.
+  - Periodically verify cancellation via `ct.ThrowIfCancellationRequested()`.
+  - Integrate native Core Guards:
     - File I/O: `SafePathGuard.IsSafeToDelete(path)`
     - Registry: `SafeRegistryGuard.IsSafeToDeleteKey(key)` & `RegistryBackupEngine.BackupKey(...)`
-    - CLI: `ProcessRunner.RunAsync(exe, args, ct)`
-    - Services: `ServiceSafetyService.IsProtectedService(name)`
-    - DPAPI: `CryptoHelper.Protect(secret)`
-  - Template tham khảo: [EngineTemplate.cs](../../templates/EngineTemplate.cs)
+    - CLI Execution: `ProcessRunner.RunAsync(exe, args, ct)`
+    - Windows Services: `ServiceSafetyService.IsProtectedService(name)`
+    - DPAPI Encryption: `CryptoHelper.Protect(secret)`
+  - Reference Template: [EngineTemplate.cs](../../templates/EngineTemplate.cs)
 
-### Bước 3: Đăng Ký Dependency Injection (DI)
-- Vị trí: [App.xaml.cs](file:///d:/WinCare/App.xaml.cs)
-- Quy tắc:
-  - `services.AddTransient<<Feature>Engine>();`
-  - `services.AddTransient<<Feature>ViewModel>();`
-  - `services.AddTransient<<Feature>View>();` (nếu cần điều hướng qua NavigationService)
+### Step 3: Register In Dependency Injection Container (DI)
+- Location: [App.xaml.cs](../../App.xaml.cs)
+- Rules:
+  - Register transient engines: `services.AddTransient<<Feature>Engine>();`
+  - Register transient view models: `services.AddTransient<<Feature>ViewModel>();`
+  - Register transient views if navigated via NavigationService: `services.AddTransient<<Feature>View>();`
 
-### Bước 4: Xây Dựng ViewModel
-- Vị trí: `Modules/<Feature>/<Feature>ViewModel.cs`
-- Kế thừa: `ViewModelBase`
-- Quy tắc:
-  - Bọc 100% cập nhật UI và `ObservableCollection` trong `RunOnUI(() => { ... })`.
-  - Quản lý trạng thái:
+### Step 4: Implement ViewModel
+- Location: `Modules/<Feature>/<Feature>ViewModel.cs`
+- Base Class: `ViewModelBase`
+- Rules:
+  - Dispatch 100% of UI mutations and `ObservableCollection` updates through `RunOnUI(() => { ... })`.
+  - Manage busy and error state rigorously:
     ```csharp
     try
     {
         IsBusy = true;
-        StatusMessage = "DangXuLy...";
-        // Gọi Engine...
+        StatusMessage = "Processing...";
+        // Call Engine method...
     }
     catch (Exception ex)
     {
         CrashLogger.LogError(ex);
-        StatusMessage = "Loi...";
+        StatusMessage = "Operation failed...";
     }
     finally
     {
@@ -75,30 +75,30 @@ graph TD
         OperationState = OperationState.Idle;
     }
     ```
-  - Giao tiếp chéo qua `WeakReferenceMessenger.Default.Send(...)`, tuyệt đối không giữ tham chiếu trực tiếp ViewModel khác.
-  - Template tham khảo: [ViewModelTemplate.cs](../../templates/ViewModelTemplate.cs)
+  - Cross-module communication MUST route through `WeakReferenceMessenger.Default.Send(...)`. Direct references to external ViewModels are STRICTLY FORBIDDEN.
+  - Reference Template: [ViewModelTemplate.cs](../../templates/ViewModelTemplate.cs)
 
-### Bước 5: Thiết Kế Giao Diện XAML (View)
-- Vị trí: `Modules/<Feature>/<Feature>View.xaml`
-- Quy tắc:
-  - Sử dụng Aura Glass Fluent 2.0 (Mica backdrop, Card bo góc `CornerRadius="8"`).
-  - Telemetry & con số bắt buộc dùng font tabular: `Typography.NumeralAlignment="Tabular"`.
-  - Ràng buộc văn bản qua `TranslationConverter`:
+### Step 5: Construct Fluent 2.0 XAML View
+- Location: `Modules/<Feature>/<Feature>View.xaml`
+- Rules:
+  - Apply Fluent 2.0 Aura Glass styling (Mica backdrop, Card border radius `CornerRadius="8"`).
+  - Telemetry and numerical metrics MUST use tabular font alignment: `Typography.NumeralAlignment="Tabular"`.
+  - Bind display text via `TranslationConverter`:
     ```xml
     <TextBlock Text="{Binding Source='Nav_MyFeature', Converter={StaticResource TranslationConverter}}"/>
     ```
-  - Unhook toàn bộ event (`-=`) khi `Unloaded` để tránh rò rỉ bộ nhớ.
-  - Template tham khảo: [ViewTemplate.xaml](../../templates/ViewTemplate.xaml)
+  - Detach all event handlers (`-=`) in the `Unloaded` event to prevent memory leaks.
+  - Reference Template: [ViewTemplate.xaml](../../templates/ViewTemplate.xaml)
 
-### Bước 6: Khai Báo Đa Ngôn Ngữ (i18n)
-- Vị trí: [Services/TranslationService/TranslationManager.Translations.cs](file:///d:/WinCare/Services/TranslationService/TranslationManager.Translations.cs)
-- Bắt buộc khai báo cả 2 từ điển `vi-VN` và `en-US`.
-- Không bao giờ hardcode text tiếng Việt hoặc tiếng Anh trực tiếp trong XAML.
+### Step 6: Register Dual-Language Keys (i18n)
+- Location: [TranslationManager.Translations.cs](../../Services/TranslationService/TranslationManager.Translations.cs)
+- Simultaneously register matching keys across both `vi-VN` and `en-US` dictionaries.
+- Hardcoded Vietnamese or English string literals in XAML are STRICTLY FORBIDDEN.
 
-### Bước 7: Viết Unit Test & Kiểm Thử Hồi Quy
-- Vị trí: `WinCarePro.Tests/<Feature>Tests.cs`
-- Nếu test có thao tác `DbManager` (SQLite): Bắt buộc đánh dấu `[Collection(nameof(DatabaseTestCollection))]`.
-- Chạy kiểm thử mục tiêu:
+### Step 7: Author Unit Tests & Regression Verification
+- Location: `WinCarePro.Tests/<Feature>Tests.cs`
+- If test suite interacts with `DbManager` (SQLite): MUST apply the `[Collection(nameof(DatabaseTestCollection))]` attribute.
+- Execute targeted test suite:
   ```powershell
   dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~<Feature>Tests" --logger "console;verbosity=minimal"
   ```

@@ -1,104 +1,105 @@
-# 📖 11. Sổ Tay Hướng Dẫn Sử Dụng Người Dùng (User Manual - Tiếng Việt)
+# 📖 11. End-User Manual (WinCare Pro User Manual)
 
-> [⬅️ 10. Hướng Dẫn Lập Trình Viên Mới](10_DEVELOPER_ONBOARDING_GUIDE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 11** • [Về Trang Đầu: 01. Kiến Trúc Tổng Thể ➡️](01_SYSTEM_ARCHITECTURE.md)
+> [⬅️ 10. Developer Onboarding Guide](10_DEVELOPER_ONBOARDING_GUIDE.md) • [🏠 Docs Index](README.md) • **Chapter 11** • [Return to Start: 01. System Architecture ➡️](01_SYSTEM_ARCHITECTURE.md)
 
-Chào mừng bạn đến với **WinCare Pro Suite v4.9 (Codename: Nova)** — Hệ thống chăm sóc, dọn dẹp, bảo mật và tăng tốc Windows toàn diện thế hệ mới!
-
----
-
-## 📥 1. Cài Đặt & Khởi Động Lần Đầu
-
-### 1.1. Yêu Cầu Cấu Hình Máy Tính
-- **Hệ điều hành:** Windows 10 (Phiên bản 2004 / Build 19041 trở lên) hoặc Windows 11 (64-bit).
-- **Bộ vi xử lý (CPU):** Intel Core i3 / AMD Ryzen 3 trở lên.
-- **Bộ nhớ RAM:** Tối thiểu 2GB (Khuyên dùng 4GB trở lên).
-- **Dung lượng ổ cứng trống:** 150 MB.
-
-### 1.2. Các Bước Cài Đặt
-1. Tải bộ cài đặt `WinCareProSetup.exe` từ trang phát hành chính thức.
-2. Nhấp đúp chuột vào file cài đặt. Khi hộp thoại **User Account Control (UAC)** xuất hiện, chọn **Yes** để cấp quyền Administrator.
-3. Làm theo hướng dẫn trên màn hình và chọn **Finish** để khởi chạy WinCare Pro.
+Welcome to **WinCare Pro Suite** — the next-generation desktop system optimization, security hardening, diagnostics, and performance platform for Windows.
 
 ---
 
-## 🧭 2. Hướng Dẫn Thao Tác Chi Tiết Từng Phân Hệ
+## 📥 1. Installation & Initial Launch
 
-### 2.1. 📊 Giám Sát & Xem Điểm Sức Khỏe (Dashboard)
-- **Màn hình chính:** Hiển thị trực quan mức độ sử dụng CPU, RAM, Ổ cứng và Mạng.
-- **Điểm sức khỏe (Health Score):**
-  - **90 - 100 Điểm (Màu Xanh lá):** Máy tính ở trạng thái tuyệt vời.
-  - **70 - 89 Điểm (Màu Vàng):** Máy tính có một số tệp rác hoặc tiến trình chạy ngầm cần tối ưu.
-  - **Dưới 70 Điểm (Màu Đỏ):** Hệ thống đang chịu tải cao, ổ đĩa gần đầy hoặc có rủi ro bảo mật.
-- **Nút "Tối Ưu Nhanh 1-Click":** Tự động giải phóng RAM và làm sạch các tệp tạm thời.
+### 1.1. System Requirements
+- **Operating System:** Windows 10 (Version 2004 / Build 19041+) or Windows 11 (64-bit).
+- **Processor (CPU):** Intel Core i3 / AMD Ryzen 3 or higher.
+- **Memory (RAM):** 2 GB minimum (4 GB+ recommended).
+- **Free Storage Space:** 150 MB.
 
----
-
-### 2.2. 🤖 Chẩn Đoán Bằng Trợ Lý AI (AI WinCare Assistant)
-- **Bước 1:** Chọn mục **AI WinCare** trên thanh điều hướng bên trái.
-- **Bước 2:** Nhấn nút **"Chạy Chẩn Đoán AI" (Run AI Diagnostics)**. Hệ thống sẽ tiến hành phân tích 8 phương diện sức khỏe của máy trong khoảng 5 - 10 giây.
-- **Bước 3:** Xem danh sách các vấn đề được phát hiện và nhấn nút **"Khắc Phục" (Fix)** bên cạnh từng mục hoặc chọn **"Sửa Toàn Bộ"** để AI tự động tối ưu.
+### 1.2. Installation Procedure
+1. Download `WinCareProSetup.exe` from the official repository releases.
+2. Double-click the installer executable. When prompted by **User Account Control (UAC)**, click **Yes** to grant administrative privileges.
+3. Follow the on-screen installation wizard and click **Finish** to launch WinCare Pro.
 
 ---
 
-### 2.3. 🧹 Dọn Rác & Giải Phóng Bộ Nhớ Đệm (Junk Cleaner)
-- **Bước 1:** Chọn mục **Dọn Tệp Rác (Junk Cleaner)**.
-- **Bước 2:** Tích chọn các danh mục muốn quét (Tệp tạm Windows, Bộ nhớ đệm trình duyệt, Nhật ký lỗi, Thùng rác).
-- **Bước 3:** Nhấn **"Quét Ngay" (Scan)** để xem danh sách và tổng dung lượng rác có thể giải phóng.
-- **Bước 4:** Nhấn **"Dọn Dẹp" (Clean)**. Cơ chế an toàn `SafePathGuard` sẽ tự động bảo vệ các tệp mật khẩu trình duyệt và tệp hệ điều hành của bạn.
+## 🧭 2. Detailed Module Operations
+
+### 2.1. 📊 System Telemetry & Health Scoring (Dashboard)
+- **Primary Dashboard:** Visualizes real-time metrics for CPU, RAM, storage volumes, and network throughput.
+- **Composite Health Score:**
+  - **90 - 100 (Emerald Green):** System is in optimal condition.
+  - **70 - 89 (Amber Yellow):** Non-critical junk files or background processes require attention.
+  - **Below 70 (Coral Red):** High resource contention, disk space exhaustion, or unpatched security vulnerabilities detected.
+- **"1-Click Quick Optimize":** Reclaims working set RAM and purges safe temporary caches immediately.
 
 ---
 
-### 2.4. 📦 Gỡ Bỏ Phần Mềm & Dọn Tàn Dư (App Uninstaller)
-- **Bước 1:** Chọn mục **Gỡ Cài Đặt (Uninstall)**.
-- **Bước 2:** Tìm kiếm phần mềm bạn muốn gỡ bỏ trong danh sách.
-- **Bước 3:** Nhấn nút **"Gỡ Cài Đặt" (Uninstall)** để chạy trình gỡ gốc.
-- **Bước 4:** Sau khi gỡ xong, WinCare Pro sẽ tự động kích hoạt chế độ **Quét Tàn Dư (Deep Scan)** tìm các thư mục thừa trong AppData và các khóa Registry còn sót lại. Nhấn **"Xóa Tàn Dư"** để hoàn tất việc dọn dẹp triệt để.
+### 2.2. 🤖 AI-Powered Diagnostics (AI WinCare Assistant)
+- **Step 1:** Select **AI WinCare** from the left navigation menu.
+- **Step 2:** Click **"Run AI Diagnostics"**. The engine executes 8 concurrent heuristic diagnostic scans across system integrity, registry consistency, disk performance, and security posture.
+- **Step 3:** Review detected issues and click **"Fix"** on individual items, or select **"Fix All"** to trigger automated remediation.
 
 ---
 
-### 2.5. 🌐 Kiểm Tra & Tối Ưu Mạng (Network Center)
-- **Đo tốc độ Internet:** Nhấn **"Kiểm Tra Tốc Độ" (SpeedTest)** để đo Ping, tốc độ Download và Upload.
-- **Đổi DNS 1-Click:** Chọn máy chủ DNS mong muốn (Cloudflare 1.1.1.1, Google 8.8.8.8, AdGuard chặn quảng cáo) và nhấn **"Áp Dụng DNS"**.
-- **Sửa lỗi mất mạng:** Nếu không vào được mạng, nhấn nút **"Khôi Phục Mạng (Reset Network)"** để xóa bộ đệm DNS và làm mới cấu hình TCP/IP.
+### 2.3. 🧹 Junk File Cleaner (Junk Cleaner)
+- **Step 1:** Navigate to **Junk Cleaner**.
+- **Step 2:** Check desired target categories (Windows Temp files, browser caches, error logs, Recycle Bin).
+- **Step 3:** Click **"Scan"** to compute recoverable disk capacity without modifying files.
+- **Step 4:** Click **"Clean"**. The `SafePathGuard` shield automatically preserves browser credentials, session tokens, and core system folders.
 
 ---
 
-### 2.6. 🛠️ Sửa Lỗi Hệ Thống Windows (System Repair)
-- **Sửa tệp hệ thống bị hỏng (SFC Scan):** Nhấn **"Quét & Sửa SFC"** (`sfc /scannow`).
-- **Khôi phục kho thành phần Windows (DISM):** Nhấn **"Khôi Phục DISM"** để tải và sửa chữa các thành phần hệ thống gốc từ Microsoft.
-- **Sửa lỗi Windows Update:** Nhấn **"Sửa Lỗi Update"** nếu máy tính bị kẹt khi tải các bản cập nhật Windows.
+### 2.4. 📦 Software Uninstaller & Leftover Cleaner (App Uninstaller)
+- **Step 1:** Navigate to **App Uninstaller**.
+- **Step 2:** Filter or search for target installed software.
+- **Step 3:** Click **"Uninstall"** to invoke the vendor uninstaller.
+- **Step 4:** Upon uninstallation completion, WinCare Pro triggers **Deep Scan** to identify orphaned files in `%AppData%` and lingering registry keys. Click **"Clean Leftovers"** to finalize removal.
 
 ---
 
-### 2.7. 🎮 Tăng Tốc Chơi Game (Gaming Turbo 2.0)
-- **Bước 1:** Chọn mục **Gaming Turbo**.
-- **Bước 2:** Bật công tắc **"Kích Hoạt Chế Độ Game" (Game Mode ON)**.
-- **Hệ thống sẽ tự động:**
-  - Kích hoạt chế độ năng lượng **Ultimate Performance**.
-  - Giải phóng tối đa bộ nhớ RAM trống.
-  - Tạm dừng các tác vụ nền gây giật lag (stuttering) trong game.
-  - Tự động khôi phục về trạng thái bình thường sau khi bạn tắt chế độ.
+### 2.5. 🌐 Network Diagnostics & Optimization (Network Center)
+- **Speed Test:** Click **"Speed Test"** to benchmark ICMP Ping latency, download speed, and upload throughput.
+- **1-Click DNS Overrides:** Select a preferred public DNS provider (Cloudflare 1.1.1.1, Google 8.8.8.8, AdGuard Ad-blocking) and click **"Apply DNS"**.
+- **Network Stack Recovery:** If network connectivity fails, click **"Reset Network"** to flush local DNS resolver caches and reset the Winsock TCP/IP stack.
 
 ---
 
-### 2.8. 🪟 Cửa Sổ Nổi Desktop HUD Widget
-- Mở menu **Cài Đặt** hoặc nhấn vào biểu tượng **Widget** trên thanh tiêu đề để bật cửa sổ mini.
-- Cửa sổ nổi hiển thị liên tục thông số CPU, RAM, Tốc độ mạng ở góc màn hình Desktop.
-- Bạn có thể nhấn giữ chuột trái để kéo thả Widget đến bất kỳ vị trí thuận tiện nào trên màn hình.
+### 2.6. 🛠️ Windows System Repair (System Repair)
+- **Corrupt File Repair (SFC Scan):** Click **"Run SFC Scan"** (`sfc /scannow`).
+- **Component Store Restoration (DISM):** Click **"Restore DISM Health"** to service and repair the Windows component store using official Microsoft images.
+- **Windows Update Repair:** Click **"Fix Windows Update"** to resolve stalled update services, clear SoftwareDistribution caches, and re-register update components.
 
 ---
 
-## ❓ 3. Câu Hỏi Thường Gặp (FAQ & Troubleshooting)
-
-**Q1: WinCare Pro có làm xóa nhầm tài liệu cá nhân của tôi không?**  
-*Trả lời:* Hoàn toàn không. Ứng dụng tích hợp hệ thống bảo vệ độc quyền `SafePathGuard`, tuyệt đối không quét hoặc can thiệp vào các thư mục tài liệu cá nhân (`Documents`, `Desktop`, `Pictures`, `Videos`) và chặn xóa các tệp mật khẩu trình duyệt.
-
-**Q2: Tại sao ứng dụng cần quyền Quản Trị Viên (Run as Administrator)?**  
-*Trả lời:* Các tính năng chuyên sâu như dọn dẹp file hệ thống, sửa lỗi tệp Windows qua SFC/DISM, đổi DNS card mạng và tối ưu RAM yêu cầu quyền quản trị cấp hệ thống của Windows để thực thi an toàn.
-
-**Q3: Tôi có thể khôi phục lại các cài đặt cũ nếu không ưng ý không?**  
-*Trả lời:* Có. Trước mọi thay đổi Registry hoặc tinh chỉnh dịch vụ, WinCare Pro đều tự động tạo một điểm sao lưu (Snapshot / Backup). Bạn chỉ cần vào mục **Lịch Sử & Hoàn Tác (Undo / Snapshots)** để quay lại trạng thái trước đó bất cứ lúc nào.
+### 2.7. 🎮 Gaming Optimization (Gaming Turbo 2.0)
+- **Step 1:** Navigate to **Gaming Turbo**.
+- **Step 2:** Toggle **"Game Mode" ON**.
+- **Automated Optimizations:**
+  - Engages the **Ultimate Performance** power profile.
+  - Reclaims physical working set memory.
+  - Temporarily suppresses background tasks causing frame stutter.
+  - Automatically restores normal power and background state when toggled OFF.
 
 ---
 
-> [⬅️ 10. Hướng Dẫn Lập Trình Viên Mới](10_DEVELOPER_ONBOARDING_GUIDE.md) • [🏠 Mục Lục Docs](README.md) • **Chương 11** • [Về Trang Đầu: 01. Kiến Trúc Tổng Thể ➡️](01_SYSTEM_ARCHITECTURE.md)
+### 2.8. 🪟 Desktop HUD Floating Widget
+- Open **Settings** or click the **Widget** icon on the TitleBar to spawn the floating HUD window.
+- The widget renders real-time CPU, RAM, and network metrics on the Windows desktop.
+- Drag and position the widget freely across primary and secondary monitors.
+
+---
+
+## ❓ 3. Frequently Asked Questions (FAQ & Troubleshooting)
+
+**Q1: Will WinCare Pro accidentally delete my personal documents?**  
+*Answer:* Absolutely not. WinCare Pro enforces the `SafePathGuard` safety engine, which completely excludes user personal folders (`Documents`, `Desktop`, `Pictures`, `Videos`) and shields sensitive credential stores and browser passwords.
+
+**Q2: Why does WinCare Pro require Administrator privileges?**  
+*Answer:* Low-level OS capabilities — such as component store servicing (SFC/DISM), physical RAM flushing, HKLM registry modifications, and network interface resets — require Windows administrative privileges to execute safely.
+
+**Q3: Can I roll back changes if needed?**  
+*Answer:* Yes. Prior to registry modifications or service state adjustments, WinCare Pro automatically records snapshots and backups. Navigate to **Undo / Snapshots** to revert the system to an earlier state at any time.
+
+---
+
+> [⬅️ 10. Developer Onboarding Guide](10_DEVELOPER_ONBOARDING_GUIDE.md) • [🏠 Docs Index](README.md) • **Chapter 11** • [Return to Start: 01. System Architecture ➡️](01_SYSTEM_ARCHITECTURE.md)
+

@@ -1,47 +1,47 @@
-# 💾 04. Cơ Sở Dữ Liệu & Quản Lý Dữ Liệu (Database & Storage)
+# 💾 04. Database & Storage Architecture
 
-> [⬅️ 03. Tầng Động Cơ Nghiệp Vụ](03_ENGINES_AND_BUSINESS_LOGIC.md) • [🏠 Mục Lục Docs](README.md) • **Chương 04** • [Trang Kế Tiếp: 05. Tiêu Chuẩn Bảo Mật & An Toàn ➡️](05_SECURITY_AND_SAFETY_ARCHITECTURE.md)
+> [⬅️ 03. Business Logic Engines](03_ENGINES_AND_BUSINESS_LOGIC.md) • [🏠 Documentation Index](README.md) • **Chapter 04** • [Next: 05. Security & Safety Standards ➡️](05_SECURITY_AND_SAFETY_ARCHITECTURE.md)
 
-Tài liệu này trình bày chi tiết về kiến trúc tầng lưu trữ dữ liệu, cấu hình cơ sở dữ liệu SQLite 3, lược đồ bảng (Schema), chiến lược di chuyển (Migration) và mã hóa an toàn trong **WinCare Pro Suite v4.9 (Codename: Nova)**.
-
----
-
-## 🗄️ 1. Tổng Quan Tầng Lưu Trữ
-
-WinCare Pro sử dụng cơ sở dữ liệu nhúng **SQLite 3** thông qua gói thư viện chính thức `Microsoft.Data.Sqlite`.
-
-- **Vị trí tệp CSDL:** `%AppData%\WinCarePro\wincaredb.db`
-- **Lớp quản lý:** [Infrastructure/Database/DbManager.cs](file:///d:/WinCare/Infrastructure/Database/DbManager.cs)
-- **Cơ chế đồng bộ:** Khóa đối tượng `private readonly object _dbLock = new();` đảm bảo an toàn truy cập đa luồng từ các tác vụ nền.
+This document details the persistence tier architecture, SQLite 3 database configuration, table schemas, migration strategies, and secure encryption standards across the **WinCare Pro Suite v5.0 (Codename: Polaris)**.
 
 ---
 
-## ⚡ 2. Cấu Hình Tối Ưu Hiệu Năng (SQLite PRAGMAs)
+## 🗄️ 1. Persistence Tier Overview
 
-Khi khởi tạo kết nối CSDL, `DbManager` tự động thực thi chuỗi câu lệnh PRAGMA nhằm tối ưu hóa tốc độ I/O và tính toàn vẹn:
+WinCare Pro embeds **SQLite 3** via the official `Microsoft.Data.Sqlite` ADO.NET package.
+
+- **Database File Path:** `%AppData%\WinCarePro\wincaredb.db`
+- **Data Access Manager:** [Infrastructure/Database/DbManager.cs](../Infrastructure/Database/DbManager.cs)
+- **Concurrency Locking:** Centralized synchronization object `private readonly object _dbLock = new();` ensures thread safety across all asynchronous background workers.
+
+---
+
+## ⚡ 2. Performance Tuning Pragmas (SQLite PRAGMAs)
+
+Upon initializing the SQLite connection, `DbManager` executes optimal PRAGMA directives to maximize throughput and guarantee ACID durability:
 
 ```sql
--- 1. Kích hoạt chế độ Write-Ahead Logging (Đọc và ghi song song không khóa lẫn nhau)
+-- 1. Enable Write-Ahead Logging (Non-blocking concurrent reads during write transactions)
 PRAGMA journal_mode = WAL;
 
--- 2. Đồng bộ đĩa mức Normal (Tăng tốc độ ghi mà vẫn an toàn khi mất điện đột ngột)
+-- 2. Synchronous Normal mode (High write throughput while maintaining power-loss safety)
 PRAGMA synchronous = NORMAL;
 
--- 3. Kích hoạt ràng buộc khóa ngoại
+-- 3. Enforce foreign key constraints
 PRAGMA foreign_keys = ON;
 
--- 4. Tăng kích thước bộ nhớ đệm trang lên 8000 trang (~32MB RAM)
+-- 4. Allocate 8000 cache pages in memory (~32MB RAM)
 PRAGMA cache_size = -8000;
 
--- 5. Lưu trữ bảng tạm thời trong RAM thay vì ghi xuống đĩa
+-- 5. Store temporary tables and indices strictly in memory
 PRAGMA temp_store = MEMORY;
 ```
 
 ---
 
-## 📊 3. Lược Đồ Cơ Sở Dữ Liệu (Database Schema)
+## 📊 3. Database Schema
 
-Hệ thống quản lý dữ liệu qua các bảng chính sau:
+The core relational structure models operational entities as follows:
 
 ```mermaid
 erDiagram
@@ -84,67 +84,67 @@ erDiagram
     }
 ```
 
-### 3.1. Bảng `Users`
-Lưu trữ hồ sơ cấu hình và tùy chọn của người dùng Windows hiện tại.
+### 3.1. `Users` Table
+Stores configuration profiles and preferences tied to active Windows accounts.
 
-| Cột | Kiểu Dữ Liệu | Thuộc Tính | Diễn Giải |
+| Column | Data Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `Id` | INTEGER | PRIMARY KEY AUTOINCREMENT | Định danh bản ghi |
-| `Username` | TEXT | NOT NULL UNIQUE | Tên tài khoản Windows (`Environment.UserName`) |
-| `Settings` | TEXT | NULL | Chuỗi JSON chứa toàn bộ cấu hình cá nhân |
-| `CreatedAt` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Thời điểm tạo hồ sơ |
+| `Id` | INTEGER | PRIMARY KEY AUTOINCREMENT | Unique record identifier |
+| `Username` | TEXT | NOT NULL UNIQUE | Active Windows username (`Environment.UserName`) |
+| `Settings` | TEXT | NULL | JSON-serialized user configuration document |
+| `CreatedAt` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Profile creation timestamp |
 
-### 3.2. Bảng `Logs` (Audit Activity Logs)
-Lưu lại lịch sử tất cả các hành động can thiệp hệ thống phục vụ mục đích kiểm toán và hoàn tác.
+### 3.2. `Logs` Table (Audit Activity Logs)
+Maintains historical audit records for all system modifications to enable traceability and Undo rollbacks.
 
-| Cột | Kiểu Dữ Liệu | Thuộc Tính | Diễn Giải |
+| Column | Data Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `Id` | INTEGER | PRIMARY KEY AUTOINCREMENT | Khóa chính |
-| `Action` | TEXT | NOT NULL | Tên hành vi (VD: "Flush RAM", "Clean Junk") |
-| `Module` | TEXT | NOT NULL | Tên phân hệ thực hiện |
+| `Id` | INTEGER | PRIMARY KEY AUTOINCREMENT | Primary Key |
+| `Action` | TEXT | NOT NULL | Operation identifier (e.g., "Flush RAM", "Clean Junk") |
+| `Module` | TEXT | NOT NULL | Invoking feature module |
 | `Status` | TEXT | NOT NULL | "Success" / "Warning" / "Failed" |
-| `Details` | TEXT | NULL | Thông tin chi tiết (dung lượng dọn, khóa xóa) |
-| `CreatedAt` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Thời gian thực thi |
+| `Details` | TEXT | NULL | Structured telemetry details (freed bytes, deleted keys) |
+| `CreatedAt` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Execution timestamp |
 
-*Chỉ mục tối ưu:* `CREATE INDEX idx_logs_module_date ON Logs(Module, CreatedAt DESC);`
+*Optimization Index:* `CREATE INDEX idx_logs_module_date ON Logs(Module, CreatedAt DESC);`
 
-### 3.3. Bảng `Notifications`
-Lưu trữ thông báo trong Notification Center của ứng dụng.
+### 3.3. `Notifications` Table
+Persists alert items displayed within the application Notification Center.
 
-| Cột | Kiểu Dữ Liệu | Thuộc Tính | Diễn Giải |
+| Column | Data Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `Id` | INTEGER | PRIMARY KEY AUTOINCREMENT | Khóa chính |
-| `Title` | TEXT | NOT NULL | Tiêu đề thông báo |
-| `Message` | TEXT | NOT NULL | Nội dung chi tiết |
+| `Id` | INTEGER | PRIMARY KEY AUTOINCREMENT | Primary Key |
+| `Title` | TEXT | NOT NULL | Notification headline |
+| `Message` | TEXT | NOT NULL | Detailed payload message |
 | `Type` | TEXT | NOT NULL | "Info", "Success", "Warning", "Error" |
-| `IsRead` | INTEGER | DEFAULT 0 | Trạng thái đã xem (0: Chưa đọc, 1: Đã đọc) |
-| `Timestamp` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Thời gian nhận |
+| `IsRead` | INTEGER | DEFAULT 0 | Read flag (0: Unread, 1: Read) |
+| `Timestamp` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Arrival timestamp |
 
-### 3.4. Bảng `Snapshots` (System Snapshots & Rollback)
-Lưu trạng thái cấu hình hệ thống trước khi tinh chỉnh để hỗ trợ hoàn tác 1-Click.
+### 3.4. `Snapshots` Table (System Snapshots & Rollback)
+Preserves system configuration states prior to optimization to facilitate 1-Click Undo rollbacks.
 
-| Cột | Kiểu Dữ Liệu | Thuộc Tính | Diễn Giải |
+| Column | Data Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `Id` | INTEGER | PRIMARY KEY AUTOINCREMENT | Khóa chính |
-| `Name` | TEXT | NOT NULL | Tên điểm lưu trạng thái |
-| `Description` | TEXT | NULL | Mô tả hành động trước khi lưu |
-| `DataJson` | TEXT | NOT NULL | Bản chụp JSON các giá trị Registry & Services cũ |
-| `CreatedAt` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Thời điểm tạo |
+| `Id` | INTEGER | PRIMARY KEY AUTOINCREMENT | Primary Key |
+| `Name` | TEXT | NOT NULL | Snapshot label |
+| `Description` | TEXT | NULL | Pre-mutation activity description |
+| `DataJson` | TEXT | NOT NULL | JSON snapshot of registry and service states |
+| `CreatedAt` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Snapshot creation timestamp |
 
-### 3.5. Bảng `AppSettings`
-Lưu trữ các cặp Key-Value cài đặt toàn cục.
+### 3.5. `AppSettings` Table
+Persists global application key-value configuration pairs.
 
-| Cột | Kiểu Dữ Liệu | Thuộc Tính | Diễn Giải |
+| Column | Data Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `Key` | TEXT | PRIMARY KEY | Khóa cấu hình (VD: "Language", "Theme") |
-| `Value` | TEXT | NOT NULL | Giá trị tương ứng |
-| `UpdatedAt` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Thời điểm cập nhật |
+| `Key` | TEXT | PRIMARY KEY | Configuration key (e.g., "Language", "Theme") |
+| `Value` | TEXT | NOT NULL | Assigned value |
+| `UpdatedAt` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Last modification timestamp |
 
 ---
 
-## 🔄 4. Chiến Lược Nâng Cấp Schema (`PRAGMA user_version`)
+## 🔄 4. Schema Migration Strategy (`PRAGMA user_version`)
 
-Để đảm bảo tương thích ngược và nâng cấp cơ sở dữ liệu mượt mà khi phát hành phiên bản mới, `DbManager` sử dụng `PRAGMA user_version`:
+To ensure backward compatibility and reliable database schema upgrades across releases, `DbManager` leverages SQLite's internal `PRAGMA user_version`:
 
 ```csharp
 public void ApplyMigrations()
@@ -179,14 +179,14 @@ public void ApplyMigrations()
 
 ---
 
-## 🔐 5. Cơ Chế Mã Hóa Dữ Liệu Nhạy Cảm (Windows DPAPI)
+## 🔐 5. Sensitive Data Encryption (Windows DPAPI)
 
-Đối với các cài đặt hoặc thông tin nhạy cảm (như mã token, cấu hình nâng cao), hệ thống tích hợp lớp mã hóa [CryptoHelper.cs](file:///d:/WinCare/Infrastructure/Security/CryptoHelper.cs) sử dụng **Windows Data Protection API (DPAPI)**:
+For sensitive application settings and security tokens, the system integrates [CryptoHelper.cs](../Core/Helpers/CryptoHelper.cs) utilizing the **Windows Data Protection API (DPAPI)**:
 
 ```csharp
 public static class CryptoHelper
 {
-    // Mã hóa dữ liệu gắn với tài khoản người dùng hiện tại (CurrentUser Scope)
+    // Encrypts data bound strictly to the active Windows user account (CurrentUser Scope)
     public static string Protect(string plainText)
     {
         if (string.IsNullOrEmpty(plainText)) return plainText;
@@ -195,7 +195,7 @@ public static class CryptoHelper
         return Convert.ToBase64String(cipherBytes);
     }
 
-    // Giải mã an toàn
+    // Decrypts ciphertext securely
     public static string Unprotect(string cipherText)
     {
         if (string.IsNullOrEmpty(cipherText)) return cipherText;
@@ -206,10 +206,10 @@ public static class CryptoHelper
 }
 ```
 
-### Ưu điểm của DPAPI:
-1. Không cần lưu trữ khóa mã hóa trong file cấu hình (Khóa được Windows quản lý và bảo vệ theo mật khẩu đăng nhập Windows của user).
-2. Tài khoản người dùng khác hoặc phần mềm lạ chạy dưới user khác không thể giải mã dữ liệu này.
+### Architectural Advantages of DPAPI:
+1. Zero key storage inside plaintext configuration files (Encryption keys are derived and safeguarded by Windows based on the active user login credentials).
+2. Unprivileged accounts or external software executing under separate user contexts cannot decrypt persisted secrets.
 
 ---
 
-> [⬅️ 03. Tầng Động Cơ Nghiệp Vụ](03_ENGINES_AND_BUSINESS_LOGIC.md) • [🏠 Mục Lục Docs](README.md) • **Chương 04** • [Trang Kế Tiếp: 05. Tiêu Chuẩn Bảo Mật & An Toàn ➡️](05_SECURITY_AND_SAFETY_ARCHITECTURE.md)
+> [⬅️ 03. Business Logic Engines](03_ENGINES_AND_BUSINESS_LOGIC.md) • [🏠 Documentation Index](README.md) • **Chapter 04** • [Next: 05. Security & Safety Standards ➡️](05_SECURITY_AND_SAFETY_ARCHITECTURE.md)

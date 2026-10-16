@@ -1,54 +1,54 @@
-# 🧬 09. Quy Chuẩn Tương Tác Windows Registry & Win32 Interop (Registry & OS Interop Rules)
+# 🧬 09. Windows Registry & Win32 Interop Rules
 
-> [⬅️ 08. Đóng Gói & CI/CD](08_RELEASE_PACKAGING_AND_CICD_RULES.md) • [🏠 Mục Lục Rules](README.md) • **Rule 09** • [Quy Chuẩn Tiếp Theo: 10. Quản Lý Sự Cố & Ghi Log ➡️](10_INCIDENT_MANAGEMENT_AND_LOGGING_RULES.md)
+> [⬅️ 08. Release Packaging & CI/CD](08_RELEASE_PACKAGING_AND_CICD_RULES.md) • [🏠 Rules Index](README.md) • **Rule 09** • [Next Rule: 10. Incident Management & Logging ➡️](10_INCIDENT_MANAGEMENT_AND_LOGGING_RULES.md)
 
 ---
 
-## 🗂️ 1. Quy Chuẩn Thao Tác Windows Registry An Toàn
+## 🗂️ 1. Windows Registry Mutation Governance
 
-WinCare Pro can thiệp vào Registry để tối ưu hệ thống, chỉnh sửa Context Menu, quản lý ứng dụng khởi động và thu dọn tàn dư.
+WinCare Pro interacts with the Windows Registry for performance tuning, context menu configuration, startup management, and residual cleanup.
 
-### 🔴 CÁC QUY TẮC BẮT BUỘC:
-1. **Kiểm tra qua SafeRegistryGuard:**
-   - Mọi thao tác xóa khóa hoặc sửa giá trị Registry **bắt buộc** phải vượt qua kiểm tra [SafeRegistryGuard.cs](file:///d:/WinCare/Core/Helpers/SafeRegistryGuard.cs).
-   - Tuyệt đối cấm xóa Root Hives (`HKLM`, `HKCU`, `HKCR`, `HKU`, `HKCC`).
-   - Cấm xóa các tiền tố hệ thống sống còn (`HKLM\SYSTEM\CurrentControlSet\Control`, `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion`).
-   - Độ sâu khóa xóa phải đạt tối thiểu từ 3 cấp trở lên (`SegmentCount >= 3`).
-   - Cấm sửa đổi/xóa các giá trị khởi động thiết yếu (`Shell`, `Userinit`).
-2. **Bắt buộc sao lưu trước khi ghi/xóa:**
-   - Trước khi sửa đổi bất kỳ Key/Value nào trong Registry, **bắt buộc** gọi `RegistryBackupEngine.BackupKey()` để xuất bản sao lưu `.reg` an toàn.
-3. **Phân biệt 32-bit & 64-bit Registry Views (`RegistryView`):**
-   - Khi quét ứng dụng đã cài đặt hoặc khóa khởi động, luôn duyệt cả hai chế độ `RegistryView.Registry64` và `RegistryView.Registry32` (`WOW6432Node`) để không bỏ sót thông tin.
+### 🔴 MANDATORY INVARIANTS:
+1. **Validation via `SafeRegistryGuard`:**
+   - All registry key deletions and value mutations **MUST** pass [SafeRegistryGuard.cs](../../Core/Helpers/SafeRegistryGuard.cs) validation.
+   - Deletion of Root Hives (`HKLM`, `HKCU`, `HKCR`, `HKU`, `HKCC`) is STRICTLY FORBIDDEN.
+   - Deletion of vital system prefixes (`HKLM\SYSTEM\CurrentControlSet\Control`, `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion`) is STRICTLY FORBIDDEN.
+   - Subkey path depth MUST be at least 3 segments (`SegmentCount >= 3`).
+   - Modification or deletion of essential shell boot keys (`Shell`, `Userinit`) is STRICTLY FORBIDDEN.
+2. **Mandatory Pre-Mutation Backup:**
+   - Before modifying or deleting any Registry key/value, **ALWAYS** invoke `RegistryBackupEngine.BackupKey()` to export an atomic `.reg` rollback artifact.
+3. **Dual 32-bit & 64-bit Registry Views (`RegistryView`):**
+   - When querying installed applications or startup entries, ALWAYS query both `RegistryView.Registry64` and `RegistryView.Registry32` (`WOW6432Node`) to avoid missing entries.
 
 ```csharp
-// Chuẩn mở khóa Registry an toàn đa kiến trúc:
+// Canonical cross-architecture registry access pattern:
 using var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
 using var subKey = baseKey.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", writable: false);
 ```
 
 ---
 
-## 🔌 2. Quy Chuẩn P/Invoke & Win32 Native Interop
+## 🔌 2. P/Invoke & Native Win32 Interop Standards
 
-1. **Khai báo `[LibraryImport]` hoặc `[DllImport]` chuẩn:**
-   - Luôn chỉ định rõ `SetLastError = true` và `CharSet = CharSet.Unicode`.
-   - Bắt buộc kiểm tra mã lỗi qua `Marshal.GetLastWin32Error()` hoặc `Marshal.GetLastPInvokeErrorMessage()` khi hàm API trả về mã lỗi (`FALSE` hoặc `INVALID_HANDLE_VALUE`).
-2. **Quản lý Handle Win32 (SafeHandle & CloseHandle):**
-   - Mọi Handle tiến trình hoặc token (`IntPtr`) lấy từ `OpenProcess`, `OpenProcessToken`, `CreateFile` **bắt buộc** phải được đóng qua `CloseHandle` hoặc bọc trong lớp kế thừa `SafeHandle` để triệt tiêu hiện tượng rò rỉ tài nguyên nhân hệ điều hành (Kernel Handle Leak).
-3. **Cấu hình Marshal An Toàn:**
-   - Các cấu trúc Win32 struct (như `MEMORYSTATUSEX`, `WINTRUST_DATA`, `SHELLEXECUTEINFO`) bắt buộc phải khởi tạo trường kích thước `dwLength = (uint)Marshal.SizeOf<STRUCT>()` trước khi truyền vào hàm gốc.
+1. **Source-Generated `[LibraryImport]` Declarations:**
+   - Win32 interop MUST use `[LibraryImport]` source generators (`SetLastError = true`, `StringMarshalling = StringMarshalling.Utf16`). Legacy `[DllImport]` is strictly deprecated.
+   - Check status codes and retrieve error details via `Marshal.GetLastPInvokeError()` or `Marshal.GetLastPInvokeErrorMessage()` when native calls fail (`FALSE` or `INVALID_HANDLE_VALUE`).
+2. **Handle Lifecycle Management (`SafeHandle` & `CloseHandle`):**
+   - Native handles (`IntPtr`) returned from `OpenProcess`, `OpenProcessToken`, `CreateFile` **MUST** be closed deterministically or encapsulated in `SafeHandle` derivations to eliminate kernel handle leaks.
+3. **Explicit Struct Sizing:**
+   - Win32 structures (e.g. `MEMORYSTATUSEX`, `WINTRUST_DATA`, `SHELLEXECUTEINFO`) MUST initialize size fields `dwLength = (uint)Marshal.SizeOf<STRUCT>()` before native dispatch.
 
 ---
 
-## 📡 3. Quy Chuẩn Truy Vấn WMI / CIM (`System.Management`)
+## 📡 3. WMI / CIM Query Standards (`System.Management`)
 
-1. **Giải phóng đối tượng WMI:**
-   - Mọi truy vấn `ManagementObjectSearcher` và `ManagementObjectCollection` phải được bọc trong khối `using` để giải phóng kết nối COM WMI ngầm.
-2. **Timeout & Fallback:**
-   - Dịch vụ WMI của Windows (`Winmgmt`) đôi khi bị treo hoặc phản hồi chậm trên các máy tính lỗi. Mọi truy vấn WMI phải có cơ chế Timeout hoặc chạy trong `Task.Run` với `CancellationToken`. Nếu WMI lỗi, phải fallback về phương thức đọc Registry hoặc Performance Counter tương đương.
+1. **Deterministic Resource Release:**
+   - All `ManagementObjectSearcher` and `ManagementObjectCollection` instances MUST be wrapped in `using` declarations to terminate underlying COM WMI proxy channels.
+2. **Timeout Bounds & Graceful Degradation:**
+   - Windows WMI services (`Winmgmt`) can stall or corrupt. WMI queries MUST execute within strict timeout bounds via `Task.Run` with a `CancellationToken`. When WMI faults occur, fallback immediately to direct Registry or Performance Counter equivalents.
 
 ---
 
 <div align="center">
-  <sub>[🏠 Mục Lục Rules](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
+  <sub>[🏠 Rules Index](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
 </div>

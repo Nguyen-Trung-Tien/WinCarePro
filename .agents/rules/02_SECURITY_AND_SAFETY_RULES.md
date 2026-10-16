@@ -1,25 +1,25 @@
-# 🔒 02. Quy Chuẩn An Toàn & Bảo Mật Tuyệt Đối (Security & Safety Rules)
+# 🔒 02. Security & Safety Rules
 
-> [⬅️ 01. Kiến Trúc & Phân Tầng](01_ARCHITECTURE_AND_DESIGN_RULES.md) • [🏠 Mục Lục Rules](README.md) • **Rule 02** • [Quy Chuẩn Tiếp Theo: 03. Đa Luồng & Bất Đồng Bộ ➡️](03_CONCURRENCY_AND_THREADING_RULES.md)
+> [⬅️ 01. Architecture & Design](01_ARCHITECTURE_AND_DESIGN_RULES.md) • [🏠 Rules Index](README.md) • **Rule 02** • [Next Rule: 03. Concurrency & Threading ➡️](03_CONCURRENCY_AND_THREADING_RULES.md)
 
 ---
 
-## 🚫 1. Chống Tấn Công Command Injection (Quy Tắc Tuyệt Đối `ProcessRunner`)
+## 🚫 1. Command Injection Prevention (`ProcessRunner` Invariants)
 
-WinCare Pro tương tác với các công cụ dòng lệnh của hệ điều hành (`winget.exe`, `sfc.exe`, `dism.exe`, `reg.exe`, `powercfg.exe`, `netsh.exe`).
+WinCare Pro executes native OS CLI utilities (`winget.exe`, `sfc.exe`, `dism.exe`, `reg.exe`, `powercfg.exe`, `netsh.exe`).
 
-### 🔴 QUY TẮC BẮT BUỘC:
-1. **KHÔNG BAO GIỜ** sử dụng phép ghép chuỗi thô để tạo câu lệnh thực thi (Raw String Concatenation).
-2. **LUÔN LUÔN** sử dụng [ProcessRunner.cs](file:///d:/WinCare/Core/Helpers/ProcessRunner.cs) và truyền danh sách tham số thông qua `ProcessStartInfo.ArgumentList`.
-3. Mọi đầu vào từ người dùng hoặc tên gói phần mềm từ bên thứ ba phải được lọc qua [InputSanitizer.cs](file:///d:/WinCare/Core/Helpers/InputSanitizer.cs).
+### 🔴 MANDATORY INVARIANTS:
+1. **NEVER** use raw string concatenation to compose executable command lines.
+2. **ALWAYS** execute commands via [ProcessRunner.cs](../../Core/Helpers/ProcessRunner.cs) and pass parameters isolated via `ProcessStartInfo.ArgumentList`.
+3. All external user input and third-party package IDs MUST be sanitized via [InputSanitizer.cs](../../Core/Helpers/InputSanitizer.cs).
 
-### ❌ Code Bị Cấm (Lỗ hổng bảo mật nghiêm trọng):
+### ❌ FORBIDDEN Code (Critical Injection Vulnerability):
 ```csharp
-// NGUY HIỂM: Dễ bị chèn lệnh độc hại như "app & shutdown -s -t 0"
+// VULNERABLE: Susceptible to command chaining, e.g. "app & shutdown -s -t 0"
 var process = Process.Start("cmd.exe", "/c winget upgrade " + userAppId);
 ```
 
-### ✅ Code Chuẩn Mực Production:
+### ✅ Production-Grade Mandatory Pattern:
 ```csharp
 var psi = new ProcessStartInfo
 {
@@ -29,7 +29,7 @@ var psi = new ProcessStartInfo
     RedirectStandardError = true,
     CreateNoWindow = true
 };
-// Mỗi tham số được cô lập an toàn trong mảng đối số:
+// Every argument is isolated in the argument list:
 psi.ArgumentList.Add("upgrade");
 psi.ArgumentList.Add("--id");
 psi.ArgumentList.Add(InputSanitizer.Sanitize(userAppId));
@@ -38,60 +38,60 @@ psi.ArgumentList.Add("--silent");
 
 ---
 
-## 🛡️ 2. Bảo Vệ Tệp Hệ Thống & Tránh Xóa Nhầm (`SafePathGuard`)
+## 🛡️ 2. System File & Data Loss Prevention (`SafePathGuard`)
 
-Mọi hành động xóa tệp hoặc thư mục trong toàn bộ ứng dụng (đặc biệt trong `JunkCleanerEngine`, `UninstallEngine`, `DiskEngine`) **bắt buộc** phải gọi `SafePathGuard.IsSafeToDelete(path)` trước khi thực hiện `File.Delete()` hoặc `Directory.Delete()`.
+All file and directory deletion operations across the entire application (specifically within `JunkCleanerEngine`, `UninstallEngine`, `DiskEngine`) **MUST** invoke `SafePathGuard.IsSafeToDelete(path)` prior to executing `File.Delete()` or `Directory.Delete()`.
 
-### Danh sách đen cấm xóa (Blacklisted Targets):
-- Thư mục gốc ổ đĩa: `C:\`, `D:\`, `E:\`
-- Thư mục hệ thống: `C:\Windows`, `C:\Windows\System32`, `C:\Windows\SysWOW64`, `C:\Windows\WinSxS`, `C:\Program Files`, `C:\Program Files (x86)`, `C:\ProgramData`
-- Thư mục dữ liệu người dùng cá nhân: `Desktop`, `Documents`, `Pictures`, `Music`, `Videos`, `Downloads`
-- Tệp nhạy cảm & Dữ liệu đăng nhập: `Login Data`, `Web Data`, `Cookies`, `Local State`, `SAM`, `SYSTEM`, `SECURITY`
+### Blacklisted Deletion Targets:
+- Drive roots: `C:\`, `D:\`, `E:\`
+- Critical system trees: `C:\Windows`, `C:\Windows\System32`, `C:\Windows\SysWOW64`, `C:\Windows\WinSxS`, `C:\Program Files`, `C:\Program Files (x86)`, `C:\ProgramData`
+- User profile personal directories: `Desktop`, `Documents`, `Pictures`, `Music`, `Videos`, `Downloads`
+- Sensitive credentials & browser state: `Login Data`, `Web Data`, `Cookies`, `Local State`, `SAM`, `SYSTEM`, `SECURITY`
 
-### Quy tắc xóa thư mục không đệ quy:
-- Khi thực hiện `Directory.Delete(path, recursive: false)`, phải xác minh thư mục hoàn toàn rỗng. Nếu còn tệp tin hoặc thư mục con, phải từ chối xóa để tránh mất mát dữ liệu không kiểm soát.
+### Non-Recursive Directory Deletion:
+- When calling `Directory.Delete(path, recursive: false)`, the directory MUST be verified empty. If subfiles or directories remain, deletion MUST be rejected to avoid uncontrolled data destruction.
 
-### Quy tắc xử lý liên kết (Reparse Point & Symlink Junctions):
-- **Tuyệt đối không đệ quy vào Junction Points:** Khi duyệt thư mục tạm, nếu gặp `FileAttributes.ReparsePoint`, phải bỏ qua việc duyệt sâu vào bên trong để ngăn chặn tấn công liên kết chéo dẫn tới thư mục ngoài ý muốn.
-
----
-
-## 🧬 3. Phòng Vệ Khóa & Giá Trị Registry Cốt Lõi (`SafeRegistryGuard`)
-
-1. **Cấm xóa Root Hives:** Tuyệt đối ngăn chặn xóa các Root Hives: `HKLM`, `HKCU`, `HKCR`, `HKU`, `HKCC`.
-2. **Cấm xóa tiền tố hệ thống sống còn:** Bảo vệ các nhánh `HKLM\SYSTEM\CurrentControlSet\Control` và `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion`.
-3. **Độ sâu khóa tối thiểu:** Mọi thao tác xóa khóa con phải có độ sâu đường dẫn tối thiểu từ 3 cấp trở lên (`SegmentCount >= 3`).
-4. **Bảo vệ giá trị khởi động sống còn:** Cấm sửa đổi hoặc xóa giá trị `Shell` (mặc định `explorer.exe`) và `Userinit` (mặc định `userinit.exe`).
+### Reparse Point & Symlink Junction Traversal:
+- **NEVER traverse Junction Points recursively:** When scanning temporary directories, encountering `FileAttributes.ReparsePoint` MUST bypass deep traversal to prevent junction redirection attacks.
 
 ---
 
-## 🛡️ 4. Bảo Vệ Dịch Vụ Cốt Lõi Windows (`ServiceSafetyService`)
+## 🧬 3. Core Registry Defense (`SafeRegistryGuard`)
 
-1. **Danh sách trắng bảo vệ (Service Whitelist):**
-   - Nghiêm cấm vô hiệu hóa hoặc dừng các dịch vụ thiết yếu: `RpcSs`, `DcomLaunch`, `SamSs`, `gpsvc`, `ProfSvc`, `BFE`, `WinDefend`, `CryptSvc`, `EventLog`, `PlugPlay`, `RpcEptMapper`.
-2. **Kiểm tra trước khi thay đổi trạng thái:**
-   - Mọi thao tác tinh chỉnh trong `StartupEngine` hoặc `SystemOptimizerEngine` phải gọi `ServiceSafetyService.IsProtectedService(serviceName)`. Nếu là dịch vụ được bảo vệ, phải từ chối hành động và trả về cảnh báo an toàn.
+1. **Root Hive Deletion FORBIDDEN:** Strictly forbid deletions targeting root hives: `HKLM`, `HKCU`, `HKCR`, `HKU`, `HKCC`.
+2. **Vital System Key Protection:** Protect system-critical branches including `HKLM\SYSTEM\CurrentControlSet\Control` and `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion`.
+3. **Minimum Key Path Depth:** Any registry subkey deletion MUST have a path depth of at least 3 levels (`SegmentCount >= 3`).
+4. **Boot Value Protection:** NEVER alter or delete `Shell` (default `explorer.exe`) or `Userinit` (default `userinit.exe`).
 
 ---
 
-## 🔐 4. Xác Thực Chữ Ký Số & Mã Hóa Dữ Liệu
+## 🛡️ 4. Windows Core Service Armor (`ServiceSafetyService`)
+
+1. **Protected Service Whitelist:**
+   - NEVER disable or terminate critical OS services: `RpcSs`, `DcomLaunch`, `SamSs`, `gpsvc`, `ProfSvc`, `BFE`, `WinDefend`, `CryptSvc`, `EventLog`, `PlugPlay`, `RpcEptMapper`.
+2. **Pre-Mutation Validation:**
+   - All optimization and state mutations in `StartupEngine` or `SystemOptimizerEngine` MUST invoke `ServiceSafetyService.IsProtectedService(serviceName)`. Protected services MUST be rejected with a safety warning.
+
+---
+
+## 🔐 5. Digital Signature Verification & Data Encryption
 
 1. **WinVerifyTrust Interop:**
-   - Các gói cập nhật phần mềm do `SoftwareUpdaterEngine` tải về phải được xác minh tính hợp lệ của chữ ký số (Authenticode Signature) qua Win32 API `WinVerifyTrust` trước khi được phép chạy cài đặt ngầm.
-2. **Mã hóa dữ liệu nhạy cảm bằng Windows DPAPI:**
-   - Các thông tin cấu hình nhạy cảm của người dùng (Token, API Key, cấu hình riêng tư) lưu trong CSDL SQLite phải được mã hóa qua [CryptoHelper.cs](file:///d:/WinCare/Core/Helpers/CryptoHelper.cs) sử dụng `ProtectedData.Protect` với `DataProtectionScope.CurrentUser`.
-   - Tuyệt đối không lưu mật khẩu hoặc thông tin bí mật ở dạng chuỗi rõ (Plain-text).
+   - Third-party installer packages downloaded by `SoftwareUpdaterEngine` MUST pass Authenticode digital signature validation via the native Win32 `WinVerifyTrust` API prior to silent execution.
+2. **Windows DPAPI Data Protection:**
+   - Sensitive user configuration items (tokens, API keys, private credentials) persisted in SQLite MUST be encrypted via [CryptoHelper.cs](../../Core/Helpers/CryptoHelper.cs) using `ProtectedData.Protect` with `DataProtectionScope.CurrentUser`.
+   - Storing passwords or credentials in plain-text is STRICTLY FORBIDDEN.
 
 ---
 
-## 🔄 5. Nguyên Tắc An Toàn & Khôi Phục (Snapshot Before Action)
+## 🔄 6. Resilience & State Rollback (Snapshot Before Action)
 
-Trước khi thực hiện bất kỳ sửa đổi Registry, vô hiệu hóa dịch vụ hoặc tinh chỉnh hệ thống nào:
-1. Phải ghi nhận trạng thái cũ vào bảng `Snapshots` trong CSDL thông qua `DbManager.SaveSnapshot()` hoặc xuất bản sao lưu `.reg` thông qua `RegistryBackupEngine`.
-2. Cung cấp khả năng hoàn tác 1-Click thông qua `UndoManagerService`.
+Prior to executing any registry mutation, service disabling, or system tweak:
+1. ALWAYS record the pre-mutation state into the `Snapshots` table via `DbManager.SaveSnapshot()` or generate a `.reg` backup via `RegistryBackupEngine`.
+2. ALWAYS provide 1-Click rollback support via `UndoManagerService`.
 
 ---
 
 <div align="center">
-  <sub>[🏠 Mục Lục Rules](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
+  <sub>[🏠 Rules Index](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
 </div>

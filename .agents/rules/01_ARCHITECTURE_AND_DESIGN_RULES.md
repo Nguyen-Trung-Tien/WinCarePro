@@ -1,12 +1,12 @@
-# 📐 01. Quy Chuẩn Kiến Trúc & Thiết Kế Phần Mềm (Architecture & Design Rules)
+# 📐 01. Architecture & Design Rules
 
-> [🏠 Mục Lục Rules](README.md) • **Rule 01** • [Quy Chuẩn Tiếp Theo: 02. An Toàn & Bảo Mật ➡️](02_SECURITY_AND_SAFETY_RULES.md)
+> [🏠 Rules Index](README.md) • **Rule 01** • [Next Rule: 02. Security & Safety ➡️](02_SECURITY_AND_SAFETY_RULES.md)
 
 ---
 
-## 🏛️ 1. Mô Hình Phân Tầng Tuyệt Đối (Strict 4-Tier Architecture)
+## 🏛️ 1. Strict 4-Tier Architecture
 
-Dự án WinCare Pro áp dụng cấu trúc 4 tầng phân lớp độc lập. Quy tắc phụ thuộc (Dependency Direction) phải đi một chiều từ ngoài vào trong:
+WinCare Pro enforces an isolated 4-tier modular architecture. The dependency direction MUST flow strictly unidirectional from exterior to core:
 
 $$\text{Presentation (UI/Views)} \longrightarrow \text{ViewModel} \longrightarrow \text{Engines (Business Logic)} \longrightarrow \text{Infrastructure / Core}$$
 
@@ -27,58 +27,58 @@ graph TD
     Engine --> |Access Services & Storage| Infra
 ```
 
-### Quy tắc bất khả xâm phạm:
-- ❌ **CẤM:** Tầng View gọi trực tiếp các phương thức của tầng Engine hoặc Infrastructure mà bỏ qua ViewModel.
-- ❌ **CẤM:** Tầng Engine chứa bất kỳ tham chiếu nào tới XAML UI Controls (như `Button`, `TextBox`, `SolidColorBrush`, `Window`).
-- ❌ **CẤM:** ViewModel tham chiếu chéo phụ thuộc lẫn nhau trực tiếp (Cross-ViewModel tight coupling). Nếu cần giao tiếp, phải sử dụng `WeakReferenceMessenger` hoặc thông qua Service trung gian.
+### Inviolable Architectural Invariants:
+- ❌ **FORBIDDEN:** Presentation layer invoking Engine or Infrastructure methods directly, bypassing ViewModel.
+- ❌ **FORBIDDEN:** Engine layer referencing any XAML UI controls (`Button`, `TextBox`, `SolidColorBrush`, `Window`).
+- ❌ **FORBIDDEN:** Tight coupling or direct references between ViewModels. Cross-ViewModel communication MUST use `WeakReferenceMessenger` or shared mediator services.
 
 ---
 
-## 🧩 2. Quy Chuẩn Modular MVVM Pattern
+## 🧩 2. Modular MVVM Pattern Standards
 
-Mỗi phân hệ chức năng trong `Modules/` phải là một cặp **View - ViewModel** tự trị:
+Each functional feature inside `Modules/` MUST exist as an autonomous **View - ViewModel** pair:
 
 ```
 Modules/
 └── JunkCleaner/
-    ├── JunkCleanerPage.xaml       # Khai báo cấu trúc giao diện
-    ├── JunkCleanerPage.xaml.cs    # Code-behind (Chỉ xử lý animation & Win32 window hooking)
-    └── JunkViewModel.cs           # State, Commands, Binding properties
+    ├── JunkCleanerPage.xaml       # UI structure and layout declaration
+    ├── JunkCleanerPage.xaml.cs    # Code-behind (strictly limited to animations & Win32 window hooks)
+    └── JunkViewModel.cs           # State, commands, and binding properties
 ```
 
-### Tiêu chuẩn ViewModel:
-1. **Kế thừa từ `ViewModelBase`:** Mọi ViewModel phải kế thừa từ `ViewModelBase` để thừa hưởng các cơ chế an toàn luồng `RunOnUI()` và quản lý trạng thái `IsBusy`.
-2. **Sử dụng Source Generators:** Sử dụng thuộc tính `[ObservableProperty]` và `[RelayCommand]` của `CommunityToolkit.Mvvm` thay vì viết thủ công các trường `INotifyPropertyChanged`.
-3. **Lazy Initialization:** Không thực hiện quét đĩa hoặc kết nối I/O nặng trong hàm khởi tạo (Constructor). Việc khởi tạo dữ liệu phải được gọi bất đồng bộ trong sự kiện `Loaded` của View hoặc khi người dùng kích hoạt lệnh.
+### ViewModel Standards:
+1. **Inherit from `ViewModelBase`:** All ViewModels MUST inherit from `ViewModelBase` to utilize thread-safe `RunOnUI()` dispatching and `IsBusy` lifecycle management.
+2. **Utilize Source Generators:** MUST use `[ObservableProperty]` and `[RelayCommand]` attributes from `CommunityToolkit.Mvvm` instead of manual `INotifyPropertyChanged` boilerplate.
+3. **Lazy Initialization:** NEVER execute heavy disk I/O or system scanning inside constructors. Data initialization MUST be triggered asynchronously during the View's `Loaded` event or via user-initiated commands.
 
 ---
 
-## 💉 3. Quy Chuẩn Dependency Injection (DI) & Quản Lý Vòng Đời
+## 💉 3. Dependency Injection (DI) & Lifetime Governance
 
-Hệ thống DI được quản lý tại [App.xaml.cs](file:///d:/WinCare/App.xaml.cs) sử dụng `Microsoft.Extensions.DependencyInjection`:
+The DI container is configured in [App.xaml.cs](../../App.xaml.cs) using `Microsoft.Extensions.DependencyInjection`:
 
-| Vòng đời (Lifetime) | Danh mục áp dụng | Ví dụ lớp |
+| Lifetime | Target Scope | Example Classes |
 | :--- | :--- | :--- |
-| **Singleton** | Dịch vụ hệ thống, Quản lý CSDL, Bộ đệm, Quản lý giao diện | `DbManager`, `ThemeManager`, `TranslationManager`, `NotificationService`, `LockingAppService` |
-| **Transient** | Các Engine tính toán độc lập, các ViewModel theo trang | `JunkCleanerEngine`, `SystemOptimizerEngine`, `JunkViewModel`, `DashboardViewModel` |
+| **Singleton** | System services, database managers, caches, UI coordinators | `DbManager`, `ThemeManager`, `TranslationManager`, `NotificationService`, `LockingAppService` |
+| **Transient** | Stateless calculation engines, page-specific ViewModels | `JunkCleanerEngine`, `SystemOptimizerEngine`, `JunkViewModel`, `DashboardViewModel` |
 
-### Quy tắc tiêm phụ thuộc:
-- ✅ **Constructor Injection:** Luôn tiêm các phụ thuộc thông qua Constructor.
-- ❌ **CẤM Service Locator ngầm:** Hạn chế tối đa việc gọi `App.Services.GetService<T>()` trực tiếp bên trong các hàm con của Engine, trừ các trường hợp đặc biệt ở tầng khởi tạo ứng dụng.
+### Dependency Injection Rules:
+- ✅ **Constructor Injection:** ALWAYS inject dependencies through constructors.
+- ❌ **FORBIDDEN Service Locator Anti-Pattern:** NEVER call `App.Services.GetService<T>()` directly inside Engine business logic; restrict usage strictly to application bootstrapper routines.
 
 ---
 
-## 🪟 4. Quy Chuẩn Vòng Đời Ứng Dụng (Single-Instance & Background Minimization)
+## 🪟 4. Application Lifecycle Standards (Single-Instance & Background Minimization)
 
 1. **Single-Instance Enforcement:**
-   - Ứng dụng chính sử dụng `System.Threading.Mutex` toàn cục có tên `Local\WinCarePro_SingleInstance_Mutex`.
-   - Nếu phát hiện tiến trình khác đã chạy, lập tức kích hoạt cửa sổ hiện tại lên tiền cảnh (`SetForegroundWindow`) và kết thúc tiến trình mới ngay lập tức.
+   - The primary application MUST enforce a single instance using a named global mutex: `Local\WinCarePro_SingleInstance_Mutex`.
+   - When a secondary instance is detected, the existing application window MUST be activated to the foreground via `SetForegroundWindow`, and the duplicate process MUST terminate immediately.
 2. **Desktop HUD Widget Isolation:**
-   - Cửa sổ Desktop HUD Widget là một `Window` độc lập nhưng chia sẻ cùng một Data Context hoặc Engine Singleton.
-   - Khi đóng cửa sổ chính, nếu tùy chọn chạy nền được bật, ứng dụng phải thu nhỏ xuống System Tray thay vì thoát hoàn toàn (`Environment.Exit(0)`).
+   - The Desktop HUD Widget is an independent `Window` that shares the existing Data Context or Singleton Engine.
+   - When the main window is closed, if background execution is enabled, the application MUST minimize to the Windows System Tray rather than invoking `Environment.Exit(0)`.
 
 ---
 
 <div align="center">
-  <sub>[🏠 Mục Lục Rules](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
+  <sub>[🏠 Rules Index](README.md) • WinCare Pro Suite Production Engineering Governance</sub>
 </div>

@@ -4,44 +4,44 @@ description: >-
   AI context window and token optimization runbook for WinCare Pro. Enforces targeted grep_search and view_file slicing (30-60 lines), zero write_to_file overwrites of large files, minimal diff anchors, and quiet terminal outputs. Use when planning refactorings or file edits across large codebases.
 ---
 
-# 🧠 WinCare Pro — Quy Chuẩn Tiết Kiệm Token & Thao Tác Chính Xác (Token Guard)
+# 🧠 WinCare Pro — Token Economy & Surgical Precision Standards (Token Guard)
 
-Quy chuẩn này là cẩm nang hướng dẫn AI Agent thao tác với chi phí token thấp nhất và độ chính xác cao nhất trên codebase WinCare Pro Suite.
+This playbook establishes operational protocols for AI Agents to execute tasks with minimal token consumption and surgical precision across the WinCare Pro Suite codebase.
 
 ---
 
-## 🎯 1. Chiến Lược 3 Bước Tiết Kiệm Context Window
+## 🎯 1. Three-Step Context Economy Protocol
 
-### Bước 1: Định Vị Không Đọc Quét Tràn Lan
-- **Không bao giờ** gọi `view_file` cả file > 150 dòng (ví dụ `MainWindow.xaml.cs`, `App.xaml.cs`, `DbManager.cs`).
-- **Luôn** dùng `grep_search` với `Includes: ["*.cs"]` hoặc `["*.xaml"]` để xác định chính xác số dòng chứa phương thức / biến.
-- Sau đó dùng `view_file` chỉ lấy lát cắt hẹp xung quanh mục tiêu:
+### Step 1: Pinpoint Symbol Locations Without Bulk File Ingestion
+- **NEVER** call `view_file` on entire files exceeding 150 lines (e.g., `MainWindow.xaml.cs`, `App.xaml.cs`, `DbManager.cs`).
+- **ALWAYS** execute `grep_search` with targeted `Includes: ["*.cs"]` or `["*.xaml"]` filters to locate exact symbol line ranges.
+- Follow up with `view_file` targeting a narrow 30-50 line slice around the identified symbol:
   ```json
   { "AbsolutePath": "d:/WinCare/...", "StartLine": 120, "EndLine": 160 }
   ```
 
-### Bước 2: Vá Cục Bộ (In-Place Minimal Anchors)
-- **Tuyệt đối CẤM** dùng `write_to_file` với `Overwrite = true` để ghi đè toàn bộ file mã nguồn cũ.
-- **Bắt buộc** dùng `replace_file_content` hoặc `multi_replace_file_content`.
-- Mỏ neo context (`TargetContent`) chỉ cần 2-4 dòng duy nhất để định vị chính xác vị trí thay thế, không copy nguyên cả khối 50 dòng nếu chỉ sửa 2 dòng.
+### Step 2: Surgical In-Place Patching (Minimal Anchors)
+- **STRICTLY FORBIDDEN** to invoke `write_to_file` with `Overwrite = true` on existing source files.
+- **MANDATORY** to use `replace_file_content` or `multi_replace_file_content`.
+- Retain compact context anchors (`TargetContent`) consisting of 2-4 lines sufficient for unique targeting; do not anchor large blocks when modifying small line subsets.
 
-### Bước 3: Triệt Tiêu Log Rác Terminal (Terminal Suppression)
-- Không chạy lệnh mặc định in hàng chục dòng log:
+### Step 3: Terminal Output Noise Suppression
+- Suppress default CLI execution verbosity that pollutes context windows with redundant logging:
   ```powershell
-  # ❌ Lãng phí token
+  # ❌ Token-Wasting Default Verbosity
   dotnet test
   dotnet build
   
-  # ✅ Tối ưu, súc tích
+  # ✅ Token-Efficient Minimal Output
   dotnet build WinCarePro.csproj -c Debug -v q --nologo
-  dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~TênTest" --logger "console;verbosity=minimal"
+  dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~TestClass" --logger "console;verbosity=minimal"
   ```
 
 ---
 
-## 🚫 2. Danh Sách Đỏ Các Anti-Patterns Thường Gặp Của AI
+## 🚫 2. AI Operational Redlist & Anti-Patterns
 
-1. **Ảo giác API (API Hallucination):** Tự bịa tham số hoặc phương thức chưa từng tồn tại trong `SafePathGuard` hay `ProcessRunner`. Tra cứu ngay tại [docs/00_AI_SYMBOL_INDEX.md](file:///d:/WinCare/docs/00_AI_SYMBOL_INDEX.md) trước khi gọi.
-2. **Nuốt lỗi (Silent Catch):** Để `catch { }` rỗng. Mọi exception phải qua `CrashLogger.LogError(ex)` và trả về `OperationResult.Fail(ex)`.
-3. **Quên `finally` giải phóng trạng thái:** Quên đặt `IsBusy = false` trong `finally`, làm giao diện bị đơ nút bấm mãi mãi nếu xảy ra lỗi.
-4. **Copy-paste lại toàn bộ mã nguồn vào đoạn chat:** Không paste lại cả file hàng trăm dòng vào tin nhắn phản hồi khi diff đã thể hiện đầy đủ. Tóm tắt trực tiếp: Nguyên nhân - Vị trí sửa - Kết quả test.
+1. **API Hallucinations:** Fabricating method overloads or parameters in `SafePathGuard`, `SafeRegistryGuard`, or `ProcessRunner`. Verify canonical signatures in [docs/00_AI_SYMBOL_INDEX.md](../../docs/00_AI_SYMBOL_INDEX.md) prior to invocation.
+2. **Silent Catching:** Omitting catch logic or using empty blocks `catch { }`. ALL exceptions MUST be recorded via `CrashLogger.LogError(ex)` and returned as `OperationResult.Fail(ex)`.
+3. **Omitting State Cleanup in `finally`:** Failing to clear `IsBusy = false` inside `finally` blocks, resulting in permanently locked UI command bindings on error.
+4. **Chat Bloat & Redundant Code Echoing:** Avoid echoing entire files or large code blocks into user responses when targeted diffs suffice. Provide concise summaries covering rationale, target locations, and test outcomes.

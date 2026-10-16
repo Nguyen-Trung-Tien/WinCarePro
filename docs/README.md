@@ -1,15 +1,15 @@
-# 📚 WinCare Pro Suite — Documentation Hub (Trung Tâm Tài Liệu)
+# 📚 WinCare Pro Suite — Documentation Hub
 
-> **Phiên bản hệ thống:** v5.0.0 (Codename: Polaris)  
-> **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64)  
-> **Công nghệ cốt lõi:** .NET 10.0 • Windows App SDK (WinUI 3) • SQLite WAL • Modular MVVM  
-> **Ngôn ngữ tài liệu:** Tiếng Việt (Chính thức) & English Technical References  
+> **System Version:** v5.0.0 (Codename: Polaris)  
+> **Target Platform:** Windows 10 (Build 19041+) & Windows 11 (x64)  
+> **Core Stack:** .NET 10.0 • Windows App SDK (WinUI 3) • SQLite WAL • Modular MVVM  
+> **Documentation Standard:** Production-Ready Technical English & Authoritative References  
 
 ---
 
-## 🗺️ Bản Đồ Cấu Trúc Tài Liệu (Documentation Map)
+## 🗺️ Documentation Architecture Map
 
-Thư mục tài liệu này được cấu trúc thành **11 chuyên đề chuyên sâu** và các bản hướng dẫn tổng hợp, bao quát toàn diện từ kiến trúc tầng thấp, thuật toán động cơ, an toàn bảo mật cho đến quy trình đóng gói và hướng dẫn sử dụng:
+This documentation directory is partitioned into **11 specialized technical chapters** and comprehensive reference guides, covering low-level architecture, diagnostic heuristics, security hardening, installer packaging, and operational procedures:
 
 ```mermaid
 graph TD
@@ -20,29 +20,29 @@ graph TD
     classDef dev fill:#701a75,stroke:#ec4899,stroke-width:2px,color:#fff;
     classDef user fill:#1e3a8a,stroke:#3b82f6,stroke-width:2px,color:#fff;
 
-    Hub["📚 Docs README (Trung Tâm Tài Liệu)"]:::hub
+    Hub["📚 Docs Hub Index (README.md)"]:::hub
 
-    subgraph Core_Architecture ["🏗️ Kiến Trúc & Phân Hệ Cốt Lõi"]
-        Doc01["01. Kiến Trúc Tổng Thể (System Architecture)"]:::arch
-        Doc02["02. Chi Tiết 16 Phân Hệ (Core Modules)"]:::arch
-        Doc07["07. Thiết Kế UI/UX Aura Glass (Design System)"]:::arch
+    subgraph Core_Architecture ["🏗️ Architecture & Core Modules"]
+        Doc01["01. System Architecture (System Architecture)"]:::arch
+        Doc02["02. 16 Core Modules (Core Modules Detailed)"]:::arch
+        Doc07["07. Aura Glass UI/UX (Design System)"]:::arch
     end
 
-    subgraph Business_And_Data ["⚙️ Động Cơ & Cơ Sở Dữ Liệu"]
-        Doc03["03. Động Cơ Nghiệp Vụ (Engines & Logic)"]:::engine
-        Doc04["04. CSDL & Lưu Trữ (Database & Storage)"]:::engine
-        Doc06["06. Dịch Vụ & Hạ Tầng (Services & Infra)"]:::engine
+    subgraph Business_And_Data ["⚙️ Business Logic & Storage"]
+        Doc03["03. Business Engines (Engines & Logic)"]:::engine
+        Doc04["04. Database & Storage (Database & Storage)"]:::engine
+        Doc06["06. Services & Infrastructure (Services & Infra)"]:::engine
     end
 
-    subgraph Security_And_Quality ["🔒 An Toàn & Đảm Bảo Chất Lượng"]
-        Doc05["05. Tiêu Chuẩn Bảo Mật (Security & Safety)"]:::sec
-        Doc08["08. Kiểm Thử Tự Động (QA & Testing)"]:::sec
+    subgraph Security_And_Quality ["🔒 Safety & Quality Assurance"]
+        Doc05["05. Security Architecture (Security & Safety)"]:::sec
+        Doc08["08. Automated Testing (QA & Testing)"]:::sec
     end
 
-    subgraph Delivery_And_Guide ["🚀 Triển Khai & Hướng Dẫn"]
-        Doc09["09. Đóng Gói & CI/CD (Build & Deploy)"]:::dev
-        Doc10["10. Lập Trình Viên Mới (Developer Onboarding)"]:::dev
-        Doc11["11. Hướng Dẫn Sử Dụng (User Manual)"]:::user
+    subgraph Delivery_And_Guide ["🚀 Deployment & Operations"]
+        Doc09["09. Build & Packaging (Build & CI/CD)"]:::dev
+        Doc10["10. Developer Onboarding (Developer Guide)"]:::dev
+        Doc11["11. End-User Manual (User Manual)"]:::user
     end
 
     Hub --> Core_Architecture
@@ -53,51 +53,52 @@ graph TD
 
 ---
 
-## 📑 Danh Mục Tài Liệu Kỹ Thuật
+## 📑 Technical Documentation Chapters
 
-| STT | Tài Liệu | Tóm Tắt Nội Dung | Đối Tượng |
+| # | Document | Scope & Focus | Target Audience |
 | :---: | :--- | :--- | :--- |
-| **00** | [**00. AI Symbol Index & Architecture Map**](00_AI_SYMBOL_INDEX.md) | Bản đồ tra cứu nhanh O(1) ký hiệu, lớp cốt lõi, Safe Guards, Engines, ViewModels và Tests cho AI Agents. | *AI Agents, Developers* |
-| **01** | [**01. Kiến Trúc Tổng Thể Hệ Thống**](01_SYSTEM_ARCHITECTURE.md) | Mô hình 4 tầng phân lớp, nguyên lý thiết kế, Dependency Injection và quản lý luồng dữ liệu an toàn. | *Architects, Developers* |
-| **02** | [**02. Chi Tiết 16 Phân Hệ Chức Năng**](02_CORE_MODULES_DETAILED.md) | Đặc tả 16 Modules: Dashboard, AI Assistant, Junk Cleaner, Uninstaller, Security, Turbo Game, Widget,... | *Developers, Product Owners* |
-| **03** | [**03. Tầng Động Cơ Nghiệp Vụ**](03_ENGINES_AND_BUSINESS_LOGIC.md) | Thuật toán Heuristic chẩn đoán AI, RAM booster, công thức chấm điểm sức khỏe, SFC/DISM wrapper. | *Engine Developers* |
-| **04** | [**04. Cơ Sở Dữ Liệu & Lưu Trữ**](04_DATABASE_AND_STORAGE.md) | SQLite 3 WAL Mode, PRAGMA tuning, Lược đồ 6 bảng CSDL, Version Migration và bảo mật dữ liệu. | *Data & Backend Devs* |
-| **05** | [**05. Tiêu Chuẩn An Toàn & Bảo Mật**](05_SECURITY_AND_SAFETY_ARCHITECTURE.md) | SafePathGuard, SafeRegistryGuard, Service Safety Whitelist, ProcessRunner ArgumentList chống Injection, CancellationToken Lifecycle. | *Security Engineers* |
-| **06** | [**06. Dịch Vụ Nền & Hạ Tầng Hệ Thống**](06_SERVICES_AND_INFRASTRUCTURE.md) | Background Workers, Theme Studio đa bảng màu, Bộ dịch thuật ngữ đa ngôn ngữ, UndoManager hoàn tác. | *Core Developers* |
-| **07** | [**07. Hệ Thống Thiết Kế UI/UX Aura Glass**](07_UI_UX_DESIGN_SYSTEM.md) | Fluent Design 2.0, Mica Backdrop, Acrylic, Shimmer Skeleton Loader, Composition 120 FPS Motion. | *UI/UX Designers & Devs* |
-| **08** | [**08. Kiểm Thử Tự Động & Đảm Bảo Chất Lượng**](08_TESTING_AND_QUALITY_ASSURANCE.md) | Bộ 465 bài kiểm thử xUnit (Production Hardening), kiểm thử đa luồng, stress test, Mocking và tiêu chuẩn Zero-Bug. | *QA & Testers* |
-| **09** | [**09. Đóng Gói, Triển Khai & CI/CD**](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) | Biên dịch Self-Contained x64, Đóng gói Inno Setup 6, cấu hình Auto-Update và GitHub Actions CI. | *DevOps, Release Managers* |
-| **10** | [**10. Hướng Dẫn Lập Trình Viên Mới**](10_DEVELOPER_ONBOARDING_GUIDE.md) | Setup môi trường Visual Studio 2022, quy chuẩn code C# 13, hướng dẫn từng bước thêm một Module mới. | *New Developers* |
-| **11** | [**11. Hướng Dẫn Sử Dụng Chi Tiết (Tiếng Việt)**](11_USER_MANUAL_VI.md) | Cẩm nang thao tác dành cho người dùng cuối: Dọn dẹp máy tính, tăng tốc game, khôi phục hệ thống. | *End Users, Support Team* |
+| **00** | [**00. AI Symbol Index & Architecture Map**](00_AI_SYMBOL_INDEX.md) | O(1) canonical symbol map, core classes, Safe Guards, Engines, ViewModels, and Tests. | *AI Agents, Developers* |
+| **01** | [**01. System Architecture**](01_SYSTEM_ARCHITECTURE.md) | 4-tier modular architecture, core principles, Dependency Injection, and data flow. | *Architects, Developers* |
+| **02** | [**02. Core Modules Detailed**](02_CORE_MODULES_DETAILED.md) | Technical specifications for 16 feature modules: Dashboard, AI Assistant, Junk Cleaner, Uninstaller, Security, Turbo Game, Widget,... | *Developers, Product Owners* |
+| **03** | [**03. Business Engines & Logic**](03_ENGINES_AND_BUSINESS_LOGIC.md) | Heuristic AI diagnostics, RAM booster, health scoring formulas, SFC/DISM wrappers. | *Engine Developers* |
+| **04** | [**04. Database & Storage**](04_DATABASE_AND_STORAGE.md) | SQLite 3 WAL Mode, PRAGMA tuning, 6-table schema, version migrations, and data security. | *Data & Backend Devs* |
+| **05** | [**05. Security & Safety Architecture**](05_SECURITY_AND_SAFETY_ARCHITECTURE.md) | SafePathGuard, SafeRegistryGuard, Service Safety Whitelist, ProcessRunner ArgumentList, CancellationToken Lifecycle. | *Security Engineers* |
+| **06** | [**06. Background Services & Infrastructure**](06_SERVICES_AND_INFRASTRUCTURE.md) | Background Workers, Theme Studio, bilingual i18n translation engine, UndoManager rollback. | *Core Developers* |
+| **07** | [**07. UI/UX Design System**](07_UI_UX_DESIGN_SYSTEM.md) | Fluent Design 2.0, Mica Backdrop, Acrylic, Shimmer Skeleton Loader, Composition 120 FPS Motion. | *UI/UX Designers & Devs* |
+| **08** | [**08. Automated Testing & Quality Assurance**](08_TESTING_AND_QUALITY_ASSURANCE.md) | 465-test xUnit suite (Production Hardening), multithreading, stress tests, mocking, and Zero-Bug policy. | *QA & Testers* |
+| **09** | [**09. Build, Deployment & CI/CD**](09_BUILD_DEPLOYMENT_AND_PACKAGING.md) | Self-Contained x64 compilation, Inno Setup 6 packaging, Auto-Update configuration, and GitHub Actions CI. | *DevOps, Release Managers* |
+| **10** | [**10. Developer Onboarding Guide**](10_DEVELOPER_ONBOARDING_GUIDE.md) | Visual Studio 2022 setup, C# 13 coding standards, step-by-step new module implementation guide. | *New Developers* |
+| **11** | [**11. End-User Manual**](11_USER_MANUAL_VI.md) | End-user operations handbook: PC cleanup, gaming acceleration, system restoration, FAQ. | *End Users, Support Team* |
 
 ---
 
-## 🔍 Tài Liệu Bổ Sung (Quick References)
+## 🔍 Supplementary Technical References
 
-- [**DEVELOPER_GUIDE.md**](DEVELOPER_GUIDE.md): Hướng dẫn tóm tắt nhanh cho lập trình viên và lối tắt tra cứu.
-- [**SYSTEM_OVERVIEW.md**](SYSTEM_OVERVIEW.md): Bản tổng quan kỹ thuật tiếng Anh (Technical Executive Summary).
+- [**DEVELOPER_GUIDE.md**](DEVELOPER_GUIDE.md): Executive technical guide and architecture quick reference.
+- [**SYSTEM_OVERVIEW.md**](SYSTEM_OVERVIEW.md): Comprehensive system overview and technical executive summary.
 
 ---
 
-## ⚡ Hướng Dẫn Đọc Theo Vai Trò (Reading Pathways)
+## ⚡ Role-Based Reading Pathways
 
-### 👨‍💻 Dành cho Lập trình viên mới bắt đầu (New Developer Pathway)
-1. Đọc [**10. Hướng Dẫn Lập Trình Viên Mới**](10_DEVELOPER_ONBOARDING_GUIDE.md) để thiết lập môi trường và hiểu quy chuẩn code.
-2. Tham khảo [**01. Kiến Trúc Tổng Thể**](01_SYSTEM_ARCHITECTURE.md) để nắm luồng MVVM và DI.
-3. Xem [**02. Chi Tiết 16 Phân Hệ**](02_CORE_MODULES_DETAILED.md) và [**03. Tầng Động Cơ**](03_ENGINES_AND_BUSINESS_LOGIC.md) để bắt tay vào viết tính năng.
+### 👨‍💻 New Developer Pathway
+1. Review [**10. Developer Onboarding Guide**](10_DEVELOPER_ONBOARDING_GUIDE.md) for environment configuration and coding invariants.
+2. Review [**01. System Architecture**](01_SYSTEM_ARCHITECTURE.md) to understand MVVM boundaries and DI setup.
+3. Review [**02. Core Modules Detailed**](02_CORE_MODULES_DETAILED.md) and [**03. Business Engines & Logic**](03_ENGINES_AND_BUSINESS_LOGIC.md) before writing module logic.
 
-### 🛡️ Dành cho Kỹ sư An ninh & Hệ thống (Security & Systems Pathway)
-1. Đọc [**05. Tiêu Chuẩn Bảo Mật & Cơ Chế An Toàn**](05_SECURITY_AND_SAFETY_ARCHITECTURE.md).
-2. Xem [**04. Cơ Sở Dữ Liệu & Lưu Trữ**](04_DATABASE_AND_STORAGE.md).
-3. Đọc [**08. Kiểm Thử Tự Động & QA**](08_TESTING_AND_QUALITY_ASSURANCE.md).
+### 🛡️ Security & Systems Engineer Pathway
+1. Review [**05. Security & Safety Architecture**](05_SECURITY_AND_SAFETY_ARCHITECTURE.md).
+2. Review [**04. Database & Storage**](04_DATABASE_AND_STORAGE.md).
+3. Review [**08. Automated Testing & Quality Assurance**](08_TESTING_AND_QUALITY_ASSURANCE.md).
 
-### 🎨 Dành cho Thiết kế & Lập trình Giao diện (Frontend & UI Pathway)
-1. Đọc [**07. Hệ Thống Thiết Kế UI/UX Aura Glass**](07_UI_UX_DESIGN_SYSTEM.md).
-2. Xem [**02. Chi Tiết 16 Phân Hệ**](02_CORE_MODULES_DETAILED.md).
-3. Xem [**06. Dịch Vụ Nền & Hạ Tầng**](06_SERVICES_AND_INFRASTRUCTURE.md) (Theme Studio & Animation).
+### 🎨 Frontend & UI/UX Pathway
+1. Review [**07. UI/UX Design System**](07_UI_UX_DESIGN_SYSTEM.md).
+2. Review [**02. Core Modules Detailed**](02_CORE_MODULES_DETAILED.md).
+3. Review [**06. Background Services & Infrastructure**](06_SERVICES_AND_INFRASTRUCTURE.md) (Theme Studio & Animation).
 
 ---
 
 <div align="center">
-  <sub>Tài liệu được chuẩn hóa và quản lý bởi nhóm phát triển <b>WinCare Pro Suite</b></sub>
+  <sub>Maintained by the <b>WinCare Pro Suite</b> Engineering Team</sub>
 </div>
+

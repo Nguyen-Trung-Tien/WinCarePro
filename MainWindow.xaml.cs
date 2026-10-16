@@ -85,12 +85,12 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleDragArea);
 
-        // Manual preview key handler for Ctrl + F to focus search, avoiding WinUI 3 KeyboardAccelerator tooltip bugs and accidental triggers
+        // Manual preview key handler for Ctrl + K and Ctrl + F to focus search / command bar
         if (this.Content is FrameworkElement rootElem)
         {
             rootElem.PreviewKeyDown += (s, e) =>
             {
-                if (e.Key == Windows.System.VirtualKey.F)
+                if (e.Key == Windows.System.VirtualKey.F || e.Key == Windows.System.VirtualKey.K)
                 {
                     var ctrlState = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control);
                     bool isCtrlDown = (ctrlState & Windows.UI.Core.CoreVirtualKeyStates.Down) == Windows.UI.Core.CoreVirtualKeyStates.Down;
@@ -358,7 +358,10 @@ public sealed partial class MainWindow : Window
                     }
                 });
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("UpdateTitleBarTelemetry", ex);
+            }
             finally
             {
                 Interlocked.Exchange(ref _isTelemetrySampling, 0);

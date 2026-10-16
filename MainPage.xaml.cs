@@ -379,7 +379,18 @@ public sealed partial class MainPage : Page
 
             try
             {
-                ContentFrame.Navigate(pageType);
+                if (_animationsEnabled)
+                {
+                    var transition = new Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionInfo
+                    {
+                        Effect = Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionEffect.FromBottom
+                    };
+                    ContentFrame.Navigate(pageType, null, transition);
+                }
+                else
+                {
+                    ContentFrame.Navigate(pageType, null, new Microsoft.UI.Xaml.Media.Animation.SuppressNavigationTransitionInfo());
+                }
                 
                 // Set header text using the centralized UpdateHeader method
                 UpdateHeader();
@@ -429,15 +440,21 @@ public sealed partial class MainPage : Page
         catch { }
     }
 
+    private bool _animationsEnabled = true;
+
     public void ApplyAnimationsEnabled(bool enabled)
     {
+        _animationsEnabled = enabled;
         if (enabled)
         {
             ContentFrame.ContentTransitions = new Microsoft.UI.Xaml.Media.Animation.TransitionCollection
             {
                 new Microsoft.UI.Xaml.Media.Animation.NavigationThemeTransition
                 {
-                    DefaultNavigationTransitionInfo = new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo()
+                    DefaultNavigationTransitionInfo = new Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionInfo
+                    {
+                        Effect = Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionEffect.FromBottom
+                    }
                 }
             };
         }

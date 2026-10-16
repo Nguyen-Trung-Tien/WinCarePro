@@ -9,6 +9,7 @@ using WinCarePro.Services;
 using WinCarePro.Engines;
 using WinCarePro.Core.Interop;
 using WinCarePro.Core.Models;
+using WinCarePro.Infrastructure.Logging;
 
 namespace WinCarePro.ViewModels;
 
@@ -71,9 +72,9 @@ public partial class DashboardViewModel
                 ramReadSuccess = true;
             }
         }
-        catch
+        catch (Exception ex)
         {
-            // Fallback
+            CrashLogger.LogException("DashboardViewModel.GetSystemResourceUsage", ex);
         }
 
         if (!cpuReadSuccess)
@@ -148,7 +149,10 @@ public partial class DashboardViewModel
                                         GpuUsage = Math.Round(gpu, 1);
                                     });
                                 }
-                                catch { }
+                                catch (Exception ex)
+                                {
+                                    CrashLogger.LogException("DashboardViewModel.GetGpuUsageMetric", ex);
+                                }
                                 finally { _isGpuQueryRunning = false; }
                             });
                         }
@@ -178,7 +182,10 @@ public partial class DashboardViewModel
                                         DiskUsage = Math.Round(disk, 1);
                                     });
                                 }
-                                catch { }
+                                catch (Exception ex)
+                                {
+                                    CrashLogger.LogException("DashboardViewModel.GetDiskUsageMetric", ex);
+                                }
                                 finally { _isDiskQueryRunning = false; }
                             });
                         }
@@ -210,7 +217,10 @@ public partial class DashboardViewModel
                                         CpuTempFormatted = double.IsNaN(cpuTemp) ? "N/A" : $"{cpuTemp:F0}°C";
                                     });
                                 }
-                                catch { }
+                                catch (Exception ex)
+                                {
+                                    CrashLogger.LogException("DashboardViewModel.GetCpuTemperature", ex);
+                                }
                                 finally { _isTempQueryRunning = false; }
                             });
                         }
@@ -231,17 +241,22 @@ public partial class DashboardViewModel
 
                         if (shouldUpdateChart)
                         {
-                            CpuSeriesValues.Add(new ObservableValue(CpuUsage));
-                            CpuSeriesValues.RemoveAt(0);
-
-                            RamSeriesValues.Add(new ObservableValue(RamUsage));
-                            RamSeriesValues.RemoveAt(0);
-
-                            GpuSeriesValues.Add(new ObservableValue(GpuUsage));
-                            GpuSeriesValues.RemoveAt(0);
-
-                            DiskSeriesValues.Add(new ObservableValue(DiskUsage));
-                            DiskSeriesValues.RemoveAt(0);
+                            // In-place zero-allocation shift of chart history values
+                            int count = CpuSeriesValues.Count;
+                            if (count > 0)
+                            {
+                                for (int i = 0; i < count - 1; i++)
+                                {
+                                    CpuSeriesValues[i].Value = CpuSeriesValues[i + 1].Value;
+                                    RamSeriesValues[i].Value = RamSeriesValues[i + 1].Value;
+                                    GpuSeriesValues[i].Value = GpuSeriesValues[i + 1].Value;
+                                    DiskSeriesValues[i].Value = DiskSeriesValues[i + 1].Value;
+                                }
+                                CpuSeriesValues[count - 1].Value = CpuUsage;
+                                RamSeriesValues[count - 1].Value = RamUsage;
+                                GpuSeriesValues[count - 1].Value = GpuUsage;
+                                DiskSeriesValues[count - 1].Value = DiskUsage;
+                            }
                         }
 
                         if (shouldUpdateUptime)

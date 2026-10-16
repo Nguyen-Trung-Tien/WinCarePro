@@ -66,7 +66,7 @@
             <!-- Search (Center) -->
             <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxWidth="420" Margin="16,0" Height="34" Canvas.ZIndex="10">
                 <AutoSuggestBox x:Name="SearchBox" 
-                                PlaceholderText="Search tools, settings, apps... (Ctrl + F)" 
+                                PlaceholderText="Search tools, settings, apps... (Ctrl + K)" 
                                 QueryIcon="Find" 
                                 CornerRadius="8" 
                                 HorizontalAlignment="Stretch" 

@@ -958,14 +958,20 @@ public class DbManager
                 using var cmd = new SqliteCommand("PRAGMA wal_checkpoint(TRUNCATE);", connection);
                 cmd.ExecuteNonQuery();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("DbManager.ShutdownDatabase.Checkpoint", ex);
+            }
             finally
             {
                 try
                 {
                     SqliteConnection.ClearAllPools();
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("DbManager.ShutdownDatabase.ClearAllPools", ex);
+                }
             }
         }
     }

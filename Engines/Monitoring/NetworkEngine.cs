@@ -430,15 +430,17 @@ public partial class NetworkEngine
             }
             catch { }
 
+            string netstatPath = Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("netstat.exe") ?? Path.Combine(Environment.SystemDirectory, "netstat.exe");
             var psi = new ProcessStartInfo
             {
-                FileName = Path.Combine(Environment.SystemDirectory, "netstat.exe"),
-                Arguments = "-ano",
+                FileName = netstatPath,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 CreateNoWindow = true,
                 WorkingDirectory = Environment.SystemDirectory
             };
+            psi.ArgumentList.Add("-ano");
+
             using var proc = Process.Start(psi);
             if (proc != null)
             {

@@ -198,14 +198,9 @@ public partial class NetworkViewModel
         {
             var proc = System.Diagnostics.Process.GetProcessById(pid);
             string? exePath = proc.MainModule?.FileName;
-            if (!string.IsNullOrEmpty(exePath) && WinCarePro.Infrastructure.Security.InputSanitizer.IsValidLocalPath(exePath))
+            if (!string.IsNullOrEmpty(exePath))
             {
-                var psi = new System.Diagnostics.ProcessStartInfo("explorer.exe")
-                {
-                    UseShellExecute = true
-                };
-                psi.ArgumentList.Add($"/select,{exePath}");
-                System.Diagnostics.Process.Start(psi);
+                WinCarePro.Core.Helpers.ProcessRunner.OpenInExplorer(exePath, selectFile: true);
             }
         }
         catch (Exception ex)

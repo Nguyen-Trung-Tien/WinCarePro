@@ -372,5 +372,48 @@ public static class ProcessRunner
         if (string.IsNullOrWhiteSpace(serviceName)) return false;
         return System.Text.RegularExpressions.Regex.IsMatch(serviceName, @"^[a-zA-Z0-9_\-\.]+$");
     }
+
+    /// <summary>
+    /// Safely opens Windows File Explorer targeting the specified directory or selecting the specified file.
+    /// Guarantees ArgumentList isolation and prevents .NET ArgumentList InvalidOperationExceptions.
+    /// </summary>
+    public static bool OpenInExplorer(string path, bool selectFile = false)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return false;
+        try
+        {
+            if (!Infrastructure.Security.InputSanitizer.IsValidLocalPath(path))
+            {
+                Infrastructure.Logging.CrashLogger.LogMessage("ProcessRunner.Warning", $"OpenInExplorer blocked invalid path: {path}");
+                return false;
+            }
+
+            string explorerPath = ResolveSafeExecutablePath("explorer.exe") ?? "explorer.exe";
+            var psi = new ProcessStartInfo
+            {
+                FileName = explorerPath,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = Environment.SystemDirectory
+            };
+
+            if (selectFile)
+            {
+                psi.ArgumentList.Add($"/select,{path}");
+            }
+            else
+            {
+                psi.ArgumentList.Add(path);
+            }
+
+            using var proc = Process.Start(psi);
+            return proc != null;
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("ProcessRunner.OpenInExplorer", ex);
+            return false;
+        }
+    }
 }
 

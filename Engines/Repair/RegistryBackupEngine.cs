@@ -315,12 +315,16 @@ public class RegistryBackupEngine
 
             var psi = new System.Diagnostics.ProcessStartInfo
             {
-                FileName = ProcessRunner.ResolveSafeExecutablePath("reg.exe"),
-                Arguments = $"export HKCU \"{filePath}\" /y",
+                FileName = ProcessRunner.ResolveSafeExecutablePath("reg.exe") ?? "reg.exe",
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 WorkingDirectory = Environment.SystemDirectory
             };
+            psi.ArgumentList.Add("export");
+            psi.ArgumentList.Add("HKCU");
+            psi.ArgumentList.Add(filePath);
+            psi.ArgumentList.Add("/y");
+
             using var proc = System.Diagnostics.Process.Start(psi);
             if (proc == null) return false;
             proc.WaitForExit(30000);
@@ -375,12 +379,14 @@ public class RegistryBackupEngine
 
             var psi = new System.Diagnostics.ProcessStartInfo
             {
-                FileName = ProcessRunner.ResolveSafeExecutablePath("reg.exe"),
-                Arguments = $"import \"{filePath}\"",
+                FileName = ProcessRunner.ResolveSafeExecutablePath("reg.exe") ?? "reg.exe",
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 WorkingDirectory = Environment.SystemDirectory
             };
+            psi.ArgumentList.Add("import");
+            psi.ArgumentList.Add(filePath);
+
             using var proc = System.Diagnostics.Process.Start(psi);
             if (proc == null) return false;
             proc.WaitForExit(15000);

@@ -798,15 +798,12 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         
         try
         {
-            string explorerPath = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("explorer.exe") ?? "explorer.exe";
-            var psi = new System.Diagnostics.ProcessStartInfo
+            bool isFile = File.Exists(path);
+            bool success = WinCarePro.Core.Helpers.ProcessRunner.OpenInExplorer(path, selectFile: isFile);
+            if (!success)
             {
-                FileName = explorerPath,
-                UseShellExecute = true,
-                WorkingDirectory = Environment.SystemDirectory
-            };
-            psi.ArgumentList.Add(path);
-            System.Diagnostics.Process.Start(psi);
+                ProgressMessage = "Error opening folder:".T() + " " + path;
+            }
         }
         catch (Exception ex)
         {

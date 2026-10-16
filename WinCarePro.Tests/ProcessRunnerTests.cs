@@ -82,4 +82,16 @@ public class ProcessRunnerTests
         bool actual = ProcessRunner.IsValidServiceName(serviceName);
         Assert.Equal(expected, actual);
     }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("http://malicious.site/payload.exe")]
+    [InlineData("cmd.exe /c calc.exe")]
+    public void OpenInExplorer_InvalidOrMaliciousPath_ReturnsFalse(string? path)
+    {
+        bool result = ProcessRunner.OpenInExplorer(path!);
+        Assert.False(result);
+    }
 }

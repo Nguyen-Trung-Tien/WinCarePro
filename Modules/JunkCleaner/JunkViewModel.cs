@@ -570,16 +570,12 @@ public class JunkViewModel : ViewModelBase, IDisposable
 
         try
         {
-            string explorerPath = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("explorer.exe") ?? "explorer.exe";
-            var psi = new System.Diagnostics.ProcessStartInfo
-            {
-                FileName = explorerPath,
-                UseShellExecute = true,
-                WorkingDirectory = Environment.SystemDirectory
-            };
-            psi.ArgumentList.Add(path);
-            System.Diagnostics.Process.Start(psi);
+            bool isFile = File.Exists(path);
+            WinCarePro.Core.Helpers.ProcessRunner.OpenInExplorer(path, selectFile: isFile);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("JunkViewModel.OpenSelectedFolder", ex);
+        }
     }
 }

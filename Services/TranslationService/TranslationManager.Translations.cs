@@ -188,6 +188,7 @@ public partial class TranslationManager
         _translations["SYSTEM TUNING"] = "TINH CHỈNH HỆ THỐNG";
         _translations["PC Health Secured"] = "Sức khỏe PC An toàn";
         _translations["Search tools, settings, apps... (Ctrl + F)"] = "Tìm kiếm công cụ, cài đặt, ứng dụng... (Ctrl + F)";
+        _translations["Search tools, settings, apps... (Ctrl + K)"] = "Tìm kiếm công cụ, cài đặt, ứng dụng... (Ctrl + K)";
         _translations["Settings & Personalization"] = "Cài đặt & Cá nhân hóa";
         _translations["Settings"] = "Cài đặt";
         _translations["Open WinCare Pro"] = "Mở WinCare Pro";

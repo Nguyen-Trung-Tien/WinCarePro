@@ -143,7 +143,10 @@ public sealed partial class LoadingToggleSwitch : UserControl
             TranslationManager.Instance.TranslateSingleControl(LoadingLabel);
             TranslationManager.Instance.TranslateSingleControl(InnerToggle);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[LoadingToggleSwitch] Translate error: {ex.Message}");
+        }
     }
 
     private static void OnIsOnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -186,7 +189,10 @@ public sealed partial class LoadingToggleSwitch : UserControl
                                 control.LoadingPanel.Visibility = Visibility.Collapsed;
                                 control.InnerToggle.IsEnabled = control.UserControlIsEnabled;
                             }
-                            catch { }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"[LoadingToggleSwitch] Reset UI error: {ex.Message}");
+                            }
                         });
                     }
                     else

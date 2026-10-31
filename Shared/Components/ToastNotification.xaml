@@ -6,8 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Width="356"
-    Margin="0,0,0,10"
+    Width="388"
+    Margin="0,0,0,8"
     Opacity="0">
 
     <UserControl.Resources>
@@ -74,12 +74,12 @@
             Background="{ThemeResource AppCardBackground}"
             BorderBrush="{ThemeResource AppCardBorder}"
             BorderThickness="1.2"
-            CornerRadius="16"
+            CornerRadius="20"
             Padding="0"
-            Translation="0,4,24">
+            Translation="0,8,28">
         <Grid>
             <!-- Top Specular Sheen Line -->
-            <Border Height="1" VerticalAlignment="Top" CornerRadius="16,16,0,0" Opacity="0.45">
+            <Border Height="1" VerticalAlignment="Top" CornerRadius="20,20,0,0" Opacity="0.45">
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                         <GradientStop Color="#00FFFFFF" Offset="0"/>
@@ -91,7 +91,7 @@
 
             <!-- Background Ambient Tint -->
             <Border x:Name="AmbientTintBorder"
-                    CornerRadius="16"
+                    CornerRadius="20"
                     Opacity="0.08"
                     Background="{StaticResource PrimaryAccentBrush}" />
 
@@ -190,8 +190,8 @@
                          Minimum="0"
                          Maximum="100"
                          Value="100"
-                         Height="2.5"
-                         CornerRadius="0,0,16,16"
+                         Height="2"
+                         CornerRadius="0,0,20,20"
                          VerticalAlignment="Bottom"
                          HorizontalAlignment="Stretch"
                          Background="Transparent"

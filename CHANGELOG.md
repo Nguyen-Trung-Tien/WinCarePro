@@ -5,6 +5,16 @@ All notable changes to **WinCare Pro** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.2] - 2026-10-31 (Polaris Top-Center Dynamic Capsule HUD & UX Elevation)
+
+### Notification Architecture & UI/UX Modernization
+- **Top-Center Floating Island Toast:** Chuyển đổi toàn diện hệ thống hiển thị thông báo sang vị trí Top-Center (Golden Focal Area), tối ưu tầm nhìn tự nhiên của người dùng, giải quyết dứt điểm hiện tượng bị Taskbar hay Action Center che khuất.
+- **Zero-Drag TitleBar Interference:** Tách biệt vùng đệm an toàn `58px` dưới TitleBar, thiết lập `Canvas.ZIndex="3000"` và cô lập vùng tương tác chuột, đảm bảo không ảnh hưởng đến thao tác kéo thả cửa sổ và thanh tìm kiếm.
+- **Dynamic Capsule Aura Styling:** Nâng cấp hình dạng bo góc mềm `CornerRadius="20"`, mở rộng bề ngang `388px`, thanh đếm ngược tiến trình `2px` siêu mỏng và hiệu ứng đổ bóng nổi khối `Translation="0,8,28"`.
+- **Y-Axis Fluid Motion Physics:** Tái cấu trúc chuyển động sang trục dọc với `CubicEaseOut` khi rơi xuống (`Y: -40 -> 0`) và `CubicEaseIn` khi thu hồi (`Y: 0 -> -25`), kết hợp hoàn hảo cùng Object Pooling để duy trì hiệu năng 120 FPS.
+
+---
+
 ## [5.1.1] - 2026-10-16 (Polaris Comprehensive Maintenance, Native Interop & Zero-Crash Hardening)
 
 ### Native Interop & Performance Optimization

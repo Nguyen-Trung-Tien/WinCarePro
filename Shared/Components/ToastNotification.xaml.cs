@@ -218,7 +218,7 @@ public sealed partial class ToastNotification : UserControl
         RepeatBadge.Visibility = Visibility.Collapsed;
         DismissProgressBar.Value = 100;
         Opacity = 0;
-        RenderTransform = new TranslateTransform { X = 380 };
+        RenderTransform = new TranslateTransform { Y = -40 };
     }
 
     private void ApplySeverityStyle(string level)
@@ -378,22 +378,22 @@ public sealed partial class ToastNotification : UserControl
 
     public void AnimateIn(Action? onCompleted = null)
     {
-        var trans = new TranslateTransform { X = 380 };
+        var trans = new TranslateTransform { Y = -40 };
         this.RenderTransform = trans;
         this.Opacity = 0;
 
         var sb = new Storyboard();
-        var ease = new CircleEase { EasingMode = EasingMode.EaseOut };
-        var animX = new DoubleAnimation { From = 380, To = 0, Duration = TimeSpan.FromMilliseconds(380), EasingFunction = ease };
-        var animOpacity = new DoubleAnimation { From = 0, To = 1, Duration = TimeSpan.FromMilliseconds(280), EasingFunction = ease };
+        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+        var animY = new DoubleAnimation { From = -40, To = 0, Duration = TimeSpan.FromMilliseconds(320), EasingFunction = ease };
+        var animOpacity = new DoubleAnimation { From = 0, To = 1, Duration = TimeSpan.FromMilliseconds(240), EasingFunction = ease };
 
-        Storyboard.SetTarget(animX, this);
-        Storyboard.SetTargetProperty(animX, "(UIElement.RenderTransform).(TranslateTransform.X)");
+        Storyboard.SetTarget(animY, this);
+        Storyboard.SetTargetProperty(animY, "(UIElement.RenderTransform).(TranslateTransform.Y)");
 
         Storyboard.SetTarget(animOpacity, this);
         Storyboard.SetTargetProperty(animOpacity, "Opacity");
 
-        sb.Children.Add(animX);
+        sb.Children.Add(animY);
         sb.Children.Add(animOpacity);
         
         if (onCompleted != null)
@@ -407,18 +407,18 @@ public sealed partial class ToastNotification : UserControl
     public void AnimateOut(Action? onCompleted = null)
     {
         var sb = new Storyboard();
-        var ease = new CircleEase { EasingMode = EasingMode.EaseIn };
-        var animOpacity = new DoubleAnimation { To = 0, Duration = TimeSpan.FromMilliseconds(220), EasingFunction = ease };
-        var animX = new DoubleAnimation { To = 140, Duration = TimeSpan.FromMilliseconds(220), EasingFunction = ease };
+        var ease = new CubicEase { EasingMode = EasingMode.EaseIn };
+        var animOpacity = new DoubleAnimation { To = 0, Duration = TimeSpan.FromMilliseconds(180), EasingFunction = ease };
+        var animY = new DoubleAnimation { To = -25, Duration = TimeSpan.FromMilliseconds(180), EasingFunction = ease };
 
         Storyboard.SetTarget(animOpacity, this);
         Storyboard.SetTargetProperty(animOpacity, "Opacity");
 
-        Storyboard.SetTarget(animX, this);
-        Storyboard.SetTargetProperty(animX, "(UIElement.RenderTransform).(TranslateTransform.X)");
+        Storyboard.SetTarget(animY, this);
+        Storyboard.SetTargetProperty(animY, "(UIElement.RenderTransform).(TranslateTransform.Y)");
 
         sb.Children.Add(animOpacity);
-        sb.Children.Add(animX);
+        sb.Children.Add(animY);
         
         sb.Completed += (s, e) =>
         {

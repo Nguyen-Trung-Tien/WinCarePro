@@ -14,14 +14,14 @@ public class AppVersionManagementTests
     {
         Assert.Equal(5, AppConstants.CurrentVersion.Major);
         Assert.Equal(1, AppConstants.CurrentVersion.Minor);
-        Assert.Equal(1, AppConstants.CurrentVersion.Build);
-        Assert.Equal("5.1.1", AppConstants.VersionString);
-        Assert.Equal("v5.1.1", AppConstants.DisplayVersion);
-        Assert.Equal("v5.1.1", AppConstants.DisplayVersionFull);
+        Assert.Equal(2, AppConstants.CurrentVersion.Build);
+        Assert.Equal("5.1.2", AppConstants.VersionString);
+        Assert.Equal("v5.1.2", AppConstants.DisplayVersion);
+        Assert.Equal("v5.1.2", AppConstants.DisplayVersionFull);
         Assert.Equal("WinCare Pro", AppConstants.AppName);
         Assert.Equal("Polaris", AppConstants.Codename);
-        Assert.Contains("WinCare Pro v5.1.1", AppConstants.TitleWithVersion);
-        Assert.Contains("Version 5.1.1 (Codename: Polaris)", AppConstants.SystemBadgeText);
+        Assert.Contains("WinCare Pro v5.1.2", AppConstants.TitleWithVersion);
+        Assert.Contains("Version 5.1.2 (Codename: Polaris)", AppConstants.SystemBadgeText);
     }
 
     [Fact]

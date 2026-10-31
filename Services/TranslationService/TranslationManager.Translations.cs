@@ -311,7 +311,7 @@ public partial class TranslationManager
         _translations["Graphics driver compiled shaders cache for speeding up UI renders."] = "Bộ nhớ đệm đồ họa DirectX.";
         _translations["Thumbnail Cache"] = "Bộ nhớ đệm ảnh thu nhỏ";
         _translations["Cached preview image files of system explorer folders."] = "Bộ nhớ đệm hình thu nhỏ của thư mục.";
-        
+
         // v3.2 Junk Redesign additions
         _translations["Delivery Optimization Files"] = "Tệp Delivery Optimization";
         _translations["Cache files used for downloading and sharing Windows updates."] = "Bộ nhớ đệm tải và chia sẻ cập nhật Windows.";
@@ -326,7 +326,7 @@ public partial class TranslationManager
         _translations["No files found or scanner is idle."] = "Không tìm thấy tệp hoặc trình quét đang rảnh.";
         _translations["Select a category to view its top files details."] = "Chọn danh mục để xem chi tiết tệp lớn nhất.";
         _translations["Scan system to find junk files."] = "Hãy quét hệ thống để tìm tệp rác.";
-        
+
         // Locking app additions
         _translations["Running Applications Locking Cache Files"] = "Ứng dụng đang chạy khóa tệp bộ nhớ đệm";
         _translations["Applications in use: {0}. These apps lock cache files and prevent them from being cleaned."] = "Ứng dụng đang mở: {0}. Các ứng dụng này khóa tệp cache và không thể dọn dẹp hoàn toàn.";
@@ -572,7 +572,7 @@ public partial class TranslationManager
         _translations["Scheduled Tasks"] = "Nhiệm vụ lên lịch";
         _translations["Startup programs registered in Windows. Disable high-impact apps to speed up boot delay times."] = "Ứng dụng khởi động đã đăng ký trong Windows. Hãy vô hiệu hóa các ứng dụng tác động cao để tăng tốc thời gian khởi động.";
         _translations["Active Background Services"] = "Dịch vụ nền đang hoạt động";
-        
+
         _translations["Last Boot Duration"] = "Thời gian khởi động gần nhất";
         _translations["Startup Health"] = "Sức khỏe khởi động";
         _translations["Startup Health Score"] = "Điểm sức khỏe khởi động";
@@ -592,7 +592,7 @@ public partial class TranslationManager
         _translations["High Impact Only"] = "Chỉ tác động cao";
         _translations["Scan System"] = "Quét hệ thống";
         _translations["Ready"] = "Sẵn sàng";
-        
+
         _translations["Application"] = "Ứng dụng";
         _translations["Publisher"] = "Nhà phát triển";
         _translations["State"] = "Trạng thái";
@@ -605,14 +605,14 @@ public partial class TranslationManager
         _translations["Author"] = "Tác giả";
         _translations["Last Execution Time"] = "Thời gian chạy gần nhất";
         _translations["Next Execution Time"] = "Thời gian chạy tiếp theo";
-        
+
         _translations["Scanning startup configuration..."] = "Đang quét cấu hình khởi động...";
         _translations["Analyzing last system boot performance..."] = "Đang phân tích thời gian khởi động hệ thống...";
         _translations["Reading registry and folder startup applications..."] = "Đang đọc các ứng dụng khởi động từ registry và thư mục...";
         _translations["Scanning Windows background services..."] = "Đang quét các dịch vụ chạy nền của Windows...";
         _translations["Reading active scheduled maintenance tasks..."] = "Đang đọc các nhiệm vụ lên lịch bảo trì đang hoạt động...";
         _translations["Optimization recommendations:"] = "Khuyến nghị tối ưu hóa:";
-        
+
         _translations["Excellent"] = "Xuất sắc";
         _translations["Good"] = "Tốt";
         _translations["Fair"] = "Khá";
@@ -629,7 +629,7 @@ public partial class TranslationManager
         _translations["Medium"] = "Trung bình";
         _translations["Low"] = "Thấp";
         _translations["Never"] = "Không bao giờ";
-        
+
         _translations["Permanently Remove Startup Entry"] = "Xóa vĩnh viễn mục khởi động";
         _translations["Disable System Service"] = "Vô hiệu hóa dịch vụ hệ thống";
         _translations["Delete Scheduled Task"] = "Xóa nhiệm vụ lên lịch";
@@ -820,7 +820,7 @@ public partial class TranslationManager
         _translations["Language setting has been updated successfully."] = "Cài đặt ngôn ngữ đã được cập nhật thành công.";
         _translations["OK"] = "Đồng ý";
         _translations["Close"] = "Đóng";
-        
+
         // --- Power Options & Graceful Shutdown Overlay ---
         _translations["Power Options"] = "Nguồn & Thoát";
         _translations["Minimize to Tray"] = "Thu nhỏ xuống khay";
@@ -837,7 +837,7 @@ public partial class TranslationManager
         _translations["Session Terminated"] = "Đã tắt hoàn tất";
         _translations["Closing database connections and freeing resources..."] = "Đang đóng kết nối dữ liệu và giải phóng tài nguyên...";
         _translations["Finalizing shutdown..."] = "Đang hoàn tất...";
-        
+
         // --- Startup Screen Loader ---
         _translations["Initializing core system engine..."] = "Khởi tạo hệ thống...";
         _translations["Loading database & telemetry store..."] = "Tải cơ sở dữ liệu...";
@@ -846,7 +846,7 @@ public partial class TranslationManager
         _translations["Launching WinCare Pro workspace..."] = "Mở không gian làm việc...";
         _translations["Ready!"] = "Sẵn sàng!";
         _translations["Next-Gen System Care & Optimization Suite"] = "Bộ công cụ tối ưu & chăm sóc hệ thống thế hệ mới";
-        
+
         // --- Additional Dashboard and System strings ---
         _translations["PC Health Issues Detected"] = "Phát hiện vấn đề sức khỏe PC";
         _translations["High Memory Usage Bottleneck"] = "RAM đang quá tải";
@@ -897,7 +897,7 @@ public partial class TranslationManager
         _translations["Telemetry Logging Privacy"] = "Quyền riêng tư nhật ký đo lường";
         _translations["Privacy settings are hardened."] = "Cấu hình quyền riêng tư đã được thắt chặt.";
         _translations["Warning: Telemetry logs tracking is enabled."] = "Cảnh báo: Tính năng theo dõi dữ liệu đo lường đang bật.";
-        
+
         // Recommendations
         _translations["Clean junk files using Junk Cleaner tool to reclaim disk space."] = "Dọn dẹp tệp rác bằng công cụ Dọn tệp rác để giải phóng dung lượng đĩa.";
         _translations["Repair registry issues using Registry Center to resolve database conflicts."] = "Sửa lỗi registry bằng Quản lý Registry để giải quyết xung đột.";
@@ -911,7 +911,7 @@ public partial class TranslationManager
         _translations["Flush local DNS resolver cache registries to optimize latency and internet bandwidth."] = "Xóa bộ nhớ đệm phân giải DNS để tối ưu hóa độ trễ và băng thông.";
         _translations["Perform an active memory RAM boost to reclaim system memory and close ghost processes."] = "Thực hiện giải phóng RAM để thu hồi bộ nhớ hệ thống và đóng các tiến trình ma.";
         _translations["Apply optimizer registry settings to harden speed parameters and UI responsiveness."] = "Áp dụng cấu hình registry để tăng tốc các thông số hiệu suất và giao diện.";
-        
+
         // System Optimizer Tweaks
         _translations["Menu Hover Delay Speedup"] = "Tăng tốc độ trễ rê chuột trên Menu";
         _translations["Reduces the wait time before menus expand on hover from 400ms to 50ms, making the Windows desktop interface feel much faster."] = "Giảm thời gian chờ trước khi mở rộng menu từ 400ms xuống 50ms, giúp giao diện Windows phản hồi nhanh hơn nhiều.";
@@ -1209,7 +1209,7 @@ public partial class TranslationManager
         _translations["30 Days logs"] = "Nhật ký 30 ngày";
         _translations["90 Days logs"] = "Nhật ký 90 ngày";
         _translations["Enable continuous low-overhead hardware sensors scanning thread"] = "Bật luồng quét cảm biến phần cứng liên tục tiêu tốn ít tài nguyên";
-        
+
         // Monitoring & Alert section missing keys
         _translations["Monitoring & Alert"] = "Giám sát & Cảnh báo";
         _translations["Telemetry & Notifications Configuration"] = "Cấu hình Đo lường & Thông báo";
@@ -3858,6 +3858,15 @@ public partial class TranslationManager
         _translations["Version 5.1.1 (Polaris) • 64-bit Native System Suite"] = "Phiên bản 5.1.1 (Polaris) • Bộ Công Cụ Hệ Thống 64-bit Native";
         _translations["What's New in v5.1.1"] = "Điểm mới trong v5.1.1";
         _translations["Comprehensive maintenance, full source-generated LibraryImport migration, zero-trust registry safety and cinematic composition animations."] = "Bảo trì toàn diện, hoàn tất chuyển đổi LibraryImport sinh mã nguồn, an toàn bảo mật Registry Zero-Trust và hiệu ứng chuyển động đồ họa Cinematic.";
+
+        // --- WinCare Pro v5.1.2 Polaris Top-Center Dynamic Capsule HUD & UX Elevation ---
+        _translations["v5.1.2"] = "v5.1.2";
+        _translations["v5.1.2 (Polaris)"] = "v5.1.2 (Polaris)";
+        _translations["v5.1.2 Polaris"] = "v5.1.2 Polaris";
+        _translations["Version 5.1.2 (Codename: Polaris) • 64-bit Native System Suite"] = "Phiên bản 5.1.2 (Codename: Polaris) • Bộ Công Cụ Hệ Thống 64-bit Native";
+        _translations["What's New in v5.1.2"] = "Điểm mới trong v5.1.2";
+        _translations["Top-Center Dynamic Capsule HUD & UX Elevation"] = "Thông Báo Dynamic Capsule Top-Center & Tối Ưu UX";
+        _translations["Elevated floating island notifications at natural eye level with fluid Y-axis motion physics and zero-drag TitleBar safety."] = "Hệ thống thông báo đảo nổi Top-Center vừa tầm mắt tự nhiên với chuyển động vật lý trục dọc mượt mà và an toàn kéo thả TitleBar.";
 
         BuildReverseTranslations();
     }

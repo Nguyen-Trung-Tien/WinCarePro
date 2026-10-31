@@ -193,6 +193,7 @@ public sealed partial class SettingsPage
         {
             var releaseItems = new (string Tag, string Title, string Description, string Glyph, string ColorHex)[]
             {
+                ("🔔 CAPSULE", "Top-Center Dynamic Capsule HUD & UX Elevation", "Elevated floating island notifications at natural eye level with fluid Y-axis motion physics and zero-drag TitleBar safety.", "\uEA8F", "#FF8B5CF6"),
                 ("🔮 POLARIS", "AI Volume Exhaustion & Predictive Space Analytics", "Linear empirical modeling forecasting storage depletion timelines, low space safeguards, and SSD wear telemetry.", "\uE7F1", "#FF06B6D4"),
                 ("🛡️ KERNEL", "Platform Security & Kernel Isolation Defenses", "Deep inspection of HVCI Hypervisor-Protected Code Integrity, Defender Tamper Protection, and RDP NLA authentication.", "\uE727", "#FF10B981"),
                 ("🔋 ECO", "Battery-Aware Background Watchdog Throttling", "Dynamic throttling of high-overhead background maintenance tasks when device is on battery below 20% threshold.", "\uEBB5", "#FFF59E0B"),
@@ -287,7 +288,7 @@ public sealed partial class SettingsPage
             var mRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
             mRow.Children.Add(new TextBlock
             {
-                Text = "v5.1.1 Polaris",
+                Text = "v5.1.2 Polaris",
                 FontSize = 13,
                 FontWeight = Microsoft.UI.Text.FontWeights.Bold,
                 Foreground = (Brush)Application.Current.Resources["PrimaryAccentBrush"]
@@ -406,7 +407,7 @@ public sealed partial class SettingsPage
 
             var dialog = new ContentDialog
             {
-                Title = "What's New in v5.1.1".T(),
+                Title = "What's New in v5.1.2".T(),
                 Content = rootStack,
                 CloseButtonText = "Close".T(),
                 DefaultButton = ContentDialogButton.Close,

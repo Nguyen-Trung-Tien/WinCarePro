@@ -1,7 +1,22 @@
 # 🧠 WinCare Pro — AI Agent Technical Skills Directory
 
-> **Target Release:** v5.0.0 (Codename: Polaris) | **Target Platform:** Windows 10/11 x64  
-> **Mandate:** Provide domain-specific, actionable operational runbooks enabling AI Agents to code with 100% precision, zero hallucination, zero crashes, and strict architectural compliance.
+> **Target Release:** v5.1.1 (Codename: Polaris) | **Target Platform:** Windows 10/11 x64  
+> **Standard:** Google Antigravity Skills Specification (`SKILL.md`, `scripts/`, `examples/`, `resources/`)  
+> **Mandate:** Provide domain-specific, actionable operational runbooks and modular assets enabling AI Agents to code with 100% precision, zero hallucination, zero crashes, and strict architectural compliance.
+
+---
+
+## 🏛️ Standard Antigravity Skill Directory Structure
+
+Every skill in WinCare Pro strictly adheres to the official Google Antigravity Skill architecture:
+
+```text
+skills/<skill-name>/
+├── SKILL.md       # Required: Main instruction runbook with YAML frontmatter (name, description)
+├── scripts/       # Automation & verification scripts (.ps1)
+├── examples/      # Canonical production-grade reference implementations (.cs, .xaml)
+└── resources/     # Templates, schemas, checklists, and reference catalogs (.cs, .xaml, .json, .md)
+```
 
 ---
 
@@ -18,6 +33,7 @@ graph TD
     subgraph "🏛️ Architecture & Deployment"
         S1["wincare-module-creator<br/>(7-step modular workflow)"]:::arch
         S10["wincare-ci-packaging<br/>(Compilation & Inno Setup)"]:::arch
+        S11["wincare-version-bumper<br/>(Atomic SemVer Upgrade)"]:::arch
     end
 
     subgraph "🛡️ OS Safety & Persistence"
@@ -40,20 +56,21 @@ graph TD
 
 ---
 
-## 📋 Technical Playbooks Directory
+## 📋 Standardized Technical Skills Directory
 
-| No. | Skill Name | Core Operational Scope | Activation Trigger |
+| No. | Skill Name | Included Assets & Helpers | Core Operational Scope |
 | :---: | :--- | :--- | :--- |
-| **01** | [`wincare-module-creator`](wincare-module-creator/SKILL.md) | Standardized 7-step modular implementation (`Model` $\rightarrow$ `Engine` $\rightarrow$ `DI` $\rightarrow$ `ViewModel` $\rightarrow$ `Aura View` $\rightarrow$ `i18n` $\rightarrow$ `xUnit`). | Adding new pages, features, or modules to WinCare Pro. |
-| **02** | [`wincare-safe-ops`](wincare-safe-ops/SKILL.md) | Safe OS operations: `SafePathGuard`, `SafeRegistryGuard`, pre-mutation `.reg` backup, `ProcessRunner` with `ArgumentList`, 45+ service armor, DPAPI encryption. | Manipulating files, Registry keys, spawning processes, or altering Windows services. |
-| **03** | [`wincare-concurrency-guard`](wincare-concurrency-guard/SKILL.md) | WinUI 3 threading: `RunOnUI()` dispatching, `DispatcherQueue`, `[RelayCommand(IncludeCancelCommand = true)]`, `CancellationToken` lifecycle, sync-over-async elimination. | Authoring asynchronous methods, worker tasks, timers, or UI data bindings. |
-| **04** | [`wincare-ui-aura`](wincare-ui-aura/SKILL.md) | Aura Glass (Fluent 2.0) interface styling: 8px corner radii, Tabular numerals, unhooking `Unloaded` events, `TranslationConverter` binding. | Creating or updating XAML views, styles, or visual layouts. |
-| **05** | [`wincare-i18n-sync`](wincare-i18n-sync/SKILL.md) | Dual-language dictionary parity across `vi-VN` and `en-US` in `TranslationManager.Translations.cs`, standardized `Mod_{Module}_{Key}` keys, zero hardcoded text. | Adding or editing UI labels, dialogs, button texts, tooltips, or placeholders. |
-| **06** | [`wincare-db-wal`](wincare-db-wal/SKILL.md) | SQLite 3 WAL persistence: serialize queries via `lock (_dbLock)`, prevent lock contention, parameterize SQL queries, database test fixtures. | Interacting with `DbManager`, persisting settings, audit logs, or cleaning history. |
-| **07** | [`wincare-error-resilience`](wincare-error-resilience/SKILL.md) | Comprehensive resilience: `OperationResult<T>` return pattern, Zero-Silent Catch elimination, `CrashLogger.LogError` tracking, graceful fallbacks. | Designing method signatures, catching Win32/WMI faults, or reporting user errors. |
-| **08** | [`wincare-test-verifier`](wincare-test-verifier/SKILL.md) | Token-efficient xUnit testing: filtered execution (`--filter`), `DatabaseTestCollection` fixture management, root cause analysis, target 100% Passed. | Validating bug fixes, diagnosing regression test failures, or preparing commits. |
-| **09** | [`wincare-token-guard`](wincare-token-guard/SKILL.md) | Token and context optimization: targeted `grep_search`, narrow 30-60 line `view_file` slicing, minimal-anchor diff patching, zero whole-file rewrites. | Analyzing or editing source files across the codebase. |
-| **10** | [`wincare-ci-packaging`](wincare-ci-packaging/SKILL.md) | Packaging and release engineering: quiet compilation checks, Self-Contained x64 .NET 10 deployment via `publish.bat`, Inno Setup installer via `publish_installer.bat`. | Verifying syntax, compiling binaries, building installers, or tagging releases. |
+| **01** | [`wincare-module-creator`](wincare-module-creator/SKILL.md) | `scripts/scaffold-module.ps1`<br/>`examples/SampleCleanerEngine.cs`<br/>`resources/*Templates*` | 7-step modular lifecycle (`Model` $\rightarrow$ `Engine` $\rightarrow$ `DI` $\rightarrow$ `ViewModel` $\rightarrow$ `Aura View` $\rightarrow$ `i18n` $\rightarrow$ `xUnit`). |
+| **02** | [`wincare-safe-ops`](wincare-safe-ops/SKILL.md) | `scripts/audit-safety-guards.ps1`<br/>`examples/Safe*.cs`<br/>`resources/protected-services-reference.json` | Safe OS operations: `SafePathGuard`, `SafeRegistryGuard`, `.reg` backup, `ProcessRunner` (`ArgumentList`), service protection, DPAPI. |
+| **03** | [`wincare-concurrency-guard`](wincare-concurrency-guard/SKILL.md) | `scripts/scan-concurrency-issues.ps1`<br/>`examples/RunOnUi*.cs`<br/>`resources/concurrency-best-practices.md` | WinUI 3 threading: `RunOnUI()` dispatching, `DispatcherQueue`, `[RelayCommand(IncludeCancelCommand = true)]`, `CancellationToken` lifecycle. |
+| **04** | [`wincare-ui-aura`](wincare-ui-aura/SKILL.md) | `scripts/verify-ui-conventions.ps1`<br/>`examples/SampleAuraPage.*`<br/>`resources/AuraGlassResourceDictionary.xaml` | Aura Glass (Fluent 2.0): 8px corner radii, Tabular numerals, unhooking `Unloaded` events, `TranslationConverter`. |
+| **05** | [`wincare-i18n-sync`](wincare-i18n-sync/SKILL.md) | `scripts/verify-i18n-parity.ps1`<br/>`examples/Translation*.cs/.xaml`<br/>`resources/i18n-taxonomy.md` | Dual-language dictionary parity across `vi-VN` and `en-US` in `TranslationManager.Translations.cs`, zero hardcoded text. |
+| **06** | [`wincare-db-wal`](wincare-db-wal/SKILL.md) | `scripts/verify-db-wal-schema.ps1`<br/>`examples/DbManager*.cs`<br/>`resources/sqlite-wal-configuration.md` | SQLite 3 WAL persistence: serialize queries via `lock (_dbLock)`, parameterized queries, `DatabaseTestCollection` fixtures. |
+| **07** | [`wincare-error-resilience`](wincare-error-resilience/SKILL.md) | `scripts/scan-silent-catch.ps1`<br/>`examples/OperationResult*.cs`<br/>`resources/error-handling-matrix.md` | Comprehensive resilience: `OperationResult<T>` pattern, Zero-Silent Catch elimination, `CrashLogger.LogError` tracking. |
+| **08** | [`wincare-test-verifier`](wincare-test-verifier/SKILL.md) | `scripts/run-targeted-tests.ps1`<br/>`examples/StandardEngineTests.cs`<br/>`resources/test-failure-rca-guide.md` | Token-efficient xUnit testing: filtered execution (`--filter`), `DatabaseTestCollection` management, root cause analysis. |
+| **09** | [`wincare-token-guard`](wincare-token-guard/SKILL.md) | `scripts/token-slice-helper.ps1`<br/>`examples/MinimalDiffAnchorsExample.md`<br/>`resources/token-economy-rules.md` | Token and context optimization: targeted `grep_search`, narrow 30-60 line slicing, minimal-anchor diff patching. |
+| **10** | [`wincare-ci-packaging`](wincare-ci-packaging/SKILL.md) | `scripts/verify-build-quiet.ps1`<br/>`examples/AppConstantsVersionExample.cs`<br/>`resources/release-smoke-test-checklist.md` | Packaging and release engineering: quiet compilation checks, Self-Contained x64 .NET 10 deployment, Inno Setup installer. |
+| **11** | [`wincare-version-bumper`](wincare-version-bumper/SKILL.md) | `scripts/bump-version.ps1`<br/>`scripts/verify-version-sync.ps1`<br/>`examples/AppVersionSyncExample.cs`<br/>`resources/version-synchronization-matrix.md` | Software version upgrade & release management: atomic SemVer synchronization across AppConstants, manifests, installer, update feed & xUnit tests. |
 
 ---
 

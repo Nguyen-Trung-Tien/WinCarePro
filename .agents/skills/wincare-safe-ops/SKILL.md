@@ -8,6 +8,15 @@ description: >-
 
 WinCare Pro executes deep system modifications across Windows 10/11 x64. All AI Agents and developers **MUST** apply Zero-Trust Safeguards prior to modifying files, registry entries, processes, and Windows services.
 
+## 📁 Skill Assets & Helpers
+- **Audit Script:** [`scripts/audit-safety-guards.ps1`](./scripts/audit-safety-guards.ps1)
+- **Reference Examples:**
+  - File Deletion: [`examples/SafeFileOperationsExample.cs`](./examples/SafeFileOperationsExample.cs)
+  - Registry Mutation: [`examples/SafeRegistryOperationsExample.cs`](./examples/SafeRegistryOperationsExample.cs)
+  - CLI Invocation: [`examples/SafeProcessExecutionExample.cs`](./examples/SafeProcessExecutionExample.cs)
+- **Catalogs & References:**
+  - Protected Services Catalog: [`resources/protected-services-reference.json`](./resources/protected-services-reference.json)
+
 ---
 
 ## 🚫 1. Safe Operations Enforcement Matrix
@@ -97,4 +106,4 @@ Prior to deleting any file or directory:
       return OperationResult.Fail($"Cannot modify protected Windows core service: {serviceName}");
   }
   ```
-- 45+ critical Windows infrastructure services are perpetually protected: `RpcSs`, `DcomLaunch`, `WinDefend`, `CryptSvc`, `EventLog`, `PlugPlay`, `SamSs`, `LSM`, `wuauserv` (safe mode), etc.
+- 45+ critical Windows infrastructure services are perpetually protected (see [`resources/protected-services-reference.json`](./resources/protected-services-reference.json)): `RpcSs`, `DcomLaunch`, `WinDefend`, `CryptSvc`, `EventLog`, `PlugPlay`, `SamSs`, `LSM`, `wuauserv` (safe mode), etc.

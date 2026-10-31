@@ -1,0 +1,23 @@
+<StackPanel
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:WinCarePro.Core.Converters"
+    Spacing="12">
+
+    <StackPanel.Resources>
+        <converters:TranslationConverter x:Key="TranslationConverter"/>
+    </StackPanel.Resources>
+
+    <!-- Static Label Binding: Automatically switches when language toggles -->
+    <TextBlock Text="{Binding Source='System Optimizer', Converter={StaticResource TranslationConverter}}"
+               Style="{ThemeResource SubtitleTextBlockStyle}"/>
+
+    <!-- Action Button Text Binding -->
+    <Button Content="{Binding Source='Start Scan', Converter={StaticResource TranslationConverter}}"
+            Style="{ThemeResource AccentButtonStyle}"/>
+
+    <!-- Dynamic Status Message with Converter -->
+    <TextBlock Text="{Binding CurrentStatusKey, Converter={StaticResource TranslationConverter}}"
+               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+</StackPanel>
+

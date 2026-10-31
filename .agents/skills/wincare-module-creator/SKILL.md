@@ -6,7 +6,17 @@ description: >-
 
 # 🚀 WinCare Pro — Standardized Module Development Lifecycle (Module Creator Workflow)
 
-This standard governs the creation and extension of all modules across the WinCare Pro Suite. Every implementation step MUST strictly conform to the 4-tier decoupled architecture.
+This standard governs the creation and extension of all modules across the WinCare Pro Suite. Every implementation step MUST strictly conform to the 4-tier decoupled architecture:
+$$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightarrow \text{Engines (Business Logic)} \longrightarrow \text{Infrastructure / Core}$$
+
+## 📁 Skill Assets & Helpers
+- **Scaffolding Script:** [`scripts/scaffold-module.ps1`](./scripts/scaffold-module.ps1)
+- **Reference Example:** [`examples/SampleCleanerEngine.cs`](./examples/SampleCleanerEngine.cs)
+- **Standard Templates:**
+  - Engine Template: [`resources/EngineTemplate.cs`](./resources/EngineTemplate.cs)
+  - ViewModel Template: [`resources/ViewModelTemplate.cs`](./resources/ViewModelTemplate.cs)
+  - Aura Glass View: [`resources/ViewTemplate.xaml`](./resources/ViewTemplate.xaml)
+  - xUnit Test Template: [`resources/ModuleTestsTemplate.cs`](./resources/ModuleTestsTemplate.cs)
 
 ---
 
@@ -42,7 +52,7 @@ graph TD
     - CLI Execution: `ProcessRunner.RunAsync(exe, args, ct)`
     - Windows Services: `ServiceSafetyService.IsProtectedService(name)`
     - DPAPI Encryption: `CryptoHelper.Protect(secret)`
-  - Reference Template: [EngineTemplate.cs](../../templates/EngineTemplate.cs)
+  - Template: [`resources/EngineTemplate.cs`](./resources/EngineTemplate.cs)
 
 ### Step 3: Register In Dependency Injection Container (DI)
 - Location: [App.xaml.cs](../../App.xaml.cs)
@@ -76,7 +86,7 @@ graph TD
     }
     ```
   - Cross-module communication MUST route through `WeakReferenceMessenger.Default.Send(...)`. Direct references to external ViewModels are STRICTLY FORBIDDEN.
-  - Reference Template: [ViewModelTemplate.cs](../../templates/ViewModelTemplate.cs)
+  - Template: [`resources/ViewModelTemplate.cs`](./resources/ViewModelTemplate.cs)
 
 ### Step 5: Construct Fluent 2.0 XAML View
 - Location: `Modules/<Feature>/<Feature>View.xaml`
@@ -88,7 +98,7 @@ graph TD
     <TextBlock Text="{Binding Source='Nav_MyFeature', Converter={StaticResource TranslationConverter}}"/>
     ```
   - Detach all event handlers (`-=`) in the `Unloaded` event to prevent memory leaks.
-  - Reference Template: [ViewTemplate.xaml](../../templates/ViewTemplate.xaml)
+  - Template: [`resources/ViewTemplate.xaml`](./resources/ViewTemplate.xaml)
 
 ### Step 6: Register Dual-Language Keys (i18n)
 - Location: [TranslationManager.Translations.cs](../../Services/TranslationService/TranslationManager.Translations.cs)
@@ -98,6 +108,7 @@ graph TD
 ### Step 7: Author Unit Tests & Regression Verification
 - Location: `WinCarePro.Tests/<Feature>Tests.cs`
 - If test suite interacts with `DbManager` (SQLite): MUST apply the `[Collection(nameof(DatabaseTestCollection))]` attribute.
+- Template: [`resources/ModuleTestsTemplate.cs`](./resources/ModuleTestsTemplate.cs)
 - Execute targeted test suite:
   ```powershell
   dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~<Feature>Tests" --logger "console;verbosity=minimal"

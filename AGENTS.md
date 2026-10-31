@@ -2,7 +2,7 @@
 
 > **Version:** v5.1.1 (Codename: Polaris) | **Target Platform:** Windows 10/11 x64  
 > **Core Stack:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite 3 WAL • CommunityToolkit.Mvvm  
-> **Deep Reference Docs:** [AI Symbol Index & Architecture Map](docs/00_AI_SYMBOL_INDEX.md) • [11 Technical Rulebooks](.agents/rules/README.md) • [11 Technical Architecture Chapters](docs/README.md) • [10 Specialized Skills](.agents/skills/README.md)
+> **Deep Reference Docs:** [AI Symbol Index & Architecture Map](docs/00_AI_SYMBOL_INDEX.md) • [11 Technical Rulebooks](.agents/rules/README.md) • [11 Technical Architecture Chapters](docs/README.md) • [11 Specialized Skills](.agents/skills/README.md)
 
 ---
 
@@ -118,6 +118,7 @@ Quick lookup before implementation at [.agents/skills/README.md](.agents/skills/
 | `wincare-test-verifier` | [wincare-test-verifier/SKILL.md](.agents/skills/wincare-test-verifier/SKILL.md) | Token-efficient testing: filtered test runs (`--filter`), regression analysis, target 100% Passed. |
 | `wincare-token-guard` | [wincare-token-guard/SKILL.md](.agents/skills/wincare-token-guard/SKILL.md) | Token optimization: `grep_search` targeted lookups, narrow 30-60 line slicing, in-place patching, quiet logs. |
 | `wincare-ci-packaging` | [wincare-ci-packaging/SKILL.md](.agents/skills/wincare-ci-packaging/SKILL.md) | CI & packaging: `publish.bat` (Self-Contained x64 .NET 10), `publish_installer.bat` (Inno Setup), SSOT `AppConstants`. |
+| `wincare-version-bumper` | [wincare-version-bumper/SKILL.md](.agents/skills/wincare-version-bumper/SKILL.md) | Software version upgrade & release management: atomic SemVer synchronization across AppConstants, manifests, installer, update feed & xUnit tests. |
 
 ---
 

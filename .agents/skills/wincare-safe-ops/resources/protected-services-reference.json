@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WinCare Pro Protected Windows Services Catalog",
+  "description": "Critical Windows core infrastructure services that must NEVER be stopped or disabled by WinCare Pro.",
+  "protectedServices": [
+    { "serviceName": "RpcSs", "displayName": "Remote Procedure Call (RPC)", "category": "Core Subsystem", "severity": "Critical" },
+    { "serviceName": "RpcEptMapper", "displayName": "RPC Endpoint Mapper", "category": "Core Subsystem", "severity": "Critical" },
+    { "serviceName": "DcomLaunch", "displayName": "DCOM Server Process Launcher", "category": "Core Subsystem", "severity": "Critical" },
+    { "serviceName": "EventLog", "displayName": "Windows Event Log", "category": "Diagnostics", "severity": "Critical" },
+    { "serviceName": "PlugPlay", "displayName": "Plug and Play", "category": "Hardware", "severity": "Critical" },
+    { "serviceName": "LSM", "displayName": "Local Session Manager", "category": "Session Management", "severity": "Critical" },
+    { "serviceName": "SamSs", "displayName": "Security Accounts Manager", "category": "Security", "severity": "Critical" },
+    { "serviceName": "WinDefend", "displayName": "Microsoft Defender Antivirus Service", "category": "Security", "severity": "Critical" },
+    { "serviceName": "CryptSvc", "displayName": "Cryptographic Services", "category": "Security", "severity": "High" },
+    { "serviceName": "LanmanWorkstation", "displayName": "Workstation", "category": "Networking", "severity": "High" },
+    { "serviceName": "LanmanServer", "displayName": "Server", "category": "Networking", "severity": "High" },
+    { "serviceName": "Dnscache", "displayName": "DNS Client", "category": "Networking", "severity": "High" },
+    { "serviceName": "Dhcp", "displayName": "DHCP Client", "category": "Networking", "severity": "High" },
+    { "serviceName": "BFE", "displayName": "Base Filtering Engine", "category": "Firewall", "severity": "Critical" },
+    { "serviceName": "MpsSvc", "displayName": "Windows Defender Firewall", "category": "Firewall", "severity": "Critical" },
+    { "serviceName": "ProfSvc", "displayName": "User Profile Service", "category": "User System", "severity": "Critical" },
+    { "serviceName": "KeyIso", "displayName": "CNG Key Isolation", "category": "Security", "severity": "Critical" },
+    { "serviceName": "VaultSvc", "displayName": "Credential Manager", "category": "Security", "severity": "High" },
+    { "serviceName": "StateRepository", "displayName": "State Repository Service", "category": "UWP / WinUI", "severity": "Critical" },
+    { "serviceName": "AppXSvc", "displayName": "AppX Deployment Service", "category": "UWP / Packaging", "severity": "High" },
+    { "serviceName": "Schedule", "displayName": "Task Scheduler", "category": "Automation", "severity": "Critical" }
+  ]
+}
+

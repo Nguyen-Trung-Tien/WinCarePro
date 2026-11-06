@@ -129,4 +129,54 @@ public class InstalledAppInfo : INotifyPropertyChanged
     public bool IsLargeApp => SizeBytes >= 500L * 1024 * 1024;
 
     public string SizeFormatted => SizeBytes <= 0 ? "Unknown" : WinCarePro.Core.Helpers.FormatHelper.FormatBytes(SizeBytes);
+
+    private bool? _isBloatwareCache;
+    public bool IsBloatware
+    {
+        get
+        {
+            if (_isBloatwareCache.HasValue) return _isBloatwareCache.Value;
+            _isBloatwareCache = DetectBloatware();
+            return _isBloatwareCache.Value;
+        }
+        set
+        {
+            if (_isBloatwareCache != value)
+            {
+                _isBloatwareCache = value;
+                OnPropertyChanged(nameof(IsBloatware));
+                OnPropertyChanged(nameof(BloatwareVisibility));
+                OnPropertyChanged(nameof(HealthBadgeText));
+            }
+        }
+    }
+
+    public Visibility BloatwareVisibility => IsBloatware ? Visibility.Visible : Visibility.Collapsed;
+
+    private static readonly string[] KnownBloatwareKeywords = new[]
+    {
+        "candy crush", "disney magic", "solitaire collection", "xbox tcui", "bing bar", 
+        "mcafee", "norton security", "wildtangent", "cyberlink media", "bytefence", 
+        "booking.com", "tiktok", "farmville", "bubble witch", "march of empires"
+    };
+
+    private bool DetectBloatware()
+    {
+        var name = DisplayName?.ToLowerInvariant() ?? "";
+        var pub = Publisher?.ToLowerInvariant() ?? "";
+
+        foreach (var keyword in KnownBloatwareKeywords)
+        {
+            if (name.Contains(keyword) || pub.Contains(keyword))
+                return true;
+        }
+
+        if (IsStoreApp && (pub.Contains("king.com") || name.Contains("promotional") || name.Contains("sponsored")))
+            return true;
+
+        return false;
+    }
+
+    public string HealthBadgeText => IsBloatware ? "Bloatware" : (IsLargeApp ? "Heavy Storage" : "Verified");
+    public string ResidualRiskText => IsStoreApp ? "Low Residual Risk" : (IsLargeApp ? "Deep Footprint" : "Standard Footprint");
 }

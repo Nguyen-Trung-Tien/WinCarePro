@@ -5,6 +5,36 @@ All notable changes to **WinCare Pro** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.0] - 2026-11-06 (Polaris Aura Fluidic 3.0 & Intelligent Diagnostic Sentinel Suite)
+
+### Aura Fluidic 3.0 & Unified UX Architecture
+- **Complete Suite Aura Glass Elevation:** Nâng cấp giao diện Fluent 2.0 Aura Glass đồng bộ trên toàn bộ 11 phân hệ (`Dashboard`, `Security`, `JunkCleaner`, `Registry`, `Uninstall`, `Network`, `Repair`, `SystemOptimizer`, `Notifications`, `AiAssistant`, `Settings`).
+- **High-Density Telemetry Cards & Micro-Interactions:** Bổ sung hệ thống thẻ chỉ số mật độ cao với góc bo chuẩn 8-12px, hiệu ứng đổ bóng nổi khối Z-axis, chuyển động phản hồi 120 FPS và định dạng số Tabular cố định chống giật bố cục.
+- **Navigation Cache & Memory Hygiene:** Tách rời toàn bộ event handlers (`-=`) khi `Unloaded`, giải phóng tài nguyên đồ họa khi chuyển trang và đảm bảo Foreground RAM $\le 85\text{ MB}$, Background RAM $\le 15\text{ MB}$.
+
+### Intelligent AI Assistant & Diagnostic Engine
+- **Contextual Multi-Step Diagnostics:** Tích hợp động cơ `AiWinCareEngine` phân tích toàn diện hiện trạng hệ thống từ mức nhân CPU, RAM, dung lượng phân vùng, mạng đến lỗ hổng bảo mật.
+- **Interactive Fix Scripts & 1-Click Repair:** Tự động tạo kịch bản khắc phục sự cố thông minh, giải thích nguyên nhân rõ ràng và cung cấp nút thực thi an toàn 1-chạm được bảo vệ bởi `SafePathGuard` và `SafeRegistryGuard`.
+- **Aura AI Chat Experience:** Giao diện hội thoại tương tác thời gian thực với hiệu ứng bong bóng chat đa lớp, hỗ trợ gợi ý câu hỏi thông minh và hiển thị tiến trình xử lý trực quan.
+
+### Next-Gen Security Center & Platform Defenses
+- **Multi-Vector Vulnerability Detection:** Tự động rà soát sâu các điểm yếu cấu hình Windows Defender, trạng thái tường lửa Windows Firewall, Remote Desktop NLA và các dịch vụ tiềm ẩn rủi ro.
+- **Kernel Isolation & Tamper Protection:** Giám sát thời gian thực tính toàn vẹn bộ nhớ Hypervisor-Protected Code Integrity (HVCI) và lá chắn chống can thiệp độc hại.
+- **Security Health Score Card:** Bảng điểm đánh giá an ninh hệ thống trực quan kèm khuyến nghị khắc phục theo thứ tự ưu tiên rủi ro.
+
+### Notifications & Telemetry Activity Hub
+- **Live Telemetry Pulse:** Theo dõi nhịp đập tải hệ thống theo thời gian thực kết hợp trung tâm thông báo hợp nhất.
+- **Category Filter & Severity Grouping:** Phân loại thông báo chi tiết (Bảo mật, Dọn dẹp, Hiệu năng, Cập nhật) với các thao tác hàng loạt: Đánh dấu đã đọc, Xóa sạch thông báo và Dọn dẹp nhật ký hoạt động.
+
+### Deep Application Lifecycle & Process Tree Management
+- **Process Grouping & Tree Termination:** Giám sát phân nhánh cây tiến trình cha-con (`ProcessGroupInfo`), hỗ trợ đóng ứng dụng an toàn trước khi gỡ cài đặt.
+- **Residual Scanning & Cleanup:** Quét sâu tệp tin rác thừa và khóa Registry mồ côi sau khi gỡ phần mềm, tích hợp sao lưu tự động khôi phục.
+
+### Quality Assurance & Automated Test Expansion
+- **482 xUnit Test Suite:** Mở rộng thêm 17 bài kiểm thử chuyên sâu cho chẩn đoán AI, bảo mật cập nhật, gỡ cài đặt và dọn dẹp hệ thống; duy trì 100% Passed với 0 Warning và 0 Error.
+
+---
+
 ## [5.1.2] - 2026-10-31 (Polaris Top-Center Dynamic Capsule HUD & UX Elevation)
 
 ### Notification Architecture & UI/UX Modernization

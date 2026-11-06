@@ -11,7 +11,16 @@ public partial class TranslationManager
     private void InitializeTranslations()
     {
         // --- Sidebar Navigation Menu Items & App Header ---
+        _translations["SYSTEM COCKPIT"] = "BẢNG ĐIỀU KHIỂN HỆ THỐNG";
+        _translations["Core Online"] = "Lõi trực tuyến";
+        _translations["Live Protected"] = "Bảo vệ trực tiếp";
+        _translations["PRO"] = "PRO";
+        _translations["Smart Diagnostics & AI Health Advisor"] = "Chẩn đoán thông minh & Cố vấn AI";
+        _translations["Smart Diagnostics &amp; AI Health Advisor"] = "Chẩn đoán thông minh & Cố vấn AI";
         _translations["Dashboard"] = "Trang chủ";
+        _translations["Quantum Boost"] = "Tăng tốc Lượng tử";
+        _translations["One-Touch Quantum Boost"] = "Tăng tốc Lượng tử 1 Chạm";
+        _translations["Spatial Nebula"] = "Không gian Tinh vân";
         _translations["🤖 AI WinCare Engine"] = "🤖 AI WinCare Engine";
         _translations["AI WinCare Engine"] = "AI WinCare Engine";
         _translations["⚡ System Turbo Mode"] = "⚡ Tăng tốc hệ thống";
@@ -47,6 +56,48 @@ public partial class TranslationManager
         _translations["Intelligent multi-factor system diagnostics and automated remedies."] = "Chẩn đoán thông minh đa yếu tố và khắc phục tự động.";
         _translations["Smart Diagnostics Engine"] = "Động cơ chẩn đoán thông minh";
         _translations["System Health Core"] = "Lõi sức khỏe hệ thống";
+        _translations["Neural Subsystem Topology Map"] = "Bản đồ tương tác tiểu hệ thống thần kinh";
+        _translations["Real-time multi-tier hardware-software telemetry and bottleneck localization"] = "Giám sát đa tầng phần cứng - phần mềm & định vị điểm nghẽn thời gian thực";
+        _translations["5 Nodes Synchronized"] = "5 Tiểu hệ thống đồng bộ";
+        _translations["AI Root-Cause Causal Analysis (Explainable AI)"] = "Phân tích chuỗi Nhân - Quả (AI giải thích - XAI)";
+        _translations["Transparent correlation between background triggers, resource contention, and perceptible latency"] = "Minh bạch mối tương quan giữa tác vụ nền, xung đột tài nguyên và độ trễ";
+        _translations["Causal Inference Active"] = "Động cơ suy luận nhân quả đang chạy";
+        _translations["AI Automated Self-Healing Deck"] = "Bảng điều khiển tự chữa lành thông minh";
+        _translations["Configurable multi-tier remedies with SafePathGuard & SafeRegistryGuard protection"] = "Cơ chế khắc phục đa cấp với giáp bảo vệ SafePathGuard & SafeRegistryGuard";
+        _translations["Configurable multi-tier remedies with SafePathGuard &amp; SafeRegistryGuard protection"] = "Cơ chế khắc phục đa cấp với giáp bảo vệ SafePathGuard & SafeRegistryGuard";
+        _translations["L1: Silent Safe"] = "Cấp 1: An toàn & Êm";
+        _translations["L2: Balanced Boost"] = "Cấp 2: Tăng tốc chuẩn";
+        _translations["L3: Deep Velocity"] = "Cấp 3: Tốc độ tối đa";
+        _translations["Snapshot Rollback Guaranteed"] = "Bảo đảm hoàn tác nguyên trạng";
+        _translations["ROOT TRIGGER"] = "NGUYÊN NHÂN GỐC";
+        _translations["PROPAGATION"] = "LAN TRUYỀN TÁC ĐỘNG";
+        _translations["SYSTEM IMPACT"] = "ẢNH HƯỞNG HỆ THỐNG";
+        _translations["Resolve Now"] = "Khắc phục ngay";
+        _translations["CPU / Kernel"] = "CPU & Nhân hệ điều hành";
+        _translations["Memory / RAM"] = "Bộ nhớ RAM & Bộ đệm";
+        _translations["Storage / NVMe"] = "Ổ lưu trữ NVMe / SSD";
+        _translations["Network Sockets"] = "Cổng mạng & Kết nối";
+        _translations["Cache & Debris"] = "Bộ nhớ đệm & File rác";
+        _translations["Healthy Sockets"] = "Kết nối ổn định";
+        _translations["DNS resolver synchronized"] = "Bộ phân giải DNS đã đồng bộ";
+        _translations["Clean file buffers"] = "Bộ đệm tập tin sạch sẽ";
+        _translations["Elevated daemon count"] = "Tác vụ chạy nền tăng cao";
+        _translations["Stable thread dispatching"] = "Điều phối luồng ổn định";
+        _translations["Standby cache elevated"] = "Bộ nhớ đệm chờ tăng cao";
+        _translations["Clean memory bounds"] = "Bộ nhớ trong mức tối ưu";
+        _translations["High disk consumption"] = "Dung lượng đĩa tiêu hao cao";
+        _translations["Optimal storage health"] = "Sức khỏe ổ đĩa tối ưu";
+        _translations["Ready for safe purge"] = "Sẵn sàng dọn dẹp an toàn";
+        _translations["Memory Pressure & Virtual Pagination Chain"] = "Chuỗi áp lực bộ nhớ & phân trang ảo hóa";
+        _translations["Orphaned Cache & Disk Scanning Overhead"] = "Chuỗi file rác mồ côi & nghẽn quét ổ đĩa";
+        _translations["Storage Depletion & Write Amplification Risk"] = "Nguy cơ cạn kiệt ổ đĩa & gia tăng ghi SSD";
+        _translations["Optimal System Harmony Chain"] = "Chuỗi hài hòa hệ thống tối ưu";
+        _translations["Low Stress (Optimal)"] = "Áp lực thấp (Tối ưu)";
+        _translations["Moderate Load"] = "Tải trung bình";
+        _translations["High Stress (Action Recommended)"] = "Áp lực cao (Cần xử lý)";
+        _translations["Low Stress (Stable)"] = "Áp lực thấp (Ổn định)";
+        _translations["System Stress:"] = "Áp lực hệ thống:";
+        _translations["Tasks"] = "Tác vụ";
         _translations["Purge system caches, temp files & debris."] = "Dọn dẹp bộ nhớ đệm & tệp rác hệ thống.";
         _translations["Purge system caches, temp files &amp; debris."] = "Dọn dẹp bộ nhớ đệm & tệp rác hệ thống.";
         _translations["Cleanly uninstall apps & remove leftover data."] = "Gỡ cài đặt sạch sẽ & loại bỏ tệp thừa.";
@@ -350,6 +401,29 @@ public partial class TranslationManager
         _translations["Cleanup scheduled successfully for next startup."] = "Đã hẹn lịch dọn dẹp thành công cho lần khởi động máy tiếp theo.";
         _translations["What would you like to do?"] = "Bạn muốn thực hiện hành động nào?";
 
+        // v5.2 Junk Redesign additions
+        _translations["System Storage Radar"] = "Radar Bộ Nhớ Hệ Thống";
+        _translations["Safe Only"] = "Chỉ tệp an toàn";
+        _translations["100% Safe Cache"] = "Bộ nhớ đệm 100% an toàn";
+        _translations["RECOMMENDED"] = "KHUYÊN DÙNG";
+        _translations["System Temp, Thumbnails, Prefetch"] = "Tệp tạm hệ thống, ảnh thu nhỏ, Prefetch";
+        _translations["Review Recommended"] = "Khuyên kiểm tra";
+        _translations["NOTICE"] = "LƯU Ý";
+        _translations["Browser Caches, Recycle Bin, Dumps"] = "Bộ nhớ đệm trình duyệt, thùng rác, tệp crash";
+        _translations["Developer & Deep"] = "Lập trình & Nâng cao";
+        _translations["OPTIONAL"] = "TÙY CHỌN";
+        _translations["Node, Pip, NuGet, Docker & Shaders"] = "Bộ nhớ đệm Node, Pip, NuGet, Docker & Shaders";
+        _translations["Active Apps Locking Files:"] = "Ứng dụng đang khóa tệp:";
+        _translations["Close Apps"] = "Đóng ứng dụng";
+        _translations["Bypass & Ignore"] = "Bỏ qua & Dọn tiếp";
+        _translations["Safe to clean:"] = "An toàn dọn dẹp:";
+        _translations["100% Safe"] = "100% An toàn";
+        _translations["Review Needed"] = "Khuyên kiểm tra";
+        _translations["Developer Caches"] = "Bộ nhớ đệm lập trình";
+        _translations["SAFE"] = "AN TOÀN";
+        _translations["DEV"] = "DEV";
+        _translations["Total Cleanable Space"] = "Tổng dung lượng có thể dọn";
+
         // --- App Uninstaller Page ---
         _translations["Search installed applications..."] = "Tìm kiếm ứng dụng đã cài đặt...";
         _translations["Scan Registry Apps"] = "Quét ứng dụng Registry";
@@ -367,6 +441,20 @@ public partial class TranslationManager
         _translations["Leftover cleanup completed successfully."] = "Dọn dẹp tàn dư hoàn tất thành công.";
 
         // v3.0 App Uninstaller Redesign additions
+        _translations["App Management Studio"] = "Quản lý & Gỡ ứng dụng";
+        _translations["Smart application lifecycle, residual trace purge & bloatware shield."] = "Quản lý vòng đời ứng dụng, dọn sạch tàn dư và loại bỏ bloatware rác.";
+        _translations["Select Bloatware"] = "Chọn ứng dụng rác";
+        _translations["Purge Bloatware"] = "Dọn ứng dụng rác";
+        _translations["Bloatware Shield"] = "Khiên Bloatware";
+        _translations["Bloatware:"] = "Bloatware rác:";
+        _translations["Bloatware"] = "Bloatware rác";
+        _translations["Applications Queued"] = "Ứng dụng trong hàng đợi";
+        _translations["Type & Health"] = "Loại & Đánh giá";
+        _translations["Residual Risk:"] = "Nguy cơ tàn dư:";
+        _translations["AI Analysis:"] = "Phân tích AI:";
+        _translations["Low Residual Risk"] = "Ít tàn dư";
+        _translations["Standard Footprint"] = "Dung lượng tiêu chuẩn";
+        _translations["Deep Footprint"] = "Chiếm dụng sâu";
         _translations["Desktop App"] = "Ứng dụng Desktop";
         _translations["Store App"] = "Ứng dụng Store";
         _translations["Total Apps:"] = "Tổng số ứng dụng:";
@@ -986,6 +1074,30 @@ public partial class TranslationManager
 
         // SecurityPage
         _translations["Security & Privacy Shield"] = "Khiên bảo mật & Quyền riêng tư";
+        _translations["Quick Harden"] = "Gia cố nhanh";
+        _translations["Intelligent System Hardening complete. System protected."] = "Gia cố hệ thống thông minh hoàn tất. Hệ thống đã được bảo vệ.";
+        _translations["Applying Intelligent System Hardening..."] = "Đang thực hiện gia cố hệ thống thông minh...";
+        _translations["Gamer Stealth Profile activated."] = "Đã kích hoạt Hồ sơ Game thủ Tàng hình.";
+        _translations["Balanced Armor Profile activated."] = "Đã kích hoạt Hồ sơ Phòng thủ Cân bằng.";
+        _translations["Zero-Trust Hardened Profile activated."] = "Đã kích hoạt Hồ sơ Thắt chặt Zero-Trust.";
+        _translations["Windows Firewall has been successfully enabled."] = "Tường lửa Windows đã được bật thành công.";
+        _translations["Firewall Active"] = "Tường lửa Hoạt động";
+        _translations["Security Hardened"] = "Đã gia cố bảo mật";
+        _translations["Defense Profile"] = "Hồ sơ phòng thủ";
+        _translations["OPTIMAL"] = "TỐI ƯU";
+        _translations["MODERATE"] = "TRUNG BÌNH";
+        _translations["CRITICAL"] = "NGUY CẤP";
+        _translations["SHIELD ARMED"] = "KHIÊN ĐÃ KÍCH HOẠT";
+        _translations["ATTENTION NEEDED"] = "CẦN CHÚ Ý";
+        _translations["EXPOSED"] = "CÓ RỦI RO";
+        _translations["Gamer Stealth"] = "Game thủ Tàng hình";
+        _translations["Balanced Armor"] = "Phòng thủ Cân bằng";
+        _translations["Zero-Trust Hardened"] = "Thắt chặt Zero-Trust";
+        _translations["Core Defense Matrix"] = "Ma trận Phòng thủ Cốt lõi";
+        _translations["Threat Radar & Audits"] = "Radar Mối đe dọa & Kiểm toán";
+        _translations["Native Diagnostics"] = "Chẩn đoán Gốc Windows";
+        _translations["All Systems Armed - Zero Vulnerabilities"] = "Tất cả hệ thống sẵn sàng - Không phát hiện lỗ hổng";
+        _translations["Hardware trust, credential safety & privacy vault."] = "Xác minh phần cứng, an toàn danh tính và quyền riêng tư.";
         _translations["Real-time threat monitoring, hardware platform trust, privacy hardening, and trace eradication."] = "Giám sát mối đe dọa thời gian thực, xác minh phần cứng tin cậy, thắt chặt quyền riêng tư và xóa sạch dấu vết.";
         _translations["Monitor local security components, verify hardware platform trust levels, and tune privacy profiles."] = "Giám sát các cấu phần bảo mật cục bộ, xác minh mức độ tin cậy của phần cứng và tinh chỉnh hồ sơ quyền riêng tư.";
         _translations["Windows Defender management, diagnostics, hardware trust, and anti-telemetry privacy tuning."] = "Quản lý Windows Defender, chẩn đoán, độ tin cậy phần cứng và tinh chỉnh quyền riêng tư chống thu thập dữ liệu.";
@@ -1132,6 +1244,17 @@ public partial class TranslationManager
         _translations["DNS Benchmark"] = "Đo tốc độ DNS";
         _translations["Flush DNS Cache"] = "Xóa bộ nhớ đệm DNS";
         _translations["Active Ports"] = "Cổng hoạt động";
+        _translations["Smart Auto-Heal"] = "Tự động sửa chữa thông minh";
+        _translations["Auto-Switch to Fastest DNS"] = "Chuyển sang DNS nhanh nhất";
+        _translations["Bandwidth & Radar"] = "Băng thông & Radar";
+        _translations["DNS Intelligence"] = "Tối ưu hóa DNS";
+        _translations["App Sockets & Traffic"] = "Kết nối & Lưu lượng ứng dụng";
+        _translations["Self-Healing & Tools"] = "Bộ tự phục hồi & Công cụ";
+        _translations["Top Applications by Network Sockets"] = "Ứng dụng dùng nhiều kết nối mạng nhất";
+        _translations["AI Connection Health"] = "Điểm sức khỏe kết nối AI";
+        _translations["Optimal for Gaming & 4K Streaming"] = "Tối ưu cho Gaming & 4K Streaming";
+        _translations["Degraded Connection"] = "Chất lượng kết nối suy giảm";
+        _translations["No Internet Connection"] = "Mất kết nối Internet";
 
         // HardwarePage
         _translations["Hardware Monitoring Engine"] = "Công cụ giám sát phần cứng";
@@ -1516,6 +1639,7 @@ public partial class TranslationManager
         _translations["EXCELLENT - Your system is highly optimized and clean."] = "TUYỆT VỜI - Hệ thống của bạn đã được tối ưu hóa và sạch sẽ.";
         _translations["GOOD - Some areas can be optimized to reclaim storage."] = "TỐT - Một số khu vực có thể được tối ưu hóa để thu hồi dung lượng lưu trữ.";
         _translations["NEEDS OPTIMIZATION - Heavy junk logs or updates required."] = "CẦN TỐI ƯU HÓA - Cần dọn dẹp các tệp nhật ký rác nặng hoặc cập nhật phần mềm.";
+        _translations["Needs Optimization"] = "Cần tối ưu";
         _translations["Uptime"] = "Thời gian hoạt động";
         _translations["Network"] = "Mạng";
         _translations["Junk Size"] = "Dung lượng rác";
@@ -2784,6 +2908,9 @@ public partial class TranslationManager
         _translations["Factory Reset Preferences"] = "Cài Đặt Lại Về Mặc Định Gốc";
         _translations["Reset all settings, theme customizations, schedulers, and thresholds to pristine factory defaults."] = "Đặt lại tất cả cài đặt, tùy chỉnh giao diện, lịch trình và ngưỡng về mặc định gốc.";
         _translations["Reset to Factory Defaults"] = "Đặt lại về mặc định gốc";
+        _translations["Reset to Factory Defaults?"] = "Đặt lại về mặc định gốc?";
+        _translations["Are you sure you want to reset all configuration settings to factory defaults? This cannot be undone."] = "Bạn có chắc chắn muốn đặt lại tất cả cài đặt cấu hình về mặc định gốc không? Thao tác này không thể hoàn tác.";
+        _translations["Reset All"] = "Đặt lại tất cả";
 
         // Section 9: About WinCare Pro & Developer Info
         _translations["About WinCare Pro & Engineering Team"] = "Giới Thiệu WinCare Pro & Đội Ngũ Kỹ Sư";
@@ -2962,9 +3089,9 @@ public partial class TranslationManager
 
         // Disk Tools & S.M.A.R.T
         _translations["Disk Health"] = "Sức Khỏe Ổ Đĩa";
-        _translations["Good"] = "Tốt (Good)";
-        _translations["Warning"] = "Cảnh Báo (Warning)";
-        _translations["Bad"] = "Nguy Hiểm (Bad)";
+        _translations["Good"] = "Tốt";
+        _translations["Warning"] = "Cảnh Báo";
+        _translations["Bad"] = "Nguy Hiểm";
         _translations["Scan Large Files"] = "Quét Tệp Dung Lượng Lớn";
         _translations["Find Duplicates"] = "Tìm Tệp Trùng Lặp";
         _translations["Analyze Disk Usage"] = "Phân Tích Sử Dụng Ổ Đĩa";
@@ -3867,6 +3994,161 @@ public partial class TranslationManager
         _translations["What's New in v5.1.2"] = "Điểm mới trong v5.1.2";
         _translations["Top-Center Dynamic Capsule HUD & UX Elevation"] = "Thông Báo Dynamic Capsule Top-Center & Tối Ưu UX";
         _translations["Elevated floating island notifications at natural eye level with fluid Y-axis motion physics and zero-drag TitleBar safety."] = "Hệ thống thông báo đảo nổi Top-Center vừa tầm mắt tự nhiên với chuyển động vật lý trục dọc mượt mà và an toàn kéo thả TitleBar.";
+
+        // --- WinCare Pro v5.2.0 Polaris Aura Fluidic 3.0 & Intelligent Diagnostic Sentinel Suite ---
+        _translations["v5.2.0"] = "v5.2.0";
+        _translations["v5.2.0 (Polaris)"] = "v5.2.0 (Polaris)";
+        _translations["v5.2.0 Polaris"] = "v5.2.0 Polaris";
+        _translations["Version 5.2.0 (Codename: Polaris) • 64-bit Native System Suite"] = "Phiên bản 5.2.0 (Codename: Polaris) • Bộ Công Cụ Hệ Thống 64-bit Native";
+        _translations["What's New in v5.2.0"] = "Điểm mới trong v5.2.0";
+        _translations["Aura Fluidic 3.0 & Intelligent Diagnostic Sentinel Suite"] = "Kiến Trúc Aura Fluidic 3.0 & Bộ Phòng Thủ Trí Tuệ Nhân Tạo";
+        _translations["Major release featuring Aura Fluidic 3.0 UI elevation, AI Diagnostic Sentinel engine, next-generation Security Center and deep application lifecycle management."] = "Bản phát hành lớn với giao diện Aura Fluidic 3.0, động cơ AI Diagnostic Sentinel, Trung tâm Bảo mật thế hệ mới và quản lý vòng đời ứng dụng chuyên sâu.";
+        _translations["Intelligent AI Diagnostic Sentinel & Fix Engine"] = "Động cơ AI Diagnostic Sentinel & Tự Động Khắc Phục";
+        _translations["Contextual system diagnostics, intelligent automated repair scripts, and interactive system optimization."] = "Chẩn đoán hệ thống thông minh, tạo kịch bản khắc phục tự động và tối ưu hóa hệ thống tương tác.";
+        _translations["Next-Gen Security Center & Exploit Mitigation"] = "Trung Tâm Bảo Mật Thế Hệ Mới & Chống Lỗ Hổng";
+        _translations["Multi-vector vulnerability detection, tamper protection, real-time shields, and firewall profile enforcement."] = "Phát hiện lỗ hổng bảo mật đa hướng, chống can thiệp hệ thống, lá chắn thời gian thực và quản lý tường lửa.";
+        _translations["Notifications & Live Telemetry Activity Hub"] = "Trung Tâm Thông Báo & Nhịp Đập Telemetry";
+        _translations["Real-time process telemetry pulse, categorized system notifications, and instant action routing."] = "Theo dõi nhịp đập tiến trình thời gian thực, phân loại thông báo hệ thống và định tuyến hành động tức thì.";
+        _translations["Deep App Leftover & Process Tree Manager"] = "Quét Sâu Dư Thừa Ứng Dụng & Cây Tiến Trình";
+        _translations["Multi-app batch uninstallation, orphaned registry residual purge, and process tree termination."] = "Gỡ cài đặt hàng loạt ứng dụng, dọn dẹp triệt để tàn dư Registry và kết thúc tiến trình theo cây cha-con.";
+        _translations["Fluent 2.0 Aura Glass Elevation & Precision Metrics"] = "Nâng Cấp Fluent 2.0 Aura Glass & Chỉ Số Chuẩn Xác";
+        _translations["Tabular telemetry numerals, 120 FPS fluid composition physics, and zero memory leaks."] = "Định dạng số telemetry Tabular cố định, chuyển động đồ họa 120 FPS mượt mà và triệt tiêu rò rỉ bộ nhớ.";
+        _translations["• 2026.11 (Current)"] = "• 11/2026 (Hiện tại)";
+
+        // --- WinCare Pro Aura Fluidic 3.0 & Intelligent Notification Hub ---
+        _translations["Notifications & Activity Hub"] = "Trung tâm Thông báo & Hoạt động";
+        _translations["Mark All Read"] = "Đánh dấu đã đọc";
+        _translations["Purge All Notifications"] = "Xóa sạch thông báo";
+        _translations["Purge Activity Logs"] = "Xóa sạch nhật ký hoạt động";
+        _translations["Active Alerts"] = "Cảnh báo kích hoạt";
+        _translations["Operations Today"] = "Thao tác hôm nay";
+        _translations["Sentinel Active"] = "Sentinel đang hoạt động";
+        _translations["Live Telemetry Pulse"] = "Nhịp đập hệ thống";
+        _translations["Working sets trimmed successfully."] = "Đã giải phóng bộ nhớ đệm thành công.";
+        _translations["All clear! No active system alerts."] = "Hệ thống an toàn! Không có cảnh báo nào.";
+        _translations["Action(s)"] = "Yêu cầu xử lý";
+        _translations["Review Apps"] = "Xem ứng dụng";
+        _translations["Shield Check"] = "Kiểm tra bảo mật";
+        _translations["Check Network"] = "Kiểm tra mạng";
+        _translations["Scan Registry"] = "Quét Registry";
+
+        // --- Dialog Badges & Result Types ---
+        _translations["DESTRUCTIVE"] = "NGUY HIỂM";
+        _translations["CONFIRMATION"] = "XÁC NHẬN";
+        _translations["SUCCESS"] = "THÀNH CÔNG";
+        _translations["WARNING"] = "CẢNH BÁO";
+        _translations["ERROR"] = "LỖI";
+        _translations["INFO"] = "THÔNG TIN";
+        _translations["Clean Safe Items Now"] = "Dọn sạch mục an toàn ngay";
+        _translations["Repair Now"] = "Sửa chữa ngay";
+        _translations["Restore Snapshot"] = "Khôi phục bản sao lưu";
+        _translations["Repair Registry Now"] = "Sửa chữa Registry ngay";
+        _translations["Start Component Cleanup"] = "Bắt đầu dọn dẹp linh kiện";
+        _translations["Reset Components Now"] = "Đặt lại linh kiện ngay";
+        _translations["Restore Defaults Now"] = "Khôi phục mặc định ngay";
+        _translations["Force Close"] = "Buộc đóng";
+        _translations["Force Uninstall"] = "Buộc gỡ cài đặt";
+        _translations["Restore Now"] = "Khôi phục ngay";
+
+        // --- Dashboard & Registry UI Translations (v5.2.0 Polaris) ---
+        _translations["System Health Status"] = "Tình trạng sức khỏe hệ thống";
+        _translations["Needs Optimization"] = "Cần tối ưu";
+        _translations["Excellent"] = "Xuất sắc";
+        _translations["Registry Center & AI Optimizer"] = "Trung tâm Registry & Tối ưu AI";
+        _translations["Registry Center &amp; AI Optimizer"] = "Trung tâm Registry & Tối ưu AI";
+        _translations["Zero-Trust Registry Armor"] = "Lá chắn Registry Zero-Trust";
+        _translations["Smart deep inspection, AI root-cause explainer, zero-risk safe fix & rollback snapshots."] = "Kiểm tra sâu thông minh, giải thích nguyên nhân bằng AI, sửa an toàn không rủi ro & bản sao lưu khôi phục.";
+        _translations["Smart deep inspection, AI root-cause explainer, zero-risk safe fix &amp; rollback snapshots."] = "Kiểm tra sâu thông minh, giải thích nguyên nhân bằng AI, sửa an toàn không rủi ro & bản sao lưu khôi phục.";
+        _translations["1-Click Safe Fix"] = "Sửa an toàn 1 chạm";
+        _translations["Clean Selected"] = "Dọn các mục đã chọn";
+        _translations["Detected Inconsistencies"] = "Sự bất thường được phát hiện";
+        _translations["Issues Found"] = "Lỗi được tìm thấy";
+        _translations["100% Zero-Risk Safe"] = "An toàn 100% không rủi ro";
+        _translations["Safe to Clean"] = "An toàn để dọn dẹp";
+        _translations["Review Suggested"] = "Khuyến nghị xem xét";
+        _translations["Need Review"] = "Cần xem xét";
+        _translations["Rollback Snapshots"] = "Bản sao lưu khôi phục";
+        _translations["Saved Points"] = "Điểm đã lưu";
+        _translations["Registry Issues & Invalid References"] = "Lỗi Registry & Liên kết không hợp lệ";
+        _translations["Registry Issues &amp; Invalid References"] = "Lỗi Registry & Liên kết không hợp lệ";
+        _translations["Filter & Select:"] = "Lọc & Chọn:";
+        _translations["Filter &amp; Select:"] = "Lọc & Chọn:";
+        _translations["100% Safe Only"] = "Chỉ mục an toàn 100%";
+        _translations["🟢 100% Safe Only"] = "🟢 Chỉ mục an toàn 100%";
+        _translations["Select All"] = "Chọn tất cả";
+        _translations["Deselect All"] = "Bỏ chọn tất cả";
+        _translations["Click item to inspect AI details →"] = "Nhấn vào mục để xem chi tiết AI →";
+        _translations["Registry Editor"] = "Trình chỉnh sửa Registry";
+        _translations["System Restore"] = "Khôi phục hệ thống";
+        _translations["Open →"] = "Mở →";
+        _translations["Smart AI Inspector"] = "Trình kiểm tra AI thông minh";
+        _translations["Visual Diff"] = "So sánh trực quan";
+        _translations["Target Key:"] = "Khóa mục tiêu:";
+        _translations["(Select an issue from list)"] = "(Chọn một lỗi từ danh sách)";
+        _translations["Click any issue on the left to see root cause and visual diff."] = "Nhấn vào bất kỳ lỗi nào bên trái để xem nguyên nhân gốc và so sánh trực quan.";
+        _translations["AI Root-Cause Insight:"] = "Phân tích nguyên nhân gốc từ AI:";
+        _translations["Leftover uninstalled application registry entry or broken link."] = "Mục registry còn sót lại của ứng dụng đã gỡ cài đặt hoặc liên kết bị hỏng.";
+        _translations["DIFF PREVIEW (Action on Repair):"] = "XEM TRƯỚC THAY ĐỔI (Thao tác khi sửa):";
+        _translations["[-] Remove orphaned subkey / dead reference"] = "[-] Xóa khóa con mồ côi / tham chiếu không tồn tại";
+        _translations["Repair Key"] = "Sửa khóa này";
+        _translations["Regedit"] = "Mở Regedit";
+        _translations["Time-Machine"] = "Cỗ máy thời gian";
+        _translations["Create Full Safety Backup"] = "Tạo sao lưu an toàn toàn diện";
+        _translations["Saved Snapshots History"] = "Lịch sử các bản sao lưu đã lưu";
+        _translations["Restore"] = "Khôi phục";
+
+        // --- Polaris v5.2.0 Search & Vitality Translations ---
+        _translations["Search tools, diagnostics, settings... (Ctrl + K)"] = "Tìm kiếm công cụ, chẩn đoán, cài đặt... (Ctrl + K)";
+        _translations["Search tools, diagnostics, settings... (Ctrl + F)"] = "Tìm kiếm công cụ, chẩn đoán, cài đặt... (Ctrl + F)";
+        _translations["VITALITY"] = "SỨC SỐNG";
+        _translations["Vitality"] = "Sức sống";
+
+        // --- Polaris v5.2.0 Network Segmented Navigation ---
+        _translations["Bandwidth & Radar"] = "Băng thông & Radar";
+        _translations["Bandwidth &amp; Radar"] = "Băng thông & Radar";
+        _translations["🚀 Bandwidth & Radar"] = "🚀 Băng thông & Radar";
+        _translations["🚀 Bandwidth &amp; Radar"] = "🚀 Băng thông & Radar";
+        _translations["DNS Intelligence"] = "Trí tuệ DNS";
+        _translations["🌐 DNS Intelligence"] = "🌐 Trí tuệ DNS";
+        _translations["App Sockets & Traffic"] = "Socket ứng dụng & Lưu lượng";
+        _translations["App Sockets &amp; Traffic"] = "Socket ứng dụng & Lưu lượng";
+        _translations["⚡ App Sockets & Traffic"] = "⚡ Socket ứng dụng & Lưu lượng";
+        _translations["⚡ App Sockets &amp; Traffic"] = "⚡ Socket ứng dụng & Lưu lượng";
+        _translations["Self-Healing & Tools"] = "Tự phục hồi & Công cụ";
+        _translations["Self-Healing &amp; Tools"] = "Tự phục hồi & Công cụ";
+        _translations["🛠 Self-Healing & Tools"] = "🛠 Tự phục hồi & Công cụ";
+        _translations["🛠 Self-Healing &amp; Tools"] = "🛠 Tự phục hồi & Công cụ";
+        _translations["🛠️ Self-Healing & Tools"] = "🛠️ Tự phục hồi & Công cụ";
+        _translations["🛠️ Self-Healing &amp; Tools"] = "🛠️ Tự phục hồi & Công cụ";
+
+        // --- Polaris v5.2.0 System Repair & Self-Healing ---
+        _translations["System Repair & Self-Healing"] = "Sửa chữa Hệ thống & Tự phục hồi";
+        _translations["System Repair &amp; Self-Healing"] = "Sửa chữa Hệ thống & Tự phục hồi";
+        _translations["Smart Engine 6.0"] = "Động cơ Thông minh 6.0";
+        _translations["Deep SFC/DISM component verification, registry safety unban, and automated rollback protection."] = "Xác minh linh kiện SFC/DISM chuyên sâu, bỏ chặn registry an toàn và bảo vệ sao lưu hoàn tác tự động.";
+        _translations["Task Name / Action"] = "Tên tác vụ / Hành động";
+        _translations["Last Execution Time"] = "Thời gian chạy gần nhất";
+        _translations["Next Execution Time"] = "Thời gian chạy kế tiếp";
+
+        // --- Polaris v5.2.0 Settings & Risk Advisory ---
+        _translations["Reset Defaults"] = "Đặt lại mặc định";
+        _translations["Export Backup"] = "Xuất bản sao lưu";
+        _translations["Experimental Risk Advisory"] = "Cảnh báo rủi ro thử nghiệm";
+        _translations["Heuristic auto-remediations execute background system adjustments without prompt confirmations. Keep disabled for stable enterprise production environments."] = "Tính năng tự động khắc phục phỏng đoán thực hiện các điều chỉnh hệ thống chạy ngầm mà không có thông báo xác nhận. Nên tắt đối với môi trường doanh nghiệp ổn định.";
+        _translations["WinCare Pro Active"] = "WinCare Pro Đang Hoạt Động";
+        _translations["Microsoft Windows x64 • High Performance Workstation"] = "Microsoft Windows x64 • Máy Trạm Hiệu Năng Cao";
+        _translations["64-bit Architecture"] = "Kiến trúc 64-bit";
+        _translations["32-bit Architecture"] = "Kiến trúc 32-bit";
+
+        // --- Polaris v5.2.0 Telemetry & Resource Insights ---
+        _translations["High CPU Load"] = "Tải CPU Cao";
+        _translations["High Memory Load"] = "Tải Bộ Nhớ RAM Cao";
+        _translations["High processor demand observed. Optimize background services and startup applications."] = "Phát hiện mức sử dụng bộ xử lý cao. Hãy tối ưu các dịch vụ chạy ngầm và ứng dụng khởi động.";
+        _translations["System resource headroom is optimal with stable average load."] = "Tài nguyên hệ thống ở mức tối ưu với tải trung bình ổn định.";
+        _translations["Memory pressure detected. Recommend working set optimization and clearing memory standby lists."] = "Phát hiện áp lực bộ nhớ RAM. Khuyến nghị tối ưu tập làm việc và dọn danh sách bộ nhớ chờ (standby list).";
+        _translations["Heavy storage I/O detected. Check for active background disk indexing or duplicate file scans."] = "Phát hiện lưu lượng truy xuất ổ đĩa nặng. Hãy kiểm tra dịch vụ lập chỉ mục đĩa hoặc quét tệp trùng lặp.";
+        _translations["Resource consumption is stable across recorded history."] = "Mức tiêu thụ tài nguyên ổn định trong toàn bộ lịch sử ghi nhận.";
+        _translations["Avg CPU: {0}% | RAM: {1}%"] = "CPU TB: {0}% | RAM: {1}%";
 
         BuildReverseTranslations();
     }

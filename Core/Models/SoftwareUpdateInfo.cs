@@ -192,6 +192,74 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
 
     public string CurrentInstalledVersionDisplay => IsCompleted ? AvailableVersion : InstalledVersion;
 
+    public bool IsSecurityPatch
+    {
+        get
+        {
+            var lowerName = (Name + " " + Id).ToLowerInvariant();
+            return lowerName.Contains("chrome") || 
+                   lowerName.Contains("edge") || 
+                   lowerName.Contains("firefox") || 
+                   lowerName.Contains("browser") ||
+                   lowerName.Contains("defender") || 
+                   lowerName.Contains("security") || 
+                   lowerName.Contains("antivirus") ||
+                   lowerName.Contains("pass") || 
+                   lowerName.Contains("bitwarden") || 
+                   lowerName.Contains("1password") ||
+                   lowerName.Contains("keepass") || 
+                   lowerName.Contains("wireguard") || 
+                   lowerName.Contains("vpn") ||
+                   lowerName.Contains("openssl") || 
+                   lowerName.Contains("ssh");
+        }
+    }
+
+    public bool IsMajorVersionBump
+    {
+        get
+        {
+            try
+            {
+                var curParts = InstalledVersion.Split(new[] { '.', '-', '_' }, StringSplitOptions.RemoveEmptyEntries);
+                var newParts = AvailableVersion.Split(new[] { '.', '-', '_' }, StringSplitOptions.RemoveEmptyEntries);
+                if (curParts.Length > 0 && newParts.Length > 0)
+                {
+                    if (int.TryParse(curParts[0], out var c) && int.TryParse(newParts[0], out var n))
+                    {
+                        return n > c;
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
+    }
+
+    public string UpdateCategory
+    {
+        get
+        {
+            if (IsSecurityPatch) return "CVE Patch".T();
+            if (IsMajorVersionBump) return "Major Bump".T();
+            return "Optimization".T();
+        }
+    }
+
+    public string SmartSummary
+    {
+        get
+        {
+            if (IsSecurityPatch)
+                return "Addresses security advisories, memory safety & integrity patches.".T();
+            if (IsMajorVersionBump)
+                return $"Major core generation jump from v{InstalledVersion} to v{AvailableVersion}.".T();
+            return "Performance optimizations, bug fixes & stability enhancements.".T();
+        }
+    }
+
+    public string CategoryIconGlyph => IsSecurityPatch ? "\uE727" : (IsMajorVersionBump ? "\uE898" : "\uE946");
+
     public string ActionBtnText => UpdateStatus switch
     {
         StatusCompleted => "Up to Date ✓".T(),
@@ -339,11 +407,16 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
             if (id.Contains("edge") || name.Contains("edge")) return "\uE774"; // Globe / Web
             if (id.Contains("chrome") || name.Contains("chrome")) return "\uE774";
             if (id.Contains("firefox") || name.Contains("firefox")) return "\uE774";
-            if (id.Contains("code") || id.Contains("visualstudio") || name.Contains("visual studio")) return "\uE943"; // Code
-            if (id.Contains("discord") || id.Contains("slack") || id.Contains("telegram")) return "\uE8BD"; // Chat
-            if (id.Contains("spotify") || id.Contains("music") || id.Contains("vlc")) return "\uE8D6"; // Media
-            if (id.Contains("git") || id.Contains("node") || id.Contains("python")) return "\uE756"; // Developer Tool
+            if (id.Contains("browser") || name.Contains("browser")) return "\uE774";
+            if (id.Contains("download") || name.Contains("download") || id.Contains("idm")) return "\uE896"; // Download
+            if (id.Contains("code") || id.Contains("visualstudio") || name.Contains("visual studio") || id.Contains("vscode")) return "\uE943"; // Code
+            if (id.Contains("discord") || id.Contains("slack") || id.Contains("telegram") || id.Contains("zalo") || id.Contains("skype")) return "\uE8BD"; // Chat
+            if (id.Contains("spotify") || id.Contains("music") || id.Contains("vlc") || name.Contains("media")) return "\uE8D6"; // Media
+            if (id.Contains("git") || id.Contains("node") || id.Contains("python") || id.Contains("rust") || id.Contains("java")) return "\uE756"; // Developer Tool
             if (id.Contains("7zip") || id.Contains("winrar") || id.Contains("zip")) return "\uF012"; // Archive
+            if (id.Contains("steam") || id.Contains("epic") || id.Contains("game")) return "\uE7FC"; // Game
+            if (id.Contains("driver") || name.Contains("driver")) return "\uE772"; // Hardware driver
+            if (id.Contains("security") || id.Contains("antivirus") || id.Contains("defender")) return "\uE727"; // Security shield
 
             return "\uE71D"; // Default Generic Tool
         }
@@ -356,15 +429,21 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
             var id = Id.ToLowerInvariant();
             var name = Name.ToLowerInvariant();
 
-            if (id.Contains("edge")) return "#0078D7";                                // Edge Blue
-            if (id.Contains("chrome") || name.Contains("chrome")) return "#EA4335";     // Chrome Red/Yellow
-            if (id.Contains("firefox")) return "#FF7139";                             // Firefox Orange
-            if (id.Contains("code") || id.Contains("vscode")) return "#007ACC";       // VS Code Blue
-            if (id.Contains("visualstudio")) return "#5C2D91";                        // Visual Studio Purple
-            if (id.Contains("spotify")) return "#1DB954";                             // Spotify Green
-            if (id.Contains("discord") || id.Contains("slack")) return "#5865F2";     // Discord Blurple
+            if (id.Contains("edge") || name.Contains("edge")) return "#0EA5E9"; // Sky Blue
+            if (id.Contains("chrome") || name.Contains("chrome")) return "#FF5722"; // Vibrant Coral Red
+            if (id.Contains("firefox") || name.Contains("firefox")) return "#FF7849"; // Orange
+            if (id.Contains("code") || id.Contains("vscode")) return "#38BDF8"; // VS Code Light Blue
+            if (id.Contains("visualstudio")) return "#C084FC"; // Light Purple
+            if (id.Contains("spotify")) return "#22C55E"; // Vivid Green
+            if (id.Contains("discord") || id.Contains("slack")) return "#818CF8"; // Indigo
+            if (id.Contains("download") || name.Contains("download") || id.Contains("idm")) return "#06B6D4"; // Electric Cyan
+            if (id.Contains("git") || id.Contains("github")) return "#F97316"; // Orange
+            if (id.Contains("python")) return "#FACC15"; // Yellow
+            if (id.Contains("node")) return "#4ADE80"; // Mint Green
+            if (id.Contains("steam")) return "#60A5FA"; // Blue
+            if (id.Contains("7zip") || id.Contains("winrar")) return "#34D399"; // Emerald
 
-            return "#3B82F6"; // Default Accent Blue
+            return "#38BDF8"; // Vibrant Sky Blue (high contrast against dark backgrounds)
         }
     }
 
@@ -390,7 +469,7 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
             try
             {
                 var color = ColorFromHex(BrandColorHex);
-                return new SolidColorBrush(Color.FromArgb(38, color.R, color.G, color.B)); // 15% opacity tint
+                return new SolidColorBrush(Color.FromArgb(55, color.R, color.G, color.B)); // 22% opacity tint for rich aura
             }
             catch { return null; }
         }
@@ -404,7 +483,7 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
             try
             {
                 var color = ColorFromHex(BrandColorHex);
-                return new SolidColorBrush(Color.FromArgb(76, color.R, color.G, color.B)); // 30% opacity border
+                return new SolidColorBrush(Color.FromArgb(120, color.R, color.G, color.B)); // 47% opacity for crisp border
             }
             catch { return null; }
         }

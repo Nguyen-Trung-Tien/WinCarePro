@@ -160,6 +160,40 @@ public partial class NetworkViewModel
                     {
                         Connections.Add(item);
                     }
+
+                    // Populate TopProcesses from raw connections (grouped by application)
+                    var topGrouped = _rawConnections
+                        .Where(c => !string.IsNullOrWhiteSpace(c.ProcessName) && c.Pid > 4)
+                        .GroupBy(c => c.ProcessName)
+                        .OrderByDescending(g => g.Count())
+                        .Take(6)
+                        .Select(g =>
+                        {
+                            var first = g.First();
+                            var pName = g.Key.ToLowerInvariant();
+                            string glyph = "\uE71D";
+                            if (pName.Contains("chrome") || pName.Contains("edge") || pName.Contains("firefox") || pName.Contains("brave")) glyph = "\uE774";
+                            else if (pName.Contains("discord") || pName.Contains("telegram") || pName.Contains("teams") || pName.Contains("zalo")) glyph = "\uE915";
+                            else if (pName.Contains("steam") || pName.Contains("epic") || pName.Contains("riot") || pName.Contains("game")) glyph = "\uE7FC";
+                            else if (pName.Contains("spotify") || pName.Contains("music")) glyph = "\uE8D6";
+                            else if (pName.Contains("svchost") || pName.Contains("system")) glyph = "\uE770";
+
+                            return new ProcessGroupInfo
+                            {
+                                ProcessName = g.Key,
+                                Pid = first.Pid,
+                                ConnectionCount = g.Count(),
+                                StateSummary = g.Any(x => x.State.Equals("ESTABLISHED", StringComparison.OrdinalIgnoreCase)) ? "ESTABLISHED" : first.State,
+                                IconGlyph = glyph,
+                                Description = $"{g.Count()} sockets • PID: {first.Pid}"
+                            };
+                        }).ToList();
+
+                    TopProcesses.Clear();
+                    foreach (var p in topGrouped)
+                    {
+                        TopProcesses.Add(p);
+                    }
                 }
                 catch { }
             });

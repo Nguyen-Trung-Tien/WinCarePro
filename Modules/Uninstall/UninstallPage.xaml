@@ -63,8 +63,8 @@
             <RowDefinition Height="*" />    <!-- 3: Master-Detail List Area -->
         </Grid.RowDefinitions>
 
-        <!-- 0. Page Header (Harmonized with JunkPage, DiskPage, SecurityPage) -->
-        <Grid Grid.Row="0" Margin="0,0,0,18">
+        <!-- 0. Page Header (Modernized Next-Gen Studio Layout) -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -80,7 +80,8 @@
                     <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
                         <FontIcon Glyph="&#xE74D;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <TextBlock Text="App Uninstaller" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="App Management Studio" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    
                     <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="5">
                             <Ellipse Width="6" Height="6" Fill="{ThemeResource AppRamChipFg}"/>
@@ -88,6 +89,7 @@
                             <TextBlock Text="{x:Bind ViewModel.TotalAppsCount, Mode=OneWay}" FontSize="11" FontWeight="ExtraBold" Foreground="{ThemeResource AppRamChipFg}" />
                         </StackPanel>
                     </Border>
+                    
                     <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="5">
                             <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
@@ -95,13 +97,29 @@
                             <TextBlock Text="{x:Bind ViewModel.TotalAppsSizeFormatted, Mode=OneWay}" FontSize="11" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeGoodFg}" />
                         </StackPanel>
                     </Border>
+
+                    <!-- Dynamic Bloatware Alert Badge -->
+                    <Border Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center" Visibility="{x:Bind GetBloatwareNoticeVisibility(ViewModel.IsBloatwareDetected), Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <Ellipse Width="6" Height="6" Fill="{ThemeResource AppStatusDangerBrush}"/>
+                            <TextBlock Text="Bloatware:" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Text="{x:Bind ViewModel.BloatwareAppsCount, Mode=OneWay}" FontSize="11" FontWeight="ExtraBold" Foreground="{ThemeResource AppStatusDangerBrush}" />
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-                <TextBlock Text="Cleanly uninstall apps &amp; remove leftover data." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Smart application lifecycle, residual trace purge &amp; bloatware shield." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
-            <!-- Right: Async Scan Action Button -->
+            <!-- Right: Async Scan & Smart Bloatware Action Buttons -->
             <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <Button x:Name="ReloadBtn" Style="{StaticResource DefaultButtonStyle}" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" MinWidth="160" Padding="16,8" CornerRadius="8">
+                <Button Style="{StaticResource CyberTactileButtonStyle}" Click="OnCleanBloatwareClick" Visibility="{x:Bind GetBloatwareNoticeVisibility(ViewModel.IsBloatwareDetected), Mode=OneWay}" CornerRadius="8" Padding="14,8" ToolTipService.ToolTip="Select and queue all detected bloatware applications">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="13" Foreground="{ThemeResource AppStatusDangerBrush}" />
+                        <TextBlock Text="Select Bloatware" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="ReloadBtn" Style="{StaticResource DefaultButtonStyle}" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" MinWidth="150" Padding="16,8" CornerRadius="8">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="ScanAppsRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" VerticalAlignment="Center"/>
                         <FontIcon x:Name="ScanAppsIcon" Glyph="&#xE72C;" FontSize="13" />
@@ -111,94 +129,113 @@
             </StackPanel>
         </Grid>
 
-        <!-- 1. Unified Stat Ribbon Deck (Harmonized with StartupPage & SystemOptimizer) -->
-        <Border Grid.Row="1" Margin="0,0,0,16" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,12"
-                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="14">
-            <Grid x:Name="TopStatsGrid">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" /> <!-- Divider 1 -->
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" /> <!-- Divider 2 -->
-                    <ColumnDefinition x:Name="StatCol2" Width="1*" />
-                    <ColumnDefinition Width="Auto" /> <!-- Divider 3 -->
-                    <ColumnDefinition Width="1.2*" />
-                </Grid.ColumnDefinitions>
-
-                <!-- Section 1: Total Apps -->
-                <Grid Grid.Column="0">
+        <!-- 1. Interactive Cyber-Bento Insights Deck (5 Dynamic Clickable Insight Capsules) -->
+        <Border Grid.Row="1" Margin="0,0,0,16" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,10"
+                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="12">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
+                <Grid x:Name="TopStatsGrid" ColumnSpacing="12" MinWidth="720">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1.1*" />
+                        <ColumnDefinition Width="1.1*" />
                     </Grid.ColumnDefinitions>
-                    <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusPurpleBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE71D;" FontSize="16" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <TextBlock Text="Total Apps" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.TotalAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                    </StackPanel>
-                </Grid>
 
-                <!-- Vertical Divider 1 -->
-                <Border Grid.Column="1" Width="1" Height="32" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="16,0" Opacity="0.4" VerticalAlignment="Center"/>
+                <!-- Section 0: Total Apps -->
+                <Button Grid.Column="0" Tag="0" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10">
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatusPurpleBackground}" Margin="0,0,10,0" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE71D;" FontSize="15" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                            <TextBlock Text="Total Apps" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Text="{x:Bind ViewModel.TotalAppsCount, Mode=OneWay}" FontSize="17" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
 
-                <!-- Section 2: Win32 Desktop Apps -->
-                <Grid Grid.Column="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusInfoBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE736;" FontSize="16" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <TextBlock Text="Win32 Desktop" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.DesktopAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                    </StackPanel>
-                </Grid>
+                <!-- Section 1: Win32 Desktop Apps -->
+                <Button Grid.Column="1" Tag="1" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10">
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatusInfoBackground}" Margin="0,0,10,0" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE736;" FontSize="15" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                            <TextBlock Text="Win32 Desktop" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Text="{x:Bind ViewModel.DesktopAppsCount, Mode=OneWay}" FontSize="17" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
 
-                <!-- Vertical Divider 2 -->
-                <Border x:Name="StatDivider2" Grid.Column="3" Width="1" Height="32" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="16,0" Opacity="0.4" VerticalAlignment="Center"/>
+                <!-- Section 2: Store Apps -->
+                <Button Grid.Column="2" Tag="2" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10">
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatusCyanBackground}" Margin="0,0,10,0" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE719;" FontSize="15" Foreground="{ThemeResource AppStatusCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                            <TextBlock Text="Store Apps" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Text="{x:Bind ViewModel.StoreAppsCount, Mode=OneWay}" FontSize="17" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
 
-                <!-- Section 3: Store Apps -->
-                <Grid Grid.Column="4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusCyanBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE719;" FontSize="16" Foreground="{ThemeResource AppStatusCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <TextBlock Text="Store Apps" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.StoreAppsCount, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                    </StackPanel>
-                </Grid>
+                <!-- Section 3: Occupied Space / Large Apps -->
+                <Button Grid.Column="3" Tag="3" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10">
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatusGoodBackground}" Margin="0,0,10,0" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE95A;" FontSize="15" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                            <TextBlock Text="Occupied Space" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Text="{x:Bind ViewModel.TotalAppsSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="{ThemeResource AppStatusGoodBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        </StackPanel>
+                    </Grid>
+                </Button>
 
-                <!-- Vertical Divider 3 -->
-                <Border Grid.Column="5" Width="1" Height="32" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="16,0" Opacity="0.4" VerticalAlignment="Center"/>
-
-                <!-- Section 4: Occupied Space -->
-                <Grid Grid.Column="6">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusGoodBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE95A;" FontSize="16" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <TextBlock Text="Occupied Space" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.TotalAppsSizeFormatted, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource AppStatusGoodBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                    </StackPanel>
-                </Grid>
+                <!-- Section 4: Bloatware Detection -->
+                <Button Grid.Column="4" Tag="4" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10">
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatusDangerBackground}" Margin="0,0,10,0" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE7BA;" FontSize="15" Foreground="{ThemeResource AppStatusDangerBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                            <TextBlock Text="Bloatware Shield" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="{x:Bind ViewModel.BloatwareAppsCount, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="{ThemeResource AppStatusDangerBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                <TextBlock Text="Detected" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Button>
             </Grid>
+            </ScrollViewer>
         </Border>
 
-        <!-- 2. Search & Filters Bar (Harmonized with StartupPage & JunkPage) -->
-        <Border Grid.Row="2" Margin="0,0,0,16" Style="{StaticResource GlassmorphismCardStyle}" Padding="12,10"
-                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="10">
+        <!-- 2. Smart Command Bar (Instant Search + Segmented Filters + Sorting) -->
+        <Border Grid.Row="2" Margin="0,0,0,16" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,8"
+                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="2.5" helpers:Animation3DHelper.DepthZ="8">
             <Grid x:Name="FiltersGrid" RowSpacing="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -206,7 +243,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="FiltersCol0" Width="300" />
+                    <ColumnDefinition x:Name="FiltersCol0" Width="280" />
                     <ColumnDefinition x:Name="FiltersCol1" Width="*" />
                     <ColumnDefinition x:Name="FiltersCol2" Width="Auto" />
                 </Grid.ColumnDefinitions>
@@ -214,23 +251,46 @@
                 <!-- Instant Search Box -->
                 <TextBox x:Name="AppSearch" PlaceholderText="Search apps by name, publisher, version..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" VerticalAlignment="Center" Height="34" CornerRadius="8"/>
                 
-                <!-- Filters & Sorting Controls -->
-                <StackPanel Grid.Column="1" x:Name="FilterStack" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" Margin="24,0,0,0">
-                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE71C;" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock Text="Filter:" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
-                        <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedFilterIndex, Mode=TwoWay}" MinWidth="160" Height="32" CornerRadius="6">
-                            <ComboBoxItem Content="All Types"/>
-                            <ComboBoxItem Content="Desktop Apps"/>
-                            <ComboBoxItem Content="Store Apps"/>
-                            <ComboBoxItem Content="Large Apps (>500MB)"/>
-                        </ComboBox>
-                    </StackPanel>
+                <!-- Segmented Pills Controls -->
+                <StackPanel Grid.Column="1" x:Name="FilterStack" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <Button Tag="0" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="12,5" CornerRadius="8">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE8D2;" FontSize="11"/>
+                            <TextBlock Text="All Apps" FontSize="11.5"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Tag="1" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="12,5" CornerRadius="8">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE736;" FontSize="11" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
+                            <TextBlock Text="Desktop" FontSize="11.5"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Tag="2" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="12,5" CornerRadius="8">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE719;" FontSize="11" Foreground="{ThemeResource AppStatusCyanBrush}"/>
+                            <TextBlock Text="Store" FontSize="11.5"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Tag="3" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="12,5" CornerRadius="8">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE95A;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                            <TextBlock Text="Large (&gt;500MB)" FontSize="11.5"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Tag="4" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="12,5" CornerRadius="8">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE7BA;" FontSize="11" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                            <TextBlock Text="Bloatware" FontSize="11.5" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
 
-                    <StackPanel x:Name="SortStack" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <!-- Sorting Controls & Selection Status Chip -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <StackPanel x:Name="SortStack" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE8CB;" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         <TextBlock Text="Sort:" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
-                        <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedSortIndex, Mode=TwoWay}" MinWidth="160" Height="32" CornerRadius="6">
+                        <ComboBox SelectedIndex="{x:Bind ViewModel.SelectedSortIndex, Mode=TwoWay}" MinWidth="140" Height="32" CornerRadius="6">
                             <ComboBoxItem Content="Name (A-Z)"/>
                             <ComboBoxItem Content="Name (Z-A)"/>
                             <ComboBoxItem Content="Size (Largest)"/>
@@ -239,16 +299,16 @@
                             <ComboBoxItem Content="Date (Oldest)"/>
                         </ComboBox>
                     </StackPanel>
-                </StackPanel>
 
-                <!-- Selection Status Chip -->
-                <Border Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center" Visibility="{x:Bind GetBatchBarVisibility(ViewModel.HasSelectedApps), Mode=OneWay}">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                        <TextBlock Text="Selected:" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock Text="{x:Bind ViewModel.SelectedAppsCount, Mode=OneWay}" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                    </StackPanel>
-                </Border>
+                    <!-- Selection Status Chip -->
+                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center" Visibility="{x:Bind GetBatchBarVisibility(ViewModel.HasSelectedApps), Mode=OneWay}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Selected:" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAppsCount, Mode=OneWay}" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </Grid>
         </Border>
 
@@ -289,7 +349,7 @@
                                     <CheckBox Grid.Column="0" IsChecked="{x:Bind ViewModel.IsAllAppsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" ToolTipService.ToolTip="Select / Deselect All" />
                                     <Border Grid.Column="1" Width="40" Margin="0,0,12,0" Background="Transparent" />
                                     <TextBlock Grid.Column="2" Text="Application Name" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="3" Text="Type" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="8,0,8,0"/>
+                                    <TextBlock Grid.Column="3" Text="Type &amp; Health" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="8,0,8,0"/>
                                     <TextBlock Grid.Column="4" Text="Size" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0"/>
                                     <TextBlock Grid.Column="5" Text="Action" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="70"/>
                                 </Grid>
@@ -301,8 +361,8 @@
                                             <ColumnDefinition Width="Auto" /> <!-- Checkbox -->
                                             <ColumnDefinition Width="Auto" /> <!-- Icon Wrapper -->
                                             <ColumnDefinition Width="*" />    <!-- Name & Publisher -->
-                                            <ColumnDefinition Width="120" />  <!-- Badges -->
-                                            <ColumnDefinition Width="100" />  <!-- Size -->
+                                            <ColumnDefinition Width="140" />  <!-- Badges -->
+                                            <ColumnDefinition Width="90" />   <!-- Size -->
                                             <ColumnDefinition Width="Auto" /> <!-- Action Button -->
                                         </Grid.ColumnDefinitions>
                                         
@@ -322,18 +382,25 @@
                                             </StackPanel>
                                         </StackPanel>
 
-                                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="12,0,12,0">
+                                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="8,0,8,0">
                                             <!-- Desktop Badge -->
-                                            <Border Background="{ThemeResource AppStatusPurpleBackground}" BorderBrush="{ThemeResource AppStatusPurpleBorder}" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsDesktopApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                                <TextBlock Text="Win32 Desktop" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
+                                            <Border Background="{ThemeResource AppStatusPurpleBackground}" BorderBrush="{ThemeResource AppStatusPurpleBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" Visibility="{x:Bind IsDesktopApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                                <TextBlock Text="Desktop" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
                                             </Border>
                                             <!-- Store Badge -->
-                                            <Border Background="{ThemeResource AppStatusCyanBackground}" BorderBrush="{ThemeResource AppStatusCyanBorder}" BorderThickness="1" CornerRadius="6" Padding="8,2" Visibility="{x:Bind IsStoreApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                                <TextBlock Text="Store App" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource AppStatusCyanBrush}"/>
+                                            <Border Background="{ThemeResource AppStatusCyanBackground}" BorderBrush="{ThemeResource AppStatusCyanBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" Visibility="{x:Bind IsStoreApp, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                                <TextBlock Text="Store" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource AppStatusCyanBrush}"/>
+                                            </Border>
+                                            <!-- Bloatware Badge -->
+                                            <Border Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" Visibility="{x:Bind BloatwareVisibility, Mode=OneWay}">
+                                                <StackPanel Orientation="Horizontal" Spacing="3">
+                                                    <FontIcon Glyph="&#xE7BA;" FontSize="8.5" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                                                    <TextBlock Text="Bloatware" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                                                </StackPanel>
                                             </Border>
                                         </StackPanel>
 
-                                        <TextBlock Grid.Column="4" Text="{x:Bind SizeFormatted, Mode=OneWay}" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Column="4" Text="{x:Bind SizeFormatted, Mode=OneWay}" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,12,0" FontWeight="SemiBold" Typography.NumeralAlignment="Tabular"/>
 
                                         <Button Grid.Column="5" Content="Uninstall" FontSize="10.5" Padding="10,4" Click="OnSingleUninstallClick" Style="{StaticResource DangerButtonStyle}" CornerRadius="6" VerticalAlignment="Center" ToolTipService.ToolTip="Uninstall this application" AutomationProperties.Name="Uninstall Application"/>
                                     </Grid>
@@ -444,7 +511,15 @@
                                     </Grid>
                                     <Grid>
                                         <TextBlock Text="Total Size:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.SizeFormatted, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Right"/>
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.SizeFormatted, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Right" Typography.NumeralAlignment="Tabular"/>
+                                    </Grid>
+                                    <Grid>
+                                        <TextBlock Text="Residual Risk:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.ResidualRiskText, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                    <Grid Visibility="{x:Bind ViewModel.SelectedApp.BloatwareVisibility, Mode=OneWay}">
+                                        <TextBlock Text="AI Analysis:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedApp.HealthBadgeText, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppStatusDangerBrush}" HorizontalAlignment="Right"/>
                                     </Grid>
                                     <Grid>
                                         <TextBlock Text="Registry Hive:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
@@ -514,23 +589,30 @@
                 </Border>
             </Grid>
 
-            <!-- Bottom Floating Batch Action Bar -->
-            <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" BorderBrush="{StaticResource PrimaryAccentGradient}" BorderThickness="1.5" Margin="0,12,0,0" Padding="16,10" Visibility="{x:Bind GetBatchBarVisibility(ViewModel.HasSelectedApps), Mode=OneWay}">
+            <!-- Bottom Floating Batch Action Bar (Aura Kinetic Pill) -->
+            <Border Grid.Row="1" Style="{StaticResource GlassmorphismCardStyle}" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}" BorderBrush="{StaticResource PrimaryAccentGradient}" BorderThickness="1.5" Margin="0,12,0,0" Padding="18,10" CornerRadius="16" Visibility="{x:Bind GetBatchBarVisibility(ViewModel.HasSelectedApps), Mode=OneWay}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
+                    
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE736;" FontSize="18" Foreground="{ThemeResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Batch Actions" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" />
-                        <TextBlock Text="•" FontSize="14" VerticalAlignment="Center" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        <TextBlock Text="Multiple applications are selected for queued execution" FontSize="12.5" VerticalAlignment="Center" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <Border Width="34" Height="34" CornerRadius="17" Background="{StaticResource PrimaryAccentLightBrush}">
+                            <FontIcon Glyph="&#xE73E;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center" Spacing="1">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="{x:Bind ViewModel.SelectedAppsCount, Mode=OneWay}" FontWeight="ExtraBold" FontSize="13.5" Foreground="{StaticResource PrimaryAccentBrush}" Typography.NumeralAlignment="Tabular"/>
+                                <TextBlock Text="Applications Queued" FontWeight="Bold" FontSize="13.5" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAppsSizeFormatted, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
                     </StackPanel>
                     
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                        <Button Content="Standard Uninstall Selected" Click="OnBatchUninstallClick" Style="{StaticResource DangerButtonStyle}" FontSize="12" Padding="16,6" CornerRadius="6" ToolTipService.ToolTip="Run sequential uninstaller for all selected apps" AutomationProperties.Name="Standard Uninstall Selected Applications"/>
-                        <Button Content="Force Wipe Selected" Click="OnBatchForceUninstallClick" Style="{StaticResource DangerButtonStyle}" FontSize="12" Padding="16,6" CornerRadius="6" ToolTipService.ToolTip="Force remove all selected apps and residuals" AutomationProperties.Name="Force Wipe Selected Applications"/>
+                        <Button Content="Standard Uninstall Selected" Click="OnBatchUninstallClick" Style="{StaticResource DangerButtonStyle}" FontSize="12" Padding="16,6" CornerRadius="8" ToolTipService.ToolTip="Run sequential uninstaller for all selected apps" AutomationProperties.Name="Standard Uninstall Selected Applications"/>
+                        <Button Content="Force Wipe Selected" Click="OnBatchForceUninstallClick" Style="{StaticResource DangerButtonStyle}" FontSize="12" Padding="16,6" CornerRadius="8" ToolTipService.ToolTip="Force remove all selected apps and residuals" AutomationProperties.Name="Force Wipe Selected Applications"/>
                     </StackPanel>
                 </Grid>
             </Border>

@@ -555,6 +555,12 @@
                 <GradientStop Color="#00FFFFFF" Offset="1.0" />
             </LinearGradientBrush>
 
+            <LinearGradientBrush x:Key="SkeletonShimmerBrush" StartPoint="0,0" EndPoint="1,0">
+                <GradientStop Color="#06FFFFFF" Offset="0.0" />
+                <GradientStop Color="#16FFFFFF" Offset="0.5" />
+                <GradientStop Color="#06FFFFFF" Offset="1.0" />
+            </LinearGradientBrush>
+
             <LinearGradientBrush x:Key="AiInsightBorderGradient" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#608B5CF6" Offset="0" />
                 <GradientStop Color="#3006B6D4" Offset="0.5" />
@@ -562,25 +568,41 @@
             </LinearGradientBrush>
 
             <!-- Card Containers Styling — Clean Windows 11 Fluent Structure -->
+            <Style x:Key="CockpitBentoCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="Padding" Value="16" />
+            </Style>
+
+            <Style x:Key="FloatingCommandIslandStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardSubtleBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="Padding" Value="12,4" />
+            </Style>
+
             <Style x:Key="ModernCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="14" />
             </Style>
 
             <Style x:Key="GradientBorderCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="14" />
             </Style>
 
             <Style x:Key="GlowCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="14" />
             </Style>
 
             <!-- Fluent Glassmorphism Card -->
@@ -588,7 +610,27 @@
                 <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="14" />
+            </Style>
+
+            <!-- Spatial Nebula Fluent 2.5 Card -->
+            <Style x:Key="SpatialNebulaCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="Padding" Value="18" />
+            </Style>
+
+            <!-- Quantum Boost 1-Click Action Button -->
+            <Style x:Key="QuantumBoostButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="Padding" Value="20,9" />
             </Style>
 
             <!-- Quick Stat Card (compact info chip) -->
@@ -599,6 +641,69 @@
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,8" />
                 <Setter Property="MinHeight" Value="48" />
+            </Style>
+
+            <Style x:Key="CockpitQuickStatCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="12,10" />
+                <Setter Property="MinHeight" Value="54" />
+            </Style>
+
+            <!-- Cyber-Bento Cockpit & Fluid Aura Glass Styles -->
+            <Style x:Key="CyberBentoHeroCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="Padding" Value="18,16" />
+            </Style>
+
+            <Style x:Key="CyberStatCapsuleStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="Padding" Value="12,10" />
+                <Setter Property="MinHeight" Value="58" />
+            </Style>
+
+            <Style x:Key="CyberTactileButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="12,6" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="FontSize" Value="12" />
+            </Style>
+
+            <!-- Spatial Bento Glass 3.0 Styles -->
+            <Style x:Key="SpatialBentoCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="Padding" Value="16" />
+            </Style>
+
+            <Style x:Key="LuminescentHeroCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="Padding" Value="20,18" />
+            </Style>
+
+            <Style x:Key="BentoStatCapsuleStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="Padding" Value="12,10" />
+                <Setter Property="MinHeight" Value="56" />
             </Style>
 
             <!-- Status Badge Styles -->

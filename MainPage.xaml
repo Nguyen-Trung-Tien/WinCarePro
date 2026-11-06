@@ -12,22 +12,26 @@
         <!-- OpenPaneLength set to 220px, CompactPaneLength to 60px -->
         <NavigationView x:Name="NavView" PaneDisplayMode="Auto" SelectionChanged="OnNavSelectionChanged" BackRequested="OnNavBackRequested" IsBackButtonVisible="Auto" AlwaysShowHeader="False" IsSettingsVisible="True" OpenPaneLength="220" CompactPaneLength="60" Background="Transparent">
 
-            <!-- v3.0 Nova — User Chip in Pane Footer -->
+            <!-- v5.2 Spatial Glass — User Profile Capsule in Pane Footer -->
             <NavigationView.PaneFooter>
                 <StackPanel Padding="0,0,0,12">
-                    <!-- User Profile Chip at the bottom — Soft rounded pill button with full keyboard navigation -->
-                    <Button x:Name="UserProfileButton" Margin="6,4,6,4" Padding="6,5" CornerRadius="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnUserProfileClick" AutomationProperties.Name="User Profile Settings" AutomationProperties.HelpText="Open Settings page to configure user preferences and application options.">
+                    <!-- User Profile Chip at the bottom — Spatial Glass pill button with full keyboard navigation -->
+                    <Button x:Name="UserProfileButton" Margin="8,4,8,4" Padding="8,6" CornerRadius="14" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnUserProfileClick" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98" AutomationProperties.Name="User Profile Settings" AutomationProperties.HelpText="Open Settings page to configure user preferences and application options.">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border x:Name="UserAvatarBorder" Grid.Column="0" Width="32" Height="32" CornerRadius="16" Background="{StaticResource CyberAccentGradient}" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xE77B;" FontSize="14" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1" Margin="8,0,0,0" Visibility="{x:Bind NavView.IsPaneOpen, Mode=OneWay}">
-                                <TextBlock x:Name="NavUserName" Text="User" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource NavigationViewItemForeground}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
-                                <TextBlock x:Name="NavMachineName" Text="PC" FontSize="12" Foreground="{ThemeResource NavigationViewItemHeaderForeground}" TextTrimming="CharacterEllipsis" MaxWidth="130"/>
+                            <Grid Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Border x:Name="UserAvatarBorder" Width="32" Height="32" CornerRadius="16" Background="{StaticResource CyberAccentGradient}">
+                                    <FontIcon Glyph="&#xE77B;" FontSize="14" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Border>
+                                <!-- Online Status Beacon -->
+                                <Border Width="9" Height="9" CornerRadius="4.5" Background="#FF10B981" BorderBrush="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-1,-1"/>
+                            </Grid>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1" Margin="10,0,0,0" Visibility="{x:Bind NavView.IsPaneOpen, Mode=OneWay}">
+                                <TextBlock x:Name="NavUserName" Text="User" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource NavigationViewItemForeground}" TextTrimming="CharacterEllipsis" MaxWidth="130" FontFamily="Segoe UI Variable Display"/>
+                                <TextBlock x:Name="NavMachineName" Text="PC" FontSize="11" Foreground="{ThemeResource NavigationViewItemHeaderForeground}" TextTrimming="CharacterEllipsis" MaxWidth="130" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                             </StackPanel>
                         </Grid>
                     </Button>

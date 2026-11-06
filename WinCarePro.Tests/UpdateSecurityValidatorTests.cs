@@ -375,4 +375,47 @@ public class UpdateSecurityValidatorTests
         string hash3 = await UpdateSecurityValidator.TryFetchCompanionSha256Async(client, "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v99.99.99/FakeSetup.exe");
         Assert.Equal(string.Empty, hash3);
     }
+
+    [Fact]
+    public void SoftwareUpdateInfo_SmartIntelligenceProperties_IdentifySecurityAndMajorBumpsCorrectly()
+    {
+        // 1. Security-critical app (e.g. Browser or Security tool)
+        var secApp = new WinCarePro.Models.SoftwareUpdateInfo
+        {
+            Name = "Google Chrome",
+            Id = "Google.Chrome",
+            InstalledVersion = "128.0.6613.120",
+            AvailableVersion = "130.0.6723.59"
+        };
+        Assert.True(secApp.IsSecurityPatch);
+        Assert.True(secApp.IsMajorVersionBump);
+        Assert.Equal("CVE Patch", secApp.UpdateCategory);
+        Assert.Contains("security", secApp.SmartSummary, StringComparison.OrdinalIgnoreCase);
+
+        // 2. Normal feature tool with major version bump
+        var devTool = new WinCarePro.Models.SoftwareUpdateInfo
+        {
+            Name = "Visual Studio Code",
+            Id = "Microsoft.VisualStudioCode",
+            InstalledVersion = "1.92.0",
+            AvailableVersion = "2.0.0"
+        };
+        Assert.False(devTool.IsSecurityPatch);
+        Assert.True(devTool.IsMajorVersionBump);
+        Assert.Equal("Major Bump", devTool.UpdateCategory);
+        Assert.Contains("generation", devTool.SmartSummary, StringComparison.OrdinalIgnoreCase);
+
+        // 3. Minor patch optimization
+        var utilApp = new WinCarePro.Models.SoftwareUpdateInfo
+        {
+            Name = "7-Zip Utility",
+            Id = "7zip.7zip",
+            InstalledVersion = "24.08",
+            AvailableVersion = "24.09"
+        };
+        Assert.False(utilApp.IsSecurityPatch);
+        Assert.False(utilApp.IsMajorVersionBump);
+        Assert.Equal("Optimization", utilApp.UpdateCategory);
+        Assert.Contains("optimization", utilApp.SmartSummary, StringComparison.OrdinalIgnoreCase);
+    }
 }

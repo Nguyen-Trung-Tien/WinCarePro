@@ -67,81 +67,88 @@
 
         <!-- Vertical Navigation Panel (Secondary Sidebar) -->
         <Border x:Name="SidebarBorder" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,1,0" Padding="0,0,16,0">
-            <!-- Navigation List -->
-            <ListView x:Name="SettingsNavList" SelectedIndex="0" SelectionChanged="SettingsNavList_SelectionChanged" SelectionMode="Single">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel x:Name="SettingsNavStackPanel" Orientation="Vertical" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                    
-                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+            <StackPanel Spacing="10">
+                <!-- Sidebar Category Header -->
+                <StackPanel Spacing="2" Margin="8,4,0,8">
+                    <TextBlock Text="SETTINGS HUB" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}" CharacterSpacing="12" FontFamily="Segoe UI Variable Display"/>
+                    <TextBlock Text="Preferences &amp; System" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display"/>
+                </StackPanel>
+
+                <!-- Navigation List -->
+                <ListView x:Name="SettingsNavList" SelectedIndex="0" SelectionChanged="SettingsNavList_SelectionChanged" SelectionMode="Single">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel x:Name="SettingsNavStackPanel" Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                        
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="10" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE713;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="General Configuration" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="10" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE790;" FontSize="13" Foreground="#FF06B6D4" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="Appearance &amp; Theme" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="10" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE812;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="Auto Maintenance" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="10" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xEA8F;" FontSize="13" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="Telemetry &amp; Alert Policy" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="10" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="Safety &amp; Rollback" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="10" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE7F1;" FontSize="13" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="Database &amp; Storage" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="10" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE75C;" FontSize="13" Foreground="#FFEC4899" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="Software Updates" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="10" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE7B4;" FontSize="13" Foreground="#FF6366F1" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="Advanced &amp; Sandbox" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
+                    <ListViewItem Height="42" Padding="8,0" CornerRadius="10" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE8AC;" FontSize="13" Foreground="#FFE81123" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="Backup &amp; Reset" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
@@ -149,7 +156,7 @@
                     </ListViewItem>
                     <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE946;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="About &amp; Developer" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
@@ -157,20 +164,59 @@
                     </ListViewItem>
                     <ListViewItem Height="42" Padding="8,0" CornerRadius="8" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="26" Height="26" CornerRadius="6" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE897;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <TextBlock Text="Feature Guide &amp; Manual" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
                 </ListView>
+            </StackPanel>
         </Border>
 
-        <!-- Content Area -->
+        <!-- Content Area with Symmetrical Fluid Layout -->
         <ScrollViewer x:Name="ContentScrollViewer" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Padding="24,0,4,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <Grid>
-                <!-- Section 0: General Configuration -->
-                <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 0), Mode=OneWay}">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Row 0: Device Identity & Master Control Glass Banner -->
+                <Border Grid.Row="0" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="16" Padding="20,16" Margin="0,0,0,20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="48" Height="48" CornerRadius="14" Background="{StaticResource PrimaryAccentGradient}" VerticalAlignment="Center" Margin="0,0,16,0">
+                            <FontIcon Glyph="&#xE7F4;" FontSize="22" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                            <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                <TextBlock x:Name="DeviceHostNameText" Text="WIN-DEVICE" FontSize="17" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="7,2.5" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
+                                        <TextBlock Text="WinCare Pro Active" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}" FontFamily="Segoe UI Variable Display"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                            <TextBlock x:Name="DeviceOsInfoText" Text="Microsoft Windows x64 • High Performance Workstation" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontFamily="Segoe UI Variable Display"/>
+                        </StackPanel>
+                        <!-- Quick Presets Actions in Header -->
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Button Content="Reset Defaults" Click="OnResetDefaultsClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="10" FontSize="11.5" FontWeight="SemiBold"/>
+                            <Button Content="Export Backup" Click="OnExportSettingsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="16,0" CornerRadius="10" FontSize="11.5" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Row 1: Modular Settings Content Sections Container -->
+                <Grid Grid.Row="1">
+                    <!-- Section 0: General Configuration -->
+                    <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 0), Mode=OneWay}">
                     <!-- Section Header Banner -->
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -729,7 +775,7 @@
                                     <!-- Top Left: Version & Title -->
                                     <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                         <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="6" Padding="6,2">
-                                            <TextBlock Text="v5.1.2" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                            <TextBlock Text="v5.2.0" FontSize="11" FontWeight="Bold" Foreground="White"/>
                                         </Border>
                                         <TextBlock Text="WinCare Pro Distribution Channel" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                     </StackPanel>
@@ -1034,7 +1080,7 @@
                             </StackPanel>
                         </StackPanel>
                         <Border Grid.Column="1" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                            <TextBlock Text="v5.1.2 Polaris" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="v5.2.0 Polaris" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                         </Border>
                     </Grid>
                     
@@ -1072,7 +1118,7 @@
                                                 </Border>
                                             </StackPanel>
                                             <TextBlock Text="Next-Generation System Optimizer, Security Shield &amp; Care Suite" FontSize="12.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                            <TextBlock Text="Version 5.1.2 (Codename: Polaris) • 64-bit Native System Suite" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
+                                            <TextBlock Text="Version 5.2.0 (Codename: Polaris) • 64-bit Native System Suite" FontSize="11.5" Foreground="{ThemeResource PrimaryAccentBrush}" FontWeight="SemiBold" />
                                         </StackPanel>
                                     </StackPanel>
 
@@ -1080,7 +1126,7 @@
                                     <Button Grid.Column="1" Click="OnViewChangelogClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="14,8" VerticalAlignment="Center" ToolTipService.ToolTip="View official release notes &amp; new features changelog">
                                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE789;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}"/>
-                                            <TextBlock Text="What's New in v5.1.2" FontSize="12" FontWeight="SemiBold"/>
+                                            <TextBlock Text="What's New in v5.2.0" FontSize="12" FontWeight="SemiBold"/>
                                         </StackPanel>
                                     </Button>
                                 </Grid>
@@ -1292,6 +1338,7 @@
 
                 <!-- Section 10: Feature Guide & System Manual -->
                 <local:UserGuideView Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 10), Mode=OneWay}" />
+                </Grid>
             </Grid>
         </ScrollViewer>
     </Grid>

@@ -147,4 +147,20 @@ public class NetworkCenterEngineTests
         // Assert
         Assert.Contains(tag.ToLowerInvariant(), canonicalActions);
     }
+
+    [Fact]
+    public void ProcessGroupInfo_CalculatesDisplayCountCorrectly()
+    {
+        var group = new ProcessGroupInfo
+        {
+            ProcessName = "chrome.exe",
+            Pid = 1234,
+            ConnectionCount = 15,
+            StateSummary = "ESTABLISHED"
+        };
+
+        Assert.Equal("15 sockets", group.DisplayCount);
+        Assert.Equal("chrome.exe", group.ProcessName);
+        Assert.Equal(1234, group.Pid);
+    }
 }

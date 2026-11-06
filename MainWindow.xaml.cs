@@ -130,7 +130,19 @@ public sealed partial class MainWindow : Window
             InitializeAppAsync();
         }
 
-        TranslationManager.Instance.LanguageChanged += (s, e) => PopulateSearchRegistry();
+        TranslationManager.Instance.LanguageChanged += (s, e) =>
+        {
+            PopulateSearchRegistry();
+            if (SearchBox != null)
+            {
+                SearchBox.PlaceholderText = "Search tools, diagnostics, settings... (Ctrl + K)".T();
+            }
+        };
+
+        if (SearchBox != null)
+        {
+            SearchBox.PlaceholderText = "Search tools, diagnostics, settings... (Ctrl + K)".T();
+        }
     }
 
     private void CenterOnScreen(int width = 1560, int height = 920)

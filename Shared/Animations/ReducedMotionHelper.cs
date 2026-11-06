@@ -49,7 +49,7 @@ public static class ReducedMotionHelper
                 }
             }
             catch { }
-            return _animationsEnabled;
+            return true;
         }
     }
 }

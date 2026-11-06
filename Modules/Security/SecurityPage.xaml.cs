@@ -140,6 +140,52 @@ public sealed partial class SecurityPage : Page
         }
     }
 
+    private async void OnQuickHardenClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.QuickHardenAsync();
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Security Hardened".T(),
+                string.Format("System Health Score: {0}/100".T(), ViewModel.SecurityScore), "Success");
+        }
+    }
+
+    private async void OnDefenseProfileGamerClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ApplyDefenseProfileAsync("Gamer");
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Defense Profile".T(), "Gamer Stealth Profile activated.".T(), "Success");
+        }
+    }
+
+    private async void OnDefenseProfileBalancedClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ApplyDefenseProfileAsync("Balanced");
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Defense Profile".T(), "Balanced Armor Profile activated.".T(), "Success");
+        }
+    }
+
+    private async void OnDefenseProfileHardenedClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ApplyDefenseProfileAsync("Hardened");
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Defense Profile".T(), "Zero-Trust Hardened Profile activated.".T(), "Success");
+        }
+    }
+
+    private async void OnEnableFirewallClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.EnableFirewallAsync();
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Firewall Active".T(), "Windows Firewall has been successfully enabled.".T(), "Success");
+        }
+    }
+
     // ==================== PRIVACY TUNING TOGGLES ====================
 
     private async void OnAdvertisingIdToggled(object sender, RoutedEventArgs e)

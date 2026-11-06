@@ -432,6 +432,14 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
                 AiStatusText = "AI Engine Ready".T();
                 AiSummaryText = "Assessing predictive metrics...".T();
                 UpdateHealthScoreBreakdown();
+                try
+                {
+                    var insights = Database.DbManager.GetResourceInsights();
+                    ResourceInsightsText = insights.HealthInsight.T();
+                    ResourceDominantBottleneck = insights.DominantBottleneck.T();
+                    ResourceAverageLoadText = string.Format("Avg CPU: {0}% | RAM: {1}%".T(), insights.AverageCpu, insights.AverageRam);
+                }
+                catch { }
             });
         };
         TranslationManager.Instance.LanguageChanged += _languageChangedHandler;

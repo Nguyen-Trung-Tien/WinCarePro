@@ -1,4 +1,4 @@
-# 🚀 WinCare Pro Suite v5.1.2 (Codename: Polaris)
+# 🚀 WinCare Pro Suite v5.2.0 (Codename: Polaris)
 
 <div align="center">
   <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(0, 120, 212, 0.45); margin-bottom: 20px;" />
@@ -9,8 +9,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.1.2/WinCareProSetup.exe">
-      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v5.1.2-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v5.1.2" />
+    <a href="https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.2.0/WinCareProSetup.exe">
+      <img src="https://img.shields.io/badge/Download-Latest%20Release%20v5.2.0-blueviolet?style=for-the-badge&logo=windows&logoColor=white&color=7F56D9" alt="Download WinCare Pro v5.2.0" />
     </a>
   </p>
 
@@ -31,7 +31,7 @@
 
 ## 📖 Tổng Quan Dự Án
 
-**WinCare Pro v5.1.2 (Codename: Polaris)** là phiên bản nâng cấp toàn diện về bảo mật, hiệu năng và trải nghiệm người dùng với hệ thống thông báo Top-Center Floating Island Toast tân tiến. Phiên bản hoàn tất 100% việc chuyển đổi các hàm gọi hệ thống Win32 sang **source-generated `[LibraryImport]`** siêu tốc, tối ưu hóa triệt để tài nguyên RAM/CPU, tăng cường chuẩn **Zero-Trust Registry & Services Protection** với sao lưu tự động `RegistryBackupEngine.BackupKey()`, giải quyết triệt để các nguy cơ race condition đa trang, và hoàn thiện hiệu ứng chuyển động kính mờ **Fluent 2.0 Aura Glass với Implicit Composition Micro-interactions 120 FPS**.
+**WinCare Pro v5.2.0 (Codename: Polaris)** là phiên bản nâng cấp toàn diện và mạnh mẽ nhất với **Kiến Trúc Aura Fluidic 3.0**, tích hợp động cơ **AI Diagnostic Sentinel Engine** tự động phát hiện và khắc phục sự cố, tái cấu trúc toàn diện **Trung Tâm Bảo Mật Thế Hệ Mới (Next-Gen Security Center)** và hệ thống quản lý ứng dụng chuyên sâu. Phiên bản hoàn tất 100% việc chuyển đổi các hàm gọi hệ thống Win32 sang **source-generated `[LibraryImport]`** siêu tốc, tối ưu hóa triệt để tài nguyên RAM/CPU, tăng cường chuẩn **Zero-Trust Registry & Services Protection** với sao lưu tự động `RegistryBackupEngine.BackupKey()`, giải quyết triệt để các nguy cơ race condition đa trang, và hoàn thiện hiệu ứng chuyển động kính mờ **Fluent 2.0 Aura Glass với Implicit Composition Micro-interactions 120 FPS**.
 
 Ứng dụng tích hợp **Trợ lý AI WinCare Engine** chẩn đoán Heuristic không gửi dữ liệu ra ngoài, cửa sổ nổi **Desktop HUD Widget**, hệ thống phòng vệ kép **SafePathGuard** và **SafeRegistryGuard**, cơ chế **Bảo vệ Dịch vụ Hệ thống (Service Safety Whitelist)**, cơ chế hủy tác vụ đa luồng an toàn **CancellationToken Lifecycle**, và khả năng **tự động thu nhỏ RAM nền (< 15MB)** khi chạy ngầm dưới khay hệ thống.
 

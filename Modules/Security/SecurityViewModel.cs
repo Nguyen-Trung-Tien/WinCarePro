@@ -87,6 +87,15 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private bool _inputTrackingEnabled;
 
+    [ObservableProperty]
+    private string _activeProfile = "Balanced";
+
+    [ObservableProperty]
+    private string _securityScoreGrade = "OPTIMAL".T();
+
+    [ObservableProperty]
+    private string _defenseStatusBadge = "SHIELD ARMED".T();
+
     public ObservableCollection<string> SecurityAlerts { get; } = new();
 
     public SecurityViewModel() : this(null, null)
@@ -241,6 +250,27 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
                 RdpNlaStatusText = nlaText;
                 SecurityScore = score;
 
+                if (score >= 90)
+                {
+                    SecurityScoreGrade = "OPTIMAL".T();
+                    DefenseStatusBadge = "SHIELD ARMED".T();
+                }
+                else if (score >= 70)
+                {
+                    SecurityScoreGrade = "SECURE".T();
+                    DefenseStatusBadge = "PROTECTED".T();
+                }
+                else if (score >= 50)
+                {
+                    SecurityScoreGrade = "MODERATE".T();
+                    DefenseStatusBadge = "ATTENTION NEEDED".T();
+                }
+                else
+                {
+                    SecurityScoreGrade = "CRITICAL".T();
+                    DefenseStatusBadge = "EXPOSED".T();
+                }
+
                 foreach (var alert in alerts)
                 {
                     if (alert.StartsWith("Suspicious startup program: "))
@@ -367,6 +397,84 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             RunOnUI(() =>
             {
                 StatusMessage = string.Format("Failed to clear recent files: {0}".T(), ex.Message);
+            });
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task ApplyDefenseProfileAsync(string profile)
+    {
+        if (IsBusy || IsScanning) return;
+        IsBusy = true;
+        ActiveProfile = profile;
+        StatusMessage = string.Format("Applying {0} Defense Profile...".T(), profile);
+        try
+        {
+            await Task.Run(() =>
+            {
+                if (profile == "Gamer")
+                {
+                    _securityEngine.ApplyPrivacyPreset("gamer");
+                }
+                else if (profile == "Hardened")
+                {
+                    _securityEngine.ApplyPrivacyPreset("max");
+                    _securityEngine.EnableAllFirewallProfiles();
+                }
+                else
+                {
+                    _securityEngine.ApplyPrivacyPreset("balanced");
+                }
+            });
+
+            RunOnUI(() => LoadPrivacySettings());
+            await ScanSecurityAsync();
+            StatusMessage = string.Format("{0} Defense Profile activated successfully.".T(), profile);
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.ApplyDefenseProfile", ex);
+            RunOnUI(() =>
+            {
+                StatusMessage = string.Format("Failed to apply defense profile: {0}".T(), ex.Message);
+            });
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task QuickHardenAsync()
+    {
+        if (IsBusy || IsScanning) return;
+        IsBusy = true;
+        StatusMessage = "Applying Intelligent System Hardening...".T();
+        try
+        {
+            await Task.Run(() =>
+            {
+                if (!IsFirewallActive)
+                {
+                    _securityEngine.EnableAllFirewallProfiles();
+                }
+                _securityEngine.ApplyPrivacyPreset("balanced");
+                _securityEngine.ClearClipboard();
+            });
+
+            RunOnUI(() => LoadPrivacySettings());
+            await ScanSecurityAsync();
+            StatusMessage = "Intelligent System Hardening complete. System protected.".T();
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.QuickHarden", ex);
+            RunOnUI(() =>
+            {
+                StatusMessage = string.Format("Hardening failed: {0}".T(), ex.Message);
             });
         }
         finally

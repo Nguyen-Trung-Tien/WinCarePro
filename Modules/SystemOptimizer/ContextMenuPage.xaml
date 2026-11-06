@@ -102,7 +102,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Card 0: Total Handlers -->
-            <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}"
+            <Border Grid.Column="0" Style="{StaticResource CockpitQuickStatCardStyle}"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -120,7 +120,7 @@
             </Border>
 
             <!-- Card 1: Active & Enabled -->
-            <Border x:Name="StatCard1" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}"
+            <Border x:Name="StatCard1" Grid.Column="1" Style="{StaticResource CockpitQuickStatCardStyle}"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -138,7 +138,7 @@
             </Border>
 
             <!-- Card 2: Disabled & Optimized -->
-            <Border x:Name="StatCard2" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}"
+            <Border x:Name="StatCard2" Grid.Column="2" Style="{StaticResource CockpitQuickStatCardStyle}"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -168,7 +168,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Left: Handlers List Card -->
-            <Border x:Name="LeftPanel" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+            <Border x:Name="LeftPanel" Grid.Column="0" Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" /> <!-- Filters -->

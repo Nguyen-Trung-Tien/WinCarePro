@@ -188,6 +188,16 @@ public sealed partial class NetworkPage : Page
         }
     }
 
+    private async void OnSmartAutoHealClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RunRepairOperationAsync("smartrepair");
+    }
+
+    private async void OnSwitchToFastestDnsClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.SwitchToFastestDnsAsync();
+    }
+
     private async void OnRefreshClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.RunDiagnosticsAsync(userTriggered: true);

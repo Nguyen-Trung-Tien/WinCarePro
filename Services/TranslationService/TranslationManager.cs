@@ -137,6 +137,53 @@ public partial class TranslationManager
                 }
             }
 
+            // 4. Punctuation fallback for reverse lookup (e.g. "?", ":", "...", "…")
+            if (trimmed.Length > 1)
+            {
+                if (trimmed.EndsWith('?'))
+                {
+                    string stripped = trimmed[..^1].TrimEnd();
+                    if (_reverseTranslations.TryGetValue(stripped, out englishKey))
+                    {
+                        return PreserveWhitespace(key, englishKey + "?");
+                    }
+                }
+                else if (trimmed.EndsWith(':'))
+                {
+                    string stripped = trimmed[..^1].TrimEnd();
+                    if (_reverseTranslations.TryGetValue(stripped, out englishKey))
+                    {
+                        return PreserveWhitespace(key, englishKey + ":");
+                    }
+                }
+                else if (trimmed.EndsWith("..."))
+                {
+                    string stripped = trimmed[..^3].TrimEnd();
+                    if (_reverseTranslations.TryGetValue(stripped, out englishKey))
+                    {
+                        return PreserveWhitespace(key, englishKey + "...");
+                    }
+                }
+                else if (trimmed.EndsWith('…'))
+                {
+                    string stripped = trimmed[..^1].TrimEnd();
+                    if (_reverseTranslations.TryGetValue(stripped, out englishKey))
+                    {
+                        return PreserveWhitespace(key, englishKey + "…");
+                    }
+                }
+            }
+
+            // 5. Leading emoji/symbol fallback for reverse lookup (e.g. "🚀 Băng thông & Radar", "🟢 Chỉ mục an toàn 100%")
+            if (TryStripLeadingSymbolOrEmoji(trimmed, out var revSymPrefix, out var revSymRest))
+            {
+                if (_reverseTranslations.TryGetValue(revSymRest, out englishKey) ||
+                    _reverseTranslations.TryGetValue(System.Net.WebUtility.HtmlDecode(revSymRest), out englishKey))
+                {
+                    return PreserveWhitespace(key, revSymPrefix + englishKey);
+                }
+            }
+
             return key;
         }
         else // Vietnamese
@@ -178,6 +225,53 @@ public partial class TranslationManager
                 if (_translations.TryGetValue(encoded, out translated))
                 {
                     return PreserveWhitespace(key, translated);
+                }
+            }
+
+            // Punctuation fallback (e.g. "Reset to Factory Defaults?", "Status:", "Loading...")
+            if (trimmed.Length > 1)
+            {
+                if (trimmed.EndsWith('?'))
+                {
+                    string stripped = trimmed[..^1].TrimEnd();
+                    if (_translations.TryGetValue(stripped, out translated))
+                    {
+                        return PreserveWhitespace(key, translated + "?");
+                    }
+                }
+                else if (trimmed.EndsWith(':'))
+                {
+                    string stripped = trimmed[..^1].TrimEnd();
+                    if (_translations.TryGetValue(stripped, out translated))
+                    {
+                        return PreserveWhitespace(key, translated + ":");
+                    }
+                }
+                else if (trimmed.EndsWith("..."))
+                {
+                    string stripped = trimmed[..^3].TrimEnd();
+                    if (_translations.TryGetValue(stripped, out translated))
+                    {
+                        return PreserveWhitespace(key, translated + "...");
+                    }
+                }
+                else if (trimmed.EndsWith('…'))
+                {
+                    string stripped = trimmed[..^1].TrimEnd();
+                    if (_translations.TryGetValue(stripped, out translated))
+                    {
+                        return PreserveWhitespace(key, translated + "…");
+                    }
+                }
+            }
+
+            // Leading emoji/symbol fallback (e.g. "🚀 Bandwidth & Radar", "🟢 100% Safe Only")
+            if (TryStripLeadingSymbolOrEmoji(trimmed, out var fwdSymPrefix, out var fwdSymRest))
+            {
+                if (_translations.TryGetValue(fwdSymRest, out translated) ||
+                    _translations.TryGetValue(System.Net.WebUtility.HtmlDecode(fwdSymRest), out translated))
+                {
+                    return PreserveWhitespace(key, fwdSymPrefix + translated);
                 }
             }
 
@@ -374,6 +468,31 @@ public partial class TranslationManager
         }
     }
 
+    private static bool TryStripLeadingSymbolOrEmoji(string text, out string prefix, out string rest)
+    {
+        prefix = string.Empty;
+        rest = text;
+        if (string.IsNullOrEmpty(text) || text.Length < 3) return false;
+
+        int symbolEnd = 0;
+        while (symbolEnd < text.Length && (char.IsSurrogate(text[symbolEnd]) || 
+                                           char.GetUnicodeCategory(text[symbolEnd]) == System.Globalization.UnicodeCategory.OtherSymbol || 
+                                           char.GetUnicodeCategory(text[symbolEnd]) == System.Globalization.UnicodeCategory.ModifierSymbol || 
+                                           text[symbolEnd] == '\uFE0F'))
+        {
+            symbolEnd++;
+        }
+
+        if (symbolEnd > 0 && symbolEnd < text.Length && text[symbolEnd] == ' ')
+        {
+            prefix = text.Substring(0, symbolEnd + 1);
+            rest = text.Substring(symbolEnd + 1).Trim();
+            return true;
+        }
+
+        return false;
+    }
+
     private static string GetOriginalValue(DependencyObject obj, string propertyName, string currentValue)
     {
         if (!OriginalValues.TryGetValue(obj, out var dict))
@@ -457,6 +576,15 @@ public partial class TranslationManager
         {
             string encoded = trimmed.Replace("&", "&amp;");
             if (_translations.ContainsKey(encoded) || _reverseTranslations.ContainsKey(encoded))
+                return true;
+        }
+
+        if (TryStripLeadingSymbolOrEmoji(trimmed, out _, out var strippedRest))
+        {
+            if (_translations.ContainsKey(strippedRest) || _reverseTranslations.ContainsKey(strippedRest))
+                return true;
+            string decodedRest = System.Net.WebUtility.HtmlDecode(strippedRest);
+            if (_translations.ContainsKey(decodedRest) || _reverseTranslations.ContainsKey(decodedRest))
                 return true;
         }
 
@@ -852,6 +980,15 @@ public partial class TranslationManager
                 translated = true;
             }
         }
+        else if (parent is ListViewBase lvb)
+        {
+            if (lvb.Header is string lvbHeaderStr && ShouldTranslate(lvbHeaderStr))
+            {
+                string original = GetOriginalValue(lvb, "Header", lvbHeaderStr);
+                lvb.Header = T(original);
+                translated = true;
+            }
+        }
         else if (parent is PivotItem pi)
         {
             if (pi.Header is string piHeader && ShouldTranslate(piHeader))
@@ -1110,6 +1247,10 @@ public partial class TranslationManager
                 else if (parent is Viewbox vb && vb.Child != null)
                 {
                     TranslateInternal(vb.Child, visited);
+                }
+                else if (parent is ListViewBase lvb && lvb.Header is DependencyObject lvbHeader)
+                {
+                    TranslateInternal(lvbHeader, visited);
                 }
             }
             catch { }

@@ -58,6 +58,16 @@ public sealed partial class SettingsPage : Page
                 CancelUpdatesBtn.Visibility = Visibility.Collapsed;
             }
 
+            // Initialize Device Identity Banner
+            if (DeviceHostNameText != null)
+            {
+                DeviceHostNameText.Text = Environment.MachineName;
+            }
+            if (DeviceOsInfoText != null)
+            {
+                DeviceOsInfoText.Text = $"{Environment.OSVersion.VersionString} • {(Environment.Is64BitOperatingSystem ? "64-bit Architecture".T() : "32-bit Architecture".T())}";
+            }
+
             // Sync with current theme on load
             bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
             ApplyThemeCardSelection(isDark);
@@ -730,10 +740,10 @@ public sealed partial class SettingsPage : Page
     {
         bool confirmed = await ResultDialogHelper.ShowConfirmAsync(
             this.Content.XamlRoot,
-            "Reset to Factory Defaults?",
+            "Reset to Factory Defaults?".T(),
             "Are you sure you want to reset all configuration settings to factory defaults? This cannot be undone.".T(),
-            confirmText: "Reset All",
-            cancelText: "Cancel",
+            confirmText: "Reset All".T(),
+            cancelText: "Cancel".T(),
             isDestructive: true);
 
         if (confirmed)

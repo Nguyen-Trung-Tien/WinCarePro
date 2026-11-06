@@ -82,6 +82,64 @@ public class JunkViewModel : ViewModelBase, IDisposable
         set => SetPropertyOnUI(() => _totalLockedSize, v => _totalLockedSize = v, value);
     }
 
+    private string _safeJunkSizeFormatted = "0.0 B";
+    public string SafeJunkSizeFormatted
+    {
+        get => _safeJunkSizeFormatted;
+        set => SetPropertyOnUI(() => _safeJunkSizeFormatted, v => _safeJunkSizeFormatted = v, value);
+    }
+
+    private string _reviewJunkSizeFormatted = "0.0 B";
+    public string ReviewJunkSizeFormatted
+    {
+        get => _reviewJunkSizeFormatted;
+        set => SetPropertyOnUI(() => _reviewJunkSizeFormatted, v => _reviewJunkSizeFormatted = v, value);
+    }
+
+    private string _devJunkSizeFormatted = "0.0 B";
+    public string DevJunkSizeFormatted
+    {
+        get => _devJunkSizeFormatted;
+        set => SetPropertyOnUI(() => _devJunkSizeFormatted, v => _devJunkSizeFormatted = v, value);
+    }
+
+    private int _safeFileCount;
+    public int SafeFileCount
+    {
+        get => _safeFileCount;
+        set => SetPropertyOnUI(() => _safeFileCount, v => _safeFileCount = v, value);
+    }
+
+    private int _reviewFileCount;
+    public int ReviewFileCount
+    {
+        get => _reviewFileCount;
+        set => SetPropertyOnUI(() => _reviewFileCount, v => _reviewFileCount = v, value);
+    }
+
+    private int _devFileCount;
+    public int DevFileCount
+    {
+        get => _devFileCount;
+        set => SetPropertyOnUI(() => _devFileCount, v => _devFileCount = v, value);
+    }
+
+    private string _selectedPreset = "Safe";
+    public string SelectedPreset
+    {
+        get => _selectedPreset;
+        set => SetPropertyOnUI(() => _selectedPreset, v => _selectedPreset = v, value);
+    }
+
+    private bool _isLockingAlertDismissed;
+    public bool IsLockingAlertDismissed
+    {
+        get => _isLockingAlertDismissed;
+        set => SetPropertyOnUI(() => _isLockingAlertDismissed, v => _isLockingAlertDismissed = v, value);
+    }
+
+    public bool ShowLockingAppsBanner => HasLockingApps && !IsLockingAlertDismissed;
+
     private bool _isCelebrationActive;
     public bool IsCelebrationActive
     {
@@ -254,6 +312,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
         IsScanning = true;
         SetOperationState(OperationState.Running);
         IsCelebrationActive = false;
+        IsLockingAlertDismissed = false;
         ProgressPercent = 0;
         lock (_logBuffer) { _logBuffer.Clear(); }
         LiveLogs = "";
@@ -285,7 +344,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
                 {
                     Categories.Add(cat);
                 }
-                UpdateTotalSize();
+                ApplyPreset("Safe");
                 SelectedCategory = Categories.FirstOrDefault();
                 
                 ActiveLockingApps.Clear();
@@ -431,15 +490,52 @@ public class JunkViewModel : ViewModelBase, IDisposable
         TotalCleanableBytes = cleanable;
         TotalJunkSize = FormatHelper.FormatBytes(cleanable);
         TotalLockedSize = FormatHelper.FormatBytes(locked);
+
+        // Compute Tier summaries
+        long safeBytes = Categories.Where(x => x.SafetyTier == JunkSafetyTier.Safe).Sum(x => x.CleanableBytes);
+        long reviewBytes = Categories.Where(x => x.SafetyTier == JunkSafetyTier.Review).Sum(x => x.CleanableBytes);
+        long devBytes = Categories.Where(x => x.SafetyTier == JunkSafetyTier.Developer).Sum(x => x.CleanableBytes);
+
+        SafeJunkSizeFormatted = FormatHelper.FormatBytes(safeBytes);
+        ReviewJunkSizeFormatted = FormatHelper.FormatBytes(reviewBytes);
+        DevJunkSizeFormatted = FormatHelper.FormatBytes(devBytes);
+
+        SafeFileCount = Categories.Where(x => x.SafetyTier == JunkSafetyTier.Safe).Sum(x => x.FileCount);
+        ReviewFileCount = Categories.Where(x => x.SafetyTier == JunkSafetyTier.Review).Sum(x => x.FileCount);
+        DevFileCount = Categories.Where(x => x.SafetyTier == JunkSafetyTier.Developer).Sum(x => x.FileCount);
+
+        OnPropertyChanged(nameof(ShowLockingAppsBanner));
+    }
+
+    public void ApplyPreset(string preset)
+    {
+        SelectedPreset = preset;
+        if (preset == "Safe")
+        {
+            foreach (var cat in Categories)
+            {
+                cat.IsSelected = (cat.SafetyTier == JunkSafetyTier.Safe);
+            }
+        }
+        else if (preset == "All")
+        {
+            foreach (var cat in Categories)
+            {
+                cat.IsSelected = true;
+            }
+        }
+        UpdateTotalSize();
+    }
+
+    public void DismissLockingAlert()
+    {
+        IsLockingAlertDismissed = true;
+        OnPropertyChanged(nameof(ShowLockingAppsBanner));
     }
 
     public void SelectAllCategories()
     {
-        foreach (var cat in Categories)
-        {
-            cat.IsSelected = true;
-        }
-        UpdateTotalSize();
+        ApplyPreset("All");
     }
 
     public void DeselectAllCategories()
@@ -448,6 +544,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
         {
             cat.IsSelected = false;
         }
+        SelectedPreset = "Custom";
         UpdateTotalSize();
     }
 

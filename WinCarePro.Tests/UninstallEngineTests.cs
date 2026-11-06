@@ -174,4 +174,32 @@ public class UninstallEngineTests
         Assert.Equal("Photoshop", sortedByName[1].DisplayName);
         Assert.Equal("Zoom", sortedByName[2].DisplayName);
     }
+
+    [Fact]
+    public void InstalledAppInfo_BloatwareDetection_IdentifiesKnownJunkApps()
+    {
+        var candyCrush = new InstalledAppInfo { DisplayName = "Candy Crush Saga", Publisher = "King.com", IsStoreApp = true };
+        var normalApp = new InstalledAppInfo { DisplayName = "Visual Studio Code", Publisher = "Microsoft Corporation", IsStoreApp = false };
+        var mcafee = new InstalledAppInfo { DisplayName = "McAfee LiveSafe", Publisher = "McAfee, LLC", IsStoreApp = false };
+
+        Assert.True(candyCrush.IsBloatware);
+        Assert.Equal("Bloatware", candyCrush.HealthBadgeText);
+
+        Assert.False(normalApp.IsBloatware);
+        Assert.Equal("Verified", normalApp.HealthBadgeText);
+
+        Assert.True(mcafee.IsBloatware);
+    }
+
+    [Fact]
+    public void InstalledAppInfo_ResidualRiskText_MatchesAppTypeAndSize()
+    {
+        var storeApp = new InstalledAppInfo { DisplayName = "Windows Terminal", IsStoreApp = true };
+        var standardWin32 = new InstalledAppInfo { DisplayName = "Notepad++", SizeBytes = 30 * 1024 * 1024, IsStoreApp = false };
+        var heavyWin32 = new InstalledAppInfo { DisplayName = "Visual Studio Enterprise", SizeBytes = 4000L * 1024 * 1024, IsStoreApp = false };
+
+        Assert.Equal("Low Residual Risk", storeApp.ResidualRiskText);
+        Assert.Equal("Standard Footprint", standardWin32.ResidualRiskText);
+        Assert.Equal("Deep Footprint", heavyWin32.ResidualRiskText);
+    }
 }

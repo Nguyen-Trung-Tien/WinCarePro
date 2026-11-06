@@ -32,6 +32,22 @@
                         <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
+
+                        <!-- Responsive 2x2 Pillars Grid -->
+                        <Setter Target="PillarCol2.Width" Value="0" />
+                        <Setter Target="PillarCol3.Width" Value="0" />
+                        <Setter Target="PillarCard2.(Grid.Row)" Value="1" />
+                        <Setter Target="PillarCard2.(Grid.Column)" Value="0" />
+                        <Setter Target="PillarCard3.(Grid.Row)" Value="1" />
+                        <Setter Target="PillarCard3.(Grid.Column)" Value="1" />
+
+                        <!-- Responsive 2x2 Remedies Grid -->
+                        <Setter Target="RemedyCol2.Width" Value="0" />
+                        <Setter Target="RemedyCol3.Width" Value="0" />
+                        <Setter Target="RemedyBtn2.(Grid.Row)" Value="1" />
+                        <Setter Target="RemedyBtn2.(Grid.Column)" Value="0" />
+                        <Setter Target="RemedyBtn3.(Grid.Row)" Value="1" />
+                        <Setter Target="RemedyBtn3.(Grid.Column)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -70,7 +86,7 @@
             </StackPanel>
 
             <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <Button x:Name="ExportReportBtn" Click="OnExportReportClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" ToolTipService.ToolTip="Export diagnostic report to file"
+                <Button x:Name="ExportReportBtn" Click="OnExportReportClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="Export diagnostic report to file"
                         AutomationProperties.Name="Export Diagnostic Report"
                         AutomationProperties.HelpText="Exports diagnostic analysis report to a file.">
                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -78,7 +94,7 @@
                         <TextBlock Text="Export Report" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="AutoRemedyAllBtn" Click="OnAutoRemedyAllClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="16,0" ToolTipService.ToolTip="Execute all safe optimization fixes in one click"
+                <Button x:Name="AutoRemedyAllBtn" Click="OnAutoRemedyAllClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="16,0" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="Execute all safe optimization fixes in one click"
                         AutomationProperties.Name="1-Click Smart Remedy"
                         AutomationProperties.HelpText="Executes all safe optimization fixes in one click.">
                     <StackPanel Orientation="Horizontal" Spacing="8">
@@ -87,7 +103,7 @@
                         <TextBlock x:Name="AutoRemedyText" Text="1-Click Smart Remedy" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="RunAiDiagnosticsBtn" Click="OnRunAiScanClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" MinWidth="150" Padding="14,0" ToolTipService.ToolTip="Trigger a deep neural diagnostics scan"
+                <Button x:Name="RunAiDiagnosticsBtn" Click="OnRunAiScanClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" MinWidth="150" Padding="14,0" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="Trigger a deep neural diagnostics scan"
                         AutomationProperties.Name="Run AI Diagnostics"
                         AutomationProperties.HelpText="Triggers deep AI diagnostics scan on system stability and resources.">
                     <StackPanel Orientation="Horizontal" Spacing="8">
@@ -104,7 +120,7 @@
             <StackPanel Spacing="16" Padding="0,0,0,36">
                 
                 <!-- 1. AI Overall Score & Neural Overview Hero Card -->
-                <Border x:Name="AiHeroCard" Style="{StaticResource ModernCardStyle}" Padding="20">
+                <Border x:Name="AiHeroCard" Style="{StaticResource CockpitBentoCardStyle}" Padding="20">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -145,22 +161,99 @@
                                         <TextBlock x:Name="AiLastScanText" Text="Neural Scan: Active &amp; Up to date" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     </StackPanel>
                                 </Border>
+                                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <FontIcon Glyph="&#xEC4A;" FontSize="11" Foreground="#FFF59E0B"/>
+                                        <TextBlock Text="System Stress:" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock x:Name="StressIndexPercentText" Text="15%" FontSize="11" FontWeight="Bold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        <ProgressBar x:Name="StressIndexBar" Value="15" Width="55" Height="4" CornerRadius="2" Foreground="#FFF59E0B" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="StressIndexText" Text="Low Stress (Stable)" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
                         </StackPanel>
                     </Grid>
                 </Border>
 
+                <!-- 2. Neural Subsystem Topology Deck (5-Node Interactive Mesh) -->
+                <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14">
+                    <StackPanel Spacing="12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1">
+                                    <FontIcon Glyph="&#xEDA2;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel VerticalAlignment="Center" Spacing="1">
+                                    <TextBlock Text="Neural Subsystem Topology Map" FontWeight="Bold" FontSize="13"/>
+                                    <TextBlock Text="Real-time multi-tier hardware-software telemetry and bottleneck localization" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <Ellipse Width="6" Height="6" Fill="#FF10B981"/>
+                                    <TextBlock Text="5 Nodes Synchronized" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- 5-Column Topology Cards ItemsControl with Smooth Horizontal Scroll -->
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" HorizontalScrollMode="Auto">
+                            <ItemsControl x:Name="TopologyItemsControl">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Left"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Click="OnTopologyNodeClick" Tag="{Binding ActionKey}" Style="{StaticResource TransparentWrapperButtonStyle}" Width="195" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                                            <Border Style="{StaticResource QuickStatCardStyle}" Padding="12,10" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{Binding StatusBorderBrush}" BorderThickness="1.2">
+                                                <StackPanel Spacing="6">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Border Grid.Column="0" Width="28" Height="28" CornerRadius="7" Background="{Binding StatusBgBrush}" BorderBrush="{Binding StatusBorderBrush}" BorderThickness="1">
+                                                            <FontIcon Glyph="{Binding IconGlyph}" FontSize="13" Foreground="{Binding StatusBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="11.5" FontWeight="Bold" Margin="8,0,0,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        <Border Grid.Column="2" Background="{Binding StatusBgBrush}" CornerRadius="4" Padding="5,2" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding StatusDisplayName}" FontSize="9.5" FontWeight="Bold" Foreground="{Binding StatusBrush}"/>
+                                                        </Border>
+                                                    </Grid>
+                                                    <TextBlock Text="{Binding MetricValue}" FontSize="16" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                                    <TextBlock Text="{Binding SubDetail}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+
                 <!-- 2. Four Predictive AI Analytics Pillars -->
-                <Grid ColumnSpacing="12" RowSpacing="12">
+                <Grid x:Name="PredictivePillarsGrid" ColumnSpacing="12" RowSpacing="12">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition x:Name="PillarCol0" Width="*"/>
+                        <ColumnDefinition x:Name="PillarCol1" Width="*"/>
+                        <ColumnDefinition x:Name="PillarCol2" Width="*"/>
+                        <ColumnDefinition x:Name="PillarCol3" Width="*"/>
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="PillarRow0" Height="Auto"/>
+                        <RowDefinition x:Name="PillarRow1" Height="Auto"/>
+                    </Grid.RowDefinitions>
 
                     <!-- Pillar 1: Storage Outlook -->
-                    <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,12"
+                    <Border x:Name="PillarCard0" Grid.Row="0" Grid.Column="0" Style="{StaticResource CockpitQuickStatCardStyle}" Padding="14,12"
                             helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
@@ -175,7 +268,7 @@
                     </Border>
 
                     <!-- Pillar 2: Boot Acceleration -->
-                    <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,12"
+                    <Border x:Name="PillarCard1" Grid.Row="0" Grid.Column="1" Style="{StaticResource CockpitQuickStatCardStyle}" Padding="14,12"
                             helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
@@ -190,7 +283,7 @@
                     </Border>
 
                     <!-- Pillar 3: Memory Pressure Index -->
-                    <Border Grid.Column="2" Style="{StaticResource QuickStatCardStyle}" Padding="14,12"
+                    <Border x:Name="PillarCard2" Grid.Row="0" Grid.Column="2" Style="{StaticResource CockpitQuickStatCardStyle}" Padding="14,12"
                             helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
@@ -205,7 +298,7 @@
                     </Border>
 
                     <!-- Pillar 4: System Telemetry Vector -->
-                    <Border Grid.Column="3" Style="{StaticResource QuickStatCardStyle}" Padding="14,12"
+                    <Border x:Name="PillarCard3" Grid.Row="0" Grid.Column="3" Style="{StaticResource CockpitQuickStatCardStyle}" Padding="14,12"
                             helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="7.0" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="6">
                             <StackPanel Orientation="Horizontal" Spacing="6">
@@ -220,15 +313,121 @@
                     </Border>
                 </Grid>
 
-                <!-- 3. Smart Quick Action Command Deck (Balanced 4-Column Hub) -->
-                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14">
+                <!-- 4. AI Root-Cause Causal Flow Deck (Explainable AI - XAI) -->
+                <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14">
+                    <StackPanel Spacing="12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <Border Width="26" Height="26" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1">
+                                    <FontIcon Glyph="&#xE7BA;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel VerticalAlignment="Center" Spacing="1">
+                                    <TextBlock Text="AI Root-Cause Causal Analysis (Explainable AI)" FontWeight="Bold" FontSize="13"/>
+                                    <TextBlock Text="Transparent correlation between background triggers, resource contention, and perceptible latency" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <Border Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
+                                <TextBlock Text="Causal Inference Active" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            </Border>
+                        </Grid>
+
+                        <ItemsControl x:Name="CausalChainsItemsControl">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8" Padding="14,12" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                                        <Grid RowSpacing="8">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Header & Title -->
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                                    <FontIcon Glyph="{Binding IconGlyph}" FontSize="14" Foreground="{Binding SeverityBrush}" VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                                <Button Grid.Column="1" Click="OnCausalActionClick" Tag="{Binding ActionKey}" Style="{StaticResource StandardSecondaryButtonStyle}" Height="28" Padding="10,0" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                                        <FontIcon Glyph="&#xE721;" FontSize="10"/>
+                                                        <TextBlock Text="{Binding ActionTitle}" FontSize="11" FontWeight="SemiBold"/>
+                                                    </StackPanel>
+                                                </Button>
+                                            </Grid>
+
+                                            <!-- 3-Stage Causal Flow (Trigger -> Propagation -> Impact) -->
+                                            <Grid Grid.Row="1" ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Stage 1: Trigger -->
+                                                <Border Grid.Column="0" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,6">
+                                                    <StackPanel Spacing="2">
+                                                        <TextBlock Text="ROOT TRIGGER" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                        <TextBlock Text="{Binding TriggerComponent}" FontSize="11" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <FontIcon Grid.Column="1" Glyph="&#xE76C;" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+
+                                                <!-- Stage 2: Propagation -->
+                                                <Border Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,6">
+                                                    <StackPanel Spacing="2">
+                                                        <TextBlock Text="PROPAGATION" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                        <TextBlock Text="{Binding PropagationEffect}" FontSize="11" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <FontIcon Grid.Column="3" Glyph="&#xE76C;" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+
+                                                <!-- Stage 3: Impact -->
+                                                <Border Grid.Column="4" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,6">
+                                                    <StackPanel Spacing="2">
+                                                        <TextBlock Text="SYSTEM IMPACT" FontSize="9" FontWeight="Bold" Foreground="{Binding SeverityBrush}"/>
+                                                        <TextBlock Text="{Binding SystemImpact}" FontSize="11" FontWeight="Bold" Foreground="{Binding SeverityBrush}" TextWrapping="Wrap"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+
+                                            <!-- Explanation Callout -->
+                                            <Border Grid.Row="2" Background="#103B82F6" BorderBrush="#303B82F6" BorderThickness="1" CornerRadius="6" Padding="10,6">
+                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                    <FontIcon Glyph="&#xE946;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                                                    <TextBlock Text="{Binding Explanation}" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" LineHeight="16"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- 5. Smart Self-Healing Command Deck (Multi-Level Safe Remedies) -->
+                <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14">
                     <Grid RowSpacing="12">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Header Row -->
+                        <!-- Header Row with Safe-Guard Mode Selector -->
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -240,30 +439,57 @@
                                     <FontIcon Glyph="&#xE7E8;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="AI Automated Quick Remedies" FontWeight="Bold" FontSize="13"/>
-                                    <TextBlock Text="Instant single-click kernel optimizations &amp; resource purge" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="AI Automated Self-Healing Deck" FontWeight="Bold" FontSize="13"/>
+                                    <TextBlock Text="Configurable multi-tier remedies with SafePathGuard &amp; SafeRegistryGuard protection" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                             </StackPanel>
 
-                            <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
-                                    <TextBlock Text="Engine Ready" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
-                                </StackPanel>
-                            </Border>
+                            <!-- Level Selector Pills -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                <Button x:Name="HealingLevel1Btn" Click="OnHealingLevelSelectClick" Tag="1" Style="{StaticResource StandardSecondaryButtonStyle}" Height="28" Padding="10,0" ToolTipService.ToolTip="Level 1: Silent &amp; Safe (No apps closed, zero risk)">
+                                    <TextBlock Text="L1: Silent Safe" FontSize="11" FontWeight="SemiBold"/>
+                                </Button>
+                                <Button x:Name="HealingLevel2Btn" Click="OnHealingLevelSelectClick" Tag="2" Style="{StaticResource StandardSecondaryButtonStyle}" Height="28" Padding="10,0" ToolTipService.ToolTip="Level 2: Balanced Boost (Recommended tune-up)">
+                                    <TextBlock Text="L2: Balanced Boost" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                </Button>
+                                <Button x:Name="HealingLevel3Btn" Click="OnHealingLevelSelectClick" Tag="3" Style="{StaticResource StandardSecondaryButtonStyle}" Height="28" Padding="10,0" ToolTipService.ToolTip="Level 3: Deep Velocity (Maximum game/app performance)">
+                                    <TextBlock Text="L3: Deep Velocity" FontSize="11" FontWeight="SemiBold"/>
+                                </Button>
+                            </StackPanel>
                         </Grid>
 
+                        <!-- Live Dry-Run Estimate Banner -->
+                        <Border Grid.Row="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE945;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="DryRunEstimateText" Text="Mode: Balanced Boost (Recommended tune-up: RAM working set &amp; temp >6h)" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="6,2">
+                                    <TextBlock Text="Snapshot Rollback Guaranteed" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+
                         <!-- 4-Column Balanced Action Cards Grid -->
-                        <Grid Grid.Row="1" ColumnSpacing="10" RowSpacing="10">
+                        <Grid x:Name="QuickRemediesGrid" Grid.Row="2" ColumnSpacing="10" RowSpacing="10">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition x:Name="RemedyCol0" Width="*"/>
+                                <ColumnDefinition x:Name="RemedyCol1" Width="*"/>
+                                <ColumnDefinition x:Name="RemedyCol2" Width="*"/>
+                                <ColumnDefinition x:Name="RemedyCol3" Width="*"/>
                             </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="RemedyRow0" Height="Auto"/>
+                                <RowDefinition x:Name="RemedyRow1" Height="Auto"/>
+                            </Grid.RowDefinitions>
 
                             <!-- Action 1: RAM Cache Purge -->
-                            <Button Grid.Column="0" Click="OnQuickPurgeRamClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                            <Button x:Name="RemedyBtn0" Grid.Row="0" Grid.Column="0" Click="OnQuickPurgeRamClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                     AutomationProperties.Name="Purge RAM Cache" AutomationProperties.HelpText="Free working set memory">
                                 <Border Style="{StaticResource QuickStatCardStyle}" Padding="12,10" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1">
                                     <Grid ColumnSpacing="10">
@@ -283,7 +509,7 @@
                             </Button>
 
                             <!-- Action 2: Clean Temp Junk -->
-                            <Button Grid.Column="1" Click="OnQuickCleanJunkClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                            <Button x:Name="RemedyBtn1" Grid.Row="0" Grid.Column="1" Click="OnQuickCleanJunkClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                     AutomationProperties.Name="Clean Temp Junk" AutomationProperties.HelpText="Purge cache and temporary debris">
                                 <Border Style="{StaticResource QuickStatCardStyle}" Padding="12,10" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1">
                                     <Grid ColumnSpacing="10">
@@ -303,7 +529,7 @@
                             </Button>
 
                             <!-- Action 3: Optimize Startup -->
-                            <Button Grid.Column="2" Click="OnQuickOptimizeStartupClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                            <Button x:Name="RemedyBtn2" Grid.Row="0" Grid.Column="2" Click="OnQuickOptimizeStartupClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                     AutomationProperties.Name="Optimize Startup Apps" AutomationProperties.HelpText="Trim boot overhead">
                                 <Border Style="{StaticResource QuickStatCardStyle}" Padding="12,10" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1">
                                     <Grid ColumnSpacing="10">
@@ -323,7 +549,7 @@
                             </Button>
 
                             <!-- Action 4: Flush DNS & Winsock -->
-                            <Button Grid.Column="3" Click="OnQuickFlushDnsClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                            <Button x:Name="RemedyBtn3" Grid.Row="0" Grid.Column="3" Click="OnQuickFlushDnsClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                     AutomationProperties.Name="Flush DNS and Winsock" AutomationProperties.HelpText="Repair socket cache">
                                 <Border Style="{StaticResource QuickStatCardStyle}" Padding="12,10" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1">
                                     <Grid ColumnSpacing="10">

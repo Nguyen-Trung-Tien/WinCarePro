@@ -93,6 +93,83 @@ public sealed partial class RegistryPage : Page
         await ViewModel.ScanRegistryAsync();
     }
 
+    private void OnIssueSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ListView lv && lv.SelectedItem is WinCarePro.Models.RegistryIssue issue)
+        {
+            ViewModel.SelectedIssue = issue;
+        }
+    }
+
+    private void OnSelectSafeOnlyClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectSafeOnly();
+        Bindings.Update();
+    }
+
+    private void OnSelectAllClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectAll(true);
+        Bindings.Update();
+    }
+
+    private void OnDeselectAllClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectAll(false);
+        Bindings.Update();
+    }
+
+    private async void OnSafeClean1Click(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectSafeOnly();
+        var safeCount = ViewModel.Issues.Count(i => i.IsSelected);
+        if (safeCount == 0) return;
+
+        var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            XamlRoot,
+            $"Safely clean all {safeCount} verified zero-risk registry entries?\n\n• Safety Guarantee: Only non-critical remnants (dead App Paths, missing file handler targets, and obsolete MRU records) will be removed.\n• Auto-Snapshot: A full registry rollback file will be generated automatically.",
+            $"1-Click Safe Registry Clean ({safeCount} items)",
+            "Clean Safe Items Now",
+            "Cancel");
+
+        if (!confirmed) return;
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
+        await ViewModel.RepairSelectedAsync();
+    }
+
+    private async void OnRepairSingleIssueClick(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.SelectedIssue == null) return;
+        var target = ViewModel.SelectedIssue;
+
+        var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+            XamlRoot,
+            $"Repair registry entry '{target.Title}'?\n\nKey: {target.KeyPath}\nAction: {target.VisualDiffAction}",
+            "Repair Single Entry",
+            "Repair Now",
+            "Cancel");
+
+        if (!confirmed) return;
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 300);
+        await ViewModel.RepairSingleIssueAsync(target);
+    }
+
+    private async void OnRestoreBackupItemClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement elem && elem.DataContext is WinCarePro.Models.RegistryBackupItem item)
+        {
+            var confirmed = await ResultDialogHelper.ShowConfirmAsync(
+                XamlRoot,
+                $"Restore registry state from snapshot '{item.Name}'?\n\nFile: {item.FilePath}\nDate: {item.FormattedDate}\n\nThis will re-import the saved registry values back into your Windows system.",
+                "Restore Registry Snapshot",
+                "Restore Snapshot",
+                "Cancel");
+
+            if (!confirmed) return;
+            await ViewModel.RestoreBackupAsync(item);
+        }
+    }
+
     private async void OnRepairClick(object sender, RoutedEventArgs e)
     {
         var count = ViewModel.Issues.Count(i => i.IsSelected);

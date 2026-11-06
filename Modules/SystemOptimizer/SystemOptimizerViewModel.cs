@@ -141,6 +141,51 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _aiSummaryText, value);
     }
 
+    private string _currentProfile = "Recommended";
+    public string CurrentProfile
+    {
+        get => _currentProfile;
+        set
+        {
+            if (SetProperty(ref _currentProfile, value))
+            {
+                OnPropertyChanged(nameof(IsRecommendedActive));
+                OnPropertyChanged(nameof(IsGamingActive));
+                OnPropertyChanged(nameof(IsPerformanceActive));
+                OnPropertyChanged(nameof(IsPrivacyActive));
+                OnPropertyChanged(nameof(IsEcoActive));
+                OnPropertyChanged(nameof(CurrentProfileDescription));
+            }
+        }
+    }
+
+    public bool IsRecommendedActive => CurrentProfile == "Recommended";
+    public bool IsGamingActive => CurrentProfile == "Gaming";
+    public bool IsPerformanceActive => CurrentProfile == "Performance";
+    public bool IsPrivacyActive => CurrentProfile == "Privacy";
+    public bool IsEcoActive => CurrentProfile == "Eco";
+
+    public string CurrentProfileDescription => CurrentProfile switch
+    {
+        "Gaming" => "Ultra Low Latency, 0ms input lag, maximum GPU scheduling priority.".T(),
+        "Performance" => "Full system horsepower, rapid menu transitions, aggressive memory cleanup.".T(),
+        "Privacy" => "Zero telemetry, telemetry services muted, privacy protected.".T(),
+        "Eco" => "Balanced energy efficiency, quiet operation for laptops and battery power.".T(),
+        _ => "AI-balanced optimization for daily responsiveness, stability & gaming.".T()
+    };
+
+    public string AiOptimizationInsight
+    {
+        get
+        {
+            if (RamUsagePercentage > 85)
+                return "High RAM usage detected. Purging cache will prevent background stutter.".T();
+            if (AvailableTweaksCount > 0)
+                return string.Format("{0} system optimizations available for your PC configuration.".T(), AvailableTweaksCount);
+            return "All key system tweaks are active. Latency is minimized and memory is balanced.".T();
+        }
+    }
+
     private bool _isAiScanning;
     public bool IsAiScanning
     {
@@ -240,6 +285,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 
         int score = (int)Math.Clamp(Math.Round(50 + (tweakRatio * 35) + (ramFactor * 10) + ramBonus), 45, 100);
         AiHealthScore = score;
+        OnPropertyChanged(nameof(AiOptimizationInsight));
     }
 
     // ============================================================
@@ -713,12 +759,25 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     public int SelectPresetProfile(string profile)
     {
         int count = 0;
+        CurrentProfile = profile;
         switch (profile)
         {
             case "Recommended":
                 foreach (var t in Tweaks)
                 {
                     t.IsSelected = (t.Id != "WerDisabled" && t.Id != "DisableLocation");
+                    if (t.IsSelected) count++;
+                }
+                break;
+            case "Gaming":
+                foreach (var t in Tweaks)
+                {
+                    t.IsSelected = t.Id == "HwSchMode" || 
+                                   t.Id == "GameDVR_Enabled" || 
+                                   t.Id == "NetworkThrottlingIndex" || 
+                                   t.Id == "SystemResponsiveness" || 
+                                   t.Id == "MenuShowDelay" || 
+                                   t.Id == "WaitToKillAppTimeout";
                     if (t.IsSelected) count++;
                 }
                 break;
@@ -735,6 +794,15 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
                 {
                     t.IsSelected = t.Category.Contains("Privacy", StringComparison.OrdinalIgnoreCase) ||
                                    t.Id == "AllowTelemetry" || t.Id == "AllowCortana" || t.Id == "WerDisabled" || t.Id == "DisableLocation";
+                    if (t.IsSelected) count++;
+                }
+                break;
+            case "Eco":
+                foreach (var t in Tweaks)
+                {
+                    t.IsSelected = t.Id == "NtfsDisableLastAccessUpdate" || 
+                                   t.Id == "MinAnimate" || 
+                                   t.Id == "AllowTelemetry";
                     if (t.IsSelected) count++;
                 }
                 break;

@@ -16,11 +16,11 @@
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
-    <Version>5.1.2</Version>
-    <AssemblyVersion>5.1.2.0</AssemblyVersion>
-    <FileVersion>5.1.2.0</FileVersion>
-    <InformationalVersion>5.1.2 (Codename: Polaris)</InformationalVersion>
-    <Product>WinCare Pro v5.1.2</Product>
+    <Version>5.2.0</Version>
+    <AssemblyVersion>5.2.0.0</AssemblyVersion>
+    <FileVersion>5.2.0.0</FileVersion>
+    <InformationalVersion>5.2.0 (Codename: Polaris)</InformationalVersion>
+    <Product>WinCare Pro v5.2.0</Product>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 

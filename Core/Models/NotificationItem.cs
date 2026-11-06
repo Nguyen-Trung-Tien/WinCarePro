@@ -20,7 +20,70 @@ public class NotificationItem
 
     public Brush LevelBrush => GetLevelBrush(Level);
     public Brush LevelTintBrush => GetLevelTintBrush(Level);
+    public Brush LevelColor => LevelBrush;
+    public Brush LevelBadgeBg => LevelTintBrush;
     public string LevelGlyph => GetLevelGlyph(Level);
+    public string Source => ExtractSource(Title, Message);
+
+    public string? QuickActionType => DetermineQuickActionType(Title, Message);
+    public string? QuickActionText => DetermineQuickActionText(QuickActionType);
+    public string QuickActionGlyph => DetermineQuickActionGlyph(QuickActionType);
+    public bool HasQuickAction => !string.IsNullOrEmpty(QuickActionType);
+    public Visibility QuickActionVisibility => HasQuickAction ? Visibility.Visible : Visibility.Collapsed;
+
+    private static string ExtractSource(string title, string message)
+    {
+        string text = $"{title} {message}".ToLower();
+        if (text.Contains("ram") || text.Contains("memory") || text.Contains("bộ nhớ")) return "Memory Sentinel";
+        if (text.Contains("junk") || text.Contains("disk") || text.Contains("rác") || text.Contains("ổ đĩa")) return "Storage Sentinel";
+        if (text.Contains("registry")) return "Registry Sentinel";
+        if (text.Contains("startup") || text.Contains("khởi động")) return "Startup Sentinel";
+        if (text.Contains("network") || text.Contains("dns") || text.Contains("mạng")) return "Network Center";
+        if (text.Contains("security") || text.Contains("shield") || text.Contains("bảo mật") || text.Contains("virus")) return "Security Shield";
+        if (text.Contains("update") || text.Contains("cập nhật")) return "Update Sentinel";
+        if (text.Contains("repair") || text.Contains("sửa lỗi")) return "System Repair";
+        return "System Core";
+    }
+
+    private static string? DetermineQuickActionType(string title, string message)
+    {
+        string text = $"{title} {message}".ToLower();
+        if (text.Contains("ram") || text.Contains("memory") || text.Contains("bộ nhớ")) return "RAM";
+        if (text.Contains("junk") || text.Contains("disk") || text.Contains("rác") || text.Contains("tệp thừa")) return "Junk";
+        if (text.Contains("registry")) return "Registry";
+        if (text.Contains("startup") || text.Contains("khởi động")) return "Startup";
+        if (text.Contains("security") || text.Contains("shield") || text.Contains("bảo mật")) return "Security";
+        if (text.Contains("network") || text.Contains("dns") || text.Contains("mạng")) return "Network";
+        return null;
+    }
+
+    private static string? DetermineQuickActionText(string? actionType)
+    {
+        return actionType switch
+        {
+            "RAM" => "Optimize RAM",
+            "Junk" => "Clean Junk",
+            "Registry" => "Scan Registry",
+            "Startup" => "Review Apps",
+            "Security" => "Shield Check",
+            "Network" => "Check Network",
+            _ => null
+        };
+    }
+
+    private static string DetermineQuickActionGlyph(string? actionType)
+    {
+        return actionType switch
+        {
+            "RAM" => "\uE7F1",
+            "Junk" => "\uE74D",
+            "Registry" => "\uE81E",
+            "Startup" => "\uE7E8",
+            "Security" => "\uEA1F",
+            "Network" => "\uE839",
+            _ => "\uE946"
+        };
+    }
 
     private static readonly SolidColorBrush GreenBrush = new(Windows.UI.Color.FromArgb(255, 16, 185, 129));
     private static readonly SolidColorBrush AmberBrush = new(Windows.UI.Color.FromArgb(255, 245, 158, 11));

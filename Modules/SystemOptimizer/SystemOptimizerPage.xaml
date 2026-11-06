@@ -128,13 +128,38 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- Right: Action Toolbar (Clean UX: Presets -> Apply Tweaks -> More) -->
+            <!-- Right: Action Toolbar (Direct Profile Pills -> Apply Tweaks -> More Options) -->
             <StackPanel x:Name="HeaderButtons" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <!-- Preset Profiles DropDown Menu -->
-                <DropDownButton x:Name="ProfilesDropDownBtn" Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="12">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE71D;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" />
-                        <TextBlock Text="Presets" VerticalAlignment="Center" FontWeight="SemiBold" />
+                <!-- 1-Click Tactile Profile Pills (Quick Mode Switcher) -->
+                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="17" Padding="12,0" FontSize="11.5"
+                            Click="OnSelectRecommendedProfileClick" ToolTipService.ToolTip="AI auto-tune for optimal everyday stability and responsiveness">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <FontIcon Glyph="&#xE99A;" FontSize="11.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Recommended" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="17" Padding="12,0" FontSize="11.5"
+                            Click="OnSelectGamingProfileClick" ToolTipService.ToolTip="Ultra-low latency, max GPU scheduling priority and 0ms queue delay">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <FontIcon Glyph="&#xE7FC;" FontSize="11.5" Foreground="{ThemeResource AppStatusWarningBrush}"/>
+                            <TextBlock Text="Gaming Ultra" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="17" Padding="12,0" FontSize="11.5"
+                            Click="OnSelectPrivacyProfileClick" ToolTipService.ToolTip="Disable background tracking, telemetry diagnostics and Cortana">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <FontIcon Glyph="&#xE727;" FontSize="11.5" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                            <TextBlock Text="Privacy Shield" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Preset Profiles DropDown Menu (More Profiles) -->
+                <DropDownButton x:Name="ProfilesDropDownBtn" Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="10,0" FontSize="11.5">
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                        <FontIcon Glyph="&#xE71D;" FontSize="11.5" Foreground="{StaticResource PrimaryAccentBrush}" />
+                        <TextBlock Text="More" VerticalAlignment="Center" FontWeight="SemiBold" />
                     </StackPanel>
                     <DropDownButton.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
@@ -148,6 +173,16 @@
                                     <FontIcon Glyph="&#xE7FC;" Foreground="{ThemeResource AppStatusWarningBrush}"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
+                            <MenuFlyoutItem Text="Gaming Ultra (Low Latency)" Click="OnSelectGamingProfileClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xEA3A;" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Text="Eco Balanced (Battery Friendly)" Click="OnSelectEcoProfileClick">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xEC0A;" Foreground="{ThemeResource AppStatusInfoBrush}"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
                             <MenuFlyoutItem Text="Privacy Shield" Click="OnSelectPrivacyProfileClick">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE727;" Foreground="{ThemeResource AppStatusGoodBrush}"/>
@@ -157,8 +192,8 @@
                     </DropDownButton.Flyout>
                 </DropDownButton>
 
-                <!-- Apply Selected Tweaks (Primary Hero CTA) -->
-                <Button x:Name="ApplyTweaksBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="Bold" Height="34" CornerRadius="8" Padding="16,0" FontSize="12">
+                <!-- Apply Selected Tweaks (Primary Hero CTA with Ambient Glow) -->
+                <Button x:Name="ApplyTweaksBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="Bold" Height="34" CornerRadius="8" Padding="18,0" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ProgressRing x:Name="ApplyTweaksRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center" />
                         <FontIcon x:Name="ApplyTweaksIcon" Glyph="&#xE8FB;" FontSize="12" Foreground="White" />
@@ -183,7 +218,7 @@
         </Grid>
 
         <!-- ==================== 1. 4-CARD FROSTED STAT RIBBON ==================== -->
-        <Grid x:Name="StatRibbonGrid" Grid.Row="1" Margin="0,0,0,10" ColumnSpacing="10" RowSpacing="8">
+        <Grid x:Name="StatRibbonGrid" Grid.Row="1" Margin="0,0,0,10" ColumnSpacing="10" RowSpacing="8" helpers:AnimationHelper.StaggerIndex="0">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="StatRibbonRow0" Height="Auto" />
                 <RowDefinition x:Name="StatRibbonRow1" Height="Auto" />
@@ -198,7 +233,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Card 0: AI Efficiency & Health Score -->
-            <Border x:Name="StatCard0" Grid.Row="0" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}"
+            <Border x:Name="StatCard0" Grid.Row="0" Grid.Column="0" Style="{StaticResource CockpitQuickStatCardStyle}"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -225,7 +260,7 @@
             </Border>
 
             <!-- Card 1: System Tweaks Active Ratio -->
-            <Border x:Name="StatCard1" Grid.Row="0" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}"
+            <Border x:Name="StatCard1" Grid.Row="0" Grid.Column="1" Style="{StaticResource CockpitQuickStatCardStyle}"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -254,7 +289,7 @@
             </Border>
 
             <!-- Card 2: RAM Memory Utilization -->
-            <Border x:Name="StatCard2" Grid.Row="0" Grid.Column="2" Style="{StaticResource QuickStatCardStyle}"
+            <Border x:Name="StatCard2" Grid.Row="0" Grid.Column="2" Style="{StaticResource CockpitQuickStatCardStyle}"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -278,27 +313,36 @@
                 </Grid>
             </Border>
 
-            <!-- Card 3: RAM Maintenance -->
-            <Border x:Name="StatCard3" Grid.Row="0" Grid.Column="3" Style="{StaticResource QuickStatCardStyle}"
+            <!-- Card 3: Kernel Latency & RAM Freed -->
+            <Border x:Name="StatCard3" Grid.Row="0" Grid.Column="3" Style="{StaticResource CockpitQuickStatCardStyle}"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE9D9;" FontSize="16" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusPurpleBackground}" BorderBrush="{ThemeResource AppStatusPurpleBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xEA3A;" FontSize="16" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <TextBlock Text="RAM Maintenance" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.GamingRamFreedText, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource AppRamChipFg}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Latency &amp; Freed" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="4,1">
+                                <TextBlock Text="0ms Delay" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
+                            </Border>
+                        </Grid>
+                        <TextBlock Text="{x:Bind ViewModel.GamingRamFreedText, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusPurpleBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                     </StackPanel>
                 </Grid>
             </Border>
         </Grid>
 
         <!-- ==================== 2. MAIN WORKSPACE GRID ==================== -->
-        <Grid Grid.Row="2" ColumnSpacing="12" RowSpacing="12">
+        <Grid Grid.Row="2" ColumnSpacing="12" RowSpacing="12" helpers:AnimationHelper.StaggerIndex="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" x:Name="Row0" />
                 <RowDefinition Height="Auto" x:Name="Row1" />
@@ -309,7 +353,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Left Pane: Tweaks Management Center -->
-            <Border x:Name="TweaksCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
+            <Border x:Name="TweaksCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource CockpitBentoCardStyle}" Padding="14,12">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" /> <!-- Category Filter & Search Bar -->
@@ -507,7 +551,32 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- 2. Background Services Monitor Card -->
+                    <!-- 2. AI Hardware & Optimization Insight Card -->
+                    <Border Style="{StaticResource AiSmartInsightCardStyle}" Padding="14,12">
+                        <StackPanel Spacing="8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="28" Height="28" Background="{ThemeResource AppStatusPurpleBackground}" CornerRadius="14" Grid.Column="0">
+                                    <FontIcon Glyph="&#xE99A;" FontSize="13" Foreground="{ThemeResource AppStatusPurpleBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="AI Hardware Advisor" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                <Button Grid.Column="2" Click="OnRunAiScanClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Height="26" Padding="8,0" FontSize="10.5">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <FontIcon Glyph="&#xE777;" FontSize="10" Foreground="{ThemeResource SystemAccentColor}" />
+                                        <TextBlock Text="Rescan" />
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                            <TextBlock Text="{x:Bind ViewModel.AiOptimizationInsight, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                            <TextBlock Text="{x:Bind ViewModel.CurrentProfileDescription, Mode=OneWay}" FontSize="10.5" Foreground="{ThemeResource AppStatusInfoBrush}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 3. Background Services Monitor Card -->
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
                         <StackPanel Spacing="8">
                             <!-- Header -->

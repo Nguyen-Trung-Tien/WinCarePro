@@ -255,6 +255,19 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         set => SetPropertyOnUI(() => _largeAppsCount, v => _largeAppsCount = v, value);
     }
 
+    private int _bloatwareAppsCount;
+    public int BloatwareAppsCount
+    {
+        get => _bloatwareAppsCount;
+        set
+        {
+            SetPropertyOnUI(() => _bloatwareAppsCount, v => _bloatwareAppsCount = v, value);
+            OnPropertyChanged(nameof(IsBloatwareDetected));
+        }
+    }
+
+    public bool IsBloatwareDetected => BloatwareAppsCount > 0;
+
     private bool _hasSelectedApps;
     public bool HasSelectedApps
     {
@@ -267,6 +280,13 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     {
         get => _selectedAppsCount;
         set => SetPropertyOnUI(() => _selectedAppsCount, v => _selectedAppsCount = v, value);
+    }
+
+    private string _selectedAppsSizeFormatted = "0 B";
+    public string SelectedAppsSizeFormatted
+    {
+        get => _selectedAppsSizeFormatted;
+        set => SetPropertyOnUI(() => _selectedAppsSizeFormatted, v => _selectedAppsSizeFormatted = v, value);
     }
 
     public int LeftoversCount => Leftovers.Count;
@@ -384,9 +404,29 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         DesktopAppsCount = _allApps.Count(x => !x.IsStoreApp);
         StoreAppsCount = _allApps.Count(x => x.IsStoreApp);
         LargeAppsCount = _allApps.Count(x => x.IsLargeApp);
+        BloatwareAppsCount = _allApps.Count(x => x.IsBloatware);
         
         long totalBytes = _allApps.Sum(x => x.SizeBytes);
         TotalAppsSizeFormatted = FormatHelper.FormatBytes(totalBytes);
+    }
+
+    public void SelectAllBloatware()
+    {
+        SelectedFilterIndex = 4;
+        foreach (var app in _allApps)
+        {
+            app.IsSelected = app.IsBloatware;
+        }
+        UpdateIsAllAppsSelectedState();
+        UpdateSelectionMetrics();
+    }
+
+    private void UpdateSelectionMetrics()
+    {
+        SelectedAppsCount = _allApps.Count(x => x.IsSelected);
+        HasSelectedApps = SelectedAppsCount > 0;
+        long selectedBytes = _allApps.Where(x => x.IsSelected).Sum(x => x.SizeBytes);
+        SelectedAppsSizeFormatted = FormatHelper.FormatBytes(selectedBytes);
     }
 
     private void ApplyAppFilter()
@@ -404,7 +444,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
 
         // 2. Type filter
-        // 0 = All, 1 = Desktop, 2 = Store, 3 = Large Apps (>500 MB)
+        // 0 = All, 1 = Desktop, 2 = Store, 3 = Large Apps (>500 MB), 4 = Bloatware / Junk
         if (SelectedFilterIndex == 1)
         {
             list = list.Where(x => !x.IsStoreApp);
@@ -416,6 +456,10 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         else if (SelectedFilterIndex == 3)
         {
             list = list.Where(x => x.IsLargeApp);
+        }
+        else if (SelectedFilterIndex == 4)
+        {
+            list = list.Where(x => x.IsBloatware);
         }
 
         // 3. Sorting
@@ -437,7 +481,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
             FilteredApps.Add(app);
         }
 
-        HasSelectedApps = _allApps.Any(x => x.IsSelected);
+        UpdateSelectionMetrics();
 
         if (FilteredApps.Count > 0)
         {
@@ -458,8 +502,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     {
         if (e.PropertyName == nameof(InstalledAppInfo.IsSelected))
         {
-            SelectedAppsCount = _allApps.Count(x => x.IsSelected);
-            HasSelectedApps = SelectedAppsCount > 0;
+            UpdateSelectionMetrics();
             UpdateIsAllAppsSelectedState();
         }
     }

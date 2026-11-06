@@ -260,7 +260,7 @@ public static class ResultDialogHelper
             };
             statusBadge.Child = new TextBlock
             {
-                Text = type.ToString().ToUpperInvariant(),
+                Text = type.ToString().ToUpperInvariant().T(),
                 FontSize = 9.5,
                 FontWeight = FontWeights.Bold,
                 Foreground = iconFg
@@ -496,13 +496,19 @@ public static class ResultDialogHelper
         string cancelText = "Cancel", 
         bool isDestructive = false)
     {
+        if (!string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(message) &&
+            title.Length > 80 && message.Length < 60 && title.Contains('\n'))
+        {
+            (title, message) = (message, title);
+        }
+
         var res = await ShowCustomResultDialogAsync(
             xamlRoot,
             isDestructive ? ResultDialogType.Destructive : ResultDialogType.Confirmation,
-            title,
-            message,
-            primaryButtonText: confirmText,
-            closeButtonText: cancelText,
+            title.T(),
+            message.T(),
+            primaryButtonText: confirmText.T(),
+            closeButtonText: cancelText.T(),
             isDestructive: isDestructive);
 
         return res == ContentDialogResult.Primary;

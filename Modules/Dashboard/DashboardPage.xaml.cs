@@ -37,6 +37,9 @@ public sealed partial class DashboardPage : Page
             // Force responsive update after extended layer is fully initialized
             UpdateResponsiveLayout(this.ActualWidth);
 
+            // Active breathing pulse glow on vitality gauge ring
+            FluidAnimationHelper.ApplyPulseGlow(GaugeRingGrid, 0.88f, 1.0f, 2600);
+
             // v4.0.0 — Auto-trigger embedded AI WinCare Engine scan
             _ = ViewModel.RunEmbeddedAiScanAsync().ContinueWith(_ =>
             {
@@ -64,6 +67,7 @@ public sealed partial class DashboardPage : Page
 
         this.Unloaded += (s, e) =>
         {
+            FluidAnimationHelper.StopPulseGlow(GaugeRingGrid);
             TranslationManager.Instance.LanguageChanged -= langHandler;
         };
 
@@ -883,9 +887,9 @@ public sealed partial class DashboardPage : Page
 
     public string GetStatusText(int score)
     {
-        if (score >= 90) return "EXCELLENT - Your system is highly optimized and clean.".T();
-        if (score >= 70) return "GOOD - Some areas can be optimized to reclaim storage.".T();
-        return "NEEDS OPTIMIZATION - Heavy junk logs or updates required.".T();
+        if (score >= 90) return "Excellent".T().ToUpperInvariant();
+        if (score >= 70) return "Good".T().ToUpperInvariant();
+        return "Needs Optimization".T().ToUpperInvariant();
     }
 
     public Brush GetHealthScoreBrush(int score)

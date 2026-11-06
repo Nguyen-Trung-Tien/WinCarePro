@@ -303,7 +303,24 @@ public sealed partial class UninstallPage : Page
         }
     }
 
+    private void OnFilterPillClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is string tagStr && int.TryParse(tagStr, out int filterIdx))
+        {
+            ViewModel.SelectedFilterIndex = filterIdx;
+        }
+    }
+
+    private void OnCleanBloatwareClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.SelectAllBloatware();
+    }
+
     // UI Helpers
+    public bool IsFilterActive(int currentFilter, int target) => currentFilter == target;
+
+    public Visibility GetBloatwareNoticeVisibility(bool detected) => detected ? Visibility.Visible : Visibility.Collapsed;
+
     public bool IsStep0Active(int step) => step == 0;
     
     public Visibility GetOverlayVisibility(int step) => step != 0 ? Visibility.Visible : Visibility.Collapsed;

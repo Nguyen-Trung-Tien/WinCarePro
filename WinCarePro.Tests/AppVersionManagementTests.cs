@@ -9,27 +9,43 @@ namespace WinCarePro.Tests;
 
 public class AppVersionManagementTests
 {
+    private static string GetSolutionRoot()
+    {
+        var current = AppContext.BaseDirectory;
+        while (!string.IsNullOrEmpty(current))
+        {
+            if (File.Exists(Path.Combine(current, "WinCarePro.csproj")))
+            {
+                return current;
+            }
+            var parent = Directory.GetParent(current);
+            if (parent == null) break;
+            current = parent.FullName;
+        }
+
+        return AppDomain.CurrentDomain.BaseDirectory;
+    }
+
     [Fact]
-    public void AppConstants_VersionProperties_AreStandardizedTo511()
+    public void AppConstants_VersionProperties_AreStandardizedTo520()
     {
         Assert.Equal(5, AppConstants.CurrentVersion.Major);
-        Assert.Equal(1, AppConstants.CurrentVersion.Minor);
-        Assert.Equal(2, AppConstants.CurrentVersion.Build);
-        Assert.Equal("5.1.2", AppConstants.VersionString);
-        Assert.Equal("v5.1.2", AppConstants.DisplayVersion);
-        Assert.Equal("v5.1.2", AppConstants.DisplayVersionFull);
+        Assert.Equal(2, AppConstants.CurrentVersion.Minor);
+        Assert.Equal(0, AppConstants.CurrentVersion.Build);
+        Assert.Equal("5.2.0", AppConstants.VersionString);
+        Assert.Equal("v5.2.0", AppConstants.DisplayVersion);
+        Assert.Equal("v5.2.0", AppConstants.DisplayVersionFull);
         Assert.Equal("WinCare Pro", AppConstants.AppName);
         Assert.Equal("Polaris", AppConstants.Codename);
-        Assert.Contains("WinCare Pro v5.1.2", AppConstants.TitleWithVersion);
-        Assert.Contains("Version 5.1.2 (Codename: Polaris)", AppConstants.SystemBadgeText);
+        Assert.Contains("WinCare Pro v5.2.0", AppConstants.TitleWithVersion);
+        Assert.Contains("Version 5.2.0 (Codename: Polaris)", AppConstants.SystemBadgeText);
     }
 
     [Fact]
     public void ConfigurationFiles_And_Manifests_AreSynchronizedWithAppConstants()
     {
-        // Locate workspace root
-        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        string projectDir = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", ".."));
+        // Locate workspace root dynamically
+        string projectDir = GetSolutionRoot();
         
         // 1. Check WinCarePro.csproj
         string csprojPath = Path.Combine(projectDir, "WinCarePro.csproj");

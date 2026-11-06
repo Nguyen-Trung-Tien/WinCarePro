@@ -145,6 +145,13 @@ namespace WinCarePro.Modules.AiAssistant
                     PredictiveBootText.Text = report.PredictiveBootTimeSavingsText;
                     AiLastScanText.Text = $"{TranslationManager.Instance.T("Neural Scan: Active & Calibrated")} ({DateTime.Now:HH:mm:ss})";
                     
+                    if (StressIndexPercentText != null) StressIndexPercentText.Text = $"{report.SystemStressIndex}%";
+                    if (StressIndexBar != null) StressIndexBar.Value = report.SystemStressIndex;
+                    if (StressIndexText != null) StressIndexText.Text = report.StressIndexText;
+
+                    if (TopologyItemsControl != null) TopologyItemsControl.ItemsSource = report.TopologyNodes;
+                    if (CausalChainsItemsControl != null) CausalChainsItemsControl.ItemsSource = report.CausalChains;
+
                     if (AiSkeletonLoadingDeck != null) AiSkeletonLoadingDeck.Visibility = Visibility.Collapsed;
 
                     bool hasRecommendations = report.Recommendations != null && report.Recommendations.Count > 0;
@@ -171,6 +178,64 @@ namespace WinCarePro.Modules.AiAssistant
             }
         }
 
+        private int _selectedHealingLevel = 2; // Default: Level 2 Balanced Boost
+
+        private void OnHealingLevelSelectClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string tagStr && int.TryParse(tagStr, out int lvl))
+            {
+                _selectedHealingLevel = lvl;
+                UpdateHealingLevelUi();
+            }
+        }
+
+        private void UpdateHealingLevelUi()
+        {
+            if (DryRunEstimateText == null) return;
+            switch (_selectedHealingLevel)
+            {
+                case 1:
+                    DryRunEstimateText.Text = "Mode: Silent & Safe (Purge standby RAM & temp >24h • Zero apps closed)".T();
+                    break;
+                case 3:
+                    DryRunEstimateText.Text = "Mode: Deep Velocity (Aggressive working set purge & temp >1h • Max FPS/speed)".T();
+                    break;
+                default:
+                    DryRunEstimateText.Text = "Mode: Balanced Boost (Recommended tune-up: RAM working set & temp >6h)".T();
+                    break;
+            }
+        }
+
+        private void OnTopologyNodeClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string actionKey)
+            {
+                if (actionKey == "FlushDns")
+                {
+                    OnQuickFlushDnsClick(sender, e);
+                }
+                else if (actionKey.StartsWith("Navigate"))
+                {
+                    OnRecommendationActionClick(sender, e);
+                }
+            }
+        }
+
+        private void OnCausalActionClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is string actionKey)
+            {
+                if (actionKey.StartsWith("Navigate"))
+                {
+                    OnRecommendationActionClick(sender, e);
+                }
+                else if (actionKey == "None")
+                {
+                    _ = RunAiScanAsync();
+                }
+            }
+        }
+
         private async void OnAutoRemedyAllClick(object sender, RoutedEventArgs e)
         {
             var btn = AutoRemedyAllBtn ?? (sender as Button);
@@ -180,7 +245,7 @@ namespace WinCarePro.Modules.AiAssistant
                 "Remediating All...", "1-Click Smart Remedy",
                 async () =>
                 {
-                    var result = await AiWinCareEngine.ExecuteSmartRemedyBatchAsync();
+                    var result = await AiWinCareEngine.ExecuteSmartRemedyLevelAsync(_selectedHealingLevel);
                     await RunAiScanAsync();
 
                     await RunOnUIAsync(() =>

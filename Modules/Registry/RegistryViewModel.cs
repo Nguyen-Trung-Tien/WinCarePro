@@ -42,6 +42,116 @@ public class RegistryViewModel : ViewModelBase, IDisposable
     public ObservableCollection<RegistryIssue> Issues { get; } = new();
     public ObservableCollection<RegistryBackupItem> Backups { get; } = new();
 
+    private RegistryIssue? _selectedIssue;
+    public RegistryIssue? SelectedIssue
+    {
+        get => _selectedIssue;
+        set => SetProperty(ref _selectedIssue, value);
+    }
+
+    private int _safeCount;
+    public int SafeCount
+    {
+        get => _safeCount;
+        set => SetProperty(ref _safeCount, value);
+    }
+
+    private int _cautionCount;
+    public int CautionCount
+    {
+        get => _cautionCount;
+        set => SetProperty(ref _cautionCount, value);
+    }
+
+    public void UpdateCounts()
+    {
+        SafeCount = Issues.Count(i => i.RiskLevel == RegistryRiskLevel.Safe);
+        CautionCount = Issues.Count(i => i.RiskLevel == RegistryRiskLevel.Caution);
+    }
+
+    public void SelectAll(bool select)
+    {
+        foreach (var issue in Issues)
+        {
+            issue.IsSelected = select;
+        }
+    }
+
+    public void SelectSafeOnly()
+    {
+        foreach (var issue in Issues)
+        {
+            issue.IsSelected = (issue.RiskLevel == RegistryRiskLevel.Safe);
+        }
+    }
+
+    public async Task RestoreBackupAsync(RegistryBackupItem item)
+    {
+        if (IsBusy || item == null || string.IsNullOrEmpty(item.FilePath) || _isDisposed) return;
+        IsBusy = true;
+        SetOperationState(OperationState.Preparing);
+        StatusText = "Restoring registry snapshot...".T();
+
+        try
+        {
+            bool ok = await _engine.RestoreRegistryBackupAsync(item.FilePath);
+            if (ok)
+            {
+                StatusText = "Registry restored successfully from snapshot.".T();
+                SetOperationState(OperationState.Completed);
+                await ScanRegistryAsync();
+            }
+            else
+            {
+                StatusText = "Registry snapshot restore failed.".T();
+                SetOperationState(OperationState.Failed);
+            }
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("RegistryViewModel.RestoreBackupAsync", ex);
+            StatusText = "Restore failed: ".T() + ex.Message;
+            SetOperationState(OperationState.Failed);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task RepairSingleIssueAsync(RegistryIssue issue)
+    {
+        if (IsBusy || issue == null || _isDisposed) return;
+        IsBusy = true;
+        SetOperationState(OperationState.Preparing);
+        StatusText = $"Repairing issue '{issue.Title}'...".T();
+
+        try
+        {
+            await _engine.CreateRegistryBackupAsync("AutoBeforeSingleFix");
+            var singleList = new System.Collections.Generic.List<RegistryIssue> { issue };
+            await _engine.FixRegistryIssuesAsync(singleList);
+            Issues.Remove(issue);
+            if (SelectedIssue == issue)
+            {
+                SelectedIssue = Issues.FirstOrDefault();
+            }
+            UpdateCounts();
+            StatusText = "Issue repaired successfully.".T();
+            SetOperationState(OperationState.Completed);
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("RegistryViewModel.RepairSingleIssueAsync", ex);
+            StatusText = "Repair failed: ".T() + ex.Message;
+            SetOperationState(OperationState.Failed);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     public RegistryViewModel() : this(null, null)
     {
     }
@@ -127,6 +237,8 @@ public class RegistryViewModel : ViewModelBase, IDisposable
                 {
                     Issues.Add(issue);
                 }
+                UpdateCounts();
+                SelectedIssue = Issues.FirstOrDefault();
                 ScanProgress = 100;
                 StatusText = string.Format("Scan complete. Found {0} issues.".T(), Issues.Count);
                 SetOperationState(OperationState.Completed);

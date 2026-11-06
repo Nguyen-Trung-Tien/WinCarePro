@@ -11,6 +11,7 @@ using WinCarePro.Core.Helpers;
 using WinCarePro.Shared.Components;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro.Views;
 
@@ -96,6 +97,7 @@ public sealed partial class NotificationPage : Page
 
         if (NotificationsEmptyText != null) NotificationsEmptyText.Text = "All clear! No active system alerts.".T();
         if (LogsEmptyText != null) LogsEmptyText.Text = "No activity logs found.".T();
+        if (BtnMarkAllRead != null) BtnMarkAllRead.Content = "Mark All Read".T();
     }
 
     private void OnTabAlertsClick(object sender, RoutedEventArgs e)
@@ -298,6 +300,77 @@ public sealed partial class NotificationPage : Page
         {
             DbManager.DeleteNotification(item.Id);
             await LoadNotificationsAsync();
+        }
+    }
+
+    private async void OnMarkAllReadClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            DbManager.MarkAllNotificationsAsRead();
+            await LoadNotificationsAsync();
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("OnMarkAllReadClick", ex);
+        }
+    }
+
+    private MainPage? GetMainPage()
+    {
+        if (App.MainWindowInstance is MainWindow mw && mw.MainFrame.Content is MainPage mp)
+        {
+            return mp;
+        }
+        if (App.MainWindowInstance?.Content is Frame rootFrame)
+        {
+            return rootFrame.Content as MainPage;
+        }
+        return null;
+    }
+
+    private async void OnQuickActionClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.DataContext is NotificationItem item && !string.IsNullOrEmpty(item.QuickActionType))
+        {
+            var mp = GetMainPage();
+            switch (item.QuickActionType)
+            {
+                case "RAM":
+                    try
+                    {
+                        var optEngine = App.Services.GetRequiredService<Engines.SystemOptimizerEngine>();
+                        await optEngine.OptimizeRamAsync();
+                        DbManager.LogAction("Quick RAM optimization from notification", "Memory Sentinel", "Success");
+                        var notif = App.Services.GetService<Services.Contracts.INotificationService>();
+                        notif?.ShowSuccess("RAM Cleaned".T(), "Working sets trimmed successfully.".T());
+                        await LoadNotificationsAsync();
+                        await LoadLogsAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        Infrastructure.Logging.CrashLogger.LogException("OnQuickActionClick.RAM", ex);
+                    }
+                    break;
+                case "Junk":
+                    mp?.NavigateToPageExternal("junk");
+                    break;
+                case "Registry":
+                    mp?.NavigateToPageExternal("registry");
+                    break;
+                case "Startup":
+                    mp?.NavigateToPageExternal("startup");
+                    break;
+                case "Security":
+                    mp?.NavigateToPageExternal("security");
+                    break;
+                case "Network":
+                    mp?.NavigateToPageExternal("network");
+                    break;
+                default:
+                    mp?.NavigateToPageExternal("dashboard");
+                    break;
+            }
         }
     }
 

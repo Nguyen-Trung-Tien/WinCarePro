@@ -219,6 +219,22 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         set => SetPropertyOnUI(() => _systemHealthColor, v => _systemHealthColor = v, value);
     }
 
+    private int _securityUpdatesCount;
+    public int SecurityUpdatesCount
+    {
+        get => _securityUpdatesCount;
+        set => SetPropertyOnUI(() => _securityUpdatesCount, v => _securityUpdatesCount = v, value);
+    }
+
+    private int _featureUpdatesCount;
+    public int FeatureUpdatesCount
+    {
+        get => _featureUpdatesCount;
+        set => SetPropertyOnUI(() => _featureUpdatesCount, v => _featureUpdatesCount = v, value);
+    }
+
+    public string HealthScoreText => $"{(int)SystemHealthScore}%";
+
     public bool HasSelectedUpdates => _allUpdates.Any(x => x.IsSelected && x.UpdateStatus != SoftwareUpdateInfo.StatusCompleted);
     public int SelectedCount => _allUpdates.Count(x => x.IsSelected && x.UpdateStatus != SoftwareUpdateInfo.StatusCompleted);
 
@@ -461,7 +477,10 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
     private void UpdateStatistics()
     {
-        PendingUpdatesCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusAvailable || x.UpdateStatus == SoftwareUpdateInfo.StatusFailed);
+        var pendingList = _allUpdates.Where(x => x.UpdateStatus == SoftwareUpdateInfo.StatusAvailable || x.UpdateStatus == SoftwareUpdateInfo.StatusFailed).ToList();
+        PendingUpdatesCount = pendingList.Count;
+        SecurityUpdatesCount = pendingList.Count(x => x.IsSecurityPatch);
+        FeatureUpdatesCount = PendingUpdatesCount - SecurityUpdatesCount;
         UpdatingCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusUpdating);
         CompletedCount = _allUpdates.Count(x => x.UpdateStatus == SoftwareUpdateInfo.StatusCompleted);
         TotalFoundCount = _allUpdates.Count;
@@ -476,11 +495,12 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         else
         {
             SystemHealthStatus = string.Format("Action Required ({0} Updates)".T(), PendingUpdatesCount);
-            SystemHealthScore = Math.Max(100.0 - (PendingUpdatesCount * 15.0), 25.0);
-            SystemHealthColor = PendingUpdatesCount > 3 ? "#FFEF4444" : "#FFF59E0B"; // Red or Amber
+            SystemHealthScore = Math.Max(100.0 - (PendingUpdatesCount * 12.0) - (SecurityUpdatesCount * 6.0), 20.0);
+            SystemHealthColor = (SecurityUpdatesCount > 0 || PendingUpdatesCount > 3) ? "#FFEF4444" : "#FFF59E0B"; // Red or Amber
         }
 
         ActiveEngineName = UpdateEngine == "winget" ? "Windows Package Manager" : "WinCare Direct Downloader";
+        OnPropertyChanged(nameof(HealthScoreText));
         OnPropertyChanged(nameof(HasSelectedUpdates));
         OnPropertyChanged(nameof(SelectedCount));
         OnPropertyChanged(nameof(SelectedStatusFilter));

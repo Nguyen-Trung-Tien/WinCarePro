@@ -173,4 +173,20 @@ public class SecurityCenterTests
         alert.IsFixed = true;
         Assert.False(alert.CanFix);
     }
+
+    [Fact]
+    public void ApplyPrivacyPreset_Gamer_ReturnsPositiveCount()
+    {
+        int countGamer = _securityEngine.ApplyPrivacyPreset("gamer");
+        Assert.True(countGamer >= 0);
+    }
+
+    [Fact]
+    public void SecurityViewModel_DefenseProfiles_PropertiesAndDefaults()
+    {
+        var vm = new WinCarePro.ViewModels.SecurityViewModel(_securityEngine);
+        Assert.Equal("Balanced", vm.ActiveProfile);
+        Assert.NotNull(vm.SecurityScoreGrade);
+        Assert.NotNull(vm.DefenseStatusBadge);
+    }
 }

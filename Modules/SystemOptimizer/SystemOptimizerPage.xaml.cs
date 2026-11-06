@@ -100,6 +100,20 @@ public sealed partial class SystemOptimizerPage : Page
         HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 16, 185, 129), "Privacy Shield".T(), count);
     }
 
+    private void OnSelectGamingProfileClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.06f, 300);
+        int count = ViewModel.SelectPresetProfile("Gaming");
+        HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 139, 92, 246), "Gaming Ultra".T(), count);
+    }
+
+    private void OnSelectEcoProfileClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.06f, 300);
+        int count = ViewModel.SelectPresetProfile("Eco");
+        HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 59, 130, 246), "Eco Balanced".T(), count);
+    }
+
     private void HighlightPresetSelection(Windows.UI.Color glowColor, string presetName, int count)
     {
         try

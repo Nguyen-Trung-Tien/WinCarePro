@@ -44,6 +44,7 @@ public sealed partial class JunkPage : Page
         {
             UpdateProgressOverlayState();
             TranslationManager.Instance.Translate(this);
+            UpdateResponsiveLayout(this.ActualWidth);
         };
 
         var langHandler = new EventHandler((s, e) =>
@@ -55,20 +56,76 @@ public sealed partial class JunkPage : Page
 
         this.SizeChanged += (s, e) =>
         {
-            if (LeftColumn != null && RightColumn != null)
-            {
-                if (e.NewSize.Width >= 900)
-                {
-                    LeftColumn.Width = new GridLength(1.2, GridUnitType.Star);
-                    RightColumn.Width = new GridLength(0.8, GridUnitType.Star);
-                }
-                else
-                {
-                    LeftColumn.Width = new GridLength(1, GridUnitType.Star);
-                    RightColumn.Width = new GridLength(0, GridUnitType.Pixel);
-                }
-            }
+            UpdateResponsiveLayout(e.NewSize.Width);
         };
+    }
+
+    private void UpdateResponsiveLayout(double width)
+    {
+        if (width <= 0) return;
+
+        // 1. Dual-Pane Master-Detail Area (Side-by-side on >= 950px, collapse details on < 950px)
+        if (LeftColumn != null && RightColumn != null)
+        {
+            if (width >= 950)
+            {
+                LeftColumn.Width = new GridLength(1.15, GridUnitType.Star);
+                RightColumn.Width = new GridLength(0.85, GridUnitType.Star);
+                WideLayoutVisibility = Visibility.Visible;
+            }
+            else
+            {
+                LeftColumn.Width = new GridLength(1, GridUnitType.Star);
+                RightColumn.Width = new GridLength(0, GridUnitType.Pixel);
+                WideLayoutVisibility = Visibility.Collapsed;
+            }
+        }
+
+        // 2. Header Action Buttons Panel
+        if (HeaderCol0 != null && HeaderCol1 != null && HeaderActionsPanel != null)
+        {
+            if (width >= 800)
+            {
+                HeaderCol0.Width = new GridLength(1, GridUnitType.Star);
+                HeaderCol1.Width = GridLength.Auto;
+                Grid.SetRow(HeaderActionsPanel, 0);
+                Grid.SetColumn(HeaderActionsPanel, 1);
+                Grid.SetColumnSpan(HeaderActionsPanel, 1);
+                HeaderActionsPanel.Margin = new Thickness(0);
+                HeaderActionsPanel.HorizontalAlignment = HorizontalAlignment.Right;
+            }
+            else
+            {
+                HeaderCol0.Width = new GridLength(1, GridUnitType.Star);
+                HeaderCol1.Width = new GridLength(0, GridUnitType.Pixel);
+                Grid.SetRow(HeaderActionsPanel, 1);
+                Grid.SetColumn(HeaderActionsPanel, 0);
+                Grid.SetColumnSpan(HeaderActionsPanel, 2);
+                HeaderActionsPanel.Margin = new Thickness(0, 12, 0, 0);
+                HeaderActionsPanel.HorizontalAlignment = HorizontalAlignment.Left;
+            }
+        }
+
+        // 3. Locking Apps Banner Actions
+        if (LockingCol2 != null && LockingActionsPanel != null)
+        {
+            if (width >= 800)
+            {
+                LockingCol2.Width = GridLength.Auto;
+                Grid.SetRow(LockingActionsPanel, 0);
+                Grid.SetColumn(LockingActionsPanel, 2);
+                Grid.SetColumnSpan(LockingActionsPanel, 1);
+                LockingActionsPanel.Margin = new Thickness(0);
+            }
+            else
+            {
+                LockingCol2.Width = new GridLength(0, GridUnitType.Pixel);
+                Grid.SetRow(LockingActionsPanel, 1);
+                Grid.SetColumn(LockingActionsPanel, 0);
+                Grid.SetColumnSpan(LockingActionsPanel, 3);
+                LockingActionsPanel.Margin = new Thickness(0, 8, 0, 0);
+            }
+        }
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -194,6 +251,21 @@ public sealed partial class JunkPage : Page
     private void OnDeselectAllCategoriesClick(object sender, RoutedEventArgs e)
     {
         ViewModel.DeselectAllCategories();
+    }
+
+    private void OnPresetSafeClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.ApplyPreset("Safe");
+    }
+
+    private void OnPresetAllClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.ApplyPreset("All");
+    }
+
+    private void OnDismissLockingAppsClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.DismissLockingAlert();
     }
 
     private void OnOpenFolderClick(object sender, RoutedEventArgs e)

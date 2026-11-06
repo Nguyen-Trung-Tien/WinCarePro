@@ -208,4 +208,47 @@ public class AiDiagnosticsEngineTests
         Assert.Equal(96, result.HealthScore);
         Assert.Contains(result.Results, r => r.CheckName == "Excessive Background Services" && !r.IsHealthy);
     }
+
+    [Fact]
+    public async Task AnalyzeSystemHealthAsync_PopulatesTopologyNodesAndCausalChains()
+    {
+        // Act
+        var report = await WinCarePro.Modules.AiAssistant.AiWinCareEngine.AnalyzeSystemHealthAsync();
+
+        // Assert
+        Assert.NotNull(report);
+        Assert.InRange(report.OverallScore, 20, 100);
+        Assert.InRange(report.SystemStressIndex, 5, 100);
+        Assert.NotNull(report.TopologyNodes);
+        Assert.Equal(5, report.TopologyNodes.Count);
+        Assert.Contains(report.TopologyNodes, n => n.Id == "CPU");
+        Assert.Contains(report.TopologyNodes, n => n.Id == "RAM");
+        Assert.Contains(report.TopologyNodes, n => n.Id == "Storage");
+        Assert.Contains(report.TopologyNodes, n => n.Id == "Network");
+        Assert.Contains(report.TopologyNodes, n => n.Id == "Cache");
+
+        Assert.NotNull(report.CausalChains);
+        Assert.True(report.CausalChains.Count > 0);
+        Assert.All(report.CausalChains, c =>
+        {
+            Assert.False(string.IsNullOrEmpty(c.Title));
+            Assert.False(string.IsNullOrEmpty(c.TriggerComponent));
+            Assert.False(string.IsNullOrEmpty(c.PropagationEffect));
+            Assert.False(string.IsNullOrEmpty(c.SystemImpact));
+        });
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    public async Task ExecuteSmartRemedyLevelAsync_ExecutesWithoutExceptions(int level)
+    {
+        // Act
+        var result = await WinCarePro.Modules.AiAssistant.AiWinCareEngine.ExecuteSmartRemedyLevelAsync(level);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.FixedActionsCount > 0);
+    }
 }

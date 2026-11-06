@@ -461,5 +461,64 @@ public class UiThemeAndConsistencyTests
         var back = converter.ConvertBack("val", typeof(string), null!, "vi-VN");
         Assert.NotNull(back);
     }
+
+    [Fact]
+    public void TranslationManager_DialogAndPunctuationFallback_TranslatesCorrectly()
+    {
+        var manager = TranslationManager.Instance;
+
+        // 1. Factory Reset dialog texts
+        Assert.Equal("Đặt lại về mặc định gốc?", manager.GetTranslationForLanguage("Reset to Factory Defaults?", AppLanguage.Vietnamese));
+        Assert.Equal("Đặt lại tất cả", manager.GetTranslationForLanguage("Reset All", AppLanguage.Vietnamese));
+        Assert.Contains("Bạn có chắc chắn muốn đặt lại", manager.GetTranslationForLanguage("Are you sure you want to reset all configuration settings to factory defaults? This cannot be undone.", AppLanguage.Vietnamese));
+
+        // 2. Dialog Badges
+        Assert.Equal("NGUY HIỂM", manager.GetTranslationForLanguage("DESTRUCTIVE", AppLanguage.Vietnamese));
+        Assert.Equal("XÁC NHẬN", manager.GetTranslationForLanguage("CONFIRMATION", AppLanguage.Vietnamese));
+        Assert.Equal("THÀNH CÔNG", manager.GetTranslationForLanguage("SUCCESS", AppLanguage.Vietnamese));
+        Assert.Equal("CẢNH BÁO", manager.GetTranslationForLanguage("WARNING", AppLanguage.Vietnamese));
+
+        // 3. Punctuation fallback (string ending in ? without explicit ? entry)
+        string testQuestion = manager.GetTranslationForLanguage("Check for Updates?", AppLanguage.Vietnamese);
+        Assert.Equal("Kiểm tra cập nhật?", testQuestion);
+
+        // 4. Reverse translation back to English
+        Assert.Equal("Reset to Factory Defaults?", manager.GetTranslationForLanguage("Đặt lại về mặc định gốc?", AppLanguage.English));
+        Assert.Contains(manager.GetTranslationForLanguage("NGUY HIỂM", AppLanguage.English), new[] { "DESTRUCTIVE", "Bad" });
+
+        // 5. Dashboard Health & Registry translations from user reports
+        Assert.Equal("Tình trạng sức khỏe hệ thống", manager.GetTranslationForLanguage("System Health Status", AppLanguage.Vietnamese));
+        Assert.Equal("Tốt", manager.GetTranslationForLanguage("Good", AppLanguage.Vietnamese));
+        Assert.Equal("Trung tâm Registry & Tối ưu AI", manager.GetTranslationForLanguage("Registry Center & AI Optimizer", AppLanguage.Vietnamese));
+        Assert.Equal("Lá chắn Registry Zero-Trust", manager.GetTranslationForLanguage("Zero-Trust Registry Armor", AppLanguage.Vietnamese));
+        Assert.Equal("Sửa an toàn 1 chạm", manager.GetTranslationForLanguage("1-Click Safe Fix", AppLanguage.Vietnamese));
+        Assert.Equal("Dọn các mục đã chọn", manager.GetTranslationForLanguage("Clean Selected", AppLanguage.Vietnamese));
+        Assert.Equal("Trình kiểm tra AI thông minh", manager.GetTranslationForLanguage("Smart AI Inspector", AppLanguage.Vietnamese));
+
+        // 6. Polaris v5.2.0 Search, Vitality, Network segmented tabs, System Repair
+        Assert.Equal("Tìm kiếm công cụ, chẩn đoán, cài đặt... (Ctrl + K)", manager.GetTranslationForLanguage("Search tools, diagnostics, settings... (Ctrl + K)", AppLanguage.Vietnamese));
+        Assert.Contains(manager.GetTranslationForLanguage("VITALITY", AppLanguage.Vietnamese), new[] { "SỨC SỐNG", "Sức sống" });
+        Assert.Equal("🚀 Băng thông & Radar", manager.GetTranslationForLanguage("🚀 Bandwidth & Radar", AppLanguage.Vietnamese));
+        Assert.Equal("🌐 Trí tuệ DNS", manager.GetTranslationForLanguage("🌐 DNS Intelligence", AppLanguage.Vietnamese));
+        Assert.Equal("⚡ Socket ứng dụng & Lưu lượng", manager.GetTranslationForLanguage("⚡ App Sockets & Traffic", AppLanguage.Vietnamese));
+        Assert.Equal("🛠️ Tự phục hồi & Công cụ", manager.GetTranslationForLanguage("🛠️ Self-Healing & Tools", AppLanguage.Vietnamese));
+        Assert.Equal("Sửa chữa Hệ thống & Tự phục hồi", manager.GetTranslationForLanguage("System Repair & Self-Healing", AppLanguage.Vietnamese));
+        Assert.Equal("Động cơ Thông minh 6.0", manager.GetTranslationForLanguage("Smart Engine 6.0", AppLanguage.Vietnamese));
+        Assert.Equal("Xác minh linh kiện SFC/DISM chuyên sâu, bỏ chặn registry an toàn và bảo vệ sao lưu hoàn tác tự động.", manager.GetTranslationForLanguage("Deep SFC/DISM component verification, registry safety unban, and automated rollback protection.", AppLanguage.Vietnamese));
+
+        // 7. Dynamic emoji round-trip back to English
+        Assert.Equal("🚀 Bandwidth & Radar", manager.GetTranslationForLanguage("🚀 Băng thông & Radar", AppLanguage.English));
+        Assert.Equal("🌐 DNS Intelligence", manager.GetTranslationForLanguage("🌐 Trí tuệ DNS", AppLanguage.English));
+
+        // 8. Polaris v5.2.0 Settings actions & Risk Advisory
+        Assert.Equal("Đặt lại mặc định", manager.GetTranslationForLanguage("Reset Defaults", AppLanguage.Vietnamese));
+        Assert.Equal("Xuất bản sao lưu", manager.GetTranslationForLanguage("Export Backup", AppLanguage.Vietnamese));
+        Assert.Equal("Cảnh báo rủi ro thử nghiệm", manager.GetTranslationForLanguage("Experimental Risk Advisory", AppLanguage.Vietnamese));
+        Assert.Equal("Tính năng tự động khắc phục phỏng đoán thực hiện các điều chỉnh hệ thống chạy ngầm mà không có thông báo xác nhận. Nên tắt đối với môi trường doanh nghiệp ổn định.", manager.GetTranslationForLanguage("Heuristic auto-remediations execute background system adjustments without prompt confirmations. Keep disabled for stable enterprise production environments.", AppLanguage.Vietnamese));
+
+        // 9. Resource Insights Telemetry Banner
+        Assert.Equal("Phát hiện mức sử dụng bộ xử lý cao. Hãy tối ưu các dịch vụ chạy ngầm và ứng dụng khởi động.", manager.GetTranslationForLanguage("High processor demand observed. Optimize background services and startup applications.", AppLanguage.Vietnamese));
+        Assert.Equal("CPU TB: {0}% | RAM: {1}%", manager.GetTranslationForLanguage("Avg CPU: {0}% | RAM: {1}%", AppLanguage.Vietnamese));
+    }
 }
 

@@ -107,6 +107,30 @@ public partial class NetworkViewModel
         }
     }
 
+    public async Task SwitchToFastestDnsAsync()
+    {
+        if (_fastestDns != null)
+        {
+            await ApplyDnsAsync(_fastestDns);
+        }
+        else if (DnsServers.Any(d => d.AverageQueryMs > 0))
+        {
+            var best = DnsServers.Where(d => d.AverageQueryMs > 0).OrderBy(d => d.AverageQueryMs).FirstOrDefault();
+            if (best != null)
+            {
+                await ApplyDnsAsync(best);
+            }
+        }
+        else
+        {
+            await StartDnsBenchmarkAsync();
+            if (_fastestDns != null)
+            {
+                await ApplyDnsAsync(_fastestDns);
+            }
+        }
+    }
+
     public async Task RestoreDefaultDnsAsync()
     {
         if (IsBusy) return;

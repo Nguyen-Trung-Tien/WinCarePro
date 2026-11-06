@@ -60,6 +60,7 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
     public ObservableCollection<NetworkAdapterInfo> Adapters { get; } = new();
     public ObservableCollection<DnsServerInfo> DnsServers { get; } = new();
     public ObservableCollection<ActiveConnectionInfo> Connections { get; } = new();
+    public ObservableCollection<ProcessGroupInfo> TopProcesses { get; } = new();
 
     private string _connectionFilterCategory = "All";
     public string ConnectionFilterCategory
@@ -115,7 +116,13 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
     public string InternetStatus
     {
         get => _internetStatus.T();
-        set => SetPropertyOnUI(() => _internetStatus, v => _internetStatus = v, value);
+        set
+        {
+            SetPropertyOnUI(() => _internetStatus, v => {
+                _internetStatus = v;
+                RecalculateHealthScore();
+            }, value);
+        }
     }
 
     public string GatewayAddress
@@ -181,19 +188,100 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
     public double LatencyMs
     {
         get => _latencyMs;
-        set => SetPropertyOnUI(() => _latencyMs, v => _latencyMs = v, value);
+        set
+        {
+            SetPropertyOnUI(() => _latencyMs, v => {
+                _latencyMs = v;
+                RecalculateHealthScore();
+            }, value);
+        }
     }
 
     public double PacketLossPercent
     {
         get => _packetLossPercent;
-        set => SetPropertyOnUI(() => _packetLossPercent, v => _packetLossPercent = v, value);
+        set
+        {
+            SetPropertyOnUI(() => _packetLossPercent, v => {
+                _packetLossPercent = v;
+                RecalculateHealthScore();
+            }, value);
+        }
     }
 
     public double JitterMs
     {
         get => _jitterMs;
-        set => SetPropertyOnUI(() => _jitterMs, v => _jitterMs = v, value);
+        set
+        {
+            SetPropertyOnUI(() => _jitterMs, v => {
+                _jitterMs = v;
+                RecalculateHealthScore();
+            }, value);
+        }
+    }
+
+    private int _networkHealthScore = 96;
+    public int NetworkHealthScore
+    {
+        get => _networkHealthScore;
+        private set => SetPropertyOnUI(() => _networkHealthScore, v => _networkHealthScore = v, value);
+    }
+
+    private string _networkHealthSummary = "Tối ưu cho Gaming & Streaming";
+    public string NetworkHealthSummary
+    {
+        get => _networkHealthSummary.T();
+        private set => SetPropertyOnUI(() => _networkHealthSummary, v => _networkHealthSummary = v, value);
+    }
+
+    private string _networkHealthRecommendation = "Băng thông và độ trễ đạt chuẩn lý tưởng. 0% rớt gói.";
+    public string NetworkHealthRecommendation
+    {
+        get => _networkHealthRecommendation.T();
+        private set => SetPropertyOnUI(() => _networkHealthRecommendation, v => _networkHealthRecommendation = v, value);
+    }
+
+    public void RecalculateHealthScore()
+    {
+        if (_internetStatus?.Contains("Disconn", StringComparison.OrdinalIgnoreCase) == true ||
+            _internetStatus?.Contains("No", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            NetworkHealthScore = 0;
+            NetworkHealthSummary = "Mất kết nối Internet";
+            NetworkHealthRecommendation = "Vui lòng kiểm tra cáp mạng, router hoặc kết nối Wi-Fi.";
+            return;
+        }
+
+        int score = 100;
+        if (_latencyMs > 120) score -= 35;
+        else if (_latencyMs > 60) score -= 20;
+        else if (_latencyMs > 25) score -= 8;
+
+        if (_packetLossPercent > 5) score -= 40;
+        else if (_packetLossPercent > 0) score -= 15;
+
+        if (_jitterMs > 15) score -= 20;
+        else if (_jitterMs > 5) score -= 8;
+
+        score = Math.Clamp(score, 20, 100);
+        NetworkHealthScore = score;
+
+        if (score >= 90)
+        {
+            NetworkHealthSummary = "Tối ưu cho Gaming & 4K Streaming";
+            NetworkHealthRecommendation = "Băng thông ổn định, 0% rớt gói, độ trễ cực thấp.";
+        }
+        else if (score >= 70)
+        {
+            NetworkHealthSummary = "Kết nối ổn định";
+            NetworkHealthRecommendation = "Độ trễ ở mức trung bình. Hãy thử DNS Benchmark để tối ưu thêm.";
+        }
+        else
+        {
+            NetworkHealthSummary = "Chất lượng mạng bị suy giảm";
+            NetworkHealthRecommendation = "Độ trễ hoặc jitter cao. Hãy dùng 'Smart Auto-Heal' để làm mới mạng.";
+        }
     }
 
     public string PublicIpAddress

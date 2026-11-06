@@ -1050,6 +1050,13 @@ public partial class SecurityPrivacyEngine
             if (SetPrivacySetting("feedback", true)) count++;
             if (SetPrivacySetting("appdiagnostics", true)) count++;
         }
+        else if (preset == "gamer")
+        {
+            if (SetPrivacySetting("advertisingid", false)) count++;
+            if (SetPrivacySetting("telemetry", false)) count++;
+            if (SetPrivacySetting("tracking", true)) count++;
+            if (SetPrivacySetting("feedback", true)) count++;
+        }
         else if (preset == "balanced")
         {
             if (SetPrivacySetting("advertisingid", false)) count++;

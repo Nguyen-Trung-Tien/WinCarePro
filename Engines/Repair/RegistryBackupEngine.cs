@@ -65,7 +65,11 @@ public class RegistryBackupEngine
                                 KeyPath = $@"HKCR\{handlerName}\shell\open\command",
                                 ValueName = "",
                                 ValueData = cmdLine,
-                                Description = $"File extension handler '{subkeyName}' refers to missing executable: {cleanPath}"
+                                Description = $"File extension handler '{subkeyName}' refers to missing executable: {cleanPath}",
+                                RiskLevel = RegistryRiskLevel.Caution,
+                                AiRecommendation = $"An uninstalled application registered the file handler for '{subkeyName}' without deregistering.",
+                                RootCauseApp = handlerName,
+                                VisualDiffAction = $"[-] Remove invalid command: {cmdLine}"
                             });
                         }
                     }
@@ -78,7 +82,51 @@ public class RegistryBackupEngine
             System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] Scan file associations error: {ex.Message}");
         }
 
+        // 3. Scan Application Paths for missing executables
+        ScanAppPaths(issues, cancellationToken);
+
         return issues;
+    }
+
+    private void ScanAppPaths(List<RegistryIssue> issues, System.Threading.CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var appPathsKey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\App Paths");
+            if (appPathsKey == null) return;
+            int count = 0;
+            foreach (var subName in appPathsKey.GetSubKeyNames())
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                if (count++ > 300) break;
+                using var subKey = appPathsKey.OpenSubKey(subName);
+                var exePath = subKey?.GetValue("")?.ToString();
+                if (!string.IsNullOrEmpty(exePath))
+                {
+                    string clean = CleanCommandPath(exePath);
+                    if (!string.IsNullOrEmpty(clean) && clean.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) && !File.Exists(clean))
+                    {
+                        issues.Add(new RegistryIssue
+                        {
+                            Section = "Application Paths",
+                            KeyPath = $@"HKLM\Software\Microsoft\Windows\CurrentVersion\App Paths\{subName}",
+                            ValueName = "",
+                            ValueData = exePath,
+                            Description = $"App Path '{subName}' points to missing executable: {clean}",
+                            RiskLevel = RegistryRiskLevel.Safe,
+                            AiRecommendation = $"Leftover App Path for '{subName}'. Removing this cleans dead Windows execution shortcuts.",
+                            RootCauseApp = subName,
+                            VisualDiffAction = $"[-] Purge App Path: {subName}"
+                        });
+                    }
+                }
+            }
+        }
+        catch (OperationCanceledException) { throw; }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] ScanAppPaths error: {ex.Message}");
+        }
     }
 
     private void ScanRunKeyPaths(RegistryKey hive, string subkey, string section, List<RegistryIssue> issues, System.Threading.CancellationToken cancellationToken = default)
@@ -104,7 +152,11 @@ public class RegistryBackupEngine
                             KeyPath = $@"{(hive == Registry.CurrentUser ? "HKCU" : "HKLM")}\{subkey}",
                             ValueName = valName,
                             ValueData = cmd,
-                            Description = $"Startup item '{valName}' references missing executable file: {path}"
+                            Description = $"Startup item '{valName}' references missing executable file: {path}",
+                            RiskLevel = RegistryRiskLevel.Safe,
+                            AiRecommendation = $"The program '{valName}' was uninstalled or moved, but Windows still attempts to launch it on boot.",
+                            RootCauseApp = valName,
+                            VisualDiffAction = $"[-] Remove startup entry '{valName}'"
                         });
                     }
                 }

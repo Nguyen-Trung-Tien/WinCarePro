@@ -13,13 +13,13 @@
     <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="LayoutVisualStates">
-                    <!-- Wide Layout: Viewport Width >= 1100px -->
+                    <!-- Wide Layout: Viewport Width >= 950px -->
                     <VisualState x:Name="WideState">
                         <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowWidth="1100" />
+                            <AdaptiveTrigger MinWindowWidth="950" />
                         </VisualState.StateTriggers>
                     </VisualState>
-                    <!-- Narrow Layout: Viewport Width < 800px -->
+                    <!-- Narrow Layout: Viewport Width < 950px -->
                     <VisualState x:Name="NarrowState">
                         <VisualState.StateTriggers>
                             <AdaptiveTrigger MinWindowWidth="0" />
@@ -31,17 +31,27 @@
                             <Setter Target="HeaderActionsPanel.(Grid.Row)" Value="1" />
                             <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
                             <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
-                            <Setter Target="HeaderActionsPanel.Margin" Value="0,16,0,0" />
+                            <Setter Target="HeaderActionsPanel.Margin" Value="0,12,0,0" />
                             <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
+
+                            <Setter Target="LeftColumn.Width" Value="*" />
+                            <Setter Target="RightColumn.Width" Value="0" />
+
+                            <Setter Target="LockingCol2.Width" Value="0" />
+                            <Setter Target="LockingActionsPanel.(Grid.Row)" Value="1" />
+                            <Setter Target="LockingActionsPanel.(Grid.Column)" Value="0" />
+                            <Setter Target="LockingActionsPanel.(Grid.ColumnSpan)" Value="3" />
+                            <Setter Target="LockingActionsPanel.Margin" Value="0,8,0,0" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" /> <!-- 0: Page Header -->
+                <RowDefinition Height="Auto" /> <!-- 1: Bento Ribbon Stat Deck -->
+                <RowDefinition Height="Auto" /> <!-- 2: Dynamic Alert / Banner Area -->
+                <RowDefinition Height="*" />    <!-- 3: Master-Detail Explorer Area -->
             </Grid.RowDefinitions>
 
             <!-- Page Header -->
@@ -83,7 +93,8 @@
 
                 <!-- Right: Scan & Clean Actions -->
                 <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Button x:Name="ScanJunkBtn" Style="{x:Bind GetScanButtonStyle(ViewModel.HasCleanableJunk), Mode=OneWay}" Click="OnScanJunkClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" MinWidth="145" Padding="16,8" CornerRadius="10"
+                    <Button x:Name="ScanJunkBtn" Style="{x:Bind GetScanButtonStyle(ViewModel.HasCleanableJunk), Mode=OneWay}" Click="OnScanJunkClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" MinWidth="145" Padding="16,8" CornerRadius="12"
+                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
                             AutomationProperties.Name="Scan Junk and System Cache"
                             AutomationProperties.HelpText="Evaluates safe-to-clean junk files and system caching logs.">
                         <StackPanel Orientation="Horizontal" Spacing="8">
@@ -92,7 +103,8 @@
                             <TextBlock x:Name="ScanJunkText" Text="{x:Bind GetScanButtonText(ViewModel.HasCleanableJunk), Mode=OneWay}" VerticalAlignment="Center" FontSize="12.5" FontWeight="Bold" />
                         </StackPanel>
                     </Button>
-                    <Button x:Name="CleanJunkBtn" Style="{x:Bind GetCleanButtonStyle(ViewModel.HasCleanableJunk), Mode=OneWay}" Click="OnCleanJunkClick" Visibility="{x:Bind GetCleanButtonVisibility(ViewModel.HasCleanableJunk), Mode=OneWay}" IsEnabled="{x:Bind CanClean(ViewModel.IsCleaning, ViewModel.Categories.Count, ViewModel.TotalCleanableBytes), Mode=OneWay}" MinWidth="145" Padding="18,8" CornerRadius="10"
+                    <Button x:Name="CleanJunkBtn" Style="{x:Bind GetCleanButtonStyle(ViewModel.HasCleanableJunk), Mode=OneWay}" Click="OnCleanJunkClick" Visibility="{x:Bind GetCleanButtonVisibility(ViewModel.HasCleanableJunk), Mode=OneWay}" IsEnabled="{x:Bind CanClean(ViewModel.IsCleaning, ViewModel.Categories.Count, ViewModel.TotalCleanableBytes), Mode=OneWay}" MinWidth="145" Padding="18,8" CornerRadius="12"
+                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
                             AutomationProperties.Name="Clean Selected Junk"
                             AutomationProperties.HelpText="Permanently removes selected temporary junk and cache files.">
                         <StackPanel Orientation="Horizontal" Spacing="8">
@@ -105,64 +117,136 @@
             </Grid>
         </Grid>
 
-        <!-- Storage Visualizer & Locking Apps Container -->
-        <StackPanel Grid.Row="1" Spacing="16" Margin="0,0,0,16">
-            <!-- Storage Visualizer Hero Deck -->
-            <Border Style="{StaticResource AuraGlassCardStyle}" Padding="18,14"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="14">
-                <StackPanel Spacing="10">
-                    <Grid>
-                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE7F1;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                            <TextBlock Text="Storage Distribution Breakdown" FontWeight="Bold" FontSize="13" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                        </StackPanel>
-                        <TextBlock Text="{x:Bind ViewModel.TotalJunkSize, Mode=OneWay}" HorizontalAlignment="Right" FontWeight="ExtraBold" FontSize="13.5" Foreground="#FF10B981"/>
-                    </Grid>
-                    <!-- Horizontal Visual Storage Bar -->
-                    <Grid Height="10" CornerRadius="5" Background="{ThemeResource AppStatChipBackground}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="4*"/>
-                            <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Background="#FFA78BFA" CornerRadius="5,0,0,5"/>
-                        <Border Grid.Column="1" Background="#FF3B82F6"/>
-                        <Border Grid.Column="2" Background="#FF10B981"/>
-                        <Border Grid.Column="3" Background="#FFF59E0B" CornerRadius="0,5,5,0"/>
-                    </Grid>
-                    <!-- Legend Chips -->
-                    <StackPanel Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Ellipse Width="8" Height="8" Fill="#FFA78BFA" VerticalAlignment="Center"/>
-                            <TextBlock Text="System Cache" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Ellipse Width="8" Height="8" Fill="#FF3B82F6" VerticalAlignment="Center"/>
-                            <TextBlock Text="Temp Files" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Ellipse Width="8" Height="8" Fill="#FF10B981" VerticalAlignment="Center"/>
-                            <TextBlock Text="Browser Data" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <Ellipse Width="8" Height="8" Fill="#FFF59E0B" VerticalAlignment="Center"/>
-                            <TextBlock Text="Logs &amp; Trash" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
+        <!-- 1. Interactive Cyber-Bento Stat Ribbon Deck (Unified Compact Capsule Layout) -->
+        <Border Grid.Row="1" Margin="0,0,0,12" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,10"
+                helpers:AnimationHelper.StaggerIndex="0"
+                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="12">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
+                <Grid x:Name="TopStatsGrid" ColumnSpacing="12" MinWidth="720">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.2*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
 
+                    <!-- Capsule 0: Total Cleanable Space & Preset Filter Chips -->
+                    <Border Grid.Column="0" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="12,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Width="38" Height="38" CornerRadius="19" Background="{StaticResource PrimaryAccentGradient}" Margin="0,0,10,0" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xEA99;" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                <TextBlock Text="Total Cleanable Space" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                <TextBlock Text="{x:Bind ViewModel.TotalJunkSize, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,2,0,0">
+                                    <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnPresetSafeClick" Padding="6,2" CornerRadius="4"
+                                            Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1"
+                                            ToolTipService.ToolTip="Select only 100% safe items (Recommended)"
+                                            AutomationProperties.Name="Safe Only Preset">
+                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                            <FontIcon Glyph="&#xE73E;" FontSize="9" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                            <TextBlock Text="Safe" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnPresetAllClick" Padding="6,2" CornerRadius="4"
+                                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1"
+                                            ToolTipService.ToolTip="Select all detected junk categories"
+                                            AutomationProperties.Name="Select All Preset">
+                                        <TextBlock Text="All" FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Capsule 1: 100% Safe Cache (Green) -->
+                    <Button Grid.Column="1" Click="OnPresetSafeClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3510B981" BorderThickness="1.2">
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Width="34" Height="34" CornerRadius="17" Background="#2010B981" Margin="0,0,10,0" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE73E;" FontSize="15" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="100% Safe Cache" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <Border Background="#2510B981" CornerRadius="3" Padding="4,0.5">
+                                        <TextBlock Text="SAFE" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind ViewModel.SafeJunkSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                <TextBlock Text="{x:Bind ViewModel.SafeFileCount, Mode=OneWay}" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <!-- Capsule 2: Review Recommended (Amber) -->
+                    <Border Grid.Column="2" Style="{StaticResource Tilt3DCardStyle}" BorderBrush="#35F59E0B" BorderThickness="1.2" CornerRadius="10" Padding="10,8">
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Width="34" Height="34" CornerRadius="17" Background="#20F59E0B" Margin="0,0,10,0" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE7BA;" FontSize="15" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="Review Recommended" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <Border Background="#25F59E0B" CornerRadius="3" Padding="4,0.5">
+                                        <TextBlock Text="NOTICE" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind ViewModel.ReviewJunkSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                <TextBlock Text="{x:Bind ViewModel.ReviewFileCount, Mode=OneWay}" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Capsule 3: Developer & Deep (Violet) -->
+                    <Border Grid.Column="3" Style="{StaticResource Tilt3DCardStyle}" BorderBrush="#358B5CF6" BorderThickness="1.2" CornerRadius="10" Padding="10,8">
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Width="34" Height="34" CornerRadius="17" Background="#208B5CF6" Margin="0,0,10,0" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE943;" FontSize="15" Foreground="#FFA78BFA" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="Developer Caches" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <Border Background="#258B5CF6" CornerRadius="3" Padding="4,0.5">
+                                        <TextBlock Text="DEV" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FFA78BFA"/>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="{x:Bind ViewModel.DevJunkSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FFA78BFA" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                <TextBlock Text="{x:Bind ViewModel.DevFileCount, Mode=OneWay}" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 2. Dynamic Alert Banners Container -->
+        <StackPanel Grid.Row="2" Spacing="10" Margin="0,0,0,12">
             <!-- Celebration & Micro-interaction Success Banner (1-Click Clean Complete) -->
             <Border Background="{ThemeResource AppBadgeGoodBg}"
                     BorderBrush="{ThemeResource AppBadgeGoodBorder}"
                     BorderThickness="1.5"
-                    CornerRadius="16"
-                    Padding="16,12"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="12"
-                    Visibility="{x:Bind GetCelebrationVisibility(ViewModel.IsCelebrationActive), Mode=OneWay}"
-                    Margin="0,0,0,12">
-                <Grid ColumnSpacing="14">
+                    CornerRadius="14"
+                    Padding="14,10"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10"
+                    Visibility="{x:Bind GetCelebrationVisibility(ViewModel.IsCelebrationActive), Mode=OneWay}">
+                <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -170,91 +254,100 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Animated Aura Icon Ring -->
-                    <Border Grid.Column="0" Width="42" Height="42" CornerRadius="21" Background="#3510B981" BorderBrush="#FF10B981" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE73E;" FontSize="18" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="18" Background="#3510B981" BorderBrush="#FF10B981" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
 
                     <!-- Message & Stats -->
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock Text="System Purge &amp; Clean Completed Successfully! ✨" FontWeight="Bold" FontSize="13.5" Foreground="#FF10B981"/>
-                            <Border Background="#3510B981" CornerRadius="4" Padding="6,1" VerticalAlignment="Center">
-                                <TextBlock Text="OPTIMAL" FontSize="9.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                            <TextBlock Text="System Purge &amp; Clean Completed Successfully! ✨" FontWeight="Bold" FontSize="13" Foreground="#FF10B981"/>
+                            <Border Background="#3510B981" CornerRadius="4" Padding="5,1" VerticalAlignment="Center">
+                                <TextBlock Text="OPTIMAL" FontSize="9" FontWeight="Bold" Foreground="#FF10B981"/>
                             </Border>
                         </StackPanel>
-                        <TextBlock Text="System working set and caches are fully refreshed. Disk performance and application response times are at peak efficiency." 
-                                   FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
+                        <TextBlock Text="Working sets and debris cleared. Disk and cache performance are at peak efficiency." 
+                                   FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap"/>
                     </StackPanel>
 
                     <!-- Action -->
-                    <Button Grid.Column="2" Content="Scan Again" Click="OnScanJunkClick" CornerRadius="8" Padding="14,6" FontSize="11.5" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                    <Button Grid.Column="2" Content="Scan Again" Click="OnScanJunkClick" CornerRadius="8" Padding="12,5" FontSize="11" VerticalAlignment="Center" FontWeight="SemiBold"/>
                 </Grid>
             </Border>
 
-            <!-- Warning Banner for Locking Applications -->
-            <Border Background="#1EEF4444" 
-                    BorderBrush="#48EF4444" 
+            <!-- Sleek Non-intrusive Locking Apps Pill Banner -->
+            <Border x:Name="LockingAppsBannerBorder" Background="#15EF4444" 
+                    BorderBrush="#35EF4444" 
                     BorderThickness="1" 
-                    CornerRadius="12" 
-                    Padding="16,12" 
-                    Visibility="{x:Bind GetWarningVisibility(ViewModel.HasLockingApps), Mode=OneWay}">
-                <Grid>
+                    CornerRadius="10" 
+                    Padding="12,8" 
+                    Visibility="{x:Bind ViewModel.ShowLockingAppsBanner, Mode=OneWay}">
+                <Grid x:Name="LockingAppsGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="LockingRow0" Height="Auto" />
+                        <RowDefinition x:Name="LockingRow1" Height="Auto" />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition x:Name="LockingCol0" Width="Auto" />
+                        <ColumnDefinition x:Name="LockingCol1" Width="*" />
+                        <ColumnDefinition x:Name="LockingCol2" Width="Auto" />
                     </Grid.ColumnDefinitions>
                     
-                    <FontIcon Grid.Column="0" Glyph="&#xE7BA;" Foreground="#FFEF4444" FontSize="18" VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <FontIcon Grid.Row="0" Grid.Column="0" Glyph="&#xE7BA;" Foreground="#FFEF4444" FontSize="15" VerticalAlignment="Center" Margin="0,0,10,0" />
                     
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="6">
-                        <TextBlock Text="Running Applications Locking Cache Files" FontWeight="Bold" FontSize="13" Foreground="#FFEF4444" />
-                        <TextBlock Text="These apps lock cache files and prevent them from being cleaned. Please close them before cleaning:" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
-                        <ItemsControl ItemsSource="{x:Bind ViewModel.ActiveLockingApps, Mode=OneWay}" Margin="0,4,0,0">
+                    <StackPanel x:Name="LockingInfoPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="8">
+                        <TextBlock Text="Active Apps Locking Files:" FontWeight="Bold" FontSize="12" Foreground="#FFEF4444" VerticalAlignment="Center"/>
+                        <ItemsControl ItemsSource="{x:Bind ViewModel.ActiveLockingApps, Mode=OneWay}" VerticalAlignment="Center">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" Spacing="12" />
+                                    <StackPanel Orientation="Horizontal" Spacing="8" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Spacing="6" Background="{ThemeResource AppStatChipBackground}" Padding="8,4" CornerRadius="6">
-                                        <!-- App Icon -->
-                                        <Grid Width="20" Height="20" VerticalAlignment="Center">
-                                            <Image Source="{Binding IconImageSource}" Visibility="{Binding HasIcon, Converter={StaticResource BooleanToVisibilityConverter}}" Stretch="Uniform" />
-                                            <FontIcon Glyph="&#xE7BA;" Foreground="#FFEF4444" FontSize="14" Visibility="{Binding HasIcon, Converter={StaticResource InverseBooleanToVisibilityConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                        </Grid>
-                                        <!-- App Name -->
-                                        <TextBlock Text="{Binding Name}" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" VerticalAlignment="Center" />
-                                        <!-- Size -->
-                                        <TextBlock Text="{Binding LockedSizeFormatted}" FontSize="10" Foreground="#FFEF4444" VerticalAlignment="Center" Opacity="0.8" />
-                                    </StackPanel>
+                                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="6" Padding="6,2" BorderThickness="1" BorderBrush="#30EF4444">
+                                        <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                                            <FontIcon Glyph="&#xE7BA;" Foreground="#FFEF4444" FontSize="11" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Name}" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding LockedSizeFormatted}" FontSize="10" Foreground="#FFEF4444" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
                     
-                    <Button Grid.Column="2" 
-                            Content="Close Apps &amp; Re-scan" 
-                            Click="OnCloseAppsClick" 
-                            Background="#FFEF4444" 
-                            Foreground="White" 
-                            FontWeight="SemiBold" 
-                            CornerRadius="6" 
-                            Padding="14,6" 
-                            VerticalAlignment="Center" />
+                    <StackPanel x:Name="LockingActionsPanel" Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <Button Content="Close Apps" 
+                                Click="OnCloseAppsClick" 
+                                Background="#FFEF4444" 
+                                Foreground="White" 
+                                FontWeight="SemiBold" 
+                                CornerRadius="6" 
+                                Padding="10,4" 
+                                FontSize="11"
+                                VerticalAlignment="Center" />
+                        <Button Content="Bypass &amp; Ignore"
+                                Click="OnDismissLockingAppsClick"
+                                Style="{StaticResource TransparentWrapperButtonStyle}"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                FontSize="11"
+                                Padding="8,4"
+                                VerticalAlignment="Center"/>
+                    </StackPanel>
                 </Grid>
             </Border>
         </StackPanel>
 
-        <Grid Grid.Row="2" ColumnSpacing="20">
+        <!-- 3. Dual-Pane Master-Detail Area (Categories & File Inspector with Virtualized Internal Scrolling) -->
+        <Grid Grid.Row="3" ColumnSpacing="16" helpers:AnimationHelper.StaggerIndex="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LeftColumn" Width="1.2*" />
-                <ColumnDefinition x:Name="RightColumn" Width="0.8*" />
+                <ColumnDefinition x:Name="LeftColumn" Width="1.15*" />
+                <ColumnDefinition x:Name="RightColumn" Width="0.85*" />
             </Grid.ColumnDefinitions>
 
             <!-- Left Pane: Categories List with Docked Action Footer -->
-            <Border Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14,16,12"
+            <Border x:Name="LeftPaneBorder" Grid.Column="0" Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14,16,12"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -312,8 +405,13 @@
                                             <FontIcon Glyph="{Binding IconGlyph}" Foreground="{Binding IconColor}" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                         </Border>
 
-                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="1" Margin="0,0,8,0">
-                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis" />
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2" Margin="0,0,8,0">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis" />
+                                                <Border Background="{Binding SafetyTierBgColor}" CornerRadius="4" Padding="5,1" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding SafetyTierText}" FontSize="8.5" FontWeight="Bold" Foreground="{Binding SafetyTierColor}" />
+                                                </Border>
+                                            </StackPanel>
                                             <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}" />
                                         </StackPanel>
 
@@ -355,10 +453,10 @@
             </Border>
 
             <!-- Right Pane: Switchable Details, Progress or Empty State -->
-            <Grid Grid.Column="1" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}">
+            <Grid x:Name="RightPaneGrid" Grid.Row="0" Grid.Column="1" Visibility="{Binding ElementName=PageRoot, Path=WideLayoutVisibility}">
                 
                  <!-- STATE 1: Empty state (Initial state before scan) -->
-                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="24" Visibility="{x:Bind GetEmptyVisibility(ViewModel.SelectedCategory, ViewModel.IsScanning, ViewModel.IsCleaning), Mode=OneWay}">
+                <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="24" Visibility="{x:Bind GetEmptyVisibility(ViewModel.SelectedCategory, ViewModel.IsScanning, ViewModel.IsCleaning), Mode=OneWay}">
                     <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                         <StackPanel Spacing="16" HorizontalAlignment="Center">
                             <Border Width="72" Height="72" CornerRadius="36" Background="#107F56D9" HorizontalAlignment="Center">
@@ -374,7 +472,7 @@
                 </Border>
 
                 <!-- STATE 2: Detailed File Inspector (Idle and item selected) -->
-                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="20" Visibility="{x:Bind GetDetailVisibility(ViewModel.SelectedCategory, ViewModel.IsScanning, ViewModel.IsCleaning), Mode=OneWay}">
+                <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="20" Visibility="{x:Bind GetDetailVisibility(ViewModel.SelectedCategory, ViewModel.IsScanning, ViewModel.IsCleaning), Mode=OneWay}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />  <!-- Category details header -->

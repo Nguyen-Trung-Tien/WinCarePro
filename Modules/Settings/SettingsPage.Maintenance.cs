@@ -36,7 +36,7 @@ public sealed partial class SettingsPage
             {
                 string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "WinCarePro");
                 string dbPath = Path.Combine(appData, "wincaredb.db");
-                
+
                 // 1. Logs
                 long logsCount = DbManager.GetLogCount();
                 long dbSize = 0;
@@ -93,7 +93,7 @@ public sealed partial class SettingsPage
                     if (CacheDbSizeLabel != null) CacheDbSizeLabel.Text = cacheText;
                 });
             }
-            catch {}
+            catch { }
         });
     }
 
@@ -149,7 +149,7 @@ public sealed partial class SettingsPage
 
                     DbManager.LogAction("Purged selected database rows and cache", "Settings", "Success");
                     UpdateStorageSizes();
-                    
+
                     App.MainWindowInstance?.ShowToastNotification("Purge Completed".T(), "Selected caches and database rows cleared successfully.".T(), "Success");
                 }
                 catch (Exception ex)
@@ -193,13 +193,13 @@ public sealed partial class SettingsPage
         {
             var releaseItems = new (string Tag, string Title, string Description, string Glyph, string ColorHex)[]
             {
-                ("🔔 CAPSULE", "Top-Center Dynamic Capsule HUD & UX Elevation", "Elevated floating island notifications at natural eye level with fluid Y-axis motion physics and zero-drag TitleBar safety.", "\uEA8F", "#FF8B5CF6"),
-                ("🔮 POLARIS", "AI Volume Exhaustion & Predictive Space Analytics", "Linear empirical modeling forecasting storage depletion timelines, low space safeguards, and SSD wear telemetry.", "\uE7F1", "#FF06B6D4"),
-                ("🛡️ KERNEL", "Platform Security & Kernel Isolation Defenses", "Deep inspection of HVCI Hypervisor-Protected Code Integrity, Defender Tamper Protection, and RDP NLA authentication.", "\uE727", "#FF10B981"),
+                ("🤖 AI SENTINEL", "Intelligent AI Diagnostic Sentinel & Fix Engine", "Contextual system diagnostics, intelligent automated repair scripts, and interactive system optimization.", "\uE99A", "#FF8B5CF6"),
+                ("🛡️ DEFENSE", "Next-Gen Security Center & Exploit Mitigation", "Multi-vector vulnerability detection, tamper protection, real-time shields, and firewall profile enforcement.", "\uE727", "#FF10B981"),
+                ("🔔 SENTINEL", "Notifications & Live Telemetry Activity Hub", "Real-time process telemetry pulse, categorized system notifications, and instant action routing.", "\uEA8F", "#FF06B6D4"),
+                ("📦 CLEANER", "Deep App Leftover & Process Tree Manager", "Multi-app batch uninstallation, orphaned registry residual purge, and process tree termination.", "\uE74D", "#FFEC4899"),
+                ("✨ AURA 3.0", "Fluent 2.0 Aura Glass Elevation & Precision Metrics", "Tabular telemetry numerals, 120 FPS fluid composition physics, and zero memory leaks.", "\uE790", "#FF3B82F6"),
                 ("🔋 ECO", "Battery-Aware Background Watchdog Throttling", "Dynamic throttling of high-overhead background maintenance tasks when device is on battery below 20% threshold.", "\uEBB5", "#FFF59E0B"),
-                ("📊 TELEMETRY", "Zero-Mock Precision Telemetry & SQLite Snapshots", "Pure native Win32/PInvoke performance monitors with 100% elimination of pseudo-random data and historical trend graphs.", "\uE9D9", "#FF8B5CF6"),
-                ("💬 POPUP", "Standardized Aura ResultDialog Engine", "High-contrast result popups with telemetry breakdowns, collapsible log expander, and jitter-free tabular figures.", "\uE8BD", "#FF3B82F6"),
-                ("🧹 BOOST", "1-Click Smart Boost & Memory Purging", "Instant RAM working set optimization and DNS cache flushing in under 800ms for peak gaming and productivity.", "\uE777", "#FFEC4899")
+                ("📊 TELEMETRY", "Zero-Mock Precision Telemetry & SQLite Snapshots", "Pure native Win32/PInvoke performance monitors with 100% elimination of pseudo-random data and historical trend graphs.", "\uE9D9", "#FF8B5CF6")
             };
 
             var currentTheme = ThemeManager.Instance.CurrentTheme;
@@ -240,7 +240,7 @@ public sealed partial class SettingsPage
             };
             var headerStack = new StackPanel { Spacing = 4 };
             var headerRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
-            
+
             var badgeBorder = new Border
             {
                 Background = (Brush)Application.Current.Resources["PrimaryAccentGradient"],
@@ -288,14 +288,14 @@ public sealed partial class SettingsPage
             var mRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
             mRow.Children.Add(new TextBlock
             {
-                Text = "v5.1.2 Polaris",
+                Text = "v5.2.0 Polaris",
                 FontSize = 13,
                 FontWeight = Microsoft.UI.Text.FontWeights.Bold,
                 Foreground = (Brush)Application.Current.Resources["PrimaryAccentBrush"]
             });
             mRow.Children.Add(new TextBlock
             {
-                Text = "• 2026.10 (Current)".T(),
+                Text = "• 2026.11 (Current)".T(),
                 FontSize = 11,
                 Foreground = textSecondary,
                 VerticalAlignment = VerticalAlignment.Center
@@ -353,7 +353,7 @@ public sealed partial class SettingsPage
                 iGrid.Children.Add(iconBox);
 
                 var textStack = new StackPanel { Spacing = 3, VerticalAlignment = VerticalAlignment.Center };
-                
+
                 var titleRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
                 var tagBorder = new Border
                 {
@@ -407,7 +407,7 @@ public sealed partial class SettingsPage
 
             var dialog = new ContentDialog
             {
-                Title = "What's New in v5.1.2".T(),
+                Title = "What's New in v5.2.0".T(),
                 Content = rootStack,
                 CloseButtonText = "Close".T(),
                 DefaultButton = ContentDialogButton.Close,

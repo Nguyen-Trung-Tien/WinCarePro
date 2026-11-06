@@ -2,11 +2,11 @@
   "version": "5.2.0",
   "url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.2.0/WinCareProSetup.exe",
   "downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.2.0/WinCareProSetup.exe",
-  "sha256": "24a38daf70ab50863d1bb9ad2b2a55d738e7c58f56392b9fd95803906b4e11e2",
-  "changelog": "Cập nhật v5.2.0 (Polaris Aura Fluidic 3.0 \u0026 Intelligent Diagnostic Sentinel Suite): Nâng cấp toàn diện giao diện Aura Fluidic 3.0 và hệ thống thẻ chẩn đoán thời gian thực, tích hợp động cơ AI WinCare Assistant tự động hóa sửa chữa sự cố, nâng cấp Trung tâm Bảo mật thế hệ mới chống lỗ hổng khai thác và quản lý sâu cây tiến trình gỡ cài đặt ứng dụng.",
+  "sha256": "ce7a9f2221b1f9ff1daa8f73472828a61672d3768092f854e9daaf74060079b6",
+  "changelog": "Cập nhật v5.2.0 (Polaris Aura Fluidic 3.0 & Intelligent Diagnostic Sentinel Suite): Nâng cấp toàn diện giao diện Aura Fluidic 3.0 và hệ thống thẻ chẩn đoán thời gian thực, tích hợp động cơ AI WinCare Assistant tự động hóa sửa chữa sự cố, nâng cấp Trung tâm Bảo mật thế hệ mới chống lỗ hổng khai thác và quản lý sâu cây tiến trình gỡ cài đặt ứng dụng.",
   "beta_version": "5.2.0-beta",
   "beta_url": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.2.0-beta/WinCareProSetup_Beta.exe",
   "beta_downloadUrl": "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases/download/v5.2.0-beta/WinCareProSetup_Beta.exe",
-  "beta_sha256": "24a38daf70ab50863d1bb9ad2b2a55d738e7c58f56392b9fd95803906b4e11e2",
+  "beta_sha256": "ce7a9f2221b1f9ff1daa8f73472828a61672d3768092f854e9daaf74060079b6",
   "beta_changelog": "WinCare Pro v5.2.0 (Polaris Release)"
 }

@@ -225,7 +225,11 @@ public sealed partial class JunkPage : Page
             try
             {
                 WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(this);
-                if (btn != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(this, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                if (btn != null)
+                {
+                    WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(this, Windows.UI.Color.FromArgb(255, 16, 185, 129));
+                    WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(btn, 1.10f, 400);
+                }
             }
             catch { }
         }

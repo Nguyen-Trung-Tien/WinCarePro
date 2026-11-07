@@ -77,9 +77,6 @@
             <!-- Left: Icon, Title, Dynamic Status Badges, Subtitle -->
             <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
-                        <FontIcon Glyph="&#xE74D;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
                     <TextBlock Text="App Management Studio" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
                     
                     <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
@@ -119,11 +116,12 @@
                     </StackPanel>
                 </Button>
 
-                <Button x:Name="ReloadBtn" Style="{StaticResource DefaultButtonStyle}" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" MinWidth="150" Padding="16,8" CornerRadius="8">
+                <Button x:Name="ReloadBtn" Style="{StaticResource DefaultButtonStyle}" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" MinWidth="150" Padding="16,8" CornerRadius="8"
+                        helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="ScanAppsRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" VerticalAlignment="Center"/>
                         <FontIcon x:Name="ScanAppsIcon" Glyph="&#xE72C;" FontSize="13" />
-                        <TextBlock x:Name="ScanAppsText" Text="Scan Registry Apps" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold" />
+                        <TextBlock x:Name="ScanAppsText" Text="Scan Installed Apps" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -252,36 +250,36 @@
                 <TextBox x:Name="AppSearch" PlaceholderText="Search apps by name, publisher, version..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" VerticalAlignment="Center" Height="34" CornerRadius="8"/>
                 
                 <!-- Segmented Pills Controls -->
-                <StackPanel Grid.Column="1" x:Name="FilterStack" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="16,0,0,0">
-                    <Button Tag="0" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="12,5" CornerRadius="8">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
+                <StackPanel Grid.Column="1" x:Name="FilterStack" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="16,0,0,0">
+                    <Button Tag="0" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="10,5" CornerRadius="8">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
                             <FontIcon Glyph="&#xE8D2;" FontSize="11"/>
-                            <TextBlock Text="All Apps" FontSize="11.5"/>
+                            <TextBlock Text="All Apps" FontSize="11"/>
                         </StackPanel>
                     </Button>
-                    <Button Tag="1" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="12,5" CornerRadius="8">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE736;" FontSize="11" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
-                            <TextBlock Text="Desktop" FontSize="11.5"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Tag="2" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="12,5" CornerRadius="8">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE719;" FontSize="11" Foreground="{ThemeResource AppStatusCyanBrush}"/>
-                            <TextBlock Text="Store" FontSize="11.5"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Tag="3" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="12,5" CornerRadius="8">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Button Tag="3" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="10,5" CornerRadius="8">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
                             <FontIcon Glyph="&#xE95A;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}"/>
-                            <TextBlock Text="Large (&gt;500MB)" FontSize="11.5"/>
+                            <TextBlock Text="Largest Footprint" FontSize="11"/>
                         </StackPanel>
                     </Button>
-                    <Button Tag="4" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="12,5" CornerRadius="8">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
+                    <Button Tag="4" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="10,5" CornerRadius="8">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
                             <FontIcon Glyph="&#xE7BA;" FontSize="11" Foreground="{ThemeResource AppStatusDangerBrush}"/>
-                            <TextBlock Text="Bloatware" FontSize="11.5" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                            <TextBlock Text="Bundled Bloatware" FontSize="11" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                         </StackPanel>
+                    </Button>
+                    <Button Tag="5" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="10,5" CornerRadius="8">
+                        <StackPanel Orientation="Horizontal" Spacing="5">
+                            <FontIcon Glyph="&#xE823;" FontSize="11" Foreground="#FFA78BFA"/>
+                            <TextBlock Text="Least Used" FontSize="11" Foreground="#FFA78BFA"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Tag="1" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="8,5" CornerRadius="8">
+                        <TextBlock Text="Desktop" FontSize="11"/>
+                    </Button>
+                    <Button Tag="2" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="8,5" CornerRadius="8">
+                        <TextBlock Text="Store" FontSize="11"/>
                     </Button>
                 </StackPanel>
 

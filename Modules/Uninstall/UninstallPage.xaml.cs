@@ -282,6 +282,7 @@ public sealed partial class UninstallPage : Page
         if (confirmed)
         {
             await ViewModel.UninstallSelectedAppsAsync(forceUninstall: false);
+            if (sender is Button btn) WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(btn, 1.10f, 400);
         }
     }
 

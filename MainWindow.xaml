@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <!-- Ambient Aura Glow Mesh (Dynamic Background Depth) -->
-        <Grid x:Name="AmbientAuraMesh" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Canvas.ZIndex="0" Opacity="0.85">
+        <Grid x:Name="AmbientAuraMesh" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Canvas.ZIndex="0" Opacity="0.25">
             <!-- Top-Right Accent Ambient Glow -->
             <Ellipse Width="700" Height="480" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-140,-140,0" Opacity="0.10">
                 <Ellipse.Fill>
@@ -120,65 +120,81 @@
                         CornerRadius="14" 
                         Padding="4,3">
                     <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                        <!-- Quick Experience Mode Switcher Capsule (Pill Switcher) -->
+                        <Button x:Name="TitleBarModeSwitchBtn" Click="OnTitleBarModeSwitchClick"
+                                Style="{StaticResource StandardSecondaryButtonStyle}"
+                                CornerRadius="10" Padding="8,3" Height="28"
+                                helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96"
+                                ToolTipService.ToolTip="Switch between Simple and Pro Mode"
+                                AutomationProperties.Name="Switch Experience Mode">
+                            <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                                <Border Width="16" Height="16" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" VerticalAlignment="Center">
+                                    <FontIcon x:Name="TitleBarModeIcon" Glyph="&#xE7FC;" FontSize="9.5" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock x:Name="TitleBarModeText" Text="Simple Mode" FontSize="11" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Sleek Vertical Hairline Divider -->
+                        <Rectangle Width="1" Height="18" Fill="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.4" Margin="2,0"/>
+
                         <!-- Telemetry Chips Subgroup -->
-                        <Button x:Name="CpuChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="10" Click="OnCpuChipClick" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance" AutomationProperties.Name="CPU Usage Monitor" AutomationProperties.HelpText="Click to view real-time CPU diagnostics and telemetry on the Dashboard.">
+                        <Button x:Name="CpuChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="10" Click="OnCpuChipClick" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance" AutomationProperties.Name="CPU Usage Monitor" AutomationProperties.HelpText="Click to view real-time CPU diagnostics and telemetry on the Dashboard.">
                             <Border Background="{ThemeResource AppCpuChipBg}" BorderBrush="{ThemeResource AppCpuChipBorder}" BorderThickness="1" CornerRadius="9" Padding="7,3">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
                                     <Ellipse Width="6" Height="6" Fill="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center"/>
-                                    <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center"/>
                                     <TextBlock x:Name="CpuChipText" Text="CPU" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" AutomationProperties.LiveSetting="Polite"/>
                                 </StackPanel>
                             </Border>
                         </Button>
 
-                        <Button x:Name="RamChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="10" Click="OnRamChipClick" ToolTipService.ToolTip="RAM Memory Booster — Click for 1-Click RAM Purge" AutomationProperties.Name="RAM Working Set Booster" AutomationProperties.HelpText="Click to trigger instant memory cache reclamation.">
+                        <Button x:Name="RamChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="10" Click="OnRamChipClick" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="RAM Memory Booster — Click for 1-Click RAM Purge" AutomationProperties.Name="RAM Working Set Booster" AutomationProperties.HelpText="Click to trigger instant memory cache reclamation.">
                             <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="9" Padding="7,3">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
                                     <Ellipse Width="6" Height="6" Fill="{ThemeResource AppRamChipFg}" VerticalAlignment="Center"/>
-                                    <FontIcon Glyph="&#xE7F1;" FontSize="11" Foreground="{ThemeResource AppRamChipFg}" VerticalAlignment="Center"/>
                                     <TextBlock x:Name="RamChipText" Text="RAM" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource AppRamChipFg}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" AutomationProperties.LiveSetting="Polite"/>
                                 </StackPanel>
                             </Border>
                         </Button>
 
                         <!-- Sleek Vertical Hairline Divider -->
-                        <Rectangle Width="1" Height="18" Fill="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.5" Margin="2,0"/>
+                        <Rectangle Width="1" Height="18" Fill="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.4" Margin="2,0"/>
 
-                        <!-- Live Clock -->
-                        <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center" Margin="4,0,4,0">
+                        <!-- Live Clock (Collapsed for minimalist TitleBar clarity) -->
+                        <StackPanel x:Name="ClockContainer" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center" Margin="4,0,4,0" Visibility="Collapsed">
                             <FontIcon Glyph="&#xE787;" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
                             <TextBlock x:Name="ClockText" Text="--:--" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" AutomationProperties.Name="System Clock" AutomationProperties.LiveSetting="Polite"/>
                         </StackPanel>
 
-                        <!-- Sleek Vertical Hairline Divider -->
-                        <Rectangle Width="1" Height="18" Fill="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.5" Margin="2,0"/>
-
-                        <!-- Quick Action Controls -->
-                        <Button x:Name="UserGuideButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="UserGuideButton_Click" ToolTipService.ToolTip="User Guide &amp; Documentation" AutomationProperties.Name="User Guide &amp; Documentation" AutomationProperties.HelpText="Open comprehensive user guide and technical documentation.">
-                            <FontIcon Glyph="&#xE897;" FontSize="12.5" />
-                        </Button>
-
-                        <Button x:Name="ThemeButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="ThemeButton_Click" ToolTipService.ToolTip="Toggle Theme" AutomationProperties.Name="Toggle Theme" AutomationProperties.HelpText="Switch between Light and Dark interface appearance.">
-                            <FontIcon x:Name="ThemeIcon" Glyph="&#xE706;" FontSize="12.5" />
-                        </Button>
-
-                        <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="NotificationButton_Click" ToolTipService.ToolTip="Notifications" AutomationProperties.Name="Notifications" AutomationProperties.HelpText="Open notification center and review recent system alerts.">
+                        <!-- Notifications with Badge -->
+                        <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="NotificationButton_Click" helpers:AnimationHelper.HoverScale="1.08" helpers:AnimationHelper.PressedScale="0.92" ToolTipService.ToolTip="Notifications" AutomationProperties.Name="Notifications" AutomationProperties.HelpText="Open notification center and review recent system alerts.">
                             <Grid>
                                 <FontIcon Glyph="&#xEA8F;" FontSize="12.5" />
                                 <Border x:Name="NotificationBadge" Background="{ThemeResource AppStatusDangerBrush}" Width="7" Height="7" CornerRadius="3.5" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="2,-1,-1,2" Visibility="Collapsed" AutomationProperties.Name="Unread notification alert" AutomationProperties.LiveSetting="Polite"/>
                             </Grid>
                         </Button>
 
-                        <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" ToolTipService.ToolTip="Power Options" AutomationProperties.Name="Power Options" AutomationProperties.HelpText="Open power options to minimize to tray or close application.">
-                            <FontIcon Glyph="&#xE7E8;" FontSize="12.5" Foreground="{ThemeResource AppStatusDangerBrush}" />
+                        <!-- Unified Menu More (...) — User Guide, Theme & Power Options -->
+                        <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" helpers:AnimationHelper.HoverScale="1.08" helpers:AnimationHelper.PressedScale="0.92" ToolTipService.ToolTip="More Options &amp; Power" AutomationProperties.Name="More Options &amp; Power" AutomationProperties.HelpText="Open menu for theme, user guide, and power controls.">
+                            <FontIcon Glyph="&#xE712;" FontSize="12.5" />
                             <Button.Flyout>
                                 <MenuFlyout x:Name="ExitPowerFlyout" Placement="BottomEdgeAlignedRight" Opening="ExitPowerFlyout_Opening">
+                                    <MenuFlyoutItem Text="Toggle Theme" Click="ThemeButton_Click" AutomationProperties.Name="Toggle Theme">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon x:Name="ThemeIcon" Glyph="&#xE706;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem Text="User Guide &amp; Documentation" Click="UserGuideButton_Click" AutomationProperties.Name="User Guide &amp; Documentation">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="&#xE897;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutSeparator />
                                     <MenuFlyoutItem x:Name="MenuMinimizeToTray" Text="Minimize to Tray" Click="OnMinimizeToTrayClick" AutomationProperties.Name="Minimize to Tray">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xE718;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
-                                    <MenuFlyoutSeparator />
                                     <MenuFlyoutItem x:Name="MenuShutdown" Text="Shutdown" Click="OnConfirmShutdownClick" AutomationProperties.Name="Shutdown Application">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xE7E8;" FontSize="14" Foreground="{ThemeResource AppStatusDangerBrush}"/>

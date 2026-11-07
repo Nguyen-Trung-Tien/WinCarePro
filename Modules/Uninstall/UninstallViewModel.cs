@@ -444,7 +444,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
 
         // 2. Type filter
-        // 0 = All, 1 = Desktop, 2 = Store, 3 = Large Apps (>500 MB), 4 = Bloatware / Junk
+        // 0 = All, 1 = Desktop, 2 = Store, 3 = Large Apps (>500 MB), 4 = Bloatware / Junk, 5 = Rarely / Least Used
         if (SelectedFilterIndex == 1)
         {
             list = list.Where(x => !x.IsStoreApp);
@@ -460,6 +460,10 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         else if (SelectedFilterIndex == 4)
         {
             list = list.Where(x => x.IsBloatware);
+        }
+        else if (SelectedFilterIndex == 5)
+        {
+            list = list.Where(x => x.IsRarelyUsed);
         }
 
         // 3. Sorting

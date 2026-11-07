@@ -135,6 +135,7 @@ public sealed partial class RegistryPage : Page
         if (!confirmed) return;
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
         await ViewModel.RepairSelectedAsync();
+        if (sender is Button btnDone) WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(btnDone, 1.10f, 400);
     }
 
     private async void OnRepairSingleIssueClick(object sender, RoutedEventArgs e)
@@ -186,6 +187,7 @@ public sealed partial class RegistryPage : Page
 
         if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
         await ViewModel.RepairSelectedAsync();
+        if (sender is Button btnDone) WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(btnDone, 1.10f, 400);
     }
 
     // Registry Editor shortcut — safe alternative to registry cleaner

@@ -38,19 +38,23 @@
                         <Setter Target="HealthGaugeCard.(Grid.Column)" Value="0" />
                         <Setter Target="HealthGaugeCard.(Grid.ColumnSpan)" Value="2" />
 
-                        <Setter Target="AiWinCareEngineEmbeddedPanel.(Grid.Row)" Value="4" />
+                        <Setter Target="AiWinCareEngineEmbeddedPanel.(Grid.Row)" Value="1" />
                         <Setter Target="AiWinCareEngineEmbeddedPanel.(Grid.Column)" Value="0" />
                         <Setter Target="AiWinCareEngineEmbeddedPanel.(Grid.ColumnSpan)" Value="2" />
 
-                        <Setter Target="CpuRamGrid.(Grid.Row)" Value="1" />
+                        <Setter Target="SimpleQuickActionsDeck.(Grid.Row)" Value="2" />
+                        <Setter Target="SimpleQuickActionsDeck.(Grid.Column)" Value="0" />
+                        <Setter Target="SimpleQuickActionsDeck.(Grid.ColumnSpan)" Value="2" />
+
+                        <Setter Target="CpuRamGrid.(Grid.Row)" Value="3" />
                         <Setter Target="CpuRamGrid.(Grid.Column)" Value="0" />
                         <Setter Target="CpuRamGrid.(Grid.ColumnSpan)" Value="2" />
 
-                        <Setter Target="BottleneckCard.(Grid.Row)" Value="5" />
+                        <Setter Target="BottleneckCard.(Grid.Row)" Value="4" />
                         <Setter Target="BottleneckCard.(Grid.Column)" Value="0" />
                         <Setter Target="BottleneckCard.(Grid.ColumnSpan)" Value="2" />
 
-                        <Setter Target="GpuDiskGrid.(Grid.Row)" Value="2" />
+                        <Setter Target="GpuDiskGrid.(Grid.Row)" Value="5" />
                         <Setter Target="GpuDiskGrid.(Grid.Column)" Value="0" />
                         <Setter Target="GpuDiskGrid.(Grid.ColumnSpan)" Value="2" />
 
@@ -58,7 +62,11 @@
                         <Setter Target="QuickStatsGrid.(Grid.Column)" Value="0" />
                         <Setter Target="QuickStatsGrid.(Grid.ColumnSpan)" Value="2" />
 
-                        <Setter Target="PerformanceChartCard.(Grid.Row)" Value="3" />
+                        <Setter Target="RecommendationsCard.(Grid.Row)" Value="7" />
+                        <Setter Target="RecommendationsCard.(Grid.Column)" Value="0" />
+                        <Setter Target="RecommendationsCard.(Grid.ColumnSpan)" Value="2" />
+
+                        <Setter Target="PerformanceChartCard.(Grid.Row)" Value="8" />
                         <Setter Target="PerformanceChartCard.(Grid.Column)" Value="0" />
                         <Setter Target="PerformanceChartCard.(Grid.ColumnSpan)" Value="2" />
 
@@ -84,57 +92,18 @@
 
         <!-- Page Header — Spatial HUD Glass Banner -->
         <Border Grid.Row="0" Margin="0,0,0,14" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="16" Padding="18,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                        <Border Background="{StaticResource PrimaryAccentGradient}" CornerRadius="10" Padding="8">
-                            <FontIcon Glyph="&#xE80F;" FontSize="16" Foreground="White" />
-                        </Border>
-                        <TextBlock Text="System Dashboard" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" FontSize="20" FontWeight="Bold"/>
-                        <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}" />
-                                <TextBlock Text="Live Telemetry" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}" FontFamily="Segoe UI Variable Display"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Background="{ThemeResource AppBadgeNeutralBg}" BorderBrush="{ThemeResource AppBadgeNeutralBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                <Ellipse Width="6" Height="6" Fill="{StaticResource PrimaryAccentBrush}"/>
-                                <TextBlock Text="Kernel Shield Active" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                    <TextBlock Text="Real-time hardware telemetry &amp; intelligent autonomous system care." Style="{StaticResource PageHeaderSubtitleStyle}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            <StackPanel Spacing="4" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <TextBlock Text="System Dashboard" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" FontSize="20" FontWeight="Bold"/>
+                    <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}" />
+                            <TextBlock Text="Live Telemetry" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}" FontFamily="Segoe UI Variable Display"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-
-                <!-- Fast Action Navigation Deck in Header Top Right -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Button Click="OnLaunchAiWinCareEngineClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" VerticalAlignment="Center" CornerRadius="10" ToolTipService.ToolTip="Smart Diagnostics &amp; AI Health Advisor">
-                        <StackPanel Orientation="Horizontal" Spacing="7">
-                            <FontIcon Glyph="&#xE99A;" FontSize="13" Foreground="{ThemeResource AppStatusCyanBrush}"/>
-                            <TextBlock Text="Smart Diagnostics" FontSize="12" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Click="OnLaunchOptimizerClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" VerticalAlignment="Center" CornerRadius="10">
-                        <StackPanel Orientation="Horizontal" Spacing="7">
-                            <FontIcon Glyph="&#xE7FC;" FontSize="13" Foreground="#FFF59E0B"/>
-                            <TextBlock Text="System Optimizer" FontSize="12" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button Click="OnLaunchDesktopWidgetClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" VerticalAlignment="Center" CornerRadius="10">
-                        <StackPanel Orientation="Horizontal" Spacing="7">
-                            <FontIcon Glyph="&#xE8A7;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                            <TextBlock Text="Widget HUD" FontSize="12" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </Grid>
+                <TextBlock Text="Real-time hardware telemetry &amp; intelligent autonomous system care." Style="{StaticResource PageHeaderSubtitleStyle}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            </StackPanel>
         </Border>
 
         <!-- Main Scrollable Content -->
@@ -149,10 +118,12 @@
                         <RowDefinition x:Name="Row1" Height="Auto" />
                         <RowDefinition x:Name="Row2" Height="Auto" />
                         <RowDefinition x:Name="Row3" Height="Auto" />
-                        <!-- Extra rows for Narrow Layout stacking -->
                         <RowDefinition x:Name="Row4" Height="Auto" />
+                        <!-- Extra rows for Narrow Layout stacking -->
                         <RowDefinition x:Name="Row5" Height="Auto" />
                         <RowDefinition x:Name="Row6" Height="Auto" />
+                        <RowDefinition x:Name="Row7" Height="Auto" />
+                        <RowDefinition x:Name="Row8" Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition x:Name="LeftCol" Width="1*" />
@@ -204,7 +175,7 @@
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="0">
                                     <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="36" FontWeight="Black" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="6" Padding="6,2" Margin="0,2,0,0">
-                                        <TextBlock Text="VITALITY" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="12"/>
+                                        <TextBlock Text="HEALTH SCORE" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="2"/>
                                     </Border>
                                 </StackPanel>
                             </Grid>
@@ -218,59 +189,56 @@
                                 </StackPanel>
                                 <TextBlock Text="{x:Bind ViewModel.HealthBreakdownText, Mode=OneWay}" TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="17" MaxLines="2" TextTrimming="CharacterEllipsis"/>
                                 
-                                <Grid x:Name="GaugeActionButtonsGrid" Margin="0,6,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
+                                <Grid x:Name="GaugeActionButtonsGrid" Margin="0,8,0,0">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
-                                    <Button x:Name="ScanSystemBtn" Grid.Row="0" Grid.Column="0" Content="Scan System" Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Height="34" Padding="18,0" CornerRadius="10" FontWeight="Bold" Margin="0,0,8,0"
-                                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
-                                            AutomationProperties.Name="Scan System"
-                                            AutomationProperties.HelpText="Initiates deep system scan for junk files, performance issues, and security status."/>
-                                    
-                                    <!-- Split Button for Tiered Optimization -->
-                                    <SplitButton x:Name="OptimizeSplitBtn" Grid.Row="0" Grid.Column="1" Content="Optimize System" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Margin="0,0,8,0"
-                                                 helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
-                                                 CornerRadius="10" FontWeight="Bold" Height="34"
-                                                 AutomationProperties.Name="Optimize System"
-                                                 AutomationProperties.HelpText="Optimizes system performance using the selected profile mode.">
-                                        <SplitButton.Resources>
-                                            <SolidColorBrush x:Key="SplitButtonButtonBackground" Color="#FF0284C7" />
-                                            <SolidColorBrush x:Key="SplitButtonButtonBackgroundPointerOver" Color="#FF0F6CBD" />
-                                            <SolidColorBrush x:Key="SplitButtonButtonBackgroundPressed" Color="#FF2563EB" />
-                                            <SolidColorBrush x:Key="SplitButtonButtonBackgroundDisabled" Color="#FFE0E0E0" />
-                                            
-                                            <SolidColorBrush x:Key="SplitButtonButtonForeground" Color="White" />
-                                            <SolidColorBrush x:Key="SplitButtonButtonForegroundPointerOver" Color="White" />
-                                            <SolidColorBrush x:Key="SplitButtonButtonForegroundPressed" Color="#FFE0E7FF" />
-                                            <SolidColorBrush x:Key="SplitButtonButtonForegroundDisabled" Color="#FF9E9E9E" />
+                                    <!-- Tier 1: Hero Primary Call-To-Action (1-Click Smart Care - Full Width, Perfectly Balanced) -->
+                                    <Grid Grid.Row="0" Margin="0,0,0,8" HorizontalAlignment="Stretch">
+                                        <Button x:Name="OneClickCareBtn" Content="🚀 Scan &amp; Optimize Now (Smart Care)" Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnOneClickSmartCareClick" IsEnabled="{x:Bind GetOneClickEnabled(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Height="38" HorizontalAlignment="Stretch" CornerRadius="10" FontWeight="Bold" FontSize="13.5"
+                                                helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98"
+                                                AutomationProperties.Name="1-Click Smart Care"
+                                                AutomationProperties.HelpText="Instantly scan and optimize system performance, RAM, and junk files in one single click."/>
 
-                                            <SolidColorBrush x:Key="SplitButtonBorderBrush" Color="Transparent" />
-                                            <SolidColorBrush x:Key="SplitButtonBorderBrushPointerOver" Color="Transparent" />
-                                            <SolidColorBrush x:Key="SplitButtonBorderBrushPressed" Color="Transparent" />
+                                        <ProgressRing x:Name="GaugeActionProgressRing" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0" IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Visibility="{x:Bind GetProgressRingVisibility(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="18" Height="18" Foreground="White" IsHitTestVisible="False" />
+                                    </Grid>
 
-                                            <SolidColorBrush x:Key="SplitButtonSeparatorBrush" Color="#30FFFFFF" />
-                                            <SolidColorBrush x:Key="SplitButtonSeparatorBrushPointerOver" Color="#50FFFFFF" />
-                                        </SplitButton.Resources>
-                                        <SplitButton.Flyout>
-                                            <MenuFlyout Placement="Bottom">
-                                                <MenuFlyoutItem Text="Safe Mode (Temp &amp; DNS)" Click="OnSafeOptimizeClick" />
-                                                <MenuFlyoutItem Text="Recommended Mode (Caches &amp; Startup)" Click="OnRecommendedOptimizeClick" />
-                                                <MenuFlyoutItem Text="Advanced Mode (Registry &amp; Tweaks)" Click="OnAdvancedOptimizeClick" />
-                                                <MenuFlyoutSeparator />
-                                                <MenuFlyoutItem Text="Undo Last Optimization" Click="OnUndoOptimizeClick" />
-                                            </MenuFlyout>
-                                        </SplitButton.Flyout>
-                                    </SplitButton>
-                                    
-                                    <ProgressRing x:Name="GaugeActionProgressRing" Grid.Row="0" Grid.Column="2" IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="20" Height="20" VerticalAlignment="Center" />
+                                    <!-- Tier 2: Step-by-Step Granular Controls (Balanced 50/50 Dual Action Deck) -->
+                                    <Grid Grid.Row="1" ColumnSpacing="8" HorizontalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button x:Name="ScanSystemBtn" Grid.Column="0" Content="Scan System" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Height="36" HorizontalAlignment="Stretch" CornerRadius="10" FontWeight="SemiBold"
+                                                helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98"
+                                                AutomationProperties.Name="Scan System"
+                                                AutomationProperties.HelpText="Initiates deep system scan for junk files, performance issues, and security status."/>
+
+                                        <Button x:Name="OptimizeBtn" Grid.Column="1" Content="Optimize System" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Height="36" HorizontalAlignment="Stretch" CornerRadius="10" FontWeight="SemiBold"
+                                                helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98"
+                                                AutomationProperties.Name="Optimize System"
+                                                AutomationProperties.HelpText="Optimizes system performance using the selected profile mode.">
+                                            <Button.ContextFlyout>
+                                                <MenuFlyout Placement="Bottom">
+                                                    <MenuFlyoutItem Text="Recommended Mode (Caches &amp; Startup)" Click="OnRecommendedOptimizeClick" />
+                                                    <MenuFlyoutItem Text="Safe Mode (Temp &amp; DNS)" Click="OnSafeOptimizeClick" />
+                                                    <MenuFlyoutItem Text="Advanced Mode (Registry &amp; Tweaks)" Click="OnAdvancedOptimizeClick" />
+                                                    <MenuFlyoutSeparator />
+                                                    <MenuFlyoutItem Text="Undo Last Optimization" Click="OnUndoOptimizeClick" />
+                                                </MenuFlyout>
+                                            </Button.ContextFlyout>
+                                        </Button>
+                                    </Grid>
                                 </Grid>
+                                
+                                <!-- Reassuring Safety & Restore Point Indicator -->
+                                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,4,0,0">
+                                    <FontIcon Glyph="&#xE72E;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Automatic Restore Point Protection Active • 1-Click Undo Supported" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                </StackPanel>
                                 
                                 <StackPanel Visibility="{x:Bind GetProgressVisibility(ViewModel.IsScanning), Mode=OneWay}" Spacing="4" Margin="0,3,0,0">
                                     <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="5" Foreground="{StaticResource PrimaryAccentGradient}" CornerRadius="2.5" />
@@ -362,19 +330,14 @@
                             </Grid>
 
                             <!-- Bottom AI Recommendation & Scan Strip -->
-                            <Border x:Name="TopAiRecommendationCard" Style="{StaticResource QuickStatCardStyle}" CornerRadius="12" Padding="12,8">
+                            <Border x:Name="TopAiRecommendationCard" Style="{StaticResource QuickStatCardStyle}" CornerRadius="12" Padding="14,8">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Border Grid.Column="0" Width="28" Height="28" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" Margin="0,0,10,0" VerticalAlignment="Center">
-                                        <FontIcon Glyph="&#xE99A;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1" Margin="0,0,8,0">
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="1" Margin="0,0,10,0">
                                         <TextBlock x:Name="TopRecommendationTitle" Text="Run AI Scan for insights" FontWeight="SemiBold" FontSize="11.5" 
                                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                                         <TextBlock x:Name="TopRecommendationDesc" Text="Click 'AI Scan' to analyze system health." FontSize="10.5" 
@@ -382,13 +345,10 @@
                                     </StackPanel>
 
                                     <!-- AI Scan Button on Far Right -->
-                                    <Button Grid.Column="2" Click="OnEmbeddedAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="28" Padding="12,0" CornerRadius="6" VerticalAlignment="Center"
+                                    <Button Grid.Column="1" Click="OnEmbeddedAiScanClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="28" Padding="14,0" CornerRadius="8" VerticalAlignment="Center"
                                             AutomationProperties.Name="Run AI Scan"
                                             AutomationProperties.HelpText="Performs AI-assisted system analysis and generates health recommendations.">
-                                        <StackPanel Orientation="Horizontal" Spacing="4">
-                                            <FontIcon Glyph="&#xE721;" FontSize="10"/>
-                                            <TextBlock Text="AI Scan" FontSize="11" FontWeight="SemiBold"/>
-                                        </StackPanel>
+                                        <TextBlock Text="AI Scan" FontSize="11" FontWeight="Bold"/>
                                     </Button>
                                 </Grid>
                             </Border>
@@ -396,8 +356,140 @@
                     </Grid>
                 </Border>
 
+                    <!-- Simple Mode Quick Actions Deck (Streamlined 3-card cockpit for casual users) -->
+                    <Grid x:Name="SimpleQuickActionsDeck" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="6,4,6,6" ColumnSpacing="12" RowSpacing="12" Visibility="Visible">
+                        <Grid.RowDefinitions>
+                            <RowDefinition x:Name="SimpleDeckRow0" Height="Auto"/>
+                            <RowDefinition x:Name="SimpleDeckRow1" Height="Auto"/>
+                            <RowDefinition x:Name="SimpleDeckRow2" Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="SimpleDeckCol0" Width="*"/>
+                            <ColumnDefinition x:Name="SimpleDeckCol1" Width="*"/>
+                            <ColumnDefinition x:Name="SimpleDeckCol2" Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Card 1: Quick Junk Clean -->
+                        <Border x:Name="SimpleCard0" Grid.Row="0" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14" CornerRadius="16"
+                                helpers:AnimationHelper.HoverScale="1.015" helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <Border Width="34" Height="34" CornerRadius="10" Background="#20F59E0B">
+                                        <FontIcon Glyph="&#xEA99;" FontSize="15" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="Disk &amp; Junk Card" FontSize="13" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="Cleanable Space Potential" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6" Margin="0,10,0,4" VerticalAlignment="Bottom">
+                                    <TextBlock Text="{x:Bind ViewModel.JunkFileSize, Mode=OneWay}" FontSize="24" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="#FFF59E0B"/>
+                                    <TextBlock Text="cleanable junk" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                                </StackPanel>
+                                <TextBlock Grid.Row="2" Text="System caches, temp files, and old logs that are 100% safe to clean now." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" Margin="0,0,0,10"/>
+                                <Button Grid.Row="3" Content="Clean Junk Now" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" Height="34" CornerRadius="10" FontWeight="Bold" FontSize="12" Click="OnCleanDiskClick" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}"
+                                        helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
+                                        AutomationProperties.Name="Clean Junk Now" AutomationProperties.HelpText="Instantly cleans safe temporary junk and caches."/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Card 2: Instant Memory Boost -->
+                        <Border x:Name="SimpleCard1" Grid.Row="0" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14" CornerRadius="16"
+                                helpers:AnimationHelper.HoverScale="1.015" helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <Border Width="34" Height="34" CornerRadius="10" Background="#203B82F6">
+                                        <FontIcon Glyph="&#xE950;" FontSize="15" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="Memory &amp; Speed Card" FontSize="13" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="Instant RAM Booster" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6" Margin="0,10,0,4" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Bind FormatRamText(ViewModel.RamUsage), Mode=OneWay}" FontSize="20" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="#FF3B82F6"/>
+                                    <Border Background="#2010B981" CornerRadius="4" Padding="6,1" VerticalAlignment="Center">
+                                        <TextBlock Text="Smooth" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Grid.Row="2" Text="Purges unused standby cache and optimizes working sets for responsive speed." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" Margin="0,0,0,10"/>
+                                <Button Grid.Row="3" Content="Boost RAM Now" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" Height="34" CornerRadius="10" FontWeight="Bold" FontSize="12" Click="OnBoostRamClick" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}"
+                                        helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
+                                        AutomationProperties.Name="Boost RAM Now" AutomationProperties.HelpText="Reclaims standby memory and optimizes system working sets."/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Card 3: Windows Quick Doctor & Healing -->
+                        <Border x:Name="SimpleCard2" Grid.Row="0" Grid.Column="2" Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14" CornerRadius="16"
+                                helpers:AnimationHelper.HoverScale="1.015" helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <Border Width="34" Height="34" CornerRadius="10" Background="#2010B981">
+                                        <FontIcon Glyph="&#xE727;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="Protection &amp; Security Card" FontSize="13" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="System Safety Status" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6" Margin="0,12,0,8" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Fully Protected &amp; Secure" FontSize="16" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" Foreground="#FF10B981" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <TextBlock Grid.Row="2" Text="Operating system files intact, Registry strictly protected, and Restore Point active." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" LineHeight="16" Margin="0,0,0,10"/>
+                                <Button Grid.Row="3" Content="Repair System Now" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" Height="34" CornerRadius="10" FontWeight="Bold" FontSize="12" Click="OnQuickRepairDoctorClick"
+                                        helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
+                                        AutomationProperties.Name="Repair System Now" AutomationProperties.HelpText="Navigate to System Repair Center."/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Collapsible Pro Drawer: Xem chi tiết phần cứng chuyên sâu -->
+                        <Button x:Name="ToggleHardwareDrawerBtn" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                Click="OnToggleHardwareDrawerClick"
+                                Style="{StaticResource StandardSecondaryButtonStyle}"
+                                HorizontalAlignment="Stretch" Height="38" CornerRadius="12" Margin="0,4,0,0"
+                                helpers:AnimationHelper.HoverScale="1.01" helpers:AnimationHelper.PressedScale="0.98">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <Border Width="24" Height="24" CornerRadius="6" Background="{ThemeResource AppStatChipBackground}">
+                                        <FontIcon Glyph="&#xE9D9;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="View Deep Hardware Sensor Analytics" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="CPU clock graphs, RAM bus, GPU &amp; WMI sensor details" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="10,0,0,0" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis"/>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <TextBlock x:Name="HardwareDrawerToggleStatusText" Text="Expand" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                    <FontIcon x:Name="HardwareDrawerChevronIcon" Glyph="&#xE70D;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+                    </Grid>
+
                     <!-- 2. CPU & RAM Kinetic Bento Cards -->
-                    <Grid x:Name="CpuRamGrid" Grid.Row="1" Grid.Column="0" ColumnSpacing="0" RowSpacing="0">
+                    <Grid x:Name="CpuRamGrid" Grid.Row="2" Grid.Column="0" ColumnSpacing="0" RowSpacing="0" Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition x:Name="CpuRamRow0" Height="Auto" />
                             <RowDefinition x:Name="CpuRamRow1" Height="Auto" />
@@ -413,20 +505,11 @@
                                 helpers:AnimationHelper.StaggerIndex="2"
                                 helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16">
                             <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Spacing="4" Grid.Column="0">
-                                        <TextBlock Text="CPU Processor Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
-                                        <TextBlock Text="{x:Bind FormatPercent(ViewModel.CpuUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                        <ProgressBar Value="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource CpuAccentBrush}" Background="{StaticResource CpuTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
-                                    </StackPanel>
-                                    <Border Grid.Column="1" Width="44" Height="44" Background="#15F59E0B" CornerRadius="14" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
-                                        <FontIcon Glyph="&#xE7F4;" FontSize="20" Foreground="{StaticResource CpuAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                    </Border>
-                                </Grid>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="CPU Processor Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
+                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.CpuUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                    <ProgressBar Value="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource CpuAccentBrush}" Background="{StaticResource CpuTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
+                                </StackPanel>
                                 <Grid Margin="0,12,0,0" Height="30">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -448,20 +531,11 @@
                                 helpers:AnimationHelper.StaggerIndex="3"
                                 helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16">
                             <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Spacing="4" Grid.Column="0">
-                                        <TextBlock Text="Memory (RAM) Footprint" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
-                                        <TextBlock Text="{x:Bind FormatPercent(ViewModel.RamUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                        <ProgressBar Value="{x:Bind ViewModel.RamUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource RamAccentBrush}" Background="{StaticResource RamTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
-                                    </StackPanel>
-                                    <Border Grid.Column="1" Width="44" Height="44" Background="#153B82F6" CornerRadius="14" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
-                                        <FontIcon Glyph="&#xE950;" FontSize="20" Foreground="{StaticResource RamAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                    </Border>
-                                </Grid>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Memory (RAM) Footprint" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
+                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.RamUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                    <ProgressBar Value="{x:Bind ViewModel.RamUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource RamAccentBrush}" Background="{StaticResource RamTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
+                                </StackPanel>
                                 <Grid Margin="0,12,0,0" Height="30">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -483,8 +557,8 @@
 
                     <!-- Right Side Column 1 -->
                     
-                    <!-- 1. Bottleneck Advisor widget (Placed on Row 1 Column 1) -->
-                    <Border x:Name="BottleneckCard" Grid.Row="1" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="16" CornerRadius="16"
+                    <!-- 1. Bottleneck Advisor widget (Placed on Row 2 Column 1) -->
+                    <Border x:Name="BottleneckCard" Grid.Row="2" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="16" CornerRadius="16" Visibility="Collapsed"
                             helpers:AnimationHelper.StaggerIndex="4"
                             helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16">
                         <StackPanel Spacing="8">
@@ -500,7 +574,7 @@
                     </Border>
 
                     <!-- 2. Quick Stats Grid (Clickable navigation cards) -->
-                    <Grid x:Name="QuickStatsGrid" Grid.Row="2" Grid.Column="1" RowSpacing="0" ColumnSpacing="0"
+                    <Grid x:Name="QuickStatsGrid" Grid.Row="3" Grid.Column="1" RowSpacing="0" ColumnSpacing="0" Visibility="Collapsed"
                           helpers:AnimationHelper.StaggerIndex="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -588,8 +662,8 @@
                         </Button>
                     </Grid>
 
-                    <!-- Row 2: GPU and Disk Cards (Lazy Loaded) -->
-                    <Grid x:Name="GpuDiskGrid" Grid.Row="2" Grid.Column="0" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" ColumnSpacing="0" RowSpacing="0">
+                    <!-- Row 3: GPU and Disk Cards (Lazy Loaded) -->
+                    <Grid x:Name="GpuDiskGrid" Grid.Row="3" Grid.Column="0" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" ColumnSpacing="0" RowSpacing="0" Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition x:Name="GpuDiskRow0" Height="Auto" />
                             <RowDefinition x:Name="GpuDiskRow1" Height="Auto" />
@@ -603,20 +677,11 @@
                         <Border x:Name="GpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="16" CornerRadius="16"
                                 helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16">
                             <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Spacing="4" Grid.Column="0">
-                                        <TextBlock Text="Graphics Card (GPU) Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
-                                        <TextBlock Text="{x:Bind FormatPercent(ViewModel.GpuUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                        <ProgressBar Value="{x:Bind ViewModel.GpuUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource GpuAccentBrush}" Background="{StaticResource GpuTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
-                                    </StackPanel>
-                                    <Border Grid.Column="1" Width="44" Height="44" Background="#158B5CF6" CornerRadius="14" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
-                                        <FontIcon Glyph="&#xE9F5;" FontSize="20" Foreground="{StaticResource GpuAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                    </Border>
-                                </Grid>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="Graphics Card (GPU) Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
+                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.GpuUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                    <ProgressBar Value="{x:Bind ViewModel.GpuUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource GpuAccentBrush}" Background="{StaticResource GpuTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
+                                </StackPanel>
                                 <Grid Margin="0,12,0,0" Height="30">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -637,20 +702,11 @@
                                 helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16"
                                 BorderBrush="{x:Bind GetDiskCardBorderBrush(ViewModel.DiskUsage), Mode=OneWay}">
                             <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Spacing="4" Grid.Column="0">
-                                        <TextBlock Text="System Disk Activity" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
-                                        <TextBlock Text="{x:Bind FormatPercent(ViewModel.DiskUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                        <ProgressBar Value="{x:Bind ViewModel.DiskUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource DiskAccentBrush}" Background="{StaticResource DiskTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
-                                    </StackPanel>
-                                    <Border Grid.Column="1" Width="44" Height="44" Background="#1510B981" CornerRadius="14" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12,0,0,0">
-                                        <FontIcon Glyph="&#xE7F1;" FontSize="20" Foreground="{StaticResource DiskAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                    </Border>
-                                </Grid>
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="System Disk Activity" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
+                                    <TextBlock Text="{x:Bind FormatPercent(ViewModel.DiskUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                    <ProgressBar Value="{x:Bind ViewModel.DiskUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource DiskAccentBrush}" Background="{StaticResource DiskTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
+                                </StackPanel>
                                 <Grid Margin="0,12,0,0" Height="30">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -670,8 +726,8 @@
                         </Border>
                     </Grid>
 
-                    <!-- Row 3: Performance Trend Chart Card with Series Toggles (Lazy Loaded) -->
-                    <Border x:Name="PerformanceChartCard" Grid.Row="3" Grid.Column="0" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14" CornerRadius="14">
+                    <!-- Row 4: Performance Trend Chart Card with Series Toggles (Lazy Loaded) -->
+                    <Border x:Name="PerformanceChartCard" Grid.Row="4" Grid.Column="1" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14" CornerRadius="14" Visibility="Collapsed">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -716,8 +772,8 @@
                         </Grid>
                     </Border>
 
-                    <!-- Row 2-3 (Span 2): Smart AI Advice Card (Actionable layout) (Lazy Loaded) -->
-                    <Border x:Name="RecommendationsCard" Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14" CornerRadius="14">
+                    <!-- Row 4: Smart AI Advice Card (Actionable layout) (Lazy Loaded) -->
+                    <Border x:Name="RecommendationsCard" Grid.Row="4" Grid.Column="0" Grid.RowSpan="1" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="14" CornerRadius="14" Visibility="Collapsed">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />

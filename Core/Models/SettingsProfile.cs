@@ -21,6 +21,7 @@ public class SettingsProfile
     public string BackdropType { get; set; } = "MicaAlt"; // MicaAlt, Mica, Acrylic, AuraGlow
     public double TransparencyLevel { get; set; } = 10.0;
     public bool EnableAnimations { get; set; } = true;
+    public bool IsProMode { get; set; } = false; // false = Simple Mode (default), true = Pro Mode
 
     // Auto Maintenance
     public double AutoCleanupTriggerSizeGB { get; set; } = 5.0;

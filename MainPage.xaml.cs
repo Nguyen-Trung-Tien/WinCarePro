@@ -68,12 +68,13 @@ public sealed partial class MainPage : Page
         // Synchronize Nav menu background reactively with Settings (TransparencyLevel, BackdropType, AccentColor)
         _settingsChangedHandler = (s, e) =>
         {
-            if (e.PropertyName is "TransparencyLevel" or "BackdropType" or "Theme" or "AccentColor")
+            if (e.PropertyName is "TransparencyLevel" or "BackdropType" or "Theme" or "AccentColor" or "IsProMode")
             {
                 DispatcherQueue?.TryEnqueue(() =>
                 {
                     var cur = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
                     UpdateNavTransparencyAndBackdrop(cur.TransparencyLevel, cur.BackdropType);
+                    UpdateExperienceMode(cur.IsProMode);
                 });
             }
         };
@@ -122,6 +123,7 @@ public sealed partial class MainPage : Page
         {
             var cur = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
             UpdateNavTransparencyAndBackdrop(cur.TransparencyLevel, cur.BackdropType);
+            UpdateExperienceMode(cur.IsProMode);
         };
 
         // Translate this container page and ensure sidebar theme consistency
@@ -529,5 +531,46 @@ public sealed partial class MainPage : Page
     private void OnUserProfileClick(object sender, RoutedEventArgs e)
     {
         NavigateToPageExternal("settings");
+    }
+
+    public void UpdateExperienceMode(bool isPro)
+    {
+        // Advanced/technical items reserved for Pro Mode
+        if (NavAi != null) NavAi.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavContextMenu != null) NavContextMenu.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavStartup != null) NavStartup.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavUpdater != null) NavUpdater.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavRepair != null) NavRepair.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavNetwork != null) NavNetwork.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavRegistry != null) NavRegistry.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+
+        // Group headers and separators: show in Pro Mode for structured categorization, hide in Simple Mode for minimal clarity
+        if (NavHeaderOverview != null) NavHeaderOverview.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavSepClean != null) NavSepClean.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavHeaderClean != null) NavHeaderClean.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavSepSpeed != null) NavSepSpeed.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavHeaderSpeed != null) NavHeaderSpeed.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavSepSecurity != null) NavSepSecurity.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        if (NavHeaderSecurity != null) NavHeaderSecurity.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+
+        if (!isPro && ContentFrame.CurrentSourcePageType != null)
+        {
+            var curTypeName = ContentFrame.CurrentSourcePageType.Name;
+            if (curTypeName is "AiWinCareEnginePage" or "ContextMenuPage" or "StartupPage" or "UpdaterPage" or "RepairPage" or "NetworkPage" or "RegistryPage")
+            {
+                NavigateToPageExternal("dashboard");
+            }
+        }
+
+        if (ContentFrame.Content is DashboardPage dbPage)
+        {
+            dbPage.UpdateExperienceMode(isPro);
+        }
+
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.UpdateTitleBarExperienceMode(isPro);
+        }
+        TranslationManager.Instance.Translate(this);
     }
 }

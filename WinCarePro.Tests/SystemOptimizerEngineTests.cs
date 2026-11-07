@@ -60,6 +60,7 @@ public class SystemOptimizerEngineTests
     [InlineData("DisableLocation", "1", "Privacy & Logs")]
     public void GetTweaks_VerifiesTweakConfigurations(string id, string recommendedValue, string category)
     {
+        Services.TranslationManager.Instance.CurrentLanguage = Services.AppLanguage.English;
         // Act
         var tweaks = _engine.GetTweaks();
         var tweak = tweaks.FirstOrDefault(t => t.Id == id);

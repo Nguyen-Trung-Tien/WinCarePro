@@ -17,6 +17,7 @@ namespace WinCarePro.Views;
 public sealed partial class DashboardPage : Page
 {
     public DashboardViewModel ViewModel { get; }
+    private readonly EventHandler<WinCarePro.Services.Contracts.SettingsChangedEventArgs> _settingsChangedHandler;
 
     public DashboardPage()
     {
@@ -25,10 +26,25 @@ public sealed partial class DashboardPage : Page
         
         ViewModel = App.Services?.GetService<DashboardViewModel>() ?? new DashboardViewModel(this.DispatcherQueue);
         ViewModel.DispatcherQueue = this.DispatcherQueue;
+
+        _settingsChangedHandler = (s, e) =>
+        {
+            if (e.PropertyName is "IsProMode")
+            {
+                var cur = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+                UpdateExperienceMode(cur.IsProMode);
+            }
+        };
+        WinCarePro.Services.Implementations.SettingsService.Instance.SettingsChanged += _settingsChangedHandler;
+
         this.Loaded += async (s, e) => 
         {
             ViewModel.DispatcherQueue = this.DispatcherQueue;
             DataContext = ViewModel;
+
+            // Sync current experience mode
+            var curMode = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+            UpdateExperienceMode(curMode.IsProMode);
 
             // Lazy load the extended layer after initial UI renders to prevent lag
             await Task.Delay(100);
@@ -69,6 +85,7 @@ public sealed partial class DashboardPage : Page
         {
             FluidAnimationHelper.StopPulseGlow(GaugeRingGrid);
             TranslationManager.Instance.LanguageChanged -= langHandler;
+            WinCarePro.Services.Implementations.SettingsService.Instance.SettingsChanged -= _settingsChangedHandler;
         };
 
         this.SizeChanged += (s, e) =>
@@ -83,6 +100,78 @@ public sealed partial class DashboardPage : Page
                 Bindings.Update();
             });
         };
+    }
+
+    public void UpdateExperienceMode(bool isPro)
+    {
+        DispatcherQueue?.TryEnqueue(() =>
+        {
+            if (isPro)
+            {
+                if (SimpleQuickActionsDeck != null)
+                {
+                    SimpleQuickActionsDeck.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                _isHardwareDrawerExpanded = false;
+                if (SimpleQuickActionsDeck != null)
+                {
+                    SimpleQuickActionsDeck.Visibility = Visibility.Visible;
+                }
+                if (HardwareDrawerToggleStatusText != null)
+                {
+                    HardwareDrawerToggleStatusText.Text = "Expand".T();
+                }
+                if (HardwareDrawerChevronIcon != null)
+                {
+                    HardwareDrawerChevronIcon.Glyph = "\uE70D";
+                }
+            }
+
+            var hardwareVis = isPro ? Visibility.Visible : Visibility.Collapsed;
+
+            if (CpuRamGrid != null)
+            {
+                CpuRamGrid.Visibility = hardwareVis;
+            }
+            if (BottleneckCard != null)
+            {
+                BottleneckCard.Visibility = hardwareVis;
+            }
+            if (QuickStatsGrid != null)
+            {
+                QuickStatsGrid.Visibility = hardwareVis;
+            }
+            if (GpuDiskGrid != null)
+            {
+                GpuDiskGrid.Visibility = hardwareVis;
+            }
+            if (PerformanceChartCard != null)
+            {
+                PerformanceChartCard.Visibility = hardwareVis;
+            }
+            if (RecommendationsCard != null)
+            {
+                RecommendationsCard.Visibility = hardwareVis;
+            }
+
+            UpdateResponsiveLayout(this.ActualWidth);
+            TranslationManager.Instance.Translate(this);
+        });
+    }
+
+    private void OnQuickRepairDoctorClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (App.MainWindowInstance is MainWindow mw && mw.MainFrame.Content is MainPage mp)
+            {
+                mp.NavigateToPageExternal("repair");
+            }
+        }
+        catch { }
     }
 
     private void OnLaunchAiWinCareEngineClick(object sender, RoutedEventArgs e)
@@ -166,10 +255,31 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumnSpan(AiWinCareEngineEmbeddedPanel, 1);
                 }
 
-                // Row 1: CPU/RAM (Left Col 0) & Bottleneck Advisor (Right Col 1) — SIDE-BY-SIDE
+                // Row 1: Simple Quick Actions Deck (Simple Mode Cockpit)
+                if (SimpleQuickActionsDeck != null)
+                {
+                    Grid.SetRow(SimpleQuickActionsDeck, 1);
+                    Grid.SetColumn(SimpleQuickActionsDeck, 0);
+                    Grid.SetColumnSpan(SimpleQuickActionsDeck, 2);
+
+                    if (SimpleCard0 != null && SimpleCard1 != null && SimpleCard2 != null &&
+                        SimpleDeckCol0 != null && SimpleDeckCol1 != null && SimpleDeckCol2 != null &&
+                        SimpleDeckRow0 != null && SimpleDeckRow1 != null && SimpleDeckRow2 != null)
+                    {
+                        SimpleDeckCol0.Width = new GridLength(1, GridUnitType.Star);
+                        SimpleDeckCol1.Width = new GridLength(1, GridUnitType.Star);
+                        SimpleDeckCol2.Width = new GridLength(1, GridUnitType.Star);
+
+                        Grid.SetRow(SimpleCard0, 0); Grid.SetColumn(SimpleCard0, 0); Grid.SetColumnSpan(SimpleCard0, 1);
+                        Grid.SetRow(SimpleCard1, 0); Grid.SetColumn(SimpleCard1, 1); Grid.SetColumnSpan(SimpleCard1, 1);
+                        Grid.SetRow(SimpleCard2, 0); Grid.SetColumn(SimpleCard2, 2); Grid.SetColumnSpan(SimpleCard2, 1);
+                    }
+                }
+
+                // Row 2: CPU/RAM (Left Col 0) & Bottleneck Advisor (Right Col 1) — SIDE-BY-SIDE
                 if (CpuRamGrid != null)
                 {
-                    Grid.SetRow(CpuRamGrid, 1);
+                    Grid.SetRow(CpuRamGrid, 2);
                     Grid.SetColumn(CpuRamGrid, 0);
                     Grid.SetColumnSpan(CpuRamGrid, 1);
                 }
@@ -187,15 +297,15 @@ public sealed partial class DashboardPage : Page
                 }
                 if (BottleneckCard != null)
                 {
-                    Grid.SetRow(BottleneckCard, 1);
+                    Grid.SetRow(BottleneckCard, 2);
                     Grid.SetColumn(BottleneckCard, 1);
                     Grid.SetColumnSpan(BottleneckCard, 1);
                 }
 
-                // Row 2: GPU/Disk (Left Col 0) & Quick Stats (Right Col 1) — SIDE-BY-SIDE
+                // Row 3: GPU/Disk (Left Col 0) & Quick Stats (Right Col 1) — SIDE-BY-SIDE
                 if (GpuDiskGrid != null)
                 {
-                    Grid.SetRow(GpuDiskGrid, 2);
+                    Grid.SetRow(GpuDiskGrid, 3);
                     Grid.SetColumn(GpuDiskGrid, 0);
                     Grid.SetColumnSpan(GpuDiskGrid, 1);
                 }
@@ -213,15 +323,15 @@ public sealed partial class DashboardPage : Page
                 }
                 if (QuickStatsGrid != null)
                 {
-                    Grid.SetRow(QuickStatsGrid, 2);
+                    Grid.SetRow(QuickStatsGrid, 3);
                     Grid.SetColumn(QuickStatsGrid, 1);
                     Grid.SetColumnSpan(QuickStatsGrid, 1);
                 }
 
-                // Row 3: Smart AI Advice (Left Col 0) & Performance Trend Chart (Right Col 1)
+                // Row 4: Smart AI Advice (Left Col 0) & Performance Trend Chart (Right Col 1)
                 if (RecommendationsCard != null)
                 {
-                    Grid.SetRow(RecommendationsCard, 3);
+                    Grid.SetRow(RecommendationsCard, 4);
                     Grid.SetColumn(RecommendationsCard, 0);
                     Grid.SetColumnSpan(RecommendationsCard, 1);
                     Grid.SetRowSpan(RecommendationsCard, 1);
@@ -229,7 +339,7 @@ public sealed partial class DashboardPage : Page
 
                 if (PerformanceChartCard != null)
                 {
-                    Grid.SetRow(PerformanceChartCard, 3);
+                    Grid.SetRow(PerformanceChartCard, 4);
                     Grid.SetColumn(PerformanceChartCard, 1);
                     Grid.SetColumnSpan(PerformanceChartCard, 1);
                 }
@@ -252,11 +362,24 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(AiWinCareEngineEmbeddedPanel, 0);
                     Grid.SetColumnSpan(AiWinCareEngineEmbeddedPanel, 2);
                 }
-                if (BottleneckCard != null)
+                if (SimpleQuickActionsDeck != null)
                 {
-                    Grid.SetRow(BottleneckCard, 2);
-                    Grid.SetColumn(BottleneckCard, 0);
-                    Grid.SetColumnSpan(BottleneckCard, 2);
+                    Grid.SetRow(SimpleQuickActionsDeck, 2);
+                    Grid.SetColumn(SimpleQuickActionsDeck, 0);
+                    Grid.SetColumnSpan(SimpleQuickActionsDeck, 2);
+
+                    if (SimpleCard0 != null && SimpleCard1 != null && SimpleCard2 != null &&
+                        SimpleDeckCol0 != null && SimpleDeckCol1 != null && SimpleDeckCol2 != null &&
+                        SimpleDeckRow0 != null && SimpleDeckRow1 != null && SimpleDeckRow2 != null)
+                    {
+                        SimpleDeckCol0.Width = new GridLength(1, GridUnitType.Star);
+                        SimpleDeckCol1.Width = new GridLength(0, GridUnitType.Pixel);
+                        SimpleDeckCol2.Width = new GridLength(0, GridUnitType.Pixel);
+
+                        Grid.SetRow(SimpleCard0, 0); Grid.SetColumn(SimpleCard0, 0); Grid.SetColumnSpan(SimpleCard0, 3);
+                        Grid.SetRow(SimpleCard1, 1); Grid.SetColumn(SimpleCard1, 0); Grid.SetColumnSpan(SimpleCard1, 3);
+                        Grid.SetRow(SimpleCard2, 2); Grid.SetColumn(SimpleCard2, 0); Grid.SetColumnSpan(SimpleCard2, 3);
+                    }
                 }
                 if (CpuRamGrid != null)
                 {
@@ -276,9 +399,15 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(RamCard, 0);
                     Grid.SetColumnSpan(RamCard, 2);
                 }
+                if (BottleneckCard != null)
+                {
+                    Grid.SetRow(BottleneckCard, 4);
+                    Grid.SetColumn(BottleneckCard, 0);
+                    Grid.SetColumnSpan(BottleneckCard, 2);
+                }
                 if (GpuDiskGrid != null)
                 {
-                    Grid.SetRow(GpuDiskGrid, 4);
+                    Grid.SetRow(GpuDiskGrid, 5);
                     Grid.SetColumn(GpuDiskGrid, 0);
                     Grid.SetColumnSpan(GpuDiskGrid, 2);
                 }
@@ -296,15 +425,9 @@ public sealed partial class DashboardPage : Page
                 }
                 if (QuickStatsGrid != null)
                 {
-                    Grid.SetRow(QuickStatsGrid, 5);
+                    Grid.SetRow(QuickStatsGrid, 6);
                     Grid.SetColumn(QuickStatsGrid, 0);
                     Grid.SetColumnSpan(QuickStatsGrid, 2);
-                }
-                if (PerformanceChartCard != null)
-                {
-                    Grid.SetRow(PerformanceChartCard, 6);
-                    Grid.SetColumn(PerformanceChartCard, 0);
-                    Grid.SetColumnSpan(PerformanceChartCard, 2);
                 }
                 if (RecommendationsCard != null)
                 {
@@ -313,12 +436,25 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumnSpan(RecommendationsCard, 2);
                     Grid.SetRowSpan(RecommendationsCard, 1);
                 }
+                if (PerformanceChartCard != null)
+                {
+                    Grid.SetRow(PerformanceChartCard, 8);
+                    Grid.SetColumn(PerformanceChartCard, 0);
+                    Grid.SetColumnSpan(PerformanceChartCard, 2);
+                }
             }
         }
     }
 
     private void OnExtendedLayerPanelLoaded(object sender, RoutedEventArgs e)
     {
+        var curMode = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+        var hardwareVis = (curMode.IsProMode || _isHardwareDrawerExpanded) ? Visibility.Visible : Visibility.Collapsed;
+
+        if (GpuDiskGrid != null) GpuDiskGrid.Visibility = hardwareVis;
+        if (PerformanceChartCard != null) PerformanceChartCard.Visibility = hardwareVis;
+        if (RecommendationsCard != null) RecommendationsCard.Visibility = hardwareVis;
+
         UpdateResponsiveLayout(this.ActualWidth);
         if (sender is FrameworkElement fe)
         {
@@ -332,6 +468,10 @@ public sealed partial class DashboardPage : Page
         ViewModel.DispatcherQueue = this.DispatcherQueue;
         ViewModel.StartMonitoring();
         ViewModel.RefreshActionLogs();
+
+        var curMode = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+        UpdateExperienceMode(curMode.IsProMode);
+        UpdateResponsiveLayout(this.ActualWidth);
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -348,10 +488,38 @@ public sealed partial class DashboardPage : Page
         ViewModel.StopMonitoring();
     }
 
+    private async void OnOneClickSmartCareClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (GaugeRingGrid != null)
+            {
+                WinCarePro.Core.Helpers.AnimationHelper.StartPulseAnimation(GaugeRingGrid, 0.95f, 1.05f, 1000);
+            }
+            if (HealthGaugeCard != null)
+            {
+                WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(HealthGaugeCard, Windows.UI.Color.FromArgb(120, 0, 242, 254));
+            }
+            if (!ViewModel.HasScanned)
+            {
+                await ViewModel.RunFullDiagnosticsAsync();
+            }
+            await RunOptimizationFlow(OptimizationMode.Recommended);
+        }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("DashboardPage.OnOneClickSmartCareClick", ex);
+        }
+    }
+
     private async void OnScanClick(object sender, RoutedEventArgs e)
     {
         try
         {
+            if (GaugeRingGrid != null)
+            {
+                WinCarePro.Core.Helpers.AnimationHelper.StartPulseAnimation(GaugeRingGrid, 0.95f, 1.05f, 900);
+            }
             if (HealthGaugeCard != null)
             {
                 WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(HealthGaugeCard, Windows.UI.Color.FromArgb(120, 0, 242, 254));
@@ -362,6 +530,11 @@ public sealed partial class DashboardPage : Page
         {
             try
             {
+                if (GaugeRingGrid != null)
+                {
+                    WinCarePro.Core.Helpers.AnimationHelper.StopPulseAnimation(GaugeRingGrid);
+                    WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(GaugeRingGrid, 1.10f, 400);
+                }
                 if (HealthGaugeCard != null)
                 {
                     WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(HealthGaugeCard);
@@ -372,7 +545,7 @@ public sealed partial class DashboardPage : Page
         }
     }
 
-    private async void OnOptimizeClick(SplitButton sender, SplitButtonClickEventArgs e)
+    private async void OnOptimizeClick(object sender, RoutedEventArgs e)
     {
         await RunOptimizationFlow(OptimizationMode.Recommended);
     }
@@ -413,6 +586,12 @@ public sealed partial class DashboardPage : Page
         {
             try
             {
+                if (GaugeRingGrid != null)
+                {
+                    WinCarePro.Core.Helpers.AnimationHelper.StopPulseAnimation(GaugeRingGrid);
+                    WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(GaugeRingGrid, 1.12f, 480);
+                }
+
                 if (HealthGaugeCard != null)
                 {
                     WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(HealthGaugeCard);
@@ -921,14 +1100,24 @@ public sealed partial class DashboardPage : Page
         return isScanning ? Visibility.Visible : Visibility.Collapsed;
     }
 
+    internal bool GetOneClickEnabled(bool isScanning, bool isOptimizing)
+    {
+        return !isScanning && !isOptimizing;
+    }
+
     internal Visibility GetOptimizeVisibility(bool hasScanned, bool isScanning)
     {
-        return (hasScanned && !isScanning) ? Visibility.Visible : Visibility.Collapsed;
+        return !isScanning ? Visibility.Visible : Visibility.Collapsed;
     }
 
     internal bool GetProgressRingActive(bool isScanning, bool isOptimizing)
     {
         return isScanning || isOptimizing;
+    }
+
+    internal Visibility GetProgressRingVisibility(bool isScanning, bool isOptimizing)
+    {
+        return (isScanning || isOptimizing) ? Visibility.Visible : Visibility.Collapsed;
     }
 
     internal static string GetStatusIcon(bool healthy)
@@ -965,6 +1154,10 @@ public sealed partial class DashboardPage : Page
         {
             FluidAnimationHelper.ApplyGlowSparkBurst(elem, 1.08f, 350);
         }
+        if (SimpleCard1 != null)
+        {
+            WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(SimpleCard1, 1.05f, 350);
+        }
         await ViewModel.BoostRamAsync();
     }
 
@@ -973,6 +1166,10 @@ public sealed partial class DashboardPage : Page
         if (sender is UIElement elem)
         {
             FluidAnimationHelper.ApplyGlowSparkBurst(elem, 1.08f, 350);
+        }
+        if (SimpleCard0 != null)
+        {
+            WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(SimpleCard0, 1.05f, 350);
         }
         await ViewModel.CleanDiskJunkAsync();
     }
@@ -1141,4 +1338,39 @@ public sealed partial class DashboardPage : Page
     }
 
     internal Visibility GetBoolVisibility(bool val) => val ? Visibility.Visible : Visibility.Collapsed;
+
+    private bool _isHardwareDrawerExpanded = false;
+
+    public string FormatRamText(double val)
+    {
+        string template = "RAM In Use {0:F0}%".T();
+        if (template.Contains("{0"))
+        {
+            return string.Format(template, val);
+        }
+        return $"RAM {val:F0}%";
+    }
+
+    private void OnToggleHardwareDrawerClick(object sender, RoutedEventArgs e)
+    {
+        _isHardwareDrawerExpanded = !_isHardwareDrawerExpanded;
+        var vis = _isHardwareDrawerExpanded ? Visibility.Visible : Visibility.Collapsed;
+
+        if (CpuRamGrid != null) CpuRamGrid.Visibility = vis;
+        if (GpuDiskGrid != null) GpuDiskGrid.Visibility = vis;
+        if (BottleneckCard != null) BottleneckCard.Visibility = vis;
+        if (QuickStatsGrid != null) QuickStatsGrid.Visibility = vis;
+        if (RecommendationsCard != null) RecommendationsCard.Visibility = vis;
+        if (PerformanceChartCard != null) PerformanceChartCard.Visibility = vis;
+
+        if (HardwareDrawerToggleStatusText != null)
+        {
+            HardwareDrawerToggleStatusText.Text = _isHardwareDrawerExpanded ? "Collapse".T() : "Expand".T();
+        }
+        if (HardwareDrawerChevronIcon != null)
+        {
+            HardwareDrawerChevronIcon.Glyph = _isHardwareDrawerExpanded ? "\uE70E" : "\uE70D";
+        }
+        UpdateResponsiveLayout(this.ActualWidth);
+    }
 }

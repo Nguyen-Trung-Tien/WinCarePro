@@ -443,4 +443,118 @@ public static class AnimationHelper
         }
         catch { }
     }
+
+    // ==========================================
+    // 7. Pulse Animation (Continuous rhythmic breathing effect)
+    // ==========================================
+    public static void StartPulseAnimation(FrameworkElement element, float minScale = 0.96f, float maxScale = 1.04f, double durationMs = 1200)
+    {
+        try
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            if (visual == null) return;
+            if (!AreAnimationsEnabled()) return;
+
+            var compositor = visual.Compositor;
+            UpdateCenterPoint(element);
+
+            var pulseAnim = compositor.CreateVector3KeyFrameAnimation();
+            pulseAnim.Duration = TimeSpan.FromMilliseconds(durationMs);
+            pulseAnim.IterationBehavior = AnimationIterationBehavior.Forever;
+            pulseAnim.Direction = AnimationDirection.Alternate;
+
+            var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0.0f), new Vector2(0.6f, 1.0f));
+            pulseAnim.InsertKeyFrame(0.0f, new Vector3(minScale, minScale, 1.0f), easing);
+            pulseAnim.InsertKeyFrame(1.0f, new Vector3(maxScale, maxScale, 1.0f), easing);
+
+            visual.StartAnimation("Scale", pulseAnim);
+        }
+        catch { }
+    }
+
+    public static void StopPulseAnimation(FrameworkElement element, double durationMs = 250)
+    {
+        try
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            if (visual == null) return;
+
+            visual.StopAnimation("Scale");
+            AnimateScale(element, 1.0f, durationMs);
+        }
+        catch { }
+    }
+
+    // ==========================================
+    // 8. Success Celebration Pop (Tactile bouncy reward animation)
+    // ==========================================
+    public static void StartSuccessPopAnimation(FrameworkElement element, float peakScale = 1.12f, double durationMs = 450)
+    {
+        try
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            if (visual == null) return;
+            if (!AreAnimationsEnabled()) return;
+
+            var compositor = visual.Compositor;
+            UpdateCenterPoint(element);
+
+            var popAnim = compositor.CreateVector3KeyFrameAnimation();
+            popAnim.Duration = TimeSpan.FromMilliseconds(durationMs);
+
+            var easeOut = compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
+            var easeIn = compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0.0f), new Vector2(0.6f, 1.0f));
+
+            popAnim.InsertKeyFrame(0.0f, new Vector3(1.0f, 1.0f, 1.0f));
+            popAnim.InsertKeyFrame(0.4f, new Vector3(peakScale, peakScale, 1.0f), easeOut);
+            popAnim.InsertKeyFrame(0.75f, new Vector3(0.97f, 0.97f, 1.0f), easeIn);
+            popAnim.InsertKeyFrame(1.0f, new Vector3(1.0f, 1.0f, 1.0f), easeOut);
+
+            visual.StartAnimation("Scale", popAnim);
+        }
+        catch { }
+    }
+
+    // ==========================================
+    // 9. Smooth Counter Text Animation (Number roll-up tween)
+    // ==========================================
+    public static async System.Threading.Tasks.Task AnimateCounterAsync(
+        TextBlock textBlock,
+        double fromValue,
+        double toValue,
+        string format = "{0:0}",
+        int durationMs = 650,
+        System.Threading.CancellationToken ct = default)
+    {
+        if (textBlock == null) return;
+        if (!AreAnimationsEnabled())
+        {
+            textBlock.Text = string.Format(format, toValue);
+            return;
+        }
+
+        try
+        {
+            int steps = Math.Max(12, durationMs / 25);
+            int delayMs = durationMs / steps;
+            double diff = toValue - fromValue;
+
+            for (int i = 1; i <= steps; i++)
+            {
+                if (ct.IsCancellationRequested) break;
+
+                // Ease-out cubic: progress = 1 - (1 - t)^3
+                double t = (double)i / steps;
+                double easeOutT = 1.0 - Math.Pow(1.0 - t, 3);
+                double currentVal = fromValue + (diff * easeOutT);
+
+                textBlock.Text = string.Format(format, currentVal);
+                await System.Threading.Tasks.Task.Delay(delayMs, ct);
+            }
+
+            textBlock.Text = string.Format(format, toValue);
+        }
+        catch (System.OperationCanceledException) { }
+        catch { }
+    }
 }

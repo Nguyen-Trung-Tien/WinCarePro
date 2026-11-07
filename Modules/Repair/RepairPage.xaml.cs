@@ -184,6 +184,11 @@ public sealed partial class RepairPage : Page
                 await ViewModel.FixAllSelectedIssuesAsync();
             },
             minDurationMs: 1000);
+
+        if (btn != null)
+        {
+            WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(btn, 1.10f, 400);
+        }
     }
 
     private async void OnFixSingleIssueClick(object sender, RoutedEventArgs e)

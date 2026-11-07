@@ -69,9 +69,6 @@
                 <!-- Left: Info & Badges Display -->
                 <StackPanel x:Name="HeaderStatsPanel" Grid.Row="0" Grid.Column="0" Spacing="4">
                     <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                        <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource CyberAccentGradient}">
-                            <FontIcon Glyph="&#xEA99;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
                         <TextBlock Text="Junk Cleaner &amp; System Cache" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
                         <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                             <StackPanel Orientation="Horizontal" Spacing="5">
@@ -165,7 +162,8 @@
                     </Border>
 
                     <!-- Capsule 1: 100% Safe Cache (Green) -->
-                    <Button Grid.Column="1" Click="OnPresetSafeClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3510B981" BorderThickness="1.2">
+                    <Button Grid.Column="1" Click="OnPresetSafeClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3510B981" BorderThickness="1.2"
+                            ToolTipService.ToolTip="Tier 1: 100% Safe Cache (Recommended) - System caches, log files, temporary setup files. Auto-selected.">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -176,59 +174,61 @@
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="100% Safe Cache" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Tier 1: 100% Safe Cache" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                                     <Border Background="#2510B981" CornerRadius="3" Padding="4,0.5">
-                                        <TextBlock Text="SAFE" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FF10B981"/>
+                                        <TextBlock Text="RECOMMENDED" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FF10B981"/>
                                     </Border>
                                 </StackPanel>
                                 <TextBlock Text="{x:Bind ViewModel.SafeJunkSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                <TextBlock Text="{x:Bind ViewModel.SafeFileCount, Mode=OneWay}" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock Text="System cache, temp files &amp; logs" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                             </StackPanel>
                         </Grid>
                     </Button>
 
-                    <!-- Capsule 2: Review Recommended (Amber) -->
-                    <Border Grid.Column="2" Style="{StaticResource Tilt3DCardStyle}" BorderBrush="#35F59E0B" BorderThickness="1.2" CornerRadius="10" Padding="10,8">
+                    <!-- Capsule 2: Browser Data (Amber) -->
+                    <Border Grid.Column="2" Style="{StaticResource Tilt3DCardStyle}" BorderBrush="#35F59E0B" BorderThickness="1.2" CornerRadius="10" Padding="10,8"
+                            ToolTipService.ToolTip="Tier 2: Browser Data - Web history, site caches (Preview supported, passwords preserved)">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Border Width="34" Height="34" CornerRadius="17" Background="#20F59E0B" Margin="0,0,10,0" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE7BA;" FontSize="15" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE774;" FontSize="15" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="Review Recommended" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Tier 2: Browser Data" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                                     <Border Background="#25F59E0B" CornerRadius="3" Padding="4,0.5">
-                                        <TextBlock Text="NOTICE" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
+                                        <TextBlock Text="PREVIEW" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
                                     </Border>
                                 </StackPanel>
                                 <TextBlock Text="{x:Bind ViewModel.ReviewJunkSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                <TextBlock Text="{x:Bind ViewModel.ReviewFileCount, Mode=OneWay}" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock Text="Web cache &amp; history (passwords kept)" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
 
-                    <!-- Capsule 3: Developer & Deep (Violet) -->
-                    <Border Grid.Column="3" Style="{StaticResource Tilt3DCardStyle}" BorderBrush="#358B5CF6" BorderThickness="1.2" CornerRadius="10" Padding="10,8">
+                    <!-- Capsule 3: Advanced Items (Violet) -->
+                    <Border Grid.Column="3" Style="{StaticResource Tilt3DCardStyle}" BorderBrush="#358B5CF6" BorderThickness="1.2" CornerRadius="10" Padding="10,8"
+                            ToolTipService.ToolTip="Tier 3: Advanced Items - Recycle Bin, previous Windows Update backup files">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Border Width="34" Height="34" CornerRadius="17" Background="#208B5CF6" Margin="0,0,10,0" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE943;" FontSize="15" Foreground="#FFA78BFA" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE74D;" FontSize="15" Foreground="#FFA78BFA" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="Developer Caches" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Tier 3: Advanced Items" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                                     <Border Background="#258B5CF6" CornerRadius="3" Padding="4,0.5">
-                                        <TextBlock Text="DEV" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FFA78BFA"/>
+                                        <TextBlock Text="ADVANCED" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FFA78BFA"/>
                                     </Border>
                                 </StackPanel>
                                 <TextBlock Text="{x:Bind ViewModel.DevJunkSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FFA78BFA" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                <TextBlock Text="{x:Bind ViewModel.DevFileCount, Mode=OneWay}" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock Text="Recycle Bin &amp; old Windows backups" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                             </StackPanel>
                         </Grid>
                     </Border>
@@ -238,6 +238,59 @@
 
         <!-- 2. Dynamic Alert Banners Container -->
         <StackPanel Grid.Row="2" Spacing="10" Margin="0,0,0,12">
+            <!-- SafePathGuard Reassurance Trust Banner -->
+            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="12" Padding="12,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="28" Height="28" CornerRadius="14" Background="#2010B981" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE72E;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock Text="SafePathGuard Protection Active" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            <Border Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="4,1">
+                                <TextBlock Text="100% SAFE" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="Personal files, browser passwords, sessions, and Windows system folders are strictly protected and never touched." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Visual Storage Capacity Bar (Disk C: Real-time capacity & reclamation bar) -->
+            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="12" Padding="14,10">
+                <Grid RowSpacing="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock Text="Visual Storage Capacity (Drive C:)" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                            <TextBlock Text="• Space reclamation potential" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock Text="Free Space After Clean:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <Border Background="#2010B981" CornerRadius="4" Padding="6,1">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{x:Bind ViewModel.TotalJunkSize, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                    <!-- Capacity Progress Bar with smooth corner radius -->
+                    <ProgressBar Grid.Row="1" Value="65" Maximum="100" Height="8" CornerRadius="4" Foreground="{StaticResource PrimaryAccentGradient}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.9"/>
+                </Grid>
+            </Border>
+
             <!-- Celebration & Micro-interaction Success Banner (1-Click Clean Complete) -->
             <Border Background="{ThemeResource AppBadgeGoodBg}"
                     BorderBrush="{ThemeResource AppBadgeGoodBorder}"
@@ -363,7 +416,6 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xEA99;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
                             <TextBlock Text="Junk Categories" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">

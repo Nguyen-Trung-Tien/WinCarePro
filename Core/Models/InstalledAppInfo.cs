@@ -128,6 +128,8 @@ public class InstalledAppInfo : INotifyPropertyChanged
 
     public bool IsLargeApp => SizeBytes >= 500L * 1024 * 1024;
 
+    public bool IsRarelyUsed => IsBloatware || (DateTime.TryParse(InstallDate, out var dt) && (DateTime.Now - dt).TotalDays > 120);
+
     public string SizeFormatted => SizeBytes <= 0 ? "Unknown" : WinCarePro.Core.Helpers.FormatHelper.FormatBytes(SizeBytes);
 
     private bool? _isBloatwareCache;

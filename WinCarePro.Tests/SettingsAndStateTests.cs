@@ -28,6 +28,7 @@ public class SettingsAndStateTests
         Assert.Equal("MicaAlt", profile.BackdropType);
         Assert.True(profile.EnableAnimations);
         Assert.True(profile.ShowNotifications);
+        Assert.False(profile.IsProMode);
     }
 
     [Fact]

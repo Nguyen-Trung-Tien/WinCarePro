@@ -165,6 +165,7 @@ public sealed partial class SystemOptimizerPage : Page
                     WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
                 }
                 if (StatCard1 != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(StatCard1);
+                if (btn != null) WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(btn, 1.10f, 400);
             }
             catch { }
         }

@@ -71,9 +71,6 @@
 
             <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
-                        <FontIcon Glyph="&#xE99A;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
                     <TextBlock Text="Smart Diagnostics Engine" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
                     <Border Background="{ThemeResource AppBadgeNeutralBg}" BorderBrush="{ThemeResource AppBadgeNeutralBorder}" BorderThickness="1" CornerRadius="6" Padding="7,2.5" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
@@ -158,7 +155,7 @@
                                 <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                        <TextBlock x:Name="AiLastScanText" Text="Neural Scan: Active &amp; Up to date" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock x:Name="AiLastScanText" Text="Diagnostics: Up to date" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     </StackPanel>
                                 </Border>
                                 <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3">
@@ -188,14 +185,14 @@
                                     <FontIcon Glyph="&#xEDA2;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="Neural Subsystem Topology Map" FontWeight="Bold" FontSize="13"/>
-                                    <TextBlock Text="Real-time multi-tier hardware-software telemetry and bottleneck localization" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="System Hardware &amp; Component Status" FontWeight="Bold" FontSize="13"/>
+                                    <TextBlock Text="Real-time hardware telemetry and performance status" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                             </StackPanel>
                             <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
                                     <Ellipse Width="6" Height="6" Fill="#FF10B981"/>
-                                    <TextBlock Text="5 Nodes Synchronized" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                    <TextBlock Text="5 Subsystems Monitored" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981"/>
                                 </StackPanel>
                             </Border>
                         </Grid>

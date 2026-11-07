@@ -137,6 +137,7 @@ public sealed partial class MainWindow : Window
             {
                 SearchBox.PlaceholderText = "Search tools, diagnostics, settings... (Ctrl + K)".T();
             }
+            UpdateTitleBarExperienceMode(WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.IsProMode);
         };
 
         if (SearchBox != null)
@@ -234,6 +235,7 @@ public sealed partial class MainWindow : Window
             // 4. Update notification badge indicator & prepare main view
             UpdateNotificationBadge();
             RootFrame.Navigate(typeof(MainPage));
+            UpdateTitleBarExperienceMode(WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.IsProMode);
 
             await SmoothTweenProgressAsync(100, "Ready!", 30);
 
@@ -358,14 +360,15 @@ public sealed partial class MainWindow : Window
 
                 this.DispatcherQueue.TryEnqueue(() =>
                 {
+                    bool isPro = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.IsProMode;
                     if (CpuChipText != null)
                     {
-                        CpuChipText.Text = cpuPercent > 0 ? $"CPU {cpuPercent:F0}%" : "CPU";
+                        CpuChipText.Text = isPro && cpuPercent > 0 ? $"CPU {cpuPercent:F0}%" : "CPU";
                         ToolTipService.SetToolTip(CpuChipButton, $"CPU Usage: {cpuPercent:F0}%\nClick to open live Dashboard monitor.".T());
                     }
                     if (RamChipText != null)
                     {
-                        RamChipText.Text = $"RAM {ramPercent:F0}%";
+                        RamChipText.Text = isPro ? $"RAM {ramPercent:F0}%" : "RAM";
                         ToolTipService.SetToolTip(RamChipButton, $"RAM Usage: {ramPercent:F0}% ({freeGb:F1} GB free of {totalGb:F1} GB)\nClick to perform 1-Click RAM Purge.".T());
                     }
                 });
@@ -714,6 +717,28 @@ public sealed partial class MainWindow : Window
         {
             PerformAppExit();
         }
+    }
+
+    private void OnTitleBarModeSwitchClick(object sender, RoutedEventArgs e)
+    {
+        var cur = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+        bool newMode = !cur.IsProMode;
+        WinCarePro.Services.Implementations.SettingsService.Instance.UpdateSettings(s => s.IsProMode = newMode, "IsProMode");
+        UpdateTitleBarExperienceMode(newMode);
+        if (RootFrame.Content is MainPage mp)
+        {
+            mp.UpdateExperienceMode(newMode);
+        }
+    }
+
+    public void UpdateTitleBarExperienceMode(bool isPro)
+    {
+        this.DispatcherQueue.TryEnqueue(() =>
+        {
+            if (TitleBarModeText != null) TitleBarModeText.Text = isPro ? "Pro Mode".T() : "Simple Mode".T();
+            if (TitleBarModeIcon != null) TitleBarModeIcon.Glyph = isPro ? "\uE90F" : "\uE7FC";
+            if (TitleBarModeSwitchBtn != null) ToolTipService.SetToolTip(TitleBarModeSwitchBtn, isPro ? "Current: Pro Mode (Click to switch to Simple Mode)".T() : "Current: Simple Mode (Click to switch to Pro Mode)".T());
+        });
     }
 
     private void OnCpuChipClick(object sender, RoutedEventArgs e)

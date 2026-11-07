@@ -118,9 +118,6 @@
             <!-- Left: Title & Subtitle -->
             <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <Border Style="{StaticResource PageHeaderIconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
-                        <FontIcon Glyph="&#xE7FC;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
                     <StackPanel Spacing="2" VerticalAlignment="Center">
                         <TextBlock Text="System Optimizer &amp; Performance" Style="{StaticResource PageHeaderTitleStyle}" />
                         <TextBlock Text="Kernel tuning, process scheduling &amp; memory caching." Style="{StaticResource PageHeaderSubtitleStyle}" />
@@ -129,91 +126,25 @@
             </StackPanel>
 
             <!-- Right: Action Toolbar (Direct Profile Pills -> Apply Tweaks -> More Options) -->
-            <StackPanel x:Name="HeaderButtons" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <!-- 1-Click Tactile Profile Pills (Quick Mode Switcher) -->
-                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                    <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="17" Padding="12,0" FontSize="11.5"
-                            Click="OnSelectRecommendedProfileClick" ToolTipService.ToolTip="AI auto-tune for optimal everyday stability and responsiveness">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <FontIcon Glyph="&#xE99A;" FontSize="11.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                            <TextBlock Text="Recommended" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="17" Padding="12,0" FontSize="11.5"
-                            Click="OnSelectGamingProfileClick" ToolTipService.ToolTip="Ultra-low latency, max GPU scheduling priority and 0ms queue delay">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <FontIcon Glyph="&#xE7FC;" FontSize="11.5" Foreground="{ThemeResource AppStatusWarningBrush}"/>
-                            <TextBlock Text="Gaming Ultra" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="17" Padding="12,0" FontSize="11.5"
-                            Click="OnSelectPrivacyProfileClick" ToolTipService.ToolTip="Disable background tracking, telemetry diagnostics and Cortana">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <FontIcon Glyph="&#xE727;" FontSize="11.5" Foreground="{ThemeResource AppStatusGoodBrush}"/>
-                            <TextBlock Text="Privacy Shield" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-
-                <!-- Preset Profiles DropDown Menu (More Profiles) -->
-                <DropDownButton x:Name="ProfilesDropDownBtn" Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="10,0" FontSize="11.5">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <FontIcon Glyph="&#xE71D;" FontSize="11.5" Foreground="{StaticResource PrimaryAccentBrush}" />
-                        <TextBlock Text="More" VerticalAlignment="Center" FontWeight="SemiBold" />
+            <StackPanel x:Name="HeaderButtons" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <!-- Restore Defaults Button (Direct 1-Click Revert Option) -->
+                <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="14,0" FontSize="11.5" Click="OnRestoreDefaultsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" ToolTipService.ToolTip="Restore Windows Default Settings"
+                        AutomationProperties.Name="Restore Windows Defaults"
+                        AutomationProperties.HelpText="Reverts all applied tweaks back to standard Windows defaults safely.">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE777;" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <TextBlock Text="Restore Defaults" FontWeight="SemiBold"/>
                     </StackPanel>
-                    <DropDownButton.Flyout>
-                        <MenuFlyout Placement="BottomEdgeAlignedRight">
-                            <MenuFlyoutItem Text="Recommended (Auto-Tune)" Click="OnSelectRecommendedProfileClick">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE99A;" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem Text="Max Performance" Click="OnSelectPerformanceProfileClick">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE7FC;" Foreground="{ThemeResource AppStatusWarningBrush}"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem Text="Gaming Ultra (Low Latency)" Click="OnSelectGamingProfileClick">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xEA3A;" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem Text="Eco Balanced (Battery Friendly)" Click="OnSelectEcoProfileClick">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xEC0A;" Foreground="{ThemeResource AppStatusInfoBrush}"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                            <MenuFlyoutItem Text="Privacy Shield" Click="OnSelectPrivacyProfileClick">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE727;" Foreground="{ThemeResource AppStatusGoodBrush}"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                        </MenuFlyout>
-                    </DropDownButton.Flyout>
-                </DropDownButton>
+                </Button>
 
                 <!-- Apply Selected Tweaks (Primary Hero CTA with Ambient Glow) -->
-                <Button x:Name="ApplyTweaksBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="Bold" Height="34" CornerRadius="8" Padding="18,0" FontSize="12">
+                <Button x:Name="ApplyTweaksBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}" FontWeight="Bold" Height="34" CornerRadius="8" Padding="20,0" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ProgressRing x:Name="ApplyTweaksRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center" />
                         <FontIcon x:Name="ApplyTweaksIcon" Glyph="&#xE8FB;" FontSize="12" Foreground="White" />
                         <TextBlock x:Name="ApplyTweaksText" Text="Apply Tweaks" FontWeight="Bold" />
                     </StackPanel>
                 </Button>
-
-                <!-- More Options Menu (Restore Defaults) -->
-                <DropDownButton Style="{StaticResource DefaultButtonStyle}" Height="34" Width="36" CornerRadius="8" Padding="0" ToolTipService.ToolTip="More Options">
-                    <FontIcon Glyph="&#xE712;" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <DropDownButton.Flyout>
-                        <MenuFlyout Placement="BottomEdgeAlignedRight">
-                            <MenuFlyoutItem Text="Restore Windows Defaults" Click="OnRestoreDefaultsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsLoading), Mode=OneWay}">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE777;" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                        </MenuFlyout>
-                    </DropDownButton.Flyout>
-                </DropDownButton>
             </StackPanel>
         </Grid>
 
@@ -356,13 +287,96 @@
             <Border x:Name="TweaksCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource CockpitBentoCardStyle}" Padding="14,12">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" /> <!-- Category Filter & Search Bar -->
-                        <RowDefinition Height="Auto" /> <!-- Quick Selection & Counters -->
-                        <RowDefinition Height="*" />    <!-- Tweaks List -->
+                        <RowDefinition Height="Auto" /> <!-- 0: 1-Click Goal Presets Strip -->
+                        <RowDefinition Height="Auto" /> <!-- 1: Category Filter & Search Bar -->
+                        <RowDefinition Height="Auto" /> <!-- 2: Quick Selection & Counters -->
+                        <RowDefinition Height="*" />    <!-- 3: Tweaks List -->
                     </Grid.RowDefinitions>
 
-                    <!-- Category Segmented Filter & Search Box (Row 0) -->
-                    <Grid Grid.Row="0" Margin="0,0,0,8">
+                    <!-- 1-Click Goal Presets Strip (Simple & Friendly UX) -->
+                    <Grid Grid.Row="0" Margin="0,0,0,10" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Preset 1: Gaming Focus -->
+                        <Button Grid.Column="0" Click="OnSelectGamingProfileClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#358B5CF6" BorderThickness="1.2"
+                                ToolTipService.ToolTip="🎮 Gaming Focus Mode: Pause background updates, free maximum RAM and prioritize CPU for gaming">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="32" Height="32" CornerRadius="8" Background="#208B5CF6" Margin="0,0,8,0" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xEA3A;" FontSize="14" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="🎮 Gaming Focus" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Prioritize CPU, free RAM" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+
+                        <!-- Preset 2: Office & Productivity -->
+                        <Button Grid.Column="1" Click="OnSelectRecommendedProfileClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3506B6D4" BorderThickness="1.2"
+                                ToolTipService.ToolTip="💼 Office &amp; Productivity: Maximum stability for Word, Excel, Teams, smooth multi-tab browsing">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="32" Height="32" CornerRadius="8" Background="#2006B6D4" Margin="0,0,8,0" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE99A;" FontSize="14" Foreground="#FF06B6D4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="💼 Office &amp; Productivity" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Stability for Office, Teams, Web" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+
+                        <!-- Preset 3: Daily Balanced -->
+                        <Button Grid.Column="2" Click="OnSelectEcoProfileClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#353B82F6" BorderThickness="1.2"
+                                ToolTipService.ToolTip="🔋 Daily Balanced: Balance system performance, keep PC cool, and preserve battery life">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="32" Height="32" CornerRadius="8" Background="#203B82F6" Margin="0,0,8,0" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xEC0A;" FontSize="14" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="🔋 Daily Balanced" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Balanced &amp; cool performance" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+
+                        <!-- Preset 4: Privacy Shield -->
+                        <Button Grid.Column="3" Click="OnSelectPrivacyProfileClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3510B981" BorderThickness="1.2"
+                                ToolTipService.ToolTip="🛡️ Privacy Shield: Block background diagnostic telemetry, tracking &amp; Windows targeted logs">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border Width="32" Height="32" CornerRadius="8" Background="#2010B981" Margin="0,0,8,0" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE727;" FontSize="14" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="🛡️ Privacy Shield" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Block telemetry &amp; tracking" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Button>
+                    </Grid>
+
+                    <!-- Category Segmented Filter & Search Box (Row 1) -->
+                    <Grid Grid.Row="1" Margin="0,0,0,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="220" />
@@ -389,15 +403,21 @@
                         </TextBox>
                     </Grid>
 
-                    <!-- Quick Selection Bar (Row 1) -->
-                    <Grid Grid.Row="1" Margin="0,0,0,10">
+                    <!-- Quick Selection Bar (Row 2) -->
+                    <Grid Grid.Row="2" Margin="0,0,0,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <!-- Clean Selection Actions: Master CheckBox + Filter -->
-                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="8,3" Margin="0,0,4,0">
+                                <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE713;" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                    <TextBlock Text="Manual Granular Tweaks (Pro)" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                </StackPanel>
+                            </Border>
                             <CheckBox Content="Select All" Checked="OnMasterSelectAllChanged" Unchecked="OnMasterSelectAllChanged" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center" />
                             <Button Content="Unapplied Only" Click="OnSelectUnappliedClick" CornerRadius="6" Padding="10,4" FontSize="11" />
                         </StackPanel>
@@ -425,8 +445,8 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- Tweaks Virtualized List (Row 2) -->
-                    <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.FilteredTweaks, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
+                    <!-- Tweaks Virtualized List (Row 3) -->
+                    <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.FilteredTweaks, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsStackPanel />

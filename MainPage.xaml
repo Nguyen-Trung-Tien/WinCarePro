@@ -16,7 +16,7 @@
             <NavigationView.PaneFooter>
                 <StackPanel Padding="0,0,0,12">
                     <!-- User Profile Chip at the bottom — Spatial Glass pill button with full keyboard navigation -->
-                    <Button x:Name="UserProfileButton" Margin="8,4,8,4" Padding="8,6" CornerRadius="14" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnUserProfileClick" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98" AutomationProperties.Name="User Profile Settings" AutomationProperties.HelpText="Open Settings page to configure user preferences and application options.">
+                    <Button x:Name="UserProfileButton" Margin="8,0,8,4" Padding="8,6" CornerRadius="14" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnUserProfileClick" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98" AutomationProperties.Name="User Profile Settings" AutomationProperties.HelpText="Open Settings page to configure user preferences and application options.">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -39,86 +39,93 @@
             </NavigationView.PaneFooter>
 
             <NavigationView.MenuItems>
-                <!-- Dashboard View -->
-                <NavigationViewItem Tag="Dashboard" Content="Dashboard" AutomationProperties.Name="Dashboard" AutomationProperties.HelpText="Overview of system health, hardware telemetry, and one-click quick boost.">
+                <!-- OVERVIEW -->
+                <NavigationViewItemHeader x:Name="NavHeaderOverview" Content="OVERVIEW" />
+
+                <NavigationViewItem x:Name="NavDashboard" Tag="Dashboard" Content="Dashboard" AutomationProperties.Name="Dashboard" AutomationProperties.HelpText="Overview of system health, hardware telemetry, and one-click quick boost.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE80F;" Foreground="{StaticResource PrimaryAccentBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Tag="AiWinCareEngine" Content="Smart Diagnostics" AutomationProperties.Name="Smart Diagnostics" AutomationProperties.HelpText="Intelligent multi-factor system diagnostics and automated remedies.">
+                <NavigationViewItem x:Name="NavAi" Tag="AiWinCareEngine" Content="Smart Diagnostics" AutomationProperties.Name="Smart Diagnostics" AutomationProperties.HelpText="Intelligent multi-factor system diagnostics and automated remedies.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE99A;" Foreground="{ThemeResource AppStatusCyanBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
-                <NavigationViewItemSeparator />
+                <NavigationViewItemSeparator x:Name="NavSepClean" />
 
-                <!-- CARE & CLEAN -->
-                <NavigationViewItemHeader Content="CARE &amp; CLEAN" />
+                <!-- CLEAN & STORAGE -->
+                <NavigationViewItemHeader x:Name="NavHeaderClean" Content="CLEAN &amp; STORAGE" />
                 
-                <NavigationViewItem Tag="Junk" Content="Junk Cleaner" AutomationProperties.Name="Junk Cleaner" AutomationProperties.HelpText="Scan and safely clean temporary files, cache, and system clutter.">
+                <NavigationViewItem x:Name="NavJunk" Tag="Junk" Content="Junk Cleaner" AutomationProperties.Name="Junk Cleaner" AutomationProperties.HelpText="Scan and safely clean temporary files, cache, and system clutter.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEA99;" Foreground="{ThemeResource AppStatusWarningBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Tag="Uninstall" Content="App Uninstaller" AutomationProperties.Name="App Uninstaller" AutomationProperties.HelpText="Uninstall desktop and Store apps with deep leftover cleanup.">
+                <NavigationViewItem x:Name="NavUninstall" Tag="Uninstall" Content="App Uninstaller" AutomationProperties.Name="App Uninstaller" AutomationProperties.HelpText="Uninstall desktop and Store apps with deep leftover cleanup.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE74D;" Foreground="{ThemeResource AppStatusDangerBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Tag="Network" Content="Network Center" AutomationProperties.Name="Network Center" AutomationProperties.HelpText="Network monitoring, DNS benchmark, and latency diagnostics.">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE701;" Foreground="{ThemeResource AppStatusInfoBrush}" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
-                <NavigationViewItem Tag="Repair" Content="System Repair" AutomationProperties.Name="System Repair" AutomationProperties.HelpText="Windows system file checker, DISM repair, and subsystem restoration.">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE90F;" Foreground="{ThemeResource AppStatusCyanBrush}" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
-                <NavigationViewItem Tag="Security" Content="Security Shield" AutomationProperties.Name="Security Shield" AutomationProperties.HelpText="Windows Defender, Firewall, and privacy telemetry settings.">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE727;" Foreground="{ThemeResource AppStatusGoodBrush}" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
-                <NavigationViewItemSeparator />
-
-                <!-- SYSTEM TUNING -->
-                <NavigationViewItemHeader Content="SYSTEM TUNING" />
-
-                <NavigationViewItem Tag="Optimizer" Content="System Optimizer" AutomationProperties.Name="System Optimizer" AutomationProperties.HelpText="System tweaks, RAM working set optimization, and performance profiles.">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7FC;" Foreground="{ThemeResource AppStatusWarningBrush}" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
-                <NavigationViewItem Tag="Startup" Content="Startup &amp; Services" AutomationProperties.Name="Startup &amp; Services Manager" AutomationProperties.HelpText="Manage and accelerate Windows boot apps, daemon states, and background velocity.">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7B5;" Foreground="{ThemeResource AppStatusPurpleBrush}" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
-                <NavigationViewItem Tag="ContextMenu" Content="Context Menu" AutomationProperties.Name="Context Menu Manager" AutomationProperties.HelpText="Manage and clean Windows Explorer right-click shell extensions.">
+                <NavigationViewItem x:Name="NavContextMenu" Tag="ContextMenu" Content="Context Menu" AutomationProperties.Name="Context Menu Manager" AutomationProperties.HelpText="Manage and clean Windows Explorer right-click shell extensions.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE8EC;" Foreground="{ThemeResource AppStatusPurpleBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Tag="Registry" Content="Registry Center" AutomationProperties.Name="Registry Center" AutomationProperties.HelpText="Registry backup, defragmentation, and cleanup.">
+                <NavigationViewItemSeparator x:Name="NavSepSpeed" />
+
+                <!-- SPEED & PERFORMANCE -->
+                <NavigationViewItemHeader x:Name="NavHeaderSpeed" Content="SPEED &amp; PERFORMANCE" />
+
+                <NavigationViewItem x:Name="NavOptimizer" Tag="Optimizer" Content="System Optimizer" AutomationProperties.Name="System Optimizer" AutomationProperties.HelpText="System tweaks, RAM working set optimization, and performance profiles.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEDA2;" Foreground="{ThemeResource AppStatusDangerBrush}" />
+                        <FontIcon Glyph="&#xE7FC;" Foreground="{ThemeResource AppStatusWarningBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Tag="Updater" Content="Software Updater" AutomationProperties.Name="Software Updater" AutomationProperties.HelpText="Scan and update installed third-party software applications.">
+                <NavigationViewItem x:Name="NavStartup" Tag="Startup" Content="Startup &amp; Services" AutomationProperties.Name="Startup &amp; Services Manager" AutomationProperties.HelpText="Manage and accelerate Windows boot apps, daemon states, and background velocity.">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7B5;" Foreground="{ThemeResource AppStatusPurpleBrush}" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="NavUpdater" Tag="Updater" Content="Software Updater" AutomationProperties.Name="Software Updater" AutomationProperties.HelpText="Scan and update installed third-party software applications.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE895;" Foreground="{ThemeResource AppStatusPurpleBrush}" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItemSeparator x:Name="NavSepSecurity" />
+
+                <!-- SECURITY & REPAIR -->
+                <NavigationViewItemHeader x:Name="NavHeaderSecurity" Content="SECURITY &amp; REPAIR" />
+
+                <NavigationViewItem x:Name="NavRepair" Tag="Repair" Content="System Repair" AutomationProperties.Name="System Repair" AutomationProperties.HelpText="Windows system file checker, DISM repair, and subsystem restoration.">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE90F;" Foreground="{ThemeResource AppStatusCyanBrush}" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="NavSecurity" Tag="Security" Content="Security Shield" AutomationProperties.Name="Security Shield" AutomationProperties.HelpText="Windows Defender, Firewall, and privacy telemetry settings.">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE727;" Foreground="{ThemeResource AppStatusGoodBrush}" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="NavNetwork" Tag="Network" Content="Network Center" AutomationProperties.Name="Network Center" AutomationProperties.HelpText="Network monitoring, DNS benchmark, and latency diagnostics.">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE701;" Foreground="{ThemeResource AppStatusInfoBrush}" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Name="NavRegistry" Tag="Registry" Content="Registry Center" AutomationProperties.Name="Registry Center" AutomationProperties.HelpText="Registry backup, defragmentation, and cleanup.">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEDA2;" Foreground="{ThemeResource AppStatusDangerBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 

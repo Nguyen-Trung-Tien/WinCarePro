@@ -30,7 +30,6 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Page Header -->
-            <RowDefinition Height="Auto" /> <!-- Top Dashboard -->
             <RowDefinition Height="Auto" /> <!-- Filter bar -->
             <RowDefinition Height="*" />    <!-- Content Area -->
         </Grid.RowDefinitions>
@@ -51,95 +50,9 @@
             </StackPanel>
         </Grid>
 
-        <!-- 1. High-End Dashboard Section -->
-        <!-- 1. High-End Dashboard Section (Unified Stat Ribbon Layout) -->
-        <Border Grid.Row="1" Margin="0,0,0,18" Style="{StaticResource CockpitBentoCardStyle}" Padding="16,12"
+        <!-- 1. Filter & Actions Toolbar -->
+        <Border Grid.Row="1" Margin="0,0,0,14" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,8"
                 helpers:AnimationHelper.StaggerIndex="0"
-                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="14">
-            <Grid x:Name="TopGrid">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" /> <!-- Divider -->
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" /> <!-- Divider -->
-                    <ColumnDefinition Width="1.8*" />
-                </Grid.ColumnDefinitions>
-
-                <!-- Section 1: Boot Performance Info & Timeline -->
-                <Grid Grid.Column="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Width="38" Height="38" CornerRadius="19" Background="{ThemeResource AppStatusWarningBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE814;" FontSize="16" Foreground="{ThemeResource AppStatusWarningBrush}" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <TextBlock Text="Last Boot Duration" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            <Border Background="{ThemeResource SystemAccentColor}" CornerRadius="4" Padding="4,1" Visibility="{x:Bind ViewModel.BootRatingText, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}">
-                                <TextBlock Text="{x:Bind ViewModel.BootRatingText, Mode=OneWay}" FontSize="9.5" FontWeight="SemiBold" Foreground="White"/>
-                            </Border>
-                        </StackPanel>
-                        <TextBlock Text="{x:Bind ViewModel.BootTimeFormatted, Mode=OneWay}" FontSize="19" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                        <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock Text="{x:Bind ViewModel.MainPathBootFormatted, Mode=OneWay}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" ToolTipService.ToolTip="Core OS Initialization Time"/>
-                            <TextBlock Text="•" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Opacity="0.6"/>
-                            <TextBlock Text="{x:Bind ViewModel.PostBootFormatted, Mode=OneWay}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" ToolTipService.ToolTip="Desktop &amp; Apps Startup Time"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-
-                <!-- Vertical Divider 1 -->
-                <Border Grid.Column="1" Width="1" Height="36" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="16,0" Opacity="0.4" VerticalAlignment="Center"/>
-
-                <!-- Section 2: Startup Health Score -->
-                <Grid Grid.Column="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid Width="42" Height="42" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <ProgressRing Value="{x:Bind ViewModel.OptimizationScore, Mode=OneWay}" 
-                                      Minimum="0" Maximum="100" 
-                                      Width="38" Height="38" 
-                                      Background="{ThemeResource ControlStrokeColorDefaultBrush}" 
-                                      Foreground="{x:Bind ScoreToBrush(ViewModel.OptimizationScore), Mode=OneWay}"
-                                      IsIndeterminate="False"/>
-                        <TextBlock Text="{x:Bind ScoreToString(ViewModel.OptimizationScore), Mode=OneWay}" FontSize="11.5" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Grid>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <TextBlock Text="Startup Health" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ScoreToStatusText(ViewModel.OptimizationScore), Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{x:Bind ScoreToBrush(ViewModel.OptimizationScore), Mode=OneWay}"/>
-                    </StackPanel>
-                </Grid>
-
-                <!-- Vertical Divider 2 -->
-                <Border Grid.Column="3" Width="1" Height="36" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Margin="16,0" Opacity="0.4" VerticalAlignment="Center"/>
-
-                <!-- Section 3: Smart Optimizer Suggestions -->
-                <Grid Grid.Column="4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="2" Margin="0,0,12,0">
-                        <TextBlock Text="Smart Insights" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.OptimizationSuggestions, Mode=OneWay}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" MaxHeight="36" TextTrimming="CharacterEllipsis"/>
-                    </StackPanel>
-                    <Button x:Name="QuickOptimizeBtn" Grid.Column="1" Style="{StaticResource AccentButtonStyle}" Click="OnQuickOptimizeClick" VerticalAlignment="Center" Padding="12,6" CornerRadius="6">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <ProgressRing x:Name="BoostSpeedRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="BoostSpeedText" Text="Boost Boot Speed" FontSize="12.5" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Button>
-                </Grid>
-            </Grid>
-        </Border>
-
-        <!-- 2. Filter & Actions Toolbar -->
-        <Border Grid.Row="2" Margin="0,0,0,14" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,8"
-                helpers:AnimationHelper.StaggerIndex="1"
                 helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="10">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -172,8 +85,8 @@
             </Grid>
         </Border>
 
-        <!-- 3. Content Tabs Area (Pivot) -->
-        <Pivot x:Name="ContentPivot" Grid.Row="3" SelectionChanged="OnPivotSelectionChanged">
+        <!-- 2. Content Tabs Area (Pivot) -->
+        <Pivot x:Name="ContentPivot" Grid.Row="2" SelectionChanged="OnPivotSelectionChanged">
             <!-- Tab 1: Startup Applications -->
             <PivotItem Header="Startup Applications">
                 <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="12" Margin="0,10,0,0">
@@ -425,8 +338,8 @@
             </PivotItem>
         </Pivot>
 
-        <!-- 4. Loading Overlay Indicator — smooth fade in/out -->
-        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!-- 3. Loading Overlay Indicator — smooth fade in/out -->
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="3" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.Resources>
                 <Storyboard x:Name="FadeInLoading">
                     <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">

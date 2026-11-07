@@ -21,9 +21,9 @@ public partial class TranslationManager
         _translations["Quantum Boost"] = "Tăng tốc Lượng tử";
         _translations["One-Touch Quantum Boost"] = "Tăng tốc Lượng tử 1 Chạm";
         _translations["Spatial Nebula"] = "Không gian Tinh vân";
-        _translations["🤖 AI WinCare Engine"] = "🤖 AI WinCare Engine";
         _translations["AI WinCare Engine"] = "AI WinCare Engine";
-        _translations["⚡ System Turbo Mode"] = "⚡ Tăng tốc hệ thống";
+        _translations["AI WinCare Engine"] = "AI WinCare Engine";
+        _translations["System Turbo Mode"] = "Tăng tốc hệ thống";
         _translations["WinCare AI Assistant"] = "Trợ lý AI WinCare";
         _translations["System Optimizer"] = "Tối ưu hệ thống";
         _translations["Widget HUD"] = "Widget HUD";
@@ -191,8 +191,8 @@ public partial class TranslationManager
         _translations["Processes"] = "Tiến trình";
         _translations["Power Mode"] = "Chế độ năng lượng";
         _translations["Gaming Turbo mode is OFF. Ready to boost!"] = "Gaming Turbo đang tắt. Sẵn sàng tăng tốc!";
-        _translations["⚡ Gaming Turbo ENABLED! Cleaning memory & optimizing CPU priority..."] = "⚡ Đã bật Gaming Turbo! Đang dọn RAM & ưu tiên CPU...";
-        _translations["🚀 Gaming Turbo ACTIVE! Freed {0:N0} MB RAM across {1} processes."] = "🚀 Gaming Turbo đang bật! Đã giải phóng {0:N0} MB RAM.";
+        _translations["Gaming Turbo ENABLED! Cleaning memory & optimizing CPU priority..."] = "⚡ Đã bật Gaming Turbo! Đang dọn RAM & ưu tiên CPU...";
+        _translations["Gaming Turbo ACTIVE! Freed {0:N0} MB RAM across {1} processes."] = "🚀 Gaming Turbo đang bật! Đã giải phóng {0:N0} MB RAM.";
         _translations["Gaming Turbo mode is OFF. System restored to standard state."] = "Gaming Turbo đã tắt. Hệ thống ở trạng thái bình thường.";
         _translations["Automated diagnostics via WinCare AI Assistant & System Turbo mode."] = "Chẩn đoán thông minh bằng Trợ lý AI và Tối ưu hệ thống.";
         _translations["Quét Chẩn Đoán AI"] = "Quét Chẩn Đoán AI";
@@ -261,7 +261,7 @@ public partial class TranslationManager
         _translations["Toggle Dark/Light Theme"] = "Đổi giao diện Sáng/Tối";
         _translations["Theme: Dark (Switch to Light)"] = "Giao diện: Tối (Bấm để chuyển sang Sáng)";
         _translations["Theme: Light (Switch to Dark)"] = "Giao diện: Sáng (Bấm để chuyển sang Tối)";
-        _translations["🚀 Open WinCare Pro"] = "🚀 Mở WinCare Pro";
+        _translations["🚀 Open WinCare Pro"] = "Mở WinCare Pro";
         _translations["🔍 Scan System Diagnostics"] = "🔍 Quét chẩn đoán hệ thống";
         _translations["⚡ Optimize Memory (RAM)"] = "⚡ Giải phóng bộ nhớ RAM";
         _translations["🧹 Clean Junk Files"] = "🧹 Dọn dẹp tệp rác";
@@ -281,7 +281,7 @@ public partial class TranslationManager
         _translations["Health Score"] = "Điểm sức khỏe";
         _translations["A scan verifies diagnostic alerts, junk file volumes, startup overhead, and available security fixes. Optimize now to clean garbage files and improve loading speeds."] = "Quét phát hiện tệp rác, tiến trình thừa và lỗi bảo mật. Tối ưu ngay để tăng tốc máy tính.";
         _translations["Scan System"] = "Quét hệ thống";
-        _translations["⚡ 1-Click Smart Care"] = "⚡ Tối ưu 1 chạm";
+        _translations["1-Click Smart Care"] = "Tối ưu 1 chạm";
         _translations["1-Click Smart Care"] = "Tối ưu 1 chạm";
         _translations["Instantly scan and optimize system performance, RAM, and junk files in one single click."] = "Quét và tối ưu hóa hiệu năng, giải phóng RAM và dọn tệp rác chỉ với 1 lần nhấn.";
         _translations["Current: Pro Mode (Click to switch to Simple Mode)"] = "Chế độ: Chuyên gia (Bấm để chuyển sang Cơ bản)";
@@ -1784,7 +1784,7 @@ public partial class TranslationManager
         _translations["Enable Windows Game Mode"] = "Bật Chế độ Game Windows";
         _translations["Enables Windows Game Mode to prioritize CPU, GPU, and RAM resources for gaming and suspend background updates."] = "Bật Chế độ chơi game của Windows để ưu tiên tài nguyên CPU, GPU và RAM cho việc chơi game và tạm dừng cập nhật nền.";
         _translations["Enable Hardware Accelerated GPU Scheduling"] = "Bật Lập lịch GPU Tăng tốc Phần cứng (HAGS)";
-        _translations["Reduces graphic rendering latency and improves gaming performance by allowing direct GPU memory scheduling." ] = "Giảm độ trễ dựng hình ảnh và cải thiện hiệu năng chơi game bằng cách cho phép lập lịch bộ nhớ GPU trực tiếp.";
+        _translations["Reduces graphic rendering latency and improves gaming performance by allowing direct GPU memory scheduling."] = "Giảm độ trễ dựng hình ảnh và cải thiện hiệu năng chơi game bằng cách cho phép lập lịch bộ nhớ GPU trực tiếp.";
         _translations["Disable Telemetry & Diagnostic Data"] = "Tắt Thu thập Dữ liệu Telemetry & Chẩn đoán";
         _translations["Disables background Windows telemetry data gathering, freeing CPU, memory, and network resources."] = "Tắt thu thập dữ liệu chẩn đoán từ xa (telemetry) của Windows chạy ẩn, giải phóng tài nguyên CPU, bộ nhớ và mạng.";
         _translations["Disable Cortana Background Assistant"] = "Tắt Trợ lý Ảo Cortana Chạy ẩn";
@@ -3032,13 +3032,13 @@ public partial class TranslationManager
         _translations["Source Code Repository & Feedback"] = "Kho Mã Nguồn & Đóng Góp Ý Kiến";
         _translations["Contributions, bug reports, and feature requests are welcome on GitHub."] = "Hoan nghênh các đóng góp, báo cáo lỗi và yêu cầu tính năng trên GitHub.";
         _translations["Zero-Telemetry & Privacy Guarantee Pledge"] = "Cam Kết Quyền Riêng Tư & Không Thu Thập Dữ Liệu (Zero-Telemetry)";
-        _translations["🔒 100% On-Device Processing"] = "🔒 Xử Lý 100% Trên Thiết Bị Cục Bộ";
+        _translations["100% On-Device Processing"] = "Xử Lý 100% Trên Thiết Bị Cục Bộ";
         _translations["All diagnostics, system scans, and cleanups execute locally with zero cloud telemetry transmission."] = "Tất cả chẩn đoán, quét hệ thống và dọn dẹp đều thực thi cục bộ, hoàn toàn không truyền dữ liệu telemetry lên đám mây.";
-        _translations["💾 Local Encrypted Storage"] = "💾 Lưu Trữ Cục Bộ Được Bảo Mật";
+        _translations["Local Encrypted Storage"] = "Lưu Trữ Cục Bộ Được Bảo Mật";
         _translations["Activity logs, configurations, and rollback snapshots reside in high-speed local database files."] = "Nhật ký hoạt động, cấu hình và ảnh chụp khôi phục được lưu trữ an toàn trong các tệp cơ sở dữ liệu cục bộ tốc độ cao.";
-        _translations["🛡️ Cryptographic Payload Audit"] = "🛡️ Kiểm Toán Gói Cập Nhật Bằng Mật Mã";
+        _translations["Cryptographic Payload Audit"] = "Kiểm Toán Gói Cập Nhật Bằng Mật Mã";
         _translations["Update payloads are audited for valid PE headers, file integrity, and digital certificate validation."] = "Các gói cập nhật được kiểm toán định dạng PE hợp lệ, tính toàn vẹn tệp và xác thực chứng chỉ số nghiêm ngặt.";
-        _translations["⏪ Transactional Safety Rollbacks"] = "⏪ Khôi Phục Trạng Thái An Toàn Theo Giao Tác";
+        _translations["Transactional Safety Rollbacks"] = "Khôi Phục Trạng Thái An Toàn Theo Giao Tác";
         _translations["Integrates Windows System Restore Points and registry backup snapshots prior to modifications."] = "Tích hợp Điểm Khôi Phục Hệ Thống Windows và sao lưu registry trước khi thực hiện bất kỳ thay đổi nào.";
         _translations["System Integrity & Security Certifications"] = "Chứng Nhận Toàn Vẹn & An Toàn Hệ Thống";
         _translations["100% Offline Processing"] = "Xử Lý 100% Ngoại Tuyến";
@@ -3235,8 +3235,8 @@ public partial class TranslationManager
         _translations["Standby"] = "Chờ (Standby)";
         _translations["Working set & Standby state"] = "Working set & Trạng thái Standby";
         _translations["Gaming Turbo 2.0 is in Standby mode. Ready to boost FPS & latency."] = "Chế độ Gaming Turbo 2.0 đang ở trạng thái Chờ. Sẵn sàng tăng tốc FPS & giảm độ trễ.";
-        _translations["⚡ Gaming Turbo ACTIVE! Quenching background apps & allocating high-priority CPU..."] = "⚡ Gaming Turbo ĐANG BẬT! Đang dọn ứng dụng nền & cấp phát ưu tiên CPU cao...";
-        _translations["🚀 Hyper-Turbo Activated! Freed {0:N0} MB RAM across {1} background processes."] = "🚀 Đã kích hoạt Hyper-Turbo! Đã giải phóng {0:N0} MB RAM trên {1} tiến trình nền.";
+        _translations["Gaming Turbo ACTIVE! Quenching background apps & allocating high-priority CPU..."] = "Gaming Turbo ĐANG BẬT! Đang dọn ứng dụng nền & cấp phát ưu tiên CPU cao...";
+        _translations["Hyper-Turbo Activated! Freed {0:N0} MB RAM across {1} background processes."] = "Đã kích hoạt Hyper-Turbo! Đã giải phóng {0:N0} MB RAM trên {1} tiến trình nền.";
         _translations["Gaming Turbo is OFF. System resources restored to standard desktop profile."] = "Chế độ Gaming Turbo đã TẮT. Tài nguyên hệ thống được khôi phục về cấu hình chuẩn.";
         _translations["Competitive FPS"] = "FPS Cạnh Tranh";
         _translations["Simulation / RTS"] = "Mô Phỏng / Chiến Thuật (RTS)";
@@ -3606,7 +3606,7 @@ public partial class TranslationManager
         _translations["Active Profile:"] = "Hồ Sơ Đang Bật:";
         _translations["Competitive FPS"] = "FPS Cạnh Tranh";
         _translations["Operations Today:"] = "Tác Vụ Hôm Nay:";
-        _translations["🛡️ Sentinel Active"] = "🛡️ Vệ Binh Đang Hoạt Động";
+        _translations["Sentinel Active"] = "Vệ Binh Đang Hoạt Động";
         _translations["All clear"] = "Tất cả an toàn";
         _translations["All clear! No active system alerts."] = "Tuyệt vời! Không có cảnh báo hệ thống nào.";
         _translations["No activity logs found."] = "Không tìm thấy nhật ký hoạt động nào.";
@@ -3689,10 +3689,10 @@ public partial class TranslationManager
         _translations["DNS Optimizer"] = "Tối ưu DNS";
         _translations["Active Sockets"] = "Kết nối đang mở";
         _translations["TCP/IP Repair Suite"] = "Bộ công cụ sửa TCP/IP";
-        _translations["🚀 Quality & Speed"] = "🚀 Tốc độ & Chất lượng";
-        _translations["🚀 Quality &amp; Speed"] = "🚀 Tốc độ & Chất lượng";
-        _translations["🌐 DNS Optimizer"] = "🌐 Tối ưu DNS";
-        _translations["🔍 Active Sockets"] = "🔍 Kết nối đang mở";
+        _translations["Quality & Speed"] = "Tốc độ & Chất lượng";
+        _translations["Quality &amp; Speed"] = "Tốc độ & Chất lượng";
+        _translations["DNS Optimizer"] = "Tối ưu DNS";
+        _translations["Active Sockets"] = "Kết nối đang mở";
         _translations["🛠 TCP/IP Repair Suite"] = "🛠 Bộ công cụ sửa TCP/IP";
         _translations["Latency (Ping)"] = "Độ trễ (Ping)";
         _translations["Round-trip echo"] = "Thời gian phản hồi khứ hồi";
@@ -4036,27 +4036,7 @@ public partial class TranslationManager
         _translations["Requires user authentication before Remote Desktop connects."] = "Yêu cầu xác thực người dùng trước khi kết nối Remote Desktop.";
         _translations["Protected"] = "Được bảo vệ";
         _translations["Unprotected"] = "Chưa bảo vệ";
-
-        // --- WinCare Pro v5.0.0 Polaris Release & Codename ---
-        _translations["v5.0.0 (Polaris)"] = "v5.0.0 (Polaris)";
         _translations["Polaris"] = "Polaris";
-        _translations["Major upgrade with AI predictive storage exhaustion, platform kernel isolation & battery-aware background watchdog."] = "Bản nâng cấp lớn với AI dự đoán cạn kiệt ổ đĩa, bảo mật cô lập nhân nền tảng & giám sát nền nhận biết nguồn pin.";
-
-        // --- WinCare Pro v5.1.1 Polaris Maintenance & Optimization ---
-        _translations["v5.1.1 (Polaris)"] = "v5.1.1 (Polaris)";
-        _translations["v5.1.1 Polaris"] = "v5.1.1 Polaris";
-        _translations["Version 5.1.1 (Polaris) • 64-bit Native System Suite"] = "Phiên bản 5.1.1 (Polaris) • Bộ Công Cụ Hệ Thống 64-bit Native";
-        _translations["What's New in v5.1.1"] = "Điểm mới trong v5.1.1";
-        _translations["Comprehensive maintenance, full source-generated LibraryImport migration, zero-trust registry safety and cinematic composition animations."] = "Bảo trì toàn diện, hoàn tất chuyển đổi LibraryImport sinh mã nguồn, an toàn bảo mật Registry Zero-Trust và hiệu ứng chuyển động đồ họa Cinematic.";
-
-        // --- WinCare Pro v5.1.2 Polaris Top-Center Dynamic Capsule HUD & UX Elevation ---
-        _translations["v5.1.2"] = "v5.1.2";
-        _translations["v5.1.2 (Polaris)"] = "v5.1.2 (Polaris)";
-        _translations["v5.1.2 Polaris"] = "v5.1.2 Polaris";
-        _translations["Version 5.1.2 (Codename: Polaris) • 64-bit Native System Suite"] = "Phiên bản 5.1.2 (Codename: Polaris) • Bộ Công Cụ Hệ Thống 64-bit Native";
-        _translations["What's New in v5.1.2"] = "Điểm mới trong v5.1.2";
-        _translations["Top-Center Dynamic Capsule HUD & UX Elevation"] = "Thông Báo Dynamic Capsule Top-Center & Tối Ưu UX";
-        _translations["Elevated floating island notifications at natural eye level with fluid Y-axis motion physics and zero-drag TitleBar safety."] = "Hệ thống thông báo đảo nổi Top-Center vừa tầm mắt tự nhiên với chuyển động vật lý trục dọc mượt mà và an toàn kéo thả TitleBar.";
 
         // --- WinCare Pro v5.2.0 Polaris Aura Fluidic 3.0 & Intelligent Diagnostic Sentinel Suite ---
         _translations["v5.2.0"] = "v5.2.0";
@@ -4138,7 +4118,7 @@ public partial class TranslationManager
         _translations["Filter & Select:"] = "Lọc & Chọn:";
         _translations["Filter &amp; Select:"] = "Lọc & Chọn:";
         _translations["100% Safe Only"] = "Chỉ mục an toàn 100%";
-        _translations["🟢 100% Safe Only"] = "🟢 Chỉ mục an toàn 100%";
+        _translations["100% Safe Only"] = "Chỉ mục an toàn 100%";
         _translations["Select All"] = "Chọn tất cả";
         _translations["Deselect All"] = "Bỏ chọn tất cả";
         _translations["Click item to inspect AI details →"] = "Nhấn vào mục để xem chi tiết AI →";
@@ -4170,20 +4150,20 @@ public partial class TranslationManager
         // --- Polaris v5.2.0 Network Segmented Navigation ---
         _translations["Bandwidth & Radar"] = "Băng thông & Radar";
         _translations["Bandwidth &amp; Radar"] = "Băng thông & Radar";
-        _translations["🚀 Bandwidth & Radar"] = "🚀 Băng thông & Radar";
-        _translations["🚀 Bandwidth &amp; Radar"] = "🚀 Băng thông & Radar";
+        _translations["Bandwidth & Radar"] = "Băng thông & Radar";
+        _translations["Bandwidth &amp; Radar"] = "Băng thông & Radar";
         _translations["DNS Intelligence"] = "Trí tuệ DNS";
-        _translations["🌐 DNS Intelligence"] = "🌐 Trí tuệ DNS";
+        _translations["DNS Intelligence"] = "Trí tuệ DNS";
         _translations["App Sockets & Traffic"] = "Socket ứng dụng & Lưu lượng";
         _translations["App Sockets &amp; Traffic"] = "Socket ứng dụng & Lưu lượng";
-        _translations["⚡ App Sockets & Traffic"] = "⚡ Socket ứng dụng & Lưu lượng";
-        _translations["⚡ App Sockets &amp; Traffic"] = "⚡ Socket ứng dụng & Lưu lượng";
+        _translations["App Sockets & Traffic"] = "Socket ứng dụng & Lưu lượng";
+        _translations["App Sockets &amp; Traffic"] = " Socket ứng dụng & Lưu lượng";
         _translations["Self-Healing & Tools"] = "Tự phục hồi & Công cụ";
         _translations["Self-Healing &amp; Tools"] = "Tự phục hồi & Công cụ";
         _translations["🛠 Self-Healing & Tools"] = "🛠 Tự phục hồi & Công cụ";
         _translations["🛠 Self-Healing &amp; Tools"] = "🛠 Tự phục hồi & Công cụ";
-        _translations["🛠️ Self-Healing & Tools"] = "🛠️ Tự phục hồi & Công cụ";
-        _translations["🛠️ Self-Healing &amp; Tools"] = "🛠️ Tự phục hồi & Công cụ";
+        _translations["Self-Healing & Tools"] = "Tự phục hồi & Công cụ";
+        _translations["Self-Healing &amp; Tools"] = "Tự phục hồi & Công cụ";
 
         // --- Polaris v5.2.0 System Repair & Self-Healing ---
         _translations["System Repair & Self-Healing"] = "Sửa chữa Hệ thống & Tự phục hồi";
@@ -4224,8 +4204,8 @@ public partial class TranslationManager
         _translations["Avg CPU: {0}% | RAM: {1}%"] = "CPU TB: {0}% | RAM: {1}%";
 
         // --- Polaris v5.2.0 UI/UX Modernization & Decluttering ---
-        _translations["🚀 Scan & Optimize Now (Smart Care)"] = "🚀 Quét & Tối Ưu Nhanh (Smart Care)";
-        _translations["🚀 Scan &amp; Optimize Now (Smart Care)"] = "🚀 Quét & Tối Ưu Nhanh (Smart Care)";
+        _translations["Scan & Optimize Now (Smart Care)"] = "Quét & Tối Ưu Nhanh (Smart Care)";
+        _translations["Scan &amp; Optimize Now (Smart Care)"] = "Quét & Tối Ưu Nhanh (Smart Care)";
         _translations["Disk & Junk Card"] = "Thẻ Ổ đĩa & Rác";
         _translations["Disk &amp; Junk Card"] = "Thẻ Ổ đĩa & Rác";
         _translations["Cleanable Space Potential"] = "Dung lượng có thể dọn dẹp";
@@ -4266,18 +4246,18 @@ public partial class TranslationManager
         _translations["Visual Storage Capacity (Drive C:)"] = "Dung lượng ổ đĩa trực quan (Ổ C:)";
         _translations["• Space reclamation potential"] = "• Dung lượng giải phóng sau khi dọn";
         _translations["Free Space After Clean:"] = "Dọn xong tăng thêm:";
-        _translations["🎮 Gaming Focus"] = "🎮 Chế độ Chơi Game";
+        _translations["Gaming Focus"] = "Chế độ Chơi Game";
         _translations["Prioritize CPU, free RAM"] = "Ưu tiên CPU, giải phóng RAM";
-        _translations["💼 Office & Productivity"] = "💼 Làm Việc & Học Tập";
-        _translations["💼 Office &amp; Productivity"] = "💼 Làm Việc & Học Tập";
+        _translations["Office & Productivity"] = "Làm Việc & Học Tập";
+        _translations["Office &amp; Productivity"] = "Làm Việc & Học Tập";
         _translations["Stability for Office, Teams, Web"] = "Ổn định Office, Teams, Web";
-        _translations["🔋 Daily Balanced"] = "🔋 Cân Bằng & Tiết Kiệm";
+        _translations["Daily Balanced"] = "Cân Bằng & Tiết Kiệm";
         _translations["Balanced & cool performance"] = "Hiệu năng ổn định & máy mát";
         _translations["Balanced &amp; cool performance"] = "Hiệu năng ổn định & máy mát";
-        _translations["🛡️ Privacy Shield"] = "🛡️ Khiên Riêng Tư";
+        _translations["Privacy Shield"] = "Khiên Riêng Tư";
         _translations["Block telemetry & tracking"] = "Chặn telemetry & theo dõi";
         _translations["Block telemetry &amp; tracking"] = "Chặn telemetry & theo dõi";
-        _translations["⚡ Manual Granular Tweaks (Pro)"] = "⚡ Tùy chỉnh thủ công từng mục (Dành cho Pro)";
+        _translations["Manual Granular Tweaks (Pro)"] = "Tùy chỉnh thủ công từng mục (Dành cho Pro)";
         _translations["System Doctor Diagnostic Summary"] = "Chẩn đoán Bác sĩ Hệ thống (System Doctor)";
         _translations["[✓] OS System Files"] = "[✓] Tập tin hệ điều hành";
         _translations["Healthy & Intact"] = "Khỏe mạnh & toàn vẹn";

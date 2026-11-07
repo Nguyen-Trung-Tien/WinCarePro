@@ -303,7 +303,7 @@ public sealed partial class SettingsPage
             mStack.Children.Add(mRow);
             mStack.Children.Add(new TextBlock
             {
-                Text = "Major upgrade with AI predictive storage exhaustion, platform kernel isolation & battery-aware background watchdog.".T(),
+                Text = "Major release featuring Aura Fluidic 3.0 UI elevation, AI Diagnostic Sentinel engine, next-generation Security Center and deep application lifecycle management.".T(),
                 FontSize = 11.5,
                 Foreground = textSecondary,
                 TextWrapping = TextWrapping.Wrap

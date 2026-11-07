@@ -132,26 +132,6 @@ public sealed partial class StartupPage : Page
         catch { }
     }
 
-    private async void OnQuickOptimizeClick(object sender, RoutedEventArgs e)
-    {
-        var btn = QuickOptimizeBtn ?? (sender as Button);
-        if (btn != null) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, BoostSpeedRing, BoostSpeedText, null,
-            "Boosting Boot Speed...", "Boost Boot Speed",
-            async () =>
-            {
-                await ViewModel.OptimizeStartupAppsAsync();
-            },
-            minDurationMs: 1200);
-
-        try
-        {
-            await ResultDialogHelper.ShowSuccessAsync(this.XamlRoot, "Startup & Services Optimization", ViewModel.StatusText);
-        }
-        catch { }
-    }
-
     private async void OnUndoClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.UndoLastChangeAsync();
@@ -306,23 +286,6 @@ public sealed partial class StartupPage : Page
     }
 
     // Helper converters called directly from XAML bindings
-    public Brush ScoreToBrush(double score) => score switch
-    {
-        >= 80 => new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)), // Green
-        >= 60 => new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)), // Amber
-        _ => new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)) // Red
-    };
-
-    public string ScoreToString(double score) => $"{score}%";
-
-    public string ScoreToStatusText(double score) => score switch
-    {
-        >= 85 => "Excellent".T(),
-        >= 70 => "Good".T(),
-        >= 55 => "Fair".T(),
-        _ => "Needs Care".T()
-    };
-
     public Brush ImpactToBgBrush(string impact) => impact switch
     {
         "Critical" => new SolidColorBrush(Windows.UI.Color.FromArgb(30, 239, 68, 68)),

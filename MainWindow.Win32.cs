@@ -248,7 +248,7 @@ public sealed partial class MainWindow : Window
         if (msg == WM_GETMINMAXINFO)
         {
             var mmi = Marshal.PtrToStructure<MINMAXINFO>(lParam);
-            
+
             // Set minimum track sizing constraints (800 x 600 px)
             mmi.ptMinTrackSize.x = 800;
             mmi.ptMinTrackSize.y = 600;
@@ -314,10 +314,10 @@ public sealed partial class MainWindow : Window
         uint cmd = 0;
         try
         {
-            string openText = "🚀 Open WinCare Pro".T();
-            string scanText = "🔍 Scan System Diagnostics".T();
-            string ramText = "⚡ Optimize Memory (RAM)".T();
-            string junkText = "🧹 Clean Junk Files".T();
+            string openText = "Open WinCare Pro".T();
+            string scanText = "Scan System Diagnostics".T();
+            string ramText = "Optimize Memory (RAM)".T();
+            string junkText = "Clean Junk Files".T();
 
             bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
             string hudText = "🪟 Desktop HUD Widget".T();
@@ -383,7 +383,7 @@ public sealed partial class MainWindow : Window
                     {
                         var optEngine = App.Services.GetRequiredService<Engines.SystemOptimizerEngine>();
                         await optEngine.OptimizeRamAsync();
-                        
+
                         App.MainDispatcherQueue?.TryEnqueue(() =>
                         {
                             Database.DbManager.LogAction("RAM optimization triggered from System Tray", "Smart Boost", "Success");
@@ -446,7 +446,7 @@ public sealed partial class MainWindow : Window
             {
                 iconPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "AppIcon.ico");
             }
-            
+
             if (File.Exists(iconPath))
             {
                 // Load 32x32 crisp icon frame for system tray notification area

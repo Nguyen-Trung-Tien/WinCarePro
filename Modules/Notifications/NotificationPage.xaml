@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:WinCarePro.Views"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    UseLayoutRounding="True"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -147,7 +148,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="12" Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" VerticalAlignment="Center">
+                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="{ThemeResource AppBadgeWarningBg}" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE7BA;" FontSize="16" Foreground="{ThemeResource AppBadgeWarningFg}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
@@ -176,7 +177,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="12" Background="#1810B981" BorderBrush="#3010B981" BorderThickness="1" VerticalAlignment="Center">
+                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="#1810B981" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xEA1F;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
@@ -204,7 +205,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="12" Background="#183B82F6" BorderBrush="#303B82F6" BorderThickness="1" VerticalAlignment="Center">
+                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="#183B82F6" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE916;" FontSize="16" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
@@ -311,11 +312,7 @@
                                     <Border Margin="0,1,0,3" Padding="14,12" CornerRadius="12"
                                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                             BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            helpers:Animation3DHelper.Is3DTiltEnabled="True"
-                                            helpers:Animation3DHelper.MaxTiltAngle="1.5"
-                                            helpers:Animation3DHelper.DepthZ="4"
-                                            helpers:AnimationHelper.HoverScale="1.008">
+                                            BorderThickness="1">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -329,9 +326,9 @@
                                             <!-- Priority Accent Strip -->
                                             <Border Grid.Column="0" Width="3.5" CornerRadius="1.75" Background="{Binding LevelBrush}" HorizontalAlignment="Left" Margin="0,2,12,2"/>
 
-                                            <!-- Glowing Status Icon -->
-                                            <Border Grid.Column="1" Width="34" Height="34" CornerRadius="11" Background="{Binding LevelBadgeBg}" BorderBrush="{Binding LevelBrush}" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                <FontIcon Glyph="{Binding LevelGlyph}" FontSize="14" Foreground="{Binding LevelColor}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <!-- Status Icon Circle -->
+                                            <Border Grid.Column="1" Width="34" Height="34" CornerRadius="17" Background="{Binding LevelBadgeBg}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <FontIcon Glyph="{Binding LevelGlyph}" FontSize="16" Foreground="{Binding LevelColor}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
 
                                             <!-- Title & Message -->
@@ -519,11 +516,7 @@
                                     <Border Margin="0,1,0,3" Padding="12,10" CornerRadius="10"
                                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                             BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                            BorderThickness="1"
-                                            helpers:Animation3DHelper.Is3DTiltEnabled="True"
-                                            helpers:Animation3DHelper.MaxTiltAngle="1.5"
-                                            helpers:Animation3DHelper.DepthZ="4"
-                                            helpers:AnimationHelper.HoverScale="1.008">
+                                            BorderThickness="1">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="40" />
@@ -533,9 +526,9 @@
                                                 <ColumnDefinition Width="160" />
                                             </Grid.ColumnDefinitions>
 
-                                            <!-- Status Icon Node -->
-                                            <Border Grid.Column="0" Width="30" Height="30" CornerRadius="10" Background="{Binding StatusTintBrush}" BorderBrush="{Binding StatusBrush}" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                <FontIcon Glyph="{Binding StatusGlyph}" FontSize="12.5" Foreground="{Binding StatusBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <!-- Status Icon Circle -->
+                                            <Border Grid.Column="0" Width="30" Height="30" CornerRadius="15" Background="{Binding StatusTintBrush}" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <FontIcon Glyph="{Binding StatusGlyph}" FontSize="14" Foreground="{Binding StatusBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
 
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0">

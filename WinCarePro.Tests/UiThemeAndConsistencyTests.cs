@@ -519,6 +519,12 @@ public class UiThemeAndConsistencyTests
         // 9. Resource Insights Telemetry Banner
         Assert.Equal("Phát hiện mức sử dụng bộ xử lý cao. Hãy tối ưu các dịch vụ chạy ngầm và ứng dụng khởi động.", manager.GetTranslationForLanguage("High processor demand observed. Optimize background services and startup applications.", AppLanguage.Vietnamese));
         Assert.Equal("CPU TB: {0}% | RAM: {1}%", manager.GetTranslationForLanguage("Avg CPU: {0}% | RAM: {1}%", AppLanguage.Vietnamese));
+
+        // 10. Settings Hub Sidebar Header
+        Assert.Equal("TRUNG TÂM CÀI ĐẶT", manager.GetTranslationForLanguage("SETTINGS HUB", AppLanguage.Vietnamese));
+        Assert.Equal("Tùy chọn & Hệ thống", manager.GetTranslationForLanguage("Preferences & System", AppLanguage.Vietnamese));
+        Assert.Equal("SETTINGS HUB", manager.GetTranslationForLanguage("TRUNG TÂM CÀI ĐẶT", AppLanguage.English));
+        Assert.Equal("Preferences & System", manager.GetTranslationForLanguage("Tùy chọn & Hệ thống", AppLanguage.English));
     }
 }
 

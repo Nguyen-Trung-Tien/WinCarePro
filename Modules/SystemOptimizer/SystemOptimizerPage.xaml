@@ -304,7 +304,7 @@
 
                         <!-- Preset 1: Gaming Focus -->
                         <Button Grid.Column="0" Click="OnSelectGamingProfileClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#358B5CF6" BorderThickness="1.2"
-                                ToolTipService.ToolTip="🎮 Gaming Focus Mode: Pause background updates, free maximum RAM and prioritize CPU for gaming">
+                                ToolTipService.ToolTip="Gaming Focus Mode: Pause background updates, free maximum RAM and prioritize CPU for gaming">
                             <Grid HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -314,7 +314,7 @@
                                     <FontIcon Glyph="&#xEA3A;" FontSize="14" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="🎮 Gaming Focus" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Gaming Focus" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                                     <TextBlock Text="Prioritize CPU, free RAM" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                             </Grid>
@@ -322,7 +322,7 @@
 
                         <!-- Preset 2: Office & Productivity -->
                         <Button Grid.Column="1" Click="OnSelectRecommendedProfileClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3506B6D4" BorderThickness="1.2"
-                                ToolTipService.ToolTip="💼 Office &amp; Productivity: Maximum stability for Word, Excel, Teams, smooth multi-tab browsing">
+                                ToolTipService.ToolTip="Office &amp; Productivity: Maximum stability for Word, Excel, Teams, smooth multi-tab browsing">
                             <Grid HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -332,7 +332,7 @@
                                     <FontIcon Glyph="&#xE99A;" FontSize="14" Foreground="#FF06B6D4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="💼 Office &amp; Productivity" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Office &amp; Productivity" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                                     <TextBlock Text="Stability for Office, Teams, Web" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                             </Grid>
@@ -340,7 +340,7 @@
 
                         <!-- Preset 3: Daily Balanced -->
                         <Button Grid.Column="2" Click="OnSelectEcoProfileClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#353B82F6" BorderThickness="1.2"
-                                ToolTipService.ToolTip="🔋 Daily Balanced: Balance system performance, keep PC cool, and preserve battery life">
+                                ToolTipService.ToolTip="Daily Balanced: Balance system performance, keep PC cool, and preserve battery life">
                             <Grid HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -350,7 +350,7 @@
                                     <FontIcon Glyph="&#xEC0A;" FontSize="14" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="🔋 Daily Balanced" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Daily Balanced" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                                     <TextBlock Text="Balanced &amp; cool performance" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                             </Grid>
@@ -358,7 +358,7 @@
 
                         <!-- Preset 4: Privacy Shield -->
                         <Button Grid.Column="3" Click="OnSelectPrivacyProfileClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3510B981" BorderThickness="1.2"
-                                ToolTipService.ToolTip="🛡️ Privacy Shield: Block background diagnostic telemetry, tracking &amp; Windows targeted logs">
+                                ToolTipService.ToolTip="Privacy Shield: Block background diagnostic telemetry, tracking &amp; Windows targeted logs">
                             <Grid HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -368,7 +368,7 @@
                                     <FontIcon Glyph="&#xE727;" FontSize="14" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <TextBlock Text="🛡️ Privacy Shield" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="Privacy Shield" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                                     <TextBlock Text="Block telemetry &amp; tracking" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                             </Grid>
@@ -694,5 +694,42 @@
 
         <!-- ==================== 3. STATUS BAR FOOTER ==================== -->
         <TextBlock Grid.Row="3" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,8,0,0" />
+
+        <!-- Loading Overlay Indicator — smooth fade in/out -->
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="{ThemeResource AppLoadingOverlayBackground}" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.Resources>
+                <Storyboard x:Name="FadeInLoading">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.25">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+                <Storyboard x:Name="FadeOutLoading" Completed="FadeOutLoading_Completed">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.25">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </Grid.Resources>
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
+                <StackPanel Spacing="14" HorizontalAlignment="Center">
+                    <!-- Glowing Rocket Badge -->
+                    <Grid Width="60" Height="60" HorizontalAlignment="Center">
+                        <Border Width="60" Height="60" CornerRadius="18" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
+                            <FontIcon Glyph="&#xE9D9;" FontSize="22" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="13.5" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="300" />
+
+                    <!-- Linear Progress Bar -->
+                    <Border Background="{ThemeResource ControlFillColorDefaultBrush}" CornerRadius="4" Height="8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" Padding="1" Width="260">
+                        <ProgressBar IsIndeterminate="True" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

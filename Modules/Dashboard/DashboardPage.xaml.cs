@@ -986,7 +986,7 @@ public sealed partial class DashboardPage : Page
 
         AddDetailItem("\uE774", 
             Windows.UI.Color.FromArgb(255, 6, 182, 212), Windows.UI.Color.FromArgb(255, 236, 254, 255), Windows.UI.Color.FromArgb(255, 165, 243, 252), Windows.UI.Color.FromArgb(255, 8, 145, 178),
-            "DNS Resolver Cache".T(), "Network socket & cache reset".T(), summary.DnsCacheFlushed ? "✓ " + "Flushed".T() : "Done".T(), summary.DnsCacheFlushed);
+            "DNS Resolver Cache".T(), "Network socket & cache reset".T(), summary.DnsCacheFlushed ? "Flushed".T() : "Done".T(), summary.DnsCacheFlushed);
 
         AddDetailItem("\uE945", 
             Windows.UI.Color.FromArgb(255, 236, 72, 153), Windows.UI.Color.FromArgb(255, 253, 242, 248), Windows.UI.Color.FromArgb(255, 251, 207, 232), Windows.UI.Color.FromArgb(255, 219, 39, 119),

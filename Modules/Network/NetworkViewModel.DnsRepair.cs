@@ -182,22 +182,22 @@ public partial class NetworkViewModel
             if (operation.Equals("smartrepair", StringComparison.OrdinalIgnoreCase) ||
                 operation.Equals("autorepairall", StringComparison.OrdinalIgnoreCase))
             {
-                LogText("⚡ [Smart Auto-Repair] Step 1/5: Flushing DNS & ARP cache...".T());
+                LogText("[Smart Auto-Repair] Step 1/5: Flushing DNS & ARP cache...".T());
                 await _engine.FlushDnsAsync();
                 
-                LogText("⚡ [Smart Auto-Repair] Step 2/5: Resetting Winsock socket catalogs...".T());
+                LogText("[Smart Auto-Repair] Step 2/5: Resetting Winsock socket catalogs...".T());
                 await _engine.ResetWinsockAsync();
                 
-                LogText("⚡ [Smart Auto-Repair] Step 3/5: Rebuilding TCP/IP network stack...".T());
+                LogText("[Smart Auto-Repair] Step 3/5: Rebuilding TCP/IP network stack...".T());
                 await _engine.ResetTcpIpAsync();
                 
-                LogText("⚡ [Smart Auto-Repair] Step 4/5: Rebinding IP & DHCP lease...".T());
+                LogText("[Smart Auto-Repair] Step 4/5: Rebinding IP & DHCP lease...".T());
                 await _engine.ReleaseRenewIpAsync();
 
-                LogText("⚡ [Smart Auto-Repair] Step 5/5: Optimizing TCP Auto-Tuning throughput...".T());
+                LogText("[Smart Auto-Repair] Step 5/5: Optimizing TCP Auto-Tuning throughput...".T());
                 await _engine.OptimizeTcpAutoTuningAsync();
 
-                LogText("🎉 Smart Network Auto-Repair completed successfully.".T());
+                LogText("[Smart Auto-Repair] Completed: Network stack, DNS cache and socket routing successfully restored.".T());
                 _notificationService?.ShowSuccess("Smart Network Repair".T(), "Network stack, DNS cache and socket routing successfully restored and optimized.".T());
                 await RunDiagnosticsAsync();
                 return;

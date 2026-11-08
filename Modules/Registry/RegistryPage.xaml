@@ -291,7 +291,12 @@
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                         <TextBlock Text="Filter &amp; Select:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
-                                        <Button Click="OnSelectSafeOnlyClick" Content="🟢 100% Safe Only" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
+                                        <Button Click="OnSelectSafeOnlyClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                                                <TextBlock Text="100% Safe Only" FontSize="11"/>
+                                            </StackPanel>
+                                        </Button>
                                         <Button Click="OnSelectAllClick" Content="Select All" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
                                         <Button Click="OnDeselectAllClick" Content="Deselect All" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
                                     </StackPanel>

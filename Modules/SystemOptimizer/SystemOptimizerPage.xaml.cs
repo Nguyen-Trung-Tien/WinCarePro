@@ -25,13 +25,25 @@ public sealed partial class SystemOptimizerPage : Page
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
 
-        this.Loaded += (s, e) => TranslationManager.Instance.Translate(this);
+        this.Loaded += (s, e) =>
+        {
+            TranslationManager.Instance.Translate(this);
+            UpdateLoadingOverlayState();
+        };
         var langHandler = new EventHandler((s, e) =>
         {
             this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
         });
         TranslationManager.Instance.LanguageChanged += langHandler;
         this.Unloaded += (s, e) => TranslationManager.Instance.LanguageChanged -= langHandler;
+
+        ViewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(ViewModel.IsLoading))
+            {
+                UpdateLoadingOverlayState();
+            }
+        };
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -292,6 +304,29 @@ public sealed partial class SystemOptimizerPage : Page
         else
         {
             await ViewModel.OptimizeRamAsync();
+        }
+    }
+
+    private void UpdateLoadingOverlayState()
+    {
+        if (LoadingOverlayGrid == null || FadeInLoading == null || FadeOutLoading == null) return;
+
+        if (ViewModel.IsLoading)
+        {
+            LoadingOverlayGrid.Visibility = Visibility.Visible;
+            FadeInLoading.Begin();
+        }
+        else
+        {
+            FadeOutLoading.Begin();
+        }
+    }
+
+    private void FadeOutLoading_Completed(object? sender, object e)
+    {
+        if (!ViewModel.IsLoading && LoadingOverlayGrid != null)
+        {
+            LoadingOverlayGrid.Visibility = Visibility.Collapsed;
         }
     }
 

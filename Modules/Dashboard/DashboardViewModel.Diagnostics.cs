@@ -209,7 +209,7 @@ public partial class DashboardViewModel
                     htmlBuilder.AppendLine("  <div class=\"container\">");
                     htmlBuilder.AppendLine("    <div class=\"header\">");
                     htmlBuilder.AppendLine("      <div>");
-                    htmlBuilder.AppendLine("        <div class=\"title\">🚀 WinCare Pro System Health Report</div>");
+                    htmlBuilder.AppendLine("        <div class=\"title\">WinCare Pro System Health Report</div>");
                     htmlBuilder.AppendLine($"        <div style=\"color: #64748b; font-size: 13px; margin-top: 4px;\">Generated on {DateTime.Now:yyyy-MM-dd HH:mm:ss} | User: {System.Net.WebUtility.HtmlEncode(Environment.UserName)}</div>");
                     htmlBuilder.AppendLine("      </div>");
                     htmlBuilder.AppendLine($"      <div class=\"score-badge\" style=\"background: {scoreBg}; color: {scoreColor}; border: 1px solid {scoreColor};\">Health Score: {HealthScore}/100</div>");

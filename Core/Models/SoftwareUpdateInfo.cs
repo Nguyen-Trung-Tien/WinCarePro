@@ -262,9 +262,9 @@ public class SoftwareUpdateInfo : INotifyPropertyChanged
 
     public string ActionBtnText => UpdateStatus switch
     {
-        StatusCompleted => "Up to Date ✓".T(),
+        StatusCompleted => "Up to Date".T(),
         StatusUpdating => "Updating...".T(),
-        StatusFailed => "Retry ↻".T(),
+        StatusFailed => "Retry".T(),
         _ => "Update".T()
     };
 

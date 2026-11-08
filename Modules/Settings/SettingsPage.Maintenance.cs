@@ -193,13 +193,13 @@ public sealed partial class SettingsPage
         {
             var releaseItems = new (string Tag, string Title, string Description, string Glyph, string ColorHex)[]
             {
-                ("🤖 AI SENTINEL", "Intelligent AI Diagnostic Sentinel & Fix Engine", "Contextual system diagnostics, intelligent automated repair scripts, and interactive system optimization.", "\uE99A", "#FF8B5CF6"),
-                ("🛡️ DEFENSE", "Next-Gen Security Center & Exploit Mitigation", "Multi-vector vulnerability detection, tamper protection, real-time shields, and firewall profile enforcement.", "\uE727", "#FF10B981"),
-                ("🔔 SENTINEL", "Notifications & Live Telemetry Activity Hub", "Real-time process telemetry pulse, categorized system notifications, and instant action routing.", "\uEA8F", "#FF06B6D4"),
-                ("📦 CLEANER", "Deep App Leftover & Process Tree Manager", "Multi-app batch uninstallation, orphaned registry residual purge, and process tree termination.", "\uE74D", "#FFEC4899"),
-                ("✨ AURA 3.0", "Fluent 2.0 Aura Glass Elevation & Precision Metrics", "Tabular telemetry numerals, 120 FPS fluid composition physics, and zero memory leaks.", "\uE790", "#FF3B82F6"),
-                ("🔋 ECO", "Battery-Aware Background Watchdog Throttling", "Dynamic throttling of high-overhead background maintenance tasks when device is on battery below 20% threshold.", "\uEBB5", "#FFF59E0B"),
-                ("📊 TELEMETRY", "Zero-Mock Precision Telemetry & SQLite Snapshots", "Pure native Win32/PInvoke performance monitors with 100% elimination of pseudo-random data and historical trend graphs.", "\uE9D9", "#FF8B5CF6")
+                ("AI SENTINEL", "Intelligent AI Diagnostic Sentinel & Fix Engine", "Contextual system diagnostics, intelligent automated repair scripts, and interactive system optimization.", "\uE99A", "#FF8B5CF6"),
+                ("DEFENSE", "Next-Gen Security Center & Exploit Mitigation", "Multi-vector vulnerability detection, tamper protection, real-time shields, and firewall profile enforcement.", "\uE727", "#FF10B981"),
+                ("SENTINEL", "Notifications & Live Telemetry Activity Hub", "Real-time process telemetry pulse, categorized system notifications, and instant action routing.", "\uEA8F", "#FF06B6D4"),
+                ("CLEANER", "Deep App Leftover & Process Tree Manager", "Multi-app batch uninstallation, orphaned registry residual purge, and process tree termination.", "\uE74D", "#FFEC4899"),
+                ("AURA 3.0", "Fluent 2.0 Aura Glass Elevation & Precision Metrics", "Tabular telemetry numerals, 120 FPS fluid composition physics, and zero memory leaks.", "\uE790", "#FF3B82F6"),
+                ("ECO", "Battery-Aware Background Watchdog Throttling", "Dynamic throttling of high-overhead background maintenance tasks when device is on battery below 20% threshold.", "\uEBB5", "#FFF59E0B"),
+                ("TELEMETRY", "Zero-Mock Precision Telemetry & SQLite Snapshots", "Pure native Win32/PInvoke performance monitors with 100% elimination of pseudo-random data and historical trend graphs.", "\uE9D9", "#FF8B5CF6")
             };
 
             var currentTheme = ThemeManager.Instance.CurrentTheme;

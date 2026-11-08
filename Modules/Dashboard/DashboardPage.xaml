@@ -129,7 +129,7 @@
                         <ColumnDefinition x:Name="LeftCol" Width="1*" />
                         <ColumnDefinition x:Name="RightCol" Width="1*" />
                     </Grid.ColumnDefinitions>
-                    
+
                     <!-- Left Side Column 0: System Health Overview Hero Bento Card -->
                     <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource CyberBentoHeroCardStyle}" Margin="6" Padding="20,18" MinHeight="195" CornerRadius="16"
                             helpers:AnimationHelper.StaggerIndex="0" helpers:AnimationHelper.HoverScale="1.01">
@@ -153,7 +153,7 @@
                                     </RadialGradientBrush>
                                 </Ellipse.Fill>
                             </Ellipse>
-                            
+
                             <!-- Clean High-Definition System Health Vitality Ring with Holographic Orbit -->
                             <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="140" Height="140" Margin="0,0,18,0" VerticalAlignment="Center">
                                 <!-- Outer Holographic Halo Orbit Ring -->
@@ -163,12 +163,12 @@
                                 <Ellipse Width="122" Height="122" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="8" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.22"/>
 
                                 <!-- Main Health Progress Ring -->
-                                <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}" 
-                                              Minimum="0" Maximum="100" 
-                                              IsIndeterminate="False" 
-                                              Width="122" Height="122" 
-                                              Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" 
-                                              Background="Transparent" 
+                                <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}"
+                                              Minimum="0" Maximum="100"
+                                              IsIndeterminate="False"
+                                              Width="122" Height="122"
+                                              Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}"
+                                              Background="Transparent"
                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                                 <!-- Centerpiece Typography HUD -->
@@ -188,21 +188,21 @@
                                     </Border>
                                 </StackPanel>
                                 <TextBlock Text="{x:Bind ViewModel.HealthBreakdownText, Mode=OneWay}" TextWrapping="Wrap" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" LineHeight="17" MaxLines="2" TextTrimming="CharacterEllipsis"/>
-                                
+
                                 <Grid x:Name="GaugeActionButtonsGrid" Margin="0,8,0,0">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
-                                    <!-- Tier 1: Hero Primary Call-To-Action (1-Click Smart Care - Full Width, Perfectly Balanced) -->
+                                    <!-- Tier 1: Hero Primary Call-To-Action (1-Click Smart Care - Full Width, Commanding Hero) -->
                                     <Grid Grid.Row="0" Margin="0,0,0,8" HorizontalAlignment="Stretch">
-                                        <Button x:Name="OneClickCareBtn" Content="🚀 Scan &amp; Optimize Now (Smart Care)" Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnOneClickSmartCareClick" IsEnabled="{x:Bind GetOneClickEnabled(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Height="38" HorizontalAlignment="Stretch" CornerRadius="10" FontWeight="Bold" FontSize="13.5"
-                                                helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98"
+                                        <Button x:Name="OneClickCareBtn" Content="1-Click Smart Care (Scan &amp; Optimize)" Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnOneClickSmartCareClick" IsEnabled="{x:Bind GetOneClickEnabled(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Height="42" HorizontalAlignment="Stretch" CornerRadius="12" FontWeight="ExtraBold" FontSize="14"
+                                                helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
                                                 AutomationProperties.Name="1-Click Smart Care"
                                                 AutomationProperties.HelpText="Instantly scan and optimize system performance, RAM, and junk files in one single click."/>
 
-                                        <ProgressRing x:Name="GaugeActionProgressRing" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0" IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Visibility="{x:Bind GetProgressRingVisibility(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="18" Height="18" Foreground="White" IsHitTestVisible="False" />
+                                        <ProgressRing x:Name="GaugeActionProgressRing" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,16,0" IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Visibility="{x:Bind GetProgressRingVisibility(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="18" Height="18" Foreground="White" IsHitTestVisible="False" />
                                     </Grid>
 
                                     <!-- Tier 2: Step-by-Step Granular Controls (Balanced 50/50 Dual Action Deck) -->
@@ -212,12 +212,12 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <Button x:Name="ScanSystemBtn" Grid.Column="0" Content="Scan System" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Height="36" HorizontalAlignment="Stretch" CornerRadius="10" FontWeight="SemiBold"
+                                        <Button x:Name="ScanSystemBtn" Grid.Column="0" Content="Scan Only" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Height="34" HorizontalAlignment="Stretch" CornerRadius="10" FontWeight="SemiBold" FontSize="12"
                                                 helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98"
                                                 AutomationProperties.Name="Scan System"
                                                 AutomationProperties.HelpText="Initiates deep system scan for junk files, performance issues, and security status."/>
 
-                                        <Button x:Name="OptimizeBtn" Grid.Column="1" Content="Optimize System" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Height="36" HorizontalAlignment="Stretch" CornerRadius="10" FontWeight="SemiBold"
+                                        <Button x:Name="OptimizeBtn" Grid.Column="1" Content="Optimize Only" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Height="34" HorizontalAlignment="Stretch" CornerRadius="10" FontWeight="SemiBold" FontSize="12"
                                                 helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98"
                                                 AutomationProperties.Name="Optimize System"
                                                 AutomationProperties.HelpText="Optimizes system performance using the selected profile mode.">
@@ -233,17 +233,17 @@
                                         </Button>
                                     </Grid>
                                 </Grid>
-                                
+
                                 <!-- Reassuring Safety & Restore Point Indicator -->
                                 <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,4,0,0">
                                     <FontIcon Glyph="&#xE72E;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}" VerticalAlignment="Center"/>
                                     <TextBlock Text="Automatic Restore Point Protection Active • 1-Click Undo Supported" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
                                 </StackPanel>
-                                
+
                                 <StackPanel Visibility="{x:Bind GetProgressVisibility(ViewModel.IsScanning), Mode=OneWay}" Spacing="4" Margin="0,3,0,0">
                                     <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="5" Foreground="{StaticResource PrimaryAccentGradient}" CornerRadius="2.5" />
                                 </StackPanel>
-                                
+
                                 <TextBlock Text="{x:Bind ViewModel.ScanStatus, Mode=OneWay}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,2,0,0" FontSize="11.5"
                                            AutomationProperties.LiveSetting="Polite"/>
                             </StackPanel>
@@ -282,20 +282,20 @@
                                             <TextBlock Text="Autonomous" FontSize="9.5" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeGoodFg}" FontFamily="Segoe UI Variable Display"/>
                                         </Border>
                                     </StackPanel>
-                                    <TextBlock x:Name="AiSummaryText" Text="{x:Bind ViewModel.AiSummaryText, Mode=OneWay}" FontSize="11.5" 
+                                    <TextBlock x:Name="AiSummaryText" Text="{x:Bind ViewModel.AiSummaryText, Mode=OneWay}" FontSize="11.5"
                                                Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxLines="2" TextWrapping="Wrap" LineHeight="16"/>
                                 </StackPanel>
 
                                 <!-- AI Score Mini Ring -->
                                 <Grid Grid.Column="1" Width="52" Height="52" Margin="8,0,0,0" VerticalAlignment="Center">
                                     <Ellipse Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="4" Opacity="0.25"/>
-                                    <ProgressRing Value="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" Width="48" Height="48" 
+                                    <ProgressRing Value="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" Width="48" Height="48"
                                                   Foreground="{StaticResource PrimaryAccentBrush}" Background="Transparent" IsIndeterminate="False"/>
                                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <TextBlock x:Name="AiScoreText" Text="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" 
-                                                   FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" 
+                                        <TextBlock x:Name="AiScoreText" Text="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}"
+                                                   FontSize="14" FontWeight="Bold" HorizontalAlignment="Center"
                                                    Foreground="{StaticResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                        <TextBlock Text="AI Score" FontSize="7.5" FontWeight="SemiBold" 
+                                        <TextBlock Text="AI Score" FontSize="7.5" FontWeight="SemiBold"
                                                    Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </Grid>
@@ -338,9 +338,9 @@
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel Grid.Column="0" VerticalAlignment="Center" Spacing="1" Margin="0,0,10,0">
-                                        <TextBlock x:Name="TopRecommendationTitle" Text="Run AI Scan for insights" FontWeight="SemiBold" FontSize="11.5" 
+                                        <TextBlock x:Name="TopRecommendationTitle" Text="Run AI Scan for insights" FontWeight="SemiBold" FontSize="11.5"
                                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock x:Name="TopRecommendationDesc" Text="Click 'AI Scan' to analyze system health." FontSize="10.5" 
+                                        <TextBlock x:Name="TopRecommendationDesc" Text="Click 'AI Scan' to analyze system health." FontSize="10.5"
                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxLines="1"/>
                                     </StackPanel>
 
@@ -384,7 +384,7 @@
                                         <FontIcon Glyph="&#xEA99;" FontSize="15" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="Disk &amp; Junk Card" FontSize="13" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="Junk &amp; Storage" FontSize="13" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
                                         <TextBlock Text="Cleanable Space Potential" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     </StackPanel>
                                 </StackPanel>
@@ -414,7 +414,7 @@
                                         <FontIcon Glyph="&#xE950;" FontSize="15" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="Memory &amp; Speed Card" FontSize="13" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="Memory &amp; Speed Boost" FontSize="13" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
                                         <TextBlock Text="Instant RAM Booster" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     </StackPanel>
                                 </StackPanel>
@@ -446,7 +446,7 @@
                                         <FontIcon Glyph="&#xE727;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="Protection &amp; Security Card" FontSize="13" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="System Protection &amp; Health" FontSize="13" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
                                         <TextBlock Text="System Safety Status" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     </StackPanel>
                                 </StackPanel>
@@ -498,7 +498,7 @@
                             <ColumnDefinition x:Name="CpuRamCol0" Width="*" />
                             <ColumnDefinition x:Name="CpuRamCol1" Width="*" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <!-- CPU Card with overload indicator border glow -->
                         <Border x:Name="CpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="16" CornerRadius="16"
                                 BorderBrush="{x:Bind GetCpuCardBorderBrush(ViewModel.CpuUsage), Mode=OneWay}"
@@ -556,7 +556,7 @@
                     </Grid>
 
                     <!-- Right Side Column 1 -->
-                    
+
                     <!-- 1. Bottleneck Advisor widget (Placed on Row 2 Column 1) -->
                     <Border x:Name="BottleneckCard" Grid.Row="2" Grid.Column="1" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="16" CornerRadius="16" Visibility="Collapsed"
                             helpers:AnimationHelper.StaggerIndex="4"
@@ -672,7 +672,7 @@
                             <ColumnDefinition x:Name="GpuDiskCol0" Width="*" />
                             <ColumnDefinition x:Name="GpuDiskCol1" Width="*" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <!-- GPU Card -->
                         <Border x:Name="GpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="16" CornerRadius="16"
                                 helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="16">
@@ -733,7 +733,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            
+
                             <StackPanel x:Name="PerformanceHeaderGrid" Grid.Row="0" Margin="0,0,0,16" Spacing="8">
                                 <StackPanel x:Name="PerformanceTitlePanel" Spacing="4">
                                     <TextBlock Text="Performance Trend History" FontSize="16" FontWeight="Bold" />
@@ -788,7 +788,7 @@
                             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                                 <StackPanel Spacing="12">
                                     <TextBlock Text="No recommendations. Run a full scan to evaluate your PC health." Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Visibility="{x:Bind GetVisibility(ViewModel.Recommendations.Count), Mode=OneWay}" Margin="0,16,0,0" TextAlignment="Center" />
-                                    
+
                                     <ItemsControl ItemsSource="{x:Bind ViewModel.Recommendations, Mode=OneWay}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="x:String">
@@ -818,11 +818,11 @@
                 </Grid>
 
                 <!-- Clean Advanced Details & History Log Toggle Banner Deck -->
-                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
-                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" 
-                        BorderThickness="1" 
-                        CornerRadius="10" 
-                        Padding="14,10" 
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="14,10"
                         Margin="6,4,6,4">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -830,7 +830,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                             <Border Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
                                 <FontIcon Glyph="&#xE9D9;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -841,17 +841,17 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <ToggleButton Grid.Column="2" 
-                                      x:Name="ShowDetailedInsightsBtn" 
-                                      Content="Advanced Details &amp; History Log" 
-                                      Checked="OnShowDeepLayerChecked" 
-                                      Unchecked="OnShowDeepLayerUnchecked" 
-                                      Style="{StaticResource DefaultToggleButtonStyle}" 
-                                      Background="{StaticResource PrimaryAccentGradient}" 
-                                      Foreground="White" 
-                                      FontWeight="SemiBold" 
-                                      CornerRadius="6" 
-                                      Padding="14,6" 
+                        <ToggleButton Grid.Column="2"
+                                      x:Name="ShowDetailedInsightsBtn"
+                                      Content="Advanced Details &amp; History Log"
+                                      Checked="OnShowDeepLayerChecked"
+                                      Unchecked="OnShowDeepLayerUnchecked"
+                                      Style="{StaticResource DefaultToggleButtonStyle}"
+                                      Background="{StaticResource PrimaryAccentGradient}"
+                                      Foreground="White"
+                                      FontWeight="SemiBold"
+                                      CornerRadius="6"
+                                      Padding="14,6"
                                       VerticalAlignment="Center"
                                       AutomationProperties.Name="Toggle Advanced Details and History Log"/>
                     </Grid>
@@ -859,7 +859,7 @@
 
                 <!-- 3. DEEP LAYER (Loaded on Demand) -->
                 <StackPanel x:Name="DeepLayerPanel" x:Load="False" Spacing="16">
-                    
+
                     <!-- Row 1: Detailed Audits Table -->
                     <Border x:Name="AuditsCard" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                         <Grid>
@@ -877,7 +877,7 @@
                                     <FontIcon Glyph="&#xE721;" FontSize="16" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
                                     <TextBlock Text="Diagnostics Discoveries" FontSize="17" FontWeight="Bold" VerticalAlignment="Center"/>
                                 </StackPanel>
-                                
+
                                 <!-- Export Report controls -->
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
                                     <ComboBox x:Name="ExportFormatCombo" SelectedIndex="0" Width="100" CornerRadius="6">
@@ -949,7 +949,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            
+
                             <StackPanel Grid.Row="0" Margin="0,0,0,16" Spacing="4">
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon Glyph="&#xEC92;" FontSize="16" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
@@ -966,18 +966,18 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            
+
                                             <Border Width="30" Height="30" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="15" Margin="0,0,12,0" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="MediumSeaGreen" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                             </Border>
-                                            
+
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                                                 <TextBlock Text="{Binding DisplayAction}" FontSize="13" FontWeight="SemiBold" TextWrapping="Wrap" />
                                                 <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="4" Padding="6,2" HorizontalAlignment="Left">
                                                     <TextBlock Text="{Binding DisplayModule}" FontSize="10.5" Foreground="{StaticResource PrimaryAccentBrush}" FontWeight="SemiBold" />
                                                 </Border>
                                             </StackPanel>
-                                            
+
                                             <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Spacing="2">
                                                 <TextBlock Text="{Binding CreatedAtFormatted}" FontFamily="Consolas" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Right"/>
                                                 <TextBlock Text="{Binding DisplayStatus}" FontSize="11" Foreground="MediumSeaGreen" FontWeight="Bold" HorizontalAlignment="Right"/>

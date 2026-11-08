@@ -85,7 +85,15 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
-                    <TextBlock Text="Purge system caches, temp files &amp; debris." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <TextBlock Text="Purge system caches, temp files &amp; debris." Style="{StaticResource PageHeaderSubtitleStyle}" VerticalAlignment="Center"/>
+                        <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,1.5" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <FontIcon Glyph="&#xE72E;" FontSize="10" Foreground="{ThemeResource AppBadgeGoodFg}" VerticalAlignment="Center"/>
+                                <TextBlock Text="SafePathGuard Active • 100% Protected" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- Right: Scan & Clean Actions -->
@@ -114,184 +122,75 @@
             </Grid>
         </Grid>
 
-        <!-- 1. Interactive Cyber-Bento Stat Ribbon Deck (Unified Compact Capsule Layout) -->
-        <Border Grid.Row="1" Margin="0,0,0,12" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,10"
+        <!-- 1. Sleek Storage Cockpit Ribbon (Compact, Modern, Actionable) -->
+        <Border Grid.Row="1" Margin="0,0,0,10" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,8"
                 helpers:AnimationHelper.StaggerIndex="0"
-                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="12">
-            <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
-                <Grid x:Name="TopStatsGrid" ColumnSpacing="12" MinWidth="720">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1.2*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
+                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8">
+            <Grid x:Name="TopStatsGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                    <!-- Capsule 0: Total Cleanable Space & Preset Filter Chips -->
-                    <Border Grid.Column="0" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="12,8">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Border Width="38" Height="38" CornerRadius="19" Background="{StaticResource PrimaryAccentGradient}" Margin="0,0,10,0" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xEA99;" FontSize="16" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                <TextBlock Text="Total Cleanable Space" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind ViewModel.TotalJunkSize, Mode=OneWay}" FontSize="18" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,2,0,0">
-                                    <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnPresetSafeClick" Padding="6,2" CornerRadius="4"
-                                            Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1"
-                                            ToolTipService.ToolTip="Select only 100% safe items (Recommended)"
-                                            AutomationProperties.Name="Safe Only Preset">
-                                        <StackPanel Orientation="Horizontal" Spacing="4">
-                                            <FontIcon Glyph="&#xE73E;" FontSize="9" Foreground="{ThemeResource AppBadgeGoodFg}"/>
-                                            <TextBlock Text="Safe" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
-                                        </StackPanel>
-                                    </Button>
-                                    <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnPresetAllClick" Padding="6,2" CornerRadius="4"
-                                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1"
-                                            ToolTipService.ToolTip="Select all detected junk categories"
-                                            AutomationProperties.Name="Select All Preset">
-                                        <TextBlock Text="All" FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                    </Button>
-                                </StackPanel>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <!-- Capsule 1: 100% Safe Cache (Green) -->
-                    <Button Grid.Column="1" Click="OnPresetSafeClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3510B981" BorderThickness="1.2"
-                            ToolTipService.ToolTip="Tier 1: 100% Safe Cache (Recommended) - System caches, log files, temporary setup files. Auto-selected.">
-                        <Grid HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Border Width="34" Height="34" CornerRadius="17" Background="#2010B981" Margin="0,0,10,0" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE73E;" FontSize="15" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="Tier 1: 100% Safe Cache" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
-                                    <Border Background="#2510B981" CornerRadius="3" Padding="4,0.5">
-                                        <TextBlock Text="RECOMMENDED" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FF10B981"/>
-                                    </Border>
-                                </StackPanel>
-                                <TextBlock Text="{x:Bind ViewModel.SafeJunkSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                <TextBlock Text="System cache, temp files &amp; logs" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            </StackPanel>
-                        </Grid>
+                <!-- Left: Quick Preset Selection Pills -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnPresetSafeClick" Padding="10,6" CornerRadius="8"
+                            Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1"
+                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
+                            ToolTipService.ToolTip="Select only 100% safe items (Recommended)"
+                            AutomationProperties.Name="Safe Only Preset">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                            <TextBlock Text="Safe Cache Only (Recommended)" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                        </StackPanel>
                     </Button>
+                    <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnPresetAllClick" Padding="10,6" CornerRadius="8"
+                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1"
+                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
+                            ToolTipService.ToolTip="Select all detected junk categories"
+                            AutomationProperties.Name="Select All Preset">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE762;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="Select All" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
 
-                    <!-- Capsule 2: Browser Data (Amber) -->
-                    <Border Grid.Column="2" Style="{StaticResource Tilt3DCardStyle}" BorderBrush="#35F59E0B" BorderThickness="1.2" CornerRadius="10" Padding="10,8"
-                            ToolTipService.ToolTip="Tier 2: Browser Data - Web history, site caches (Preview supported, passwords preserved)">
-                        <Grid HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Border Width="34" Height="34" CornerRadius="17" Background="#20F59E0B" Margin="0,0,10,0" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE774;" FontSize="15" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="Tier 2: Browser Data" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
-                                    <Border Background="#25F59E0B" CornerRadius="3" Padding="4,0.5">
-                                        <TextBlock Text="PREVIEW" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
-                                    </Border>
-                                </StackPanel>
-                                <TextBlock Text="{x:Bind ViewModel.ReviewJunkSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                <TextBlock Text="Web cache &amp; history (passwords kept)" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            </StackPanel>
-                        </Grid>
+                <!-- Right: Breakdown Metrics Badges -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <!-- Tier 1: Safe Cache -->
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="#3010B981" BorderThickness="1" CornerRadius="8" Padding="10,5"
+                            helpers:AnimationHelper.HoverScale="1.02">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <Ellipse Width="6" Height="6" Fill="#FF10B981"/>
+                            <TextBlock Text="Safe Cache:" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="{x:Bind ViewModel.SafeJunkSizeFormatted, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        </StackPanel>
                     </Border>
-
-                    <!-- Capsule 3: Advanced Items (Violet) -->
-                    <Border Grid.Column="3" Style="{StaticResource Tilt3DCardStyle}" BorderBrush="#358B5CF6" BorderThickness="1.2" CornerRadius="10" Padding="10,8"
-                            ToolTipService.ToolTip="Tier 3: Advanced Items - Recycle Bin, previous Windows Update backup files">
-                        <Grid HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Border Width="34" Height="34" CornerRadius="17" Background="#208B5CF6" Margin="0,0,10,0" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE74D;" FontSize="15" Foreground="#FFA78BFA" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="Tier 3: Advanced Items" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
-                                    <Border Background="#258B5CF6" CornerRadius="3" Padding="4,0.5">
-                                        <TextBlock Text="ADVANCED" FontSize="7.5" FontWeight="ExtraBold" Foreground="#FFA78BFA"/>
-                                    </Border>
-                                </StackPanel>
-                                <TextBlock Text="{x:Bind ViewModel.DevJunkSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="#FFA78BFA" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                <TextBlock Text="Recycle Bin &amp; old Windows backups" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            </StackPanel>
-                        </Grid>
+                    <!-- Tier 2: Browser Data -->
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="#30F59E0B" BorderThickness="1" CornerRadius="8" Padding="10,5"
+                            helpers:AnimationHelper.HoverScale="1.02">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <Ellipse Width="6" Height="6" Fill="#FFF59E0B"/>
+                            <TextBlock Text="Browser Data:" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="{x:Bind ViewModel.ReviewJunkSizeFormatted, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        </StackPanel>
                     </Border>
-                </Grid>
-            </ScrollViewer>
+                    <!-- Tier 3: Advanced -->
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="#308B5CF6" BorderThickness="1" CornerRadius="8" Padding="10,5"
+                            helpers:AnimationHelper.HoverScale="1.02">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <Ellipse Width="6" Height="6" Fill="#FFA78BFA"/>
+                            <TextBlock Text="Advanced:" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="{x:Bind ViewModel.DevJunkSizeFormatted, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="#FFA78BFA" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
         </Border>
 
-        <!-- 2. Dynamic Alert Banners Container -->
-        <StackPanel Grid.Row="2" Spacing="10" Margin="0,0,0,12">
-            <!-- SafePathGuard Reassurance Trust Banner -->
-            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="12" Padding="12,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="28" Height="28" CornerRadius="14" Background="#2010B981" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE72E;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <TextBlock Text="SafePathGuard Protection Active" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="4,1">
-                                <TextBlock Text="100% SAFE" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981"/>
-                            </Border>
-                        </StackPanel>
-                        <TextBlock Text="Personal files, browser passwords, sessions, and Windows system folders are strictly protected and never touched." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Visual Storage Capacity Bar (Disk C: Real-time capacity & reclamation bar) -->
-            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="12" Padding="14,10">
-                <Grid RowSpacing="6">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <TextBlock Text="Visual Storage Capacity (Drive C:)" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
-                            <TextBlock Text="• Space reclamation potential" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <TextBlock Text="Free Space After Clean:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            <Border Background="#2010B981" CornerRadius="4" Padding="6,1">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#FF10B981" VerticalAlignment="Center"/>
-                                    <TextBlock Text="{x:Bind ViewModel.TotalJunkSize, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </Grid>
-                    <!-- Capacity Progress Bar with smooth corner radius -->
-                    <ProgressBar Grid.Row="1" Value="65" Maximum="100" Height="8" CornerRadius="4" Foreground="{StaticResource PrimaryAccentGradient}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.9"/>
-                </Grid>
-            </Border>
-
-            <!-- Celebration & Micro-interaction Success Banner (1-Click Clean Complete) -->
+        <!-- 2. Dynamic Contextual Alert Banners (Celebration & Locking Apps) -->
+        <StackPanel Grid.Row="2" Spacing="8" Margin="0,0,0,10">
             <Border Background="{ThemeResource AppBadgeGoodBg}"
                     BorderBrush="{ThemeResource AppBadgeGoodBorder}"
                     BorderThickness="1.5"
@@ -314,7 +213,7 @@
                     <!-- Message & Stats -->
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock Text="System Purge &amp; Clean Completed Successfully! ✨" FontWeight="Bold" FontSize="13" Foreground="#FF10B981"/>
+                            <TextBlock Text="System Purge &amp; Clean Completed Successfully!" FontWeight="Bold" FontSize="13" Foreground="#FF10B981"/>
                             <Border Background="#3510B981" CornerRadius="4" Padding="5,1" VerticalAlignment="Center">
                                 <TextBlock Text="OPTIMAL" FontSize="9" FontWeight="Bold" Foreground="#FF10B981"/>
                             </Border>
@@ -441,6 +340,7 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Border Style="{StaticResource Tilt3DCardStyle}" Padding="12,10" BorderThickness="1"
+                                        helpers:AnimationHelper.HoverScale="1.015" helpers:AnimationHelper.PressedScale="0.985"
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
                                     <Grid>
                                         <Grid.ColumnDefinitions>

@@ -10,6 +10,7 @@ using WinCarePro.Services;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Shared.Components;
+using WinCarePro.Shared.Animations;
 
 namespace WinCarePro.Views;
 
@@ -120,6 +121,10 @@ public sealed partial class UninstallPage : Page
             if (e.PropertyName == nameof(ViewModel.SelectedApp))
             {
                 UpdateDetailsPaneVisibility();
+            }
+            else if (e.PropertyName == nameof(ViewModel.IsBusy))
+            {
+                UpdateSkeletonShimmerState();
             }
         };
 
@@ -336,6 +341,26 @@ public sealed partial class UninstallPage : Page
     public Visibility GetSkeletonVisibility(bool isBusy)
     {
         return isBusy ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void UpdateSkeletonShimmerState()
+    {
+        if (SkeletonLoadingPanel == null) return;
+        try
+        {
+            if (ViewModel.IsBusy)
+            {
+                FluidAnimationHelper.ApplyShimmerEffect(SkeletonLoadingPanel);
+            }
+            else
+            {
+                FluidAnimationHelper.StopShimmerEffect(SkeletonLoadingPanel);
+            }
+        }
+        catch
+        {
+            // Gracefully ignore if composition compositor is unavailable
+        }
     }
 
     public Visibility GetDetailsVisibility(InstalledAppInfo? app)

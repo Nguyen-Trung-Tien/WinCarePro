@@ -73,10 +73,18 @@
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                             <TextBlock Text="System Repair &amp; Self-Healing" Style="{StaticResource PageHeaderTitleStyle}"/>
                             <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{ThemeResource PrimaryAccentBrush}" BorderThickness="1" CornerRadius="8" Padding="8,2" VerticalAlignment="Center">
-                                <TextBlock Text="Smart Engine 6.0" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="System Doctor 6.0" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                             </Border>
                         </StackPanel>
-                        <TextBlock Text="Automated system diagnostic scan, self-healing file restoration, and safe rollback protection." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <TextBlock Text="Automated diagnostics, self-healing file restoration &amp; safe rollback." Style="{StaticResource PageHeaderSubtitleStyle}" VerticalAlignment="Center"/>
+                            <Border Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1" CornerRadius="6" Padding="6,1.5" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <FontIcon Glyph="&#xE72E;" FontSize="10" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Auto Restore Point Active" FontSize="10" FontWeight="Bold" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
@@ -105,28 +113,6 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-
-            <!-- System Doctor Guaranteed Safety & Restore Point Protection Banner -->
-            <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0" Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1.2" CornerRadius="10" Padding="12,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="28" Height="28" CornerRadius="14" Background="#2010B981" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE72E;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <TextBlock Text="System Doctor Safety Guarantee Active" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="5,1">
-                                <TextBlock Text="AUTO RESTORE POINT" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981"/>
-                            </Border>
-                        </StackPanel>
-                        <TextBlock Text="A full system restore point is created automatically before any repairs. You can safely undo changes anytime with 1-click." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
         </Grid>
 
         <!-- ==================== 1. UNIFIED STAT RIBBON ==================== -->
@@ -239,6 +225,7 @@
 
                     <!-- Symptom 1: Auto Scan & Fix -->
                     <Button Grid.Column="0" Click="OnScanDiagnosticsClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3506B6D4" BorderThickness="1.2"
+                            helpers:AnimationHelper.HoverScale="1.025" helpers:AnimationHelper.PressedScale="0.975"
                             ToolTipService.ToolTip="Auto Scan &amp; Fix All: Comprehensive diagnostic scan of all system components">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
@@ -257,6 +244,7 @@
 
                     <!-- Symptom 2: Corrupted System Files -->
                     <Button Grid.Column="1" Click="OnTabSfcDismClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#353B82F6" BorderThickness="1.2"
+                            helpers:AnimationHelper.HoverScale="1.025" helpers:AnimationHelper.PressedScale="0.975"
                             ToolTipService.ToolTip="Corrupted System Files: Verify and restore damaged Windows components">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
@@ -275,6 +263,7 @@
 
                     <!-- Symptom 3: Network Issues -->
                     <Button Grid.Column="2" Click="OnTabNetworkClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3510B981" BorderThickness="1.2"
+                            helpers:AnimationHelper.HoverScale="1.025" helpers:AnimationHelper.PressedScale="0.975"
                             ToolTipService.ToolTip="Network Issues &amp; Latency: Flush DNS and reset network stack">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
@@ -293,6 +282,7 @@
 
                     <!-- Symptom 4: Windows Update Errors -->
                     <Button Grid.Column="3" Click="OnTabNetworkClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#35F59E0B" BorderThickness="1.2"
+                            helpers:AnimationHelper.HoverScale="1.025" helpers:AnimationHelper.PressedScale="0.975"
                             ToolTipService.ToolTip="Windows Update Errors: Fix update services and clear corrupted caches">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
@@ -322,10 +312,30 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button x:Name="BtnTabDiagnostics" Grid.Column="0" Content="🔍 Diagnostics &amp; Issues" Click="OnTabDiagnosticsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="Bold" FontSize="12" Padding="0,8"/>
-                <Button x:Name="BtnTabSfcDism" Grid.Column="1" Content="🛡️ SFC &amp; DISM Servicing" Click="OnTabSfcDismClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="SemiBold" FontSize="12" Padding="0,8"/>
-                <Button x:Name="BtnTabRegistry" Grid.Column="2" Content="🔒 Registry Safeguards" Click="OnTabRegistryClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="SemiBold" FontSize="12" Padding="0,8"/>
-                <Button x:Name="BtnTabNetwork" Grid.Column="3" Content="⚡ Update &amp; Network" Click="OnTabNetworkClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="SemiBold" FontSize="12" Padding="0,8"/>
+                <Button x:Name="BtnTabDiagnostics" Grid.Column="0" Click="OnTabDiagnosticsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE721;" FontSize="13" Foreground="{ThemeResource AppStatusInfoBrush}"/>
+                        <TextBlock Text="Diagnostics &amp; Issues" FontWeight="Bold" FontSize="12"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BtnTabSfcDism" Grid.Column="1" Click="OnTabSfcDismClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                        <TextBlock Text="SFC &amp; DISM Servicing" FontWeight="SemiBold" FontSize="12"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BtnTabRegistry" Grid.Column="2" Click="OnTabRegistryClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xEDA2;" FontSize="13" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
+                        <TextBlock Text="Registry Safeguards" FontWeight="SemiBold" FontSize="12"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BtnTabNetwork" Grid.Column="3" Click="OnTabNetworkClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE895;" FontSize="13" Foreground="{ThemeResource AppStatusCyanBrush}"/>
+                        <TextBlock Text="Update &amp; Network" FontWeight="SemiBold" FontSize="12"/>
+                    </StackPanel>
+                </Button>
             </Grid>
         </Border>
 
@@ -520,7 +530,7 @@
                                                     <FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="[✓] OS System Files" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                                    <TextBlock Text="OS System Files" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                                     <TextBlock Text="Healthy &amp; Intact" FontSize="9.5" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                                                 </StackPanel>
                                             </StackPanel>
@@ -533,7 +543,7 @@
                                                     <FontIcon Glyph="&#xE73E;" FontSize="10" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="[✓] Registry Database" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                                    <TextBlock Text="Registry Database" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                                     <TextBlock Text="Cleaned &amp; Optimized" FontSize="9.5" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                                                 </StackPanel>
                                             </StackPanel>

@@ -431,7 +431,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
             await RunOnUIActionAsync(() =>
             {
                 ProgressPercent = 100;
-                ProgressMessage = string.Format("✓ Cleanup complete! Reclaimed {0}.".T(), cleanedFormatted);
+                ProgressMessage = string.Format("Cleanup complete! Reclaimed {0}.".T(), cleanedFormatted);
             });
 
             await Task.Delay(800);
@@ -455,7 +455,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
                 await RunOnUIAsync(async () =>
                     await _dialogService.ShowMessageAsync(
                         "Cleanup Result".T(),
-                        string.Format("Cleaning completed.\n\n✓ Cleaned: {0}\n⚠ Could not clean: {1} (files in use)".T(), cleanedFormatted, lockedFormatted)
+                        string.Format("Cleaning completed.\n\nCleaned: {0}\nCould not clean: {1} (files in use)".T(), cleanedFormatted, lockedFormatted)
                     )
                 );
             }

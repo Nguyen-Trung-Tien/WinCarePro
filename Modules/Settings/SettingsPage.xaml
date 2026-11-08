@@ -1261,26 +1261,38 @@
 
                                 <!-- Pledge 1 -->
                                 <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
-                                    <TextBlock Text="🔒 100% On-Device Processing" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
-                                    <TextBlock Text="All diagnostics, system scans, and cleanups execute locally with zero cloud telemetry transmission." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE72E;" FontSize="13" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                                        <TextBlock Text="100% On-Device Processing" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <TextBlock Text="All diagnostics, system scans, and cleanups execute locally with zero cloud telemetry transmission." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="21,0,0,0"/>
                                 </StackPanel>
 
                                 <!-- Pledge 2 -->
                                 <StackPanel Grid.Row="0" Grid.Column="1" Spacing="4">
-                                    <TextBlock Text="💾 Local Encrypted Storage" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Activity logs, configurations, and rollback snapshots reside in high-speed local database files." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xEDA2;" FontSize="13" Foreground="{ThemeResource AppStatusInfoBrush}"/>
+                                        <TextBlock Text="Local Encrypted Storage" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <TextBlock Text="Activity logs, configurations, and rollback snapshots reside in high-speed local database files." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="21,0,0,0"/>
                                 </StackPanel>
 
                                 <!-- Pledge 3 -->
                                 <StackPanel Grid.Row="1" Grid.Column="0" Spacing="4">
-                                    <TextBlock Text="🛡️ Cryptographic Payload Audit" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Update payloads are audited for valid PE headers, file integrity, and digital certificate validation." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
+                                        <TextBlock Text="Cryptographic Payload Audit" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <TextBlock Text="Update payloads are audited for valid PE headers, file integrity, and digital certificate validation." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="21,0,0,0"/>
                                 </StackPanel>
 
                                 <!-- Pledge 4 -->
                                 <StackPanel Grid.Row="1" Grid.Column="1" Spacing="4">
-                                    <TextBlock Text="⏪ Transactional Safety Rollbacks" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Integrates Windows System Restore Points and registry backup snapshots prior to modifications." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE7A7;" FontSize="13" Foreground="{ThemeResource AppStatusCyanBrush}"/>
+                                        <TextBlock Text="Transactional Safety Rollbacks" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <TextBlock Text="Integrates Windows System Restore Points and registry backup snapshots prior to modifications." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" Margin="21,0,0,0"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>

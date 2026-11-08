@@ -407,7 +407,7 @@
                         </ListView>
 
                         <!-- Shimmer Skeleton Loading State -->
-                        <StackPanel Visibility="{x:Bind GetSkeletonVisibility(ViewModel.IsBusy), Mode=OneWay}" Spacing="12" Margin="0,8,0,0">
+                        <StackPanel x:Name="SkeletonLoadingPanel" Visibility="{x:Bind GetSkeletonVisibility(ViewModel.IsBusy), Mode=OneWay}" Spacing="12" Margin="0,8,0,0">
                             <Grid Padding="12,10" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />

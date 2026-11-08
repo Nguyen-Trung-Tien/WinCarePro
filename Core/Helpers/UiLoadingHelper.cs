@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Dispatching;
 using WinCarePro.Services;
+using WinCarePro.Shared.Animations;
 
 namespace WinCarePro.Core.Helpers;
 
@@ -103,6 +104,15 @@ public static class UiLoadingHelper
                     if (restoreIsEnabled)
                     {
                         button.IsEnabled = true;
+                    }
+                    // Tactile success pop micro-interaction
+                    try
+                    {
+                        FluidAnimationHelper.ApplyGlowSparkBurst(button, 1.035f, 280);
+                    }
+                    catch
+                    {
+                        // Fallback gracefully on headless or unsupported composition contexts
                     }
                 }
             });

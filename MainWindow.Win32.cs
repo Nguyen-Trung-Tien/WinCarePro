@@ -320,10 +320,10 @@ public sealed partial class MainWindow : Window
             string junkText = "Clean Junk Files".T();
 
             bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
-            string hudText = "🪟 Desktop HUD Widget".T();
-            string themeText = isDark ? "🌙 Theme: Dark (Switch to Light)".T() : "☀️ Theme: Light (Switch to Dark)".T();
-            string settingsText = "⚙️ Settings".T();
-            string exitText = "🚪 Exit".T();
+            string hudText = "Desktop HUD Widget".T();
+            string themeText = isDark ? "Theme: Dark (Switch to Light)".T() : "Theme: Light (Switch to Dark)".T();
+            string settingsText = "Settings".T();
+            string exitText = "Exit".T();
 
             AppendMenu(hMenu, MF_STRING, ID_TRAY_OPEN, openText);
             AppendMenu(hMenu, MF_STRING, ID_TRAY_SCAN, scanText);

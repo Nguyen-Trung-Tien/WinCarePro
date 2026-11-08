@@ -135,10 +135,30 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button x:Name="BtnTabQuality" Grid.Column="0" Content="🚀 Bandwidth &amp; Radar" Click="OnTabQualityClick" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="Bold" FontSize="12.5" Padding="0,8"/>
-                <Button x:Name="BtnTabDns" Grid.Column="1" Content="🌐 DNS Intelligence" Click="OnTabDnsClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="SemiBold" FontSize="12.5" Padding="0,8"/>
-                <Button x:Name="BtnTabPorts" Grid.Column="2" Content="⚡ App Sockets &amp; Traffic" Click="OnTabPortsClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="SemiBold" FontSize="12.5" Padding="0,8"/>
-                <Button x:Name="BtnTabRepairs" Grid.Column="3" Content="🛠 Self-Healing &amp; Tools" Click="OnTabRepairsClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" FontWeight="SemiBold" FontSize="12.5" Padding="0,8"/>
+                <Button x:Name="BtnTabQuality" Grid.Column="0" Click="OnTabQualityClick" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE8B9;" FontSize="13" Foreground="{ThemeResource AppStatusInfoBrush}"/>
+                        <TextBlock Text="Bandwidth &amp; Radar" FontWeight="Bold" FontSize="12.5"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BtnTabDns" Grid.Column="1" Click="OnTabDnsClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE774;" FontSize="13" Foreground="{ThemeResource AppStatusCyanBrush}"/>
+                        <TextBlock Text="DNS Intelligence" FontWeight="SemiBold" FontSize="12.5"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BtnTabPorts" Grid.Column="2" Click="OnTabPortsClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xEC0A;" FontSize="13" Foreground="{ThemeResource AppStatusWarningBrush}"/>
+                        <TextBlock Text="App Sockets &amp; Traffic" FontWeight="SemiBold" FontSize="12.5"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="BtnTabRepairs" Grid.Column="3" Click="OnTabRepairsClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                    <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE90F;" FontSize="13" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                        <TextBlock Text="Self-Healing &amp; Tools" FontWeight="SemiBold" FontSize="12.5"/>
+                    </StackPanel>
+                </Button>
             </Grid>
         </Border>
 

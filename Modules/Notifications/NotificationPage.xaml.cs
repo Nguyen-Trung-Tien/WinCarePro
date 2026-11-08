@@ -61,16 +61,18 @@ public sealed partial class NotificationPage : Page
         if (PageTitleTextBlock != null) PageTitleTextBlock.Text = "Notifications & Activity Log".T();
         if (PageSubtitleTextBlock != null) PageSubtitleTextBlock.Text = "System telemetry alerts, diagnostic logs & operation records.".T();
 
-        if (BtnTabAlerts != null && BtnTabAlerts.Content is not StackPanel) BtnTabAlerts.Content = "System Alerts".T();
-        if (BtnTabLogs != null && BtnTabLogs.Content is not StackPanel) BtnTabLogs.Content = "Activity History".T();
+        UpdateButtonLabel(BtnTabAlerts, "System Alerts".T());
+        UpdateButtonLabel(BtnTabLogs, "Activity History".T());
+        UpdateButtonLabel(HeaderRefreshBtn, "Refresh".T());
 
         if (NotificationSearchBox != null) NotificationSearchBox.PlaceholderText = "Search alerts by title or description...".T();
         if (SearchBox != null) SearchBox.PlaceholderText = "Search logs by action or status...".T();
 
-        if (ClearAlertsBtn != null) ClearAlertsBtn.Content = "Clear All Alerts".T();
-        if (ClearLogsBtn != null) ClearLogsBtn.Content = "Clear Logs".T();
-        if (RefreshLogsBtn != null) RefreshLogsBtn.Content = "Refresh".T();
-        if (ExportLogsBtn != null) ExportLogsBtn.Content = "Export Logs".T();
+        UpdateButtonLabel(BtnMarkAllRead, "Mark All Read".T());
+        UpdateButtonLabel(ClearAlertsBtn, "Clear All Alerts".T());
+        UpdateButtonLabel(RefreshLogsBtn, "Refresh".T());
+        UpdateButtonLabel(ClearLogsBtn, "Clear Logs".T());
+        UpdateButtonLabel(ExportLogsBtn, "Export Logs".T());
 
         if (LevelAllItem != null) LevelAllItem.Content = "All Levels".T();
         if (LevelInfoItem != null) LevelInfoItem.Content = "Info".T();
@@ -97,7 +99,26 @@ public sealed partial class NotificationPage : Page
 
         if (NotificationsEmptyText != null) NotificationsEmptyText.Text = "All clear! No active system alerts.".T();
         if (LogsEmptyText != null) LogsEmptyText.Text = "No activity logs found.".T();
-        if (BtnMarkAllRead != null) BtnMarkAllRead.Content = "Mark All Read".T();
+    }
+
+    private static void UpdateButtonLabel(Button? btn, string text)
+    {
+        if (btn == null) return;
+        if (btn.Content is StackPanel sp)
+        {
+            var tb = sp.Children.OfType<TextBlock>().FirstOrDefault();
+            if (tb != null)
+            {
+                tb.Text = text;
+                return;
+            }
+        }
+        else if (btn.Content is TextBlock directTb)
+        {
+            directTb.Text = text;
+            return;
+        }
+        btn.Content = text;
     }
 
     private void OnTabAlertsClick(object sender, RoutedEventArgs e)
@@ -181,6 +202,11 @@ public sealed partial class NotificationPage : Page
                     DeckAlertsPill.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeGoodBorder"];
                     DeckAlertsPillText.Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeGoodFg"];
                     DeckAlertsPillText.Text = "All clear".T();
+                    if (DeckAlertsPillIcon != null)
+                    {
+                        DeckAlertsPillIcon.Glyph = "\uE73E";
+                        DeckAlertsPillIcon.Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeGoodFg"];
+                    }
                 }
                 else
                 {
@@ -188,6 +214,11 @@ public sealed partial class NotificationPage : Page
                     DeckAlertsPill.BorderBrush = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeWarningBorder"];
                     DeckAlertsPillText.Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeWarningFg"];
                     DeckAlertsPillText.Text = $"{totalActive} Action(s)".T();
+                    if (DeckAlertsPillIcon != null)
+                    {
+                        DeckAlertsPillIcon.Glyph = "\uE7BA";
+                        DeckAlertsPillIcon.Foreground = (Microsoft.UI.Xaml.Media.Brush)Application.Current.Resources["AppBadgeWarningFg"];
+                    }
                 }
             }
 

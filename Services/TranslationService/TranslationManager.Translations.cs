@@ -351,7 +351,7 @@ public partial class TranslationManager
         _translations["SafePathGuard Protection Active"] = "Lá chắn Bảo vệ SafePathGuard Đang hoạt động";
         _translations["SafePathGuard Active • 100% Protected"] = "SafePathGuard Đang hoạt động • Bảo vệ 100%";
         _translations["Safe Cache Only (Recommended)"] = "Chỉ dọn rác an toàn (Khuyên dùng)";
-        _translations["1-Click Smart Care (Scan & Optimize)"] = "Tối ưu 1 chạm (Quét & Tăng tốc)";
+        _translations["1-Click Smart Care"] = "Tối ưu 1 chạm";
         _translations["Scan Only"] = "Chỉ quét";
         _translations["Optimize Only"] = "Chỉ tối ưu";
         _translations["Junk & Storage"] = "Tệp rác & Bộ nhớ";

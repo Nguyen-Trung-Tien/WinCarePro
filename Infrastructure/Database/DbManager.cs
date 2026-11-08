@@ -22,19 +22,28 @@ public class DbManager
     private static readonly string DbPath = Path.Combine(AppDataPath, "wincaredb.db");
     private static readonly string ConnectionString = $"Data Source={DbPath};";
 
+    private static volatile bool _isWalModeConfigured;
+
     private static SqliteConnection CreateAndOpenConnection()
     {
         var connection = new SqliteConnection(ConnectionString);
         try
         {
             connection.Open();
-            using (var cmd = new SqliteCommand("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=5000; PRAGMA cache_size=-2000; PRAGMA temp_store=MEMORY;", connection))
+            string pragmaSql = _isWalModeConfigured
+                ? "PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=5000; PRAGMA cache_size=-2000; PRAGMA temp_store=MEMORY;"
+                : "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA busy_timeout=5000; PRAGMA cache_size=-2000; PRAGMA temp_store=MEMORY;";
+            using (var cmd = new SqliteCommand(pragmaSql, connection))
             {
                 try
                 {
                     cmd.ExecuteNonQuery();
+                    _isWalModeConfigured = true;
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("DbManager.PragmaInit", ex);
+                }
             }
             return connection;
         }
@@ -254,13 +263,17 @@ public class DbManager
     public static void InitializeDatabase()
     {
         _cachedSettings = null; // Clear cache on database initialization
+        _isWalModeConfigured = false;
         if (!Directory.Exists(AppDataPath))
         {
             try
             {
                 Directory.CreateDirectory(AppDataPath);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("DbManager.CreateAppDataDir", ex);
+            }
         }
 
         ExecuteWithConnection(connection =>

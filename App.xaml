@@ -1928,6 +1928,8 @@
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
             </Style>
 
+            <Style x:Key="StandardPrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource VibrantPrimaryButtonStyle}" />
+
             <!-- Value Converters -->
             <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />

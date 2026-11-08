@@ -120,24 +120,6 @@
                         CornerRadius="14" 
                         Padding="4,3">
                     <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                        <!-- Quick Experience Mode Switcher Capsule (Pill Switcher) -->
-                        <Button x:Name="TitleBarModeSwitchBtn" Click="OnTitleBarModeSwitchClick"
-                                Style="{StaticResource StandardSecondaryButtonStyle}"
-                                CornerRadius="10" Padding="8,3" Height="28"
-                                helpers:AnimationHelper.HoverScale="1.04" helpers:AnimationHelper.PressedScale="0.96"
-                                ToolTipService.ToolTip="Switch between Simple and Pro Mode"
-                                AutomationProperties.Name="Switch Experience Mode">
-                            <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
-                                <Border Width="16" Height="16" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" VerticalAlignment="Center">
-                                    <FontIcon x:Name="TitleBarModeIcon" Glyph="&#xE7FC;" FontSize="9.5" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <TextBlock x:Name="TitleBarModeText" Text="Simple Mode" FontSize="11" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display"/>
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Sleek Vertical Hairline Divider -->
-                        <Rectangle Width="1" Height="18" Fill="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.4" Margin="2,0"/>
-
                         <!-- Telemetry Chips Subgroup -->
                         <Button x:Name="CpuChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="10" Click="OnCpuChipClick" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance" AutomationProperties.Name="CPU Usage Monitor" AutomationProperties.HelpText="Click to view real-time CPU diagnostics and telemetry on the Dashboard.">
                             <Border Background="{ThemeResource AppCpuChipBg}" BorderBrush="{ThemeResource AppCpuChipBorder}" BorderThickness="1" CornerRadius="9" Padding="7,3">
@@ -160,11 +142,16 @@
                         <!-- Sleek Vertical Hairline Divider -->
                         <Rectangle Width="1" Height="18" Fill="{ThemeResource ControlStrokeColorDefaultBrush}" Opacity="0.4" Margin="2,0"/>
 
-                        <!-- Live Clock (Collapsed for minimalist TitleBar clarity) -->
-                        <StackPanel x:Name="ClockContainer" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center" Margin="4,0,4,0" Visibility="Collapsed">
+                        <!-- Live Clock -->
+                        <StackPanel x:Name="ClockContainer" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center" Margin="4,0,4,0" Visibility="Visible">
                             <FontIcon Glyph="&#xE787;" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
                             <TextBlock x:Name="ClockText" Text="--:--" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" AutomationProperties.Name="System Clock" AutomationProperties.LiveSetting="Polite"/>
                         </StackPanel>
+
+                        <!-- 1-Click Desktop Mini HUD Widget Toggle -->
+                        <Button x:Name="WidgetLaunchBtn" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="OnWidgetLaunchClick" helpers:AnimationHelper.HoverScale="1.08" helpers:AnimationHelper.PressedScale="0.92" ToolTipService.ToolTip="Desktop HUD Widget" AutomationProperties.Name="Desktop HUD Widget" AutomationProperties.HelpText="Launch or toggle the floating Desktop HUD performance widget.">
+                            <FontIcon Glyph="&#xE9D9;" FontSize="12.5" Foreground="{StaticResource PrimaryAccentBrush}" />
+                        </Button>
 
                         <!-- Notifications with Badge -->
                         <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="NotificationButton_Click" helpers:AnimationHelper.HoverScale="1.08" helpers:AnimationHelper.PressedScale="0.92" ToolTipService.ToolTip="Notifications" AutomationProperties.Name="Notifications" AutomationProperties.HelpText="Open notification center and review recent system alerts.">
@@ -307,8 +294,8 @@
             </StackPanel>
         </Grid>
 
-        <!-- Startup Overlay Grid (Aura Genesis Cinematic Loader) -->
-        <Grid x:Name="StartupOverlayGrid" Grid.Row="0" Grid.RowSpan="2" Visibility="Visible" Canvas.ZIndex="1100" Opacity="1">
+        <!-- Startup Overlay Grid (Collapsed for Instant Launch) -->
+        <Grid x:Name="StartupOverlayGrid" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Canvas.ZIndex="1100" Opacity="0">
             <Grid.Resources>
                 <Storyboard x:Name="FadeOutStartupOverlay" Completed="FadeOutStartupOverlay_Completed">
                     <DoubleAnimation Storyboard.TargetName="StartupOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.6">

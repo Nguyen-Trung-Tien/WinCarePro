@@ -201,8 +201,7 @@
                         <ListView ItemsSource="{x:Bind ViewModel.FilteredItems, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:ContextMenuItem">
-                                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="12,9" Margin="0,0,0,4"
-                                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
+                                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="12,9" Margin="0,0,0,4">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />

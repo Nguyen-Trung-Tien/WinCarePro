@@ -119,10 +119,19 @@ public sealed partial class SettingsPage : Page
 
     public void SelectSection(int index)
     {
-        if (index >= 0 && index < SettingsNavList.Items.Count)
+        int mappedTabIndex = index switch
         {
-            SettingsNavList.SelectedIndex = index;
-            SettingsNavList.ScrollIntoView(SettingsNavList.Items[index]);
+            0 or 1 => 0,
+            2 or 3 => 1,
+            4 or 5 or 7 or 8 => 2,
+            6 or 9 or 10 => 3,
+            _ => Math.Clamp(index, 0, Math.Max(0, SettingsNavList.Items.Count - 1))
+        };
+
+        if (mappedTabIndex >= 0 && mappedTabIndex < SettingsNavList.Items.Count)
+        {
+            SettingsNavList.SelectedIndex = mappedTabIndex;
+            SettingsNavList.ScrollIntoView(SettingsNavList.Items[mappedTabIndex]);
         }
     }
 
@@ -767,6 +776,14 @@ public sealed partial class SettingsPage : Page
 
     private Visibility GetSectionVisibility(int selectedIndex, int targetIndex)
     {
-        return selectedIndex == targetIndex ? Visibility.Visible : Visibility.Collapsed;
+        int mappedTabIndex = targetIndex switch
+        {
+            0 or 1 => 0,
+            2 or 3 => 1,
+            4 or 5 or 7 or 8 => 2,
+            6 or 9 or 10 => 3,
+            _ => 0
+        };
+        return selectedIndex == mappedTabIndex ? Visibility.Visible : Visibility.Collapsed;
     }
 }

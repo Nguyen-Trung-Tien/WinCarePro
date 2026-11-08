@@ -4313,6 +4313,36 @@ public partial class TranslationManager
         _translations["Bundled Bloatware"] = "Ứng dụng rác cài kèm";
         _translations["Least Used"] = "Ít sử dụng nhất";
 
+        // v5.2 Unified 6-Hub Navigation & Consolidated Settings Hubs
+        _translations["CORE HUBS"] = "TRUNG TÂM CHÍNH";
+        _translations["Smart Cockpit"] = "Buồng lái Thông minh";
+        _translations["Deep Cleaner"] = "Dọn dẹp Chuyên sâu";
+        _translations["App Studio"] = "Quản lý Ứng dụng";
+        _translations["Speed & Startup"] = "Tăng tốc & Khởi động";
+        _translations["Speed &amp; Startup"] = "Tăng tốc & Khởi động";
+        _translations["System Doctor"] = "Bác sĩ Hệ thống";
+        _translations["General & Appearance"] = "Cài đặt chung & Giao diện";
+        _translations["General &amp; Appearance"] = "Cài đặt chung & Giao diện";
+        _translations["Automation & Alerts"] = "Tự động hóa & Cảnh báo";
+        _translations["Automation &amp; Alerts"] = "Tự động hóa & Cảnh báo";
+        _translations["Safety, Storage & Backup"] = "An toàn, Lưu trữ & Sao lưu";
+        _translations["Safety, Storage &amp; Backup"] = "An toàn, Lưu trữ & Sao lưu";
+        _translations["Updates, Guide & About"] = "Cập nhật, Hướng dẫn & Thông tin";
+        _translations["Updates, Guide &amp; About"] = "Cập nhật, Hướng dẫn & Thông tin";
+        _translations["CLEAN & STORAGE"] = "DỌN DẸP & LƯU TRỮ";
+        _translations["CLEAN &amp; STORAGE"] = "DỌN DẸP & LƯU TRỮ";
+        _translations["SPEED & PERFORMANCE"] = "TĂNG TỐC & HIỆU NĂNG";
+        _translations["SPEED &amp; PERFORMANCE"] = "TĂNG TỐC & HIỆU NĂNG";
+        _translations["SECURITY & REPAIR"] = "BẢO MẬT & SỬA LỖI";
+        _translations["SECURITY &amp; REPAIR"] = "BẢO MẬT & SỬA LỖI";
+        _translations["Desktop HUD"] = "HUD Màn hình";
+        _translations["Desktop HUD Widget"] = "Tiện ích HUD Nổi";
+        _translations["Launch Desktop HUD"] = "Mở HUD Màn hình";
+        _translations["Open Smart Diagnostics"] = "Mở Chẩn đoán Thông minh";
+        _translations["Smart Diagnostics"] = "Chẩn đoán Thông minh";
+        _translations["Boot Optimizer"] = "Tối ưu Khởi động";
+        _translations["Software Updater"] = "Cập nhật Phần mềm";
+
         BuildReverseTranslations();
     }
 }

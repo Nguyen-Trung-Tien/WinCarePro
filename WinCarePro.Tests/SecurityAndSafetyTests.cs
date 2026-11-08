@@ -224,4 +224,31 @@ public class SecurityAndSafetyTests
             try { Directory.Delete(tempRoot, true); } catch { }
         }
     }
+
+    [Theory]
+    [InlineData(@"C:\Temp\wallet.dat")]
+    [InlineData(@"C:\Temp\kubeconfig")]
+    [InlineData(@"C:\Temp\.npmrc")]
+    [InlineData(@"C:\Temp\secring.gpg")]
+    public void SafePathGuard_BlocksSensitiveCredentialAndCryptoFiles(string filePath)
+    {
+        Assert.False(SafePathGuard.IsSafeToDelete(filePath));
+    }
+
+    [Theory]
+    [InlineData(@"HKLM\SYSTEM\CurrentControlSet\Control\SecureBoot\State")]
+    [InlineData(@"HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios")]
+    [InlineData("HKCU\\Software\\TestApp\\SubKey\0Injected")]
+    public void SafeRegistryGuard_BlocksProtectedBootKeysAndControlChars(string keyPath)
+    {
+        Assert.False(SafeRegistryGuard.IsSafeToDeleteKey(keyPath));
+    }
+
+    [Theory]
+    [InlineData(@"\\.\PhysicalDrive0")]
+    [InlineData(@"\\?\Volume{1234}")]
+    public void InputSanitizer_BlocksDosDevicePaths(string devicePath)
+    {
+        Assert.False(WinCarePro.Infrastructure.Security.InputSanitizer.IsValidLocalPath(devicePath));
+    }
 }

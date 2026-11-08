@@ -23,7 +23,8 @@ public static class SafePathGuard
         "Login Data", "Login Data For Account", "Web Data", "Local State",
         "Cookies", "Cookies-journal", "key4.db", "logins.json", "cert9.db",
         "Vault.dat", "credentials", "id_rsa", "id_ed25519", "id_ecdsa", "id_dsa", "known_hosts",
-        "token.json", "client_secret.json", "azureProfile.json", ".env", "private_key.pem", "keepass.kdbx"
+        "token.json", "client_secret.json", "azureProfile.json", ".env", "private_key.pem", "keepass.kdbx",
+        "wallet.dat", "kubeconfig", ".npmrc", ".pypirc", ".netrc", "secring.gpg", "pubring.kbx"
     };
 
     static SafePathGuard()
@@ -121,7 +122,7 @@ public static class SafePathGuard
                 BlacklistedExactPaths.Add(NormalizePath(Path.Combine(winDir, "WinSxS")));
                 BlacklistedExactPaths.Add(NormalizePath(Path.Combine(winDir, "system.ini")));
                 BlacklistedExactPaths.Add(NormalizePath(Path.Combine(winDir, "win.ini")));
-                
+
                 // Prefix protections: Protect Windows directory and all critical subdirectories
                 BlacklistedPathPrefixes.Add(NormalizePath(winDir));
                 BlacklistedPathPrefixes.Add(NormalizePath(Path.Combine(winDir, "System32")));

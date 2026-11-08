@@ -72,7 +72,10 @@ public class SystemOptimizerEngine
                     selfReclaimed = wsBefore - wsAfter;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("SystemOptimizerEngine.OptimizeRamAsync", ex);
+            }
         });
 
         ulong ramAfter = GetAvailablePhysicalMemory();

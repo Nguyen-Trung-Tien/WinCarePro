@@ -252,53 +252,149 @@ public sealed partial class MainPage : Page
         }
     }
 
+    private bool _isUpdatingNavSelection;
+
     public void UpdateSelectedNavItem()
     {
         if (ContentFrame.Content is not Page currentPage) return;
         var curType = currentPage.GetType();
 
-        if (curType == typeof(SettingsPage))
+        _isUpdatingNavSelection = true;
+        try
         {
-            NavView.SelectedItem = NavView.SettingsItem;
-            return;
-        }
-        if (curType == typeof(NotificationPage))
-        {
-            NavView.SelectedItem = null;
-            return;
-        }
-
-        string? targetTag = curType.Name switch
-        {
-            nameof(DashboardPage) => "Dashboard",
-            "AiWinCareEnginePage" => "AiWinCareEngine",
-            nameof(JunkPage) => "Junk",
-            nameof(UninstallPage) => "Uninstall",
-            nameof(NetworkPage) => "Network",
-            nameof(RepairPage) => "Repair",
-            nameof(SecurityPage) => "Security",
-            nameof(SystemOptimizerPage) => "Optimizer",
-            nameof(StartupPage) => "Startup",
-            nameof(ContextMenuPage) => "ContextMenu",
-            nameof(RegistryPage) => "Registry",
-            nameof(UpdaterPage) => "Updater",
-            _ => null
-        };
-
-        if (targetTag != null)
-        {
-            var match = NavView.MenuItems
-                .OfType<NavigationViewItem>()
-                .FirstOrDefault(x => x.Tag?.ToString()?.Equals(targetTag, StringComparison.OrdinalIgnoreCase) == true);
-            if (match != null)
+            if (curType == typeof(SettingsPage))
             {
-                NavView.SelectedItem = match;
+                NavView.SelectedItem = NavView.SettingsItem;
+                UpdateHubSubNavBar(null);
+                return;
             }
+            if (curType == typeof(NotificationPage))
+            {
+                NavView.SelectedItem = null;
+                UpdateHubSubNavBar(null);
+                return;
+            }
+
+            string? activeSubTag = curType.Name switch
+            {
+                nameof(DashboardPage) => "Dashboard",
+                "AiWinCareEnginePage" => "AiWinCareEngine",
+                nameof(JunkPage) => "Junk",
+                nameof(RegistryPage) => "Registry",
+                nameof(UninstallPage) => "Uninstall",
+                nameof(UpdaterPage) => "Updater",
+                nameof(SystemOptimizerPage) => "Optimizer",
+                nameof(StartupPage) => "Startup",
+                nameof(ContextMenuPage) => "ContextMenu",
+                nameof(RepairPage) => "Repair",
+                nameof(NetworkPage) => "Network",
+                nameof(SecurityPage) => "Security",
+                _ => null
+            };
+
+            if (activeSubTag != null)
+            {
+                var match = NavView.MenuItems
+                    .OfType<NavigationViewItem>()
+                    .FirstOrDefault(x => x.Tag?.ToString()?.Equals(activeSubTag, StringComparison.OrdinalIgnoreCase) == true);
+                if (match != null && !ReferenceEquals(NavView.SelectedItem, match))
+                {
+                    NavView.SelectedItem = match;
+                }
+            }
+
+            UpdateHubSubNavBar(activeSubTag);
+        }
+        finally
+        {
+            _isUpdatingNavSelection = false;
+        }
+    }
+
+    private void UpdateHubSubNavBar(string? activeSubTag)
+    {
+        if (HubSubNavBar == null) return;
+
+        if (string.IsNullOrEmpty(activeSubTag))
+        {
+            HubSubNavBar.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        HubSubNavBar.Visibility = Visibility.Visible;
+        var primaryStyle = Application.Current.Resources["VibrantPrimaryButtonStyle"] as Style;
+        var secondaryStyle = Application.Current.Resources["StandardSecondaryButtonStyle"] as Style;
+
+        void ConfigureTab(Button btn, FontIcon icon, TextBlock text, string tag, string glyph, string labelKey, bool visible = true)
+        {
+            btn.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+            btn.Tag = tag;
+            icon.Glyph = glyph;
+            text.Text = labelKey.T();
+            bool isActive = tag.Equals(activeSubTag, StringComparison.OrdinalIgnoreCase);
+            if (primaryStyle != null && secondaryStyle != null)
+            {
+                btn.Style = isActive ? primaryStyle : secondaryStyle;
+            }
+        }
+
+        switch (activeSubTag.ToLowerInvariant())
+        {
+            case "dashboard":
+            case "aiwincareengine":
+                ConfigureTab(HubTabBtn1, HubTabIcon1, HubTabText1, "Dashboard", "\uE80F", "Smart Cockpit");
+                ConfigureTab(HubTabBtn2, HubTabIcon2, HubTabText2, "AiWinCareEngine", "\uE99A", "Smart Diagnostics");
+                HubTabBtn3.Visibility = Visibility.Collapsed;
+                break;
+
+            case "junk":
+            case "registry":
+                ConfigureTab(HubTabBtn1, HubTabIcon1, HubTabText1, "Junk", "\uEA99", "Junk Cleaner");
+                ConfigureTab(HubTabBtn2, HubTabIcon2, HubTabText2, "Registry", "\uEDA2", "Registry Center");
+                HubTabBtn3.Visibility = Visibility.Collapsed;
+                break;
+
+            case "uninstall":
+            case "updater":
+                ConfigureTab(HubTabBtn1, HubTabIcon1, HubTabText1, "Uninstall", "\uE74D", "App Uninstaller");
+                ConfigureTab(HubTabBtn2, HubTabIcon2, HubTabText2, "Updater", "\uE895", "Software Updater");
+                HubTabBtn3.Visibility = Visibility.Collapsed;
+                break;
+
+            case "optimizer":
+            case "startup":
+            case "contextmenu":
+                ConfigureTab(HubTabBtn1, HubTabIcon1, HubTabText1, "Optimizer", "\uE7FC", "System Optimizer");
+                ConfigureTab(HubTabBtn2, HubTabIcon2, HubTabText2, "Startup", "\uE7B5", "Startup & Services");
+                ConfigureTab(HubTabBtn3, HubTabIcon3, HubTabText3, "ContextMenu", "\uE8EC", "Context Menu");
+                break;
+
+            case "repair":
+            case "network":
+            case "security":
+                ConfigureTab(HubTabBtn1, HubTabIcon1, HubTabText1, "Repair", "\uE90F", "System Repair");
+                ConfigureTab(HubTabBtn2, HubTabIcon2, HubTabText2, "Network", "\uE701", "Network Center");
+                ConfigureTab(HubTabBtn3, HubTabIcon3, HubTabText3, "Security", "\uE727", "Security Shield");
+                break;
+
+            default:
+                HubSubNavBar.Visibility = Visibility.Collapsed;
+                break;
+        }
+    }
+
+    private void OnHubSubTabClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is string tag)
+        {
+            NavigateToPageExternal(tag);
         }
     }
 
     private void OnNavSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
     {
+        if (_isUpdatingNavSelection) return;
+
         if (args.IsSettingsSelected)
         {
             NavigateToPage("Settings");
@@ -336,19 +432,8 @@ public sealed partial class MainPage : Page
             return;
         }
 
-        var menuItem = NavView.MenuItems
-            .OfType<NavigationViewItem>()
-            .FirstOrDefault(x => x.Tag?.ToString()?.Equals(tag, StringComparison.OrdinalIgnoreCase) == true);
-        
-        if (menuItem != null)
-        {
-            NavView.SelectedItem = menuItem;
-            NavigateToPage(tag);
-        }
-        else
-        {
-            NavigateToPage(tag);
-        }
+        NavigateToPage(tag);
+        UpdateSelectedNavItem();
     }
 
     private void NavigateToPage(string tag)
@@ -439,7 +524,10 @@ public sealed partial class MainPage : Page
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("MainPage.LoadAnimationsConfiguration", ex);
+        }
     }
 
     private bool _animationsEnabled = true;
@@ -513,7 +601,10 @@ public sealed partial class MainPage : Page
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("MainPage.CleanupActivePage", ex);
+        }
     }
 
     private void UpdateUserAvatarAccent()
@@ -535,42 +626,38 @@ public sealed partial class MainPage : Page
 
     public void UpdateExperienceMode(bool isPro)
     {
-        // Advanced/technical items reserved for Pro Mode
-        if (NavAi != null) NavAi.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavContextMenu != null) NavContextMenu.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavStartup != null) NavStartup.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavUpdater != null) NavUpdater.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavRepair != null) NavRepair.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavNetwork != null) NavNetwork.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavRegistry != null) NavRegistry.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
+        // Unified 4-Pillar Architecture: All 12 core modules are directly accessible in the sidebar and synchronized with the contextual switcher
+        if (NavDashboard != null) NavDashboard.Visibility = Visibility.Visible;
+        if (NavAi != null) NavAi.Visibility = Visibility.Visible;
+        if (NavJunk != null) NavJunk.Visibility = Visibility.Visible;
+        if (NavRegistry != null) NavRegistry.Visibility = Visibility.Visible;
+        if (NavUninstall != null) NavUninstall.Visibility = Visibility.Visible;
+        if (NavUpdater != null) NavUpdater.Visibility = Visibility.Visible;
+        if (NavOptimizer != null) NavOptimizer.Visibility = Visibility.Visible;
+        if (NavStartup != null) NavStartup.Visibility = Visibility.Visible;
+        if (NavContextMenu != null) NavContextMenu.Visibility = Visibility.Visible;
+        if (NavRepair != null) NavRepair.Visibility = Visibility.Visible;
+        if (NavNetwork != null) NavNetwork.Visibility = Visibility.Visible;
+        if (NavSecurity != null) NavSecurity.Visibility = Visibility.Visible;
 
-        // Group headers and separators: show in Pro Mode for structured categorization, hide in Simple Mode for minimal clarity
-        if (NavHeaderOverview != null) NavHeaderOverview.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavSepClean != null) NavSepClean.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavHeaderClean != null) NavHeaderClean.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavSepSpeed != null) NavSepSpeed.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavHeaderSpeed != null) NavHeaderSpeed.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavSepSecurity != null) NavSepSecurity.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-        if (NavHeaderSecurity != null) NavHeaderSecurity.Visibility = isPro ? Visibility.Visible : Visibility.Collapsed;
-
-        if (!isPro && ContentFrame.CurrentSourcePageType != null)
-        {
-            var curTypeName = ContentFrame.CurrentSourcePageType.Name;
-            if (curTypeName is "AiWinCareEnginePage" or "ContextMenuPage" or "StartupPage" or "UpdaterPage" or "RepairPage" or "NetworkPage" or "RegistryPage")
-            {
-                NavigateToPageExternal("dashboard");
-            }
-        }
+        if (NavHeaderOverview != null) NavHeaderOverview.Visibility = Visibility.Visible;
+        if (NavSepClean != null) NavSepClean.Visibility = Visibility.Visible;
+        if (NavHeaderClean != null) NavHeaderClean.Visibility = Visibility.Visible;
+        if (NavSepSpeed != null) NavSepSpeed.Visibility = Visibility.Visible;
+        if (NavHeaderSpeed != null) NavHeaderSpeed.Visibility = Visibility.Visible;
+        if (NavSepSecurity != null) NavSepSecurity.Visibility = Visibility.Visible;
+        if (NavHeaderSecurity != null) NavHeaderSecurity.Visibility = Visibility.Visible;
 
         if (ContentFrame.Content is DashboardPage dbPage)
         {
-            dbPage.UpdateExperienceMode(isPro);
+            dbPage.UpdateExperienceMode(true);
         }
 
         if (App.MainWindowInstance is MainWindow mw)
         {
-            mw.UpdateTitleBarExperienceMode(isPro);
+            mw.UpdateTitleBarExperienceMode(true);
         }
         TranslationManager.Instance.Translate(this);
+        UpdateSelectedNavItem();
     }
 }

@@ -76,9 +76,13 @@ public static class InputSanitizer
         if (string.IsNullOrWhiteSpace(path))
             return false;
 
+        string trimmed = path.Trim();
+        if (trimmed.StartsWith(@"\\.\") || trimmed.StartsWith(@"\\?\") || trimmed.IndexOf('\0') >= 0)
+            return false;
+
         try
         {
-            string fullPath = Path.GetFullPath(path);
+            string fullPath = Path.GetFullPath(trimmed);
             return File.Exists(fullPath) || Directory.Exists(fullPath);
         }
         catch

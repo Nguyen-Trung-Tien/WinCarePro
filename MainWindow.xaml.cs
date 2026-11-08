@@ -217,31 +217,25 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            await SmoothTweenProgressAsync(25, "Initializing core system engine...", 40);
+            StartupOverlayGrid.Visibility = Visibility.Collapsed;
 
             // 1. Ensure database & telemetry store are synchronized
             await Task.Run(() => SettingsService.Instance.LoadSettings());
-            await SmoothTweenProgressAsync(55, "Loading database & telemetry store...", 40);
 
             // 2. Load theme settings and transparency levels from DB
             LoadThemeConfiguration();
-            await SmoothTweenProgressAsync(75, "Applying visual themes & typography...", 40);
 
             // 3. Load language setting and apply translations to window content
             TranslationManager.Instance.LoadLanguageFromSettings();
             TranslationManager.Instance.Translate(this.Content);
-            await SmoothTweenProgressAsync(90, "Applying localized linguistic model...", 40);
 
             // 4. Update notification badge indicator & prepare main view
             UpdateNotificationBadge();
             RootFrame.Navigate(typeof(MainPage));
-            UpdateTitleBarExperienceMode(WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.IsProMode);
+            UpdateTitleBarExperienceMode(true);
 
-            await SmoothTweenProgressAsync(100, "Ready!", 30);
-
-            // 5. Start Clock Ticker & fade out splash overlay smoothly
+            // 5. Start Clock Ticker
             StartClockTicker();
-            FadeOutStartupOverlay.Begin();
 
             // 6. Deferred background tasks: Database maintenance
             AppTitleVersionBadge.Text = WinCarePro.Core.AppConstants.DisplayVersion;
@@ -275,11 +269,21 @@ public sealed partial class MainWindow : Window
         catch (Exception ex)
         {
             // Fallback: Ensure splash vanishes and app is navigable if anything throws
-            StartupOverlayGrid.Visibility = Visibility.Collapsed;
-            RootFrame.Navigate(typeof(MainPage));
-            StartClockTicker();
-            Database.DbManager.LogAction($"Startup failed: {ex.Message}", "System", "Failed");
             Infrastructure.Logging.CrashLogger.LogException("MainWindow.InitializeAppAsync", ex);
+            StartupOverlayGrid.Visibility = Visibility.Collapsed;
+            StartClockTicker();
+            try { Database.DbManager.LogAction($"Startup failed: {ex.Message}", "System", "Failed"); } catch { }
+            try
+            {
+                if (RootFrame.Content == null)
+                {
+                    RootFrame.Navigate(typeof(MainPage));
+                }
+            }
+            catch (Exception navEx)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("MainWindow.InitializeAppAsync.FallbackNavigate", navEx);
+            }
         }
     }
 
@@ -360,15 +364,14 @@ public sealed partial class MainWindow : Window
 
                 this.DispatcherQueue.TryEnqueue(() =>
                 {
-                    bool isPro = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.IsProMode;
                     if (CpuChipText != null)
                     {
-                        CpuChipText.Text = isPro && cpuPercent > 0 ? $"CPU {cpuPercent:F0}%" : "CPU";
+                        CpuChipText.Text = $"CPU {cpuPercent:F0}%";
                         ToolTipService.SetToolTip(CpuChipButton, $"CPU Usage: {cpuPercent:F0}%\nClick to open live Dashboard monitor.".T());
                     }
                     if (RamChipText != null)
                     {
-                        RamChipText.Text = isPro ? $"RAM {ramPercent:F0}%" : "RAM";
+                        RamChipText.Text = $"RAM {ramPercent:F0}%";
                         ToolTipService.SetToolTip(RamChipButton, $"RAM Usage: {ramPercent:F0}% ({freeGb:F1} GB free of {totalGb:F1} GB)\nClick to perform 1-Click RAM Purge.".T());
                     }
                 });
@@ -455,13 +458,19 @@ public sealed partial class MainWindow : Window
                 netPage.ViewModel?.Cleanup();
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("MainWindow_Closed.PageCleanup", ex);
+        }
 
         try
         {
             WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.CloseWindow();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("MainWindow_Closed.WidgetClose", ex);
+        }
 
         try
         {
@@ -469,7 +478,10 @@ public sealed partial class MainWindow : Window
             DbManager.ShutdownDatabase();
             App.ReleaseSingleInstanceMutex();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("MainWindow_Closed.DbShutdown", ex);
+        }
     }
 
     private void OnDbNotificationAdded(WinCarePro.Models.NotificationItem item)
@@ -622,16 +634,6 @@ public sealed partial class MainWindow : Window
 
     public async void PerformAppExit()
     {
-        this.AppWindow.Show();
-        BringToForeground();
-
-        ExitOverlayTitle.Text = "Shutting Down".T();
-        ExitOverlayMessage.Text = "Securing database, flushing memory caches & closing services...".T();
-        ExitOverlayGrid.Visibility = Visibility.Visible;
-        FadeInExitOverlay.Begin();
-
-        // Stage 1: UI and active page cleanup
-        await SmoothTweenExitProgressAsync(30, "Saving session state & active modules...", 200);
         try
         {
             if (RootFrame.Content is MainPage mainPage)
@@ -647,10 +649,11 @@ public sealed partial class MainWindow : Window
             WinCarePro.Core.Helpers.Animation3DHelper.StopAll3DScanEffects();
             WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.CloseWindow();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("PerformAppExit.Cleanup", ex);
+        }
 
-        // Stage 2: Database shutdown & WAL checkpoint flush
-        await SmoothTweenExitProgressAsync(70, "Flushing SQLite WAL checkpoint & memory pools...", 220);
         await Task.Run(() =>
         {
             try
@@ -658,23 +661,21 @@ public sealed partial class MainWindow : Window
                 WinCarePro.Services.Implementations.SettingsService.Instance.FlushPendingSave();
                 DbManager.ShutdownDatabase();
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("PerformAppExit.DbShutdown", ex);
+            }
         });
 
-        // Stage 3: Disposing telemetry & tray icons
-        await SmoothTweenExitProgressAsync(95, "Disposing telemetry engines & system monitors...", 180);
         try
         {
             App.Services?.GetService<Services.Contracts.IBackgroundWatchdogService>()?.Stop();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("PerformAppExit.WatchdogStop", ex);
+        }
         CleanupTrayIcon();
-
-        // Stage 4: Farewell complete
-        await SmoothTweenExitProgressAsync(100, "All resources secured. Goodbye!", 150);
-        ExitOverlayTitle.Text = "Session Terminated".T();
-
-        await Task.Delay(250);
 
         App.ReleaseSingleInstanceMutex();
         _forceClose = true;
@@ -719,26 +720,21 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void OnTitleBarModeSwitchClick(object sender, RoutedEventArgs e)
+    private void OnWidgetLaunchClick(object sender, RoutedEventArgs e)
     {
-        var cur = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
-        bool newMode = !cur.IsProMode;
-        WinCarePro.Services.Implementations.SettingsService.Instance.UpdateSettings(s => s.IsProMode = newMode, "IsProMode");
-        UpdateTitleBarExperienceMode(newMode);
-        if (RootFrame.Content is MainPage mp)
+        try
         {
-            mp.UpdateExperienceMode(newMode);
+            WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.ShowWindow();
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("MainWindow.OnWidgetLaunchClick", ex);
         }
     }
 
     public void UpdateTitleBarExperienceMode(bool isPro)
     {
-        this.DispatcherQueue.TryEnqueue(() =>
-        {
-            if (TitleBarModeText != null) TitleBarModeText.Text = isPro ? "Pro Mode".T() : "Simple Mode".T();
-            if (TitleBarModeIcon != null) TitleBarModeIcon.Glyph = isPro ? "\uE90F" : "\uE7FC";
-            if (TitleBarModeSwitchBtn != null) ToolTipService.SetToolTip(TitleBarModeSwitchBtn, isPro ? "Current: Pro Mode (Click to switch to Simple Mode)".T() : "Current: Simple Mode (Click to switch to Pro Mode)".T());
-        });
+        // Unified experience mode — all hubs and tools directly accessible
     }
 
     private void OnCpuChipClick(object sender, RoutedEventArgs e)
@@ -767,7 +763,10 @@ public sealed partial class MainWindow : Window
                     notificationService?.ShowToast("RAM Optimized".T(), "Process working sets trimmed and managed memory reclaimed.".T(), Services.Contracts.NotificationSeverity.Success);
                 });
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("MainWindow.OnRamChipClick", ex);
+            }
         });
     }
 

@@ -90,7 +90,10 @@ public static class SafeRegistryGuard
         @"HKLM\SOFTWARE\Policies",
         @"HKCU\Software\Policies",
         @"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies",
-        @"HKCU\Software\Microsoft\Windows\CurrentVersion\Policies"
+        @"HKCU\Software\Microsoft\Windows\CurrentVersion\Policies",
+        @"HKLM\SYSTEM\CurrentControlSet\Control\BootVerificationProgram",
+        @"HKLM\SYSTEM\CurrentControlSet\Control\SecureBoot",
+        @"HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard"
     };
 
     /// <summary>
@@ -99,7 +102,7 @@ public static class SafeRegistryGuard
     /// </summary>
     public static bool IsSafeToDeleteKey(string rawPath)
     {
-        if (string.IsNullOrWhiteSpace(rawPath)) return false;
+        if (string.IsNullOrWhiteSpace(rawPath) || rawPath.IndexOfAny(new[] { '\0', '\r', '\n' }) >= 0) return false;
 
         string normalized = NormalizePath(rawPath);
 

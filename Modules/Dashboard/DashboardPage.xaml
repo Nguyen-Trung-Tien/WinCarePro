@@ -203,7 +203,7 @@
                                                 AutomationProperties.HelpText="Instantly scan and optimize system performance, RAM, and junk files in one single click.">
                                             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                                                 <FontIcon Glyph="&#xE9D9;" FontSize="15" Foreground="White"/>
-                                                <TextBlock Text="1-Click Smart Care (Scan &amp; Optimize)" FontWeight="ExtraBold" FontSize="13.5"/>
+                                                <TextBlock Text="1-Click Smart Care" FontWeight="ExtraBold" FontSize="13.5"/>
                                             </StackPanel>
                                         </Button>
 

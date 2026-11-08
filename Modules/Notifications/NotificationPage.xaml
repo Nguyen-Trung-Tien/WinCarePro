@@ -13,7 +13,7 @@
         <CollectionViewSource x:Name="GroupedNotificationsCVS" IsSourceGrouped="True" />
     </Page.Resources>
 
-    <Grid Padding="20,14" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="24,16" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1050px -->
@@ -49,73 +49,85 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Dynamic Header & Segmented Pill Deck -->
-        <Grid Grid.Row="0" Margin="0,0,0,12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+        <!-- Spatial HUD Glass Banner Header -->
+        <Border Grid.Row="0" Margin="0,0,0,14"
+                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                BorderThickness="1" CornerRadius="16" Padding="16,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-            <!-- Left: Title & Subtitle with Badge & Glowing Aura Emblem -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <Border Width="40" Height="40" CornerRadius="12"
+                <!-- Left: Title, Subtitle & Aura Sentinel Live Pill -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                    <Border Width="44" Height="44" CornerRadius="14"
+                            Background="{ThemeResource AppCardBackground}"
+                            BorderBrush="{StaticResource PrimaryAccentBorderBrush}"
+                            BorderThickness="1.2"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True"
+                            helpers:Animation3DHelper.MaxTiltAngle="5.0"
+                            helpers:Animation3DHelper.DepthZ="8"
+                            VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE91C;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Spacing="3" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <TextBlock x:Name="PageTitleTextBlock" Text="Notifications &amp; Activity Log"
+                                       FontFamily="Segoe UI Variable Display" FontSize="18" FontWeight="Bold"
+                                       Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="7,2" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <Ellipse Width="6" Height="6" Fill="#FF10B981" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Aura Sentinel Active" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock x:Name="PageSubtitleTextBlock" Text="System telemetry alerts, diagnostic logs &amp; operation records."
+                                   FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Center/Right: Segmented Tabs in a sleek compact pill deck -->
+                <Border Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,0"
                         Background="{ThemeResource AppCardBackground}"
-                        BorderBrush="{ThemeResource AppCardBorder}"
-                        BorderThickness="1"
-                        helpers:Animation3DHelper.Is3DTiltEnabled="True"
-                        helpers:Animation3DHelper.MaxTiltAngle="5.0"
-                        helpers:Animation3DHelper.DepthZ="8"
-                        VerticalAlignment="Center">
-                    <FontIcon Glyph="&#xE91C;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-                <StackPanel Spacing="2" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock x:Name="PageTitleTextBlock" Text="Notifications &amp; Activity Log" Style="{StaticResource PageHeaderTitleStyle}"/>
-                        <Border Background="{ThemeResource AppBadgeNeutralBg}" BorderBrush="{ThemeResource AppBadgeNeutralBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
-                            <StackPanel Orientation="Horizontal" Spacing="4">
-                                <Ellipse Width="5" Height="5" Fill="#FF10B981" VerticalAlignment="Center"/>
-                                <TextBlock Text="Aura Sentinel" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1" Padding="3" CornerRadius="12"
+                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="6">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <Button x:Name="BtnTabAlerts" Click="OnTabAlertsClick" Style="{StaticResource ActivePresetChipButtonStyle}" Height="34" Padding="14,0" CornerRadius="9">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE7BA;" FontSize="12.5"/>
+                                <TextBlock Text="System Alerts" FontSize="12" FontWeight="SemiBold"/>
                             </StackPanel>
-                        </Border>
+                        </Button>
+
+                        <Button x:Name="BtnTabLogs" Click="OnTabLogsClick" Style="{StaticResource InactivePresetChipButtonStyle}" Height="34" Padding="14,0" CornerRadius="9">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE81C;" FontSize="12.5"/>
+                                <TextBlock Text="Activity History" FontSize="12" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
-                    <TextBlock x:Name="PageSubtitleTextBlock" Text="System telemetry alerts, diagnostic logs &amp; operation records." Style="{StaticResource PageHeaderSubtitleStyle}"/>
-                </StackPanel>
-            </StackPanel>
+                </Border>
 
-            <!-- Center/Right: Segmented Tabs in a sleek compact pill deck -->
-            <Border Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,0" Style="{StaticResource AuraGlassCardStyle}" Padding="3" CornerRadius="10"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                    <Button x:Name="BtnTabAlerts" Click="OnTabAlertsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="14,0" CornerRadius="8">
+                <!-- Quick Action Controls -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <Button x:Name="HeaderRefreshBtn" Click="OnRefreshClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" Padding="14,0" CornerRadius="10"
+                            ToolTipService.ToolTip="Refresh Telemetry &amp; Logs">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE7BA;" FontSize="12.5"/>
-                            <TextBlock Text="System Alerts" FontSize="12" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button x:Name="BtnTabLogs" Click="OnTabLogsClick" Style="{StaticResource DefaultButtonStyle}" Height="32" Padding="14,0" CornerRadius="8">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE81C;" FontSize="12.5"/>
-                            <TextBlock Text="Activity History" FontSize="12" FontWeight="SemiBold"/>
+                            <FontIcon Glyph="&#xE72C;" FontSize="12.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Refresh" FontSize="12" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
-            </Border>
-
-            <!-- Quick Action Controls -->
-            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                <Button x:Name="HeaderRefreshBtn" Click="OnRefreshClick" Style="{StaticResource DefaultButtonStyle}" Height="34" Padding="12,0" CornerRadius="8">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                        <TextBlock Text="Refresh" FontSize="12" FontWeight="SemiBold"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
+            </Grid>
+        </Border>
 
         <!-- Smart Hero Deck: 3-Card Bento Metric Grid -->
-        <Grid x:Name="HeroBentoGrid" Grid.Row="1" Margin="0,0,0,12" ColumnSpacing="10" RowSpacing="10">
+        <Grid x:Name="HeroBentoGrid" Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -123,23 +135,26 @@
             </Grid.ColumnDefinitions>
 
             <!-- Card 1: Active Alerts Sentinel -->
-            <Border x:Name="CardAlerts" Grid.Column="0" Style="{StaticResource AuraGlassCardStyle}" Padding="14,10" CornerRadius="12"
+            <Border x:Name="CardAlerts" Grid.Column="0"
+                    Background="{ThemeResource AppCardBackground}"
+                    BorderBrush="{ThemeResource AppCardBorder}"
+                    BorderThickness="1" CornerRadius="16" Padding="16,14"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8"
-                    helpers:AnimationHelper.HoverScale="1.02">
-                <Grid ColumnSpacing="12">
+                    helpers:AnimationHelper.HoverScale="1.015">
+                <Grid ColumnSpacing="14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="12" Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1">
-                        <FontIcon Glyph="&#xE7BA;" FontSize="15" Foreground="{ThemeResource AppBadgeWarningFg}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="12" Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="16" Foreground="{ThemeResource AppBadgeWarningFg}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <TextBlock Text="Active Alerts" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="DeckAlertsCountText" Text="0" FontSize="18" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.LiveSetting="Polite"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Active Alerts" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="DeckAlertsCountText" Text="0" FontSize="22" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.LiveSetting="Polite"/>
                     </StackPanel>
-                    <Border Grid.Column="2" x:Name="DeckAlertsPill" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="7,2" VerticalAlignment="Center">
+                    <Border Grid.Column="2" x:Name="DeckAlertsPill" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <FontIcon x:Name="DeckAlertsPillIcon" Glyph="&#xE73E;" FontSize="10" Foreground="{ThemeResource AppBadgeGoodFg}" VerticalAlignment="Center"/>
                             <TextBlock x:Name="DeckAlertsPillText" Text="All clear" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
@@ -149,48 +164,54 @@
             </Border>
 
             <!-- Card 2: Shield Operations Today -->
-            <Border x:Name="CardOperations" Grid.Column="1" Style="{StaticResource AuraGlassCardStyle}" Padding="14,10" CornerRadius="12"
+            <Border x:Name="CardOperations" Grid.Column="1"
+                    Background="{ThemeResource AppCardBackground}"
+                    BorderBrush="{ThemeResource AppCardBorder}"
+                    BorderThickness="1" CornerRadius="16" Padding="16,14"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8"
-                    helpers:AnimationHelper.HoverScale="1.02">
-                <Grid ColumnSpacing="12">
+                    helpers:AnimationHelper.HoverScale="1.015">
+                <Grid ColumnSpacing="14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="12" Background="#1810B981" BorderBrush="#3010B981" BorderThickness="1">
-                        <FontIcon Glyph="&#xEA1F;" FontSize="15" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="12" Background="#1810B981" BorderBrush="#3010B981" BorderThickness="1" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xEA1F;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <TextBlock Text="Operations Today" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="DeckOperationsCountText" Text="0" FontSize="18" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.LiveSetting="Polite"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Operations Today" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock x:Name="DeckOperationsCountText" Text="0" FontSize="22" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.LiveSetting="Polite"/>
                     </StackPanel>
-                    <Border Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="7,2" VerticalAlignment="Center">
+                    <Border Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <Ellipse Width="6" Height="6" Fill="#FF10B981" VerticalAlignment="Center"/>
-                            <TextBlock Text="Sentinel Active" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            <TextBlock Text="Protected" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                         </StackPanel>
                     </Border>
                 </Grid>
             </Border>
 
             <!-- Card 3: Live Telemetry Pulse -->
-            <Border x:Name="CardTelemetry" Grid.Column="2" Style="{StaticResource AuraGlassCardStyle}" Padding="14,10" CornerRadius="12"
+            <Border x:Name="CardTelemetry" Grid.Column="2"
+                    Background="{ThemeResource AppCardBackground}"
+                    BorderBrush="{ThemeResource AppCardBorder}"
+                    BorderThickness="1" CornerRadius="16" Padding="16,14"
                     helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8"
-                    helpers:AnimationHelper.HoverScale="1.02">
-                <Grid ColumnSpacing="12">
+                    helpers:AnimationHelper.HoverScale="1.015">
+                <Grid ColumnSpacing="14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="12" Background="#183B82F6" BorderBrush="#303B82F6" BorderThickness="1">
-                        <FontIcon Glyph="&#xE916;" FontSize="15" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="12" Background="#183B82F6" BorderBrush="#303B82F6" BorderThickness="1" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE916;" FontSize="16" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                        <TextBlock Text="Live Telemetry Pulse" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <TextBlock x:Name="DeckRecentPulseText" Text="Just Now" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Typography.NumeralAlignment="Tabular" AutomationProperties.LiveSetting="Polite"/>
-                            <TextBlock x:Name="DeckRecentModuleText" Text="• System Idle" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Live Telemetry Pulse" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock x:Name="DeckRecentPulseText" Text="Just Now" FontSize="15" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Typography.NumeralAlignment="Tabular" AutomationProperties.LiveSetting="Polite"/>
+                            <TextBlock x:Name="DeckRecentModuleText" Text="• System Idle" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -207,49 +228,79 @@
                 </Grid.RowDefinitions>
 
                 <!-- Alert Controls Filter Bar -->
-                <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="10,6" CornerRadius="10">
+                <Border Grid.Row="0"
+                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1" Padding="10,8" CornerRadius="12">
                     <Grid ColumnSpacing="10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="160" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         
-                        <TextBox x:Name="NotificationSearchBox" PlaceholderText="Search alerts by title or description..." TextChanged="OnNotificationSearchChanged" VerticalAlignment="Center" Height="32" CornerRadius="6" FontSize="12" AutomationProperties.Name="Search Alerts"/>
+                        <TextBox x:Name="NotificationSearchBox" PlaceholderText="Search alerts by title or description..." TextChanged="OnNotificationSearchChanged" VerticalAlignment="Center" Height="34" CornerRadius="8" FontSize="12" AutomationProperties.Name="Search Alerts"/>
                         
-                        <ComboBox x:Name="NotificationLevelFilter" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnNotificationFilterChanged" SelectedIndex="0" VerticalAlignment="Center" Height="32" CornerRadius="6" FontSize="12" AutomationProperties.Name="Filter by Alert Level">
+                        <ComboBox x:Name="NotificationLevelFilter" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnNotificationFilterChanged" SelectedIndex="0" VerticalAlignment="Center" Height="34" CornerRadius="8" FontSize="12" AutomationProperties.Name="Filter by Alert Level">
                             <ComboBoxItem x:Name="LevelAllItem" Content="All Levels" Tag="All"/>
                             <ComboBoxItem x:Name="LevelInfoItem" Content="Info" Tag="Info"/>
                             <ComboBoxItem x:Name="LevelWarningItem" Content="Warning" Tag="Warning"/>
                             <ComboBoxItem x:Name="LevelCriticalItem" Content="Critical" Tag="Critical"/>
                         </ComboBox>
                         
-                        <Button x:Name="BtnMarkAllRead" Grid.Column="2" Click="OnMarkAllReadClick" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Padding="12,0" Height="32" CornerRadius="6" AutomationProperties.Name="Mark All Read">
+                        <Button x:Name="BtnMarkAllRead" Grid.Column="2" Click="OnMarkAllReadClick" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Padding="14,0" Height="34" CornerRadius="8" AutomationProperties.Name="Mark All Read">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                <TextBlock Text="Mark All Read" FontSize="11.5" FontWeight="SemiBold"/>
+                                <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="Mark All Read" FontSize="12" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="ClearAlertsBtn" Grid.Column="3" Click="OnClearNotificationsClick" Style="{StaticResource DangerButtonStyle}" VerticalAlignment="Center" Padding="12,0" Height="32" CornerRadius="6" AutomationProperties.Name="Clear All Alerts" AutomationProperties.HelpText="Permanently purge all notifications and alerts from history.">
+                        <Button x:Name="ClearAlertsBtn" Grid.Column="3" Click="OnClearNotificationsClick" Style="{StaticResource DangerButtonStyle}" VerticalAlignment="Center" Padding="14,0" Height="34" CornerRadius="8" AutomationProperties.Name="Clear All Alerts" AutomationProperties.HelpText="Permanently purge all notifications and alerts from history.">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xE74D;" FontSize="11" Foreground="{ThemeResource AppStatusDangerBrush}"/>
-                                <TextBlock Text="Clear All Alerts" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                                <FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                                <TextBlock Text="Clear All Alerts" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                             </StackPanel>
                         </Button>
                     </Grid>
                 </Border>
 
                 <!-- System Notifications List -->
-                <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="10" CornerRadius="12">
+                <Border Grid.Row="1"
+                        Background="{ThemeResource AppCardBackground}"
+                        BorderBrush="{ThemeResource AppCardBorder}"
+                        BorderThickness="1" Padding="12" CornerRadius="14">
                     <Grid>
                         <ListView x:Name="NotificationsListView" ItemsSource="{x:Bind GroupedNotificationsCVS.View, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Margin" Value="0,3" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="MinHeight" Value="0" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                    <ReorderThemeTransition />
+                                    <EntranceThemeTransition FromVerticalOffset="16" />
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
                             <ListView.GroupStyle>
                                 <GroupStyle>
                                     <GroupStyle.HeaderTemplate>
                                         <DataTemplate>
-                                            <Grid Padding="6,10,6,6">
-                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13.5" Foreground="{StaticResource PrimaryAccentBrush}" />
+                                            <Grid Padding="4,10,4,6">
+                                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                                    <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="8,2.5">
+                                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                                            <FontIcon Glyph="&#xE787;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="11.5" Foreground="{StaticResource PrimaryAccentBrush}" />
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Rectangle Height="1" Fill="{ThemeResource ControlStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" Width="300" Opacity="0.4"/>
+                                                </StackPanel>
                                             </Grid>
                                         </DataTemplate>
                                     </GroupStyle.HeaderTemplate>
@@ -257,18 +308,18 @@
                             </ListView.GroupStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,3,0,6" Padding="14,12" CornerRadius="12"
-                                            Background="{ThemeResource AppCardBackground}"
-                                            BorderBrush="{ThemeResource AppCardBorder}"
+                                    <Border Margin="0,1,0,3" Padding="14,12" CornerRadius="12"
+                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                             BorderThickness="1"
                                             helpers:Animation3DHelper.Is3DTiltEnabled="True"
-                                            helpers:Animation3DHelper.MaxTiltAngle="2.0"
-                                            helpers:Animation3DHelper.DepthZ="6"
-                                            helpers:AnimationHelper.HoverScale="1.01">
+                                            helpers:Animation3DHelper.MaxTiltAngle="1.5"
+                                            helpers:Animation3DHelper.DepthZ="4"
+                                            helpers:AnimationHelper.HoverScale="1.008">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="38"/>
+                                                <ColumnDefinition Width="42"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="Auto"/>
@@ -276,32 +327,32 @@
                                             </Grid.ColumnDefinitions>
 
                                             <!-- Priority Accent Strip -->
-                                            <Border Grid.Column="0" Width="3" CornerRadius="1.5" Background="{Binding LevelBrush}" HorizontalAlignment="Left" Margin="0,0,10,0"/>
+                                            <Border Grid.Column="0" Width="3.5" CornerRadius="1.75" Background="{Binding LevelBrush}" HorizontalAlignment="Left" Margin="0,2,12,2"/>
 
                                             <!-- Glowing Status Icon -->
-                                            <Border Grid.Column="1" Width="32" Height="32" CornerRadius="16" Background="{Binding LevelBadgeBg}" BorderBrush="{Binding LevelBrush}" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                <FontIcon Glyph="{Binding LevelGlyph}" FontSize="13" Foreground="{Binding LevelColor}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Grid.Column="1" Width="34" Height="34" CornerRadius="11" Background="{Binding LevelBadgeBg}" BorderBrush="{Binding LevelBrush}" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <FontIcon Glyph="{Binding LevelGlyph}" FontSize="14" Foreground="{Binding LevelColor}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
 
                                             <!-- Title & Message -->
-                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="3" Margin="0,0,10,0">
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="3" Margin="0,0,12,0">
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="13" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.Name="{Binding Title}"/>
+                                                    <TextBlock Text="{Binding Title}" FontFamily="Segoe UI Variable Display" FontWeight="SemiBold" FontSize="13.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.Name="{Binding Title}"/>
                                                     <!-- Source Tag -->
-                                                    <Border Background="{ThemeResource AppBadgeNeutralBg}" BorderBrush="{ThemeResource AppBadgeNeutralBorder}" BorderThickness="1" CornerRadius="5" Padding="6,1.5" VerticalAlignment="Center">
-                                                        <TextBlock Text="{Binding Source}" FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource AppBadgeNeutralFg}"/>
+                                                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="6,1.5" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Source}" FontSize="10" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                                     </Border>
-                                                    <!-- NEW Badge with 3D Glow -->
-                                                    <Border Visibility="{Binding UnreadVisibility}" Background="#FFEF4444" CornerRadius="5" Padding="6,1.5" VerticalAlignment="Center">
-                                                        <TextBlock Text="NEW" FontSize="9" FontWeight="ExtraBold" Foreground="White"/>
+                                                    <!-- NEW Badge with Soft Glow -->
+                                                    <Border Visibility="{Binding UnreadVisibility}" Background="#20EF4444" BorderBrush="#50EF4444" BorderThickness="1" CornerRadius="6" Padding="6,1.5" VerticalAlignment="Center">
+                                                        <TextBlock Text="NEW" FontSize="9.5" FontWeight="Bold" Foreground="#FFEF4444"/>
                                                     </Border>
                                                 </StackPanel>
-                                                <TextBlock Text="{Binding Message}" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" LineHeight="17"/>
+                                                <TextBlock Text="{Binding Message}" FontFamily="Segoe UI Variable Text" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" LineHeight="17"/>
                                             </StackPanel>
 
                                             <!-- Contextual Quick Action Button -->
                                             <Button Grid.Column="3" Click="OnQuickActionClick" DataContext="{Binding}" Visibility="{Binding QuickActionVisibility}"
-                                                    Style="{StaticResource VibrantPrimaryButtonStyle}" Height="30" Padding="10,0" CornerRadius="8" VerticalAlignment="Center" Margin="0,0,8,0">
+                                                    Style="{StaticResource VibrantPrimaryButtonStyle}" Height="30" Padding="12,0" CornerRadius="8" VerticalAlignment="Center" Margin="0,0,10,0">
                                                 <StackPanel Orientation="Horizontal" Spacing="5">
                                                     <FontIcon Glyph="{Binding QuickActionGlyph}" FontSize="11.5"/>
                                                     <TextBlock Text="{Binding QuickActionText}" FontSize="11.5" FontWeight="SemiBold"/>
@@ -309,14 +360,17 @@
                                             </Button>
 
                                             <!-- Relative Timestamp with Clock Icon -->
-                                            <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" Margin="0,0,12,0">
-                                                <FontIcon Glyph="&#xE823;" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" Margin="0,0,14,0">
+                                                <FontIcon Glyph="&#xE823;" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
                                                 <TextBlock Text="{Binding RelativeTimeAgo}" ToolTipService.ToolTip="{Binding CreatedAtFormatted}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Typography.NumeralAlignment="Tabular"/>
                                             </StackPanel>
 
                                             <!-- Action: Delete button -->
-                                            <Button Grid.Column="5" Click="OnDeleteSingleNotificationClick" DataContext="{Binding}" Style="{StaticResource StandardSecondaryButtonStyle}" Width="30" Height="30" Padding="0" CornerRadius="15" VerticalAlignment="Center" ToolTipService.ToolTip="Delete Notification" AutomationProperties.Name="Delete Notification">
-                                                <FontIcon Glyph="&#xE711;" FontSize="11" Foreground="#FFEF4444"/>
+                                            <Button Grid.Column="5" Click="OnDeleteSingleNotificationClick" DataContext="{Binding}"
+                                                    Style="{StaticResource StandardSecondaryButtonStyle}"
+                                                    Width="30" Height="30" Padding="0" CornerRadius="15"
+                                                    VerticalAlignment="Center" ToolTipService.ToolTip="Delete Notification" AutomationProperties.Name="Delete Notification">
+                                                <FontIcon Glyph="&#xE711;" FontSize="11" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                                             </Button>
                                         </Grid>
                                     </Border>
@@ -327,12 +381,17 @@
                 </Border>
                 
                 <!-- Empty State (Cyber Zen Shield) -->
-                <StackPanel x:Name="NotificationsEmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="14" Visibility="Collapsed" Margin="0,40,0,40">
-                    <Border Width="72" Height="72" CornerRadius="36" Background="#1510B981" BorderBrush="#3010B981" BorderThickness="1.5" HorizontalAlignment="Center">
-                        <FontIcon Glyph="&#xE73E;" FontSize="32" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <TextBlock x:Name="NotificationsEmptyText" Text="All clear! No active system alerts." FontSize="16" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Center"/>
-                    <TextBlock Text="WinCare Pro Sentinel is continuously monitoring your system health." FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                <StackPanel x:Name="NotificationsEmptyState" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Visibility="Collapsed" Margin="0,48,0,48">
+                    <Grid Width="84" Height="84" HorizontalAlignment="Center">
+                        <Border Width="84" Height="84" CornerRadius="42" Background="#0C10B981" BorderBrush="#2510B981" BorderThickness="1"/>
+                        <Border Width="56" Height="56" CornerRadius="28" Background="#1810B981" BorderBrush="#3510B981" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE73E;" FontSize="24" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                    <StackPanel Spacing="4" HorizontalAlignment="Center">
+                        <TextBlock x:Name="NotificationsEmptyText" Text="All clear! No active system alerts." FontFamily="Segoe UI Variable Display" FontSize="16" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="WinCare Pro Sentinel is continuously monitoring your system health." FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
 
@@ -343,20 +402,23 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!-- Filters Bar (Compact 34px) -->
-                <Border Grid.Row="0" Style="{StaticResource ModernCardStyle}" Padding="10,6" CornerRadius="10">
+                <!-- Filters Bar -->
+                <Border Grid.Row="0"
+                        Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1" Padding="10,8" CornerRadius="12">
                     <Grid ColumnSpacing="10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="160" />
+                            <ColumnDefinition Width="170" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         
-                        <TextBox x:Name="SearchBox" PlaceholderText="Search logs by action or status..." TextChanged="OnSearchChanged" VerticalAlignment="Center" Height="32" CornerRadius="6" FontSize="12"/>
+                        <TextBox x:Name="SearchBox" PlaceholderText="Search logs by action or status..." TextChanged="OnSearchChanged" VerticalAlignment="Center" Height="34" CornerRadius="8" FontSize="12"/>
                         
-                        <ComboBox x:Name="ModuleFilter" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnFilterChanged" SelectedIndex="0" VerticalAlignment="Center" Height="32" CornerRadius="6" FontSize="12">
+                        <ComboBox x:Name="ModuleFilter" Grid.Column="1" HorizontalAlignment="Stretch" SelectionChanged="OnFilterChanged" SelectedIndex="0" VerticalAlignment="Center" Height="34" CornerRadius="8" FontSize="12">
                             <ComboBoxItem x:Name="ModAllItem" Content="All Modules" Tag="All" IsSelected="True"/>
                             <ComboBoxItem x:Name="ModDashItem" Content="Dashboard" Tag="Dashboard"/>
                             <ComboBoxItem x:Name="ModJunkItem" Content="Junk Cleaner" Tag="Junk Cleaner"/>
@@ -371,61 +433,69 @@
                             <ComboBoxItem x:Name="ModRepItem" Content="Repair Tools" Tag="Repair Tools"/>
                         </ComboBox>
                         
-                        <Button x:Name="RefreshLogsBtn" Grid.Column="2" Click="OnRefreshClick" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Height="32" Padding="12,0" CornerRadius="6">
+                        <Button x:Name="RefreshLogsBtn" Grid.Column="2" Click="OnRefreshClick" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Height="34" Padding="14,0" CornerRadius="8">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xE72C;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                <TextBlock Text="Refresh" FontSize="11.5" FontWeight="SemiBold"/>
+                                <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="Refresh" FontSize="12" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="ClearLogsBtn" Grid.Column="3" Click="OnClearOldLogsClick" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Height="32" Padding="12,0" CornerRadius="6">
+                        <Button x:Name="ClearLogsBtn" Grid.Column="3" Click="OnClearOldLogsClick" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Height="34" Padding="14,0" CornerRadius="8">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xE74D;" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="Clear Logs" FontSize="11.5" FontWeight="SemiBold"/>
+                                <FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="Clear Logs" FontSize="12" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="ExportLogsBtn" Grid.Column="4" Click="OnExportLogsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" VerticalAlignment="Center" Height="32" Padding="12,0" CornerRadius="6">
+                        <Button x:Name="ExportLogsBtn" Grid.Column="4" Click="OnExportLogsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" VerticalAlignment="Center" Height="34" Padding="14,0" CornerRadius="8">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xEDE1;" FontSize="11" Foreground="White"/>
-                                <TextBlock Text="Export Logs" FontSize="11.5" FontWeight="SemiBold"/>
+                                <FontIcon Glyph="&#xEDE1;" FontSize="12" Foreground="White"/>
+                                <TextBlock Text="Export Logs" FontSize="12" FontWeight="SemiBold"/>
                             </StackPanel>
                         </Button>
                     </Grid>
                 </Border>
 
                 <!-- Logs List / Timeline -->
-                <Border Grid.Row="1" Style="{StaticResource ModernCardStyle}" Padding="10" CornerRadius="12">
+                <Border Grid.Row="1"
+                        Background="{ThemeResource AppCardBackground}"
+                        BorderBrush="{ThemeResource AppCardBorder}"
+                        BorderThickness="1" Padding="12" CornerRadius="14">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <!-- Static Header Grid with Fluent Icons -->
-                        <Grid Grid.Row="0" Padding="14,8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="38" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="110" />
-                                <ColumnDefinition Width="160" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE81C;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                <TextBlock x:Name="ColHeaderAction" Text="Action / Operation" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE71D;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                <TextBlock x:Name="ColHeaderModule" Text="Module" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                <TextBlock x:Name="ColHeaderStatus" Text="Status" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE823;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                <TextBlock x:Name="ColHeaderTime" Text="Time Logged" FontWeight="Bold" Style="{ThemeResource CaptionTextBlockStyle}" TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Grid>
+                        <!-- Sleek Column Ribbon Header -->
+                        <Border Grid.Row="0" Padding="14,8"
+                                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                BorderThickness="1" CornerRadius="10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="160" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE81C;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock x:Name="ColHeaderAction" Text="Action / Operation" FontWeight="Bold" FontSize="11.5" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE71D;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock x:Name="ColHeaderModule" Text="Module" FontWeight="Bold" FontSize="11.5" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock x:Name="ColHeaderStatus" Text="Status" FontWeight="Bold" FontSize="11.5" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE823;" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock x:Name="ColHeaderTime" Text="Time Logged" FontWeight="Bold" FontSize="11.5" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
 
                         <ListView x:Name="LogsListView" Grid.Row="1" SelectionMode="None">
                             <ListView.ItemContainerStyle>
@@ -433,13 +503,22 @@
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                     <Setter Property="Padding" Value="0" />
                                     <Setter Property="Margin" Value="0,2" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="MinHeight" Value="0" />
                                 </Style>
                             </ListView.ItemContainerStyle>
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                    <ReorderThemeTransition />
+                                    <EntranceThemeTransition FromVerticalOffset="16" />
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Margin="0,2,0,3" Padding="12,9" CornerRadius="10"
-                                            Background="{ThemeResource AppCardBackground}"
-                                            BorderBrush="{ThemeResource AppCardBorder}"
+                                    <Border Margin="0,1,0,3" Padding="12,10" CornerRadius="10"
+                                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                             BorderThickness="1"
                                             helpers:Animation3DHelper.Is3DTiltEnabled="True"
                                             helpers:Animation3DHelper.MaxTiltAngle="1.5"
@@ -447,7 +526,7 @@
                                             helpers:AnimationHelper.HoverScale="1.008">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="38" />
+                                                <ColumnDefinition Width="40" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="150" />
                                                 <ColumnDefinition Width="110" />
@@ -455,20 +534,20 @@
                                             </Grid.ColumnDefinitions>
 
                                             <!-- Status Icon Node -->
-                                            <Border Grid.Column="0" Width="28" Height="28" CornerRadius="9" Background="{Binding StatusTintBrush}" BorderBrush="{Binding StatusBrush}" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                <FontIcon Glyph="{Binding StatusGlyph}" FontSize="12" Foreground="{Binding StatusBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Grid.Column="0" Width="30" Height="30" CornerRadius="10" Background="{Binding StatusTintBrush}" BorderBrush="{Binding StatusBrush}" BorderThickness="1" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <FontIcon Glyph="{Binding StatusGlyph}" FontSize="12.5" Foreground="{Binding StatusBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
 
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0">
-                                                <TextBlock Text="{Binding Action}" FontWeight="SemiBold" FontSize="12.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding DisplayAction}" ToolTipService.ToolTip="{Binding DisplayAction}" FontFamily="Segoe UI Variable Text" FontWeight="SemiBold" FontSize="12.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
                                             </StackPanel>
 
                                             <Border Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding Module}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                <TextBlock Text="{Binding DisplayModule}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                             </Border>
                                             
-                                            <Border Grid.Column="3" Background="{Binding StatusTintBrush}" BorderBrush="{Binding StatusBrush}" BorderThickness="1" CornerRadius="6" Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="Bold" Foreground="{Binding StatusBrush}"/>
+                                            <Border Grid.Column="3" Background="{Binding StatusTintBrush}" BorderBrush="{Binding StatusBrush}" BorderThickness="1" CornerRadius="6" Padding="8,2.5" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding DisplayStatus}" FontSize="11" FontWeight="Bold" Foreground="{Binding StatusBrush}"/>
                                             </Border>
 
                                             <StackPanel Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="1">
@@ -482,12 +561,17 @@
                         </ListView>
                         
                         <!-- Activity Log Empty State -->
-                        <StackPanel x:Name="LogsEmptyState" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="14" Visibility="Collapsed" Margin="0,40,0,40">
-                            <Border Width="72" Height="72" CornerRadius="36" Background="#158B5CF6" BorderBrush="#308B5CF6" BorderThickness="1.5" HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xE9D9;" FontSize="32" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock x:Name="LogsEmptyText" Text="No activity logs found." FontSize="16" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Center"/>
-                            <TextBlock Text="System optimizations and actions will appear here in chronological order." FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                        <StackPanel x:Name="LogsEmptyState" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Visibility="Collapsed" Margin="0,48,0,48">
+                            <Grid Width="84" Height="84" HorizontalAlignment="Center">
+                                <Border Width="84" Height="84" CornerRadius="42" Background="#0C8B5CF6" BorderBrush="#258B5CF6" BorderThickness="1"/>
+                                <Border Width="56" Height="56" CornerRadius="28" Background="#188B5CF6" BorderBrush="#358B5CF6" BorderThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE9D9;" FontSize="24" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                                <TextBlock x:Name="LogsEmptyText" Text="No activity logs found." FontFamily="Segoe UI Variable Display" FontSize="16" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Center"/>
+                                <TextBlock Text="System optimizations and actions will appear here in chronological order." FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center"/>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
                 </Border>

@@ -141,13 +141,13 @@ public sealed partial class NotificationPage : Page
         {
             if (alertsActive)
             {
-                BtnTabAlerts.Style = (Style)Application.Current.Resources["VibrantPrimaryButtonStyle"];
-                BtnTabLogs.Style = (Style)Application.Current.Resources["DefaultButtonStyle"];
+                BtnTabAlerts.Style = (Style)Application.Current.Resources["ActivePresetChipButtonStyle"];
+                BtnTabLogs.Style = (Style)Application.Current.Resources["InactivePresetChipButtonStyle"];
             }
             else
             {
-                BtnTabAlerts.Style = (Style)Application.Current.Resources["DefaultButtonStyle"];
-                BtnTabLogs.Style = (Style)Application.Current.Resources["VibrantPrimaryButtonStyle"];
+                BtnTabAlerts.Style = (Style)Application.Current.Resources["InactivePresetChipButtonStyle"];
+                BtnTabLogs.Style = (Style)Application.Current.Resources["ActivePresetChipButtonStyle"];
             }
         }
     }

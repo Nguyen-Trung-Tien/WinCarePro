@@ -300,7 +300,10 @@
                                         <Button Click="OnSelectAllClick" Content="Select All" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
                                         <Button Click="OnDeselectAllClick" Content="Deselect All" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
                                     </StackPanel>
-                                    <TextBlock Grid.Column="2" Text="Click item to inspect AI details →" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                                        <TextBlock Text="Click item to inspect AI details" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE76C;" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
                                 </Grid>
                             </Border>
 
@@ -363,7 +366,12 @@
                                     <TextBlock Text="Registry Editor" FontWeight="Bold" FontSize="12.5"/>
                                     <TextBlock Text="regedit.exe" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
-                                <Button Grid.Column="2" Content="Open →" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Click="OnOpenRegeditClick" CornerRadius="6" Padding="10,4" FontSize="11.5"/>
+                                <Button Grid.Column="2" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Click="OnOpenRegeditClick" CornerRadius="6" Padding="10,4">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="Open" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE8A7;" FontSize="11" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
                             </Grid>
                         </Border>
 
@@ -383,7 +391,12 @@
                                     <TextBlock Text="System Restore" FontWeight="Bold" FontSize="12.5"/>
                                     <TextBlock Text="rstrui.exe" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
-                                <Button Grid.Column="2" Content="Open →" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Click="OnOpenSystemRestoreClick" CornerRadius="6" Padding="10,4" FontSize="11.5"/>
+                                <Button Grid.Column="2" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Click="OnOpenSystemRestoreClick" CornerRadius="6" Padding="10,4">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="Open" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE8A7;" FontSize="11" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
                             </Grid>
                         </Border>
                     </Grid>

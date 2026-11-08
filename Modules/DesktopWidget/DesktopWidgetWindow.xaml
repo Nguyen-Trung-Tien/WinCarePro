@@ -172,12 +172,12 @@
                             </Grid.ColumnDefinitions>
 
                             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                                <TextBlock Text="↓" FontSize="11" FontWeight="Bold" Foreground="#FF10B981"/>
+                                <FontIcon Glyph="&#xE896;" FontSize="9.5" Foreground="#FF10B981" VerticalAlignment="Center"/>
                                 <TextBlock x:Name="NetDownText" Text="0 KB/s" FontSize="10" FontWeight="Bold" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                <TextBlock Text="↑" FontSize="11" FontWeight="Bold" Foreground="#FF8B5CF6"/>
+                                <FontIcon Glyph="&#xE898;" FontSize="9.5" Foreground="#FF8B5CF6" VerticalAlignment="Center"/>
                                 <TextBlock x:Name="NetUpText" Text="0 KB/s" FontSize="10" FontWeight="Bold" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             </StackPanel>
                         </Grid>
@@ -257,7 +257,7 @@
                     <!-- Net Speed Pill -->
                     <Border Grid.Column="2" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppCardBorder}" BorderThickness="1" CornerRadius="7" Padding="6,4" Margin="0,0,4,0">
                         <StackPanel Orientation="Horizontal" Spacing="3" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock Text="↓" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
+                            <FontIcon Glyph="&#xE896;" FontSize="9" Foreground="#FF10B981" VerticalAlignment="Center"/>
                             <TextBlock x:Name="CompactNetText" Text="0 KB/s" FontSize="10" FontWeight="Bold" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                         </StackPanel>
                     </Border>

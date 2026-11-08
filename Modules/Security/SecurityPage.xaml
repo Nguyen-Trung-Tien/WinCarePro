@@ -331,7 +331,13 @@
                                             </StackPanel>
                                         </Grid>
                                         <TextBlock Grid.Row="1" Margin="0,6,0,8" Text="{x:Bind ViewModel.AntivirusStatus, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextWrapping="Wrap"/>
-                                        <Button Grid.Row="2" Content="Open Defender →" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Click="OnOpenWindowsSecurityClick" CornerRadius="7" Padding="10,4" FontSize="11"/>
+                                        <Button Grid.Row="2" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Click="OnOpenWindowsSecurityClick" CornerRadius="7" Padding="10,5">
+                                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE73A;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                                                <TextBlock Text="Open Defender" FontSize="11" FontWeight="SemiBold"/>
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
 
@@ -362,7 +368,12 @@
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
                                             <Button Grid.Column="0" Content="Enable" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Stretch" Click="OnEnableFirewallClick" CornerRadius="7" Padding="8,4" FontSize="11"/>
-                                            <Button Grid.Column="1" Content="Rules →" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Click="OnOpenFirewallClick" CornerRadius="7" Padding="8,4" FontSize="11"/>
+                                            <Button Grid.Column="1" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Click="OnOpenFirewallClick" CornerRadius="7" Padding="8,5">
+                                                <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                    <TextBlock Text="Rules" FontSize="11" FontWeight="SemiBold"/>
+                                                    <FontIcon Glyph="&#xE8A7;" FontSize="9.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                                </StackPanel>
+                                            </Button>
                                         </Grid>
                                     </Grid>
                                 </Border>
@@ -558,7 +569,12 @@
                                             <TextBlock Text="Windows Security" FontWeight="Bold" FontSize="13"/>
                                             <TextBlock Text="Threat protection &amp; defender center." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenWindowsSecurityClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
+                                        <Button Grid.Column="2" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenWindowsSecurityClick" CornerRadius="7" Padding="11,5">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <TextBlock Text="Open" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="10" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
 
@@ -578,7 +594,12 @@
                                             <TextBlock Text="System Info (msinfo32)" FontWeight="Bold" FontSize="13"/>
                                             <TextBlock Text="Hardware inventory, BIOS &amp; drivers." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenMsinfoClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
+                                        <Button Grid.Column="2" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenMsinfoClick" CornerRadius="7" Padding="11,5">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <TextBlock Text="Open" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="10" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
 
@@ -598,7 +619,12 @@
                                             <TextBlock Text="Windows Update" FontWeight="Bold" FontSize="13"/>
                                             <TextBlock Text="Security patches &amp; system updates." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenWindowsUpdateClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
+                                        <Button Grid.Column="2" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenWindowsUpdateClick" CornerRadius="7" Padding="11,5">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <TextBlock Text="Open" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="10" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
 
@@ -618,7 +644,12 @@
                                             <TextBlock Text="Task Manager" FontWeight="Bold" FontSize="13"/>
                                             <TextBlock Text="CPU/RAM load, services &amp; processes." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenTaskManagerClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
+                                        <Button Grid.Column="2" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenTaskManagerClick" CornerRadius="7" Padding="11,5">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <TextBlock Text="Open" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="10" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
 
@@ -638,7 +669,12 @@
                                             <TextBlock Text="Firewall Rules (wf.msc)" FontWeight="Bold" FontSize="13"/>
                                             <TextBlock Text="Inbound, outbound &amp; IP filter rules." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenFirewallClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
+                                        <Button Grid.Column="2" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenFirewallClick" CornerRadius="7" Padding="11,5">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <TextBlock Text="Open" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="10" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
 
@@ -658,7 +694,12 @@
                                             <TextBlock Text="Event Viewer (eventvwr.msc)" FontWeight="Bold" FontSize="13"/>
                                             <TextBlock Text="Audit logs, security events &amp; crash history." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenEventViewerClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
+                                        <Button Grid.Column="2" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenEventViewerClick" CornerRadius="7" Padding="11,5">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <TextBlock Text="Open" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="10" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
 
@@ -678,7 +719,12 @@
                                             <TextBlock Text="Services (services.msc)" FontWeight="Bold" FontSize="13"/>
                                             <TextBlock Text="Windows background daemon services." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenServicesClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
+                                        <Button Grid.Column="2" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenServicesClick" CornerRadius="7" Padding="11,5">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <TextBlock Text="Open" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="10" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
 
@@ -698,7 +744,12 @@
                                             <TextBlock Text="Registry Editor (regedit)" FontWeight="Bold" FontSize="13"/>
                                             <TextBlock Text="HKLM &amp; HKCU system configuration hives." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                         </StackPanel>
-                                        <Button Grid.Column="2" Content="Open →" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenRegistryEditorClick" CornerRadius="7" Padding="12,5" FontSize="11"/>
+                                        <Button Grid.Column="2" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Click="OnOpenRegistryEditorClick" CornerRadius="7" Padding="11,5">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <TextBlock Text="Open" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <FontIcon Glyph="&#xE8A7;" FontSize="10" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                            </StackPanel>
+                                        </Button>
                                     </Grid>
                                 </Border>
                             </Grid>

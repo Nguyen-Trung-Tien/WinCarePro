@@ -561,11 +561,16 @@
                                                         <FontIcon Glyph="&#xE7BA;" FontSize="10" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                     </Border>
                                                     <StackPanel VerticalAlignment="Center">
-                                                        <TextBlock Text="[!] Windows Update" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                                        <TextBlock Text="Windows Update" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                                         <TextBlock Text="Slightly Stalled" FontSize="9.5" Foreground="#FFF59E0B"/>
                                                     </StackPanel>
                                                 </StackPanel>
-                                                <Button Grid.Column="1" Content="Auto-Fix Now" Click="OnTabNetworkClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Padding="8,2" Height="26" FontSize="10.5" CornerRadius="6" VerticalAlignment="Center"/>
+                                                <Button Grid.Column="1" Click="OnTabNetworkClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Padding="10,2" Height="26" CornerRadius="6" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                                        <FontIcon Glyph="&#xE90F;" FontSize="9.5" Foreground="White"/>
+                                                        <TextBlock Text="Auto-Fix Now" FontSize="10.5" FontWeight="Bold" Foreground="White"/>
+                                                    </StackPanel>
+                                                </Button>
                                             </Grid>
                                         </Border>
                                     </Grid>

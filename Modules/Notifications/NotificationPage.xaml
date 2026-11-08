@@ -206,8 +206,18 @@
                             <ComboBoxItem x:Name="LevelCriticalItem" Content="Critical" Tag="Critical"/>
                         </ComboBox>
                         
-                        <Button x:Name="BtnMarkAllRead" Grid.Column="2" Content="Mark All Read" Click="OnMarkAllReadClick" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Padding="12,0" Height="32" CornerRadius="6" FontSize="12" AutomationProperties.Name="Mark All Read"/>
-                        <Button x:Name="ClearAlertsBtn" Grid.Column="3" Content="Clear All Alerts" Click="OnClearNotificationsClick" Style="{StaticResource DangerButtonStyle}" VerticalAlignment="Center" Padding="12,0" Height="32" CornerRadius="6" FontSize="12" AutomationProperties.Name="Clear All Alerts" AutomationProperties.HelpText="Permanently purge all notifications and alerts from history."/>
+                        <Button x:Name="BtnMarkAllRead" Grid.Column="2" Click="OnMarkAllReadClick" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Padding="12,0" Height="32" CornerRadius="6" AutomationProperties.Name="Mark All Read">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="Mark All Read" FontSize="11.5" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="ClearAlertsBtn" Grid.Column="3" Click="OnClearNotificationsClick" Style="{StaticResource DangerButtonStyle}" VerticalAlignment="Center" Padding="12,0" Height="32" CornerRadius="6" AutomationProperties.Name="Clear All Alerts" AutomationProperties.HelpText="Permanently purge all notifications and alerts from history.">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE74D;" FontSize="11" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                                <TextBlock Text="Clear All Alerts" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                            </StackPanel>
+                        </Button>
                     </Grid>
                 </Border>
 
@@ -334,9 +344,24 @@
                             <ComboBoxItem x:Name="ModRepItem" Content="Repair Tools" Tag="Repair Tools"/>
                         </ComboBox>
                         
-                        <Button x:Name="RefreshLogsBtn" Grid.Column="2" Content="Refresh" Click="OnRefreshClick" VerticalAlignment="Center" Height="32" Padding="12,0" CornerRadius="6" FontSize="12"/>
-                        <Button x:Name="ClearLogsBtn" Grid.Column="3" Content="Clear Logs" Click="OnClearOldLogsClick" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Height="32" Padding="12,0" CornerRadius="6" FontSize="12"/>
-                        <Button x:Name="ExportLogsBtn" Grid.Column="4" Content="Export Logs" Click="OnExportLogsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" VerticalAlignment="Center" Height="32" Padding="12,0" CornerRadius="6" FontSize="12"/>
+                        <Button x:Name="RefreshLogsBtn" Grid.Column="2" Click="OnRefreshClick" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE72C;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="Refresh" FontSize="11.5" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="ClearLogsBtn" Grid.Column="3" Click="OnClearOldLogsClick" Style="{StaticResource DefaultButtonStyle}" VerticalAlignment="Center" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE74D;" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="Clear Logs" FontSize="11.5" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="ExportLogsBtn" Grid.Column="4" Click="OnExportLogsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" VerticalAlignment="Center" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xEDE1;" FontSize="11" Foreground="White"/>
+                                <TextBlock Text="Export Logs" FontSize="11.5" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Button>
                     </Grid>
                 </Border>
 

@@ -424,7 +424,7 @@ public class AiDiagnosticsEngine
             sb.AppendLine("  <div class=\"container\">");
             sb.AppendLine("    <div class=\"header\">");
             sb.AppendLine("      <div>");
-            sb.AppendLine("        <div class=\"title\">🚀 WinCare Pro System Report</div>");
+            sb.AppendLine("        <div class=\"title\">WinCare Pro System Report</div>");
             sb.AppendLine($"        <div style=\"color: #64748b; font-size: 13px; margin-top: 4px;\">Generated on {DateTime.Now:yyyy-MM-dd HH:mm:ss} | User: {Environment.UserName}</div>");
             sb.AppendLine("      </div>");
             sb.AppendLine($"      <div class=\"score-badge\" style=\"background: {scoreBg}; color: {scoreColor}; border: 1px solid {scoreColor};\">Score: {diagnosticSummary.HealthScore}/100</div>");
@@ -448,7 +448,7 @@ public class AiDiagnosticsEngine
                 sb.AppendLine($"      <div style=\"font-size: 13px; color: #cbd5e1; margin-top: 4px;\">{System.Net.WebUtility.HtmlEncode(r.Description)}</div>");
                 if (!string.IsNullOrEmpty(r.Recommendation))
                 {
-                    sb.AppendLine($"      <div style=\"font-size: 12px; color: #38bdf8; margin-top: 4px;\">💡 {System.Net.WebUtility.HtmlEncode(r.Recommendation)}</div>");
+                    sb.AppendLine($"      <div style=\"font-size: 12px; color: #38bdf8; margin-top: 6px; display: flex; align-items: center; gap: 6px;\"><span style=\"background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 1px 6px; border-radius: 4px; font-weight: 600; font-size: 10px; letter-spacing: 0.04em;\">ADVISORY</span> {System.Net.WebUtility.HtmlEncode(r.Recommendation)}</div>");
                 }
                 sb.AppendLine("    </div>");
             }

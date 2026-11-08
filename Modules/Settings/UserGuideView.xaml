@@ -110,7 +110,12 @@
                 <FontIcon Glyph="&#xE721;" FontSize="32" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
                 <TextBlock Text="No matching modules found" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center"/>
                 <TextBlock Text="Try searching for another keyword like 'clean', 'speed', 'ram', 'game', 'restore', or select 'All Modules'." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
-                <Button Click="OnResetSearchClick" Style="{StaticResource StandardSecondaryButtonStyle}" Content="Clear Search &amp; Show All" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                <Button Click="OnResetSearchClick" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Center" Margin="0,8,0,0" Padding="14,6" CornerRadius="8">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE894;" FontSize="11"/>
+                        <TextBlock Text="Clear Search &amp; Show All" FontSize="11.5" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Border>
 

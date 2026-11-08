@@ -2133,6 +2133,7 @@ public partial class TranslationManager
         _translations["Live throughput benchmark & latency analysis"] = "Đo băng thông thực tế & phân tích độ trễ";
         _translations["Start Speed Test"] = "Bắt đầu Đo tốc độ";
         _translations["Recent Speed Tests"] = "Lịch sử Đo gần đây";
+        _translations["View History"] = "Xem lịch sử";
         _translations["View History ↗"] = "Xem lịch sử ↗";
         _translations["TIMESTAMP"] = "THỜI GIAN";
         _translations["DOWNLOAD"] = "TẢI XUỐNG";
@@ -2629,7 +2630,9 @@ public partial class TranslationManager
         // --- Background Services Shortcuts UI ---
         _translations["Services Manager"] = "Quản lý dịch vụ Services";
         _translations["Task Manager Services"] = "Task Manager → Thẻ Services";
+        _translations["Open Services Manager"] = "Mở Quản lý Services";
         _translations["Open Services Manager →"] = "Mở Quản lý Services →";
+        _translations["Open Task Manager"] = "Mở Task Manager";
         _translations["Open Task Manager →"] = "Mở Task Manager →";
         _translations["System Services Safety Guard"] = "Khiên Bảo vệ Dịch vụ Hệ thống";
         _translations["14 Core Services Protected"] = "14 Dịch vụ Cốt lõi được Bảo vệ";
@@ -2720,6 +2723,15 @@ public partial class TranslationManager
         _translations["Live Repair Terminal"] = "Terminal Nhật Ký Trực Tiếp";
         _translations["Copy Log"] = "Sao chép Log";
         _translations["Clear"] = "Xóa Log";
+        _translations["Diagnostics & Issues"] = "Chẩn đoán & Sự cố";
+        _translations["Diagnostics &amp; Issues"] = "Chẩn đoán & Sự cố";
+        _translations["SFC & DISM Servicing"] = "Bảo trì SFC & DISM";
+        _translations["SFC &amp; DISM Servicing"] = "Bảo trì SFC & DISM";
+        _translations["Registry Safeguards"] = "Bảo vệ Registry";
+        _translations["Update & Network"] = "Cập nhật & Mạng";
+        _translations["Update &amp; Network"] = "Cập nhật & Mạng";
+        _translations["Live Terminal"] = "Terminal Trực tiếp";
+        _translations["Open Live Terminal"] = "Mở Terminal Trực tiếp";
         _translations["🔍 Diagnostics & Issues"] = "🔍 Chẩn đoán & Sự cố";
         _translations["🛡️ SFC & DISM Servicing"] = "🛡️ Bảo trì SFC & DISM";
         _translations["🔒 Registry Safeguards"] = "🔒 Bảo vệ Registry";
@@ -4146,9 +4158,11 @@ public partial class TranslationManager
         _translations["100% Safe Only"] = "Chỉ mục an toàn 100%";
         _translations["Select All"] = "Chọn tất cả";
         _translations["Deselect All"] = "Bỏ chọn tất cả";
+        _translations["Click item to inspect AI details"] = "Nhấn vào mục để xem chi tiết AI";
         _translations["Click item to inspect AI details →"] = "Nhấn vào mục để xem chi tiết AI →";
         _translations["Registry Editor"] = "Trình chỉnh sửa Registry";
         _translations["System Restore"] = "Khôi phục hệ thống";
+        _translations["Open"] = "Mở";
         _translations["Open →"] = "Mở →";
         _translations["Smart AI Inspector"] = "Trình kiểm tra AI thông minh";
         _translations["Visual Diff"] = "So sánh trực quan";
@@ -4284,9 +4298,11 @@ public partial class TranslationManager
         _translations["Block telemetry &amp; tracking"] = "Chặn telemetry & theo dõi";
         _translations["Manual Granular Tweaks (Pro)"] = "Tùy chỉnh thủ công từng mục (Dành cho Pro)";
         _translations["System Doctor Diagnostic Summary"] = "Chẩn đoán Bác sĩ Hệ thống (System Doctor)";
+        _translations["OS System Files"] = "Tập tin hệ điều hành";
         _translations["[✓] OS System Files"] = "[✓] Tập tin hệ điều hành";
         _translations["Healthy & Intact"] = "Khỏe mạnh & toàn vẹn";
         _translations["Healthy &amp; Intact"] = "Khỏe mạnh & toàn vẹn";
+        _translations["Registry Database"] = "Cơ sở dữ liệu Registry";
         _translations["[✓] Registry Database"] = "[✓] Cơ sở dữ liệu Registry";
         _translations["Cleaned & Optimized"] = "Đã tối ưu gọn gàng";
         _translations["Cleaned &amp; Optimized"] = "Đã tối ưu gọn gàng";

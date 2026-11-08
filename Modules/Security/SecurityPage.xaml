@@ -157,10 +157,10 @@
 
                         <!-- Overall Grade Pill (Right) -->
                         <Border Grid.Column="2" VerticalAlignment="Center" CornerRadius="12" Padding="12,6"
-                                Background="{ThemeResource AccentFillColorSecondaryBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1">
+                                Background="{StaticResource PrimaryAccentGradient}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1">
                             <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE73E;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" />
-                                <TextBlock Text="{x:Bind ViewModel.SecurityScoreGrade, Mode=OneWay}" FontSize="12" FontWeight="Black" Foreground="{StaticResource PrimaryAccentBrush}" />
+                                <FontIcon Glyph="&#xE73E;" FontSize="13" Foreground="White" />
+                                <TextBlock Text="{x:Bind ViewModel.SecurityScoreGrade, Mode=OneWay}" FontSize="12" FontWeight="Black" Foreground="White" />
                             </StackPanel>
                         </Border>
                     </Grid>

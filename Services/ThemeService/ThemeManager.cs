@@ -226,6 +226,12 @@ public partial class ThemeManager
         CurrentAccent = string.IsNullOrWhiteSpace(tag) ? "Default" : tag;
         bool isDark = (CurrentTheme == ElementTheme.Dark);
 
+        if (Application.Current?.Resources is null)
+        {
+            AccentChanged?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
         try
         {
             Color c0, c1, c2, cyber0, cyber1, cyber2;

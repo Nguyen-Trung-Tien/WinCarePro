@@ -119,10 +119,18 @@ public sealed partial class MainWindow : Window
         // Handle window resizing and start async application initialization on load
         if (RootGrid != null)
         {
-            RootGrid.Loaded += (s, e) => {
+            if (RootGrid.IsLoaded)
+            {
                 CenterOnScreen(1560, 920);
                 InitializeAppAsync();
-            };
+            }
+            else
+            {
+                RootGrid.Loaded += (s, e) => {
+                    CenterOnScreen(1560, 920);
+                    InitializeAppAsync();
+                };
+            }
         }
         else
         {
@@ -185,40 +193,17 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private async Task SmoothTweenProgressAsync(double targetValue, string message, int durationMs = 60)
-    {
-        if (StartupProgressText != null) StartupProgressText.Text = message.T();
-        if (StartupProgressBar == null || StartupProgressPercent == null) return;
-
-        double startVal = StartupProgressBar.Value;
-        double diff = targetValue - startVal;
-        if (Math.Abs(diff) < 0.01) return;
-
-        int steps = Math.Max(3, durationMs / 16);
-        int stepDelay = Math.Max(8, durationMs / steps);
-
-        for (int i = 1; i <= steps; i++)
-        {
-            double t = (double)i / steps;
-            // Cubic Ease-Out curve for progress
-            double easeT = 1.0 - Math.Pow(1.0 - t, 3);
-            double currentVal = startVal + diff * easeT;
-
-            StartupProgressBar.Value = currentVal;
-            StartupProgressPercent.Text = $"{(int)Math.Min(100, Math.Round(currentVal))}%";
-            await Task.Delay(stepDelay);
-        }
-
-        StartupProgressBar.Value = targetValue;
-        StartupProgressPercent.Text = $"{(int)Math.Min(100, Math.Round(targetValue))}%";
-    }
+    private int _isAppInitialized = 0;
 
     private async void InitializeAppAsync()
     {
+        if (Interlocked.Exchange(ref _isAppInitialized, 1) != 0)
+        {
+            return;
+        }
+
         try
         {
-            StartupOverlayGrid.Visibility = Visibility.Collapsed;
-
             // 1. Ensure database & telemetry store are synchronized
             await Task.Run(() => SettingsService.Instance.LoadSettings());
 
@@ -227,18 +212,27 @@ public sealed partial class MainWindow : Window
 
             // 3. Load language setting and apply translations to window content
             TranslationManager.Instance.LoadLanguageFromSettings();
-            TranslationManager.Instance.Translate(this.Content);
+            if (this.Content != null)
+            {
+                TranslationManager.Instance.Translate(this.Content);
+            }
 
             // 4. Update notification badge indicator & prepare main view
             UpdateNotificationBadge();
-            RootFrame.Navigate(typeof(MainPage));
+            if (RootFrame != null)
+            {
+                RootFrame.Navigate(typeof(MainPage));
+            }
             UpdateTitleBarExperienceMode(true);
 
             // 5. Start Clock Ticker
             StartClockTicker();
 
             // 6. Deferred background tasks: Database maintenance
-            AppTitleVersionBadge.Text = WinCarePro.Core.AppConstants.DisplayVersion;
+            if (AppTitleVersionBadge != null)
+            {
+                AppTitleVersionBadge.Text = WinCarePro.Core.AppConstants.DisplayVersion;
+            }
             var currentVersion = WinCarePro.Core.AppConstants.CurrentVersion;
             CheckAndShowChangelog(currentVersion);
 
@@ -268,14 +262,13 @@ public sealed partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            // Fallback: Ensure splash vanishes and app is navigable if anything throws
+            // Fallback: Ensure app is navigable if anything throws
             Infrastructure.Logging.CrashLogger.LogException("MainWindow.InitializeAppAsync", ex);
-            StartupOverlayGrid.Visibility = Visibility.Collapsed;
-            StartClockTicker();
+            try { StartClockTicker(); } catch { }
             try { Database.DbManager.LogAction($"Startup failed: {ex.Message}", "System", "Failed"); } catch { }
             try
             {
-                if (RootFrame.Content == null)
+                if (RootFrame != null && RootFrame.Content == null)
                 {
                     RootFrame.Navigate(typeof(MainPage));
                 }
@@ -287,28 +280,36 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void FadeOutStartupOverlay_Completed(object? sender, object e)
-    {
-        StartupOverlayGrid.Visibility = Visibility.Collapsed;
-    }
-
     private void StartClockTicker()
     {
-        // Update clock immediately
-        ClockText.Text = DateTime.Now.ToString("HH:mm");
-
-        // Stop any previous timer to prevent duplicates
-        _clockTimer?.Stop();
-
-        // Create a DispatcherTimer for periodic clock and telemetry updates
-        _clockTimer = new Microsoft.UI.Xaml.DispatcherTimer();
-        _clockTimer.Interval = TimeSpan.FromSeconds(2);
-        _clockTimer.Tick += (s, e) =>
+        try
         {
-            ClockText.Text = DateTime.Now.ToString("HH:mm");
-            UpdateTitleBarTelemetry();
-        };
-        _clockTimer.Start();
+            // Update clock immediately
+            if (ClockText != null)
+            {
+                ClockText.Text = DateTime.Now.ToString("HH:mm");
+            }
+
+            // Stop any previous timer to prevent duplicates
+            _clockTimer?.Stop();
+
+            // Create a DispatcherTimer for periodic clock and telemetry updates
+            _clockTimer = new Microsoft.UI.Xaml.DispatcherTimer();
+            _clockTimer.Interval = TimeSpan.FromSeconds(2);
+            _clockTimer.Tick += (s, e) =>
+            {
+                if (ClockText != null)
+                {
+                    ClockText.Text = DateTime.Now.ToString("HH:mm");
+                }
+                UpdateTitleBarTelemetry();
+            };
+            _clockTimer.Start();
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("MainWindow.StartClockTicker", ex);
+        }
     }
 
     private ulong _hudPrevIdleTime;
@@ -448,12 +449,12 @@ public sealed partial class MainWindow : Window
         }
         try
         {
-            if (RootFrame.Content is MainPage mainPage)
+            if (RootFrame?.Content is MainPage mainPage)
             {
                 mainPage.CleanupActivePage();
                 mainPage.Cleanup();
             }
-            else if (RootFrame.Content is WinCarePro.Views.NetworkPage netPage)
+            else if (RootFrame?.Content is WinCarePro.Views.NetworkPage netPage)
             {
                 netPage.ViewModel?.Cleanup();
             }
@@ -588,7 +589,7 @@ public sealed partial class MainWindow : Window
                     {
                         App.MainDispatcherQueue?.TryEnqueue(() =>
                         {
-                            if (RootFrame.Content is MainPage mp)
+                            if (RootFrame?.Content is MainPage mp)
                             {
                                 mp.NavigateToPageExternal("Junk");
                             }
@@ -636,12 +637,12 @@ public sealed partial class MainWindow : Window
     {
         try
         {
-            if (RootFrame.Content is MainPage mainPage)
+            if (RootFrame?.Content is MainPage mainPage)
             {
                 mainPage.CleanupActivePage();
                 mainPage.Cleanup();
             }
-            else if (RootFrame.Content is WinCarePro.Views.NetworkPage netPage)
+            else if (RootFrame?.Content is WinCarePro.Views.NetworkPage netPage)
             {
                 netPage.ViewModel?.Cleanup();
             }
@@ -739,7 +740,7 @@ public sealed partial class MainWindow : Window
 
     private void OnCpuChipClick(object sender, RoutedEventArgs e)
     {
-        if (RootFrame.Content is MainPage mp)
+        if (RootFrame?.Content is MainPage mp)
         {
             mp.NavigateToPageExternal("Dashboard");
         }

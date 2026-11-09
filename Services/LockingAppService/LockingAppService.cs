@@ -134,6 +134,11 @@ public partial class LockingAppService : ILockingAppService
         });
     }
 
+    private static readonly HashSet<string> SystemCriticalProcessNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "explorer", "csrss", "lsass", "smss", "services", "wininit", "winlogon", "svchost", "dwm", "spoolsv", "System"
+    };
+
     public async Task CloseAppsAsync(IEnumerable<LockingAppInfo> apps, Func<string, Task<bool>> confirmForceClose)
     {
         foreach (var app in apps)
@@ -142,8 +147,16 @@ public partial class LockingAppService : ILockingAppService
             {
                 try
                 {
+                    if (pid <= 4) continue; // Skip Idle & System kernel process
+
                     using var process = Process.GetProcessById(pid);
                     if (process == null || process.HasExited) continue;
+
+                    // Safety Guard: Inviolable check against critical system processes
+                    if (SystemCriticalProcessNames.Contains(process.ProcessName))
+                    {
+                        continue;
+                    }
 
                     // Try to close gracefully
                     process.CloseMainWindow();
@@ -170,7 +183,10 @@ public partial class LockingAppService : ILockingAppService
                         }
                     }
                 }
-                catch {}
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException($"LockingAppService.CloseAppsAsync PID:{pid}", ex);
+                }
             }
         }
         await Task.Delay(500); // Give the system some time to release locks

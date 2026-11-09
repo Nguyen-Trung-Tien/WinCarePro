@@ -18,9 +18,49 @@ public class JunkViewModel : ViewModelBase, IDisposable
     private readonly IJunkCleanerService _junkEngine;
     private readonly ILockingAppService _lockingAppService;
     private readonly IDialogService _dialogService;
+    private readonly AuditLogService _audit;
+    private readonly INotificationService? _notificationService;
     private readonly EventHandler _languageChangedHandler;
     private System.Threading.CancellationTokenSource? _scanCts;
     private bool _isDisposed;
+
+    // Sorting & Filtering properties
+    public enum JunkSortOption
+    {
+        SizeDesc,
+        SizeAsc,
+        NameAsc,
+        NameDesc,
+        SafetyTier
+    }
+
+    private readonly List<JunkCategory> _allCategories = new();
+
+    private string _searchQuery = "";
+    public string SearchQuery
+    {
+        get => _searchQuery;
+        set
+        {
+            if (SetProperty(ref _searchQuery, value))
+            {
+                ApplyFilters();
+            }
+        }
+    }
+
+    private JunkSortOption _currentSort = JunkSortOption.SizeDesc;
+    public JunkSortOption CurrentSort
+    {
+        get => _currentSort;
+        set
+        {
+            if (SetProperty(ref _currentSort, value))
+            {
+                ApplyFilters();
+            }
+        }
+    }
 
     private bool _isScanning;
     public bool IsScanning
@@ -185,11 +225,18 @@ public class JunkViewModel : ViewModelBase, IDisposable
     public ObservableCollection<JunkCategory> Categories { get; } = new();
     public ObservableCollection<LockingAppInfo> ActiveLockingApps { get; } = new();
 
-    public JunkViewModel(IJunkCleanerService junkEngine, ILockingAppService lockingAppService, IDialogService dialogService)
+    public JunkViewModel(
+        IJunkCleanerService junkEngine,
+        ILockingAppService lockingAppService,
+        IDialogService dialogService,
+        AuditLogService? audit = null,
+        INotificationService? notificationService = null)
     {
         _junkEngine = junkEngine;
         _lockingAppService = lockingAppService;
         _dialogService = dialogService;
+        _audit = audit ?? App.Services?.GetService<AuditLogService>() ?? new AuditLogService();
+        _notificationService = notificationService ?? App.Services?.GetService<INotificationService>();
         _dispatcherQueue = SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
 
@@ -207,7 +254,9 @@ public class JunkViewModel : ViewModelBase, IDisposable
     public JunkViewModel() : this(
         App.Services?.GetService<IJunkCleanerService>() ?? new JunkCleanerService(),
         App.Services?.GetService<ILockingAppService>() ?? new LockingAppService(),
-        App.Services?.GetService<IDialogService>() ?? new DialogService())
+        App.Services?.GetService<IDialogService>() ?? new DialogService(),
+        App.Services?.GetService<AuditLogService>(),
+        App.Services?.GetService<INotificationService>())
     {
     }
 
@@ -340,11 +389,13 @@ public class JunkViewModel : ViewModelBase, IDisposable
 
             await RunOnUIActionAsync(() =>
             {
+                _allCategories.Clear();
                 foreach (var cat in results)
                 {
-                    Categories.Add(cat);
+                    _allCategories.Add(cat);
                 }
                 ApplyPreset("Safe");
+                ApplyFilters();
                 SelectedCategory = Categories.FirstOrDefault();
                 
                 ActiveLockingApps.Clear();
@@ -365,6 +416,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
                     LockingAppsText = "";
                 }
                 SetOperationState(OperationState.Completed);
+                _audit.LogAction("Junk", "Scan", $"{_allCategories.Count} categories", "Success", $"Cleanable: {TotalJunkSize}, Locked: {TotalLockedSize}");
             });
         }
         catch (OperationCanceledException)
@@ -439,6 +491,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
             await RunOnUIActionAsync(() =>
             {
                 Categories.Clear();
+                _allCategories.Clear();
                 SelectedCategory = null;
                 UpdateTotalSize();
                 HasLockingApps = false;
@@ -447,6 +500,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
                 IsCleaning = false;
                 IsCelebrationActive = true;
                 CleanedReclaimedSummary = cleanedFormatted;
+                _audit.LogAction("Junk", "Clean", cleanedFormatted, "Success", $"Locked remaining: {lockedFormatted}");
             });
 
             // Show dialog on UI thread separately to avoid async void lambda
@@ -510,21 +564,66 @@ public class JunkViewModel : ViewModelBase, IDisposable
     public void ApplyPreset(string preset)
     {
         SelectedPreset = preset;
+        var sourceList = _allCategories.Count > 0 ? _allCategories : Categories.ToList();
         if (preset == "Safe")
         {
-            foreach (var cat in Categories)
+            foreach (var cat in sourceList)
             {
                 cat.IsSelected = (cat.SafetyTier == JunkSafetyTier.Safe);
             }
         }
         else if (preset == "All")
         {
-            foreach (var cat in Categories)
+            foreach (var cat in sourceList)
             {
                 cat.IsSelected = true;
             }
         }
         UpdateTotalSize();
+    }
+
+    public void ApplyFilters()
+    {
+        if (_allCategories.Count == 0 && Categories.Count > 0)
+        {
+            _allCategories.AddRange(Categories);
+        }
+
+        RunOnUI(() =>
+        {
+            var filtered = _allCategories.Where(cat =>
+            {
+                if (!string.IsNullOrWhiteSpace(SearchQuery))
+                {
+                    bool matchName = cat.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase);
+                    bool matchDesc = cat.Description.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase);
+                    bool matchFolder = cat.FolderPath.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase);
+                    bool matchFile = cat.TopFiles.Any(f => f.FileName.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase));
+                    return matchName || matchDesc || matchFolder || matchFile;
+                }
+                return true;
+            });
+
+            var sorted = CurrentSort switch
+            {
+                JunkSortOption.SizeAsc => filtered.OrderBy(x => x.CleanableBytes).ThenBy(x => x.Name),
+                JunkSortOption.NameAsc => filtered.OrderBy(x => x.Name),
+                JunkSortOption.NameDesc => filtered.OrderByDescending(x => x.Name),
+                JunkSortOption.SafetyTier => filtered.OrderBy(x => (int)x.SafetyTier).ThenByDescending(x => x.CleanableBytes),
+                _ => filtered.OrderByDescending(x => x.CleanableBytes).ThenBy(x => x.Name)
+            };
+
+            Categories.Clear();
+            foreach (var item in sorted)
+            {
+                Categories.Add(item);
+            }
+
+            if (SelectedCategory == null || !Categories.Contains(SelectedCategory))
+            {
+                SelectedCategory = Categories.FirstOrDefault();
+            }
+        });
     }
 
     public void DismissLockingAlert()
@@ -540,7 +639,8 @@ public class JunkViewModel : ViewModelBase, IDisposable
 
     public void DeselectAllCategories()
     {
-        foreach (var cat in Categories)
+        var sourceList = _allCategories.Count > 0 ? _allCategories : Categories.ToList();
+        foreach (var cat in sourceList)
         {
             cat.IsSelected = false;
         }
@@ -673,6 +773,49 @@ public class JunkViewModel : ViewModelBase, IDisposable
         catch (Exception ex)
         {
             WinCarePro.Infrastructure.Logging.CrashLogger.LogException("JunkViewModel.OpenSelectedFolder", ex);
+        }
+    }
+
+    // Export Junk & Temporary Files Audit Report (CSV)
+    public async Task<string?> ExportReportAsync()
+    {
+        try
+        {
+            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string filePath = System.IO.Path.Combine(desktop, $"WinCarePro_JunkReport_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("Category,SafetyTier,CleanableBytes,CleanableSize,LockedBytes,LockedSize,FilesCount,DirectoryPath");
+
+            var sourceList = _allCategories.Count > 0 ? _allCategories : Categories.ToList();
+            foreach (var cat in sourceList)
+            {
+                string safeName = $"\"{cat.Name.Replace("\"", "\"\"")}\"";
+                string safeTier = $"\"{cat.SafetyTierText.Replace("\"", "\"\"")}\"";
+                string safeCleanSize = $"\"{cat.CleanableSizeFormatted.Replace("\"", "\"\"")}\"";
+                string safeLockedSize = $"\"{cat.LockedSizeFormatted.Replace("\"", "\"\"")}\"";
+                string safePath = $"\"{cat.FolderPath.Replace("\"", "\"\"")}\"";
+
+                sb.AppendLine($"{safeName},{safeTier},{cat.CleanableBytes},{safeCleanSize},{cat.LockedBytes},{safeLockedSize},{cat.FileCount},{safePath}");
+            }
+
+            await System.IO.File.WriteAllTextAsync(filePath, sb.ToString(), System.Text.Encoding.UTF8);
+
+            var notifier = _notificationService ?? App.Services?.GetService<INotificationService>();
+            notifier?.ShowToast(
+                "Report Exported".T(),
+                string.Format("Junk cleaner report saved to Desktop:\n{0}".T(), System.IO.Path.GetFileName(filePath)),
+                NotificationSeverity.Success
+            );
+
+            _audit.LogAction("Junk", "ExportReport", filePath, "Success");
+            return filePath;
+        }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("JunkViewModel.ExportReportAsync", ex);
+            ProgressMessage = string.Format("Export failed: {0}".T(), ex.Message);
+            return null;
         }
     }
 }

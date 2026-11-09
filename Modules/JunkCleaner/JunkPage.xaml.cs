@@ -277,6 +277,27 @@ public sealed partial class JunkPage : Page
         ViewModel.OpenSelectedFolder();
     }
 
+    private async void OnExportReportClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
+        await ViewModel.ExportReportAsync();
+    }
+
+    private void OnSortSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox cb && cb.SelectedIndex >= 0)
+        {
+            ViewModel.CurrentSort = cb.SelectedIndex switch
+            {
+                1 => JunkViewModel.JunkSortOption.SizeAsc,
+                2 => JunkViewModel.JunkSortOption.NameAsc,
+                3 => JunkViewModel.JunkSortOption.NameDesc,
+                4 => JunkViewModel.JunkSortOption.SafetyTier,
+                _ => JunkViewModel.JunkSortOption.SizeDesc
+            };
+        }
+    }
+
     public bool IsNot(bool val) => !val;
 
     public bool CanClean(bool isCleaning, int count, long totalCleanableBytes)

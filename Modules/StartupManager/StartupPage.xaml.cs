@@ -9,6 +9,7 @@ using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Services.Contracts;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Infrastructure.Logging;
 using WinCarePro.Shared.Components;
 
 namespace WinCarePro.Views;
@@ -117,7 +118,10 @@ public sealed partial class StartupPage : Page
             if (System.IO.File.Exists(servicesMsc))
                 Process.Start(new ProcessStartInfo(servicesMsc) { UseShellExecute = true, WorkingDirectory = Environment.SystemDirectory });
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("StartupPage.OnOpenServicesMscClick", ex);
+        }
     }
 
     private void OnOpenTaskMgrServicesClick(object sender, RoutedEventArgs e)
@@ -129,7 +133,64 @@ public sealed partial class StartupPage : Page
             if (taskmgr != null)
                 Process.Start(new ProcessStartInfo(taskmgr) { UseShellExecute = true, WorkingDirectory = Environment.SystemDirectory });
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("StartupPage.OnOpenTaskMgrServicesClick", ex);
+        }
+    }
+
+    private async void OnExportReportClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
+        await ViewModel.ExportReportAsync();
+    }
+
+    private void OnSortSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ComboBox cb && cb.SelectedIndex >= 0)
+        {
+            ViewModel.CurrentSort = cb.SelectedIndex switch
+            {
+                1 => StartupViewModel.StartupSortOption.NameDesc,
+                2 => StartupViewModel.StartupSortOption.ImpactDesc,
+                3 => StartupViewModel.StartupSortOption.StateDesc,
+                _ => StartupViewModel.StartupSortOption.NameAsc
+            };
+        }
+    }
+
+    private void OnOpenFileLocationClick(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            string? targetPath = null;
+            if (sender is FrameworkElement fe)
+            {
+                if (fe.DataContext is StartupEntry se) targetPath = se.Command;
+                else if (fe.DataContext is ServiceEntry sve) targetPath = sve.ImagePath;
+            }
+
+            if (!string.IsNullOrWhiteSpace(targetPath))
+            {
+                // Remove quotes and args if any
+                string cleanPath = targetPath.Trim('\"');
+                int exeIdx = cleanPath.IndexOf(".exe", StringComparison.OrdinalIgnoreCase);
+                if (exeIdx > 0) cleanPath = cleanPath.Substring(0, exeIdx + 4);
+
+                if (System.IO.File.Exists(cleanPath))
+                {
+                    Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{cleanPath}\"") { UseShellExecute = true });
+                }
+                else if (System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(cleanPath)))
+                {
+                    Process.Start(new ProcessStartInfo("explorer.exe", $"\"{System.IO.Path.GetDirectoryName(cleanPath)}\"") { UseShellExecute = true });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("StartupPage.OnOpenFileLocationClick", ex);
+        }
     }
 
     private async void OnUndoClick(object sender, RoutedEventArgs e)
@@ -322,6 +383,21 @@ public sealed partial class StartupPage : Page
 
     public bool ServiceRunning(string status) => status.Equals("Running", StringComparison.OrdinalIgnoreCase);
     public bool ServiceNotRunning(string status) => !status.Equals("Running", StringComparison.OrdinalIgnoreCase);
+
+    public string ScoreToString(double score) => $"{Math.Round(score)}";
+    public string ScoreToStatusText(double score) => score >= 85 ? "Optimal".T() : score >= 65 ? "Fair".T() : "Needs Care".T();
+    public Brush ScoreToBrush(double score)
+    {
+        if (score >= 85) return (Brush)Application.Current.Resources["AppStatusGoodBrush"];
+        if (score >= 65) return (Brush)Application.Current.Resources["AppStatusWarningBrush"];
+        return (Brush)Application.Current.Resources["AppStatusCriticalBrush"];
+    }
+
+    private async void OnQuickOptimizeClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 250);
+        await ViewModel.OptimizeStartupAppsAsync();
+    }
 
     public string FormatDateTime(DateTime? dt) => dt.HasValue ? dt.Value.ToString("yyyy-MM-dd HH:mm") : "Never".T();
 

@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:WinCarePro.ViewModels"
+    xmlns:models="using:WinCarePro.Models"
     xmlns:local="using:WinCarePro.Views"
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
@@ -197,9 +198,40 @@
                                                 helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98"
                                                 AutomationProperties.Name="Scan System"
                                                 AutomationProperties.HelpText="Initiates deep system scan for junk files, performance issues, and security status.">
+                                            <Button.Flyout>
+                                                <MenuFlyout Placement="Bottom">
+                                                    <MenuFlyoutItem Text="Disk &amp; Cache Cleaner" Tag="DiskAndCache" Click="OnScanCategoryMenuClick">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xEA99;" Foreground="#FFF59E0B"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutItem Text="Startup &amp; Performance Audit" Tag="StartupAndPerformance" Click="OnScanCategoryMenuClick">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE7F4;" Foreground="#FF3B82F6"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutItem Text="Security &amp; Network Armor" Tag="SecurityCheck" Click="OnScanCategoryMenuClick">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xEA18;" Foreground="#FF10B981"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutItem Text="Registry &amp; Disk Health" Tag="RegistryAndDiskHealth" Click="OnScanCategoryMenuClick">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xEDA2;" Foreground="#FF8B5CF6"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutSeparator />
+                                                    <MenuFlyoutItem Text="Run All Diagnostics" Click="OnRunAllDiagnosticsMenuClick">
+                                                        <MenuFlyoutItem.Icon>
+                                                            <FontIcon Glyph="&#xE721;" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                                        </MenuFlyoutItem.Icon>
+                                                    </MenuFlyoutItem>
+                                                </MenuFlyout>
+                                            </Button.Flyout>
                                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                                 <FontIcon Glyph="&#xE721;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                                <TextBlock Text="Scan Only" FontWeight="SemiBold" FontSize="12"/>
+                                                <TextBlock Text="Scan Hub" FontWeight="SemiBold" FontSize="12"/>
+                                                <FontIcon Glyph="&#xE70D;" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
                                         </Button>
 
@@ -339,7 +371,7 @@
                     </Grid>
                 </Border>
 
-                    <!-- Row 1: 4-Pillar Quick Vital Capsules (Full-Width 4-Column Quick Action Strip) -->
+                    <!-- Row 1: 4-Pillar Modular Scan Action Cards Hub -->
                     <Grid x:Name="QuickStatsGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" RowSpacing="0" ColumnSpacing="0" Visibility="Visible"
                           helpers:AnimationHelper.StaggerIndex="2">
                         <Grid.RowDefinitions>
@@ -353,78 +385,94 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatUptimeClick"
-                                AutomationProperties.Name="System Uptime Details" AutomationProperties.HelpText="View system uptime details">
-                            <Border Style="{StaticResource CyberStatCapsuleStyle}" Margin="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="14,10" CornerRadius="14">
+                        <!-- Card 1: Disk & Cache Cleaner -->
+                        <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnScanCardDiskClick"
+                                AutomationProperties.Name="Disk and Cache Cleaner Scan" AutomationProperties.HelpText="Open Disk and Cache Cleaner Scan Hub">
+                            <Border Style="{StaticResource CyberStatCapsuleStyle}" Margin="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="72" Padding="14,10" CornerRadius="14">
                                 <Grid ColumnSpacing="10">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" Width="34" Height="34" CornerRadius="10" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" VerticalAlignment="Center">
-                                        <FontIcon Glyph="&#xE916;" FontSize="14" Foreground="{StaticResource GpuAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="12" Background="#15F59E0B" BorderBrush="#35F59E0B" BorderThickness="1" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xEA99;" FontSize="16" Foreground="#FFF59E0B" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                     </Border>
                                     <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                        <TextBlock Text="Uptime" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        <TextBlock Text="{x:Bind ViewModel.SystemUptime, Mode=OneWay}" FontSize="13.5" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="Disk &amp; Cache" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="Temp, Prefetch, Updates" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{x:Bind ViewModel.JunkFileSize, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     </StackPanel>
+                                    <FontIcon Grid.Column="2" Glyph="&#xE76C;" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
                                 </Grid>
                             </Border>
                         </Button>
 
-                        <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatNetworkClick"
-                                AutomationProperties.Name="Network Status Details" AutomationProperties.HelpText="View network activity details">
-                            <Border Style="{StaticResource CyberStatCapsuleStyle}" Margin="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="14,10" CornerRadius="14">
+                        <!-- Card 2: Startup & Performance Audit -->
+                        <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnScanCardStartupClick"
+                                AutomationProperties.Name="Startup and Performance Audit Scan" AutomationProperties.HelpText="Open Startup and Performance Audit Scan Hub">
+                            <Border Style="{StaticResource CyberStatCapsuleStyle}" Margin="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="72" Padding="14,10" CornerRadius="14">
                                 <Grid ColumnSpacing="10">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" Width="34" Height="34" CornerRadius="10" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" VerticalAlignment="Center">
-                                        <FontIcon Glyph="&#xE774;" FontSize="14" Foreground="#FF0284C7" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="12" Background="#153B82F6" BorderBrush="#353B82F6" BorderThickness="1" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xE7F4;" FontSize="16" Foreground="#FF3B82F6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                     </Border>
                                     <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                        <TextBlock Text="Network" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        <TextBlock Text="{x:Bind ViewModel.NetworkStatus, Mode=OneWay}" FontSize="13.5" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="Startup &amp; Performance" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="High impact apps &amp; services" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{x:Bind ViewModel.SystemUptime, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" Foreground="#FF3B82F6" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     </StackPanel>
+                                    <FontIcon Grid.Column="2" Glyph="&#xE76C;" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
                                 </Grid>
                             </Border>
                         </Button>
 
-                        <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatJunkClick"
-                                AutomationProperties.Name="Navigate to Junk Cleaner" AutomationProperties.HelpText="Open Junk Cleaner module">
-                            <Border Style="{StaticResource CyberStatCapsuleStyle}" Margin="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="14,10" CornerRadius="14">
+                        <!-- Card 3: Security & Network Armor -->
+                        <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnScanCardSecurityClick"
+                                AutomationProperties.Name="Security Check Scan" AutomationProperties.HelpText="Open Security and Network Armor Scan Hub">
+                            <Border Style="{StaticResource CyberStatCapsuleStyle}" Margin="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="72" Padding="14,10" CornerRadius="14">
                                 <Grid ColumnSpacing="10">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" Width="34" Height="34" CornerRadius="10" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" VerticalAlignment="Center">
-                                        <FontIcon Glyph="&#xEA99;" FontSize="14" Foreground="#FFF59E0B" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="12" Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xEA18;" FontSize="16" Foreground="#FF10B981" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                     </Border>
                                     <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                        <TextBlock Text="Junk Size" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        <TextBlock Text="{x:Bind ViewModel.JunkFileSize, Mode=OneWay}" FontSize="13.5" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="Security &amp; Network" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="Defender, UAC &amp; Ports" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{x:Bind ViewModel.NetworkStatus, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display"/>
                                     </StackPanel>
+                                    <FontIcon Grid.Column="2" Glyph="&#xE76C;" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
                                 </Grid>
                             </Border>
                         </Button>
 
-                        <Button Grid.Row="0" Grid.Column="3" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnQuickStatAppsClick"
-                                AutomationProperties.Name="Navigate to App Uninstaller" AutomationProperties.HelpText="Open App Uninstaller module">
-                            <Border Style="{StaticResource CyberStatCapsuleStyle}" Margin="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="60" Padding="14,10" CornerRadius="14">
+                        <!-- Card 4: Registry & Disk Health -->
+                        <Button Grid.Row="0" Grid.Column="3" Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnScanCardRegistryClick"
+                                AutomationProperties.Name="Registry and Disk Health Scan" AutomationProperties.HelpText="Open Registry and Disk S.M.A.R.T Health Scan Hub">
+                            <Border Style="{StaticResource CyberStatCapsuleStyle}" Margin="6,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="72" Padding="14,10" CornerRadius="14">
                                 <Grid ColumnSpacing="10">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" Width="34" Height="34" CornerRadius="10" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" VerticalAlignment="Center">
-                                        <FontIcon Glyph="&#xE71D;" FontSize="14" Foreground="#FF8B5CF6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="12" Background="#158B5CF6" BorderBrush="#358B5CF6" BorderThickness="1" VerticalAlignment="Center">
+                                        <FontIcon Glyph="&#xEDA2;" FontSize="16" Foreground="#FF8B5CF6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                     </Border>
                                     <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                        <TextBlock Text="Apps" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        <TextBlock Text="{x:Bind ViewModel.InstalledAppsCount, Mode=OneWay}" FontSize="13.5" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="Registry &amp; Disk Health" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="Orphan keys &amp; S.M.A.R.T" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{x:Bind ViewModel.InstalledAppsCount, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0} apps installed'}" FontSize="11" FontWeight="SemiBold" Foreground="#FF8B5CF6" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     </StackPanel>
+                                    <FontIcon Grid.Column="2" Glyph="&#xE76C;" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
                                 </Grid>
                             </Border>
                         </Button>
@@ -827,6 +875,244 @@
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
+
+        <!-- ======================================================================== -->
+        <!-- Aura Glass Slide-in Detail Panel & Modal Overlay for Modular Scans        -->
+        <!-- ======================================================================== -->
+        <Grid Grid.Row="0" Grid.RowSpan="2"
+              Visibility="{x:Bind ViewModel.IsScanPanelOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+              Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}"
+              Opacity="1.0"
+              Canvas.ZIndex="1000">
+
+            <!-- Backdrop Scrim (Click to dismiss) -->
+            <Button Background="#55000000" Click="OnScanPanelScrimClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutomationProperties.Name="Dismiss Scan Panel"/>
+
+            <!-- Right-aligned Slide-in Aura Glass Card -->
+            <Border HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                    Width="520"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1,0,0,0"
+                    CornerRadius="16,0,0,16"
+                    Shadow="{ThemeResource SharedShadow}"
+                    Padding="24,20,24,20">
+                <Grid RowSpacing="14">
+                    <Grid.RowDefinitions>
+                        <!-- Header & Close -->
+                        <RowDefinition Height="Auto" />
+                        <!-- Pre-Scan Subcategory Config or Finding List -->
+                        <RowDefinition Height="*" />
+                        <!-- Scanning Progress & Module Status -->
+                        <RowDefinition Height="Auto" />
+                        <!-- Action Deck Footer -->
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Row 0: Panel Header -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" Margin="0,0,14,0" VerticalAlignment="Center">
+                            <FontIcon Glyph="{x:Bind ViewModel.ModeHeaderGlyph, Mode=OneWay}" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                            <TextBlock Text="{x:Bind ViewModel.ModeHeaderTitle, Mode=OneWay}" FontSize="17" FontWeight="Bold" FontFamily="Segoe UI Variable Display" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{x:Bind ViewModel.ModeHeaderSubtitle, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxLines="2" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <Button Grid.Column="2" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="32" Height="32" Click="OnCloseScanPanelClick" VerticalAlignment="Top" AutomationProperties.Name="Close Scan Panel">
+                            <FontIcon Glyph="&#xE711;" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- Row 1: Dual-State Scrollable Content (Pre-scan Config vs Post-scan Findings) -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Spacing="12">
+
+                            <!-- State A: Pre-Scan Subcategory Config Selection -->
+                            <StackPanel Visibility="{x:Bind ViewModel.HasModeScanned, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Spacing="10">
+                                <TextBlock Text="Pre-Scan Categories" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock Text="Configure items to include before starting scan" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+
+                                <ItemsControl ItemsSource="{x:Bind ViewModel.ModeSubCategories, Mode=OneWay}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="models:DashboardSubCategoryItem">
+                                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="12,10" Margin="0,0,0,8">
+                                                <Grid ColumnSpacing="10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border Grid.Column="0" Width="30" Height="30" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" VerticalAlignment="Center">
+                                                        <FontIcon Glyph="{x:Bind IconGlyph}" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                    </Border>
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                                        <TextBlock Text="{x:Bind DisplayName}" FontSize="12.5" FontWeight="SemiBold"/>
+                                                        <TextBlock Text="{x:Bind DisplayDescription}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                                    </StackPanel>
+                                                    <CheckBox Grid.Column="2" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" AutomationProperties.Name="{x:Bind DisplayName}"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                            <!-- State B: Post-Scan Findings & Categorized Health Audit -->
+                            <StackPanel Visibility="{x:Bind ViewModel.HasModeScanned, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Spacing="12">
+                                <!-- Severity KPI Summary Bar -->
+                                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="12,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Safe Count -->
+                                        <StackPanel Grid.Column="0" HorizontalAlignment="Center" Spacing="2">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <Ellipse Width="7" Height="7" Fill="#FF10B981" VerticalAlignment="Center"/>
+                                                <TextBlock Text="Safe" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{x:Bind ViewModel.SafeCount, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="#FF10B981" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        </StackPanel>
+
+                                        <!-- Notice / Warning Count -->
+                                        <StackPanel Grid.Column="1" HorizontalAlignment="Center" Spacing="2">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <Ellipse Width="7" Height="7" Fill="#FFF59E0B" VerticalAlignment="Center"/>
+                                                <TextBlock Text="Notice" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{x:Bind ViewModel.WarningCount, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="#FFF59E0B" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        </StackPanel>
+
+                                        <!-- Risk / Danger Count -->
+                                        <StackPanel Grid.Column="2" HorizontalAlignment="Center" Spacing="2">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
+                                                <Ellipse Width="7" Height="7" Fill="#FFEF4444" VerticalAlignment="Center"/>
+                                                <TextBlock Text="Risk" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{x:Bind ViewModel.DangerCount, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="#FFEF4444" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Quick Fix Result Message if any -->
+                                <Border Visibility="{x:Bind GetQuickFixResultVisibility(ViewModel.QuickFixResultMessage), Mode=OneWay}" Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1" CornerRadius="8" Padding="10,6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{x:Bind ViewModel.QuickFixResultMessage, Mode=OneWay}" FontSize="11.5" Foreground="#FF10B981" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBlock Text="Scan Findings &amp; Health Audit" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+
+                                <!-- Findings List with Color Badges -->
+                                <ItemsControl ItemsSource="{x:Bind ViewModel.ModeFindings, Mode=OneWay}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="models:DashboardScanFinding">
+                                            <Border Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="12,10" Margin="0,0,0,6">
+                                                <Grid ColumnSpacing="10">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                                                        <TextBlock Text="{x:Bind Title}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Text="{x:Bind Description}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap"/>
+                                                    </StackPanel>
+
+                                                    <!-- Severity Badge -->
+                                                    <Border Grid.Column="1" Background="{x:Bind BadgeBg, Mode=OneWay}" Padding="8,3" CornerRadius="6" VerticalAlignment="Center">
+                                                        <TextBlock Text="{x:Bind SeverityBadgeText, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{x:Bind BadgeFg, Mode=OneWay}"/>
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Row 2: Live Scanning Progress HUD -->
+                    <Border Grid.Row="2" Visibility="{x:Bind ViewModel.IsModeScanning, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="12" Padding="14,10">
+                        <StackPanel Spacing="6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <ProgressRing Width="16" Height="16" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                    <TextBlock Text="{x:Bind ViewModel.ModeCurrentModuleName, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.ModeScannedItemCount, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0} items'}" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            </Grid>
+                            <ProgressBar Value="{x:Bind ViewModel.ModeScanProgress, Mode=OneWay}" Maximum="100" Height="4.5" Foreground="{StaticResource PrimaryAccentGradient}" CornerRadius="2"/>
+                            <TextBlock Text="{x:Bind ViewModel.ModeScanStatus, Mode=OneWay}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Row 3: Action Buttons Deck -->
+                    <Grid Grid.Row="3" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Primary Action: Scan or Stop Scan or Quick Fix -->
+                        <!-- If Scanning: Stop Scan -->
+                        <Button Grid.Column="0" Visibility="{x:Bind ViewModel.IsModeScanning, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnCancelModeScanClick" Height="38" HorizontalAlignment="Stretch" CornerRadius="10"
+                                AutomationProperties.Name="Stop Scan">
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE71A;" FontSize="12" Foreground="#FFEF4444"/>
+                                <TextBlock Text="Stop Scan" FontWeight="Bold" FontSize="12" Foreground="#FFEF4444"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- If Idle & Not Scanned: Start Scan -->
+                        <Button Grid.Column="0" Visibility="{x:Bind GetScanButtonVisibility(ViewModel.IsModeScanning, ViewModel.HasModeScanned), Mode=OneWay}"
+                                Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnStartModeScanClick" Height="38" HorizontalAlignment="Stretch" CornerRadius="10"
+                                AutomationProperties.Name="Start Scan">
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE721;" FontSize="12" Foreground="White"/>
+                                <TextBlock Text="Start Scan" FontWeight="Bold" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- If Scanned: Quick Fix / Clean Now -->
+                        <Button Grid.Column="0" Visibility="{x:Bind GetQuickFixButtonVisibility(ViewModel.IsModeScanning, ViewModel.HasModeScanned), Mode=OneWay}"
+                                IsEnabled="{x:Bind IsNot(ViewModel.IsModeFixing), Mode=OneWay}"
+                                Style="{StaticResource VibrantPrimaryButtonStyle}" Click="OnExecuteModeQuickFixClick" Height="38" HorizontalAlignment="Stretch" CornerRadius="10"
+                                AutomationProperties.Name="{x:Bind ViewModel.ModeActionFixButtonText, Mode=OneWay}">
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE945;" FontSize="12" Foreground="White"/>
+                                <TextBlock Text="{x:Bind ViewModel.ModeActionFixButtonText, Mode=OneWay}" FontWeight="Bold" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Secondary Action: Open Deep Module Page -->
+                        <Button Grid.Column="1" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnModeDeepNavClick" Height="38" HorizontalAlignment="Stretch" CornerRadius="10"
+                                AutomationProperties.Name="{x:Bind ViewModel.ModeDeepNavButtonText, Mode=OneWay}">
+                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE8A7;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="{x:Bind ViewModel.ModeDeepNavButtonText, Mode=OneWay}" FontWeight="SemiBold" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Page>
 

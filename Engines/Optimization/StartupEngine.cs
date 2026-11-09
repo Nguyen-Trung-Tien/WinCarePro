@@ -477,6 +477,15 @@ public class StartupEngine
                 string targetKeyPath = originalKeyPath + (enable ? "" : "Disabled");
                 string sourceKeyPath = originalKeyPath + (enable ? "Disabled" : "");
 
+                // Verify safety with SafeRegistryGuard before modifying Run / RunDisabled
+                string activeKeyPath = hive == Registry.LocalMachine ? @"HKLM\" + sourceKeyPath : @"HKCU\" + sourceKeyPath;
+                string targetFullKeyPath = hive == Registry.LocalMachine ? @"HKLM\" + targetKeyPath : @"HKCU\" + targetKeyPath;
+                if (!SafeRegistryGuard.IsSafeToModifyValue(activeKeyPath, entry.Name) || !SafeRegistryGuard.IsSafeToModifyKey(targetFullKeyPath))
+                {
+                    Database.DbManager.LogAction($"Safety Block: Modifying registry value '{entry.Name}' in '{activeKeyPath}' is restricted.", "Startup Manager", "Warning");
+                    return false;
+                }
+
                 using (var srcKey = hive.OpenSubKey(sourceKeyPath, true))
                 using (var dstKey = hive.CreateSubKey(targetKeyPath, true))
                 {
@@ -531,6 +540,20 @@ public class StartupEngine
                 };
 
                 string activeKey = runKeyPath + (entry.IsEnabled ? "" : "Disabled");
+                string fullActiveKey = hive == Registry.LocalMachine ? @"HKLM\" + activeKey : @"HKCU\" + activeKey;
+
+                // Rule 02: SafeRegistryGuard validation and auto-backup before permanent deletion
+                if (!SafeRegistryGuard.IsSafeToDeleteValue(fullActiveKey, entry.Name))
+                {
+                    Database.DbManager.LogAction($"Safety Block: Deleting registry value '{entry.Name}' in '{fullActiveKey}' is restricted.", "Startup Manager", "Warning");
+                    return false;
+                }
+
+                try
+                {
+                    RegistryBackupEngine.BackupKey(fullActiveKey);
+                }
+                catch { }
 
                 using var key = hive.OpenSubKey(activeKey, true);
                 if (key != null)

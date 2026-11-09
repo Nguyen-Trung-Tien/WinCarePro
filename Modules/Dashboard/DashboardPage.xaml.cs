@@ -449,6 +449,120 @@ public sealed partial class DashboardPage : Page
         }
     }
 
+    private void OnScanCategoryMenuClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem item && item.Tag is string modeTag)
+        {
+            ViewModel.OpenScanPanel(modeTag);
+        }
+    }
+
+    private async void OnRunAllDiagnosticsMenuClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RunFullDiagnosticsAsync();
+    }
+
+    // Modular Scan Card Click Handlers
+    private void OnScanCardDiskClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.OpenScanPanel("DiskAndCache");
+    }
+
+    private void OnScanCardStartupClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.OpenScanPanel("StartupAndPerformance");
+    }
+
+    private void OnScanCardSecurityClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.OpenScanPanel("SecurityCheck");
+    }
+
+    private void OnScanCardRegistryClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.OpenScanPanel("RegistryAndDiskHealth");
+    }
+
+    // Modal / Side Panel event handlers
+    private void OnCloseScanPanelClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.CloseScanPanel();
+    }
+
+    private void OnScanPanelScrimClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.CloseScanPanel();
+    }
+
+    private async void OnStartModeScanClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.StartModeScanAsync();
+    }
+
+    private void OnCancelModeScanClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.CancelModeScan();
+    }
+
+    private async void OnExecuteModeQuickFixClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ExecuteModeQuickFixAsync();
+    }
+
+    private void OnModeDeepNavClick(object sender, RoutedEventArgs e)
+    {
+        ViewModel.CloseScanPanel();
+        try
+        {
+            if (App.MainWindowInstance is MainWindow mw && mw.MainFrame.Content is MainPage mp)
+            {
+                mp.NavigateToPageExternal(ViewModel.ModeDeepNavTarget);
+            }
+        }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("DashboardPage.OnModeDeepNavClick", ex);
+        }
+    }
+
+    // Helpers for XAML bindings
+    public Visibility GetScanButtonVisibility(bool isScanning, bool hasScanned)
+    {
+        return (!isScanning && !hasScanned) ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    public Visibility GetQuickFixButtonVisibility(bool isScanning, bool hasScanned)
+    {
+        return (!isScanning && hasScanned) ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    public Visibility GetQuickFixResultVisibility(string? message)
+    {
+        return !string.IsNullOrWhiteSpace(message) ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    public SolidColorBrush GetFindingBadgeBg(ScanFindingSeverity severity)
+    {
+        return severity switch
+        {
+            ScanFindingSeverity.Healthy => new SolidColorBrush(Windows.UI.Color.FromArgb(35, 16, 185, 129)),
+            ScanFindingSeverity.Warning => new SolidColorBrush(Windows.UI.Color.FromArgb(35, 245, 158, 11)),
+            ScanFindingSeverity.Danger => new SolidColorBrush(Windows.UI.Color.FromArgb(35, 239, 68, 68)),
+            _ => new SolidColorBrush(Windows.UI.Color.FromArgb(25, 148, 163, 184))
+        };
+    }
+
+    public SolidColorBrush GetFindingBadgeFg(ScanFindingSeverity severity)
+    {
+        return severity switch
+        {
+            ScanFindingSeverity.Healthy => new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)),
+            ScanFindingSeverity.Warning => new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)),
+            ScanFindingSeverity.Danger => new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)),
+            _ => new SolidColorBrush(Windows.UI.Color.FromArgb(255, 148, 163, 184))
+        };
+    }
+
     private async void OnOptimizeClick(object sender, RoutedEventArgs e)
     {
         await RunOptimizationFlow(OptimizationMode.Recommended);

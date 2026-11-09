@@ -49,6 +49,28 @@ public class StartupViewModel : ViewModelBase, IDisposable
     public ObservableCollection<ServiceEntry> Services { get; } = new();
     public ObservableCollection<ScheduledTaskEntry> ScheduledTasks { get; } = new();
 
+    // Sorting properties
+    public enum StartupSortOption
+    {
+        NameAsc,
+        NameDesc,
+        ImpactDesc,
+        StateDesc
+    }
+
+    private StartupSortOption _currentSort = StartupSortOption.NameAsc;
+    public StartupSortOption CurrentSort
+    {
+        get => _currentSort;
+        set
+        {
+            if (SetProperty(ref _currentSort, value))
+            {
+                ApplyFilters();
+            }
+        }
+    }
+
     // Properties
     private bool _isLoading;
     public bool IsLoading
@@ -494,7 +516,16 @@ public class StartupViewModel : ViewModelBase, IDisposable
                 }
                 return true;
             });
-            foreach (var app in filteredApps) StartupApps.Add(app);
+
+            var sortedApps = CurrentSort switch
+            {
+                StartupSortOption.NameDesc => filteredApps.OrderByDescending(x => x.Name),
+                StartupSortOption.ImpactDesc => filteredApps.OrderByDescending(x => x.StartupImpact == "Critical" ? 3 : x.StartupImpact == "High" ? 2 : x.StartupImpact == "Medium" ? 1 : 0).ThenBy(x => x.Name),
+                StartupSortOption.StateDesc => filteredApps.OrderByDescending(x => x.IsEnabled).ThenBy(x => x.Name),
+                _ => filteredApps.OrderBy(x => x.Name)
+            };
+
+            foreach (var app in sortedApps) StartupApps.Add(app);
 
             // 2. Filter Services
             Services.Clear();
@@ -512,7 +543,15 @@ public class StartupViewModel : ViewModelBase, IDisposable
                 }
                 return true;
             });
-            foreach (var svc in filteredSvcs) Services.Add(svc);
+
+            var sortedSvcs = CurrentSort switch
+            {
+                StartupSortOption.NameDesc => filteredSvcs.OrderByDescending(x => x.DisplayName),
+                StartupSortOption.StateDesc => filteredSvcs.OrderByDescending(x => x.Status == "Running").ThenBy(x => x.DisplayName),
+                _ => filteredSvcs.OrderBy(x => x.DisplayName)
+            };
+
+            foreach (var svc in sortedSvcs) Services.Add(svc);
 
             // 3. Filter Scheduled Tasks
             ScheduledTasks.Clear();
@@ -530,7 +569,15 @@ public class StartupViewModel : ViewModelBase, IDisposable
                 }
                 return true;
             });
-            foreach (var task in filteredTasks) ScheduledTasks.Add(task);
+
+            var sortedTasks = CurrentSort switch
+            {
+                StartupSortOption.NameDesc => filteredTasks.OrderByDescending(x => x.Name),
+                StartupSortOption.StateDesc => filteredTasks.OrderByDescending(x => x.IsEnabled).ThenBy(x => x.Name),
+                _ => filteredTasks.OrderBy(x => x.Name)
+            };
+
+            foreach (var task in sortedTasks) ScheduledTasks.Add(task);
         });
     }
 
@@ -891,5 +938,62 @@ public class StartupViewModel : ViewModelBase, IDisposable
         }
 
         IsLoading = false;
+    }
+
+    // Export Startup & Services Configuration Report (CSV)
+    public async Task<string?> ExportReportAsync()
+    {
+        try
+        {
+            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string filePath = System.IO.Path.Combine(desktop, $"WinCarePro_StartupReport_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("Type,Name,Publisher/Company,Status/State,Impact,Path/Command");
+
+            foreach (var app in _allStartupApps)
+            {
+                string state = app.IsEnabled ? "Enabled" : "Disabled";
+                string safeName = $"\"{app.Name.Replace("\"", "\"\"")}\"";
+                string safePub = $"\"{app.Publisher.Replace("\"", "\"\"")}\"";
+                string safeCmd = $"\"{app.Command.Replace("\"", "\"\"")}\"";
+                sb.AppendLine($"Startup App,{safeName},{safePub},{state},{app.StartupImpact},{safeCmd}");
+            }
+
+            foreach (var svc in _allServices)
+            {
+                string safeDisp = $"\"{svc.DisplayName.Replace("\"", "\"\"")}\"";
+                string safeComp = $"\"{svc.CompanyName.Replace("\"", "\"\"")}\"";
+                string safePath = $"\"{svc.ImagePath.Replace("\"", "\"\"")}\"";
+                sb.AppendLine($"Windows Service,{safeDisp},{safeComp},{svc.Status}/{svc.StartupType},N/A,{safePath}");
+            }
+
+            foreach (var task in _allScheduledTasks)
+            {
+                string state = task.IsEnabled ? "Enabled" : "Disabled";
+                string safeName = $"\"{task.Name.Replace("\"", "\"\"")}\"";
+                string safeAuthor = $"\"{task.Author.Replace("\"", "\"\"")}\"";
+                string safeAction = $"\"{task.Action.Replace("\"", "\"\"")}\"";
+                sb.AppendLine($"Scheduled Task,{safeName},{safeAuthor},{state},N/A,{safeAction}");
+            }
+
+            await System.IO.File.WriteAllTextAsync(filePath, sb.ToString(), System.Text.Encoding.UTF8);
+
+            var notifier = _notificationService ?? App.Services?.GetService<INotificationService>();
+            notifier?.ShowToast(
+                "Report Exported".T(),
+                string.Format("Startup report saved to Desktop:\n{0}".T(), System.IO.Path.GetFileName(filePath)),
+                NotificationSeverity.Success
+            );
+
+            _audit.LogAction("Startup", "ExportReport", filePath, "Success");
+            return filePath;
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("StartupViewModel.ExportReportAsync", ex);
+            StatusText = string.Format("Export failed: {0}".T(), ex.Message);
+            return null;
+        }
     }
 }

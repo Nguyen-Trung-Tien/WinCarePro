@@ -526,5 +526,69 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("SETTINGS HUB", manager.GetTranslationForLanguage("TRUNG TÂM CÀI ĐẶT", AppLanguage.English));
         Assert.Equal("Preferences & System", manager.GetTranslationForLanguage("Tùy chọn & Hệ thống", AppLanguage.English));
     }
+
+    [Fact]
+    public void TranslationManager_ModularPartialClassArchitecture_ZeroBreakingChange()
+    {
+        var manager = TranslationManager.Instance;
+        manager.CurrentLanguage = AppLanguage.Vietnamese;
+
+        // 1. Indexer API: TranslationManager.Instance[key]
+        Assert.Equal("Tổng quan", manager["Dashboard"]);
+        Assert.Equal("BẢNG ĐIỀU KHIỂN HỆ THỐNG", manager["SYSTEM COCKPIT"]);
+
+        // 2. GetString API: TranslationManager.Instance.GetString(key)
+        Assert.Equal("Tổng quan", manager.GetString("Dashboard"));
+        Assert.Equal("Dọn dẹp", manager.GetString("Clean"));
+
+        // 3. Culture dictionaries
+        var viDict = manager.GetTranslations("vi-VN");
+        var enDict = manager.GetTranslations("en-US");
+        Assert.NotNull(viDict);
+        Assert.NotNull(enDict);
+        Assert.True(viDict.Count >= 3300, $"Expected >= 3300 keys in viDict, got {viDict.Count}");
+        Assert.True(enDict.Count >= 3300, $"Expected >= 3300 keys in enDict, got {enDict.Count}");
+
+        // 4. TranslationConverter verification
+        var converter = new TranslationConverter();
+        var converted = converter.Convert("Dashboard", typeof(string), null!, "vi-VN");
+        Assert.Equal("Tổng quan", converted);
+
+        // 5. Test keys across all 15 modular subsets
+        // Common
+        Assert.Equal("Đang chuẩn bị", manager["Preparing"]);
+        // Dashboard
+        Assert.Equal("Lõi trực tuyến", manager["Core Online"]);
+        // AiAssistant
+        Assert.Equal("Chẩn đoán thông minh", manager["Smart Diagnostics & AI Health Advisor"]);
+        // DiskCleaner
+        Assert.Equal("Dọn dẹp & Lưu trữ", manager["Clean & Storage"]);
+        // StartupManager
+        Assert.Equal("Tăng tốc & Khởi động", manager["Speed & Startup"]);
+        // SystemOptimizer
+        Assert.Equal("Bác sĩ Hệ thống", manager["System Doctor"]);
+        // Registry
+        Assert.Equal("Dọn dẹp Registry", manager["Registry Cleaner"]);
+        // Repair
+        Assert.Equal("Sửa chữa Hệ thống & Tự phục hồi", manager["System Repair & Self-Healing"]);
+        // Network
+        Assert.Equal("Trung tâm Mạng", manager["Network Center"]);
+        // Security
+        Assert.Equal("Bảo vệ an ninh & quyền riêng tư Windows.", manager["Windows security & privacy protection."]);
+        // Uninstall
+        Assert.Equal("Cập nhật Phần mềm", manager["Software Updater"]);
+        // Updates
+        Assert.Equal("Ghi Chú Phát Hành & Nhật Ký Thay Đổi", manager["Release Notes & Changelog"]);
+        // DesktopWidget
+        Assert.Equal("Widget HUD", manager["Widget HUD"]);
+        // Notifications
+        Assert.Equal("Thông báo", manager["Notifications"]);
+        // Settings
+        Assert.Equal("Tối ưu hóa", manager["System Optimizer"]);
+
+        // Reset to English
+        manager.CurrentLanguage = AppLanguage.English;
+        Assert.Equal("Dashboard", manager["Dashboard"]);
+    }
 }
 

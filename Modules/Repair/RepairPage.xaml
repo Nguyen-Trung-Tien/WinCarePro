@@ -71,17 +71,17 @@
                 <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                     <StackPanel Spacing="3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <TextBlock Text="System Repair &amp; Self-Healing" Style="{StaticResource PageHeaderTitleStyle}"/>
+                            <TextBlock Text="System Repair" Style="{StaticResource PageHeaderTitleStyle}"/>
                             <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{ThemeResource PrimaryAccentBrush}" BorderThickness="1" CornerRadius="8" Padding="8,2" VerticalAlignment="Center">
-                                <TextBlock Text="System Doctor 6.0" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="System Doctor" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                             </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <TextBlock Text="Automated diagnostics, self-healing file restoration &amp; safe rollback." Style="{StaticResource PageHeaderSubtitleStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Text="Repair system components &amp; Windows integrity." Style="{StaticResource PageHeaderSubtitleStyle}" VerticalAlignment="Center"/>
                             <Border Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1" CornerRadius="6" Padding="6,1.5" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
                                     <FontIcon Glyph="&#xE72E;" FontSize="10" Foreground="#FF10B981" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Auto Restore Point Active" FontSize="10" FontWeight="Bold" Foreground="#FF10B981" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Restore Point Protected" FontSize="10" FontWeight="Bold" Foreground="#FF10B981" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
                         </StackPanel>
@@ -93,7 +93,7 @@
                 <Button x:Name="CancelHeaderBtn" Click="OnCancelOperationClick" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" CornerRadius="8" Padding="14,8" Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" Foreground="{ThemeResource AppStatusDangerBrush}" FontWeight="Bold">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE711;" FontSize="13" />
-                        <TextBlock Text="Cancel Operation" VerticalAlignment="Center" FontSize="12.5" />
+                        <TextBlock Text="Cancel" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" />
                     </StackPanel>
                 </Button>
                 
@@ -101,7 +101,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="ScanDiagRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                         <FontIcon x:Name="ScanDiagIcon" Glyph="&#xE721;" FontSize="13" />
-                        <TextBlock x:Name="ScanDiagText" Text="Scan Diagnostics" VerticalAlignment="Center" FontSize="12.5" />
+                        <TextBlock x:Name="ScanDiagText" Text="Scan Now" VerticalAlignment="Center" FontSize="12" FontWeight="Bold" />
                     </StackPanel>
                 </Button>
 
@@ -109,7 +109,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="FixSelectedRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                         <FontIcon x:Name="FixSelectedIcon" Glyph="&#xE77F;" FontSize="13" />
-                        <TextBlock x:Name="FixSelectedText" Text="1-Click Auto-Heal" VerticalAlignment="Center" FontSize="12.5" />
+                        <TextBlock x:Name="FixSelectedText" Text="Auto Repair" VerticalAlignment="Center" FontSize="12" FontWeight="Bold" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -213,7 +213,6 @@
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="4,0,0,8" VerticalAlignment="Center">
                     <TextBlock Text="Quick Problem Solver" FontSize="13" FontWeight="Bold" FontFamily="Segoe UI Variable Display"/>
-                    <TextBlock Text="• Select your symptom for instant 1-click healing" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
                 </StackPanel>
                 <Grid Grid.Row="1" ColumnSpacing="8">
                     <Grid.ColumnDefinitions>

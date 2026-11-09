@@ -262,7 +262,7 @@ namespace WinCarePro.Modules.AiAssistant
     }
 
     /// <summary>
-    /// AI Engine v4.0.0 analyzing system telemetry, memory pressure, predictive storage exhaustion, 
+    /// AI Engine v4.0.0 analyzing system telemetry, memory pressure, predictive storage exhaustion,
     /// boot time overhead profiling, and generating smart diagnostic recommendations.
     /// </summary>
     public static class AiWinCareEngine
@@ -495,7 +495,7 @@ namespace WinCarePro.Modules.AiAssistant
                     new SubsystemTopologyNode
                     {
                         Id = "CPU",
-                        Title = "CPU / Kernel".T(),
+                        Title = "CPU".T(),
                         IconGlyph = "\uE9D9",
                         Status = processCount > 250 ? "Critical" : (processCount > 180 ? "Warning" : "Optimal"),
                         MetricValue = $"{processCount} Tasks".T(),
@@ -505,7 +505,7 @@ namespace WinCarePro.Modules.AiAssistant
                     new SubsystemTopologyNode
                     {
                         Id = "RAM",
-                        Title = "Memory / RAM".T(),
+                        Title = "RAM".T(),
                         IconGlyph = "\uE7F1",
                         Status = totalRamMB > 12000 ? "Critical" : (totalRamMB > 8000 ? "Warning" : "Optimal"),
                         MetricValue = $"{totalRamMB / 1024.0:F1} GB Used".T(),

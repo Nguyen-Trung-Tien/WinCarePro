@@ -36,7 +36,7 @@ public sealed partial class SettingsPage : Page
     {
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
-        
+
         LoadSettingsToUI();
         UpdateStorageSizes();
 
@@ -89,7 +89,7 @@ public sealed partial class SettingsPage : Page
                 WinCarePro.Infrastructure.Logging.CrashLogger.LogMessage("SettingsPage", $"NetworkChange registration skipped: {netEx.Message}");
             }
 
-            try { PulsingUpdateGlowAnimation?.Begin(); } catch {}
+            try { PulsingUpdateGlowAnimation?.Begin(); } catch { }
 
             // Start live process telemetry for About section
             UpdateAboutTelemetry();
@@ -119,19 +119,10 @@ public sealed partial class SettingsPage : Page
 
     public void SelectSection(int index)
     {
-        int mappedTabIndex = index switch
+        if (index >= 0 && index < SettingsNavList.Items.Count)
         {
-            0 or 1 => 0,
-            2 or 3 => 1,
-            4 or 5 or 7 or 8 => 2,
-            6 or 9 or 10 => 3,
-            _ => Math.Clamp(index, 0, Math.Max(0, SettingsNavList.Items.Count - 1))
-        };
-
-        if (mappedTabIndex >= 0 && mappedTabIndex < SettingsNavList.Items.Count)
-        {
-            SettingsNavList.SelectedIndex = mappedTabIndex;
-            SettingsNavList.ScrollIntoView(SettingsNavList.Items[mappedTabIndex]);
+            SettingsNavList.SelectedIndex = index;
+            SettingsNavList.ScrollIntoView(SettingsNavList.Items[index]);
         }
     }
 
@@ -299,7 +290,7 @@ public sealed partial class SettingsPage : Page
         {
             p.AutoScan = AutoScanToggle.IsOn;
             p.ReportFormat = "TXT";
-            
+
             if (LanguageComboBox.SelectedIndex >= 0)
             {
                 p.LanguageIndex = LanguageComboBox.SelectedIndex;
@@ -446,7 +437,7 @@ public sealed partial class SettingsPage : Page
     {
         if (_loadingSettings) return;
         SaveSettings();
-        
+
         if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
         {
             lts.IsLoading = true;
@@ -484,14 +475,14 @@ public sealed partial class SettingsPage : Page
     private void OnLanguageSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (_loadingSettings) return;
-        
+
         int index = LanguageComboBox.SelectedIndex;
         if (index < 0) return;
 
         SettingsService.Instance.UpdateSettings(s => s.LanguageIndex = index, "LanguageIndex");
-        
+
         TranslationManager.Instance.CurrentLanguage = index == 1 ? AppLanguage.Vietnamese : AppLanguage.English;
-        
+
         if (App.MainWindowInstance is MainWindow mainWindow)
         {
             if (mainWindow.MainFrame.Content is MainPage mainPage)
@@ -499,7 +490,7 @@ public sealed partial class SettingsPage : Page
                 mainPage.UpdateHeader();
             }
         }
-        
+
         App.MainWindowInstance?.ShowToastNotification("Language Saved".T(), "Language setting has been updated successfully.".T(), "Success");
     }
 
@@ -573,7 +564,7 @@ public sealed partial class SettingsPage : Page
         if (_loadingSettings) return;
         int freq = MaintenanceFrequencyComboBox.SelectedIndex;
         SettingsService.Instance.UpdateSettings(s => s.MaintenanceFrequencyIndex = freq, "MaintenanceFrequencyIndex");
-        
+
         try
         {
             var engine = new WinCarePro.Engines.StartupEngine();
@@ -702,10 +693,10 @@ public sealed partial class SettingsPage : Page
             string json = SettingsService.Instance.ExportSettingsJson();
             string appData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "WinCarePro");
             string backupPath = Path.Combine(appData, $"WinCarePro_SettingsBackup_{DateTime.Now:yyyyMMdd_HHmmss}.json");
-            
+
             await File.WriteAllTextAsync(backupPath, json);
             DbManager.LogAction($"Exported settings backup to {backupPath}", "Settings", "Success");
-            
+
             App.MainWindowInstance?.ShowToastNotification("Backup Exported".T(), string.Format("Settings saved successfully to: {0}".T(), Path.GetFileName(backupPath)), "Success");
         }
         catch (Exception ex)
@@ -768,6 +759,7 @@ public sealed partial class SettingsPage : Page
     private void SettingsNavList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // View switches automatically via binding
+        ContentScrollViewer?.ChangeView(null, 0, null, true);
         this.DispatcherQueue?.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
         {
             TranslationManager.Instance.Translate(this);
@@ -776,14 +768,6 @@ public sealed partial class SettingsPage : Page
 
     private Visibility GetSectionVisibility(int selectedIndex, int targetIndex)
     {
-        int mappedTabIndex = targetIndex switch
-        {
-            0 or 1 => 0,
-            2 or 3 => 1,
-            4 or 5 or 7 or 8 => 2,
-            6 or 9 or 10 => 3,
-            _ => 0
-        };
-        return selectedIndex == mappedTabIndex ? Visibility.Visible : Visibility.Collapsed;
+        return selectedIndex == targetIndex ? Visibility.Visible : Visibility.Collapsed;
     }
 }

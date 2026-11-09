@@ -75,38 +75,38 @@
                     <Border Background="{ThemeResource AppBadgeNeutralBg}" BorderBrush="{ThemeResource AppBadgeNeutralBorder}" BorderThickness="1" CornerRadius="6" Padding="7,2.5" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}"/>
-                            <TextBlock Text="System Health Core" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Diagnostics" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Intelligent multi-factor diagnostics &amp; system health recommendations." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Multi-factor health diagnostics &amp; automated fixes." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
-            <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <Button x:Name="ExportReportBtn" Click="OnExportReportClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="Export diagnostic report to file"
+            <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button x:Name="ExportReportBtn" Click="OnExportReportClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="12,0" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="Export diagnostic report to file"
                         AutomationProperties.Name="Export Diagnostic Report"
                         AutomationProperties.HelpText="Exports diagnostic analysis report to a file.">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE8A7;" FontSize="13"/>
-                        <TextBlock Text="Export Report" FontSize="12" FontWeight="SemiBold"/>
+                        <TextBlock Text="Export" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="AutoRemedyAllBtn" Click="OnAutoRemedyAllClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="16,0" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="Execute all safe optimization fixes in one click"
+                <Button x:Name="AutoRemedyAllBtn" Click="OnAutoRemedyAllClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="Execute all safe optimization fixes in one click"
                         AutomationProperties.Name="1-Click Smart Remedy"
                         AutomationProperties.HelpText="Executes all safe optimization fixes in one click.">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
                         <ProgressRing x:Name="AutoRemedyProgressRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                         <FontIcon x:Name="AutoRemedyIcon" Glyph="&#xE777;" FontSize="13"/>
-                        <TextBlock x:Name="AutoRemedyText" Text="1-Click Smart Remedy" FontSize="12" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="AutoRemedyText" Text="Auto Fix" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="RunAiDiagnosticsBtn" Click="OnRunAiScanClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" MinWidth="150" Padding="14,0" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="Trigger a deep neural diagnostics scan"
+                <Button x:Name="RunAiDiagnosticsBtn" Click="OnRunAiScanClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" MinWidth="110" Padding="12,0" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="Trigger a deep neural diagnostics scan"
                         AutomationProperties.Name="Run AI Diagnostics"
                         AutomationProperties.HelpText="Triggers deep AI diagnostics scan on system stability and resources.">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
                         <ProgressRing x:Name="RunAiProgressRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
                         <FontIcon x:Name="RunAiIcon" Glyph="&#xE721;" FontSize="13"/>
-                        <TextBlock x:Name="RunAiText" Text="Run AI Diagnostics" FontSize="12" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="RunAiText" Text="AI Scan" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -185,14 +185,14 @@
                                     <FontIcon Glyph="&#xEDA2;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="System Hardware &amp; Component Status" FontWeight="Bold" FontSize="13"/>
-                                    <TextBlock Text="Real-time hardware telemetry and performance status" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="Component Health" FontWeight="Bold" FontSize="13"/>
+                                    <TextBlock Text="Real-time telemetry" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                             </StackPanel>
                             <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
                                     <Ellipse Width="6" Height="6" Fill="#FF10B981"/>
-                                    <TextBlock Text="5 Subsystems Monitored" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                    <TextBlock Text="5 Monitored" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981"/>
                                 </StackPanel>
                             </Border>
                         </Grid>
@@ -257,10 +257,10 @@
                                 <Border Width="26" Height="26" CornerRadius="6" Background="#153B82F6">
                                     <FontIcon Glyph="&#xE7F1;" FontSize="12" Foreground="#FF3B82F6" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Border>
-                                <TextBlock Text="Storage Horizon" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Storage Forecast" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
                             <TextBlock x:Name="PredictiveStorageText" Text="30+ Days Free" FontSize="18" FontWeight="ExtraBold" Foreground="#FF10B981"/>
-                            <TextBlock Text="Drive C: exhaustion forecast" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="C: Drive Forecast" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
 
@@ -272,10 +272,10 @@
                                 <Border Width="26" Height="26" CornerRadius="6" Background="#15F59E0B">
                                     <FontIcon Glyph="&#xE7B5;" FontSize="12" Foreground="#FFF59E0B" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Border>
-                                <TextBlock Text="Boot Optimization" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Boot Time" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
                             <TextBlock x:Name="PredictiveBootText" Text="-1.5s Boot Time" FontSize="18" FontWeight="ExtraBold" Foreground="#FFF59E0B"/>
-                            <TextBlock Text="Potential startup shaving" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="Startup Tuning" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
 
@@ -287,10 +287,10 @@
                                 <Border Width="26" Height="26" CornerRadius="6" Background="#158B5CF6">
                                     <FontIcon Glyph="&#xE950;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Border>
-                                <TextBlock Text="Memory Index" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Memory" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
                             <TextBlock x:Name="PredictiveMemoryText" Text="Stable" FontSize="18" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                            <TextBlock Text="Working set &amp; Standby state" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="RAM Working Set" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
 
@@ -302,10 +302,10 @@
                                 <Border Width="26" Height="26" CornerRadius="6" Background="#1510B981">
                                     <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="#FF10B981" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Border>
-                                <TextBlock Text="Stability Vector" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                                <TextBlock Text="Stability" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                             </StackPanel>
                             <TextBlock Text="99.9% Optimal" FontSize="18" FontWeight="ExtraBold" Foreground="#FF10B981"/>
-                            <TextBlock Text="Zero crash anomalies" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="System Normal" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
                 </Grid>
@@ -323,12 +323,12 @@
                                     <FontIcon Glyph="&#xE7BA;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="AI Root-Cause Causal Analysis (Explainable AI)" FontWeight="Bold" FontSize="13"/>
-                                    <TextBlock Text="Transparent correlation between background triggers, resource contention, and perceptible latency" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="Root-Cause Analysis" FontWeight="Bold" FontSize="13"/>
+                                    <TextBlock Text="Diagnostics and latency correlation" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                             </StackPanel>
                             <Border Grid.Column="1" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="Causal Inference Active" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="Active" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                             </Border>
                         </Grid>
 
@@ -436,8 +436,8 @@
                                     <FontIcon Glyph="&#xE7E8;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                    <TextBlock Text="AI Automated Self-Healing Deck" FontWeight="Bold" FontSize="13"/>
-                                    <TextBlock Text="Configurable multi-tier remedies with SafePathGuard &amp; SafeRegistryGuard protection" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Text="Automated Self-Healing" FontWeight="Bold" FontSize="13"/>
+                                    <TextBlock Text="Multi-tier safe remedies with rollback protection" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                 </StackPanel>
                             </StackPanel>
 
@@ -476,7 +476,7 @@
                                     <TextBlock x:Name="DryRunEstimateText" Text="Mode: Balanced Boost (Recommended tune-up: RAM working set &amp; temp >6h)" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="6,2">
-                                    <TextBlock Text="Snapshot Rollback Guaranteed" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
+                                    <TextBlock Text="Rollback Protected" FontSize="10" FontWeight="Bold" Foreground="#FF10B981"/>
                                 </Border>
                             </Grid>
                         </Border>

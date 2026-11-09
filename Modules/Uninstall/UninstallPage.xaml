@@ -77,7 +77,7 @@
             <!-- Left: Icon, Title, Dynamic Status Badges, Subtitle -->
             <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <TextBlock Text="App Management Studio" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="App Uninstaller" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
                     
                     <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="5">
@@ -104,7 +104,7 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
-                <TextBlock Text="Smart application lifecycle, residual trace purge &amp; bloatware shield." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                <TextBlock Text="Manage &amp; uninstall installed applications." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
             <!-- Right: Async Scan & Smart Bloatware Action Buttons -->
@@ -116,12 +116,12 @@
                     </StackPanel>
                 </Button>
 
-                <Button x:Name="ReloadBtn" Style="{StaticResource DefaultButtonStyle}" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" MinWidth="150" Padding="16,8" CornerRadius="8"
+                <Button x:Name="ReloadBtn" Style="{StaticResource DefaultButtonStyle}" Click="OnReloadAppsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" MinWidth="130" Padding="14,8" CornerRadius="8"
                         helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="ScanAppsRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" VerticalAlignment="Center"/>
                         <FontIcon x:Name="ScanAppsIcon" Glyph="&#xE72C;" FontSize="13" />
-                        <TextBlock x:Name="ScanAppsText" Text="Scan Installed Apps" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold" />
+                        <TextBlock x:Name="ScanAppsText" Text="Refresh Apps" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -168,7 +168,7 @@
                             <FontIcon Glyph="&#xE736;" FontSize="15" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                            <TextBlock Text="Win32 Desktop" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Text="Desktop Apps" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                             <TextBlock Text="{x:Bind ViewModel.DesktopAppsCount, Mode=OneWay}" FontSize="17" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                         </StackPanel>
                     </Grid>
@@ -202,7 +202,7 @@
                             <FontIcon Glyph="&#xE95A;" FontSize="15" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
-                            <TextBlock Text="Occupied Space" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Text="Total Size" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                             <TextBlock Text="{x:Bind ViewModel.TotalAppsSizeFormatted, Mode=OneWay}" FontSize="16" FontWeight="ExtraBold" Foreground="{ThemeResource AppStatusGoodBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                         </StackPanel>
                     </Grid>
@@ -247,7 +247,7 @@
                 </Grid.ColumnDefinitions>
                 
                 <!-- Instant Search Box -->
-                <TextBox x:Name="AppSearch" PlaceholderText="Search apps by name, publisher, version..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" VerticalAlignment="Center" Height="34" CornerRadius="8"/>
+                <TextBox x:Name="AppSearch" PlaceholderText="Search apps..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" VerticalAlignment="Center" Height="34" CornerRadius="8"/>
                 
                 <!-- Segmented Pills Controls -->
                 <StackPanel Grid.Column="1" x:Name="FilterStack" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="16,0,0,0">
@@ -260,13 +260,13 @@
                     <Button Tag="3" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="10,5" CornerRadius="8">
                         <StackPanel Orientation="Horizontal" Spacing="5">
                             <FontIcon Glyph="&#xE95A;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}"/>
-                            <TextBlock Text="Largest Footprint" FontSize="11"/>
+                            <TextBlock Text="Largest" FontSize="11"/>
                         </StackPanel>
                     </Button>
                     <Button Tag="4" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="10,5" CornerRadius="8">
                         <StackPanel Orientation="Horizontal" Spacing="5">
                             <FontIcon Glyph="&#xE7BA;" FontSize="11" Foreground="{ThemeResource AppStatusDangerBrush}"/>
-                            <TextBlock Text="Bundled Bloatware" FontSize="11" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                            <TextBlock Text="Bloatware" FontSize="11" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                         </StackPanel>
                     </Button>
                     <Button Tag="5" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="10,5" CornerRadius="8">

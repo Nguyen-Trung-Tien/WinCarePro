@@ -39,44 +39,44 @@
             </NavigationView.PaneFooter>
 
             <NavigationView.MenuItems>
-                <!-- GROUP 1: OVERVIEW & AI -->
-                <NavigationViewItemHeader x:Name="NavHeaderOverview" Content="CORE HUBS" />
+                <!-- GROUP 1: OVERVIEW -->
+                <NavigationViewItemHeader x:Name="NavHeaderOverview" Content="OVERVIEW" Visibility="Visible" />
 
-                <NavigationViewItem x:Name="NavDashboard" Tag="Dashboard" Content="Smart Cockpit" AutomationProperties.Name="Smart Cockpit" AutomationProperties.HelpText="Overview of system health, hardware telemetry, and one-click quick boost.">
+                <NavigationViewItem x:Name="NavDashboard" Tag="Dashboard" Content="Dashboard" AutomationProperties.Name="Dashboard" AutomationProperties.HelpText="Overview of system health, hardware telemetry, and one-click quick boost.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE80F;" Foreground="{StaticResource PrimaryAccentBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavAi" Tag="AiWinCareEngine" Content="Smart Diagnostics" Visibility="Visible" AutomationProperties.Name="Smart Diagnostics" AutomationProperties.HelpText="Intelligent multi-factor system diagnostics and automated remedies.">
+                <NavigationViewItem x:Name="NavAi" Tag="AiWinCareEngine" Content="Diagnostics" Visibility="Visible" AutomationProperties.Name="Diagnostics" AutomationProperties.HelpText="Intelligent multi-factor system diagnostics and automated remedies.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE99A;" Foreground="{ThemeResource AppStatusCyanBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                
+
                 <!-- GROUP 2: CLEAN & STORAGE -->
                 <NavigationViewItemSeparator x:Name="NavSepClean" Visibility="Visible" />
                 <NavigationViewItemHeader x:Name="NavHeaderClean" Content="CLEAN &amp; STORAGE" Visibility="Visible" />
-                
-                <NavigationViewItem x:Name="NavJunk" Tag="Junk" Content="Deep Cleaner" AutomationProperties.Name="Deep Cleaner" AutomationProperties.HelpText="Scan and safely clean temporary files, cache, system clutter, and registry entries.">
+
+                <NavigationViewItem x:Name="NavJunk" Tag="Junk" Content="Junk Cleaner" AutomationProperties.Name="Junk Cleaner" AutomationProperties.HelpText="Scan and safely clean temporary files, cache, and system clutter.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEA99;" Foreground="{ThemeResource AppStatusWarningBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavRegistry" Tag="Registry" Content="Registry Center" Visibility="Visible" AutomationProperties.Name="Registry Center" AutomationProperties.HelpText="Registry backup, defragmentation, and cleanup.">
+                <NavigationViewItem x:Name="NavRegistry" Tag="Registry" Content="Registry" Visibility="Visible" AutomationProperties.Name="Registry" AutomationProperties.HelpText="Registry backup, defragmentation, and cleanup.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEDA2;" Foreground="{ThemeResource AppStatusDangerBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavUninstall" Tag="Uninstall" Content="App Studio" AutomationProperties.Name="App Studio" AutomationProperties.HelpText="Uninstall desktop/Store apps and update third-party software.">
+                <NavigationViewItem x:Name="NavUninstall" Tag="Uninstall" Content="Uninstaller" AutomationProperties.Name="Uninstaller" AutomationProperties.HelpText="Uninstall desktop and Store apps with deep leftover cleanup.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE74D;" Foreground="{ThemeResource AppStatusDangerBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavUpdater" Tag="Updater" Content="Software Updater" Visibility="Visible" AutomationProperties.Name="Software Updater" AutomationProperties.HelpText="Scan and update installed third-party software applications.">
+                <NavigationViewItem x:Name="NavUpdater" Tag="Updater" Content="Updater" Visibility="Visible" AutomationProperties.Name="Updater" AutomationProperties.HelpText="Scan and update installed third-party software applications.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE895;" Foreground="{ThemeResource AppStatusPurpleBrush}" />
                     </NavigationViewItem.Icon>
@@ -86,19 +86,19 @@
                 <NavigationViewItemSeparator x:Name="NavSepSpeed" Visibility="Visible" />
                 <NavigationViewItemHeader x:Name="NavHeaderSpeed" Content="SPEED &amp; PERFORMANCE" Visibility="Visible" />
 
-                <NavigationViewItem x:Name="NavOptimizer" Tag="Optimizer" Content="System Optimizer" AutomationProperties.Name="System Optimizer" AutomationProperties.HelpText="System tweaks, RAM boost, boot startup manager, and shell context menu.">
+                <NavigationViewItem x:Name="NavOptimizer" Tag="Optimizer" Content="Optimizer" Visibility="Visible" AutomationProperties.Name="Optimizer" AutomationProperties.HelpText="System tweaks, RAM boost, and performance profiles.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7FC;" Foreground="{ThemeResource AppStatusWarningBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavStartup" Tag="Startup" Content="Startup &amp; Services" Visibility="Visible" AutomationProperties.Name="Startup &amp; Services Manager" AutomationProperties.HelpText="Manage and accelerate Windows boot apps, daemon states, and background velocity.">
+                <NavigationViewItem x:Name="NavStartup" Tag="Startup" Content="Startup" Visibility="Visible" AutomationProperties.Name="Startup" AutomationProperties.HelpText="Manage Windows boot apps and background services.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7B5;" Foreground="{ThemeResource AppStatusPurpleBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavContextMenu" Tag="ContextMenu" Content="Context Menu" Visibility="Visible" AutomationProperties.Name="Context Menu Manager" AutomationProperties.HelpText="Manage and clean Windows Explorer right-click shell extensions.">
+                <NavigationViewItem x:Name="NavContextMenu" Tag="ContextMenu" Content="Context Menu" Visibility="Visible" AutomationProperties.Name="Context Menu" AutomationProperties.HelpText="Manage and clean Windows Explorer right-click shell extensions.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE8EC;" Foreground="{ThemeResource AppStatusPurpleBrush}" />
                     </NavigationViewItem.Icon>
@@ -108,38 +108,37 @@
                 <NavigationViewItemSeparator x:Name="NavSepSecurity" Visibility="Visible" />
                 <NavigationViewItemHeader x:Name="NavHeaderSecurity" Content="SECURITY &amp; REPAIR" Visibility="Visible" />
 
-                <NavigationViewItem x:Name="NavRepair" Tag="Repair" Content="System Doctor" AutomationProperties.Name="System Doctor" AutomationProperties.HelpText="Windows system file checker, DISM repair, and network diagnostics.">
+                <NavigationViewItem x:Name="NavRepair" Tag="Repair" Content="Repair" AutomationProperties.Name="Repair" AutomationProperties.HelpText="Windows system file checker, DISM repair, and subsystem restoration.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE90F;" Foreground="{ThemeResource AppStatusCyanBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavNetwork" Tag="Network" Content="Network Center" Visibility="Visible" AutomationProperties.Name="Network Center" AutomationProperties.HelpText="Network monitoring, DNS benchmark, and latency diagnostics.">
+                <NavigationViewItem x:Name="NavNetwork" Tag="Network" Content="Network" Visibility="Visible" AutomationProperties.Name="Network" AutomationProperties.HelpText="Network monitoring, DNS benchmark, and latency diagnostics.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE701;" Foreground="{ThemeResource AppStatusInfoBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavSecurity" Tag="Security" Content="Security Shield" AutomationProperties.Name="Security Shield" AutomationProperties.HelpText="Windows Defender, Firewall, and privacy telemetry settings.">
+                <NavigationViewItem x:Name="NavSecurity" Tag="Security" Content="Security" Visibility="Visible" AutomationProperties.Name="Security" AutomationProperties.HelpText="Windows Defender, Firewall, and privacy telemetry settings.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE727;" Foreground="{ThemeResource AppStatusGoodBrush}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-
             </NavigationView.MenuItems>
 
-            <!-- Navigation Frame Content Area + Contextual Hub Sub-Navigation Pill Bar -->
+            <!-- Navigation Frame Content Area without overlapping top bar -->
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Contextual Hub Sub-Navigation Bar (1-Click Switch between Integrated Hub Tools) -->
-                <Border x:Name="HubSubNavBar" Grid.Row="0" Margin="28,10,28,0" Padding="6,5" CornerRadius="12"
+                <!-- Contextual Hub Sub-Navigation Bar collapsed by default to prevent overlapping page content -->
+                <Border x:Name="HubSubNavBar" Grid.Row="0" Margin="28,8,28,0" Padding="6,5" CornerRadius="12"
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                        BorderThickness="1" HorizontalAlignment="Left" Visibility="Visible">
+                        BorderThickness="1" HorizontalAlignment="Left" Visibility="Collapsed">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <Button x:Name="HubTabBtn1" Click="OnHubSubTabClick" Tag="Dashboard" CornerRadius="8" Padding="12,5" Style="{StaticResource VibrantPrimaryButtonStyle}" AutomationProperties.Name="Primary Hub View">
                             <StackPanel Orientation="Horizontal" Spacing="7">

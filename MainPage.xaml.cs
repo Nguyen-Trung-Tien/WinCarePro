@@ -314,73 +314,8 @@ public sealed partial class MainPage : Page
     private void UpdateHubSubNavBar(string? activeSubTag)
     {
         if (HubSubNavBar == null) return;
-
-        if (string.IsNullOrEmpty(activeSubTag))
-        {
-            HubSubNavBar.Visibility = Visibility.Collapsed;
-            return;
-        }
-
-        HubSubNavBar.Visibility = Visibility.Visible;
-        var primaryStyle = Application.Current.Resources["VibrantPrimaryButtonStyle"] as Style;
-        var secondaryStyle = Application.Current.Resources["StandardSecondaryButtonStyle"] as Style;
-
-        void ConfigureTab(Button btn, FontIcon icon, TextBlock text, string tag, string glyph, string labelKey, bool visible = true)
-        {
-            btn.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
-            btn.Tag = tag;
-            icon.Glyph = glyph;
-            text.Text = labelKey.T();
-            bool isActive = tag.Equals(activeSubTag, StringComparison.OrdinalIgnoreCase);
-            if (primaryStyle != null && secondaryStyle != null)
-            {
-                btn.Style = isActive ? primaryStyle : secondaryStyle;
-            }
-        }
-
-        switch (activeSubTag.ToLowerInvariant())
-        {
-            case "dashboard":
-            case "aiwincareengine":
-                ConfigureTab(HubTabBtn1, HubTabIcon1, HubTabText1, "Dashboard", "\uE80F", "Smart Cockpit");
-                ConfigureTab(HubTabBtn2, HubTabIcon2, HubTabText2, "AiWinCareEngine", "\uE99A", "Smart Diagnostics");
-                HubTabBtn3.Visibility = Visibility.Collapsed;
-                break;
-
-            case "junk":
-            case "registry":
-                ConfigureTab(HubTabBtn1, HubTabIcon1, HubTabText1, "Junk", "\uEA99", "Junk Cleaner");
-                ConfigureTab(HubTabBtn2, HubTabIcon2, HubTabText2, "Registry", "\uEDA2", "Registry Center");
-                HubTabBtn3.Visibility = Visibility.Collapsed;
-                break;
-
-            case "uninstall":
-            case "updater":
-                ConfigureTab(HubTabBtn1, HubTabIcon1, HubTabText1, "Uninstall", "\uE74D", "App Uninstaller");
-                ConfigureTab(HubTabBtn2, HubTabIcon2, HubTabText2, "Updater", "\uE895", "Software Updater");
-                HubTabBtn3.Visibility = Visibility.Collapsed;
-                break;
-
-            case "optimizer":
-            case "startup":
-            case "contextmenu":
-                ConfigureTab(HubTabBtn1, HubTabIcon1, HubTabText1, "Optimizer", "\uE7FC", "System Optimizer");
-                ConfigureTab(HubTabBtn2, HubTabIcon2, HubTabText2, "Startup", "\uE7B5", "Startup & Services");
-                ConfigureTab(HubTabBtn3, HubTabIcon3, HubTabText3, "ContextMenu", "\uE8EC", "Context Menu");
-                break;
-
-            case "repair":
-            case "network":
-            case "security":
-                ConfigureTab(HubTabBtn1, HubTabIcon1, HubTabText1, "Repair", "\uE90F", "System Repair");
-                ConfigureTab(HubTabBtn2, HubTabIcon2, HubTabText2, "Network", "\uE701", "Network Center");
-                ConfigureTab(HubTabBtn3, HubTabIcon3, HubTabText3, "Security", "\uE727", "Security Shield");
-                break;
-
-            default:
-                HubSubNavBar.Visibility = Visibility.Collapsed;
-                break;
-        }
+        // Keep collapsed to eliminate layout overlap and ensure full vertical viewport for active page
+        HubSubNavBar.Visibility = Visibility.Collapsed;
     }
 
     private void OnHubSubTabClick(object sender, RoutedEventArgs e)
@@ -626,7 +561,7 @@ public sealed partial class MainPage : Page
 
     public void UpdateExperienceMode(bool isPro)
     {
-        // Unified 4-Pillar Architecture: All 12 core modules are directly accessible in the sidebar and synchronized with the contextual switcher
+        // Unified 4-Pillar Architecture: All 12 core modules are directly accessible in the sidebar
         if (NavDashboard != null) NavDashboard.Visibility = Visibility.Visible;
         if (NavAi != null) NavAi.Visibility = Visibility.Visible;
         if (NavJunk != null) NavJunk.Visibility = Visibility.Visible;

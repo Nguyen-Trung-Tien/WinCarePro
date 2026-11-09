@@ -302,7 +302,7 @@ namespace WinCarePro.Shared.Animations
         /// <summary>
         /// Stops pulse glow animation and restores target opacity.
         /// </summary>
-        public static void StopPulseGlow(UIElement element, float restoreOpacity = 0.1f)
+        public static void StopPulseGlow(UIElement element, float restoreOpacity = 1.0f)
         {
             if (element == null) return;
 

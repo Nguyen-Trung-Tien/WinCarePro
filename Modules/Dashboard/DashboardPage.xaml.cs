@@ -10,6 +10,7 @@ using WinCarePro.ViewModels;
 using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Shared.Animations;
+using Microsoft.UI.Xaml.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace WinCarePro.Views;
@@ -46,15 +47,23 @@ public sealed partial class DashboardPage : Page
             var curMode = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
             UpdateExperienceMode(curMode.IsProMode);
 
+            // Ensure GaugeRingGrid has full 100% crisp opacity
+            if (GaugeRingGrid != null)
+            {
+                var visual = ElementCompositionPreview.GetElementVisual(GaugeRingGrid);
+                if (visual != null)
+                {
+                    visual.StopAnimation("Opacity");
+                    visual.Opacity = 1.0f;
+                }
+            }
+
             // Lazy load the extended layer after initial UI renders to prevent lag
             await Task.Delay(100);
             ViewModel.IsExtendedLayerLoaded = true;
             
             // Force responsive update after extended layer is fully initialized
             UpdateResponsiveLayout(this.ActualWidth);
-
-            // Active breathing pulse glow on vitality gauge ring
-            FluidAnimationHelper.ApplyPulseGlow(GaugeRingGrid, 0.88f, 1.0f, 2600);
 
             // v4.0.0 — Auto-trigger embedded AI WinCare Engine scan
             _ = ViewModel.RunEmbeddedAiScanAsync().ContinueWith(_ =>
@@ -83,7 +92,6 @@ public sealed partial class DashboardPage : Page
 
         this.Unloaded += (s, e) =>
         {
-            FluidAnimationHelper.StopPulseGlow(GaugeRingGrid);
             TranslationManager.Instance.LanguageChanged -= langHandler;
             WinCarePro.Services.Implementations.SettingsService.Instance.SettingsChanged -= _settingsChangedHandler;
         };
@@ -384,6 +392,16 @@ public sealed partial class DashboardPage : Page
         var curMode = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
         UpdateExperienceMode(curMode.IsProMode);
         UpdateResponsiveLayout(this.ActualWidth);
+
+        if (GaugeRingGrid != null)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(GaugeRingGrid);
+            if (visual != null)
+            {
+                visual.StopAnimation("Opacity");
+                visual.Opacity = 1.0f;
+            }
+        }
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -404,14 +422,6 @@ public sealed partial class DashboardPage : Page
     {
         try
         {
-            if (GaugeRingGrid != null)
-            {
-                WinCarePro.Core.Helpers.AnimationHelper.StartPulseAnimation(GaugeRingGrid, 0.95f, 1.05f, 1000);
-            }
-            if (HealthGaugeCard != null)
-            {
-                WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(HealthGaugeCard, Windows.UI.Color.FromArgb(120, 0, 242, 254));
-            }
             if (!ViewModel.HasScanned)
             {
                 await ViewModel.RunFullDiagnosticsAsync();
@@ -428,32 +438,14 @@ public sealed partial class DashboardPage : Page
     {
         try
         {
-            if (GaugeRingGrid != null)
-            {
-                WinCarePro.Core.Helpers.AnimationHelper.StartPulseAnimation(GaugeRingGrid, 0.95f, 1.05f, 900);
-            }
-            if (HealthGaugeCard != null)
-            {
-                WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(HealthGaugeCard, Windows.UI.Color.FromArgb(120, 0, 242, 254));
-            }
             await ViewModel.RunFullDiagnosticsAsync();
+            string msg = string.Format("Scan completed. Health Score: {0}/100. Junk files: {1}.".T(), 
+                ViewModel.HealthScore, ViewModel.JunkFileSize);
+            App.MainWindowInstance?.ShowToastNotification("System Scan Completed".T(), msg, "Info");
         }
-        finally
+        catch (Exception ex)
         {
-            try
-            {
-                if (GaugeRingGrid != null)
-                {
-                    WinCarePro.Core.Helpers.AnimationHelper.StopPulseAnimation(GaugeRingGrid);
-                    WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(GaugeRingGrid, 1.10f, 400);
-                }
-                if (HealthGaugeCard != null)
-                {
-                    WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(HealthGaugeCard);
-                    WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(HealthGaugeCard, Windows.UI.Color.FromArgb(120, 0, 242, 254));
-                }
-            }
-            catch { }
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("DashboardPage.OnScanClick", ex);
         }
     }
 
@@ -488,28 +480,12 @@ public sealed partial class DashboardPage : Page
         OptimizationSummary? summary = null;
         try
         {
-            if (HealthGaugeCard != null)
-            {
-                WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(HealthGaugeCard, Windows.UI.Color.FromArgb(220, 16, 185, 129));
-            }
             summary = await ViewModel.OptimizeSystemAsync(mode);
         }
         finally
         {
             try
             {
-                if (GaugeRingGrid != null)
-                {
-                    WinCarePro.Core.Helpers.AnimationHelper.StopPulseAnimation(GaugeRingGrid);
-                    WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(GaugeRingGrid, 1.12f, 480);
-                }
-
-                if (HealthGaugeCard != null)
-                {
-                    WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(HealthGaugeCard);
-                    WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(HealthGaugeCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
-                }
-
                 // Cascade 3D Quantum Ripple Wave through telemetry cards
                 var rippleCards = new System.Collections.Generic.List<FrameworkElement>();
                 if (CpuCard != null) rippleCards.Add(CpuCard);

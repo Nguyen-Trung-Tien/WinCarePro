@@ -67,55 +67,116 @@
 
         <!-- Vertical Navigation Panel (Secondary Sidebar) -->
         <Border x:Name="SidebarBorder" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,1,0" Padding="0,0,16,0">
-            <StackPanel Spacing="10">
+            <Grid RowSpacing="6">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
                 <!-- Sidebar Category Header -->
-                <StackPanel Spacing="2" Margin="8,4,0,8">
+                <StackPanel Grid.Row="0" Spacing="2" Margin="8,4,0,6">
                     <TextBlock Text="SETTINGS HUB" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}" CharacterSpacing="12" FontFamily="Segoe UI Variable Display"/>
                     <TextBlock Text="Preferences &amp; System" FontSize="13" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display"/>
                 </StackPanel>
 
-                <!-- Navigation List -->
-                <ListView x:Name="SettingsNavList" SelectedIndex="0" SelectionChanged="SettingsNavList_SelectionChanged" SelectionMode="Single">
+                <!-- Navigation List (11 Functional Categories) -->
+                <ListView Grid.Row="1" x:Name="SettingsNavList" SelectedIndex="0" SelectionChanged="SettingsNavList_SelectionChanged" SelectionMode="Single">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsStackPanel x:Name="SettingsNavStackPanel" Orientation="Vertical" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                         
-                    <ListViewItem Height="44" Padding="8,0" CornerRadius="10" Margin="0,2">
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="28" Height="28" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE790;" FontSize="13.5" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE713;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
-                            <TextBlock Text="General &amp; Appearance" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                            <TextBlock Text="General Configuration" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="44" Padding="8,0" CornerRadius="10" Margin="0,2">
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="28" Height="28" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE812;" FontSize="13.5" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE790;" FontSize="13" Foreground="#FF06B6D4" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
-                            <TextBlock Text="Automation &amp; Alerts" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                            <TextBlock Text="Appearance &amp; Theme" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="44" Padding="8,0" CornerRadius="10" Margin="0,2">
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="28" Height="28" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE727;" FontSize="13.5" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE812;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
-                            <TextBlock Text="Safety, Storage &amp; Backup" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                            <TextBlock Text="Auto Maintenance" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
-                    <ListViewItem Height="44" Padding="8,0" CornerRadius="10" Margin="0,2">
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="28" Height="28" CornerRadius="8" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE946;" FontSize="13.5" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xEA8F;" FontSize="13" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
-                            <TextBlock Text="Updates, Guide &amp; About" VerticalAlignment="Center" FontSize="12.5" FontWeight="SemiBold"/>
+                            <TextBlock Text="Telemetry &amp; Alert Policy" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Safety &amp; Rollback" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE7F1;" FontSize="13" Foreground="#FF8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Database &amp; Storage" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE75C;" FontSize="13" Foreground="#FFEC4899" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Software Updates" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE7B4;" FontSize="13" Foreground="#FF6366F1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Advanced &amp; Sandbox" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE8AC;" FontSize="13" Foreground="#FFE81123" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Backup &amp; Reset" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE946;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="About &amp; Developer" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </ListViewItem>
+                    <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                            <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                <FontIcon Glyph="&#xE897;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="Feature Guide &amp; Manual" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
                         </StackPanel>
                     </ListViewItem>
                 </ListView>
-            </StackPanel>
+            </Grid>
         </Border>
 
         <!-- Content Area with Symmetrical Fluid Layout -->

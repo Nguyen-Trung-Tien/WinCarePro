@@ -119,8 +119,8 @@
             <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Spacing="4">
                 <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                     <StackPanel Spacing="2" VerticalAlignment="Center">
-                        <TextBlock Text="System Optimizer &amp; Performance" Style="{StaticResource PageHeaderTitleStyle}" />
-                        <TextBlock Text="Kernel tuning, process scheduling &amp; memory caching." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                        <TextBlock Text="System Optimizer" Style="{StaticResource PageHeaderTitleStyle}" />
+                        <TextBlock Text="Optimize performance &amp; RAM." Style="{StaticResource PageHeaderSubtitleStyle}" />
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
@@ -182,7 +182,7 @@
                     </Grid>
 
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                        <TextBlock Text="AI System Efficiency" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <TextBlock Text="Efficiency" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                         <Border Background="{x:Bind ViewModel.EfficiencyGradeBadgeBg, Mode=OneWay}" CornerRadius="6" Padding="6,2" HorizontalAlignment="Left">
                             <TextBlock Text="{x:Bind ViewModel.EfficiencyGradeText, Mode=OneWay}" FontSize="10" FontWeight="ExtraBold" Foreground="{x:Bind ViewModel.EfficiencyGradeBadgeFg, Mode=OneWay}" />
                         </Border>
@@ -207,7 +207,7 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Tweaks Applied" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Column="0" Text="Applied" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
                                 <TextBlock Text="{x:Bind ViewModel.OptimizedTweaksCount, Mode=OneWay}" FontSize="12" FontWeight="ExtraBold" Foreground="{ThemeResource AppStatusGoodBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                 <TextBlock Text="/" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
@@ -236,7 +236,7 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Memory In Use" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Column="0" Text="Memory" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                             <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppStatusInfoBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                         </Grid>
                         <ProgressBar Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{ThemeResource AppStatusInfoBrush}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
@@ -261,7 +261,7 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Latency &amp; Freed" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                            <TextBlock Grid.Column="0" Text="RAM Freed" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                             <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="4,1">
                                 <TextBlock Text="0ms Delay" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
                             </Border>

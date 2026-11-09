@@ -82,49 +82,20 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Page Header — Spatial HUD Glass Banner with Quick Utility Actions -->
+        <!-- Page Header — Spatial HUD Glass Banner -->
         <Border Grid.Row="0" Margin="0,0,0,12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="16" Padding="18,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                        <TextBlock Text="System Dashboard" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" FontSize="20" FontWeight="Bold"/>
-                        <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}" />
-                                <TextBlock Text="Live Telemetry" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}" FontFamily="Segoe UI Variable Display"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                    <TextBlock Text="Real-time hardware telemetry &amp; intelligent autonomous system care." Style="{StaticResource PageHeaderSubtitleStyle}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                </StackPanel>
-
-                <!-- Quick Access Toolbar: Desktop HUD & Deep Diagnostics -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <Button Click="OnLaunchDesktopWidgetClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="12,0" CornerRadius="10"
-                            helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98"
-                            AutomationProperties.Name="Launch Desktop HUD"
-                            AutomationProperties.HelpText="Open floating real-time Desktop HUD performance widget.">
+            <StackPanel Spacing="4" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <TextBlock Text="System Dashboard" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" FontSize="20" FontWeight="Bold"/>
+                    <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE9D9;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                            <TextBlock Text="Desktop HUD" FontSize="11.5" FontWeight="SemiBold"/>
+                            <Ellipse Width="6" Height="6" Fill="{ThemeResource AppBadgeGoodFg}" />
+                            <TextBlock Text="Live Telemetry" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}" FontFamily="Segoe UI Variable Display"/>
                         </StackPanel>
-                    </Button>
-                    <Button Click="OnLaunchAiWinCareEngineClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="12,0" CornerRadius="10"
-                            helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98"
-                            AutomationProperties.Name="Open Smart Diagnostics"
-                            AutomationProperties.HelpText="Open full AI Diagnostics and Hardware Health Center.">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE99A;" FontSize="12" Foreground="{ThemeResource AppStatusCyanBrush}"/>
-                            <TextBlock Text="Smart Diagnostics" FontSize="11.5" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Button>
+                    </Border>
                 </StackPanel>
-            </Grid>
+                <TextBlock Text="Live system metrics &amp; 1-click care." Style="{StaticResource PageHeaderSubtitleStyle}" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            </StackPanel>
         </Border>
 
         <!-- Main Scrollable Content -->
@@ -152,7 +123,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Left Side Column 0: System Health Overview Hero Bento Card -->
-                    <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource CyberBentoHeroCardStyle}" Margin="6" Padding="20,18" MinHeight="195" CornerRadius="16"
+                    <Border x:Name="HealthGaugeCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource CyberBentoHeroCardStyle}" Margin="6" Padding="18,16" MinHeight="0" CornerRadius="16"
                             helpers:AnimationHelper.StaggerIndex="0" helpers:AnimationHelper.HoverScale="1.01">
                         <Grid x:Name="HealthGaugeGrid">
                             <Grid.RowDefinitions>
@@ -164,40 +135,24 @@
                                 <ColumnDefinition x:Name="HealthGaugeCol1" Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <!-- Ambient Holographic Aura Glow -->
-                            <Ellipse Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Grid.ColumnSpan="2" Width="200" Height="200" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="-20,0,0,0" Opacity="0.14" IsHitTestVisible="False">
-                                <Ellipse.Fill>
-                                    <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
-                                        <GradientStop Color="#FF06B6D4" Offset="0" />
-                                        <GradientStop Color="#FF3B82F6" Offset="0.6" />
-                                        <GradientStop Color="Transparent" Offset="1" />
-                                    </RadialGradientBrush>
-                                </Ellipse.Fill>
-                            </Ellipse>
-
-                            <!-- Clean High-Definition System Health Vitality Ring with Holographic Orbit -->
-                            <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="140" Height="140" Margin="0,0,18,0" VerticalAlignment="Center">
-                                <!-- Outer Holographic Halo Orbit Ring -->
-                                <Ellipse Width="138" Height="138" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="1.2" StrokeDashArray="3,3" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.32"/>
-
+                            <!-- Clean High-Definition System Health Vitality Ring -->
+                            <Grid x:Name="GaugeRingGrid" Grid.Column="0" Width="118" Height="118" Margin="0,0,14,0" VerticalAlignment="Center">
                                 <!-- Background Track Ring -->
-                                <Ellipse Width="122" Height="122" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="8" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.22"/>
+                                <Ellipse Width="104" Height="104" Stroke="{ThemeResource ControlStrokeColorDefaultBrush}" StrokeThickness="7" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.22"/>
 
                                 <!-- Main Health Progress Ring -->
                                 <ProgressRing Value="{x:Bind ViewModel.HealthScore, Mode=OneWay}"
                                               Minimum="0" Maximum="100"
                                               IsIndeterminate="False"
-                                              Width="122" Height="122"
+                                              Width="104" Height="104"
                                               Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}"
                                               Background="Transparent"
                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                                 <!-- Centerpiece Typography HUD -->
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="0">
-                                    <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="36" FontWeight="Black" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="6" Padding="6,2" Margin="0,2,0,0">
-                                        <TextBlock Text="HEALTH SCORE" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" CharacterSpacing="2"/>
-                                    </Border>
+                                    <TextBlock Text="{x:Bind ViewModel.HealthScore, Mode=OneWay}" FontSize="32" FontWeight="Black" HorizontalAlignment="Center" Foreground="{x:Bind GetHealthScoreBrush(ViewModel.HealthScore), Mode=OneWay}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                    <TextBlock Text="HEALTH SCORE" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Center" CharacterSpacing="1.5" Margin="0,3,0,0"/>
                                 </StackPanel>
                             </Grid>
 
@@ -270,9 +225,9 @@
                                 </Grid>
 
                                 <!-- Reassuring Safety & Restore Point Indicator -->
-                                <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,4,0,0">
-                                    <FontIcon Glyph="&#xE72E;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Automatic Restore Point Protection Active • 1-Click Undo Supported" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,4,0,0">
+                                    <FontIcon Glyph="&#xE72E;" FontSize="10.5" Foreground="{ThemeResource AppStatusGoodBrush}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Restore Point Protected" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
 
                                 <StackPanel Visibility="{x:Bind GetProgressVisibility(ViewModel.IsScanning), Mode=OneWay}" Spacing="4" Margin="0,3,0,0">
@@ -286,19 +241,9 @@
                     </Border>
 
                     <!-- Right Side Row 0 Column 1: WinCare AI Engine Bento Card -->
-                    <Border x:Name="AiWinCareEngineEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource CyberBentoHeroCardStyle}" Margin="6" Padding="20,18" MinHeight="195" CornerRadius="16"
+                    <Border x:Name="AiWinCareEngineEmbeddedPanel" Grid.Row="0" Grid.Column="1" Style="{StaticResource CyberBentoHeroCardStyle}" Margin="6" Padding="18,16" MinHeight="0" CornerRadius="16"
                             helpers:AnimationHelper.StaggerIndex="1" helpers:AnimationHelper.HoverScale="1.01">
                         <Grid>
-                            <!-- Ambient AI Cortex Aura Glow -->
-                            <Ellipse Width="190" Height="190" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-30,-30,0" Opacity="0.12" IsHitTestVisible="False">
-                                <Ellipse.Fill>
-                                    <RadialGradientBrush Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
-                                        <GradientStop Color="#FF8B5CF6" Offset="0" />
-                                        <GradientStop Color="Transparent" Offset="1" />
-                                    </RadialGradientBrush>
-                                </Ellipse.Fill>
-                            </Ellipse>
-
                             <StackPanel Spacing="8">
                             <!-- AI Header Row -->
                             <Grid>
@@ -502,7 +447,7 @@
                                 helpers:AnimationHelper.StaggerIndex="3">
                             <StackPanel>
                                 <StackPanel Spacing="4">
-                                    <TextBlock Text="CPU Processor Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
+                                    <TextBlock Text="CPU" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12" FontWeight="SemiBold"/>
                                     <TextBlock Text="{x:Bind FormatPercent(ViewModel.CpuUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     <ProgressBar Value="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource CpuAccentBrush}" Background="{StaticResource CpuTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
                                 </StackPanel>
@@ -527,7 +472,7 @@
                                 helpers:AnimationHelper.StaggerIndex="4">
                             <StackPanel>
                                 <StackPanel Spacing="4">
-                                    <TextBlock Text="Memory (RAM) Footprint" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
+                                    <TextBlock Text="Memory (RAM)" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12" FontWeight="SemiBold"/>
                                     <TextBlock Text="{x:Bind FormatPercent(ViewModel.RamUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     <ProgressBar Value="{x:Bind ViewModel.RamUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource RamAccentBrush}" Background="{StaticResource RamTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
                                 </StackPanel>
@@ -565,7 +510,7 @@
                         <Border x:Name="GpuCard" Grid.Column="0" Style="{StaticResource GlassmorphismCardStyle}" Margin="6" Padding="16" CornerRadius="16">
                             <StackPanel>
                                 <StackPanel Spacing="4">
-                                    <TextBlock Text="Graphics Card (GPU) Load" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
+                                    <TextBlock Text="GPU" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12" FontWeight="SemiBold"/>
                                     <TextBlock Text="{x:Bind FormatPercent(ViewModel.GpuUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     <ProgressBar Value="{x:Bind ViewModel.GpuUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource GpuAccentBrush}" Background="{StaticResource GpuTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
                                 </StackPanel>
@@ -577,7 +522,7 @@
                                     <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="8,3" HorizontalAlignment="Left" VerticalAlignment="Center">
                                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE9F5;" FontSize="11.5" Foreground="{StaticResource GpuAccentBrush}" VerticalAlignment="Center"/>
-                                            <TextBlock Text="Active Monitoring" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                            <TextBlock Text="Active" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                         </StackPanel>
                                     </Border>
                                 </Grid>
@@ -589,7 +534,7 @@
                                 BorderBrush="{x:Bind GetDiskCardBorderBrush(ViewModel.DiskUsage), Mode=OneWay}">
                             <StackPanel>
                                 <StackPanel Spacing="4">
-                                    <TextBlock Text="System Disk Activity" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="11.5"/>
+                                    <TextBlock Text="Disk" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12" FontWeight="SemiBold"/>
                                     <TextBlock Text="{x:Bind FormatPercent(ViewModel.DiskUsage), Mode=OneWay}" FontSize="28" FontWeight="Black" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     <ProgressBar Value="{x:Bind ViewModel.DiskUsage, Mode=OneWay}" Maximum="100" Height="5.5" Foreground="{StaticResource DiskAccentBrush}" Background="{StaticResource DiskTrackBrush}" CornerRadius="3" Margin="0,4,0,0" />
                                 </StackPanel>
@@ -622,8 +567,8 @@
 
                             <StackPanel x:Name="PerformanceHeaderGrid" Grid.Row="0" Margin="0,0,0,16" Spacing="8">
                                 <StackPanel x:Name="PerformanceTitlePanel" Spacing="4">
-                                    <TextBlock Text="Performance Trend History" FontSize="16" FontWeight="Bold" />
-                                    <TextBlock Text="Rolling history of resource load levels (CPU, RAM, GPU, Disk)" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                    <TextBlock Text="Performance History" FontSize="16" FontWeight="Bold" />
+                                    <TextBlock Text="Load levels for CPU, RAM, GPU, Disk" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                                 </StackPanel>
 
                                 <!-- Resource Insights Telemetry Banner -->
@@ -668,7 +613,7 @@
 
                             <StackPanel Grid.Row="0" Margin="0,0,0,12" Spacing="4">
                                 <TextBlock Text="Smart AI Advice" FontSize="18" FontWeight="Bold" />
-                                <TextBlock Text="Suggested actions based on diagnostics:" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                <TextBlock Text="Suggested optimization actions" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
                             </StackPanel>
 
                             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">

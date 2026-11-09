@@ -114,6 +114,15 @@ public partial class DashboardViewModel
             if (mode >= OptimizationMode.Safe)
             {
                 _dispatcherQueue?.TryEnqueue(() => { ScanStatus = "Status: Cleaning Junk Files...".T(); });
+                if (_scannedJunkCategories == null || _scannedJunkCategories.Count == 0)
+                {
+                    try
+                    {
+                        _scannedJunkCategories = await _junkEngine.ScanJunkAsync(token).ConfigureAwait(false);
+                    }
+                    catch { }
+                }
+
                 if (_scannedJunkCategories != null && _scannedJunkCategories.Any(c => c.IsSelected && c.SizeBytes > 0))
                 {
                     long junkCleaned = await _junkEngine.CleanJunkAsync(_scannedJunkCategories);
@@ -142,6 +151,12 @@ public partial class DashboardViewModel
                 summary.DoCacheBytesCleaned = doCleaned;
                 await Task.Delay(300, token);
 
+                _dispatcherQueue?.TryEnqueue(() => { ScanStatus = "Status: Active RAM Boosting...".T(); });
+                var ramResult = await optEngine.OptimizeRamAsync();
+                summary.RamBytesReclaimed = ramResult.memoryReclaimedBytes;
+                summary.RamProcessesOptimized = ramResult.processesOptimized;
+                await Task.Delay(300, token);
+
                 _dispatcherQueue?.TryEnqueue(() => { ScanStatus = "Status: Optimizing Startup Apps...".T(); });
                 // Startup engine items resolved in background
                 await Task.Delay(300, token);
@@ -158,14 +173,8 @@ public partial class DashboardViewModel
                 }
                 await Task.Delay(300, token);
 
-                _dispatcherQueue?.TryEnqueue(() => { ScanStatus = "Status: Active RAM Boosting...".T(); });
-                var optEngine = new SystemOptimizerEngine();
-                var ramResult = await optEngine.OptimizeRamAsync();
-                summary.RamBytesReclaimed = ramResult.memoryReclaimedBytes;
-                summary.RamProcessesOptimized = ramResult.processesOptimized;
-                await Task.Delay(300, token);
-
                 _dispatcherQueue?.TryEnqueue(() => { ScanStatus = "Status: Applying Responsiveness Tweaks...".T(); });
+                var optEngine = new SystemOptimizerEngine();
                 var tweaks = optEngine.GetTweaks();
                 int tweaksApplied = 0;
                 foreach (var tweak in tweaks)

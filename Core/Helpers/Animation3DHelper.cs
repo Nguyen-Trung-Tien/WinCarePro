@@ -329,57 +329,12 @@ public static class Animation3DHelper
     /// Starts a smooth, hardware-accelerated Holographic Ambient Scan Beam across a UI element.
     /// The host card remains firmly stable (no jitter, shaking or strobing).
     /// </summary>
+    /// <summary>
+    /// Smoothly handles scan effect. Disabled vertical moving beam as requested for calm, distraction-free UI.
+    /// </summary>
     public static void Start3DScanEffect(FrameworkElement element, Windows.UI.Color? beamColor = null)
     {
-        try
-        {
-            if (element == null) return;
-            if (!Shared.Animations.ReducedMotionHelper.AreAnimationsEnabled) return;
-            var hostVisual = ElementCompositionPreview.GetElementVisual(element);
-            if (hostVisual == null) return;
-            var compositor = hostVisual.Compositor;
-
-            float w = (float)Math.Max(element.ActualWidth, 120);
-            float h = (float)Math.Max(element.ActualHeight, 120);
-
-            Stop3DScanEffect(element); // Clear previous if active
-
-            var scanVisual = compositor.CreateSpriteVisual();
-            scanVisual.Size = new Vector2(w, Math.Min(64, h * 0.3f));
-            scanVisual.CenterPoint = new Vector3(w / 2f, scanVisual.Size.Y / 2f, 0);
-
-            var color = beamColor ?? Windows.UI.Color.FromArgb(120, 0, 242, 254);
-            var transparent = Windows.UI.Color.FromArgb(0, color.R, color.G, color.B);
-
-            var gradientBrush = compositor.CreateLinearGradientBrush();
-            gradientBrush.StartPoint = new Vector2(0.5f, 0.0f);
-            gradientBrush.EndPoint = new Vector2(0.5f, 1.0f);
-
-            var stop0 = compositor.CreateColorGradientStop(0.0f, transparent);
-            var stop1 = compositor.CreateColorGradientStop(0.5f, color);
-            var stop2 = compositor.CreateColorGradientStop(1.0f, transparent);
-
-            gradientBrush.ColorStops.Add(stop0);
-            gradientBrush.ColorStops.Add(stop1);
-            gradientBrush.ColorStops.Add(stop2);
-
-            scanVisual.Brush = gradientBrush;
-            scanVisual.Opacity = 0.55f;
-
-            // Smooth, slow, elegant sine sweep without strobing
-            var sineEasing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.42f, 0.0f), new Vector2(0.58f, 1.0f));
-            var sweepAnim = compositor.CreateVector3KeyFrameAnimation();
-            sweepAnim.Duration = TimeSpan.FromMilliseconds(3000);
-            sweepAnim.IterationBehavior = AnimationIterationBehavior.Forever;
-            sweepAnim.InsertKeyFrame(0.0f, new Vector3(0, -scanVisual.Size.Y, 0), sineEasing);
-            sweepAnim.InsertKeyFrame(0.5f, new Vector3(0, h, 0), sineEasing);
-            sweepAnim.InsertKeyFrame(1.0f, new Vector3(0, -scanVisual.Size.Y, 0), sineEasing);
-            scanVisual.StartAnimation("Offset", sweepAnim);
-
-            ElementCompositionPreview.SetElementChildVisual(element, scanVisual);
-            _activeScanVisuals[element] = scanVisual;
-        }
-        catch { }
+        // No-op: Removed moving scan beam up and down for clean and calm UI
     }
 
     /// <summary>

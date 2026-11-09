@@ -71,8 +71,8 @@
             <!-- Left: Title & Subtitle with Gradient Icon Badge -->
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                 <StackPanel Spacing="2" VerticalAlignment="Center">
-                    <TextBlock Text="Security &amp; Privacy Shield" Style="{StaticResource PageHeaderTitleStyle}" />
-                    <TextBlock Text="Hardware trust, credential safety &amp; privacy vault." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                    <TextBlock Text="Security Shield" Style="{StaticResource PageHeaderTitleStyle}" />
+                    <TextBlock Text="Windows security &amp; privacy protection." Style="{StaticResource PageHeaderSubtitleStyle}" />
                 </StackPanel>
             </StackPanel>
 

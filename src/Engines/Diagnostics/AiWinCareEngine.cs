@@ -294,16 +294,15 @@ namespace WinCarePro.Modules.AiAssistant
                         driveFreeGB = freeGB;
                         driveUsedPercent = usedPercent;
 
-                        int estimatedDaysLeft = Math.Max(3, (int)(freeGB * 1.5));
-                        report.PredictiveStorageDaysText = estimatedDaysLeft > 30 ? "> 30 Days Free".T() : $"{estimatedDaysLeft} Days Left".T();
+                        report.PredictiveStorageDaysText = $"{freeGB:F1} GB Free";
 
                         if (freeGB < 5.0 || usedPercent > 96.0)
                         {
                             penaltyScore += 15;
                             recommendations.Add(new AiWinCareRecommendation
                             {
-                                Title = "Predictive Storage Warning".T(),
-                                Description = $"Drive C: has critically low space ({freeGB:F1} GB free, {usedPercent:F0}% used). AI recommends immediate disk cleanup.".T(),
+                                Title = "Critical Low Disk Space".T(),
+                                Description = $"Drive C: has critically low space ({freeGB:F1} GB free, {usedPercent:F0}% used). Recommended disk cleanup.".T(),
                                 Category = "Storage",
                                 ImpactLevel = "Critical",
                                 ActionKey = "NavigateDisk"
@@ -314,7 +313,7 @@ namespace WinCarePro.Modules.AiAssistant
                             penaltyScore += 5;
                             recommendations.Add(new AiWinCareRecommendation
                             {
-                                Title = "Storage Consumption Outlook".T(),
+                                Title = "Storage Status".T(),
                                 Description = $"Drive C: is at {usedPercent:F0}% capacity ({freeGB:F1} GB free). Consider freeing up large files.".T(),
                                 Category = "Storage",
                                 ImpactLevel = "Medium",
@@ -325,9 +324,9 @@ namespace WinCarePro.Modules.AiAssistant
                         {
                             recommendations.Add(new AiWinCareRecommendation
                             {
-                                Title = "Storage Consumption Outlook Good".T(),
-                                Description = $"Drive C: usage is healthy at {usedPercent:F0}% ({freeGB:F1} GB free). Storage sustainability is over {estimatedDaysLeft} days.".T(),
-                                Category = "Prediction",
+                                Title = "Storage Status Healthy".T(),
+                                Description = $"Drive C: storage capacity is healthy at {usedPercent:F0}% ({freeGB:F1} GB free).".T(),
+                                Category = "Storage",
                                 ImpactLevel = "Low",
                                 ActionKey = "None"
                             });

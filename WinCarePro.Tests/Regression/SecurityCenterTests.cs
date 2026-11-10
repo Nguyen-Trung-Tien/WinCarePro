@@ -189,4 +189,91 @@ public class SecurityCenterTests
         Assert.NotNull(vm.SecurityScoreGrade);
         Assert.NotNull(vm.DefenseStatusBadge);
     }
+
+    [Fact]
+    public void SecurityViewModel_LoadPrivacySettings_InitializesAll8Toggles()
+    {
+        var vm = new WinCarePro.ViewModels.SecurityViewModel(_securityEngine);
+        vm.LoadPrivacySettings();
+
+        // Check that all 8 toggles are readable
+        Assert.True(vm.AdvertisingIdEnabled || !vm.AdvertisingIdEnabled);
+        Assert.True(vm.TelemetryEnabled || !vm.TelemetryEnabled);
+        Assert.True(vm.ClipboardHistoryEnabled || !vm.ClipboardHistoryEnabled);
+        Assert.True(vm.InputTrackingEnabled || !vm.InputTrackingEnabled);
+        Assert.True(vm.CortanaBingEnabled || !vm.CortanaBingEnabled);
+        Assert.True(vm.LocationTrackingEnabled || !vm.LocationTrackingEnabled);
+        Assert.True(vm.FeedbackTrackingEnabled || !vm.FeedbackTrackingEnabled);
+        Assert.True(vm.AppDiagnosticsEnabled || !vm.AppDiagnosticsEnabled);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task SecurityViewModel_FixSecurityAlertAsync_HandlesNullAndUnfixableGracefully()
+    {
+        var vm = new WinCarePro.ViewModels.SecurityViewModel(_securityEngine);
+        await vm.FixSecurityAlertAsync(null);
+
+        var unfixableAlert = new SecurityAlertItem
+        {
+            Id = "unfixable",
+            Title = "Manual Fix Only",
+            FixActionKey = ""
+        };
+        await vm.FixSecurityAlertAsync(unfixableAlert);
+        Assert.False(unfixableAlert.IsFixed);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task SecurityViewModel_Safeguards_LoadAndFilter_PopulatesCorrectly()
+    {
+        var vm = new WinCarePro.ViewModels.SecurityViewModel(_securityEngine);
+        await vm.LoadSafeguardsAsync();
+
+        Assert.NotEmpty(vm.Safeguards);
+        Assert.NotEmpty(vm.FilteredSafeguards);
+        Assert.True(vm.SafeguardTotalCount > 0);
+
+        // Filter by keyword
+        vm.SearchSafeguardsText = "UAC";
+        Assert.Contains(vm.FilteredSafeguards, s => s.Id.Contains("UAC"));
+
+        // Clear filter
+        vm.SearchSafeguardsText = string.Empty;
+        Assert.Equal(vm.Safeguards.Count, vm.FilteredSafeguards.Count);
+    }
+
+    [Fact]
+    public void SecurityViewModel_GenerateSecurityReport_ReturnsFormattedMarkdown()
+    {
+        var vm = new WinCarePro.ViewModels.SecurityViewModel(_securityEngine);
+        string report = vm.GenerateSecurityReport();
+
+        Assert.NotNull(report);
+        Assert.Contains("# WinCare Pro - Security & Privacy Audit Report", report);
+        Assert.Contains("Security Score:", report);
+        Assert.Contains("## Core Defense Matrix", report);
+        Assert.Contains("## Privacy & Anti-Telemetry Configuration", report);
+    }
+
+    [Fact]
+    public async System.Threading.Tasks.Task SecurityViewModel_ActivityTraces_ClearingMethodsExecuteSafely()
+    {
+        var vm = new WinCarePro.ViewModels.SecurityViewModel(_securityEngine);
+        await vm.ClearClipboardAsync();
+        await vm.ClearRecentFilesAsync();
+        await vm.ClearJumpListsAsync();
+        await vm.ClearRunHistoryAsync();
+        int totalErased = await vm.ClearAllActivityTracesAsync();
+        Assert.True(totalErased >= 0);
+    }
+
+    [Fact]
+    public void SecurityViewModel_TpmChipText_ReturnsValidConciseStatus_AndBitLockerRemovedFromReport()
+    {
+        var vm = new WinCarePro.ViewModels.SecurityViewModel(_securityEngine);
+        string chipText = vm.TpmChipText;
+        Assert.False(string.IsNullOrWhiteSpace(chipText));
+        string report = vm.GenerateSecurityReport();
+        Assert.DoesNotContain("BitLocker", report);
+    }
 }

@@ -355,16 +355,17 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 
         double tweakRatio = (double)OptimizedTweaksCount / Tweaks.Count;
         double ramFactor = Math.Max(0, (100 - RamUsagePercentage) / 100.0);
-        double ramBonus = GamingOptimizedProcessesCount > 0 ? 5 : 0;
 
-        int score = (int)Math.Clamp(Math.Round(50 + (tweakRatio * 35) + (ramFactor * 10) + ramBonus), 45, 100);
+        int score = (int)Math.Clamp(Math.Round(55 + (tweakRatio * 35) + (ramFactor * 10)), 45, 100);
         AiHealthScore = score;
         OnPropertyChanged(nameof(AiOptimizationInsight));
     }
 
     // ============================================================
-    // SYSTEM RAM MAINTENANCE & OPTIMIZATION
+    // SYSTEM RAM & SERVICES TELEMETRY
     // ============================================================
+
+    public string ActiveServicesCountText => $"{BackgroundServices.Count} Monitored";
 
     private string _gamingRamFreedText = "0 MB";
     public string GamingRamFreedText
@@ -725,12 +726,6 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
                 Infrastructure.Logging.CrashLogger.LogException("SystemOptimizerViewModel.UpdateRamAndServices", ex);
             }
         });
-
-        if (AutoBoostEnabled && pct > 85 && !IsBoosting && !IsLoading)
-        {
-            Log("Auto-Boost: Memory load exceeds threshold (85%). Initiating purge.".T());
-            _ = BoostRamAsync(silent: true);
-        }
     }
 
     public async Task BoostRamAsync(bool silent = false, CancellationToken ct = default)

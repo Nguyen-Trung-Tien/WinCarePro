@@ -6,11 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:WinCarePro.ViewModels"
+    xmlns:models="using:WinCarePro.Models"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
     xmlns:components="using:WinCarePro.Shared.Components"
     mc:Ignorable="d">
 
-    <Grid Padding="24,14" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1040px -->
@@ -48,21 +49,14 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Modern Header -->
             <RowDefinition Height="Auto" /> <!-- 1. Interactive Bento Hero Ribbon -->
             <RowDefinition Height="*" />    <!-- 2. Main Body Pivots -->
-            <RowDefinition Height="Auto" /> <!-- 3. Status Footer -->
         </Grid.RowDefinitions>
 
         <!-- ==================== 0. MODERN HEADER WITH DUAL ACTION ==================== -->
-        <Grid Grid.Row="0" Margin="0,0,0,10">
+        <Grid Grid.Row="0" Margin="0,0,0,14">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -76,11 +70,20 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- Right: Action Buttons (Quick Harden + Scan Security) -->
+            <!-- Right: Action Buttons (Export Report + Quick Harden + Scan Security) -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                <!-- Export Audit Report -->
+                <Button Click="OnExportReportClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" 
+                        Style="{StaticResource DefaultButtonStyle}" CornerRadius="8" Padding="14,7" FontWeight="SemiBold" FontSize="12">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xEDE1;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                        <TextBlock Text="Export Report" FontWeight="SemiBold" />
+                    </StackPanel>
+                </Button>
+
                 <!-- 1-Click Quick Harden -->
                 <Button Click="OnQuickHardenClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" 
-                        Style="{StaticResource DefaultButtonStyle}" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" Padding="14,7" FontWeight="SemiBold" FontSize="12">
+                        Style="{StaticResource DefaultButtonStyle}" CornerRadius="8" Padding="14,7" FontWeight="SemiBold" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE945;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
                         <TextBlock Text="Quick Harden" FontWeight="SemiBold" />
@@ -89,7 +92,7 @@
 
                 <!-- Scan Security Button -->
                 <Button Click="OnScanSecurityClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" 
-                        Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" Padding="16,7" FontWeight="Bold" FontSize="12">
+                        Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ProgressRing IsActive="{x:Bind ViewModel.IsScanning, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsScanning, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" Width="13" Height="13" Foreground="White" VerticalAlignment="Center" />
                         <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="White" Visibility="{x:Bind ViewModel.IsScanning, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" />
@@ -99,8 +102,8 @@
             </StackPanel>
         </Grid>
 
-        <!-- ==================== 1. INTERACTIVE BENTO HERO SECTION ==================== -->
-        <Grid x:Name="StatRibbonGrid" Grid.Row="1" Margin="0,0,0,10" ColumnSpacing="14" RowSpacing="14" helpers:AnimationHelper.StaggerIndex="0">
+        <!-- ==================== 1. INTERACTIVE BENTO HERO SECTION (Collapsed to eliminate redundant gauge/profile cards) ==================== -->
+        <Grid x:Name="StatRibbonGrid" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,12" ColumnSpacing="12" RowSpacing="12">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="StatRow0" Height="Auto" />
                 <RowDefinition x:Name="StatRow1" Height="Auto" />
@@ -108,16 +111,13 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="StatCol0" Width="1.4*" />
                 <ColumnDefinition x:Name="StatCol1" Width="*" />
-                <ColumnDefinition x:Name="StatCol2" Width="0" />
-                <ColumnDefinition x:Name="StatCol3" Width="0" />
             </Grid.ColumnDefinitions>
 
             <!-- Hero Card 0: Interactive Shield Dome & Dynamic Score HUD -->
             <Border x:Name="StatCard0" Grid.Row="0" Grid.Column="0" 
-                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1" CornerRadius="16" Padding="18,12"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="10">
+                    BorderThickness="1" CornerRadius="8" Padding="18,12">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -196,12 +196,13 @@
                         </Border>
 
                         <!-- Chip 3: TPM 2.0 -->
-                        <Border Grid.Column="2" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="10" Padding="10,6" Margin="6,0,0,0">
+                        <Border Grid.Column="2" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="10" Padding="10,6" Margin="6,0,0,0"
+                                ToolTipService.ToolTip="{x:Bind ViewModel.TpmStatusText, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xE950;" FontSize="13" Foreground="#FF8B5CF6" />
                                 <StackPanel>
                                     <TextBlock Text="TPM &amp; UEFI" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.TpmStatusText, Mode=OneWay}" FontSize="10.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Text="{x:Bind ViewModel.TpmChipText, Mode=OneWay}" FontSize="10.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
                                 </StackPanel>
                             </StackPanel>
                         </Border>
@@ -211,10 +212,9 @@
 
             <!-- Hero Card 1: Intelligent Defense Profiles (Gamer / Balanced / Hardened) -->
             <Border x:Name="StatCard1" Grid.Row="0" Grid.Column="1"
-                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                    BorderThickness="1" CornerRadius="16" Padding="18,12"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="10">
+                    BorderThickness="1" CornerRadius="8" Padding="18,12">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -280,10 +280,6 @@
                     </StackPanel>
                 </Grid>
             </Border>
-
-            <!-- Hidden dummy elements to maintain name compatibility with any old visual state setters -->
-            <Border x:Name="StatCard2" Visibility="Collapsed" Width="0" Height="0" />
-            <Border x:Name="StatCard3" Visibility="Collapsed" Width="0" Height="0" />
         </Grid>
 
         <!-- ==================== 2. MAIN BODY PIVOTS ==================== -->
@@ -305,7 +301,6 @@
 
                             <Grid ColumnSpacing="12" RowSpacing="12">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
@@ -375,33 +370,6 @@
                                                 </StackPanel>
                                             </Button>
                                         </Grid>
-                                    </Grid>
-                                </Border>
-
-                                <!-- Card 3: BitLocker Drive Encryption -->
-                                <Border Grid.Column="2" Style="{StaticResource Tilt3DCardStyle}" Padding="14,10"
-                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid Grid.Row="0">
-                                            <StackPanel Orientation="Horizontal" Spacing="10">
-                                                <Border Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusCyanBackground}" VerticalAlignment="Center">
-                                                    <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="{ThemeResource AppStatusCyanBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                                <StackPanel VerticalAlignment="Center">
-                                                    <TextBlock Text="BitLocker Drive" FontWeight="Bold" FontSize="13"/>
-                                                    <TextBlock Text="Volume Encryption" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Grid>
-                                        <TextBlock Grid.Row="1" Margin="0,6,0,8" Text="{x:Bind ViewModel.BitLockerStatus, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextWrapping="Wrap"/>
-                                        <Border Grid.Row="2" CornerRadius="7" Padding="10,4" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" HorizontalAlignment="Stretch">
-                                            <TextBlock Text="Hardware Protected" FontSize="10.5" HorizontalAlignment="Center" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        </Border>
                                     </Grid>
                                 </Border>
                             </Grid>
@@ -496,7 +464,12 @@
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel Spacing="14" HorizontalAlignment="Stretch">
                             <Grid>
-                                <TextBlock Text="Live Security Audits &amp; Threat Detection" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <TextBlock Text="Live Security Audits &amp; Threat Detection" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
+                                    <Border CornerRadius="8" Padding="8,2" Background="#20EF4444" Visibility="{x:Bind ViewModel.HasAlerts, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        <TextBlock Text="{x:Bind ViewModel.AlertCount, Mode=OneWay}" FontSize="11" FontWeight="Bold" Foreground="#FFEF4444" Typography.NumeralAlignment="Tabular" />
+                                    </Border>
+                                </StackPanel>
                                 <Border HorizontalAlignment="Right" Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="8" Padding="10,4">
                                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                         <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
@@ -505,24 +478,155 @@
                                 </Border>
                             </Grid>
 
-                            <ListView ItemsSource="{x:Bind ViewModel.SecurityAlerts, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
+                            <!-- Empty State Card (When no alerts detected) -->
+                            <Border Visibility="{x:Bind ViewModel.HasNoAlerts, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+                                    Style="{StaticResource GlassmorphismCardStyle}" Padding="32,24" Margin="0,12,0,0" HorizontalAlignment="Stretch">
+                                <StackPanel HorizontalAlignment="Center" Spacing="10" VerticalAlignment="Center">
+                                    <Border Width="52" Height="52" CornerRadius="26" Background="#2010B981" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE73E;" FontSize="24" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                    <TextBlock Text="No Security Threats Detected" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center" />
+                                    <TextBlock Text="Your system has passed real-time security integrity audits." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" TextAlignment="Center" />
+                                    <Button Click="OnScanSecurityClick" Content="Re-scan System" Style="{StaticResource DefaultButtonStyle}" CornerRadius="8" HorizontalAlignment="Center" Margin="0,6,0,0" Padding="14,6" FontSize="11.5" />
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Alert Items List -->
+                            <ListView ItemsSource="{x:Bind ViewModel.SecurityAuditItems, Mode=OneWay}" 
+                                      Visibility="{x:Bind ViewModel.HasAlerts, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+                                      SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                                 <ListView.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <ItemsStackPanel />
                                     </ItemsPanelTemplate>
                                 </ListView.ItemsPanel>
                                 <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="x:String">
-                                        <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,10" Margin="0,0,0,6">
-                                            <Grid ColumnSpacing="12">
+                                    <DataTemplate x:DataType="models:SecurityAlertItem">
+                                        <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12" Margin="0,0,0,8">
+                                            <Grid ColumnSpacing="14">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"/>
                                                     <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-                                                <Border Width="30" Height="30" CornerRadius="8" Background="#20EF4444" VerticalAlignment="Center">
-                                                    <FontIcon Glyph="&#xE783;" Foreground="#FFEF4444" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                                                <!-- Severity Icon -->
+                                                <Border Grid.Column="0" Width="36" Height="36" CornerRadius="10" Background="#20EF4444" VerticalAlignment="Center">
+                                                    <FontIcon Glyph="&#xE783;" Foreground="#FFEF4444" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
-                                                <TextBlock Grid.Column="1" Text="{x:Bind}" FontSize="12" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+
+                                                <!-- Alert Information -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                                        <TextBlock Text="{x:Bind Title}" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextWrapping="Wrap" />
+                                                        <Border CornerRadius="6" Padding="6,1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                                            <TextBlock Text="{x:Bind Category}" FontSize="9.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                        </Border>
+                                                        <Border CornerRadius="6" Padding="6,1" Background="#20EF4444">
+                                                            <TextBlock Text="{x:Bind Severity}" FontSize="9.5" FontWeight="Bold" Foreground="#FFEF4444" />
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{x:Bind Description}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                                </StackPanel>
+
+                                                <!-- Action Button: Fix Issue or Status Badge -->
+                                                <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal" Spacing="8">
+                                                    <Button Click="OnFixAlertClick" Visibility="{x:Bind CanFix, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                            Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White"
+                                                            CornerRadius="7" Padding="12,5" FontSize="11" FontWeight="SemiBold">
+                                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                                            <FontIcon Glyph="&#xE90F;" FontSize="11" Foreground="White" />
+                                                            <TextBlock Text="Fix Issue" />
+                                                        </StackPanel>
+                                                    </Button>
+                                                    <Border Visibility="{x:Bind IsFixed, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                            Background="#2010B981" BorderBrush="#4010B981" BorderThickness="1" CornerRadius="7" Padding="10,4">
+                                                        <TextBlock Text="Resolved" FontSize="11" FontWeight="Bold" Foreground="#FF10B981" />
+                                                    </Border>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </PivotItem>
+
+            <!-- ==================== TAB 3: SECURITY SAFEGUARDS ==================== -->
+            <PivotItem Header="Security Safeguards">
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="0,16,16,16" Padding="18">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="14" HorizontalAlignment="Stretch">
+                            <!-- Safeguards Header, Stats & Search Bar -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Spacing="2">
+                                    <TextBlock Text="System Safeguards &amp; Hardening Catalog" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                    <TextBlock Text="Fine-grained policy controls and exploit mitigation safeguards." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="10,5">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon Glyph="&#xE727;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                            <TextBlock Text="{x:Bind ViewModel.SafeguardProtectedCount, Mode=OneWay}" FontWeight="Bold" FontSize="11" Typography.NumeralAlignment="Tabular"/>
+                                            <TextBlock Text="/" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="{x:Bind ViewModel.SafeguardTotalCount, Mode=OneWay}" FontWeight="Bold" FontSize="11" Typography.NumeralAlignment="Tabular"/>
+                                            <TextBlock Text="Protected" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <TextBox Text="{x:Bind ViewModel.SearchSafeguardsText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                             PlaceholderText="Search safeguards..." Width="200" CornerRadius="8" FontSize="11.5" VerticalAlignment="Center">
+                                    </TextBox>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Safeguards Items List -->
+                            <ListView ItemsSource="{x:Bind ViewModel.FilteredSafeguards, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:SecuritySafeguardItem">
+                                        <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12" Margin="0,0,0,8">
+                                            <Grid ColumnSpacing="14">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Icon -->
+                                                <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" VerticalAlignment="Center">
+                                                    <FontIcon Glyph="{x:Bind IconGlyph}" FontSize="16" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+
+                                                <!-- Info -->
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                                        <TextBlock Text="{x:Bind Name}" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                                        <Border CornerRadius="6" Padding="6,1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                                            <TextBlock Text="{x:Bind Category}" FontSize="9.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{x:Bind Description}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                                    <TextBlock Text="{x:Bind ComparisonText}" FontSize="10" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" TextWrapping="Wrap" />
+                                                </StackPanel>
+
+                                                <!-- Toggle / Action Button -->
+                                                <Button Grid.Column="2" Click="OnToggleSafeguardClick"
+                                                        Style="{StaticResource DefaultButtonStyle}" CornerRadius="8" Padding="12,6" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                                        <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                                        <TextBlock Text="{x:Bind StatusFormatted}" FontSize="11" FontWeight="SemiBold" />
+                                                    </StackPanel>
+                                                </Button>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
@@ -835,12 +939,72 @@
                                         <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.InputTrackingEnabled, Mode=TwoWay}" Toggled="OnInputTrackingToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
                                     </Grid>
                                 </Border>
+
+                                <!-- Cortana & Bing Search Suggestions -->
+                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0" Spacing="2">
+                                            <TextBlock Text="Cortana &amp; Bing Search" FontWeight="Bold" FontSize="12.5" />
+                                            <TextBlock Text="Disable online search suggestions in Start menu." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.CortanaBingEnabled, Mode=TwoWay}" Toggled="OnCortanaBingToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
+                                    </Grid>
+                                </Border>
+
+                                <!-- Location Sensors -->
+                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0" Spacing="2">
+                                            <TextBlock Text="Background Location" FontWeight="Bold" FontSize="12.5" />
+                                            <TextBlock Text="Disable location tracking sensors and access." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.LocationTrackingEnabled, Mode=TwoWay}" Toggled="OnLocationToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
+                                    </Grid>
+                                </Border>
+
+                                <!-- Feedback Requests -->
+                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0" Spacing="2">
+                                            <TextBlock Text="Feedback Requests" FontWeight="Bold" FontSize="12.5" />
+                                            <TextBlock Text="Prevent Windows from asking for feedback surveys." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.FeedbackTrackingEnabled, Mode=TwoWay}" Toggled="OnFeedbackToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
+                                    </Grid>
+                                </Border>
+
+                                <!-- App Diagnostics Access -->
+                                <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0" Spacing="2">
+                                            <TextBlock Text="App Diagnostic Access" FontWeight="Bold" FontSize="12.5" />
+                                            <TextBlock Text="Block third-party apps from reading diagnostic info." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                        <components:LoadingToggleSwitch Grid.Column="1" IsOn="{x:Bind ViewModel.AppDiagnosticsEnabled, Mode=TwoWay}" Toggled="OnAppDiagnosticsToggled" VerticalAlignment="Center" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" />
+                                    </Grid>
+                                </Border>
                             </StackPanel>
 
                             <!-- Right: Activity Trace Cleaning Card -->
                             <Grid x:Name="PrivRightPanel" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
                                 <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="16,14" VerticalAlignment="Top">
-                                    <StackPanel Spacing="12">
+                                    <StackPanel Spacing="10">
                                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                                             <Border Width="32" Height="32" CornerRadius="16" Background="#2010B981" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xE74D;" FontSize="14" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -849,17 +1013,43 @@
                                         </StackPanel>
                                         <TextBlock Text="Erase cached activity logs and history:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
 
-                                        <Button x:Name="WipeClipboardBtn" Click="OnClearClipboardClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" HorizontalAlignment="Stretch" Padding="12,8" FontSize="11.5">
+                                        <Button x:Name="WipeClipboardBtn" Click="OnClearClipboardClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" HorizontalAlignment="Stretch" Padding="12,7" FontSize="11.5">
                                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                                 <ProgressRing x:Name="WipeClipboardRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
                                                 <TextBlock x:Name="WipeClipboardText" Text="Wipe Clipboard"/>
                                             </StackPanel>
                                         </Button>
 
-                                        <Button x:Name="ClearRecentBtn" Click="OnClearRecentClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" HorizontalAlignment="Stretch" Padding="12,8" FontSize="11.5">
+                                        <Button x:Name="ClearRecentBtn" Click="OnClearRecentClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" HorizontalAlignment="Stretch" Padding="12,7" FontSize="11.5">
                                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                                 <ProgressRing x:Name="ClearRecentRing" IsActive="False" Visibility="Collapsed" Width="12" Height="12" VerticalAlignment="Center"/>
                                                 <TextBlock x:Name="ClearRecentText" Text="Clear Recent Files &amp; History"/>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button Click="OnClearJumpListsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" HorizontalAlignment="Stretch" Padding="12,7" FontSize="11.5">
+                                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE7C3;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                                <TextBlock Text="Clear Explorer Jump Lists"/>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button Click="OnClearRunHistoryClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" HorizontalAlignment="Stretch" Padding="12,7" FontSize="11.5">
+                                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE756;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                                <TextBlock Text="Clear Run &amp; Address History"/>
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Border Height="1" Background="{ThemeResource CardStrokeColorDefaultBrush}" Margin="0,4" />
+
+                                        <!-- One-Click Erase All Traces -->
+                                        <Button Click="OnClearAllTracesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}"
+                                                Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White"
+                                                CornerRadius="8" HorizontalAlignment="Stretch" Padding="12,8" FontSize="11.5" FontWeight="Bold">
+                                            <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                                                <FontIcon Glyph="&#xE74D;" FontSize="13" Foreground="White" />
+                                                <TextBlock Text="Erase All Activity Traces" FontWeight="Bold"/>
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>
@@ -871,11 +1061,8 @@
             </PivotItem>
         </Pivot>
 
-        <!-- Status Footer -->
-        <TextBlock Grid.Row="3" Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,8,0,0" />
-
         <!-- Loading Overlay Indicator -->
-        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="3" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.Resources>
                 <Storyboard x:Name="FadeInLoading">
                     <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3">

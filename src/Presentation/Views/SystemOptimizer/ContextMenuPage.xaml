@@ -47,12 +47,6 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Header -->
             <RowDefinition Height="Auto" /> <!-- 1. Stat Ribbon -->
@@ -85,8 +79,8 @@
             </Button>
         </Grid>
 
-        <!-- ==================== 1. 3-CARD STAT RIBBON ==================== -->
-        <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+        <!-- ==================== 1. 3-CARD STAT RIBBON (Collapsed to eliminate redundant counter cards) ==================== -->
+        <Grid Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -154,18 +148,18 @@
         </Grid>
 
         <!-- ==================== 2. MAIN WORKSPACE ==================== -->
-        <Grid Grid.Row="2" ColumnSpacing="16" RowSpacing="16">
+        <Grid Grid.Row="2" ColumnSpacing="0" RowSpacing="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="WorkspaceCol0" Width="*" />
-                <ColumnDefinition x:Name="WorkspaceCol1" Width="320" />
+                <ColumnDefinition x:Name="WorkspaceCol1" Width="0" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left: Handlers List Card -->
-            <Border x:Name="LeftPanel" Grid.Column="0" Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14">
+            <!-- Left: Handlers List Card (Full Width) -->
+            <Border x:Name="LeftPanel" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" /> <!-- Filters -->
@@ -245,9 +239,8 @@
                 </Grid>
             </Border>
 
-            <!-- Right: Details & Guidelines Panel with 3D Depth -->
-            <Border x:Name="RightPanel" Grid.Column="1" Style="{StaticResource SpatialDepthCardStyle}" Padding="16,14"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="10">
+            <!-- Right: Details & Guidelines Panel (Collapsed to give full width to Handlers list) -->
+            <Border x:Name="RightPanel" Grid.Column="1" Visibility="Collapsed" Style="{StaticResource SpatialDepthCardStyle}" Padding="16,14">
                 <StackPanel Spacing="14">
                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE946;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" />

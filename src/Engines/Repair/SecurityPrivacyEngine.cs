@@ -181,33 +181,6 @@ public partial class SecurityPrivacyEngine
         }
     }
 
-    public string GetBitLockerStatus()
-    {
-        try
-        {
-            var list = WmiHelper.Query("SELECT DriveLetter, ProtectionStatus FROM Win32_EncryptableVolume", obj =>
-            {
-                string letter = obj["DriveLetter"]?.ToString() ?? "";
-                uint status = Convert.ToUInt32(obj["ProtectionStatus"]);
-                string statusStr = status switch
-                {
-                    0 => "Off",
-                    1 => "On",
-                    _ => "Unknown"
-                };
-                return new { Letter = letter, StatusStr = statusStr };
-            }, @"root\cimv2\Security\MicrosoftVolumeEncryption")
-            .Where(x => !string.IsNullOrEmpty(x.Letter))
-            .Select(x => $"{x.Letter} ({x.StatusStr})")
-            .ToList();
-
-            if (list.Count > 0) return string.Join(", ", list);
-        }
-        catch { }
-
-        return "C: (Off) [Standard/Virtual OS]";
-    }
-
     public (bool enabled, string status) CheckSecureBootStatus()
     {
         try

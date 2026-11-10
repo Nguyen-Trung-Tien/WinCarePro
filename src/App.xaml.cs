@@ -221,8 +221,7 @@ public partial class App : Application
             _window = new MainWindow();
             _window.Activate();
 
-            // Start background watchdog for proactive health monitoring and automated RAM optimization
-            Services.GetService<IBackgroundWatchdogService>()?.Start();
+            // Zero-Bloat mode: BackgroundWatchdogService continuous polling loop is not started on launch.
         }
         catch (Exception ex)
         {

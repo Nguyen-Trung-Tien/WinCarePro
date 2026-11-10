@@ -115,8 +115,8 @@
             </StackPanel>
         </Grid>
 
-        <!-- ==================== 1. UNIFIED STAT RIBBON ==================== -->
-        <Grid x:Name="StatsRibbonGrid" Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12" helpers:AnimationHelper.StaggerIndex="0">
+        <!-- ==================== 1. UNIFIED STAT RIBBON (Collapsed to eliminate redundant stat cards) ==================== -->
+        <Grid x:Name="StatsRibbonGrid" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12" helpers:AnimationHelper.StaggerIndex="0">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="StatRow0" Height="Auto" />
                 <RowDefinition x:Name="StatRow1" Height="Auto" />
@@ -204,8 +204,8 @@
             </Border>
         </Grid>
 
-        <!-- ==================== 2. QUICK PROBLEM SOLVER (SYMPTOM-BASED REPAIR) ==================== -->
-        <Border Grid.Row="2" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,10" Margin="0,0,0,12">
+        <!-- ==================== 2. QUICK PROBLEM SOLVER (Collapsed to eliminate duplicate tab buttons) ==================== -->
+        <Border Grid.Row="2" Visibility="Collapsed" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,10" Margin="0,0,0,12">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

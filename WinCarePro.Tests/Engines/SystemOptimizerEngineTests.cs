@@ -320,4 +320,14 @@ public class SystemOptimizerEngineTests
 
         vm.Cleanup();
     }
+
+    [Fact]
+    public void SystemOptimizerViewModel_ActiveServicesCountText_ReturnsValidMetric()
+    {
+        var vm = new WinCarePro.ViewModels.SystemOptimizerViewModel(_engine);
+        string text = vm.ActiveServicesCountText;
+        Assert.False(string.IsNullOrWhiteSpace(text));
+        Assert.Contains("Monitored", text);
+        vm.Cleanup();
+    }
 }

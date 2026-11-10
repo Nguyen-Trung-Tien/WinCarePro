@@ -280,30 +280,22 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private ulong _hudPrevIdleTime;
+    private ulong _hudPrevKernelTime;
+    private ulong _hudPrevUserTime;
+    private bool _hudHasPrevTimes = false;
+
     private void StartClockTicker()
     {
         try
         {
-            // Update clock immediately
-            if (ClockText != null)
-            {
-                ClockText.Text = DateTime.Now.ToString("HH:mm");
-            }
-
-            // Stop any previous timer to prevent duplicates
+            UpdateTitleBarTelemetry();
             _clockTimer?.Stop();
-
-            // Create a DispatcherTimer for periodic clock and telemetry updates
-            _clockTimer = new Microsoft.UI.Xaml.DispatcherTimer();
-            _clockTimer.Interval = TimeSpan.FromSeconds(2);
-            _clockTimer.Tick += (s, e) =>
+            _clockTimer = new Microsoft.UI.Xaml.DispatcherTimer
             {
-                if (ClockText != null)
-                {
-                    ClockText.Text = DateTime.Now.ToString("HH:mm");
-                }
-                UpdateTitleBarTelemetry();
+                Interval = TimeSpan.FromSeconds(3)
             };
+            _clockTimer.Tick += (s, e) => UpdateTitleBarTelemetry();
             _clockTimer.Start();
         }
         catch (Exception ex)
@@ -312,36 +304,27 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private ulong _hudPrevIdleTime;
-    private ulong _hudPrevKernelTime;
-    private ulong _hudPrevUserTime;
-    private bool _hudHasPrevTimes = false;
-
-    private int _isTelemetrySampling = 0;
-
     private void UpdateTitleBarTelemetry()
     {
-        // Standby check: Skip sampling if window is hidden (minimized to tray) to save CPU
         if (this.AppWindow == null || !this.AppWindow.IsVisible)
             return;
 
-        // Concurrency guard: Skip sampling if a previous sample is still running
-        if (Interlocked.CompareExchange(ref _isTelemetrySampling, 1, 0) != 0)
-            return;
-
-        Task.Run(() =>
+        try
         {
-            try
+            if (ClockText != null)
             {
-                // Sample RAM
-                var mem = Core.Interop.NativeApi.MEMORYSTATUSEX.Create();
-                Core.Interop.NativeApi.GlobalMemoryStatusEx(ref mem);
-                double ramPercent = mem.dwMemoryLoad;
-                double freeGb = mem.ullAvailPhys / (1024.0 * 1024.0 * 1024.0);
-                double totalGb = mem.ullTotalPhys / (1024.0 * 1024.0 * 1024.0);
+                ClockText.Text = DateTime.Now.ToString("HH:mm");
+            }
 
-                // Sample CPU
-                Core.Interop.NativeApi.GetSystemTimes(out var idleTime, out var kernelTime, out var userTime);
+            var mem = Core.Interop.NativeApi.MEMORYSTATUSEX.Create();
+            if (Core.Interop.NativeApi.GlobalMemoryStatusEx(ref mem) && RamChipText != null)
+            {
+                double ramPercent = mem.dwMemoryLoad;
+                RamChipText.Text = $"RAM {ramPercent:F0}%";
+            }
+
+            if (Core.Interop.NativeApi.GetSystemTimes(out var idleTime, out var kernelTime, out var userTime))
+            {
                 ulong idle = idleTime.ToUInt64();
                 ulong kernel = kernelTime.ToUInt64();
                 ulong user = userTime.ToUInt64();
@@ -363,29 +346,16 @@ public sealed partial class MainWindow : Window
                 _hudPrevUserTime = user;
                 _hudHasPrevTimes = true;
 
-                this.DispatcherQueue.TryEnqueue(() =>
+                if (CpuChipText != null)
                 {
-                    if (CpuChipText != null)
-                    {
-                        CpuChipText.Text = $"CPU {cpuPercent:F0}%";
-                        ToolTipService.SetToolTip(CpuChipButton, $"CPU Usage: {cpuPercent:F0}%\nClick to open live Dashboard monitor.".T());
-                    }
-                    if (RamChipText != null)
-                    {
-                        RamChipText.Text = $"RAM {ramPercent:F0}%";
-                        ToolTipService.SetToolTip(RamChipButton, $"RAM Usage: {ramPercent:F0}% ({freeGb:F1} GB free of {totalGb:F1} GB)\nClick to perform 1-Click RAM Purge.".T());
-                    }
-                });
+                    CpuChipText.Text = $"CPU {cpuPercent:F0}%";
+                }
             }
-            catch (Exception ex)
-            {
-                Infrastructure.Logging.CrashLogger.LogException("UpdateTitleBarTelemetry", ex);
-            }
-            finally
-            {
-                Interlocked.Exchange(ref _isTelemetrySampling, 0);
-            }
-        });
+        }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("UpdateTitleBarTelemetry", ex);
+        }
     }
 
     private void AppWindow_Closing(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowClosingEventArgs args)
@@ -750,25 +720,12 @@ public sealed partial class MainWindow : Window
 
     private void OnRamChipClick(object sender, RoutedEventArgs e)
     {
-        Task.Run(async () =>
+        if (RootFrame?.Content is MainPage mp)
         {
-            try
-            {
-                // Actually free system RAM via optimizer engine (EmptyWorkingSet + GC)
-                var optEngine = App.Services.GetRequiredService<Engines.SystemOptimizerEngine>();
-                await optEngine.OptimizeRamAsync();
-
-                App.MainDispatcherQueue?.TryEnqueue(() =>
-                {
-                    var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
-                    notificationService?.ShowToast("RAM Optimized".T(), "Process working sets trimmed and managed memory reclaimed.".T(), Services.Contracts.NotificationSeverity.Success);
-                });
-            }
-            catch (Exception ex)
-            {
-                Infrastructure.Logging.CrashLogger.LogException("MainWindow.OnRamChipClick", ex);
-            }
-        });
+            mp.NavigateToPageExternal("Dashboard");
+        }
+        var notificationService = App.Services.GetService<Services.Contracts.INotificationService>();
+        notificationService?.ShowToast("RAM Telemetry Monitor".T(), "Showing real-time memory metrics on the Dashboard.".T(), Services.Contracts.NotificationSeverity.Info);
     }
 
     public void UpdateNotificationBadge()
@@ -798,9 +755,7 @@ public sealed partial class MainWindow : Window
         {
             if (AmbientAuraMesh != null)
             {
-                AmbientAuraMesh.Visibility = WinCarePro.Shared.Animations.ReducedMotionHelper.AreAnimationsEnabled
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                AmbientAuraMesh.Visibility = Visibility.Collapsed;
             }
         });
     }

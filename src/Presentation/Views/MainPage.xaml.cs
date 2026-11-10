@@ -113,7 +113,7 @@ public sealed partial class MainPage : Page
         };
 
         // Load default page on startup
-        NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().First();
+        NavView.SelectedItem = NavDashboard;
         NavigateToPage("Dashboard");
 
         // Load animations setting
@@ -465,28 +465,12 @@ public sealed partial class MainPage : Page
         }
     }
 
-    private bool _animationsEnabled = true;
+    private bool _animationsEnabled = false;
 
     public void ApplyAnimationsEnabled(bool enabled)
     {
-        _animationsEnabled = enabled;
-        if (enabled)
-        {
-            ContentFrame.ContentTransitions = new Microsoft.UI.Xaml.Media.Animation.TransitionCollection
-            {
-                new Microsoft.UI.Xaml.Media.Animation.NavigationThemeTransition
-                {
-                    DefaultNavigationTransitionInfo = new Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionInfo
-                    {
-                        Effect = Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionEffect.FromBottom
-                    }
-                }
-            };
-        }
-        else
-        {
-            ContentFrame.ContentTransitions = null;
-        }
+        _animationsEnabled = false;
+        ContentFrame.ContentTransitions = null;
     }
 
     public void UpdateHeader()
@@ -561,9 +545,9 @@ public sealed partial class MainPage : Page
 
     public void UpdateExperienceMode(bool isPro)
     {
-        // Unified 4-Pillar Architecture: All 12 core modules are directly accessible in the sidebar
+        // Unified 4-Group Sidebar Architecture: All core modules directly accessible on the Nav Bar
         if (NavDashboard != null) NavDashboard.Visibility = Visibility.Visible;
-        if (NavAi != null) NavAi.Visibility = Visibility.Visible;
+        if (NavAi != null) NavAi.Visibility = Visibility.Collapsed;
         if (NavJunk != null) NavJunk.Visibility = Visibility.Visible;
         if (NavRegistry != null) NavRegistry.Visibility = Visibility.Visible;
         if (NavUninstall != null) NavUninstall.Visibility = Visibility.Visible;
@@ -576,12 +560,12 @@ public sealed partial class MainPage : Page
         if (NavSecurity != null) NavSecurity.Visibility = Visibility.Visible;
 
         if (NavHeaderOverview != null) NavHeaderOverview.Visibility = Visibility.Visible;
+        if (NavSepApps != null) NavSepApps.Visibility = Visibility.Visible;
+        if (NavHeaderApps != null) NavHeaderApps.Visibility = Visibility.Visible;
         if (NavSepClean != null) NavSepClean.Visibility = Visibility.Visible;
         if (NavHeaderClean != null) NavHeaderClean.Visibility = Visibility.Visible;
-        if (NavSepSpeed != null) NavSepSpeed.Visibility = Visibility.Visible;
-        if (NavHeaderSpeed != null) NavHeaderSpeed.Visibility = Visibility.Visible;
-        if (NavSepSecurity != null) NavSepSecurity.Visibility = Visibility.Visible;
-        if (NavHeaderSecurity != null) NavHeaderSecurity.Visibility = Visibility.Visible;
+        if (NavSepTweaks != null) NavSepTweaks.Visibility = Visibility.Visible;
+        if (NavHeaderTweaks != null) NavHeaderTweaks.Visibility = Visibility.Visible;
 
         if (ContentFrame.Content is DashboardPage dbPage)
         {

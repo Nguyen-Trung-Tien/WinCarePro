@@ -76,13 +76,8 @@ public class SystemOptimizerEngine
                 using var curProc = Process.GetCurrentProcess();
                 long wsBefore = curProc.WorkingSet64;
 
-                // 1. Force full Garbage Collection on managed heap
-                GC.Collect(2, GCCollectionMode.Forced, true, true);
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
-
-                // 2. Trim WinCarePro's own working set safely
-                NativeApi.EmptyWorkingSet(curProc.Handle);
+                // 1. Safe managed garbage collection without forcing OS working set trim to paging file
+                GC.Collect(2, GCCollectionMode.Forced, false, false);
 
                 curProc.Refresh();
                 long wsAfter = curProc.WorkingSet64;

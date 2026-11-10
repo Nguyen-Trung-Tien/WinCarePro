@@ -15,13 +15,7 @@
         <KeyboardAccelerator Key="F" Modifiers="Control" Invoked="OnFindAcceleratorInvoked"/>
     </Page.KeyboardAccelerators>
 
-    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
-
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1050px -->
@@ -69,7 +63,7 @@
         </Grid.RowDefinitions>
 
         <!-- 0. Page Header (Modernized Next-Gen Studio Layout) -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid Grid.Row="0" Margin="0,0,0,14">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -112,9 +106,8 @@
             </StackPanel>
         </Grid>
 
-        <!-- 1. Interactive Cyber-Bento Insights Deck (5 Dynamic Clickable Insight Capsules) -->
-        <Border Grid.Row="1" Margin="0,0,0,16" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,10"
-                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="12">
+        <!-- 1. Interactive Cyber-Bento Insights Deck (Collapsed to eliminate duplicate filter bar) -->
+        <Border Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,16" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,10">
             <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
                 <Grid x:Name="TopStatsGrid" ColumnSpacing="12" MinWidth="720">
                     <Grid.ColumnDefinitions>

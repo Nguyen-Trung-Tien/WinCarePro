@@ -10,7 +10,7 @@
     xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
-    <Grid Padding="20,12" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1024px (1 single neat row for stats & toolbar) -->
@@ -71,12 +71,6 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Header -->
             <RowDefinition Height="Auto" /> <!-- 1. 4-Card Ribbon -->
@@ -85,7 +79,7 @@
         </Grid.RowDefinitions>
 
         <!-- ==================== 0. MODERN HEADER ==================== -->
-        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,10">
+        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,14">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="HeaderRow0" Height="Auto" />
                 <RowDefinition x:Name="HeaderRow1" Height="Auto" />
@@ -105,9 +99,21 @@
                 </StackPanel>
             </StackPanel>
 
-            <!-- Right: Action Buttons (Scan + Update All + More) -->
-            <!-- Right: Action Buttons (Scan + Update All + More) -->
+            <!-- Right: Action Buttons (Drivers + Scan + Update All) -->
             <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="12,0" CornerRadius="8" FontSize="11.5" FontWeight="SemiBold" Click="OnBackupDriversClick" ToolTipService.ToolTip="Backup Installed Hardware Drivers">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE74E;" FontSize="11.5" Foreground="{ThemeResource AppStatusInfoBrush}"/>
+                        <TextBlock Text="Backup Drivers"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="12,0" CornerRadius="8" FontSize="11.5" FontWeight="SemiBold" Click="OnRestoreDriversClick" ToolTipService.ToolTip="Restore Drivers from Backup">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE777;" FontSize="11.5" Foreground="{ThemeResource AppStatusWarningBrush}"/>
+                        <TextBlock Text="Restore Drivers"/>
+                    </StackPanel>
+                </Button>
+
                 <!-- Scan Updates Button (Hero CTA) -->
                 <Button x:Name="ScanUpdatesBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12"
                         AutomationProperties.Name="Scan for Updates"
@@ -132,8 +138,8 @@
             </StackPanel>
         </Grid>
 
-        <!-- ==================== 1. BENTO COCKPIT: RADAR & HUB ==================== -->
-        <Grid x:Name="StatsGrid" Grid.Row="1" Margin="0,0,0,12" ColumnSpacing="12" RowSpacing="10">
+        <!-- ==================== 1. BENTO COCKPIT: RADAR & HUB (Collapsed to eliminate redundant radar/index cards) ==================== -->
+        <Grid x:Name="StatsGrid" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,12" ColumnSpacing="12" RowSpacing="10">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="StatRow0" Height="Auto" />
                 <RowDefinition x:Name="StatRow1" Height="Auto" />

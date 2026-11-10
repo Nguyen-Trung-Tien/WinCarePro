@@ -26,6 +26,11 @@ public partial class TranslationManager
         vi["Visual disk breakdown & folder hierarchy analysis."] = "Phân tích trực quan dung lượng ổ đĩa & cấu trúc thư mục.";
         vi["Preparing"] = "Đang chuẩn bị";
         vi["Cancelling"] = "Đang hủy";
+        vi["APPLICATIONS"] = "ỨNG DỤNG";
+        vi["CLEAN & REPAIR"] = "DỌN DẸP & SỬA LỖI";
+        vi["CLEAN &amp; REPAIR"] = "DỌN DẸP & SỬA LỖI";
+        vi["TWEAKS & SECURITY"] = "TINH CHỈNH & BẢO MẬT";
+        vi["TWEAKS &amp; SECURITY"] = "TINH CHỈNH & BẢO MẬT";
         vi["CLEAN & STORAGE"] = "DỌN DẸP & LƯU TRỮ";
         vi["CLEAN &amp; STORAGE"] = "DỌN DẸP & LƯU TRỮ";
         vi["SPEED & PERFORMANCE"] = "TĂNG TỐC & HIỆU NĂNG";

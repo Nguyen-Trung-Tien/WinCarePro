@@ -66,12 +66,6 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Header -->
             <RowDefinition Height="Auto" /> <!-- 1. Stat Ribbon -->
@@ -119,8 +113,8 @@
                 </Button>
             </StackPanel>
 
-            <!-- Registry Safety Guarantee & Automated Rollback Snapshot Banner -->
-            <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0" Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1.2" CornerRadius="10" Padding="12,8">
+            <!-- Registry Safety Guarantee & Automated Rollback Snapshot Banner (Collapsed to reduce header clutter) -->
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Visibility="Collapsed" Margin="0,10,0,0" Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1.2" CornerRadius="10" Padding="12,8">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -142,8 +136,8 @@
             </Border>
         </Grid>
 
-        <!-- ==================== 1. 4-CARD STAT RIBBON ==================== -->
-        <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+        <!-- ==================== 1. 4-CARD STAT RIBBON (Collapsed to eliminate redundant stat cards) ==================== -->
+        <Grid Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -292,7 +286,7 @@
                                         <Button Click="OnDeselectAllClick" Content="Deselect All" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
-                                        <TextBlock Text="Click item to inspect AI details" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Select item to view key details" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
                                         <FontIcon Glyph="&#xE76C;" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Grid>
@@ -408,7 +402,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                                    <TextBlock Text="Smart AI Inspector" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Registry Key Inspector" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
                                     <TextBlock Text="Visual Diff" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
@@ -435,7 +429,7 @@
                                     </Grid.ColumnDefinitions>
                                     <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Top" Margin="0,2,0,0"/>
                                     <StackPanel Grid.Column="1" Spacing="2">
-                                        <TextBlock Text="AI Root-Cause Insight:" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                        <TextBlock Text="Key Impact &amp; Details:" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                         <TextBlock Text="{x:Bind ViewModel.SelectedIssue.AiRecommendation, Mode=OneWay, FallbackValue='Leftover uninstalled application registry entry or broken link.'}" FontSize="10.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Grid>

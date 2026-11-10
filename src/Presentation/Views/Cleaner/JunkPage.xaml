@@ -10,7 +10,7 @@
     xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
-    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="LayoutVisualStates">
                     <!-- Wide Layout: Viewport Width >= 950px -->
@@ -55,7 +55,7 @@
             </Grid.RowDefinitions>
 
             <!-- Page Header -->
-            <Grid Grid.Row="0" Margin="0,0,0,18">
+            <Grid Grid.Row="0" Margin="0,0,0,14">
                 <Grid x:Name="HeaderGrid">
                     <Grid.RowDefinitions>
                         <RowDefinition x:Name="HeaderRow0" Height="Auto" />

@@ -1,3 +1,15 @@
 $ErrorActionPreference = "Stop"
-dotnet run --project "$PSScriptRoot\src\WinCarePro.csproj" @args
+Push-Location "$PSScriptRoot\src"
+try {
+    if ($args -and $args.Count -gt 0) {
+        dotnet run -- @args
+    } else {
+        dotnet run
+    }
+}
+finally {
+    Pop-Location
+}
+
+
 

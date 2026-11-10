@@ -88,36 +88,15 @@ public class PredictiveAnalysisEngine
             {
                 double freePercent = (freeSpaceGB / totalSpaceGB) * 100.0;
                 
-                // Construct time-series model (Last 7 days data points assuming daily accumulation rate)
-                double dailyBurnRateGB = 0.45; // Default baseline ~450MB/day
-                if (freePercent < 20.0) dailyBurnRateGB = 0.75;
-                if (freePercent < 10.0) dailyBurnRateGB = 1.10;
-
-                double[] days = { 0, 1, 2, 3, 4, 5, 6 };
-                double[] projectedFreeSpace = days.Select(d => Math.Max(0.1, freeSpaceGB - (d * dailyBurnRateGB))).ToArray();
-                var regression = ComputeLinearRegression(days, projectedFreeSpace);
-
-                // Days until storage falls below safety threshold (5.0 GB)
-                double thresholdGB = 5.0;
-                int estimatedDaysLeft = 365;
-                if (regression.IsValid && regression.Slope < 0)
-                {
-                    double daysToThreshold = (thresholdGB - regression.Intercept) / regression.Slope;
-                    estimatedDaysLeft = Math.Max(1, (int)Math.Round(daysToThreshold));
-                }
-                else
-                {
-                    estimatedDaysLeft = Math.Max(2, (int)(freeSpaceGB / dailyBurnRateGB));
-                }
-
                 if (freeSpaceGB < 35.0 || freePercent < 20.0)
                 {
+                    int estimatedDays = Math.Max(1, (int)(freeSpaceGB / 1.0));
                     warnings.Add(new PredictiveWarning
                     {
-                        Title = "Predictive Storage Exhaustion (AI Linear Trend)".T(),
-                        Description = string.Format("Drive C: has {0:F1} GB free ({1:F0}%). AI Regression model predicts critical storage exhaustion (<5GB) in ~{2} days.", freeSpaceGB, freePercent, estimatedDaysLeft).T(),
-                        MetricTrend = $"{freeSpaceGB:F1} GB Free ({freePercent:F0}%) | Burn: -{dailyBurnRateGB:F2}GB/d",
-                        ImpactTimeline = string.Format("Exhaustion in {0} Days", estimatedDaysLeft).T(),
+                        Title = "Low Storage Capacity Warning".T(),
+                        Description = string.Format("Drive C: has {0:F1} GB free ({1:F0}%). Consider cleaning temporary junk files to prevent system drive exhaustion.", freeSpaceGB, freePercent).T(),
+                        MetricTrend = $"{freeSpaceGB:F1} GB Free ({freePercent:F0}%)",
+                        ImpactTimeline = string.Format("{0} Days Margin", estimatedDays).T(),
                         Severity = freeSpaceGB < 12.0 ? "Critical" : "Warning",
                         IconGlyph = "\uE7B8"
                     });
@@ -126,18 +105,17 @@ public class PredictiveAnalysisEngine
         }
         catch { }
 
-        // 2. Boot Delay & Startup Creep Model
+        // 2. High Startup Application Count
         try
         {
             if (startupAppsCount > 6)
             {
-                double estimatedBootDelaySec = Math.Round(startupAppsCount * 0.45, 1);
                 warnings.Add(new PredictiveWarning
                 {
-                    Title = "Startup Boot Delay Creep".T(),
-                    Description = string.Format("AI detected {0} startup applications. Boot time is predicted to slow down by ~{1:F1} seconds on next system reboot.", startupAppsCount, estimatedBootDelaySec).T(),
+                    Title = "High Startup Program Count".T(),
+                    Description = string.Format("There are {0} applications configured to launch on Windows startup. Review and disable unneeded startup items.", startupAppsCount).T(),
                     MetricTrend = $"{startupAppsCount} Startup Apps",
-                    ImpactTimeline = string.Format("+{0:F1}s Boot Time Delay", estimatedBootDelaySec).T(),
+                    ImpactTimeline = startupAppsCount > 12 ? "High Boot Overhead".T() : "Moderate Boot Overhead".T(),
                     Severity = startupAppsCount > 12 ? "Critical" : "Warning",
                     IconGlyph = "\uE7B8"
                 });

@@ -1,560 +1,70 @@
 using System;
-using System.Numerics;
-using System.Runtime.CompilerServices;
-using Microsoft.UI.Composition;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Hosting;
-using Microsoft.UI.Xaml.Input;
 
 namespace WinCarePro.Core.Helpers;
 
+/// <summary>
+/// Zero-Bloat flat stub: Eliminates all pointer hover/press scale hooks, composition timers, and shimmer animations.
+/// </summary>
 public static class AnimationHelper
 {
-    private static readonly ConditionalWeakTable<FrameworkElement, PointerState> _elementStates = new();
+    public static bool AreAnimationsEnabled() => false;
 
-    private class PointerState
-    {
-        public bool IsPointerOver { get; set; }
-        public bool IsPressed { get; set; }
-    }
-
-    private static PointerState GetOrCreateState(FrameworkElement element)
-    {
-        return _elementStates.GetValue(element, _ => new PointerState());
-    }
-
-    public static bool AreAnimationsEnabled()
-    {
-        return WinCarePro.Shared.Animations.ReducedMotionHelper.AreAnimationsEnabled;
-    }
-    // ==========================================
-    // 1. Attached Property: HoverScale
-    // ==========================================
     public static readonly DependencyProperty HoverScaleProperty =
-        DependencyProperty.RegisterAttached(
-            "HoverScale",
-            typeof(double),
-            typeof(AnimationHelper),
-            new PropertyMetadata(1.0, OnHoverScaleChanged));
+        DependencyProperty.RegisterAttached("HoverScale", typeof(double), typeof(AnimationHelper), new PropertyMetadata(1.0));
+    public static double GetHoverScale(FrameworkElement element) => 1.0;
+    public static void SetHoverScale(FrameworkElement element, double value) { }
 
-    public static double GetHoverScale(FrameworkElement element) => (double)element.GetValue(HoverScaleProperty);
-    public static void SetHoverScale(FrameworkElement element, double value) => element.SetValue(HoverScaleProperty, value);
-
-    private static void OnHoverScaleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FrameworkElement element)
-        {
-            element.PointerEntered -= Element_PointerEntered;
-            element.PointerExited -= Element_PointerExited;
-            element.SizeChanged -= Element_SizeChanged;
-
-            if (e.NewValue is double scale && scale != 1.0)
-            {
-                element.PointerEntered += Element_PointerEntered;
-                element.PointerExited += Element_PointerExited;
-                element.SizeChanged += Element_SizeChanged;
-            }
-        }
-    }
-
-    // ==========================================
-    // 2. Attached Property: PressedScale
-    // ==========================================
     public static readonly DependencyProperty PressedScaleProperty =
-        DependencyProperty.RegisterAttached(
-            "PressedScale",
-            typeof(double),
-            typeof(AnimationHelper),
-            new PropertyMetadata(1.0, OnPressedScaleChanged));
+        DependencyProperty.RegisterAttached("PressedScale", typeof(double), typeof(AnimationHelper), new PropertyMetadata(1.0));
+    public static double GetPressedScale(FrameworkElement element) => 1.0;
+    public static void SetPressedScale(FrameworkElement element, double value) { }
 
-    public static double GetPressedScale(FrameworkElement element) => (double)element.GetValue(PressedScaleProperty);
-    public static void SetPressedScale(FrameworkElement element, double value) => element.SetValue(PressedScaleProperty, value);
-
-    private static void OnPressedScaleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FrameworkElement element)
-        {
-            element.PointerPressed -= Element_PointerPressed;
-            element.PointerReleased -= Element_PointerReleased;
-            element.PointerCanceled -= Element_PointerReleased;
-
-            if (e.NewValue is double scale && scale != 1.0)
-            {
-                element.PointerPressed += Element_PointerPressed;
-                element.PointerReleased += Element_PointerReleased;
-                element.PointerCanceled += Element_PointerReleased;
-            }
-        }
-    }
-
-    // ==========================================
-    // 3. Attached Property: EntranceDelay (NEW v4.0.0)
-    //    Auto-triggers spring entrance animation with specified delay when element loads.
-    // ==========================================
     public static readonly DependencyProperty EntranceDelayProperty =
-        DependencyProperty.RegisterAttached(
-            "EntranceDelay",
-            typeof(double),
-            typeof(AnimationHelper),
-            new PropertyMetadata(-1.0, OnEntranceDelayChanged));
+        DependencyProperty.RegisterAttached("EntranceDelay", typeof(double), typeof(AnimationHelper), new PropertyMetadata(-1.0));
+    public static double GetEntranceDelay(FrameworkElement element) => -1.0;
+    public static void SetEntranceDelay(FrameworkElement element, double value) { }
 
-    public static double GetEntranceDelay(FrameworkElement element) => (double)element.GetValue(EntranceDelayProperty);
-    public static void SetEntranceDelay(FrameworkElement element, double value) => element.SetValue(EntranceDelayProperty, value);
-
-    // ==========================================
-    // 3b. Attached Property: StaggerIndex
-    //    Convenience index multiplier for staggered entrance (e.g. index 0 -> 0ms, 1 -> 45ms, 2 -> 90ms)
-    // ==========================================
     public static readonly DependencyProperty StaggerIndexProperty =
-        DependencyProperty.RegisterAttached(
-            "StaggerIndex",
-            typeof(int),
-            typeof(AnimationHelper),
-            new PropertyMetadata(-1, OnStaggerIndexChanged));
+        DependencyProperty.RegisterAttached("StaggerIndex", typeof(int), typeof(AnimationHelper), new PropertyMetadata(-1));
+    public static int GetStaggerIndex(FrameworkElement element) => -1;
+    public static void SetStaggerIndex(FrameworkElement element, int value) { }
 
-    public static int GetStaggerIndex(FrameworkElement element) => (int)element.GetValue(StaggerIndexProperty);
-    public static void SetStaggerIndex(FrameworkElement element, int value) => element.SetValue(StaggerIndexProperty, value);
-
-    private static void OnStaggerIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FrameworkElement element && e.NewValue is int index && index >= 0)
-        {
-            SetEntranceDelay(element, index * 45.0);
-        }
-    }
-
-    private static void OnEntranceDelayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FrameworkElement element && e.NewValue is double delayMs && delayMs >= 0)
-        {
-            element.Loaded -= Element_EntranceLoaded;
-            element.Loaded += Element_EntranceLoaded;
-        }
-    }
-
-    private static void Element_EntranceLoaded(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement element)
-        {
-            element.Loaded -= Element_EntranceLoaded;
-            if (!AreAnimationsEnabled())
-            {
-                return;
-            }
-
-            double delayMs = GetEntranceDelay(element);
-            ElementCompositionPreview.SetIsTranslationEnabled(element, true);
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            var compositor = visual.Compositor;
-
-            // Set initial state via Translation (does not corrupt XAML layout Offset)
-            visual.Properties.InsertVector3("Translation", new Vector3(0, 20, 0));
-            visual.Opacity = 0.0f;
-
-            // Spring translation animation
-            var springTranslation = compositor.CreateSpringVector3Animation();
-            springTranslation.Target = "Translation";
-            springTranslation.FinalValue = new Vector3(0, 0, 0);
-            springTranslation.DampingRatio = 0.78f;
-            springTranslation.Period = TimeSpan.FromMilliseconds(320);
-
-            // Opacity fade-in
-            var opacityAnim = compositor.CreateScalarKeyFrameAnimation();
-            opacityAnim.InsertKeyFrame(0.0f, 0.0f);
-            opacityAnim.InsertKeyFrame(1.0f, 1.0f, compositor.CreateCubicBezierEasingFunction(
-                new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
-            opacityAnim.Duration = TimeSpan.FromMilliseconds(350);
-
-            if (delayMs > 0)
-            {
-                springTranslation.DelayTime = TimeSpan.FromMilliseconds(delayMs);
-                springTranslation.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-                opacityAnim.DelayTime = TimeSpan.FromMilliseconds(delayMs);
-                opacityAnim.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            }
-
-            visual.StartAnimation("Translation", springTranslation);
-            visual.StartAnimation("Opacity", opacityAnim);
-
-            // Unsubscribe after first load to prevent re-animation
-            element.Loaded -= Element_EntranceLoaded;
-        }
-    }
-
-    // ==========================================
-    // 4. Attached Property: GlowOnFocus (NEW v4.0.0)
-    //    Adds a pulsing opacity glow when element receives keyboard focus.
-    // ==========================================
     public static readonly DependencyProperty GlowOnFocusProperty =
-        DependencyProperty.RegisterAttached(
-            "GlowOnFocus",
-            typeof(bool),
-            typeof(AnimationHelper),
-            new PropertyMetadata(false, OnGlowOnFocusChanged));
+        DependencyProperty.RegisterAttached("GlowOnFocus", typeof(bool), typeof(AnimationHelper), new PropertyMetadata(false));
+    public static bool GetGlowOnFocus(FrameworkElement element) => false;
+    public static void SetGlowOnFocus(FrameworkElement element, bool value) { }
 
-    public static bool GetGlowOnFocus(FrameworkElement element) => (bool)element.GetValue(GlowOnFocusProperty);
-    public static void SetGlowOnFocus(FrameworkElement element, bool value) => element.SetValue(GlowOnFocusProperty, value);
-
-    private static void OnGlowOnFocusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FrameworkElement element)
-        {
-            element.GotFocus -= Element_GotFocus_Glow;
-            element.LostFocus -= Element_LostFocus_Glow;
-
-            if (e.NewValue is bool enabled && enabled)
-            {
-                element.GotFocus += Element_GotFocus_Glow;
-                element.LostFocus += Element_LostFocus_Glow;
-            }
-        }
-    }
-
-    private static void Element_GotFocus_Glow(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement element)
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            var compositor = visual.Compositor;
-
-            // Subtle scale-up on focus
-            UpdateCenterPoint(element);
-            var scaleAnim = compositor.CreateVector3KeyFrameAnimation();
-            scaleAnim.Duration = TimeSpan.FromMilliseconds(200);
-            scaleAnim.InsertKeyFrame(1.0f, new Vector3(1.02f, 1.02f, 1.0f),
-                compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
-            visual.StartAnimation("Scale", scaleAnim);
-        }
-    }
-
-    private static void Element_LostFocus_Glow(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement element)
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            var compositor = visual.Compositor;
-
-            var scaleAnim = compositor.CreateVector3KeyFrameAnimation();
-            scaleAnim.Duration = TimeSpan.FromMilliseconds(200);
-            scaleAnim.InsertKeyFrame(1.0f, new Vector3(1.0f, 1.0f, 1.0f),
-                compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
-            visual.StartAnimation("Scale", scaleAnim);
-        }
-    }
-
-    // ==========================================
-    // 5. Attached Property: ShakeOnError (NEW v4.0.0)
-    //    Set to true to trigger a horizontal shake animation (for validation errors).
-    //    Reset to false then true again to re-trigger.
-    // ==========================================
     public static readonly DependencyProperty ShakeOnErrorProperty =
-        DependencyProperty.RegisterAttached(
-            "ShakeOnError",
-            typeof(bool),
-            typeof(AnimationHelper),
-            new PropertyMetadata(false, OnShakeOnErrorChanged));
+        DependencyProperty.RegisterAttached("ShakeOnError", typeof(bool), typeof(AnimationHelper), new PropertyMetadata(false));
+    public static bool GetShakeOnError(UIElement element) => false;
+    public static void SetShakeOnError(UIElement element, bool value) { }
 
-    public static bool GetShakeOnError(UIElement element) => (bool)element.GetValue(ShakeOnErrorProperty);
-    public static void SetShakeOnError(UIElement element, bool value) => element.SetValue(ShakeOnErrorProperty, value);
-
-    private static void OnShakeOnErrorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FrameworkElement element && e.NewValue is bool shake && shake)
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            var compositor = visual.Compositor;
-
-            // Horizontal shake keyframes: 0 → -8 → 8 → -5 → 5 → -2 → 0
-            var shakeAnim = compositor.CreateVector3KeyFrameAnimation();
-            shakeAnim.Duration = TimeSpan.FromMilliseconds(400);
-            var linear = compositor.CreateLinearEasingFunction();
-
-            shakeAnim.InsertKeyFrame(0.0f, new Vector3(0, 0, 0), linear);
-            shakeAnim.InsertKeyFrame(0.15f, new Vector3(-8, 0, 0), linear);
-            shakeAnim.InsertKeyFrame(0.30f, new Vector3(8, 0, 0), linear);
-            shakeAnim.InsertKeyFrame(0.45f, new Vector3(-5, 0, 0), linear);
-            shakeAnim.InsertKeyFrame(0.60f, new Vector3(5, 0, 0), linear);
-            shakeAnim.InsertKeyFrame(0.80f, new Vector3(-2, 0, 0), linear);
-            shakeAnim.InsertKeyFrame(1.0f, new Vector3(0, 0, 0), linear);
-
-            visual.StartAnimation("Offset", shakeAnim);
-        }
-    }
-
-    // ==========================================
-    // 6. Attached Property: IsShimmering
-    //    Enables a continuous smooth opacity pulse shimmer loading animation.
-    // ==========================================
     public static readonly DependencyProperty IsShimmeringProperty =
-        DependencyProperty.RegisterAttached(
-            "IsShimmering",
-            typeof(bool),
-            typeof(AnimationHelper),
-            new PropertyMetadata(false, OnIsShimmeringChanged));
+        DependencyProperty.RegisterAttached("IsShimmering", typeof(bool), typeof(AnimationHelper), new PropertyMetadata(false));
+    public static bool GetIsShimmering(UIElement element) => false;
+    public static void SetIsShimmering(UIElement element, bool value) { }
 
-    public static bool GetIsShimmering(UIElement element) => (bool)element.GetValue(IsShimmeringProperty);
-    public static void SetIsShimmering(UIElement element, bool value) => element.SetValue(IsShimmeringProperty, value);
+    public static void StartPulseAnimation(FrameworkElement element, float minScale = 1.0f, float maxScale = 1.0f, double durationMs = 0) { }
+    public static void StopPulseAnimation(FrameworkElement element, double durationMs = 0) { }
+    public static void StartSuccessPopAnimation(FrameworkElement element, float peakScale = 1.0f, double durationMs = 0) { }
 
-    private static void OnIsShimmeringChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FrameworkElement element && e.NewValue is bool isShimmering)
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            var compositor = visual.Compositor;
-
-            if (isShimmering)
-            {
-                var shimmerAnim = compositor.CreateScalarKeyFrameAnimation();
-                shimmerAnim.Duration = TimeSpan.FromMilliseconds(1000);
-                shimmerAnim.IterationBehavior = AnimationIterationBehavior.Forever;
-                shimmerAnim.Direction = AnimationDirection.Alternate;
-                shimmerAnim.InsertKeyFrame(0.0f, 0.4f);
-                shimmerAnim.InsertKeyFrame(1.0f, 0.95f, compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0.0f), new Vector2(0.6f, 1.0f)));
-                visual.StartAnimation("Opacity", shimmerAnim);
-            }
-            else
-            {
-                visual.StopAnimation("Opacity");
-                var resetAnim = compositor.CreateScalarKeyFrameAnimation();
-                resetAnim.Duration = TimeSpan.FromMilliseconds(200);
-                resetAnim.InsertKeyFrame(1.0f, 1.0f);
-                visual.StartAnimation("Opacity", resetAnim);
-            }
-        }
-    }
-
-    // ==========================================
-    // Event Handlers
-    // ==========================================
-    private static void Element_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-        if (sender is FrameworkElement element)
-        {
-            UpdateCenterPoint(element);
-        }
-    }
-
-    private static void Element_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        if (sender is FrameworkElement element)
-        {
-            var state = GetOrCreateState(element);
-            state.IsPointerOver = true;
-        }
-    }
-
-    private static void Element_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
-        if (sender is FrameworkElement element)
-        {
-            var state = GetOrCreateState(element);
-            state.IsPointerOver = false;
-
-            if (!state.IsPressed)
-            {
-                AnimateScale(element, 1.0f, 150);
-            }
-        }
-    }
-
-    private static void Element_PointerPressed(object sender, PointerRoutedEventArgs e)
-    {
-        if (sender is FrameworkElement element)
-        {
-            var state = GetOrCreateState(element);
-            state.IsPressed = true;
-
-            double scale = GetPressedScale(element);
-            AnimateScale(element, (float)scale, 100);
-        }
-    }
-
-    private static void Element_PointerReleased(object sender, PointerRoutedEventArgs e)
-    {
-        if (sender is FrameworkElement element)
-        {
-            var state = GetOrCreateState(element);
-            state.IsPressed = false;
-
-            if (state.IsPointerOver)
-            {
-                double scale = GetHoverScale(element);
-                AnimateScale(element, (float)scale, 200);
-            }
-            else
-            {
-                Canvas.SetZIndex(element, 0);
-                AnimateScale(element, 1.0f, 200);
-            }
-        }
-    }
-
-    // ==========================================
-    // Animation Logic using Composition APIs
-    // ==========================================
-    private static void UpdateCenterPoint(FrameworkElement element)
-    {
-        try
-        {
-            var width = (float)element.ActualWidth;
-            var height = (float)element.ActualHeight;
-
-            if (width > 0 && height > 0 && !float.IsNaN(width) && !float.IsNaN(height) && !float.IsInfinity(width) && !float.IsInfinity(height))
-            {
-                var visual = ElementCompositionPreview.GetElementVisual(element);
-                if (visual != null)
-                {
-                    visual.Size = new Vector2(width, height);
-                    visual.CenterPoint = new Vector3(width / 2.0f, height / 2.0f, 0.0f);
-                }
-            }
-        }
-        catch { }
-    }
-
-    private static void AnimateScale(FrameworkElement element, float scaleTo, double durationMs)
-    {
-        try
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            if (visual == null) return;
-
-            if (!AreAnimationsEnabled())
-            {
-                visual.Scale = new Vector3(scaleTo, scaleTo, 1.0f);
-                return;
-            }
-
-            var compositor = visual.Compositor;
-            UpdateCenterPoint(element);
-
-            var scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
-            scaleAnimation.Duration = TimeSpan.FromMilliseconds(durationMs);
-
-            var easing = compositor.CreateCubicBezierEasingFunction(
-                new Vector2(0.1f, 0.9f),
-                new Vector2(0.2f, 1.0f)
-            );
-
-            scaleAnimation.InsertKeyFrame(1.0f, new Vector3(scaleTo, scaleTo, 1.0f), easing);
-
-            visual.StartAnimation("Scale", scaleAnimation);
-        }
-        catch { }
-    }
-
-    // ==========================================
-    // 7. Pulse Animation (Continuous rhythmic breathing effect)
-    // ==========================================
-    public static void StartPulseAnimation(FrameworkElement element, float minScale = 0.96f, float maxScale = 1.04f, double durationMs = 1200)
-    {
-        try
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            if (visual == null) return;
-            if (!AreAnimationsEnabled()) return;
-
-            var compositor = visual.Compositor;
-            UpdateCenterPoint(element);
-
-            var pulseAnim = compositor.CreateVector3KeyFrameAnimation();
-            pulseAnim.Duration = TimeSpan.FromMilliseconds(durationMs);
-            pulseAnim.IterationBehavior = AnimationIterationBehavior.Forever;
-            pulseAnim.Direction = AnimationDirection.Alternate;
-
-            var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0.0f), new Vector2(0.6f, 1.0f));
-            pulseAnim.InsertKeyFrame(0.0f, new Vector3(minScale, minScale, 1.0f), easing);
-            pulseAnim.InsertKeyFrame(1.0f, new Vector3(maxScale, maxScale, 1.0f), easing);
-
-            visual.StartAnimation("Scale", pulseAnim);
-        }
-        catch { }
-    }
-
-    public static void StopPulseAnimation(FrameworkElement element, double durationMs = 250)
-    {
-        try
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            if (visual == null) return;
-
-            visual.StopAnimation("Scale");
-            AnimateScale(element, 1.0f, durationMs);
-        }
-        catch { }
-    }
-
-    // ==========================================
-    // 8. Success Celebration Pop (Tactile bouncy reward animation)
-    // ==========================================
-    public static void StartSuccessPopAnimation(FrameworkElement element, float peakScale = 1.12f, double durationMs = 450)
-    {
-        try
-        {
-            var visual = ElementCompositionPreview.GetElementVisual(element);
-            if (visual == null) return;
-            if (!AreAnimationsEnabled()) return;
-
-            var compositor = visual.Compositor;
-            UpdateCenterPoint(element);
-
-            var popAnim = compositor.CreateVector3KeyFrameAnimation();
-            popAnim.Duration = TimeSpan.FromMilliseconds(durationMs);
-
-            var easeOut = compositor.CreateCubicBezierEasingFunction(new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f));
-            var easeIn = compositor.CreateCubicBezierEasingFunction(new Vector2(0.4f, 0.0f), new Vector2(0.6f, 1.0f));
-
-            popAnim.InsertKeyFrame(0.0f, new Vector3(1.0f, 1.0f, 1.0f));
-            popAnim.InsertKeyFrame(0.4f, new Vector3(peakScale, peakScale, 1.0f), easeOut);
-            popAnim.InsertKeyFrame(0.75f, new Vector3(0.97f, 0.97f, 1.0f), easeIn);
-            popAnim.InsertKeyFrame(1.0f, new Vector3(1.0f, 1.0f, 1.0f), easeOut);
-
-            visual.StartAnimation("Scale", popAnim);
-        }
-        catch { }
-    }
-
-    // ==========================================
-    // 9. Smooth Counter Text Animation (Number roll-up tween)
-    // ==========================================
-    public static async System.Threading.Tasks.Task AnimateCounterAsync(
+    public static Task AnimateCounterAsync(
         TextBlock textBlock,
         double fromValue,
         double toValue,
         string format = "{0:0}",
-        int durationMs = 650,
-        System.Threading.CancellationToken ct = default)
+        int durationMs = 0,
+        CancellationToken ct = default)
     {
-        if (textBlock == null) return;
-        if (!AreAnimationsEnabled())
+        if (textBlock != null)
         {
             textBlock.Text = string.Format(format, toValue);
-            return;
         }
-
-        try
-        {
-            int steps = Math.Max(12, durationMs / 25);
-            int delayMs = durationMs / steps;
-            double diff = toValue - fromValue;
-
-            for (int i = 1; i <= steps; i++)
-            {
-                if (ct.IsCancellationRequested) break;
-
-                // Ease-out cubic: progress = 1 - (1 - t)^3
-                double t = (double)i / steps;
-                double easeOutT = 1.0 - Math.Pow(1.0 - t, 3);
-                double currentVal = fromValue + (diff * easeOutT);
-
-                textBlock.Text = string.Format(format, currentVal);
-                await System.Threading.Tasks.Task.Delay(delayMs, ct);
-            }
-
-            textBlock.Text = string.Format(format, toValue);
-        }
-        catch (System.OperationCanceledException) { }
-        catch { }
+        return Task.CompletedTask;
     }
 }
+

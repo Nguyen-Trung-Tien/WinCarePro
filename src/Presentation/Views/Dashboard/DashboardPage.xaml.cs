@@ -216,18 +216,16 @@ public sealed partial class DashboardPage : Page
                 LeftCol.Width = new GridLength(1, GridUnitType.Star);
                 RightCol.Width = new GridLength(1, GridUnitType.Star);
                 
-                // Row 0: System Health Overview (Left) & AI WinCare Engine (Right) — SIDE-BY-SIDE
+                // Row 0: System Health Overview spanning full width
                 if (HealthGaugeCard != null)
                 {
                     Grid.SetRow(HealthGaugeCard, 0);
                     Grid.SetColumn(HealthGaugeCard, 0);
-                    Grid.SetColumnSpan(HealthGaugeCard, 1);
+                    Grid.SetColumnSpan(HealthGaugeCard, 2);
                 }
                 if (AiWinCareEngineEmbeddedPanel != null)
                 {
-                    Grid.SetRow(AiWinCareEngineEmbeddedPanel, 0);
-                    Grid.SetColumn(AiWinCareEngineEmbeddedPanel, 1);
-                    Grid.SetColumnSpan(AiWinCareEngineEmbeddedPanel, 1);
+                    AiWinCareEngineEmbeddedPanel.Visibility = Visibility.Collapsed;
                 }
 
                 // Row 1: 4-Pillar Quick Vital Capsules spanning both columns
@@ -306,9 +304,7 @@ public sealed partial class DashboardPage : Page
                 }
                 if (AiWinCareEngineEmbeddedPanel != null)
                 {
-                    Grid.SetRow(AiWinCareEngineEmbeddedPanel, 1);
-                    Grid.SetColumn(AiWinCareEngineEmbeddedPanel, 0);
-                    Grid.SetColumnSpan(AiWinCareEngineEmbeddedPanel, 2);
+                    AiWinCareEngineEmbeddedPanel.Visibility = Visibility.Collapsed;
                 }
                 if (QuickStatsGrid != null)
                 {
@@ -505,9 +501,9 @@ public sealed partial class DashboardPage : Page
         }
     }
 
-    private async void OnRunAllDiagnosticsMenuClick(object sender, RoutedEventArgs e)
+    private void OnRunAllDiagnosticsMenuClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.RunFullDiagnosticsAsync();
+        OnScanClick(sender, e);
     }
 
     // Modular Scan Card Click Handlers

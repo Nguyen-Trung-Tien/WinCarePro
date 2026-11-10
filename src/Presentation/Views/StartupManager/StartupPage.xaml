@@ -10,7 +10,7 @@
     xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
-    <Grid Padding="24,20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1000px -->
@@ -35,33 +35,33 @@
         </Grid.RowDefinitions>
 
         <!-- Page Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,16">
+        <Grid Grid.Row="0" Margin="0,0,0,14">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Spacing="4">
+            <StackPanel Grid.Column="0" Spacing="2">
                 <TextBlock Text="Startup &amp; Services Manager" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
                 <TextBlock Text="Control startup apps &amp; boot velocity." Style="{StaticResource PageHeaderSubtitleStyle}"/>
             </StackPanel>
 
             <!-- Live Boot Telemetry Summary Pill Strip -->
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="12,6">
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="12,6">
                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xEC4A;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}"/>
                         <TextBlock Text="Boot Time" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                         <TextBlock Text="{x:Bind ViewModel.BootTimeFormatted, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Typography.NumeralAlignment="Tabular" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Border>
-                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="12,6">
+                <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="12,6">
                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE7B8;" FontSize="13" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
                         <TextBlock Text="Startup Apps" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
                         <TextBlock Text="{x:Bind ViewModel.TotalStartupApps, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Typography.NumeralAlignment="Tabular" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Border>
-                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="12,6">
+                <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="12,6">
                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <FontIcon Glyph="&#xE912;" FontSize="13" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                         <TextBlock Text="Services" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>

@@ -14,7 +14,7 @@
         <CollectionViewSource x:Name="GroupedNotificationsCVS" IsSourceGrouped="True" />
     </Page.Resources>
 
-    <Grid Padding="24,16" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1050px -->
@@ -50,77 +50,58 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Spatial HUD Glass Banner Header -->
-        <Border Grid.Row="0" Margin="0,0,0,14"
-                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                BorderThickness="1" CornerRadius="16" Padding="16,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+        <!-- Standard Flat Page Header (Synchronized with all pages) -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-                <!-- Left: Title, Subtitle & Aura Sentinel Live Pill -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
-                    <Border Width="44" Height="44" CornerRadius="14"
-                            Background="{ThemeResource AppCardBackground}"
-                            BorderBrush="{StaticResource PrimaryAccentBorderBrush}"
-                            BorderThickness="1.2"
-                            helpers:Animation3DHelper.Is3DTiltEnabled="True"
-                            helpers:Animation3DHelper.MaxTiltAngle="5.0"
-                            helpers:Animation3DHelper.DepthZ="8"
-                            VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE91C;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Spacing="3" VerticalAlignment="Center">
-                        <TextBlock x:Name="PageTitleTextBlock" Text="Notifications &amp; Activity Log"
-                                   FontFamily="Segoe UI Variable Display" FontSize="18" FontWeight="Bold"
-                                   Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="PageSubtitleTextBlock" Text="System telemetry alerts, diagnostic logs &amp; operation records."
-                                   FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    </StackPanel>
-                </StackPanel>
+            <!-- Left: Title & Subtitle -->
+            <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                <TextBlock x:Name="PageTitleTextBlock" Text="Notifications &amp; Activity Log"
+                           Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                <TextBlock x:Name="PageSubtitleTextBlock" Text="System telemetry alerts, diagnostic logs &amp; operation records."
+                           Style="{StaticResource PageHeaderSubtitleStyle}"/>
+            </StackPanel>
 
-                <!-- Center/Right: Segmented Tabs in a sleek compact pill deck -->
-                <Border Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,0"
-                        Background="{ThemeResource AppCardBackground}"
-                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                        BorderThickness="1" Padding="3" CornerRadius="12"
-                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="6">
-                    <StackPanel Orientation="Horizontal" Spacing="4">
-                        <Button x:Name="BtnTabAlerts" Click="OnTabAlertsClick" Style="{StaticResource ActivePresetChipButtonStyle}" Height="34" Padding="14,0" CornerRadius="9">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xE7BA;" FontSize="12.5"/>
-                                <TextBlock Text="System Alerts" FontSize="12" FontWeight="SemiBold"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button x:Name="BtnTabLogs" Click="OnTabLogsClick" Style="{StaticResource InactivePresetChipButtonStyle}" Height="34" Padding="14,0" CornerRadius="9">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon Glyph="&#xE81C;" FontSize="12.5"/>
-                                <TextBlock Text="Activity History" FontSize="12" FontWeight="SemiBold"/>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </Border>
-
-                <!-- Quick Action Controls -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                    <Button x:Name="HeaderRefreshBtn" Click="OnRefreshClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="36" Padding="14,0" CornerRadius="10"
-                            ToolTipService.ToolTip="Refresh Telemetry &amp; Logs">
+            <!-- Center/Right: Segmented Tabs -->
+            <Border Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,10,0"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1" Padding="3" CornerRadius="8">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Button x:Name="BtnTabAlerts" Click="OnTabAlertsClick" Style="{StaticResource ActivePresetChipButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE72C;" FontSize="12.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                            <TextBlock Text="Refresh" FontSize="12" FontWeight="SemiBold"/>
+                            <FontIcon Glyph="&#xE7BA;" FontSize="12"/>
+                            <TextBlock Text="System Alerts" FontSize="12" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="BtnTabLogs" Click="OnTabLogsClick" Style="{StaticResource InactivePresetChipButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE81C;" FontSize="12"/>
+                            <TextBlock Text="Activity History" FontSize="12" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
-            </Grid>
-        </Border>
+            </Border>
 
-        <!-- Smart Hero Deck: 3-Card Bento Metric Grid -->
-        <Grid x:Name="HeroBentoGrid" Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+            <!-- Quick Action Controls -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                <Button x:Name="HeaderRefreshBtn" Click="OnRefreshClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="8"
+                        ToolTipService.ToolTip="Refresh Telemetry &amp; Logs">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                        <TextBlock Text="Refresh" FontSize="12" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Smart Hero Deck: 3-Card Bento Metric Grid (Collapsed to eliminate redundant stat cards) -->
+        <Grid x:Name="HeroBentoGrid" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -129,25 +110,23 @@
 
             <!-- Card 1: Active Alerts Sentinel -->
             <Border x:Name="CardAlerts" Grid.Column="0"
-                    Background="{ThemeResource AppCardBackground}"
-                    BorderBrush="{ThemeResource AppCardBorder}"
-                    BorderThickness="1" CornerRadius="16" Padding="16,14"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8"
-                    helpers:AnimationHelper.HoverScale="1.015">
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="16,12">
                 <Grid ColumnSpacing="14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="{ThemeResource AppBadgeWarningBg}" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE7BA;" FontSize="16" Foreground="{ThemeResource AppBadgeWarningFg}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="{ThemeResource AppBadgeWarningBg}" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="15" Foreground="{ThemeResource AppBadgeWarningFg}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="Active Alerts" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="DeckAlertsCountText" Text="0" FontSize="22" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.LiveSetting="Polite"/>
+                        <TextBlock x:Name="DeckAlertsCountText" Text="0" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.LiveSetting="Polite"/>
                     </StackPanel>
-                    <Border Grid.Column="2" x:Name="DeckAlertsPill" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                    <Border Grid.Column="2" x:Name="DeckAlertsPill" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <FontIcon x:Name="DeckAlertsPillIcon" Glyph="&#xE73E;" FontSize="10" Foreground="{ThemeResource AppBadgeGoodFg}" VerticalAlignment="Center"/>
                             <TextBlock x:Name="DeckAlertsPillText" Text="All clear" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
@@ -158,25 +137,23 @@
 
             <!-- Card 2: Shield Operations Today -->
             <Border x:Name="CardOperations" Grid.Column="1"
-                    Background="{ThemeResource AppCardBackground}"
-                    BorderBrush="{ThemeResource AppCardBorder}"
-                    BorderThickness="1" CornerRadius="16" Padding="16,14"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8"
-                    helpers:AnimationHelper.HoverScale="1.015">
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="16,12">
                 <Grid ColumnSpacing="14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="#1810B981" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xEA1F;" FontSize="16" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="#1810B981" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xEA1F;" FontSize="15" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="Operations Today" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBlock x:Name="DeckOperationsCountText" Text="0" FontSize="22" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.LiveSetting="Polite"/>
+                        <TextBlock x:Name="DeckOperationsCountText" Text="0" FontSize="20" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}" AutomationProperties.LiveSetting="Polite"/>
                     </StackPanel>
-                    <Border Grid.Column="2" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="8,3" VerticalAlignment="Center">
+                    <Border Grid.Column="2" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <Ellipse Width="6" Height="6" Fill="#FF10B981" VerticalAlignment="Center"/>
                             <TextBlock Text="Protected" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
@@ -187,18 +164,16 @@
 
             <!-- Card 3: Live Telemetry Pulse -->
             <Border x:Name="CardTelemetry" Grid.Column="2"
-                    Background="{ThemeResource AppCardBackground}"
-                    BorderBrush="{ThemeResource AppCardBorder}"
-                    BorderThickness="1" CornerRadius="16" Padding="16,14"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8"
-                    helpers:AnimationHelper.HoverScale="1.015">
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="16,12">
                 <Grid ColumnSpacing="14">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="20" Background="#183B82F6" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE916;" FontSize="16" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="#183B82F6" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE916;" FontSize="15" Foreground="#FF3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="Live Telemetry Pulse" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>

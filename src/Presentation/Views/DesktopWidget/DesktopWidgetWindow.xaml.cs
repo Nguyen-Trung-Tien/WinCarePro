@@ -661,84 +661,33 @@ namespace WinCarePro.Modules.DesktopWidget
             {
                 _isBoosting = true;
 
-                // GPU Spark Burst Micro-Interaction
                 if (BoostButton != null) FluidAnimationHelper.ApplyGlowSparkBurst(BoostButton);
                 if (CompactBoostButton != null) FluidAnimationHelper.ApplyGlowSparkBurst(CompactBoostButton);
 
-                BoostText.Text = "...";
-                BoostIcon.Glyph = "\uE895";
-                if (CompactBoostText != null) CompactBoostText.Text = "...";
-                if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE895";
-
-                // Spin Boost Icon smoothly
+                // Smooth rotation feedback while refreshing
                 var spinTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
                 spinTimer.Tick += (s, ev) =>
                 {
-                    if (BoostIconRotation != null) BoostIconRotation.Angle = (BoostIconRotation.Angle + 20) % 360;
-                    if (CompactBoostIconRotation != null) CompactBoostIconRotation.Angle = (CompactBoostIconRotation.Angle + 20) % 360;
+                    if (BoostIconRotation != null) BoostIconRotation.Angle = (BoostIconRotation.Angle + 25) % 360;
+                    if (CompactBoostIconRotation != null) CompactBoostIconRotation.Angle = (CompactBoostIconRotation.Angle + 25) % 360;
                 };
                 spinTimer.Start();
 
-                int oldRamPercent = 0;
-                var memStatusOld = new MEMORYSTATUSEX();
-                memStatusOld.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
-                if (GlobalMemoryStatusEx(ref memStatusOld))
-                {
-                    oldRamPercent = (int)memStatusOld.dwMemoryLoad;
-                }
-
-                var optEngine = new SystemOptimizerEngine();
-                var (_, memoryReclaimedBytes) = await optEngine.OptimizeRamAsync();
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
+                await Task.Delay(300);
+                UpdateStats();
 
                 spinTimer.Stop();
                 if (BoostIconRotation != null) BoostIconRotation.Angle = 0;
                 if (CompactBoostIconRotation != null) CompactBoostIconRotation.Angle = 0;
 
-                UpdateStats();
-
-                // Animate RAM % decrease count-down
-                var memStatusNew = new MEMORYSTATUSEX();
-                memStatusNew.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
-                if (GlobalMemoryStatusEx(ref memStatusNew))
-                {
-                    int newRamPercent = (int)memStatusNew.dwMemoryLoad;
-                    if (oldRamPercent > 0 && newRamPercent < oldRamPercent)
-                    {
-                        FluidAnimationHelper.AnimateNumberInt(RamText, oldRamPercent, newRamPercent, "%", 600);
-                        FluidAnimationHelper.AnimateNumberInt(CompactRamText, oldRamPercent, newRamPercent, "%", 600);
-                    }
-                }
-
-                double freedMb = memoryReclaimedBytes / (1024.0 * 1024.0);
-                if (freedMb > 0)
-                {
-                    BoostBadgeText.Text = $"+{freedMb:F0}MB";
-                    BoostBadgeText.Visibility = Visibility.Visible;
-                    BoostText.Text = "FREED!";
-                    BoostIcon.Glyph = "\uE73E"; // Checkmark glyph
-                    if (CompactBoostText != null) CompactBoostText.Text = $"+{freedMb:F0}M";
-                    if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE73E";
-                }
-                else
-                {
-                    BoostText.Text = "OPTIMAL";
-                    BoostIcon.Glyph = "\uE73E";
-                    if (CompactBoostText != null) CompactBoostText.Text = "OK!";
-                    if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE73E";
-                }
-
-                _badgeResetTimer.Stop();
-                _badgeResetTimer.Start();
+                BoostText.Text = "SYNC";
+                BoostIcon.Glyph = "\uE72C";
+                if (CompactBoostText != null) CompactBoostText.Text = "SYNC";
+                if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE72C";
             }
-            catch
+            catch (Exception ex)
             {
-                BoostText.Text = "BOOST";
-                BoostIcon.Glyph = "\uE74C";
-                if (CompactBoostText != null) CompactBoostText.Text = "BOOST";
-                if (CompactBoostIcon != null) CompactBoostIcon.Glyph = "\uE74C";
+                Infrastructure.Logging.CrashLogger.LogException("DesktopWidgetWindow.OnFastCleanClick", ex);
             }
             finally
             {

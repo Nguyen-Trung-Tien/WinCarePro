@@ -80,11 +80,11 @@
                 
                 <!-- Status Pills -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <!-- AI Health Score Pill -->
+                    <!-- Network Health Score Pill -->
                     <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,4" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" Spacing="5">
                             <FontIcon Glyph="&#xE9D9;" FontSize="11" Foreground="#FF10B981"/>
-                            <TextBlock Text="AI Health:" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="Health Score:" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                             <TextBlock Text="{x:Bind ViewModel.NetworkHealthScore, Mode=OneWay}" FontSize="11.5" FontWeight="ExtraBold" Foreground="#FF10B981" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                             <TextBlock Text="/100" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
@@ -245,7 +245,7 @@
                         </Grid>
                     </Border>
 
-                    <!-- Card 4: Connection Quality & AI Health Rating -->
+                    <!-- Card 4: Connection Quality Rating -->
                     <Border Grid.Column="3" Style="{StaticResource CockpitBentoCardStyle}" Padding="16,10"
                             helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
                         <Grid>
@@ -255,7 +255,7 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Spacing="2">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="AI Health &amp; Quality" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    <TextBlock Text="Connection Quality" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                     <Border Background="#2006B6D4" CornerRadius="4" Padding="5,1">
                                         <TextBlock Text="{x:Bind ViewModel.NetworkHealthScore, Mode=OneWay}" FontSize="10" FontWeight="Bold" Foreground="#FF06B6D4"/>
                                     </Border>

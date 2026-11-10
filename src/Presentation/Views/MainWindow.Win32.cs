@@ -316,20 +316,15 @@ public sealed partial class MainWindow : Window
         {
             string openText = "Open WinCare Pro".T();
             string scanText = "Scan System Diagnostics".T();
-            string ramText = "Optimize Memory (RAM)".T();
             string junkText = "Clean Junk Files".T();
 
             bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
-            string hudText = "Desktop HUD Widget".T();
             string themeText = isDark ? "Theme: Dark (Switch to Light)".T() : "Theme: Light (Switch to Dark)".T();
             string settingsText = "Settings".T();
             string exitText = "Exit".T();
 
             AppendMenu(hMenu, MF_STRING, ID_TRAY_OPEN, openText);
             AppendMenu(hMenu, MF_STRING, ID_TRAY_SCAN, scanText);
-            AppendMenu(hMenu, MF_SEPARATOR, 0, string.Empty);
-            AppendMenu(hMenu, MF_STRING, ID_TRAY_HUD, hudText);
-            AppendMenu(hMenu, MF_STRING, ID_TRAY_RAM, ramText);
             AppendMenu(hMenu, MF_STRING, ID_TRAY_JUNK, junkText);
             AppendMenu(hMenu, MF_SEPARATOR, 0, string.Empty);
             AppendMenu(hMenu, MF_STRING, ID_TRAY_THEME, themeText);

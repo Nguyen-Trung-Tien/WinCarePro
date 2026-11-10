@@ -70,6 +70,7 @@ public sealed partial class SecurityPage : Page
         this.DataContext = ViewModel;
         ViewModel?.LoadPrivacySettings();
         _ = ViewModel?.ScanSecurityAsync();
+        _ = ViewModel?.LoadSafeguardsAsync();
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
         TranslationManager.Instance.Translate(this);
@@ -137,6 +138,37 @@ public sealed partial class SecurityPage : Page
         {
             mw.ShowToastFromDb("Security Scan Complete".T(),
                 string.Format("System Health Score: {0}/100".T(), ViewModel.SecurityScore), "Success");
+        }
+    }
+
+    private async void OnFixAlertClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.DataContext is WinCarePro.Models.SecurityAlertItem alert)
+        {
+            await ViewModel.FixSecurityAlertAsync(alert);
+            if (App.MainWindowInstance is MainWindow mw)
+            {
+                mw.ShowToastFromDb("Security Issue Resolved".T(),
+                    string.Format("Resolved: {0}".T(), alert.Title), "Success");
+            }
+        }
+    }
+
+    private async void OnExportReportClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ExportSecurityReportAsync();
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Security Audit Report".T(),
+                "Audit report copied to clipboard successfully.".T(), "Success");
+        }
+    }
+
+    private async void OnToggleSafeguardClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.DataContext is WinCarePro.Models.SecuritySafeguardItem item)
+        {
+            await ViewModel.ToggleSafeguardAsync(item);
         }
     }
 
@@ -268,6 +300,86 @@ public sealed partial class SecurityPage : Page
         }
     }
 
+    private async void OnCortanaBingToggled(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleSwitch ts)
+        {
+            await ViewModel.TogglePrivacySettingAsync("cortanabing", ts.IsOn);
+        }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        {
+            lts.IsLoading = true;
+            try
+            {
+                await ViewModel.TogglePrivacySettingAsync("cortanabing", lts.IsOn);
+            }
+            finally
+            {
+                lts.IsLoading = false;
+            }
+        }
+    }
+
+    private async void OnLocationToggled(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleSwitch ts)
+        {
+            await ViewModel.TogglePrivacySettingAsync("location", ts.IsOn);
+        }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        {
+            lts.IsLoading = true;
+            try
+            {
+                await ViewModel.TogglePrivacySettingAsync("location", lts.IsOn);
+            }
+            finally
+            {
+                lts.IsLoading = false;
+            }
+        }
+    }
+
+    private async void OnFeedbackToggled(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleSwitch ts)
+        {
+            await ViewModel.TogglePrivacySettingAsync("feedback", ts.IsOn);
+        }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        {
+            lts.IsLoading = true;
+            try
+            {
+                await ViewModel.TogglePrivacySettingAsync("feedback", lts.IsOn);
+            }
+            finally
+            {
+                lts.IsLoading = false;
+            }
+        }
+    }
+
+    private async void OnAppDiagnosticsToggled(object sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleSwitch ts)
+        {
+            await ViewModel.TogglePrivacySettingAsync("appdiagnostics", ts.IsOn);
+        }
+        else if (sender is WinCarePro.Shared.Components.LoadingToggleSwitch lts)
+        {
+            lts.IsLoading = true;
+            try
+            {
+                await ViewModel.TogglePrivacySettingAsync("appdiagnostics", lts.IsOn);
+            }
+            finally
+            {
+                lts.IsLoading = false;
+            }
+        }
+    }
+
     // ==================== TRACE ERADICATION ====================
 
     private async void OnClearClipboardClick(object sender, RoutedEventArgs e)
@@ -305,6 +417,36 @@ public sealed partial class SecurityPage : Page
         {
             mw.ShowToastFromDb("Activity Traces".T(),
                 "Recent items and Explorer Run history successfully cleared.".T(), "Success");
+        }
+    }
+
+    private async void OnClearJumpListsClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ClearJumpListsAsync();
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Jump Lists".T(),
+                "Explorer Jump Lists cleared successfully.".T(), "Success");
+        }
+    }
+
+    private async void OnClearRunHistoryClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ClearRunHistoryAsync();
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Run & Typed History".T(),
+                "Explorer Run dialog and address bar history cleared.".T(), "Success");
+        }
+    }
+
+    private async void OnClearAllTracesClick(object sender, RoutedEventArgs e)
+    {
+        int count = await ViewModel.ClearAllActivityTracesAsync();
+        if (App.MainWindowInstance is MainWindow mw)
+        {
+            mw.ShowToastFromDb("Trace Eradication Complete".T(),
+                string.Format("Purged {0} cached trace entries from system.".T(), count), "Success");
         }
     }
 

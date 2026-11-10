@@ -19,8 +19,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Ambient Aura Glow Mesh (Dynamic Background Depth) -->
-        <Grid x:Name="AmbientAuraMesh" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Canvas.ZIndex="0" Opacity="0.25">
+        <!-- Ambient Aura Glow Mesh collapsed in Zero-Bloat mode to prevent GPU Composition overdraw -->
+        <Grid x:Name="AmbientAuraMesh" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Canvas.ZIndex="0" Opacity="0.25" Visibility="Collapsed">
             <!-- Top-Right Accent Ambient Glow -->
             <Ellipse Width="700" Height="480" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-140,-140,0" Opacity="0.10">
                 <Ellipse.Fill>
@@ -85,12 +85,12 @@
 
             <!-- Search (Center) — Floating Spotlight Command Capsule -->
             <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" MaxWidth="460" Margin="16,0" Height="36" Canvas.ZIndex="10">
-                <AutoSuggestBox x:Name="SearchBox" 
-                                PlaceholderText="Search tools, diagnostics, settings... (Ctrl + K)" 
-                                QueryIcon="Find" 
-                                CornerRadius="12" 
-                                HorizontalAlignment="Stretch" 
-                                VerticalAlignment="Center" 
+                <AutoSuggestBox x:Name="SearchBox"
+                                PlaceholderText="Search tools, diagnostics, settings... (Ctrl + K)"
+                                QueryIcon="Find"
+                                CornerRadius="12"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
                                 QuerySubmitted="OnSearchQuerySubmitted"
                                 TextChanged="OnSearchTextChanged"
                                 SuggestionChosen="OnSearchSuggestionChosen">
@@ -114,14 +114,14 @@
 
             <!-- Controls (Right) — Unified Spatial Glass Action Island -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" Padding="0,0,140,0" VerticalAlignment="Center" Canvas.ZIndex="10">
-                <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" 
-                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" 
-                        BorderThickness="1" 
-                        CornerRadius="14" 
+                <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                        BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="14"
                         Padding="4,3">
                     <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                         <!-- Telemetry Chips Subgroup -->
-                        <Button x:Name="CpuChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="10" Click="OnCpuChipClick" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance" AutomationProperties.Name="CPU Usage Monitor" AutomationProperties.HelpText="Click to view real-time CPU diagnostics and telemetry on the Dashboard.">
+                        <Button x:Name="CpuChipButton" Visibility="Visible" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="10" Click="OnCpuChipClick" ToolTipService.ToolTip="CPU Usage Monitor — Click to view Dashboard performance" AutomationProperties.Name="CPU Usage Monitor" AutomationProperties.HelpText="Click to view real-time CPU diagnostics and telemetry on the Dashboard.">
                             <Border Background="{ThemeResource AppCpuChipBg}" BorderBrush="{ThemeResource AppCpuChipBorder}" BorderThickness="1" CornerRadius="9" Padding="7,3">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <Ellipse Width="6" Height="6" Fill="{ThemeResource AppCpuChipFg}" VerticalAlignment="Center"/>
@@ -130,7 +130,7 @@
                             </Border>
                         </Button>
 
-                        <Button x:Name="RamChipButton" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="10" Click="OnRamChipClick" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" ToolTipService.ToolTip="RAM Memory Booster — Click for 1-Click RAM Purge" AutomationProperties.Name="RAM Working Set Booster" AutomationProperties.HelpText="Click to trigger instant memory cache reclamation.">
+                        <Button x:Name="RamChipButton" Visibility="Visible" Style="{StaticResource TelemetryChipButtonStyle}" CornerRadius="10" Click="OnRamChipClick" ToolTipService.ToolTip="RAM Usage Monitor — Click to view Dashboard memory metrics" AutomationProperties.Name="RAM Usage Monitor" AutomationProperties.HelpText="Click to view real-time memory metrics on the Dashboard.">
                             <Border Background="{ThemeResource AppRamChipBg}" BorderBrush="{ThemeResource AppRamChipBorder}" BorderThickness="1" CornerRadius="9" Padding="7,3">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <Ellipse Width="6" Height="6" Fill="{ThemeResource AppRamChipFg}" VerticalAlignment="Center"/>
@@ -148,8 +148,8 @@
                             <TextBlock x:Name="ClockText" Text="--:--" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" AutomationProperties.Name="System Clock" AutomationProperties.LiveSetting="Polite"/>
                         </StackPanel>
 
-                        <!-- 1-Click Desktop Mini HUD Widget Toggle -->
-                        <Button x:Name="WidgetLaunchBtn" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="OnWidgetLaunchClick" helpers:AnimationHelper.HoverScale="1.08" helpers:AnimationHelper.PressedScale="0.92" ToolTipService.ToolTip="Desktop HUD Widget" AutomationProperties.Name="Desktop HUD Widget" AutomationProperties.HelpText="Launch or toggle the floating Desktop HUD performance widget.">
+                        <!-- 1-Click Desktop Mini HUD Widget Toggle (Collapsed in Zero-Bloat mode) -->
+                        <Button x:Name="WidgetLaunchBtn" Visibility="Collapsed" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="OnWidgetLaunchClick" ToolTipService.ToolTip="Desktop HUD Widget" AutomationProperties.Name="Desktop HUD Widget" AutomationProperties.HelpText="Launch or toggle the floating Desktop HUD performance widget.">
                             <FontIcon Glyph="&#xE9D9;" FontSize="12.5" Foreground="{StaticResource PrimaryAccentBrush}" />
                         </Button>
 
@@ -252,16 +252,16 @@
                         </RadialGradientBrush>
                     </Ellipse.Fill>
                 </Ellipse>
-                
+
                 <!-- Frosted Glass Layer with Theme Adaptation -->
                 <Border BorderThickness="0" Background="{ThemeResource AppOverlayBackdropBrush}" />
             </Grid>
-            
+
             <StackPanel x:Name="ExitOverlayContent" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24" Width="400">
                 <StackPanel.RenderTransform>
                     <TranslateTransform Y="30" />
                 </StackPanel.RenderTransform>
-                
+
                 <!-- Clean App Logo with Radial Aura Glow -->
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="144" Height="144">
                     <Ellipse Width="140" Height="140" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.4">
@@ -275,7 +275,7 @@
                     </Ellipse>
                     <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="136" Height="136" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
                 </Grid>
-                
+
                 <StackPanel Spacing="6" HorizontalAlignment="Center">
                     <TextBlock x:Name="ExitOverlayTitle" Text="Shutting Down" FontSize="24" FontWeight="ExtraBold" FontFamily="Segoe UI Variable Display" HorizontalAlignment="Center" Foreground="{ThemeResource AppOverlayTitleBrush}" CharacterSpacing="0.5"/>
                     <TextBlock x:Name="ExitOverlayMessage" Text="Closing database connections and freeing resources..." FontSize="13" Foreground="{ThemeResource AppOverlaySubtitleBrush}" HorizontalAlignment="Center" FontWeight="Medium" TextAlignment="Center"/>

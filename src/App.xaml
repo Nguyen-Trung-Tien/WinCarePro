@@ -459,16 +459,14 @@
             <!-- Shared ThemeShadow resource -->
             <ThemeShadow x:Key="SharedShadow" />
 
-            <!-- Brand Linear Gradients (Refined Windows 11 Azure & Deep Blue) -->
+            <!-- Brand Linear Gradients (Unified Flat Windows 11 Azure) -->
             <LinearGradientBrush x:Key="PrimaryAccentGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF0284C7" Offset="0" />
-                <GradientStop Color="#FF0F6CBD" Offset="0.5" />
-                <GradientStop Color="#FF2563EB" Offset="1" />
+                <GradientStop Color="#FF0F6CBD" Offset="0" />
+                <GradientStop Color="#FF0F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="CyberAccentGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF38BDF8" Offset="0" />
-                <GradientStop Color="#FF0284C7" Offset="0.5" />
+                <GradientStop Color="#FF0F6CBD" Offset="0" />
                 <GradientStop Color="#FF0F6CBD" Offset="1" />
             </LinearGradientBrush>
 
@@ -478,13 +476,11 @@
 
             <LinearGradientBrush x:Key="GlassBorderBrush" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#250F6CBD" Offset="0" />
-                <GradientStop Color="#150F6CBD" Offset="0.5" />
                 <GradientStop Color="#250F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="CyberGlassBorderBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#300F6CBD" Offset="0" />
-                <GradientStop Color="#150F6CBD" Offset="0.5" />
+                <GradientStop Color="#250F6CBD" Offset="0" />
                 <GradientStop Color="#250F6CBD" Offset="1" />
             </LinearGradientBrush>
 
@@ -499,147 +495,128 @@
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="HealthCriticalGradient" StartPoint="0,0" EndPoint="1,0">
-                <GradientStop Color="#FFF87171" Offset="0" />
+                <GradientStop Color="#FFEF4444" Offset="0" />
                 <GradientStop Color="#FFDC2626" Offset="1" />
             </LinearGradientBrush>
 
             <!-- Clean Modern Health and Accent Brushes -->
             <LinearGradientBrush x:Key="Asc19ReactorGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF0284C7" Offset="0" />
-                <GradientStop Color="#FF0F6CBD" Offset="0.5" />
-                <GradientStop Color="#FF10B981" Offset="1" />
+                <GradientStop Color="#FF0F6CBD" Offset="0" />
+                <GradientStop Color="#FF0F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="Asc19RadarSweepBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#900284C7" Offset="0" />
-                <GradientStop Color="#300284C7" Offset="0.5" />
-                <GradientStop Color="#000284C7" Offset="1" />
+                <GradientStop Color="#400F6CBD" Offset="0" />
+                <GradientStop Color="#000F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="Asc19EmeraldGlowBrush" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#FF10B981" Offset="0" />
-                <GradientStop Color="#FF059669" Offset="0.6" />
-                <GradientStop Color="#FF047857" Offset="1" />
+                <GradientStop Color="#FF059669" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="Asc19AmberTurboBrush" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#FFF59E0B" Offset="0" />
-                <GradientStop Color="#FFEA580C" Offset="0.5" />
-                <GradientStop Color="#FFF97316" Offset="1" />
+                <GradientStop Color="#FFD97706" Offset="1" />
             </LinearGradientBrush>
 
-            <!-- Aura 2.0 Glow & Neon Master Brushes -->
             <LinearGradientBrush x:Key="AuraNeonPurpleGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF8B5CF6" Offset="0" />
-                <GradientStop Color="#FF6D28D9" Offset="0.5" />
-                <GradientStop Color="#FF4C1D95" Offset="1" />
+                <GradientStop Color="#FF0F6CBD" Offset="0" />
+                <GradientStop Color="#FF0F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="AuraNeonCyanGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF38BDF8" Offset="0" />
-                <GradientStop Color="#FF0284C7" Offset="0.5" />
-                <GradientStop Color="#FF0369A1" Offset="1" />
+                <GradientStop Color="#FF0F6CBD" Offset="0" />
+                <GradientStop Color="#FF0F6CBD" Offset="1" />
             </LinearGradientBrush>
 
-            <!-- Cyberpunk Rainbow Neon Spectrum (Full Chroma Prism) -->
             <LinearGradientBrush x:Key="RainbowChromaGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF00F2FE" Offset="0.0" />
-                <GradientStop Color="#FF7F56D9" Offset="0.25" />
-                <GradientStop Color="#FFFE0979" Offset="0.5" />
-                <GradientStop Color="#FFFFB800" Offset="0.75" />
-                <GradientStop Color="#FF00FF9D" Offset="1.0" />
+                <GradientStop Color="#FF0F6CBD" Offset="0.0" />
+                <GradientStop Color="#FF0F6CBD" Offset="1.0" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="AuraShimmerSweepBrush" StartPoint="0,0" EndPoint="1,0">
                 <GradientStop Color="#00FFFFFF" Offset="0.0" />
-                <GradientStop Color="#15FFFFFF" Offset="0.4" />
-                <GradientStop Color="#30FFFFFF" Offset="0.5" />
-                <GradientStop Color="#15FFFFFF" Offset="0.6" />
                 <GradientStop Color="#00FFFFFF" Offset="1.0" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="SkeletonShimmerBrush" StartPoint="0,0" EndPoint="1,0">
-                <GradientStop Color="#06FFFFFF" Offset="0.0" />
-                <GradientStop Color="#16FFFFFF" Offset="0.5" />
-                <GradientStop Color="#06FFFFFF" Offset="1.0" />
+                <GradientStop Color="#08FFFFFF" Offset="0.0" />
+                <GradientStop Color="#08FFFFFF" Offset="1.0" />
             </LinearGradientBrush>
 
             <LinearGradientBrush x:Key="AiInsightBorderGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#608B5CF6" Offset="0" />
-                <GradientStop Color="#3006B6D4" Offset="0.5" />
-                <GradientStop Color="#608B5CF6" Offset="1" />
+                <GradientStop Color="#250F6CBD" Offset="0" />
+                <GradientStop Color="#250F6CBD" Offset="1" />
             </LinearGradientBrush>
 
-            <!-- Card Containers Styling — Clean Windows 11 Fluent Structure -->
+            <!-- Unified Flat Fluent 2.0 Card Containers Styling (8px CornerRadius Across Entire System) -->
             <Style x:Key="CockpitBentoCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
             </Style>
 
             <Style x:Key="FloatingCommandIslandStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardSubtleBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,4" />
             </Style>
 
             <Style x:Key="ModernCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
             <Style x:Key="GradientBorderCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
             <Style x:Key="GlowCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
-            <!-- Fluent Glassmorphism Card -->
             <Style x:Key="GlassmorphismCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
-            <!-- Spatial Nebula Fluent 2.5 Card -->
             <Style x:Key="SpatialNebulaCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="16" />
-                <Setter Property="Padding" Value="18" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="16" />
             </Style>
 
-            <!-- Quantum Boost 1-Click Action Button -->
             <Style x:Key="QuantumBoostButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="Background" Value="{StaticResource PrimaryAccentBrush}" />
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="CornerRadius" Value="12" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="FontSize" Value="13" />
-                <Setter Property="Padding" Value="20,9" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Padding" Value="16,7" />
             </Style>
 
-            <!-- Quick Stat Card (compact info chip) -->
+            <!-- Unified Stat Chip / Capsule Styles (8px CornerRadius) -->
             <Style x:Key="QuickStatCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,8" />
@@ -647,30 +624,29 @@
             </Style>
 
             <Style x:Key="CockpitQuickStatCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,10" />
-                <Setter Property="MinHeight" Value="54" />
+                <Setter Property="MinHeight" Value="52" />
             </Style>
 
-            <!-- Cyber-Bento Cockpit & Fluid Aura Glass Styles -->
             <Style x:Key="CyberBentoHeroCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="16" />
-                <Setter Property="Padding" Value="18,16" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="16" />
             </Style>
 
             <Style x:Key="CyberStatCapsuleStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,10" />
-                <Setter Property="MinHeight" Value="58" />
+                <Setter Property="MinHeight" Value="54" />
             </Style>
 
             <Style x:Key="CyberTactileButtonStyle" TargetType="Button">
@@ -683,30 +659,29 @@
                 <Setter Property="FontSize" Value="12" />
             </Style>
 
-            <!-- Spatial Bento Glass 3.0 Styles -->
             <Style x:Key="SpatialBentoCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
             </Style>
 
             <Style x:Key="LuminescentHeroCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="16" />
-                <Setter Property="Padding" Value="20,18" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="16" />
             </Style>
 
             <Style x:Key="BentoStatCapsuleStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,10" />
-                <Setter Property="MinHeight" Value="56" />
+                <Setter Property="MinHeight" Value="54" />
             </Style>
 
             <!-- Status Badge Styles -->
@@ -734,44 +709,40 @@
                 <Setter Property="Padding" Value="8,3" />
             </Style>
 
-            <!-- Accent Card Border -->
             <Style x:Key="NeonGlowBorderStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
-            <!-- Interactive Fluent Card -->
             <Style x:Key="FluidInteractiveCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
-            <!-- System Optimal Micro-interaction Badges -->
             <Style x:Key="AuraCelebrationBadgeStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource AppBadgeGoodBg}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeGoodBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="CornerRadius" Value="6" />
                 <Setter Property="Padding" Value="12,8" />
             </Style>
 
             <Style x:Key="AuraPulseCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
-            <!-- Fluent Pulse Glow Cards -->
             <Style x:Key="CyberPulseGlowCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
             <Style x:Key="MasterInteractiveButtonStyle" TargetType="Button">
@@ -779,75 +750,73 @@
                 <Setter Property="FontWeight" Value="SemiBold" />
             </Style>
 
-            <!-- Spatial Depth Card Styles -->
             <Style x:Key="Tilt3DCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="14" />
             </Style>
 
             <Style x:Key="Holographic3DCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="14" />
             </Style>
 
             <Style x:Key="SpatialDepthCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppSecondaryCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardSubtleBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12" />
             </Style>
 
             <Style x:Key="Glass3DCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="14" />
             </Style>
 
             <Style x:Key="AuraGlassLayerCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
             </Style>
 
             <Style x:Key="AiSmartInsightCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppSecondaryCardBackground}" />
-                <Setter Property="BorderBrush" Value="{StaticResource AiInsightBorderGradient}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="14,10" />
             </Style>
 
             <Style x:Key="Magnetic3DButtonStyle" TargetType="Button">
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Padding" Value="14,8" />
+                <Setter Property="Padding" Value="14,7" />
             </Style>
 
-            <!-- Action & Hero Scan Buttons -->
             <Style x:Key="HeroScan3DButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="Background" Value="{StaticResource PrimaryAccentBrush}" />
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="FontSize" Value="13" />
-                <Setter Property="Padding" Value="18,8" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Padding" Value="16,7" />
                 <Setter Property="BorderThickness" Value="0" />
             </Style>
 
             <Style x:Key="Action3DButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="FontWeight" Value="SemiBold" />
@@ -856,8 +825,8 @@
             </Style>
 
             <Style x:Key="Spatial3DChipStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="10,6" />
@@ -866,7 +835,7 @@
             <Style x:Key="DarkTerminalStyle" TargetType="TextBox">
                 <Setter Property="Background" Value="{ThemeResource AppTerminalBackground}" />
                 <Setter Property="Foreground" Value="{ThemeResource AppTerminalForeground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="FontFamily" Value="Consolas, Cascadia Code, Segoe UI Mono" />
@@ -876,10 +845,10 @@
 
             <!-- Global typography & header standards -->
             <Style x:Key="PageHeaderIconBadgeStyle" TargetType="Border">
-                <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}" />
-                <Setter Property="CornerRadius" Value="10" />
-                <Setter Property="Width" Value="38" />
-                <Setter Property="Height" Value="38" />
+                <Setter Property="Background" Value="{StaticResource PrimaryAccentBrush}" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Width" Value="36" />
+                <Setter Property="Height" Value="36" />
                 <Setter Property="Padding" Value="0" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Center" />
@@ -888,21 +857,20 @@
             <Style x:Key="PageHeaderTitleStyle" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
                 <Setter Property="FontSize" Value="22" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="CharacterSpacing" Value="-5" />
+                <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
             </Style>
 
             <Style x:Key="PageHeaderSubtitleStyle" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI Variable Text" />
-                <Setter Property="FontSize" Value="13" />
+                <Setter Property="FontSize" Value="12.5" />
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                <Setter Property="Margin" Value="0,4,0,0" />
+                <Setter Property="Margin" Value="0,2,0,0" />
             </Style>
 
             <Style x:Key="SectionHeaderTitleStyle" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
-                <Setter Property="FontSize" Value="16.5" />
+                <Setter Property="FontSize" Value="15.5" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
             </Style>
@@ -917,12 +885,11 @@
                 <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
                 <Setter Property="FontWeight" Value="Bold" />
                 <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
-                <Setter Property="CharacterSpacing" Value="-10" />
             </Style>
 
             <!-- Global default style for standard buttons -->
             <Style TargetType="Button">
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="UseSystemFocusVisuals" Value="True" />
                 <Setter Property="FocusVisualPrimaryThickness" Value="2" />
                 <Setter Property="FocusVisualMargin" Value="-2" />
@@ -1095,8 +1062,8 @@
             <Style x:Key="ModernCardListViewItemStyle" TargetType="ListViewItem">
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 <Setter Property="Padding" Value="0" />
-                <Setter Property="Margin" Value="0,0,0,8" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Margin" Value="0,0,0,6" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
             <!-- ======================================================== -->
@@ -1105,19 +1072,19 @@
 
             <!-- Standard Corner Radius Tokens -->
             <CornerRadius x:Key="AppControlCornerRadius">8</CornerRadius>
-            <CornerRadius x:Key="AppCardCornerRadius">12</CornerRadius>
-            <CornerRadius x:Key="AppSubCardCornerRadius">8</CornerRadius>
+            <CornerRadius x:Key="AppCardCornerRadius">8</CornerRadius>
+            <CornerRadius x:Key="AppSubCardCornerRadius">6</CornerRadius>
             <CornerRadius x:Key="AppBadgeCornerRadius">6</CornerRadius>
-            <CornerRadius x:Key="AppDialogCornerRadius">14</CornerRadius>
-            <CornerRadius x:Key="AppPillCornerRadius">18</CornerRadius>
+            <CornerRadius x:Key="AppDialogCornerRadius">8</CornerRadius>
+            <CornerRadius x:Key="AppPillCornerRadius">8</CornerRadius>
 
             <!-- Standard Spacing & Padding Tokens -->
-            <Thickness x:Key="AppPagePadding">24,20,24,24</Thickness>
+            <Thickness x:Key="AppPagePadding">24,18,24,18</Thickness>
             <Thickness x:Key="AppPagePaddingCompact">16,12,16,16</Thickness>
             <Thickness x:Key="AppCardPadding">16</Thickness>
             <Thickness x:Key="AppCardPaddingCompact">12</Thickness>
             <Thickness x:Key="AppCardPaddingComfortable">20</Thickness>
-            <Thickness x:Key="AppSectionMargin">0,0,0,20</Thickness>
+            <Thickness x:Key="AppSectionMargin">0,0,0,16</Thickness>
             <Thickness x:Key="AppItemSpacingBottom">0,0,0,8</Thickness>
 
             <!-- Standard Typography Scale Tokens -->
@@ -1135,43 +1102,43 @@
 
             <!-- AI WinCare Engine Gradient -->
             <LinearGradientBrush x:Key="AiWinCareEngineGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF0284C7" Offset="0" />
+                <GradientStop Color="#FF0F6CBD" Offset="0" />
                 <GradientStop Color="#FF0F6CBD" Offset="1" />
             </LinearGradientBrush>
 
             <!-- Aura Glass Card Style -->
             <Style x:Key="AuraGlassCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
             </Style>
 
             <!-- Elevated Glass Card Style -->
             <Style x:Key="ElevatedGlassCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
             </Style>
 
             <!-- AI WinCare Engine Card Style -->
             <Style x:Key="AiWinCareEngineCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
             </Style>
 
             <!-- Floating Action Deck Style -->
             <Style x:Key="FloatingActionDeckStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,8" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Bottom" />
@@ -1179,12 +1146,13 @@
             </Style>
 
             <Style x:Key="VibrantPrimaryButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="Background" Value="#FF0F6CBD" />
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="CornerRadius" Value="10" />
-                <Setter Property="Padding" Value="18,8" />
-                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="16,7" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="#FF0D5CA6" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -1197,100 +1165,31 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
-                                <Grid.RenderTransform>
-                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
-                                </Grid.RenderTransform>
-
-                                <!-- Main Button Body -->
+                            <Grid x:Name="RootButtonGrid">
                                 <Border x:Name="MainButtonBorder"
                                         Background="{TemplateBinding Background}"
-                                        BorderBrush="{StaticResource AuroraGlowBorderBrush}"
-                                        BorderThickness="1.0"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
                                         CornerRadius="{TemplateBinding CornerRadius}">
-                                    <Grid>
-                                        <!-- Top Specular Glass Reflection Sheen -->
-                                        <Border Height="1.0" VerticalAlignment="Top" CornerRadius="{TemplateBinding CornerRadius}" Opacity="0.4">
-                                            <Border.Background>
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                    <GradientStop Color="#00FFFFFF" Offset="0"/>
-                                                    <GradientStop Color="#FFFFFFFF" Offset="0.5"/>
-                                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
-                                                </LinearGradientBrush>
-                                            </Border.Background>
-                                        </Border>
-
-                                        <!-- Hover Brightness Overlay -->
-                                        <Border x:Name="HoverOverlay"
-                                                Background="White"
-                                                Opacity="0.0"
-                                                CornerRadius="{TemplateBinding CornerRadius}"
-                                                IsHitTestVisible="False" />
-
-                                        <!-- Content Presenter -->
-                                        <ContentPresenter x:Name="ContentPresenter"
-                                            Content="{TemplateBinding Content}"
-                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                            Padding="{TemplateBinding Padding}"
-                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                    </Grid>
+                                    <ContentPresenter x:Name="ContentPresenter"
+                                        Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                                        Padding="{TemplateBinding Padding}"
+                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                                 </Border>
-
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="CommonStates">
-                                        <VisualStateGroup.Transitions>
-                                            <VisualTransition To="PointerOver" GeneratedDuration="0:0:0.12">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="-0.5" Duration="0:0:0.12">
-                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.12" Duration="0:0:0.12"/>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                            <VisualTransition To="Pressed" GeneratedDuration="0:0:0.08">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="0.985" Duration="0:0:0.08">
-                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="0.985" Duration="0:0:0.08">
-                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0.5" Duration="0:0:0.08">
-                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                            <VisualTransition To="Normal" GeneratedDuration="0:0:0.15">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.15">
-                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.15">
-                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.15">
-                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.15"/>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                        </VisualStateGroup.Transitions>
-
                                         <VisualState x:Name="Normal" />
                                         <VisualState x:Name="PointerOver">
                                             <VisualState.Setters>
-                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="-0.5" />
-                                                <Setter Target="HoverOverlay.Opacity" Value="0.12" />
+                                                <Setter Target="MainButtonBorder.Background" Value="#FF115EA3" />
                                             </VisualState.Setters>
                                         </VisualState>
                                         <VisualState x:Name="Pressed">
                                             <VisualState.Setters>
-                                                <Setter Target="ButtonScaleTransform.ScaleX" Value="0.985" />
-                                                <Setter Target="ButtonScaleTransform.ScaleY" Value="0.985" />
-                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="0.5" />
-                                                <Setter Target="HoverOverlay.Opacity" Value="0.06" />
+                                                <Setter Target="MainButtonBorder.Background" Value="#FF0F548C" />
                                             </VisualState.Setters>
                                         </VisualState>
                                         <VisualState x:Name="Disabled">
@@ -1306,106 +1205,45 @@
                 </Setter>
             </Style>
 
-            <!-- Cleaner Hero Green Button Style (Emerald Purge Button - High Contrast Active / Crisp Muted Disabled) -->
+            <!-- Cleaner Hero Green Button Style -->
             <Style x:Key="CleanerHeroGreenButtonStyle" TargetType="Button">
-                <Setter Property="Background">
-                    <Setter.Value>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FF10B981" Offset="0" />
-                            <GradientStop Color="#FF059669" Offset="1" />
-                        </LinearGradientBrush>
-                    </Setter.Value>
-                </Setter>
+                <Setter Property="Background" Value="#FF059669" />
                 <Setter Property="Foreground" Value="White" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="CornerRadius" Value="10" />
-                <Setter Property="Padding" Value="20,9" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="16,7" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="BorderBrush" Value="#3010B981" />
+                <Setter Property="BorderBrush" Value="#FF047857" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
-                                <Grid.RenderTransform>
-                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
-                                </Grid.RenderTransform>
-
+                            <Grid x:Name="RootButtonGrid">
                                 <Border x:Name="MainButtonBorder"
                                         Background="{TemplateBinding Background}"
                                         BorderBrush="{TemplateBinding BorderBrush}"
                                         BorderThickness="{TemplateBinding BorderThickness}"
                                         CornerRadius="{TemplateBinding CornerRadius}">
-                                    <Grid>
-                                        <Border Height="1.0" VerticalAlignment="Top" CornerRadius="{TemplateBinding CornerRadius}" Opacity="0.4">
-                                            <Border.Background>
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                    <GradientStop Color="#00FFFFFF" Offset="0"/>
-                                                    <GradientStop Color="#FFFFFFFF" Offset="0.5"/>
-                                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
-                                                </LinearGradientBrush>
-                                            </Border.Background>
-                                        </Border>
-
-                                        <Border x:Name="HoverOverlay"
-                                                Background="White"
-                                                Opacity="0.0"
-                                                CornerRadius="{TemplateBinding CornerRadius}"
-                                                IsHitTestVisible="False" />
-
-                                        <ContentPresenter x:Name="ContentPresenter"
-                                            Content="{TemplateBinding Content}"
-                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                            Padding="{TemplateBinding Padding}"
-                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                    </Grid>
+                                    <ContentPresenter x:Name="ContentPresenter"
+                                        Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                                        Padding="{TemplateBinding Padding}"
+                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                                 </Border>
-
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="CommonStates">
-                                        <VisualStateGroup.Transitions>
-                                            <VisualTransition To="PointerOver" GeneratedDuration="0:0:0.12">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="-0.5" Duration="0:0:0.12">
-                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.12" Duration="0:0:0.12"/>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                            <VisualTransition To="Pressed" GeneratedDuration="0:0:0.08">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="0.985" Duration="0:0:0.08"/>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="0.985" Duration="0:0:0.08"/>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0.5" Duration="0:0:0.08"/>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                            <VisualTransition To="Normal" GeneratedDuration="0:0:0.15">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.15"/>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.15"/>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.15"/>
-                                                    <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.15"/>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                        </VisualStateGroup.Transitions>
-
                                         <VisualState x:Name="Normal" />
                                         <VisualState x:Name="PointerOver">
                                             <VisualState.Setters>
-                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="-0.5" />
-                                                <Setter Target="HoverOverlay.Opacity" Value="0.12" />
-                                                <Setter Target="MainButtonBorder.BorderBrush" Value="#806EE7B7" />
+                                                <Setter Target="MainButtonBorder.Background" Value="#FF10B981" />
                                             </VisualState.Setters>
                                         </VisualState>
                                         <VisualState x:Name="Pressed">
                                             <VisualState.Setters>
-                                                <Setter Target="ButtonScaleTransform.ScaleX" Value="0.985" />
-                                                <Setter Target="ButtonScaleTransform.ScaleY" Value="0.985" />
-                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="0.5" />
-                                                <Setter Target="HoverOverlay.Opacity" Value="0.06" />
+                                                <Setter Target="MainButtonBorder.Background" Value="#FF047857" />
                                             </VisualState.Setters>
                                         </VisualState>
                                         <VisualState x:Name="Disabled">
@@ -1424,125 +1262,10 @@
                 </Setter>
             </Style>
 
-            <!-- Cleaner Hero Scan Button Style (Violet-Blue Scan Button) -->
-            <Style x:Key="CleanerHeroScanButtonStyle" TargetType="Button">
-                <Setter Property="Background">
-                    <Setter.Value>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FF7C3AED" Offset="0" />
-                            <GradientStop Color="#FF2563EB" Offset="1" />
-                        </LinearGradientBrush>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="Foreground" Value="White" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="CornerRadius" Value="10" />
-                <Setter Property="Padding" Value="20,9" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="BorderBrush" Value="#307C3AED" />
-                <Setter Property="HorizontalAlignment" Value="Center" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
-                                <Grid.RenderTransform>
-                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
-                                </Grid.RenderTransform>
+            <!-- Cleaner Hero Scan Button Style -->
+            <Style x:Key="CleanerHeroScanButtonStyle" TargetType="Button" BasedOn="{StaticResource VibrantPrimaryButtonStyle}" />
 
-                                <Border x:Name="MainButtonBorder"
-                                        Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="{TemplateBinding CornerRadius}">
-                                    <Grid>
-                                        <Border Height="1.0" VerticalAlignment="Top" CornerRadius="{TemplateBinding CornerRadius}" Opacity="0.4">
-                                            <Border.Background>
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                    <GradientStop Color="#00FFFFFF" Offset="0"/>
-                                                    <GradientStop Color="#FFFFFFFF" Offset="0.5"/>
-                                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
-                                                </LinearGradientBrush>
-                                            </Border.Background>
-                                        </Border>
-
-                                        <Border x:Name="HoverOverlay"
-                                                Background="White"
-                                                Opacity="0.0"
-                                                CornerRadius="{TemplateBinding CornerRadius}"
-                                                IsHitTestVisible="False" />
-
-                                        <ContentPresenter x:Name="ContentPresenter"
-                                            Content="{TemplateBinding Content}"
-                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                            Padding="{TemplateBinding Padding}"
-                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                    </Grid>
-                                </Border>
-
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup x:Name="CommonStates">
-                                        <VisualStateGroup.Transitions>
-                                            <VisualTransition To="PointerOver" GeneratedDuration="0:0:0.12">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="-0.5" Duration="0:0:0.12">
-                                                        <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                    </DoubleAnimation>
-                                                    <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.12" Duration="0:0:0.12"/>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                            <VisualTransition To="Pressed" GeneratedDuration="0:0:0.08">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="0.985" Duration="0:0:0.08"/>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="0.985" Duration="0:0:0.08"/>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0.5" Duration="0:0:0.08"/>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                            <VisualTransition To="Normal" GeneratedDuration="0:0:0.15">
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.15"/>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.15"/>
-                                                    <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.15"/>
-                                                    <DoubleAnimation Storyboard.TargetName="HoverOverlay" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.15"/>
-                                                </Storyboard>
-                                            </VisualTransition>
-                                        </VisualStateGroup.Transitions>
-
-                                        <VisualState x:Name="Normal" />
-                                        <VisualState x:Name="PointerOver">
-                                            <VisualState.Setters>
-                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="-0.5" />
-                                                <Setter Target="HoverOverlay.Opacity" Value="0.12" />
-                                                <Setter Target="MainButtonBorder.BorderBrush" Value="#80A78BFA" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Pressed">
-                                            <VisualState.Setters>
-                                                <Setter Target="ButtonScaleTransform.ScaleX" Value="0.985" />
-                                                <Setter Target="ButtonScaleTransform.ScaleY" Value="0.985" />
-                                                <Setter Target="ButtonScaleTransform.TranslateY" Value="0.5" />
-                                                <Setter Target="HoverOverlay.Opacity" Value="0.06" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Disabled">
-                                            <VisualState.Setters>
-                                                <Setter Target="MainButtonBorder.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                <Setter Target="MainButtonBorder.BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
-                                                <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource TextFillColorDisabledBrush}" />
-                                                <Setter Target="RootButtonGrid.Opacity" Value="0.45" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
-            <!-- Standard Secondary Button Style (Glassmorphism Pill Button) -->
+            <!-- Standard Secondary Button Style -->
             <Style x:Key="StandardSecondaryButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
@@ -1564,10 +1287,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
-                                <Grid.RenderTransform>
-                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
-                                </Grid.RenderTransform>
+                            <Grid x:Name="RootButtonGrid">
                                 <ContentPresenter x:Name="ContentPresenter"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
@@ -1581,56 +1301,17 @@
                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
                                     <VisualStateManager.VisualStateGroups>
                                         <VisualStateGroup x:Name="CommonStates">
-                                            <VisualStateGroup.Transitions>
-                                                <VisualTransition To="PointerOver" GeneratedDuration="0:0:0.12">
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="-0.5" Duration="0:0:0.12">
-                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                        </DoubleAnimation>
-                                                    </Storyboard>
-                                                </VisualTransition>
-                                                <VisualTransition To="Pressed" GeneratedDuration="0:0:0.08">
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="0.985" Duration="0:0:0.08">
-                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                        </DoubleAnimation>
-                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="0.985" Duration="0:0:0.08">
-                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                        </DoubleAnimation>
-                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0.5" Duration="0:0:0.08">
-                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                        </DoubleAnimation>
-                                                    </Storyboard>
-                                                </VisualTransition>
-                                                <VisualTransition To="Normal" GeneratedDuration="0:0:0.15">
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.15">
-                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                        </DoubleAnimation>
-                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.15">
-                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                        </DoubleAnimation>
-                                                        <DoubleAnimation Storyboard.TargetName="ButtonScaleTransform" Storyboard.TargetProperty="TranslateY" To="0" Duration="0:0:0.15">
-                                                            <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut"/></DoubleAnimation.EasingFunction>
-                                                        </DoubleAnimation>
-                                                    </Storyboard>
-                                                </VisualTransition>
-                                            </VisualStateGroup.Transitions>
                                             <VisualState x:Name="Normal" />
                                             <VisualState x:Name="PointerOver">
                                                 <VisualState.Setters>
                                                     <Setter Target="ContentPresenter.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
                                                     <Setter Target="ContentPresenter.BorderBrush" Value="{StaticResource PrimaryAccentBorderBrush}" />
-                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="-0.5" />
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Pressed">
                                                 <VisualState.Setters>
                                                     <Setter Target="ContentPresenter.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
                                                     <Setter Target="ContentPresenter.Opacity" Value="0.85" />
-                                                    <Setter Target="ButtonScaleTransform.ScaleX" Value="0.985" />
-                                                    <Setter Target="ButtonScaleTransform.ScaleY" Value="0.985" />
-                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="0.5" />
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Disabled">
@@ -1692,7 +1373,7 @@
                 <Setter Property="FontWeight" Value="SemiBold" />
             </Style>
 
-            <!-- Destructive / Danger Action Button Style (Red Glass Glow) -->
+            <!-- Destructive / Danger Action Button Style -->
             <Style x:Key="DangerButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{ThemeResource AppBadgeCriticalBg}" />
                 <Setter Property="Foreground" Value="{ThemeResource AppBadgeCriticalFg}" />
@@ -1713,10 +1394,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
-                                <Grid.RenderTransform>
-                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
-                                </Grid.RenderTransform>
+                            <Grid x:Name="RootButtonGrid">
                                 <ContentPresenter x:Name="ContentPresenter"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
@@ -1736,16 +1414,12 @@
                                                     <Setter Target="ContentPresenter.Background" Value="#FFEF4444" />
                                                     <Setter Target="ContentPresenter.Foreground" Value="White" />
                                                     <Setter Target="ContentPresenter.BorderBrush" Value="#FFDC2626" />
-                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="-0.5" />
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Pressed">
                                                 <VisualState.Setters>
                                                     <Setter Target="ContentPresenter.Background" Value="#FFDC2626" />
                                                     <Setter Target="ContentPresenter.Foreground" Value="White" />
-                                                    <Setter Target="ButtonScaleTransform.ScaleX" Value="0.985" />
-                                                    <Setter Target="ButtonScaleTransform.ScaleY" Value="0.985" />
-                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="0.5" />
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Disabled">
@@ -1762,10 +1436,10 @@
                 </Setter>
             </Style>
 
-            <!-- Destructive Action Button Style (Semantic Alias to DangerButtonStyle with focus visuals) -->
+            <!-- Destructive Action Button Style -->
             <Style x:Key="DestructiveButtonStyle" TargetType="Button" BasedOn="{StaticResource DangerButtonStyle}" />
 
-            <!-- Success Action Button Style (Emerald Glass Glow) -->
+            <!-- Success Action Button Style -->
             <Style x:Key="SuccessButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{ThemeResource AppBadgeGoodBg}" />
                 <Setter Property="Foreground" Value="{ThemeResource AppBadgeGoodFg}" />
@@ -1781,10 +1455,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Grid x:Name="RootButtonGrid" RenderTransformOrigin="0.5,0.5">
-                                <Grid.RenderTransform>
-                                    <CompositeTransform x:Name="ButtonScaleTransform" ScaleX="1.0" ScaleY="1.0" TranslateY="0" />
-                                </Grid.RenderTransform>
+                            <Grid x:Name="RootButtonGrid">
                                 <ContentPresenter x:Name="ContentPresenter"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
@@ -1804,16 +1475,12 @@
                                                     <Setter Target="ContentPresenter.Background" Value="#FF10B981" />
                                                     <Setter Target="ContentPresenter.Foreground" Value="White" />
                                                     <Setter Target="ContentPresenter.BorderBrush" Value="#FF059669" />
-                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="-0.5" />
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Pressed">
                                                 <VisualState.Setters>
                                                     <Setter Target="ContentPresenter.Background" Value="#FF059669" />
                                                     <Setter Target="ContentPresenter.Foreground" Value="White" />
-                                                    <Setter Target="ButtonScaleTransform.ScaleX" Value="0.985" />
-                                                    <Setter Target="ButtonScaleTransform.ScaleY" Value="0.985" />
-                                                    <Setter Target="ButtonScaleTransform.TranslateY" Value="0.5" />
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Disabled">
@@ -1839,13 +1506,13 @@
                 <Setter Property="CornerRadius" Value="6" />
             </Style>
 
-            <!-- Power Option Item Button Style (Solid, perfectly contrast in Dark & Light) -->
+            <!-- Power Option Item Button Style -->
             <Style x:Key="PowerOptionItemButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{ThemeResource AppFlyoutItemBackground}" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource AppFlyoutItemBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,10" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -1891,9 +1558,9 @@
                 </Setter>
             </Style>
 
-            <!-- Shimmer Skeleton Loading Style with Active Composition Pulse -->
+            <!-- Shimmer Skeleton Loading Style -->
             <Style x:Key="ShimmerSkeletonStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Opacity" Value="0.65" />
@@ -1901,31 +1568,31 @@
 
             <!-- Staggered Entrance Card Style -->
             <Style x:Key="StaggeredEntranceCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppCardBackground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppCardBorder}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="14" />
+                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
-            <!-- Active Preset Profile Chip Button Style (Glowing Neon Pill) -->
+            <!-- Active Preset Profile Chip Button Style -->
             <Style x:Key="ActivePresetChipButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource PrimaryAccentGradient}" />
+                <Setter Property="Background" Value="#FF0F6CBD" />
                 <Setter Property="Foreground" Value="White" />
-                <Setter Property="BorderBrush" Value="{StaticResource AuroraGlowBorderBrush}" />
-                <Setter Property="BorderThickness" Value="1.2" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="BorderBrush" Value="#FF0D5CA6" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,8" />
                 <Setter Property="FontWeight" Value="Bold" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
             </Style>
 
-            <!-- Inactive Preset Profile Chip Button Style (Subtle Card Pill) -->
+            <!-- Inactive Preset Profile Chip Button Style -->
             <Style x:Key="InactivePresetChipButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{ThemeResource AppStatChipBackground}" />
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppStatChipBorder}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,8" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />

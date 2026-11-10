@@ -1,7 +1,5 @@
 using System;
 using System.ComponentModel;
-using Microsoft.UI.Xaml.Media;
-using Windows.UI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WinCarePro.Services;
 
@@ -40,61 +38,9 @@ public partial class SecuritySafeguardItem : ObservableObject
 
     public string StatusFormatted => IsProtected ? "Protected".T() : "Vulnerable".T();
 
-    private static SolidColorBrush? _goodBg;
-    private static SolidColorBrush? _goodBorder;
-    private static SolidColorBrush? _goodFg;
-    private static SolidColorBrush? _warnBg;
-    private static SolidColorBrush? _warnBorder;
-    private static SolidColorBrush? _warnFg;
-
-    public Brush? StatusBgColor
-    {
-        get
-        {
-            try
-            {
-                return IsProtected
-                    ? (_goodBg ??= new SolidColorBrush(Color.FromArgb(30, 16, 185, 129)))
-                    : (_warnBg ??= new SolidColorBrush(Color.FromArgb(30, 239, 68, 68)));
-            }
-            catch { return null; }
-        }
-    }
-
-    public Brush? StatusBorderColor
-    {
-        get
-        {
-            try
-            {
-                return IsProtected
-                    ? (_goodBorder ??= new SolidColorBrush(Color.FromArgb(60, 16, 185, 129)))
-                    : (_warnBorder ??= new SolidColorBrush(Color.FromArgb(60, 239, 68, 68)));
-            }
-            catch { return null; }
-        }
-    }
-
-    public Brush? StatusForegroundColor
-    {
-        get
-        {
-            try
-            {
-                return IsProtected
-                    ? (_goodFg ??= new SolidColorBrush(Color.FromArgb(255, 16, 185, 129)))
-                    : (_warnFg ??= new SolidColorBrush(Color.FromArgb(255, 239, 68, 68)));
-            }
-            catch { return null; }
-        }
-    }
-
     public void NotifyStatusChanged()
     {
         OnPropertyChanged(nameof(StatusFormatted));
-        OnPropertyChanged(nameof(StatusBgColor));
-        OnPropertyChanged(nameof(StatusBorderColor));
-        OnPropertyChanged(nameof(StatusForegroundColor));
         OnPropertyChanged(nameof(ComparisonText));
     }
 }
@@ -119,34 +65,6 @@ public partial class SecurityComponentCard : ObservableObject
 
     [ObservableProperty]
     private bool _canAutoFix;
-
-    private SolidColorBrush? _badgeBg;
-    public SolidColorBrush? BadgeBg
-    {
-        get => _badgeBg;
-        set => SetProperty(ref _badgeBg, value);
-    }
-
-    private SolidColorBrush? _badgeFg;
-    public SolidColorBrush? BadgeFg
-    {
-        get => _badgeFg;
-        set => SetProperty(ref _badgeFg, value);
-    }
-
-    private SolidColorBrush? _iconBg;
-    public SolidColorBrush? IconBg
-    {
-        get => _iconBg;
-        set => SetProperty(ref _iconBg, value);
-    }
-
-    private SolidColorBrush? _iconFg;
-    public SolidColorBrush? IconFg
-    {
-        get => _iconFg;
-        set => SetProperty(ref _iconFg, value);
-    }
 }
 
 public partial class SecurityAlertItem : ObservableObject
@@ -163,32 +81,6 @@ public partial class SecurityAlertItem : ObservableObject
 
     [ObservableProperty]
     private string _statusText = "Open";
-
-    private static SolidColorBrush? _redBrush;
-    private static SolidColorBrush? _amberBrush;
-    private static SolidColorBrush? _blueBrush;
-    private static SolidColorBrush? _grayBrush;
-
-    public SolidColorBrush? SeverityBrush
-    {
-        get
-        {
-            try
-            {
-                return Severity switch
-                {
-                    "Critical" => _redBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)),
-                    "Warning" => _amberBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)),
-                    "Info" => _blueBrush ??= new SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246)),
-                    _ => _grayBrush ??= new SolidColorBrush(Microsoft.UI.Colors.Gray)
-                };
-            }
-            catch
-            {
-                return null;
-            }
-        }
-    }
 
     public bool CanFix => !string.IsNullOrEmpty(FixActionKey) && !IsFixed;
 }

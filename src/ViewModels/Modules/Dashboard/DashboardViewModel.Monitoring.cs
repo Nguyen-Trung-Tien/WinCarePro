@@ -89,8 +89,6 @@ public partial class DashboardViewModel
         return (cpu, ramPercent);
     }
 
-    private DateTime _lastSmartBoostTime = DateTime.MinValue;
-
     private void StartResourceMonitor()
     {
         if (Interlocked.CompareExchange(ref _monitorRunning, 1, 0) != 0) return;
@@ -98,235 +96,59 @@ public partial class DashboardViewModel
         _monitorCts = new CancellationTokenSource();
         var token = _monitorCts.Token;
 
-        Task.Run(async () =>
+        // Zero-Bloat On-Demand Snapshot: Query Win32 metrics once on view activation without background polling loops
+        Task.Run(() =>
         {
-            int tickCount = 0;
             try
             {
-                while (!token.IsCancellationRequested)
+                if (token.IsCancellationRequested) return;
+
+                var currentSettings = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+                bool sensorsEnabled = currentSettings.EnableSensorsThread;
+
+                var (cpu, ram) = GetSystemResourceUsage();
+                double gpu = sensorsEnabled ? GetGpuUsageMetric() : 0.0;
+                double disk = sensorsEnabled ? GetDiskUsageMetric() : 0.0;
+                double cpuTemp = sensorsEnabled ? _hardwareEngine.GetCpuTemperature(cpu) : double.NaN;
+
+                if (token.IsCancellationRequested) return;
+
+                _dispatcherQueue?.TryEnqueue(() =>
                 {
-                    tickCount++;
+                    if (token.IsCancellationRequested) return;
 
-                    // High-performance O(1) in-memory settings lookup (Zero DB I/O, zero JSON deserialization per tick)
-                    var currentSettings = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
-                    bool sensorsEnabled = currentSettings.EnableSensorsThread;
-                    bool smartBoostEnabled = currentSettings.TriggerSmartBoost;
-                    int delayMs = currentSettings.TelemetryIntervalIndex switch
+                    CpuUsage = Math.Round(cpu, 1);
+                    RamUsage = Math.Round(ram, 1);
+                    GpuUsage = Math.Round(gpu, 1);
+                    DiskUsage = Math.Round(disk, 1);
+                    CpuTemperature = double.IsNaN(cpuTemp) ? 0 : cpuTemp;
+                    CpuTempFormatted = !sensorsEnabled ? "Disabled".T() : (double.IsNaN(cpuTemp) ? "N/A" : $"{cpuTemp:F0}°C");
+
+                    int count = CpuSeriesValues.Count;
+                    if (count > 0)
                     {
-                        0 => 500,   // 0.5s
-                        1 => 1000,  // 1.0s
-                        2 => 2000,  // 2.0s
-                        3 => 5000,  // 5.0s
-                        _ => 1000
-                    };
-                    
-                    // CPU and RAM are queried every tick (1000ms)
-                    var (cpu, ram) = GetSystemResourceUsage();
-
-                    if (token.IsCancellationRequested) break;
-
-                    // GPU is queried every 3 ticks (~3000ms)
-                    if (tickCount % 3 == 0 || tickCount == 1)
-                    {
-                        if (!sensorsEnabled)
-                        {
-                            _dispatcherQueue?.TryEnqueue(() =>
-                            {
-                                GpuUsage = 0;
-                            });
-                        }
-                        else if (!_isGpuQueryRunning)
-                        {
-                            _isGpuQueryRunning = true;
-                            _ = Task.Run(() =>
-                            {
-                                try
-                                {
-                                    double gpu = GetGpuUsageMetric();
-                                    _dispatcherQueue?.TryEnqueue(() =>
-                                    {
-                                        if (token.IsCancellationRequested) return;
-                                        GpuUsage = Math.Round(gpu, 1);
-                                    });
-                                }
-                                catch (Exception ex)
-                                {
-                                    CrashLogger.LogException("DashboardViewModel.GetGpuUsageMetric", ex);
-                                }
-                                finally { _isGpuQueryRunning = false; }
-                            });
-                        }
+                        CpuSeriesValues[count - 1].Value = CpuUsage;
+                        RamSeriesValues[count - 1].Value = RamUsage;
+                        GpuSeriesValues[count - 1].Value = GpuUsage;
+                        DiskSeriesValues[count - 1].Value = DiskUsage;
                     }
 
-                    // Disk is queried every 10 ticks (~10000ms)
-                    if (tickCount % 10 == 0 || tickCount == 1)
-                    {
-                        if (!sensorsEnabled)
-                        {
-                            _dispatcherQueue?.TryEnqueue(() =>
-                            {
-                                DiskUsage = 0;
-                            });
-                        }
-                        else if (!_isDiskQueryRunning)
-                        {
-                            _isDiskQueryRunning = true;
-                            _ = Task.Run(() =>
-                            {
-                                try
-                                {
-                                    double disk = GetDiskUsageMetric();
-                                    _dispatcherQueue?.TryEnqueue(() =>
-                                    {
-                                        if (token.IsCancellationRequested) return;
-                                        DiskUsage = Math.Round(disk, 1);
-                                    });
-                                }
-                                catch (Exception ex)
-                                {
-                                    CrashLogger.LogException("DashboardViewModel.GetDiskUsageMetric", ex);
-                                }
-                                finally { _isDiskQueryRunning = false; }
-                            });
-                        }
-                    }
+                    var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
+                    SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
 
-                    // CPU Temperature is queried every 5 ticks (~5000ms)
-                    if (tickCount % 5 == 0 || tickCount == 1)
-                    {
-                        if (!sensorsEnabled)
-                        {
-                            _dispatcherQueue?.TryEnqueue(() =>
-                            {
-                                CpuTemperature = 0;
-                                CpuTempFormatted = "Disabled".T();
-                            });
-                        }
-                        else if (!_isTempQueryRunning)
-                        {
-                            _isTempQueryRunning = true;
-                            _ = Task.Run(() =>
-                            {
-                                try
-                                {
-                                    double cpuTemp = _hardwareEngine.GetCpuTemperature(cpu);
-                                    _dispatcherQueue?.TryEnqueue(() =>
-                                    {
-                                        if (token.IsCancellationRequested) return;
-                                        CpuTemperature = double.IsNaN(cpuTemp) ? 0 : cpuTemp;
-                                        CpuTempFormatted = double.IsNaN(cpuTemp) ? "N/A" : $"{cpuTemp:F0}°C";
-                                    });
-                                }
-                                catch (Exception ex)
-                                {
-                                    CrashLogger.LogException("DashboardViewModel.GetCpuTemperature", ex);
-                                }
-                                finally { _isTempQueryRunning = false; }
-                            });
-                        }
-                    }
-
-                    // Uptime chỉ update mỗi 30 tick (~30s) thay vì mỗi giây
-                    bool shouldUpdateUptime = tickCount % 30 == 0 || tickCount == 1;
-                    bool shouldUpdateChart = tickCount % 2 == 0 || tickCount == 1;
-                    bool shouldDetectBottlenecks = tickCount % 5 == 0 || tickCount == 1;
-
-                    // Batch dispatch CPU/RAM update + chart vào 1 lần enqueue
-                    _dispatcherQueue?.TryEnqueue(() =>
-                    {
-                        if (token.IsCancellationRequested) return;
-
-                        CpuUsage = Math.Round(cpu, 1);
-                        RamUsage = Math.Round(ram, 1);
-
-                        if (shouldUpdateChart)
-                        {
-                            // In-place zero-allocation shift of chart history values
-                            int count = CpuSeriesValues.Count;
-                            if (count > 0)
-                            {
-                                for (int i = 0; i < count - 1; i++)
-                                {
-                                    CpuSeriesValues[i].Value = CpuSeriesValues[i + 1].Value;
-                                    RamSeriesValues[i].Value = RamSeriesValues[i + 1].Value;
-                                    GpuSeriesValues[i].Value = GpuSeriesValues[i + 1].Value;
-                                    DiskSeriesValues[i].Value = DiskSeriesValues[i + 1].Value;
-                                }
-                                CpuSeriesValues[count - 1].Value = CpuUsage;
-                                RamSeriesValues[count - 1].Value = RamUsage;
-                                GpuSeriesValues[count - 1].Value = GpuUsage;
-                                DiskSeriesValues[count - 1].Value = DiskUsage;
-                            }
-                        }
-
-                        if (shouldUpdateUptime)
-                        {
-                            var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
-                            SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
-                        }
-
-                        if (shouldDetectBottlenecks)
-                        {
-                            DetectBottlenecks();
-                            UpdateHealthScoreBreakdown();
-                        }
-                    });
-
-                    // Periodic snapshot recording for Resource History & Insights (Every ~30s or during bottlenecks)
-                    if (tickCount % 30 == 0 || (HasBottleneck && tickCount % 10 == 0))
-                    {
-                        string? reason = HasBottleneck ? BottleneckStatus : null;
-                        double curCpu = cpu;
-                        double curRam = ram;
-                        double curDisk = DiskUsage;
-                        double curGpu = GpuUsage;
-                        _ = Task.Run(() =>
-                        {
-                            try
-                            {
-                                Database.DbManager.SaveResourceSnapshot(curCpu, curRam, curDisk, curGpu, reason);
-                                var insights = Database.DbManager.GetResourceInsights();
-                                _dispatcherQueue?.TryEnqueue(() =>
-                                {
-                                    ResourceInsightsText = insights.HealthInsight.T();
-                                    ResourceDominantBottleneck = insights.DominantBottleneck.T();
-                                    ResourceAverageLoadText = string.Format("Avg CPU: {0}% | RAM: {1}%".T(), insights.AverageCpu, insights.AverageRam);
-                                });
-                            }
-                            catch { }
-                        });
-                    }
-
-                    // Trigger Smart Boost if RAM exceeds 90%
-                    if (ram > 90.0 && (DateTime.Now - _lastSmartBoostTime).TotalMinutes >= 2.0)
-                    {
-                        if (smartBoostEnabled)
-                        {
-                            _lastSmartBoostTime = DateTime.Now;
-                            _ = Task.Run(async () =>
-                            {
-                                try
-                                {
-                                    await _optimizerEngine.OptimizeRamAsync();
-                                    Database.DbManager.LogAction("Automated Smart Boost optimization triggered (RAM > 90%)", "Smart Boost", "Success");
-                                }
-                                catch { }
-                            });
-                        }
-                    }
-
-                    try
-                    {
-                        await Task.Delay(delayMs, token);
-                    }
-                    catch (TaskCanceledException) { break; }
-                }
+                    DetectBottlenecks();
+                    UpdateHealthScoreBreakdown();
+                });
+            }
+            catch (Exception ex)
+            {
+                CrashLogger.LogException("DashboardViewModel.StartResourceMonitor", ex);
             }
             finally
             {
                 Interlocked.Exchange(ref _monitorRunning, 0);
             }
-        });
+        }, token);
     }
 
     public void StartMonitoring()
@@ -374,12 +196,7 @@ public partial class DashboardViewModel
     private double GetGpuUsageMetric()
     {
         double realGpu = _hardwareEngine.GetActualGpuUsage();
-        if (realGpu >= 0)
-        {
-            return realGpu;
-        }
-        double baseGpu = CpuUsage * 0.3 + 2.0;
-        return Math.Clamp(baseGpu, 0, 100);
+        return realGpu >= 0 ? Math.Clamp(realGpu, 0, 100) : 0.0;
     }
 
     private double GetDiskUsageMetric()
@@ -408,9 +225,7 @@ public partial class DashboardViewModel
         }
         catch { }
 
-        // Last resort fallback
-        double baseDisk = CpuUsage * 0.15 + RamUsage * 0.05 + 1.0;
-        return Math.Clamp(baseDisk, 0, 100);
+        return 0.0;
     }
 
     public void ToggleChartSeries(string seriesName, bool isVisible)

@@ -210,15 +210,7 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnBoostRamClick(object sender, RoutedEventArgs e)
     {
-        var btn = BoostRamBtn ?? (sender as Button);
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, BoostRamRing, BoostRamText, BoostRamIcon,
-            "Purging RAM...", "Purge RAM Cache",
-            async () =>
-            {
-                await ViewModel.BoostRamAsync();
-            },
-            minDurationMs: 800);
+        await ViewModel.BoostRamAsync();
     }
 
     private async void OnRestoreDefaultsClick(object sender, RoutedEventArgs e)

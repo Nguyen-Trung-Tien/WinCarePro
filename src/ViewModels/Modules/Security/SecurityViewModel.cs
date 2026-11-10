@@ -42,19 +42,19 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     private string _firewallStatusText = "Checking...".T();
 
     [ObservableProperty]
-    private string _bitLockerStatus = "Checking...".T();
-
-    [ObservableProperty]
     private bool _isSecureBootEnabled;
 
     [ObservableProperty]
     private string _secureBootStatusText = "Checking...".T();
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TpmChipText))]
     private bool _isTpmEnabled;
 
     [ObservableProperty]
     private string _tpmStatusText = "Checking...".T();
+
+    public string TpmChipText => IsTpmEnabled ? "TPM Active".T() : "Not Detected".T();
 
     [ObservableProperty]
     private bool _isCoreIsolationEnabled;
@@ -74,7 +74,7 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private string _rdpNlaStatusText = "Checking...".T();
 
-    // Privacy Toggles
+    // Privacy Toggles (Expanded to 8 controls)
     [ObservableProperty]
     private bool _advertisingIdEnabled;
 
@@ -88,6 +88,18 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     private bool _inputTrackingEnabled;
 
     [ObservableProperty]
+    private bool _cortanaBingEnabled;
+
+    [ObservableProperty]
+    private bool _locationTrackingEnabled;
+
+    [ObservableProperty]
+    private bool _feedbackTrackingEnabled;
+
+    [ObservableProperty]
+    private bool _appDiagnosticsEnabled;
+
+    [ObservableProperty]
     private string _activeProfile = "Balanced";
 
     [ObservableProperty]
@@ -96,7 +108,27 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     [ObservableProperty]
     private string _defenseStatusBadge = "SHIELD ARMED".T();
 
+    [ObservableProperty]
+    private string _searchSafeguardsText = string.Empty;
+
+    [ObservableProperty]
+    private string _selectedSafeguardCategory = "All";
+
     public ObservableCollection<string> SecurityAlerts { get; } = new();
+    public ObservableCollection<WinCarePro.Models.SecurityAlertItem> SecurityAuditItems { get; } = new();
+    public ObservableCollection<WinCarePro.Models.SecuritySafeguardItem> Safeguards { get; } = new();
+    public ObservableCollection<WinCarePro.Models.SecuritySafeguardItem> FilteredSafeguards { get; } = new();
+
+    public int AlertCount => SecurityAuditItems.Count;
+    public bool HasAlerts => SecurityAuditItems.Count > 0;
+    public bool HasNoAlerts => !IsScanning && SecurityAuditItems.Count == 0;
+    public int CriticalAlertCount => SecurityAuditItems.Count(a => a.Severity == "Critical" && !a.IsFixed);
+    public int WarningAlertCount => SecurityAuditItems.Count(a => a.Severity == "Warning" && !a.IsFixed);
+    public int SafeguardProtectedCount => Safeguards.Count(s => s.IsProtected);
+    public int SafeguardTotalCount => Safeguards.Count;
+
+    partial void OnSearchSafeguardsTextChanged(string value) => FilterSafeguards();
+    partial void OnSelectedSafeguardCategoryChanged(string value) => FilterSafeguards();
 
     public SecurityViewModel() : this(null, null)
     {
@@ -162,6 +194,10 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             TelemetryEnabled = _securityEngine.GetPrivacySetting("telemetry");
             ClipboardHistoryEnabled = _securityEngine.GetPrivacySetting("clipboardhistory");
             InputTrackingEnabled = _securityEngine.GetPrivacySetting("tracking");
+            CortanaBingEnabled = _securityEngine.GetPrivacySetting("cortanabing");
+            LocationTrackingEnabled = _securityEngine.GetPrivacySetting("location");
+            FeedbackTrackingEnabled = _securityEngine.GetPrivacySetting("feedback");
+            AppDiagnosticsEnabled = _securityEngine.GetPrivacySetting("appdiagnostics");
         }
         catch { }
     }
@@ -184,25 +220,29 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         IsScanning = true;
         StatusMessage = "Analyzing system security indicators...".T();
 
-        _dispatcherQueue?.TryEnqueue(() =>
+        RunOnUI(() =>
         {
             SecurityAlerts.Clear();
+            SecurityAuditItems.Clear();
+            OnPropertyChanged(nameof(HasAlerts));
+            OnPropertyChanged(nameof(HasNoAlerts));
+            OnPropertyChanged(nameof(AlertCount));
         });
 
         try
         {
             // Execute checks in parallel for maximum performance (< 400ms)
-            var avTask = Task.Run(() => _securityEngine.GetAntivirusStatus());
-            var fwTask = Task.Run(() => _securityEngine.GetFirewallStatus());
-            var blTask = Task.Run(() => _securityEngine.GetBitLockerStatus());
-            var sbTask = Task.Run(() => _securityEngine.CheckSecureBootStatus());
-            var tpmTask = Task.Run(() => _securityEngine.CheckTpmStatus());
-            var ciTask = Task.Run(() => _securityEngine.CheckCoreIsolationStatus());
-            var tpTask = Task.Run(() => _securityEngine.CheckTamperProtectionStatus());
-            var nlaTask = Task.Run(() => _securityEngine.CheckRdpNlaStatus());
-            var auditTask = Task.Run(() => _securityEngine.RunSecurityAudits());
+            var avTask = Task.Run(() => _securityEngine.GetAntivirusStatus(), ct);
+            var fwTask = Task.Run(() => _securityEngine.GetFirewallStatus(), ct);
+            var sbTask = Task.Run(() => _securityEngine.CheckSecureBootStatus(), ct);
+            var tpmTask = Task.Run(() => _securityEngine.CheckTpmStatus(), ct);
+            var ciTask = Task.Run(() => _securityEngine.CheckCoreIsolationStatus(), ct);
+            var tpTask = Task.Run(() => _securityEngine.CheckTamperProtectionStatus(), ct);
+            var nlaTask = Task.Run(() => _securityEngine.CheckRdpNlaStatus(), ct);
+            var auditItemsTask = Task.Run(() => _securityEngine.RunSecurityAuditItems(), ct);
+            var legacyAlertsTask = Task.Run(() => _securityEngine.RunSecurityAudits(), ct);
 
-            await Task.WhenAll(avTask, fwTask, blTask, sbTask, tpmTask, ciTask, tpTask, nlaTask, auditTask);
+            await Task.WhenAll(avTask, fwTask, sbTask, tpmTask, ciTask, tpTask, nlaTask, auditItemsTask, legacyAlertsTask);
 
             if (ct.IsCancellationRequested || _isDisposed)
             {
@@ -213,13 +253,13 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
 
             var av = await avTask;
             bool fw = await fwTask;
-            var bl = await blTask;
             var (sbEnabled, sbText) = await sbTask;
             var (tpmOk, tpmText) = await tpmTask;
             var (ciOk, ciText) = await ciTask;
             var (tpOk, tpText) = await tpTask;
             var (nlaOk, nlaText) = await nlaTask;
-            var alerts = await auditTask;
+            var auditItems = await auditItemsTask;
+            var legacyAlerts = await legacyAlertsTask;
 
             // Calculate Security Score
             int score = 100;
@@ -229,15 +269,14 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             if (!tpmOk) score -= 10;
             if (!ciOk) score -= 10;
             if (!tpOk) score -= 10;
-            if (alerts.Count > 0) score -= Math.Min(15, alerts.Count * 5);
+            if (auditItems.Count > 0) score -= Math.Min(15, auditItems.Count * 5);
             score = Math.Clamp(score, 10, 100);
 
-            _dispatcherQueue?.TryEnqueue(() =>
+            RunOnUI(() =>
             {
                 AntivirusStatus = av.Replace("Enabled", "Enabled".T()).Replace("Disabled", "Disabled".T()).Replace("Running", "Running".T());
                 IsFirewallActive = fw;
                 FirewallStatusText = fw ? "Windows Firewall Active".T() : "Firewall Disabled or Inactive".T();
-                BitLockerStatus = bl.Replace("Off", "Off".T()).Replace("On", "On".T());
                 IsSecureBootEnabled = sbEnabled;
                 SecureBootStatusText = sbText;
                 IsTpmEnabled = tpmOk;
@@ -271,7 +310,16 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
                     DefenseStatusBadge = "EXPOSED".T();
                 }
 
-                foreach (var alert in alerts)
+                // Populate rich audit items
+                SecurityAuditItems.Clear();
+                foreach (var item in auditItems)
+                {
+                    SecurityAuditItems.Add(item);
+                }
+
+                // Populate legacy alerts collection for backward compatibility
+                SecurityAlerts.Clear();
+                foreach (var alert in legacyAlerts)
                 {
                     if (alert.StartsWith("Suspicious startup program: "))
                     {
@@ -297,6 +345,12 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
                 if (!av.Contains("Enabled") && !av.Contains("Running")) SecurityAlerts.Add("No active Antivirus protection detected. Enable Microsoft Defender.".T());
                 if (!sbEnabled) SecurityAlerts.Add("Secure Boot is disabled. Enable it in your system BIOS/UEFI for rootkit defense.".T());
 
+                OnPropertyChanged(nameof(AlertCount));
+                OnPropertyChanged(nameof(HasAlerts));
+                OnPropertyChanged(nameof(HasNoAlerts));
+                OnPropertyChanged(nameof(CriticalAlertCount));
+                OnPropertyChanged(nameof(WarningAlertCount));
+
                 StatusMessage = string.Format("Scan complete. Security Score: {0}/100".T(), SecurityScore);
                 SetOperationState(OperationState.Completed);
             });
@@ -320,6 +374,141 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         }
     }
 
+    public async Task FixSecurityAlertAsync(WinCarePro.Models.SecurityAlertItem? alert)
+    {
+        if (alert == null || !alert.CanFix || IsBusy) return;
+
+        IsBusy = true;
+        StatusMessage = string.Format("Fixing security issue: {0}...".T(), alert.Title);
+        try
+        {
+            bool success = await Task.Run(() => _securityEngine.FixSecurityIssue(alert.FixActionKey));
+            if (success)
+            {
+                RunOnUI(() =>
+                {
+                    alert.IsFixed = true;
+                    alert.StatusText = "Resolved".T();
+                    StatusMessage = string.Format("Successfully resolved: {0}".T(), alert.Title);
+                    OnPropertyChanged(nameof(CriticalAlertCount));
+                    OnPropertyChanged(nameof(WarningAlertCount));
+                });
+                await ScanSecurityAsync();
+            }
+            else
+            {
+                RunOnUI(() =>
+                {
+                    StatusMessage = string.Format("Failed to automatically fix: {0}".T(), alert.Title);
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.FixSecurityAlertAsync", ex);
+            RunOnUI(() =>
+            {
+                StatusMessage = string.Format("Error fixing issue: {0}".T(), ex.Message);
+            });
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task LoadSafeguardsAsync(System.Threading.CancellationToken ct = default)
+    {
+        try
+        {
+            var items = await Task.Run(() =>
+            {
+                var list = _securityEngine.GetAllSafeguards();
+                foreach (var item in list)
+                {
+                    if (ct.IsCancellationRequested) break;
+                    _securityEngine.RefreshSafeguard(item);
+                }
+                return list;
+            }, ct);
+
+            RunOnUI(() =>
+            {
+                Safeguards.Clear();
+                foreach (var item in items)
+                {
+                    Safeguards.Add(item);
+                }
+                FilterSafeguards();
+                OnPropertyChanged(nameof(SafeguardProtectedCount));
+                OnPropertyChanged(nameof(SafeguardTotalCount));
+            });
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.LoadSafeguardsAsync", ex);
+        }
+    }
+
+    public void FilterSafeguards()
+    {
+        RunOnUI(() =>
+        {
+            FilteredSafeguards.Clear();
+            var query = SearchSafeguardsText?.Trim().ToLowerInvariant() ?? string.Empty;
+            var category = SelectedSafeguardCategory ?? "All";
+
+            foreach (var item in Safeguards)
+            {
+                bool matchesCategory = category == "All" || item.Category.Equals(category, StringComparison.OrdinalIgnoreCase);
+                bool matchesSearch = string.IsNullOrEmpty(query) ||
+                                     item.Name.ToLowerInvariant().Contains(query) ||
+                                     item.Description.ToLowerInvariant().Contains(query);
+
+                if (matchesCategory && matchesSearch)
+                {
+                    FilteredSafeguards.Add(item);
+                }
+            }
+        });
+    }
+
+    public async Task ToggleSafeguardAsync(WinCarePro.Models.SecuritySafeguardItem? item)
+    {
+        if (item == null || IsBusy) return;
+        IsBusy = true;
+        try
+        {
+            bool newProtectedState = !item.IsProtected;
+            bool ok = await Task.Run(() =>
+            {
+                return newProtectedState
+                    ? _securityEngine.ApplySafeguard(item)
+                    : _securityEngine.RevertSafeguard(item);
+            });
+
+            await Task.Run(() => _securityEngine.RefreshSafeguard(item));
+
+            RunOnUI(() =>
+            {
+                item.NotifyStatusChanged();
+                FilterSafeguards();
+                OnPropertyChanged(nameof(SafeguardProtectedCount));
+                StatusMessage = string.Format(
+                    ok ? "Safeguard {0} updated successfully.".T() : "Failed to update safeguard {0}.".T(),
+                    item.Name);
+            });
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.ToggleSafeguardAsync", ex);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     public async Task EnableFirewallAsync()
     {
         IsBusy = true;
@@ -337,6 +526,7 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
 
     public async Task TogglePrivacySettingAsync(string type, bool enabled)
     {
+        if (IsBusy) return;
         IsBusy = true;
         try
         {
@@ -385,10 +575,10 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         StatusMessage = "Clearing Recent items and Run history...".T();
         try
         {
-            await Task.Run(() => _securityEngine.ClearRecentFiles() + _securityEngine.ClearExplorerRunHistory());
+            int count = await Task.Run(() => _securityEngine.ClearRecentFiles() + _securityEngine.ClearExplorerRunHistory());
             RunOnUI(() =>
             {
-                StatusMessage = "Recent items and Explorer Run history successfully cleared.".T();
+                StatusMessage = string.Format("Recent items and Explorer Run history cleared ({0} items).".T(), count);
             });
         }
         catch (Exception ex)
@@ -403,6 +593,157 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         {
             IsBusy = false;
         }
+    }
+
+    public async Task ClearJumpListsAsync()
+    {
+        IsBusy = true;
+        StatusMessage = "Clearing Explorer Jump Lists...".T();
+        try
+        {
+            int count = await Task.Run(() => _securityEngine.ClearExplorerJumpLists());
+            RunOnUI(() =>
+            {
+                StatusMessage = string.Format("Cleared {0} Explorer Jump List entries.".T(), count);
+            });
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.ClearJumpListsAsync", ex);
+            RunOnUI(() =>
+            {
+                StatusMessage = string.Format("Failed to clear jump lists: {0}".T(), ex.Message);
+            });
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task ClearRunHistoryAsync()
+    {
+        IsBusy = true;
+        StatusMessage = "Clearing Explorer Run and Typed Paths history...".T();
+        try
+        {
+            int count = await Task.Run(() => _securityEngine.ClearExplorerRunHistory() + _securityEngine.ClearTypedPathsHistory());
+            RunOnUI(() =>
+            {
+                StatusMessage = string.Format("Cleared {0} Run & Typed Paths entries.".T(), count);
+            });
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.ClearRunHistoryAsync", ex);
+            RunOnUI(() =>
+            {
+                StatusMessage = string.Format("Failed to clear run history: {0}".T(), ex.Message);
+            });
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public async Task<int> ClearAllActivityTracesAsync()
+    {
+        IsBusy = true;
+        StatusMessage = "Erasing all system activity traces...".T();
+        int total = 0;
+        try
+        {
+            total = await Task.Run(() => _securityEngine.ClearAllActivityTraces());
+            RunOnUI(() =>
+            {
+                StatusMessage = string.Format("All activity traces purged. Erased {0} cached items.".T(), total);
+            });
+            return total;
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.ClearAllActivityTracesAsync", ex);
+            RunOnUI(() =>
+            {
+                StatusMessage = string.Format("Failed to erase all traces: {0}".T(), ex.Message);
+            });
+            return total;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    public string GenerateSecurityReport()
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("# WinCare Pro - Security & Privacy Audit Report");
+        sb.AppendLine($"Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+        sb.AppendLine($"Security Score: {SecurityScore}/100 ({SecurityScoreGrade})");
+        sb.AppendLine($"Defense Profile: {ActiveProfile} ({DefenseStatusBadge})");
+        sb.AppendLine();
+        sb.AppendLine("## Core Defense Matrix");
+        sb.AppendLine($"- Antivirus: {AntivirusStatus}");
+        sb.AppendLine($"- Firewall: {FirewallStatusText}");
+        sb.AppendLine($"- Secure Boot: {SecureBootStatusText}");
+        sb.AppendLine($"- TPM: {TpmStatusText}");
+        sb.AppendLine($"- Core Isolation (HVCI): {CoreIsolationStatusText}");
+        sb.AppendLine($"- Tamper Protection: {TamperProtectionStatusText}");
+        sb.AppendLine($"- Remote Desktop NLA: {RdpNlaStatusText}");
+        sb.AppendLine();
+        sb.AppendLine("## Threat Radar & Active Alerts");
+        if (SecurityAuditItems.Count == 0)
+        {
+            sb.AppendLine("- No active security threats detected. System is healthy.");
+        }
+        else
+        {
+            foreach (var alert in SecurityAuditItems)
+            {
+                sb.AppendLine($"- [{alert.Severity.ToUpper()}] {alert.Title} (Status: {alert.StatusText})");
+                sb.AppendLine($"  {alert.Description}");
+            }
+        }
+        sb.AppendLine();
+        sb.AppendLine("## Privacy & Anti-Telemetry Configuration");
+        sb.AppendLine($"- Diagnostic Telemetry: {(TelemetryEnabled ? "Enabled" : "Disabled (Protected)")}");
+        sb.AppendLine($"- Advertising ID: {(AdvertisingIdEnabled ? "Enabled" : "Disabled (Protected)")}");
+        sb.AppendLine($"- Clipboard History: {(ClipboardHistoryEnabled ? "Enabled" : "Disabled (Protected)")}");
+        sb.AppendLine($"- Typing & Input Tracking: {(InputTrackingEnabled ? "Enabled" : "Disabled (Protected)")}");
+        sb.AppendLine($"- Cortana & Bing Search: {(CortanaBingEnabled ? "Enabled" : "Disabled (Protected)")}");
+        sb.AppendLine($"- Background Location: {(LocationTrackingEnabled ? "Enabled" : "Disabled (Protected)")}");
+        sb.AppendLine($"- Feedback Frequency: {(FeedbackTrackingEnabled ? "Enabled" : "Disabled (Protected)")}");
+        sb.AppendLine($"- App Diagnostics Access: {(AppDiagnosticsEnabled ? "Enabled" : "Disabled (Protected)")}");
+        return sb.ToString();
+    }
+
+    public async Task<string> ExportSecurityReportAsync()
+    {
+        string report = GenerateSecurityReport();
+        try
+        {
+            await Task.Run(() =>
+            {
+                _dispatcherQueue?.TryEnqueue(() =>
+                {
+                    try
+                    {
+                        var dp = new Windows.ApplicationModel.DataTransfer.DataPackage();
+                        dp.SetText(report);
+                        Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(dp);
+                    }
+                    catch { }
+                });
+            });
+            StatusMessage = "Security Audit Report copied to clipboard.".T();
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.ExportSecurityReportAsync", ex);
+        }
+        return report;
     }
 
     public async Task ApplyDefenseProfileAsync(string profile)

@@ -75,11 +75,6 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     private CancellationTokenSource? _scanCts;       // class-level scan CTS: có thể cancel từ bên ngoài
     private int _monitorRunning = 0; // 0 = stopped, 1 = running (Interlocked)
 
-
-    private bool _isGpuQueryRunning = false;
-    private bool _isDiskQueryRunning = false;
-    private bool _isTempQueryRunning = false;
-
     private List<JunkCategory>? _scannedJunkCategories;
     private List<RegistryIssue>? _scannedRegistryIssues;
 

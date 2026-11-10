@@ -117,8 +117,8 @@ public sealed partial class DashboardPage : Page
             if (QuickStatsGrid != null) QuickStatsGrid.Visibility = Visibility.Visible;
             if (CpuRamGrid != null) CpuRamGrid.Visibility = Visibility.Visible;
             if (GpuDiskGrid != null) GpuDiskGrid.Visibility = Visibility.Visible;
-            if (PerformanceChartCard != null) PerformanceChartCard.Visibility = Visibility.Visible;
-            if (RecommendationsCard != null) RecommendationsCard.Visibility = Visibility.Visible;
+            if (PerformanceChartCard != null) PerformanceChartCard.Visibility = Visibility.Collapsed;
+            if (RecommendationsCard != null) RecommendationsCard.Visibility = Visibility.Collapsed;
 
             UpdateResponsiveLayout(this.ActualWidth);
             TranslationManager.Instance.Translate(this);

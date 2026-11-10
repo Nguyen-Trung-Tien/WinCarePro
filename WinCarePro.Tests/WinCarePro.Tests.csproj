@@ -19,6 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WinCarePro.csproj" />
+    <ProjectReference Include="..\src\WinCarePro.csproj" />
   </ItemGroup>
 </Project>

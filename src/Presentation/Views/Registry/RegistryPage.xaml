@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WinCarePro.Views.RegistryPage"
+    x:Name="PageRoot"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:WinCarePro.Models"
+    xmlns:vm="using:WinCarePro.ViewModels"
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
+    mc:Ignorable="d">
+
+    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutVisualStates">
+                <!-- Wide Layout: Viewport Width >= 1080px -->
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1080" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+
+                <!-- Medium Layout: Viewport Width 820px to 1080px -->
+                <VisualState x:Name="MediumState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="820" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RightCol.Width" Value="340" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <!-- Narrow Layout: Viewport Width < 820px -->
+                <VisualState x:Name="NarrowState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderCol1.Width" Value="0" />
+                        <Setter Target="HeaderTitlePanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderActionsPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
+                        <Setter Target="StatCol0.Width" Value="*" />
+                        <Setter Target="StatCol1.Width" Value="0" />
+                        <Setter Target="StatCol2.Width" Value="0" />
+                        <Setter Target="StatCol3.Width" Value="0" />
+                        <Setter Target="StatCard2.(Grid.Row)" Value="1" />
+                        <Setter Target="StatCard2.(Grid.Column)" Value="0" />
+                        <Setter Target="StatCard3.(Grid.Row)" Value="2" />
+                        <Setter Target="StatCard3.(Grid.Column)" Value="0" />
+                        <Setter Target="StatCard4.(Grid.Row)" Value="3" />
+                        <Setter Target="StatCard4.(Grid.Column)" Value="0" />
+                        <Setter Target="LeftCol.Width" Value="*" />
+                        <Setter Target="RightCol.Width" Value="0" />
+                        <Setter Target="WorkspaceRow1.Height" Value="*" />
+                        <Setter Target="RightPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="RightPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="RightPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="RightPanel.Margin" Value="0,14,0,0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="20" />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <!-- 0. Header -->
+            <RowDefinition Height="Auto" /> <!-- 1. Stat Ribbon -->
+            <RowDefinition Height="*" />    <!-- 2. Main Content Workspace -->
+        </Grid.RowDefinitions>
+
+        <!-- ==================== 0. MODERN HEADER ==================== -->
+        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,14">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="HeaderRow0" Height="Auto" />
+                <RowDefinition x:Name="HeaderRow1" Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="HeaderCol0" Width="*" />
+                <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Spacing="4">
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="Registry Center" Style="{StaticResource PageHeaderTitleStyle}" />
+                    <TextBlock Text="Safe scan, backup &amp; clean." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" CornerRadius="8" Padding="14,0">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE721;" FontSize="12" />
+                        <TextBlock Text="Scan Registry" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="OnSafeClean1Click" Style="{StaticResource SuccessButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="14,0"
+                        ToolTipService.ToolTip="1-Click automatic repair of all 100% verified zero-risk entries with rollback snapshot">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="White" />
+                        <TextBlock Text="1-Click Safe Fix" VerticalAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="White" />
+                    </StackPanel>
+                </Button>
+                <Button Click="OnRepairClick" Style="{StaticResource DangerButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="14,0"
+                        ToolTipService.ToolTip="Clean and repair all currently selected registry entries">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="{ThemeResource AppBadgeCriticalFg}" />
+                        <TextBlock Text="Clean Selected" VerticalAlignment="Center" FontSize="12" FontWeight="Bold" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+
+            <!-- Registry Safety Guarantee & Automated Rollback Snapshot Banner -->
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0" Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1.2" CornerRadius="10" Padding="12,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="28" Height="28" CornerRadius="14" Background="#2010B981" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE72E;" FontSize="13" Foreground="#FF10B981" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock Text="Registry Armor Safety Guarantee Active" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            <Border Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="5,1">
+                                <TextBlock Text="AUTO ROLLBACK SNAPSHOT" FontSize="8.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="A full registry rollback backup (.reg) is generated automatically before any modifications. You can safely undo changes anytime with 1-click." FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 1. 4-CARD STAT RIBBON ==================== -->
+        <Grid Grid.Row="1" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="StatCol0" Width="*" />
+                <ColumnDefinition x:Name="StatCol1" Width="*" />
+                <ColumnDefinition x:Name="StatCol2" Width="*" />
+                <ColumnDefinition x:Name="StatCol3" Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Card 0: Detected Issues -->
+            <Border Grid.Column="0" Style="{StaticResource CockpitQuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#20F59E0B" BorderBrush="#50F59E0B" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xEDA2;" FontSize="16" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Detected Inconsistencies" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="{x:Bind ViewModel.Issues.Count, Mode=OneWay}" FontSize="15" FontWeight="ExtraBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Text="Issues Found" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 1: 100% Zero-Risk Safe Entries -->
+            <Border x:Name="StatCard2" Grid.Column="1" Style="{StaticResource CockpitQuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="{ThemeResource AppBadgeGoodFg}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="100% Zero-Risk Safe" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="{x:Bind ViewModel.SafeCount, Mode=OneWay}" FontSize="15" FontWeight="ExtraBold" Foreground="{ThemeResource AppBadgeGoodFg}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Text="Safe to Clean" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 2: Caution / Review Needed -->
+            <Border x:Name="StatCard3" Grid.Column="2" Style="{StaticResource CockpitQuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="#20F59E0B" BorderBrush="#50F59E0B" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE7BA;" FontSize="16" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Review Suggested" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="{x:Bind ViewModel.CautionCount, Mode=OneWay}" FontSize="15" FontWeight="ExtraBold" Foreground="#FFF59E0B" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Text="Need Review" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 3: Safety Snapshots -->
+            <Border x:Name="StatCard4" Grid.Column="3" Style="{StaticResource CockpitQuickStatCardStyle}"
+                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <FontIcon Glyph="&#xE727;" FontSize="16" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                        <TextBlock Text="Rollback Snapshots" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="{x:Bind ViewModel.Backups.Count, Mode=OneWay}" FontSize="15" FontWeight="ExtraBold" Foreground="{StaticResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                            <TextBlock Text="Saved Points" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ==================== 2. MAIN WORKSPACE ==================== -->
+        <Grid Grid.Row="2" ColumnSpacing="16" RowSpacing="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" x:Name="WorkspaceRow0" />
+                <RowDefinition Height="Auto" x:Name="WorkspaceRow1" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftCol" Width="*" />
+                <ColumnDefinition x:Name="RightCol" Width="400" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Left: Registry Issues Stream & Quick Filters -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Spacing="14">
+
+                    <!-- Issue Stream Bento Card -->
+                    <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14">
+                        <StackPanel Spacing="12">
+                            <!-- Stream Header & Quick Actions -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <TextBlock Text="Registry Issues &amp; Invalid References" FontSize="13.5" FontWeight="Bold" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- Quick Select Toolbar -->
+                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="8,6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                        <TextBlock Text="Filter &amp; Select:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                        <Button Click="OnSelectSafeOnlyClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                                            <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                                                <TextBlock Text="100% Safe Only" FontSize="11"/>
+                                            </StackPanel>
+                                        </Button>
+                                        <Button Click="OnSelectAllClick" Content="Select All" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
+                                        <Button Click="OnDeselectAllClick" Content="Deselect All" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
+                                        <TextBlock Text="Click item to inspect AI details" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE76C;" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
+
+                            <!-- Issues List with Rich Cards -->
+                            <ListView ItemsSource="{x:Bind ViewModel.Issues, Mode=OneWay}" SelectionMode="Single" SelectionChanged="OnIssueSelectionChanged" MaxHeight="320" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:RegistryIssue">
+                                        <Border Style="{StaticResource Tilt3DCardStyle}" Padding="10,8" Margin="0,0,0,4"
+                                                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
+                                            <Grid ColumnSpacing="10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" MinWidth="0" />
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                                        <TextBlock Text="{x:Bind Title}" FontWeight="Bold" FontSize="12" />
+                                                        <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="4,1">
+                                                            <TextBlock Text="{x:Bind Section}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{x:Bind KeyPath}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                                <!-- Safety Badge -->
+                                                <Border Grid.Column="2" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                                                    <TextBlock Text="{x:Bind RiskBadgeText}" FontSize="10" FontWeight="Bold" Foreground="{x:Bind RiskColorHex}"/>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Tools Row: Registry Editor & System Restore -->
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Open Registry Editor -->
+                        <Border Grid.Column="0" Style="{StaticResource Tilt3DCardStyle}" Padding="14,12"
+                                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1">
+                                    <FontIcon Glyph="&#xEDA2;" FontSize="14" Foreground="#FFF59E0B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                    <TextBlock Text="Registry Editor" FontWeight="Bold" FontSize="12.5"/>
+                                    <TextBlock Text="regedit.exe" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <Button Grid.Column="2" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Click="OnOpenRegeditClick" CornerRadius="6" Padding="10,4">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="Open" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE8A7;" FontSize="11" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <!-- Open System Restore -->
+                        <Border Grid.Column="1" Style="{StaticResource Tilt3DCardStyle}" Padding="14,12"
+                                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1">
+                                    <FontIcon Glyph="&#xE7A7;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                    <TextBlock Text="System Restore" FontWeight="Bold" FontSize="12.5"/>
+                                    <TextBlock Text="rstrui.exe" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+                                <Button Grid.Column="2" Style="{StaticResource StandardSecondaryButtonStyle}" VerticalAlignment="Center" Click="OnOpenSystemRestoreClick" CornerRadius="6" Padding="10,4">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="Open" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE8A7;" FontSize="11" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Right: Smart AI Inspector & Time-Machine Rollback Deck -->
+            <ScrollViewer x:Name="RightPanel" Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Spacing="14">
+
+                    <!-- Deck 1: Smart AI Root-Cause & Visual Diff Inspector -->
+                    <Border Style="{StaticResource SpatialDepthCardStyle}" Padding="16,14"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="10">
+                        <StackPanel Spacing="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <TextBlock Text="Smart AI Inspector" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
+                                    <TextBlock Text="Visual Diff" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                </Border>
+                            </Grid>
+
+                            <!-- Inspected Item Details -->
+                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="10,8">
+                                <StackPanel Spacing="6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <TextBlock Text="Target Key:" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedIssue.Title, Mode=OneWay, FallbackValue='(Select an issue from list)'}" FontWeight="Bold" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{x:Bind ViewModel.SelectedIssue.KeyPath, Mode=OneWay, FallbackValue='Click any issue on the left to see root cause and visual diff.'}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- AI Root-Cause Analysis Capsule -->
+                            <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10,8">
+                                <Grid ColumnSpacing="8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                                    <StackPanel Grid.Column="1" Spacing="2">
+                                        <TextBlock Text="AI Root-Cause Insight:" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedIssue.AiRecommendation, Mode=OneWay, FallbackValue='Leftover uninstalled application registry entry or broken link.'}" FontSize="10.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- Visual Diff Terminal Preview -->
+                            <Border Background="#121824" BorderBrush="#25FFFFFF" BorderThickness="1" CornerRadius="8" Padding="10,8">
+                                <StackPanel Spacing="3">
+                                    <TextBlock Text="DIFF PREVIEW (Action on Repair):" FontSize="9.5" FontWeight="Bold" Foreground="#94A3B8"/>
+                                    <TextBlock Text="{x:Bind ViewModel.SelectedIssue.VisualDiffAction, Mode=OneWay, FallbackValue='[-] Remove orphaned subkey / dead reference'}" FontSize="10.5" Foreground="#EF4444" FontFamily="Consolas, Cascadia Code, monospace"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Inspector Action Buttons -->
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Click="OnRepairSingleIssueClick" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="6" Padding="0,6" FontSize="11" FontWeight="SemiBold">
+                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{ThemeResource AppBadgeGoodFg}"/>
+                                        <TextBlock Text="Repair Key"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Grid.Column="1" Click="OnOpenRegeditClick" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="6" Padding="0,6" FontSize="11">
+                                    <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE8A7;" FontSize="11"/>
+                                        <TextBlock Text="Regedit"/>
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Deck 2: Safety Snapshots & Time-Machine Rollback -->
+                    <Border Style="{StaticResource SpatialDepthCardStyle}" Padding="16,14"
+                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0" Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                    <TextBlock Text="Rollback Snapshots" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="6,2">
+                                    <TextBlock Text="Time-Machine" FontSize="10" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                </Border>
+                            </Grid>
+                            
+                            <Button Grid.Row="1" Content="Create Full Safety Backup" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Height="34" CornerRadius="8" Margin="0,0,0,12" Click="OnCreateBackupClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" FontWeight="Bold" FontSize="12"/>
+
+                            <StackPanel Grid.Row="2" Spacing="6">
+                                <TextBlock Text="Saved Snapshots History" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                
+                                <ListView ItemsSource="{x:Bind ViewModel.Backups, Mode=OneWay}" SelectionMode="None" MaxHeight="200" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="models:RegistryBackupItem">
+                                            <Border Style="{StaticResource Tilt3DCardStyle}" Padding="8,6" Margin="0,0,0,4">
+                                                <Grid ColumnSpacing="8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <FontIcon Grid.Column="0" Glyph="&#xE727;" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                                                        <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                                            <TextBlock Text="{x:Bind FormattedDate}" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                            <TextBlock Text="{x:Bind FormattedSize}" FontSize="9" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                    <Button Grid.Column="2" Content="Restore" Click="OnRestoreBackupItemClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="10" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- Loading Overlay Indicator — smooth fade in/out -->
+        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="3" Background="#60000000" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.Resources>
+                <Storyboard x:Name="FadeInLoading">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.25">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+                <Storyboard x:Name="FadeOutLoading" Completed="FadeOutLoading_Completed">
+                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.25">
+                        <DoubleAnimation.EasingFunction>
+                            <CubicEase EasingMode="EaseOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </Grid.Resources>
+            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="32,22" HorizontalAlignment="Center" VerticalAlignment="Center" Width="340">
+                <StackPanel Spacing="12" HorizontalAlignment="Center">
+                    <Grid Width="54" Height="54" HorizontalAlignment="Center">
+                        <Border Width="54" Height="54" CornerRadius="16" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
+                            <FontIcon Glyph="&#xEB42;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <TextBlock Text="Processing Registry Operation..." FontSize="13.5" FontWeight="Bold" TextAlignment="Center" />
+
+                    <Border Background="#1AFFFFFF" CornerRadius="4" Height="6" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1" Width="240">
+                        <ProgressBar IsIndeterminate="True" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

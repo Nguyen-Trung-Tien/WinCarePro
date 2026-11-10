@@ -88,9 +88,9 @@ graph TD
   - **Quiet Compilation Verification:**
     ```powershell
     # ✅ Saves 100% extraneous tokens: outputs solely upon syntax/build failure
-    dotnet build WinCarePro.csproj -c Debug -v q --nologo
+    dotnet build WinCarePro.sln -c Debug -v q --nologo
     # Or restrict to errors only:
-    dotnet build WinCarePro.csproj -c Debug -clp:ErrorsOnly --nologo
+    dotnet build WinCarePro.sln -c Debug -clp:ErrorsOnly --nologo
     ```
   - **Compact Git Commands:** Use `git status -s` instead of `git status`; use `git log -n 3 --oneline` instead of `git log`.
 
@@ -144,7 +144,7 @@ Before writing any OS-level operations, the Agent MUST leverage established infr
 
 ### 3.4 Layer-by-Layer Verification Pipeline
 To prevent cascading compile failures:
-1. **Model / DTO:** Declare models in `Core/Models/`. Run `dotnet build WinCarePro.csproj -c Debug -v q --nologo` to verify syntax.
+1. **Model / DTO:** Declare models in `Core/Models/`. Run `dotnet build WinCarePro.sln -c Debug -v q --nologo` to verify syntax.
 2. **Engine:** Author business logic in `Engines/`, encapsulate with safety guards, accept `CancellationToken ct = default`.
 3. **Engine Unit Test:** Author tests in `WinCarePro.Tests/` and run filtered test targets:
    ```powershell
@@ -209,7 +209,7 @@ replace_file_content(...)
 dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --filter "FullyQualifiedName~TargetModule" --logger "console;verbosity=minimal"
 
 # Step 5: Verification Gate prior to handoff
-dotnet build WinCarePro.csproj -c Debug -v q --nologo            # MUST yield 0 Errors, 0 Warnings
+dotnet build WinCarePro.sln -c Debug -v q --nologo            # MUST yield 0 Errors, 0 Warnings
 dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj            # MUST achieve 100% Passed (465/465 Tests)
 ```
 

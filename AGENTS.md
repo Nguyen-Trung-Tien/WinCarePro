@@ -125,8 +125,9 @@ Quick lookup before implementation at [.agents/skills/README.md](.agents/skills/
 ## ⚡ 7. Operational Commands & Completion Checklist
 
 ```powershell
-dotnet build WinCarePro.csproj -c Debug                         # Syntax and compilation check
-dotnet test WinCarePro.Tests/WinCarePro.Tests.csproj --verbosity normal # Run full test suite (Target: 100% Passed - 465 Tests)
+dotnet build                                                   # Syntax and compilation check (Entire solution)
+.\run                                                          # Launch app directly from root (or: dotnet run --project src/WinCarePro.csproj)
+dotnet test --logger "console;verbosity=minimal"               # Run full test suite
 .\publish.bat                                                  # Self-Contained x64 deployment
 .\publish_installer.bat                                        # Build Inno Setup installer package
 ```

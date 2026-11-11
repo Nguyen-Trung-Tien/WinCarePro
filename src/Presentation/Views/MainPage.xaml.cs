@@ -24,7 +24,7 @@ public sealed partial class MainPage : Page
     public MainPage()
     {
         InitializeComponent();
-        
+
         // Populate user chip with system info
         NavUserName.Text = Environment.UserName;
         NavMachineName.Text = Environment.MachineName;
@@ -53,7 +53,7 @@ public sealed partial class MainPage : Page
         };
         ThemeManager.Instance.AccentChanged += _accentChangedHandler;
         UpdateUserAvatarAccent();
-        
+
         // Register to language changes to force translation for this page and current navigated page
         _languageChangedHandler = (s, e) =>
         {
@@ -79,7 +79,7 @@ public sealed partial class MainPage : Page
             }
         };
         WinCarePro.Services.Implementations.SettingsService.Instance.SettingsChanged += _settingsChangedHandler;
-        
+
         // Auto-translate and synchronize theme for navigated pages
         ContentFrame.Navigated += (s, e) =>
         {
@@ -209,9 +209,9 @@ public sealed partial class MainPage : Page
         var cur = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
         UpdateNavTransparencyAndBackdrop(cur.TransparencyLevel, cur.BackdropType);
 
-        var itemFg = isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 248, 250, 252)) 
+        var itemFg = isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 248, 250, 252))
                             : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 15, 23, 42));
-        var headerFg = isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 148, 163, 184)) 
+        var headerFg = isDark ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 148, 163, 184))
                               : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 51, 65, 85));
 
         NavUserName.Foreground = itemFg;
@@ -376,7 +376,6 @@ public sealed partial class MainPage : Page
         Type? pageType = tag.ToLower() switch
         {
             "dashboard" => typeof(DashboardPage),
-            "aiwincareengine" => typeof(WinCarePro.Modules.AiAssistant.AiWinCareEnginePage),
             "junk" => typeof(JunkPage),
             "uninstall" => typeof(UninstallPage),
             "network" => typeof(NetworkPage),
@@ -413,7 +412,7 @@ public sealed partial class MainPage : Page
                 {
                     ContentFrame.Navigate(pageType, null, new Microsoft.UI.Xaml.Media.Animation.SuppressNavigationTransitionInfo());
                 }
-                
+
                 // Set header text using the centralized UpdateHeader method
                 UpdateHeader();
             }
@@ -499,8 +498,7 @@ public sealed partial class MainPage : Page
     {
         try
         {
-            // Halt any running 3D holographic composition scan effects globally on navigation
-            WinCarePro.Core.Helpers.Animation3DHelper.StopAll3DScanEffects();
+            // Halt any running scan effects globally on navigation
 
             if (ContentFrame.Content is Page oldPage)
             {
@@ -547,7 +545,6 @@ public sealed partial class MainPage : Page
     {
         // Unified 4-Group Sidebar Architecture: All core modules directly accessible on the Nav Bar
         if (NavDashboard != null) NavDashboard.Visibility = Visibility.Visible;
-        if (NavAi != null) NavAi.Visibility = Visibility.Collapsed;
         if (NavJunk != null) NavJunk.Visibility = Visibility.Visible;
         if (NavRegistry != null) NavRegistry.Visibility = Visibility.Visible;
         if (NavUninstall != null) NavUninstall.Visibility = Visibility.Visible;

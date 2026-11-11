@@ -47,12 +47,6 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavAi" Tag="AiWinCareEngine" Content="Diagnostics" Visibility="Collapsed" AutomationProperties.Name="Diagnostics" AutomationProperties.HelpText="Intelligent multi-factor system diagnostics and automated remedies.">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE99A;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
                 <!-- HUB 2: APPLICATIONS -->
                 <NavigationViewItemSeparator x:Name="NavSepApps" Visibility="Visible" />
                 <NavigationViewItemHeader x:Name="NavHeaderApps" Content="APPLICATIONS" Visibility="Visible" />

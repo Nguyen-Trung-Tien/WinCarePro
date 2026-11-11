@@ -51,7 +51,6 @@ public partial class TranslationManager
         // Core & Shell
         RegisterCommonTranslations(_translations, en);
         RegisterDashboardTranslations(_translations, en);
-        RegisterDesktopWidgetTranslations(_translations, en);
         RegisterNotificationsTranslations(_translations, en);
 
         // Intelligence & Diagnostics
@@ -109,7 +108,6 @@ public partial class TranslationManager
     private void LoadSettingsCommonTranslations()
     {
         RegisterAiAssistantTranslations(_translations, null!);
-        RegisterDesktopWidgetTranslations(_translations, null!);
         RegisterNotificationsTranslations(_translations, null!);
         RegisterUpdatesTranslations(_translations, null!);
         RegisterSettingsTranslations(_translations, null!);

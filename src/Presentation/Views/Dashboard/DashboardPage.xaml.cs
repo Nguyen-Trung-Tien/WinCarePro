@@ -158,14 +158,6 @@ public sealed partial class DashboardPage : Page
 
     private void OnLaunchDesktopWidgetClick(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.ShowWindow();
-        }
-        catch (Exception ex)
-        {
-            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("DashboardPage.OnLaunchDesktopWidgetClick", ex);
-        }
     }
 
     private void OnLaunchOptimizerClick(object sender, RoutedEventArgs e)

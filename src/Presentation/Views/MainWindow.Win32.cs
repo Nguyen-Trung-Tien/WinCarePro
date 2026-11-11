@@ -355,7 +355,7 @@ public sealed partial class MainWindow : Window
             }
             else if (cmd == ID_TRAY_HUD)
             {
-                WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.ShowWindow();
+                // Zero-bloat mode: Desktop HUD is retired
             }
             else if (cmd == ID_TRAY_SCAN)
             {

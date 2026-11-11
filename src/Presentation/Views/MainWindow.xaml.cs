@@ -436,7 +436,6 @@ public sealed partial class MainWindow : Window
 
         try
         {
-            WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.CloseWindow();
         }
         catch (Exception ex)
         {
@@ -618,7 +617,6 @@ public sealed partial class MainWindow : Window
             }
 
             WinCarePro.Core.Helpers.Animation3DHelper.StopAll3DScanEffects();
-            WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.CloseWindow();
         }
         catch (Exception ex)
         {
@@ -693,14 +691,6 @@ public sealed partial class MainWindow : Window
 
     private void OnWidgetLaunchClick(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.ShowWindow();
-        }
-        catch (Exception ex)
-        {
-            Infrastructure.Logging.CrashLogger.LogException("MainWindow.OnWidgetLaunchClick", ex);
-        }
     }
 
     public void UpdateTitleBarExperienceMode(bool isPro)

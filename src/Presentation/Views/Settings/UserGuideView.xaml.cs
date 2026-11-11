@@ -201,15 +201,6 @@ public sealed partial class UserGuideView : UserControl
 
     private void OnLaunchWidgetClick(object sender, RoutedEventArgs e)
     {
-        if (sender is Button btn)
-        {
-            FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.1f, 300);
-            try
-            {
-                WinCarePro.Modules.DesktopWidget.DesktopWidgetWindow.ShowWindow();
-            }
-            catch { }
-        }
     }
 
     private MainPage? GetMainPage()

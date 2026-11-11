@@ -217,33 +217,7 @@ public partial class DashboardViewModel
                         UpdateHealthScoreBreakdown();
                     });
 
-                    // Periodic snapshot recording for Resource History & Insights (Every ~30 ticks)
-                    if (tickCount % 30 == 0 || (HasBottleneck && tickCount % 10 == 0))
-                    {
-                        string? reason = HasBottleneck ? BottleneckStatus : null;
-                        double curCpu = cpu;
-                        double curRam = ram;
-                        double curDisk = disk;
-                        double curGpu = gpu;
-                        _ = Task.Run(() =>
-                        {
-                            try
-                            {
-                                Database.DbManager.SaveResourceSnapshot(curCpu, curRam, curDisk, curGpu, reason);
-                                var insights = Database.DbManager.GetResourceInsights();
-                                _dispatcherQueue?.TryEnqueue(() =>
-                                {
-                                    ResourceInsightsText = insights.HealthInsight.T();
-                                    ResourceDominantBottleneck = insights.DominantBottleneck.T();
-                                    ResourceAverageLoadText = string.Format("Avg CPU: {0}% | RAM: {1}%".T(), insights.AverageCpu, insights.AverageRam);
-                                });
-                            }
-                            catch (Exception ex)
-                            {
-                                CrashLogger.LogException("DashboardViewModel.SaveResourceSnapshot", ex);
-                            }
-                        });
-                    }
+                    // Zero-Bloat Mode: Background telemetry snapshots to SQLite are disabled to prevent unnecessary I/O.
 
                     try
                     {

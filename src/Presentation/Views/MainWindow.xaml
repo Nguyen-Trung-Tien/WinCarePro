@@ -148,11 +148,6 @@
                             <TextBlock x:Name="ClockText" Text="--:--" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" AutomationProperties.Name="System Clock" AutomationProperties.LiveSetting="Polite"/>
                         </StackPanel>
 
-                        <!-- 1-Click Desktop Mini HUD Widget Toggle (Collapsed in Zero-Bloat mode) -->
-                        <Button x:Name="WidgetLaunchBtn" Visibility="Collapsed" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="OnWidgetLaunchClick" ToolTipService.ToolTip="Desktop HUD Widget" AutomationProperties.Name="Desktop HUD Widget" AutomationProperties.HelpText="Launch or toggle the floating Desktop HUD performance widget.">
-                            <FontIcon Glyph="&#xE9D9;" FontSize="12.5" Foreground="{StaticResource PrimaryAccentBrush}" />
-                        </Button>
-
                         <!-- Notifications with Badge -->
                         <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="NotificationButton_Click" helpers:AnimationHelper.HoverScale="1.08" helpers:AnimationHelper.PressedScale="0.92" ToolTipService.ToolTip="Notifications" AutomationProperties.Name="Notifications" AutomationProperties.HelpText="Open notification center and review recent system alerts.">
                             <Grid>

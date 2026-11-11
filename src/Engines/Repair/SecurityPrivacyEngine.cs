@@ -81,6 +81,29 @@ public partial class SecurityPrivacyEngine
         }
     }
 
+    public (bool domain, bool @private, bool @public) GetFirewallProfilesStatus()
+    {
+        bool domain = IsFirewallProfileEnabled("DomainProfile");
+        bool priv = IsFirewallProfileEnabled("StandardProfile");
+        bool pub = IsFirewallProfileEnabled("PublicProfile");
+        return (domain, priv, pub);
+    }
+
+    private bool IsFirewallProfileEnabled(string profile)
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\{profile}");
+            if (key != null)
+            {
+                var val = key.GetValue("EnableFirewall");
+                return val != null && Convert.ToInt32(val) != 0;
+            }
+        }
+        catch { }
+        return false;
+    }
+
     public bool EnableAllFirewallProfiles()
     {
         bool success = true;
@@ -121,6 +144,37 @@ public partial class SecurityPrivacyEngine
         }
         catch { }
         return true;
+    }
+
+    public (bool enabled, int consentLevel, string description) GetUacLevelDetails()
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System");
+            if (key != null)
+            {
+                var enableLua = key.GetValue("EnableLUA");
+                bool isLua = enableLua != null && Convert.ToInt32(enableLua) == 1;
+                if (!isLua)
+                {
+                    return (false, 0, "UAC Disabled (Never notify)");
+                }
+
+                var prompt = key.GetValue("ConsentPromptBehaviorAdmin");
+                int promptVal = prompt != null ? Convert.ToInt32(prompt) : 5;
+                string desc = promptVal switch
+                {
+                    0 => "Elevate without prompting (Insecure)",
+                    1 => "Prompt for credentials on secure desktop",
+                    2 => "Always notify on secure desktop",
+                    5 => "Notify for non-Windows apps (Default)",
+                    _ => $"Custom Policy (Level {promptVal})"
+                };
+                return (true, promptVal, desc);
+            }
+        }
+        catch { }
+        return (true, 5, "Notify for non-Windows apps (Default)");
     }
 
     public bool EnableUac()
@@ -255,18 +309,31 @@ public partial class SecurityPrivacyEngine
     {
         try
         {
+            // First verify if Remote Desktop is actually enabled on the host
+            using var tsKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Terminal Server");
+            if (tsKey != null)
+            {
+                var fDeny = tsKey.GetValue("fDenyTSConnections");
+                if (fDeny == null || Convert.ToInt32(fDeny) != 0)
+                {
+                    // RDP is disabled: zero remote exposure, completely secure
+                    return (true, "Remote Desktop Disabled (Secure)");
+                }
+            }
+
             using var key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp");
             if (key != null)
             {
                 var val = key.GetValue("UserAuthentication");
                 if (val is int intVal && intVal == 1)
                 {
-                    return (true, "RDP NLA Authentication Enforced");
+                    return (true, "RDP Active with NLA Enforced");
                 }
+                return (false, "RDP Active without NLA Authentication");
             }
         }
         catch { }
-        return (true, "Remote Desktop Secured (Standard)");
+        return (true, "Remote Desktop Disabled (Secure)");
     }
 
     public List<string> RunSecurityAudits(List<StartupEntry>? startupEntries = null)

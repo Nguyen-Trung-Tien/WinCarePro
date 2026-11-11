@@ -131,6 +131,32 @@ public sealed partial class SecurityPage : Page
 
     private void OnOpenRegistryEditorClick(object sender, RoutedEventArgs e) => SafeLaunchProcess("regedit.exe");
 
+    private void OnSecurityMatrixActionClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is string target && !string.IsNullOrWhiteSpace(target))
+        {
+            SafeLaunchProcess(target);
+        }
+    }
+
+    public static Microsoft.UI.Xaml.Media.Brush GetStatusPillBg(bool isSecure) =>
+        isSecure 
+            ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(30, 16, 185, 129))
+            : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(30, 239, 68, 68));
+
+    public static Microsoft.UI.Xaml.Media.Brush GetStatusPillBorder(bool isSecure) =>
+        isSecure 
+            ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(60, 16, 185, 129))
+            : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(60, 239, 68, 68));
+
+    public static Microsoft.UI.Xaml.Media.Brush GetStatusPillFg(bool isSecure) =>
+        isSecure 
+            ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129))
+            : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68));
+
+    public static string GetStatusIconGlyph(bool isSecure) =>
+        isSecure ? "\uE73E" : "\uE783";
+
     private async void OnScanSecurityClick(object sender, RoutedEventArgs e)
     {
         await ViewModel.ScanSecurityAsync();
@@ -384,16 +410,7 @@ public sealed partial class SecurityPage : Page
 
     private async void OnClearClipboardClick(object sender, RoutedEventArgs e)
     {
-        var btn = WipeClipboardBtn ?? (sender as Button);
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, WipeClipboardRing, WipeClipboardText, null,
-            "Wiping Clipboard...".T(), "Wipe Clipboard Cache".T(),
-            async () =>
-            {
-                await ViewModel.ClearClipboardAsync();
-            },
-            minDurationMs: 800);
-
+        await ViewModel.ClearClipboardAsync();
         if (App.MainWindowInstance is MainWindow mw)
         {
             mw.ShowToastFromDb("Clipboard Cache".T(),
@@ -403,16 +420,7 @@ public sealed partial class SecurityPage : Page
 
     private async void OnClearRecentClick(object sender, RoutedEventArgs e)
     {
-        var btn = ClearRecentBtn ?? (sender as Button);
-        await UiLoadingHelper.ExecuteWithLoadingAsync(
-            btn, ClearRecentRing, ClearRecentText, null,
-            "Clearing Recent Files...".T(), "Clear Recent Files & Run History".T(),
-            async () =>
-            {
-                await ViewModel.ClearRecentFilesAsync();
-            },
-            minDurationMs: 800);
-
+        await ViewModel.ClearRecentFilesAsync();
         if (App.MainWindowInstance is MainWindow mw)
         {
             mw.ShowToastFromDb("Activity Traces".T(),
@@ -452,25 +460,7 @@ public sealed partial class SecurityPage : Page
 
     private void UpdateLoadingOverlayState()
     {
-        if (LoadingOverlayGrid == null || FadeInLoading == null || FadeOutLoading == null) return;
-
-        if (ViewModel.IsBusy)
-        {
-            LoadingOverlayGrid.Visibility = Visibility.Visible;
-            FadeInLoading.Begin();
-        }
-        else
-        {
-            FadeOutLoading.Begin();
-        }
-    }
-
-    private void FadeOutLoading_Completed(object? sender, object e)
-    {
-        if (!ViewModel.IsBusy && LoadingOverlayGrid != null)
-        {
-            LoadingOverlayGrid.Visibility = Visibility.Collapsed;
-        }
+        // Minimal Fluent UX: overlay removed to avoid UI freeze and visual obstruction
     }
 
     public bool IsNot(bool val) => !val;

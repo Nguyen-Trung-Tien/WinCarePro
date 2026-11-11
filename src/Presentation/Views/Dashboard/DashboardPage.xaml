@@ -538,8 +538,8 @@
                         </Border>
                     </Grid>
 
-                    <!-- Row 3: Performance Trend Chart Card with Series Toggles (Collapsed to eliminate redundant chart clutter) -->
-                    <Border x:Name="PerformanceChartCard" Grid.Row="3" Grid.Column="1" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Margin="4" Padding="14" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Visibility="Collapsed">
+                    <!-- Row 3: Performance Trend Chart Card with Series Toggles -->
+                    <Border x:Name="PerformanceChartCard" Grid.Row="3" Grid.Column="1" x:Load="{x:Bind ViewModel.IsExtendedLayerLoaded, Mode=OneWay}" Loaded="OnExtendedLayerPanelLoaded" Margin="4" Padding="14" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Visibility="Visible">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -810,22 +810,22 @@
         </ScrollViewer>
 
         <!-- ======================================================================== -->
-        <!-- Aura Glass Slide-in Detail Panel & Modal Overlay for Modular Scans        -->
+        <!-- Right Slide-in Detail Panel & Modal Overlay for Modular Scans               -->
         <!-- ======================================================================== -->
         <Grid Grid.Row="0" Grid.RowSpan="2"
               Visibility="{x:Bind ViewModel.IsScanPanelOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-              Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}"
+              Background="Transparent"
               Opacity="1.0"
               Canvas.ZIndex="1000">
 
             <!-- Backdrop Scrim (Click to dismiss) -->
-            <Button Background="#55000000" Click="OnScanPanelScrimClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutomationProperties.Name="Dismiss Scan Panel"/>
+            <Button Background="#80000000" Click="OnScanPanelScrimClick" Style="{StaticResource TransparentWrapperButtonStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutomationProperties.Name="Dismiss Scan Panel"/>
 
-            <!-- Right-aligned Slide-in Aura Glass Card -->
+            <!-- Right-aligned Slide-in Detail Panel (100% Solid Opaque Surface) -->
             <Border HorizontalAlignment="Right" VerticalAlignment="Stretch"
                     Width="520"
-                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                    Background="{ThemeResource AppFlyoutBackground}"
+                    BorderBrush="{ThemeResource AppFlyoutBorder}"
                     BorderThickness="1,0,0,0"
                     CornerRadius="16,0,0,16"
                     Padding="24,20,24,20">
@@ -849,7 +849,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" Margin="0,0,14,0" VerticalAlignment="Center">
+                        <Border Grid.Column="0" Width="44" Height="44" CornerRadius="12" Background="{ThemeResource AppFlyoutItemBackground}" BorderBrush="{ThemeResource AppFlyoutItemBorder}" BorderThickness="1" Margin="0,0,14,0" VerticalAlignment="Center">
                             <FontIcon Glyph="{x:Bind ViewModel.ModeHeaderGlyph, Mode=OneWay}" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Border>
 
@@ -875,14 +875,14 @@
                                 <ItemsControl ItemsSource="{x:Bind ViewModel.ModeSubCategories, Mode=OneWay}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="models:DashboardSubCategoryItem">
-                                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="12,10" Margin="0,0,0,8">
+                                            <Border Background="{ThemeResource AppFlyoutItemBackground}" BorderBrush="{ThemeResource AppFlyoutItemBorder}" BorderThickness="1" CornerRadius="10" Padding="12,10" Margin="0,0,0,8">
                                                 <Grid ColumnSpacing="10">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto" />
                                                         <ColumnDefinition Width="*" />
                                                         <ColumnDefinition Width="Auto" />
                                                     </Grid.ColumnDefinitions>
-                                                    <Border Grid.Column="0" Width="30" Height="30" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" VerticalAlignment="Center">
+                                                    <Border Grid.Column="0" Width="30" Height="30" CornerRadius="8" Background="{ThemeResource AppFlyoutBackground}" BorderBrush="{ThemeResource AppFlyoutItemBorder}" BorderThickness="1" VerticalAlignment="Center">
                                                         <FontIcon Glyph="{x:Bind IconGlyph}" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                                     </Border>
                                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
@@ -900,7 +900,7 @@
                             <!-- State B: Post-Scan Findings & Categorized Health Audit -->
                             <StackPanel Visibility="{x:Bind ViewModel.HasModeScanned, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Spacing="12">
                                 <!-- Severity KPI Summary Bar -->
-                                <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="12,8">
+                                <Border Background="{ThemeResource AppFlyoutItemBackground}" BorderBrush="{ThemeResource AppFlyoutItemBorder}" BorderThickness="1" CornerRadius="10" Padding="12,8">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
@@ -951,7 +951,7 @@
                                 <ItemsControl ItemsSource="{x:Bind ViewModel.ModeFindings, Mode=OneWay}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="models:DashboardScanFinding">
-                                            <Border Background="{ThemeResource AppCardBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="12,10" Margin="0,0,0,6">
+                                            <Border Background="{ThemeResource AppFlyoutItemBackground}" BorderBrush="{ThemeResource AppFlyoutItemBorder}" BorderThickness="1" CornerRadius="10" Padding="12,10" Margin="0,0,0,6">
                                                 <Grid ColumnSpacing="10">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*" />
@@ -976,7 +976,7 @@
                     </ScrollViewer>
 
                     <!-- Row 2: Live Scanning Progress HUD -->
-                    <Border Grid.Row="2" Visibility="{x:Bind ViewModel.IsModeScanning, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="12" Padding="14,10">
+                    <Border Grid.Row="2" Visibility="{x:Bind ViewModel.IsModeScanning, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource AppFlyoutItemBackground}" BorderBrush="{ThemeResource AppFlyoutItemBorder}" BorderThickness="1" CornerRadius="12" Padding="14,10">
                         <StackPanel Spacing="6">
                             <Grid>
                                 <Grid.ColumnDefinitions>

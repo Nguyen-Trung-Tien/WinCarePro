@@ -9,6 +9,7 @@
     xmlns:models="using:WinCarePro.Models"
     xmlns:vm="using:WinCarePro.ViewModels"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:views="using:WinCarePro.Views"
     mc:Ignorable="d">
 
     <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -97,14 +98,14 @@
                         <TextBlock Text="Scan Registry" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
-                <Button Click="OnSafeClean1Click" Style="{StaticResource SuccessButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="14,0"
+                <Button Click="OnSafeClean1Click" Style="{StaticResource SuccessButtonStyle}" IsEnabled="{x:Bind views:RegistryPage.CanSafeClean(ViewModel.SafeCount, ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="14,0"
                         ToolTipService.ToolTip="1-Click automatic repair of all 100% verified zero-risk entries with rollback snapshot">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="White" />
-                        <TextBlock Text="1-Click Safe Fix" VerticalAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="White" />
+                        <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{ThemeResource AppBadgeGoodFg}" />
+                        <TextBlock Text="1-Click Safe Fix" VerticalAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppBadgeGoodFg}" />
                     </StackPanel>
                 </Button>
-                <Button Click="OnRepairClick" Style="{StaticResource DangerButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="14,0"
+                <Button Click="OnRepairClick" Style="{StaticResource DangerButtonStyle}" IsEnabled="{x:Bind views:RegistryPage.CanCleanSelected(ViewModel.Issues.Count, ViewModel.IsBusy), Mode=OneWay}" Height="34" CornerRadius="8" Padding="14,0"
                         ToolTipService.ToolTip="Clean and repair all currently selected registry entries">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE74D;" FontSize="12" Foreground="{ThemeResource AppBadgeCriticalFg}" />
@@ -252,7 +253,12 @@
                 <StackPanel Spacing="14">
 
                     <!-- Issue Stream Bento Card -->
-                    <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14">
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16,14"
+                            MinHeight="440">
                         <StackPanel Spacing="12">
                             <!-- Stream Header & Quick Actions -->
                             <Grid>
@@ -276,14 +282,14 @@
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                         <TextBlock Text="Filter &amp; Select:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
-                                        <Button Click="OnSelectSafeOnlyClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                                        <Button Click="OnSelectSafeOnlyClick" IsEnabled="{x:Bind views:RegistryPage.CanCleanSelected(ViewModel.Issues.Count, ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3">
                                             <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                                                 <TextBlock Text="100% Safe Only" FontSize="11"/>
                                             </StackPanel>
                                         </Button>
-                                        <Button Click="OnSelectAllClick" Content="Select All" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
-                                        <Button Click="OnDeselectAllClick" Content="Deselect All" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
+                                        <Button Click="OnSelectAllClick" Content="Select All" IsEnabled="{x:Bind views:RegistryPage.CanCleanSelected(ViewModel.Issues.Count, ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
+                                        <Button Click="OnDeselectAllClick" Content="Deselect All" IsEnabled="{x:Bind views:RegistryPage.CanCleanSelected(ViewModel.Issues.Count, ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="8,3" FontSize="11"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="5" VerticalAlignment="Center">
                                         <TextBlock Text="Select item to view key details" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
@@ -294,12 +300,42 @@
 
                             <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
 
-                            <!-- Issues List with Rich Cards -->
-                            <ListView ItemsSource="{x:Bind ViewModel.Issues, Mode=OneWay}" SelectionMode="Single" SelectionChanged="OnIssueSelectionChanged" MaxHeight="320" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
+                            <!-- Empty State Placeholder when no issues scanned yet -->
+                            <Border Visibility="{x:Bind views:RegistryPage.VisibleIfZero(ViewModel.Issues.Count), Mode=OneWay}"
+                                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="24,40"
+                                    MinHeight="260"
+                                    HorizontalAlignment="Stretch">
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+                                    <Border Width="48" Height="48" CornerRadius="24" Background="{StaticResource PrimaryAccentLightBrush}" HorizontalAlignment="Center">
+                                        <FontIcon Glyph="&#xE721;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                    </Border>
+                                    <TextBlock Text="Ready to Scan Registry" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Scan the Windows Registry to detect broken file associations, orphaned paths, and invalid startup keys safely with automatic rollback backup."
+                                               FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" TextAlignment="Center" MaxWidth="380" TextWrapping="Wrap"/>
+                                    <Button Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Content="Scan Registry Now" HorizontalAlignment="Center" Margin="0,6,0,0" Padding="18,6"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Issues List with Flat Cards -->
+                            <ListView ItemsSource="{x:Bind ViewModel.Issues, Mode=OneWay}"
+                                      Visibility="{x:Bind views:RegistryPage.VisibleIfPositive(ViewModel.Issues.Count), Mode=OneWay}"
+                                      SelectionMode="Single"
+                                      SelectionChanged="OnIssueSelectionChanged"
+                                      MinHeight="280"
+                                      MaxHeight="500"
+                                      ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="models:RegistryIssue">
-                                        <Border Style="{StaticResource Tilt3DCardStyle}" Padding="10,8" Margin="0,0,0,4"
-                                                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
+                                        <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                                BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="6"
+                                                Padding="10,8"
+                                                Margin="0,0,0,4">
                                             <Grid ColumnSpacing="10">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" />
@@ -310,14 +346,14 @@
                                                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
                                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                                         <TextBlock Text="{x:Bind Title}" FontWeight="Bold" FontSize="12" />
-                                                        <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="4,1">
+                                                        <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="4,1">
                                                             <TextBlock Text="{x:Bind Section}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                                         </Border>
                                                     </StackPanel>
                                                     <TextBlock Text="{x:Bind KeyPath}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                                 <!-- Safety Badge -->
-                                                <Border Grid.Column="2" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
+                                                <Border Grid.Column="2" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
                                                     <TextBlock Text="{x:Bind RiskBadgeText}" FontSize="10" FontWeight="Bold" Foreground="{x:Bind RiskColorHex}"/>
                                                 </Border>
                                             </Grid>
@@ -336,8 +372,7 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Open Registry Editor -->
-                        <Border Grid.Column="0" Style="{StaticResource Tilt3DCardStyle}" Padding="14,12"
-                                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
+                        <Border Grid.Column="0" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="14,12">
                             <Grid ColumnSpacing="12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -361,8 +396,7 @@
                         </Border>
 
                         <!-- Open System Restore -->
-                        <Border Grid.Column="1" Style="{StaticResource Tilt3DCardStyle}" Padding="14,12"
-                                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.0" helpers:Animation3DHelper.DepthZ="8">
+                        <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="14,12">
                             <Grid ColumnSpacing="12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -393,8 +427,11 @@
                 <StackPanel Spacing="14">
 
                     <!-- Deck 1: Smart AI Root-Cause & Visual Diff Inspector -->
-                    <Border Style="{StaticResource SpatialDepthCardStyle}" Padding="16,14"
-                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="10">
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16,14">
                         <StackPanel Spacing="10">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -409,39 +446,58 @@
                                 </Border>
                             </Grid>
 
-                            <!-- Inspected Item Details -->
-                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="10,8">
-                                <StackPanel Spacing="6">
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <TextBlock Text="Target Key:" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        <TextBlock Text="{x:Bind ViewModel.SelectedIssue.Title, Mode=OneWay, FallbackValue='(Select an issue from list)'}" FontWeight="Bold" FontSize="11" TextTrimming="CharacterEllipsis"/>
-                                    </StackPanel>
-                                    <TextBlock Text="{x:Bind ViewModel.SelectedIssue.KeyPath, Mode=OneWay, FallbackValue='Click any issue on the left to see root cause and visual diff.'}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                            <!-- Placeholder when no issue is selected -->
+                            <Border Visibility="{x:Bind views:RegistryPage.VisibleIfNull(ViewModel.SelectedIssue), Mode=OneWay}"
+                                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Padding="16,24"
+                                    MinHeight="160">
+                                <StackPanel Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE946;" FontSize="22" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="No Issue Selected" FontSize="12.5" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Select any registry issue from the list on the left to inspect root cause, key details, and rollback diff preview."
+                                               FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="300"/>
                                 </StackPanel>
                             </Border>
 
-                            <!-- AI Root-Cause Analysis Capsule -->
-                            <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10,8">
-                                <Grid ColumnSpacing="8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Top" Margin="0,2,0,0"/>
-                                    <StackPanel Grid.Column="1" Spacing="2">
-                                        <TextBlock Text="Key Impact &amp; Details:" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                        <TextBlock Text="{x:Bind ViewModel.SelectedIssue.AiRecommendation, Mode=OneWay, FallbackValue='Leftover uninstalled application registry entry or broken link.'}" FontSize="10.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextWrapping="Wrap"/>
+                            <!-- Actual Issue Details when selected -->
+                            <StackPanel Visibility="{x:Bind views:RegistryPage.VisibleIfNotNull(ViewModel.SelectedIssue), Mode=OneWay}" Spacing="10">
+                                <!-- Inspected Item Details -->
+                                <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="10,8">
+                                    <StackPanel Spacing="6">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <TextBlock Text="Target Key:" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Text="{x:Bind ViewModel.SelectedIssue.Title, Mode=OneWay}" FontWeight="Bold" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedIssue.KeyPath, Mode=OneWay}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
                                     </StackPanel>
-                                </Grid>
-                            </Border>
+                                </Border>
 
-                            <!-- Visual Diff Terminal Preview -->
-                            <Border Background="#121824" BorderBrush="#25FFFFFF" BorderThickness="1" CornerRadius="8" Padding="10,8">
-                                <StackPanel Spacing="3">
-                                    <TextBlock Text="DIFF PREVIEW (Action on Repair):" FontSize="9.5" FontWeight="Bold" Foreground="#94A3B8"/>
-                                    <TextBlock Text="{x:Bind ViewModel.SelectedIssue.VisualDiffAction, Mode=OneWay, FallbackValue='[-] Remove orphaned subkey / dead reference'}" FontSize="10.5" Foreground="#EF4444" FontFamily="Consolas, Cascadia Code, monospace"/>
-                                </StackPanel>
-                            </Border>
+                                <!-- AI Root-Cause Analysis Capsule -->
+                                <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10,8">
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                                        <StackPanel Grid.Column="1" Spacing="2">
+                                            <TextBlock Text="Key Impact &amp; Details:" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                            <TextBlock Text="{x:Bind ViewModel.SelectedIssue.AiRecommendation, Mode=OneWay}" FontSize="10.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Visual Diff Terminal Preview -->
+                                <Border Background="#121824" BorderBrush="#25FFFFFF" BorderThickness="1" CornerRadius="8" Padding="10,8">
+                                    <StackPanel Spacing="3">
+                                        <TextBlock Text="DIFF PREVIEW (Action on Repair):" FontSize="9.5" FontWeight="Bold" Foreground="#94A3B8"/>
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedIssue.VisualDiffAction, Mode=OneWay}" FontSize="10.5" Foreground="#EF4444" FontFamily="Consolas, Cascadia Code, monospace"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
 
                             <!-- Inspector Action Buttons -->
                             <Grid ColumnSpacing="8">
@@ -449,13 +505,17 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Click="OnRepairSingleIssueClick" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="6" Padding="0,6" FontSize="11" FontWeight="SemiBold">
+                                <Button Grid.Column="0" Click="OnRepairSingleIssueClick"
+                                        IsEnabled="{x:Bind views:RegistryPage.IsNotNull(ViewModel.SelectedIssue), Mode=OneWay}"
+                                        Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="6" Padding="0,6" FontSize="11" FontWeight="SemiBold">
                                     <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
                                         <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{ThemeResource AppBadgeGoodFg}"/>
                                         <TextBlock Text="Repair Key"/>
                                     </StackPanel>
                                 </Button>
-                                <Button Grid.Column="1" Click="OnOpenRegeditClick" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="6" Padding="0,6" FontSize="11">
+                                <Button Grid.Column="1" Click="OnOpenRegeditClick"
+                                        IsEnabled="{x:Bind views:RegistryPage.IsNotNull(ViewModel.SelectedIssue), Mode=OneWay}"
+                                        Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="6" Padding="0,6" FontSize="11">
                                     <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
                                         <FontIcon Glyph="&#xE8A7;" FontSize="11"/>
                                         <TextBlock Text="Regedit"/>
@@ -466,8 +526,11 @@
                     </Border>
 
                     <!-- Deck 2: Safety Snapshots & Time-Machine Rollback -->
-                    <Border Style="{StaticResource SpatialDepthCardStyle}" Padding="16,14"
-                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8">
+                    <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="16,14">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -496,7 +559,12 @@
                                 <ListView ItemsSource="{x:Bind ViewModel.Backups, Mode=OneWay}" SelectionMode="None" MaxHeight="200" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
                                     <ListView.ItemTemplate>
                                         <DataTemplate x:DataType="models:RegistryBackupItem">
-                                            <Border Style="{StaticResource Tilt3DCardStyle}" Padding="8,6" Margin="0,0,0,4">
+                                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="6"
+                                                    Padding="8,6"
+                                                    Margin="0,0,0,4">
                                                 <Grid ColumnSpacing="8">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto" />

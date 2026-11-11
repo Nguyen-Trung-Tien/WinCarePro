@@ -19,6 +19,7 @@ public partial class DashboardViewModel
     private NativeApi.FILETIME _prevKernelTime;
     private NativeApi.FILETIME _prevUserTime;
     private bool _hasPrevTimes = false;
+    private bool _isHistoricalDataLoaded = false;
 
     private (double cpu, double ramPercent) GetSystemResourceUsage()
     {
@@ -89,6 +90,57 @@ public partial class DashboardViewModel
         return (cpu, ramPercent);
     }
 
+    private void InitializeHistoricalData(double initialCpu, double initialRam, double initialGpu, double initialDisk)
+    {
+        try
+        {
+            var snapshots = Database.DbManager.GetRecentResourceSnapshots(30);
+            int count = CpuSeriesValues.Count;
+            if (count == 0) return;
+
+            if (snapshots != null && snapshots.Count > 0)
+            {
+                snapshots.Reverse();
+                int offset = Math.Max(0, count - snapshots.Count);
+
+                double baseCpu = snapshots[0].CpuPercent;
+                double baseRam = snapshots[0].RamPercent;
+                double baseGpu = snapshots[0].GpuPercent;
+                double baseDisk = snapshots[0].DiskPercent;
+
+                for (int i = 0; i < offset; i++)
+                {
+                    CpuSeriesValues[i].Value = baseCpu;
+                    RamSeriesValues[i].Value = baseRam;
+                    GpuSeriesValues[i].Value = baseGpu;
+                    DiskSeriesValues[i].Value = baseDisk;
+                }
+
+                for (int i = 0; i < snapshots.Count && (i + offset) < count; i++)
+                {
+                    CpuSeriesValues[i + offset].Value = snapshots[i].CpuPercent;
+                    RamSeriesValues[i + offset].Value = snapshots[i].RamPercent;
+                    GpuSeriesValues[i + offset].Value = snapshots[i].GpuPercent;
+                    DiskSeriesValues[i + offset].Value = snapshots[i].DiskPercent;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    CpuSeriesValues[i].Value = initialCpu;
+                    RamSeriesValues[i].Value = initialRam;
+                    GpuSeriesValues[i].Value = initialGpu;
+                    DiskSeriesValues[i].Value = initialDisk;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("DashboardViewModel.InitializeHistoricalData", ex);
+        }
+    }
+
     private void StartResourceMonitor()
     {
         if (Interlocked.CompareExchange(ref _monitorRunning, 1, 0) != 0) return;
@@ -96,49 +148,112 @@ public partial class DashboardViewModel
         _monitorCts = new CancellationTokenSource();
         var token = _monitorCts.Token;
 
-        // Zero-Bloat On-Demand Snapshot: Query Win32 metrics once on view activation without background polling loops
-        Task.Run(() =>
+        Task.Run(async () =>
         {
+            int tickCount = 0;
             try
             {
-                if (token.IsCancellationRequested) return;
-
-                var currentSettings = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
-                bool sensorsEnabled = currentSettings.EnableSensorsThread;
-
-                var (cpu, ram) = GetSystemResourceUsage();
-                double gpu = sensorsEnabled ? GetGpuUsageMetric() : 0.0;
-                double disk = sensorsEnabled ? GetDiskUsageMetric() : 0.0;
-                double cpuTemp = sensorsEnabled ? _hardwareEngine.GetCpuTemperature(cpu) : double.NaN;
-
-                if (token.IsCancellationRequested) return;
-
-                _dispatcherQueue?.TryEnqueue(() =>
+                while (!token.IsCancellationRequested)
                 {
-                    if (token.IsCancellationRequested) return;
+                    tickCount++;
 
-                    CpuUsage = Math.Round(cpu, 1);
-                    RamUsage = Math.Round(ram, 1);
-                    GpuUsage = Math.Round(gpu, 1);
-                    DiskUsage = Math.Round(disk, 1);
-                    CpuTemperature = double.IsNaN(cpuTemp) ? 0 : cpuTemp;
-                    CpuTempFormatted = !sensorsEnabled ? "Disabled".T() : (double.IsNaN(cpuTemp) ? "N/A" : $"{cpuTemp:F0}°C");
-
-                    int count = CpuSeriesValues.Count;
-                    if (count > 0)
+                    var currentSettings = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
+                    bool sensorsEnabled = currentSettings.EnableSensorsThread;
+                    int delayMs = currentSettings.TelemetryIntervalIndex switch
                     {
-                        CpuSeriesValues[count - 1].Value = CpuUsage;
-                        RamSeriesValues[count - 1].Value = RamUsage;
-                        GpuSeriesValues[count - 1].Value = GpuUsage;
-                        DiskSeriesValues[count - 1].Value = DiskUsage;
+                        0 => 500,
+                        1 => 1000,
+                        2 => 2000,
+                        3 => 5000,
+                        _ => 1000
+                    };
+
+                    var (cpu, ram) = GetSystemResourceUsage();
+                    double gpu = sensorsEnabled ? GetGpuUsageMetric() : 0.0;
+                    double disk = sensorsEnabled ? GetDiskUsageMetric() : 0.0;
+                    double cpuTemp = sensorsEnabled ? _hardwareEngine.GetCpuTemperature(cpu) : double.NaN;
+
+                    if (token.IsCancellationRequested) break;
+
+                    _dispatcherQueue?.TryEnqueue(() =>
+                    {
+                        if (token.IsCancellationRequested) return;
+
+                        CpuUsage = Math.Round(cpu, 1);
+                        RamUsage = Math.Round(ram, 1);
+                        GpuUsage = Math.Round(gpu, 1);
+                        DiskUsage = Math.Round(disk, 1);
+                        CpuTemperature = double.IsNaN(cpuTemp) ? 0 : cpuTemp;
+                        CpuTempFormatted = !sensorsEnabled ? "Disabled".T() : (double.IsNaN(cpuTemp) ? "N/A" : $"{cpuTemp:F0}°C");
+
+                        int count = CpuSeriesValues.Count;
+                        if (count > 0)
+                        {
+                            if (!_isHistoricalDataLoaded)
+                            {
+                                InitializeHistoricalData(CpuUsage, RamUsage, GpuUsage, DiskUsage);
+                                _isHistoricalDataLoaded = true;
+                            }
+                            else
+                            {
+                                for (int i = 0; i < count - 1; i++)
+                                {
+                                    CpuSeriesValues[i].Value = CpuSeriesValues[i + 1].Value;
+                                    RamSeriesValues[i].Value = RamSeriesValues[i + 1].Value;
+                                    GpuSeriesValues[i].Value = GpuSeriesValues[i + 1].Value;
+                                    DiskSeriesValues[i].Value = DiskSeriesValues[i + 1].Value;
+                                }
+                                CpuSeriesValues[count - 1].Value = CpuUsage;
+                                RamSeriesValues[count - 1].Value = RamUsage;
+                                GpuSeriesValues[count - 1].Value = GpuUsage;
+                                DiskSeriesValues[count - 1].Value = DiskUsage;
+                            }
+                        }
+
+                        var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
+                        SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
+
+                        DetectBottlenecks();
+                        UpdateHealthScoreBreakdown();
+                    });
+
+                    // Periodic snapshot recording for Resource History & Insights (Every ~30 ticks)
+                    if (tickCount % 30 == 0 || (HasBottleneck && tickCount % 10 == 0))
+                    {
+                        string? reason = HasBottleneck ? BottleneckStatus : null;
+                        double curCpu = cpu;
+                        double curRam = ram;
+                        double curDisk = disk;
+                        double curGpu = gpu;
+                        _ = Task.Run(() =>
+                        {
+                            try
+                            {
+                                Database.DbManager.SaveResourceSnapshot(curCpu, curRam, curDisk, curGpu, reason);
+                                var insights = Database.DbManager.GetResourceInsights();
+                                _dispatcherQueue?.TryEnqueue(() =>
+                                {
+                                    ResourceInsightsText = insights.HealthInsight.T();
+                                    ResourceDominantBottleneck = insights.DominantBottleneck.T();
+                                    ResourceAverageLoadText = string.Format("Avg CPU: {0}% | RAM: {1}%".T(), insights.AverageCpu, insights.AverageRam);
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                CrashLogger.LogException("DashboardViewModel.SaveResourceSnapshot", ex);
+                            }
+                        });
                     }
 
-                    var uptime = TimeSpan.FromMilliseconds(Environment.TickCount64);
-                    SystemUptime = $"{(int)uptime.TotalDays}d {uptime.Hours}h {uptime.Minutes}m";
-
-                    DetectBottlenecks();
-                    UpdateHealthScoreBreakdown();
-                });
+                    try
+                    {
+                        await Task.Delay(delayMs, token);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        break;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -175,6 +290,7 @@ public partial class DashboardViewModel
     public void StopMonitoring()
     {
         _monitorCts?.Cancel();
+        _isHistoricalDataLoaded = false;
         CancelScanIfRunning();
         if (_languageChangedHandler != null)
         {
@@ -232,12 +348,13 @@ public partial class DashboardViewModel
     {
         _dispatcherQueue?.TryEnqueue(() =>
         {
-            var target = seriesName.ToUpperInvariant() switch
+            string upper = seriesName.ToUpperInvariant();
+            var target = upper switch
             {
-                "CPU" => _cpuLineSeries,
-                "RAM" => _ramLineSeries,
-                "GPU" => _gpuLineSeries,
-                "DISK" => _diskLineSeries,
+                var s when s.Contains("CPU") => _cpuLineSeries,
+                var s when s.Contains("RAM") || s.Contains("MEM") => _ramLineSeries,
+                var s when s.Contains("GPU") => _gpuLineSeries,
+                var s when s.Contains("DISK") || s.Contains("Ổ") => _diskLineSeries,
                 _ => null
             };
 

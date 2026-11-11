@@ -5,6 +5,23 @@ using WinCarePro.Services;
 
 namespace WinCarePro.Models;
 
+public partial class SecurityStatusItem : ObservableObject
+{
+    public string Id { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public string IconGlyph { get; set; } = "\uE727";
+    public string ActionText { get; set; } = string.Empty;
+    public string ActionTarget { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    private bool _isSecure = true;
+
+    [ObservableProperty]
+    private string _statusText = string.Empty;
+}
+
 public enum SecurityCategory
 {
     Safeguards,

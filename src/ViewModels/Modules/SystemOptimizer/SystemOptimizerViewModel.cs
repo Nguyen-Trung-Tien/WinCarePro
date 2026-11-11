@@ -10,6 +10,8 @@ using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Services.Contracts;
+using WinCarePro.Services.Implementations;
+using WinCarePro.Infrastructure.Logging;
 
 namespace WinCarePro.ViewModels;
 
@@ -68,6 +70,8 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     private DispatcherQueue? _dispatcherQueue;
     private readonly SystemOptimizerEngine _optimizerEngine;
     private readonly INotificationService? _notificationService;
+    private readonly StartupEngine _startupEngine = App.Services?.GetService<StartupEngine>() ?? new();
+    private readonly ServiceSafetyService _serviceSafety = App.Services?.GetService<ServiceSafetyService>() ?? new();
     private CancellationTokenSource? _aiScanCts;
     private bool _isDisposed;
 
@@ -97,6 +101,21 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
     public ObservableCollection<SystemTweak> Tweaks { get; } = new();
     public ObservableCollection<SystemTweak> FilteredTweaks { get; } = new();
     public ObservableCollection<ServiceStatusItem> BackgroundServices { get; } = new();
+    public ObservableCollection<StartupEntry> StartupItems { get; } = new();
+    public ObservableCollection<StartupEntry> FilteredStartupItems { get; } = new();
+
+    private string _startupSearchQuery = string.Empty;
+    public string StartupSearchQuery
+    {
+        get => _startupSearchQuery;
+        set
+        {
+            if (SetProperty(ref _startupSearchQuery, value))
+            {
+                ApplyStartupFilter();
+            }
+        }
+    }
 
     private string _currentSort = "Default";
     public string CurrentSort
@@ -381,39 +400,11 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _gamingOptimizedProcessesCount, value);
     }
 
-    public async Task OptimizeRamAsync(CancellationToken ct = default)
+    public Task OptimizeRamAsync(CancellationToken ct = default)
     {
-        if (IsLoading || _isDisposed) return;
-        IsLoading = true;
-        SetOperationState(OperationState.Running);
-        StatusText = "Optimizing RAM...".T();
-        try
-        {
-            ct.ThrowIfCancellationRequested();
-            var (procs, reclaimed) = await _optimizerEngine.OptimizeRamAsync(ct);
-            double freedMB = reclaimed / (1024.0 * 1024.0);
-
-            GamingRamFreedText = $"{freedMB:N0} MB";
-            GamingOptimizedProcessesCount = procs;
-            StatusText = string.Format("Optimized RAM: Freed {0} MB on {1} processes".T(), freedMB.ToString("N0"), procs);
-            RecalculateEfficiencyScore();
-            UpdateRamAndServices();
-        }
-        catch (OperationCanceledException)
-        {
-            StatusText = "RAM optimization cancelled.".T();
-        }
-        catch (Exception ex)
-        {
-            Infrastructure.Logging.CrashLogger.LogException("SystemOptimizerViewModel.OptimizeRamAsync", ex);
-            Log($"Error optimizing RAM: {ex.Message}");
-            StatusText = string.Format("Error: {0}".T(), ex.Message);
-        }
-        finally
-        {
-            IsLoading = false;
-            SetOperationState(OperationState.Idle);
-        }
+        // Safe memory telemetry refresh without calling EmptyWorkingSet or causing page-fault stutter
+        UpdateRamAndServices();
+        return Task.CompletedTask;
     }
 
     // ============================================================
@@ -677,12 +668,120 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         RunOnUI(() =>
         {
             BackgroundServices.Clear();
-            BackgroundServices.Add(new ServiceStatusItem { ServiceName = "SysMain", DisplayName = "SysMain (Superfetch)".T() });
-            BackgroundServices.Add(new ServiceStatusItem { ServiceName = "DiagTrack", DisplayName = "Telemetry & Diagnostics".T() });
-            BackgroundServices.Add(new ServiceStatusItem { ServiceName = "WSearch", DisplayName = "Windows Search Indexer".T() });
-            BackgroundServices.Add(new ServiceStatusItem { ServiceName = "wuauserv", DisplayName = "Windows Update".T() });
-            BackgroundServices.Add(new ServiceStatusItem { ServiceName = "DoSvc", DisplayName = "Delivery Optimization".T() });
+            BackgroundServices.Add(new ServiceStatusItem { ServiceName = "DiagTrack", DisplayName = "Connected User Experiences & Telemetry (DiagTrack)".T() });
+            BackgroundServices.Add(new ServiceStatusItem { ServiceName = "dmwappushservice", DisplayName = "WAP Push Routing Service (dmwappushservice)".T() });
+            BackgroundServices.Add(new ServiceStatusItem { ServiceName = "WerSvc", DisplayName = "Windows Error Reporting Service (WerSvc)".T() });
+            BackgroundServices.Add(new ServiceStatusItem { ServiceName = "SysMain", DisplayName = "SysMain (Superfetch Disk Caching)".T() });
+            BackgroundServices.Add(new ServiceStatusItem { ServiceName = "DoSvc", DisplayName = "Delivery Optimization Cloud Cache (DoSvc)".T() });
         });
+    }
+
+    public async Task LoadStartupItemsAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            var items = await Task.Run(() => _startupEngine.GetStartupEntries(), ct);
+            RunOnUI(() =>
+            {
+                StartupItems.Clear();
+                foreach (var item in items)
+                {
+                    StartupItems.Add(item);
+                }
+                ApplyStartupFilter();
+            });
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SystemOptimizerViewModel.LoadStartupItemsAsync", ex);
+        }
+    }
+
+    public void ApplyStartupFilter()
+    {
+        RunOnUI(() =>
+        {
+            FilteredStartupItems.Clear();
+            string q = StartupSearchQuery?.Trim() ?? string.Empty;
+            var matched = StartupItems.Where(i =>
+                string.IsNullOrEmpty(q) ||
+                i.Name.Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                i.Command.Contains(q, StringComparison.OrdinalIgnoreCase) ||
+                i.SourceFormatted.Contains(q, StringComparison.OrdinalIgnoreCase)
+            );
+            foreach (var item in matched)
+            {
+                FilteredStartupItems.Add(item);
+            }
+        });
+    }
+
+    public async Task<bool> ToggleStartupItemAsync(StartupEntry entry, bool? targetState = null)
+    {
+        if (entry == null) return false;
+        try
+        {
+            bool target = targetState ?? !entry.IsEnabled;
+            if (entry.IsEnabled == target)
+            {
+                entry.IsEnabled = !target;
+            }
+            bool success = await Task.Run(() => _startupEngine.ToggleStartupEntry(entry, target));
+            if (success)
+            {
+                StatusText = string.Format("Startup entry '{0}' status updated.".T(), entry.Name);
+            }
+            return success;
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SystemOptimizerViewModel.ToggleStartupItemAsync", ex);
+            return false;
+        }
+    }
+
+    public async Task<bool> ToggleServiceStateAsync(ServiceStatusItem item)
+    {
+        if (item == null || string.IsNullOrWhiteSpace(item.ServiceName)) return false;
+
+        if (_serviceSafety.IsProtectedService(item.ServiceName))
+        {
+            ShowNotification("Service Protected".T(), $"'{item.ServiceName}' is a critical protected service and cannot be modified.", Microsoft.UI.Xaml.Controls.InfoBarSeverity.Warning);
+            return false;
+        }
+
+        try
+        {
+            bool isRunning = item.IsRunning;
+            
+            // Record snapshot in DbManager before modifying for rollback support
+            Database.DbManager.SaveSnapshot("WindowsService", item.ServiceName, isRunning ? "Running" : "Stopped", isRunning ? "Stopped" : "Running");
+
+            await Task.Run(() =>
+            {
+                using var sc = new ServiceController(item.ServiceName);
+                if (isRunning && sc.CanStop)
+                {
+                    sc.Stop();
+                    sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(5));
+                }
+                else if (!isRunning)
+                {
+                    sc.Start();
+                    sc.WaitForStatus(ServiceControllerStatus.Running, TimeSpan.FromSeconds(5));
+                }
+            });
+
+            UpdateRamAndServices();
+            ShowNotification("Service Updated".T(), $"Service '{item.ServiceName}' has been successfully {(isRunning ? "stopped" : "started")}.", Microsoft.UI.Xaml.Controls.InfoBarSeverity.Success);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException($"SystemOptimizerViewModel.ToggleServiceStateAsync({item.ServiceName})", ex);
+            ShowNotification("Service Error".T(), ex.Message, Microsoft.UI.Xaml.Controls.InfoBarSeverity.Error);
+            return false;
+        }
     }
 
     public void UpdateRamAndServices()
@@ -728,59 +827,11 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         });
     }
 
-    public async Task BoostRamAsync(bool silent = false, CancellationToken ct = default)
+    public Task BoostRamAsync(bool silent = false, CancellationToken ct = default)
     {
-        if (IsBoosting || _isDisposed) return;
-        IsBoosting = true;
-        try
-        {
-            ct.ThrowIfCancellationRequested();
-            if (!silent)
-            {
-                RamOptimizedText = "Purging memory cache...".T();
-                Log("RAM Booster: Purging process working sets and system memory cache...".T());
-            }
-
-            var (procs, reclaimed) = await _optimizerEngine.OptimizeRamAsync(ct);
-            double mb = reclaimed / 1024.0 / 1024.0;
-
-            RunOnUI(() =>
-            {
-                if (_isDisposed) return;
-
-                var (total, avail, used, pct) = _optimizerEngine.GetRamStatus();
-                RamUsagePercentage = pct;
-                RamUsageText = string.Format("{0:F1} GB / {1:F1} GB ({2:F0}%)", used, total, pct);
-                
-                TotalRamText = string.Format("{0:F1} GB", total);
-                AvailableRamText = string.Format("{0:F1} GB", avail);
-                UsedRamText = string.Format("{0:F1} GB", used);
-
-                RecalculateEfficiencyScore();
-
-                if (!silent)
-                {
-                    string res = string.Format("Reclaimed {0} MB of physical memory.".T(), mb.ToString("F1"));
-                    RamOptimizedText = res;
-                    Log(string.Format("RAM Booster completed. Purged {0} processes and freed {1} MB.".T(), procs, mb.ToString("F1")));
-
-                    var notificationService = _notificationService ?? App.Services?.GetService<INotificationService>();
-                    notificationService?.ShowToast(
-                        "RAM Booster".T(), 
-                        string.Format("Successfully reclaimed {0} MB of physical memory across {1} processes.".T(), mb.ToString("F1"), procs),
-                        NotificationSeverity.Success
-                    );
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            Infrastructure.Logging.CrashLogger.LogException("SystemOptimizerViewModel.BoostRamAsync", ex);
-        }
-        finally
-        {
-            IsBoosting = false;
-        }
+        // Gimmick removed: update authentic telemetry without forcing paging file swap
+        UpdateRamAndServices();
+        return Task.CompletedTask;
     }
 
     private (string raw, string localized) GetServiceStatus(string name)
@@ -1056,16 +1107,13 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
                 }
             }
 
-            // Also purge RAM cache for instant boost
-            await BoostRamAsync(silent: true);
-
             StatusText = string.Format("Applied {0} tweaks successfully.".T(), applied);
             Log(string.Format("Registry Sweep completed. Successfully adjusted {0} settings.".T(), applied));
             
             var notificationService = _notificationService ?? App.Services?.GetService<INotificationService>();
             notificationService?.ShowToast(
                 "System Optimizer".T(), 
-                string.Format("Successfully applied {0} performance tweaks and purged RAM cache.".T(), applied),
+                string.Format("Successfully applied {0} system performance tweaks.".T(), applied),
                 NotificationSeverity.Success
             );
 

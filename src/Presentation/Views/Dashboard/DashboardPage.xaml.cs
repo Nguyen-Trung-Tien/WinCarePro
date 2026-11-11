@@ -92,6 +92,7 @@ public sealed partial class DashboardPage : Page
 
         this.Unloaded += (s, e) =>
         {
+            try { ViewModel?.StopMonitoring(); } catch { }
             TranslationManager.Instance.LanguageChanged -= langHandler;
             WinCarePro.Services.Implementations.SettingsService.Instance.SettingsChanged -= _settingsChangedHandler;
         };
@@ -117,7 +118,7 @@ public sealed partial class DashboardPage : Page
             if (QuickStatsGrid != null) QuickStatsGrid.Visibility = Visibility.Visible;
             if (CpuRamGrid != null) CpuRamGrid.Visibility = Visibility.Visible;
             if (GpuDiskGrid != null) GpuDiskGrid.Visibility = Visibility.Visible;
-            if (PerformanceChartCard != null) PerformanceChartCard.Visibility = Visibility.Collapsed;
+            if (PerformanceChartCard != null) PerformanceChartCard.Visibility = Visibility.Visible;
             if (RecommendationsCard != null) RecommendationsCard.Visibility = Visibility.Collapsed;
 
             UpdateResponsiveLayout(this.ActualWidth);
@@ -435,7 +436,12 @@ public sealed partial class DashboardPage : Page
 
         var curMode = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
         UpdateExperienceMode(curMode.IsProMode);
+        if (PerformanceChartCard != null)
+        {
+            PerformanceChartCard.Visibility = Visibility.Visible;
+        }
         UpdateResponsiveLayout(this.ActualWidth);
+        Bindings.Update();
 
         if (GaugeRingGrid != null)
         {

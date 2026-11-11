@@ -19,120 +19,39 @@
     </Page.KeyboardAccelerators>
 
     <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 1024px (1 neat row of 4 stat cards) -->
-                <VisualState x:Name="WideState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1024" />
-                    </VisualState.StateTriggers>
-                </VisualState>
-
-                <!-- Medium Layout: Viewport Width between 720px and 1024px -->
-                <VisualState x:Name="MediumState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="HeaderCol1.Width" Value="0" />
-                        <Setter Target="HeaderTitlePanel.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="HeaderButtons.(Grid.Row)" Value="1" />
-                        <Setter Target="HeaderButtons.(Grid.Column)" Value="0" />
-                        <Setter Target="HeaderButtons.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="HeaderButtons.HorizontalAlignment" Value="Left" />
-                        <Setter Target="HeaderButtons.Margin" Value="0,8,0,0" />
-                        
-                        <Setter Target="StatCol0.Width" Value="*" />
-                        <Setter Target="StatCol1.Width" Value="*" />
-                        <Setter Target="StatCol2.Width" Value="0" />
-                        <Setter Target="StatCol3.Width" Value="0" />
-                        <Setter Target="StatCard0.(Grid.Row)" Value="0" />
-                        <Setter Target="StatCard0.(Grid.Column)" Value="0" />
-                        <Setter Target="StatCard1.(Grid.Row)" Value="0" />
-                        <Setter Target="StatCard1.(Grid.Column)" Value="1" />
-                        <Setter Target="StatCard2.(Grid.Row)" Value="1" />
-                        <Setter Target="StatCard2.(Grid.Column)" Value="0" />
-                        <Setter Target="StatCard3.(Grid.Row)" Value="1" />
-                        <Setter Target="StatCard3.(Grid.Column)" Value="1" />
-                        <Setter Target="Col1.Width" Value="0" />
-                    </VisualState.Setters>
-                </VisualState>
-
-                <!-- Narrow Layout: Viewport Width < 720px -->
-                <VisualState x:Name="NarrowState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="HeaderCol1.Width" Value="0" />
-                        <Setter Target="HeaderTitlePanel.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="HeaderButtons.(Grid.Row)" Value="1" />
-                        <Setter Target="HeaderButtons.(Grid.Column)" Value="0" />
-                        <Setter Target="HeaderButtons.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="HeaderButtons.HorizontalAlignment" Value="Left" />
-                        <Setter Target="HeaderButtons.Margin" Value="0,8,0,0" />
-                        
-                        <Setter Target="StatCol0.Width" Value="*" />
-                        <Setter Target="StatCol1.Width" Value="0" />
-                        <Setter Target="StatCol2.Width" Value="0" />
-                        <Setter Target="StatCol3.Width" Value="0" />
-                        <Setter Target="StatCard0.(Grid.Row)" Value="0" />
-                        <Setter Target="StatCard0.(Grid.Column)" Value="0" />
-                        <Setter Target="StatCard1.(Grid.Row)" Value="1" />
-                        <Setter Target="StatCard1.(Grid.Column)" Value="0" />
-                        <Setter Target="StatCard2.(Grid.Row)" Value="2" />
-                        <Setter Target="StatCard2.(Grid.Column)" Value="0" />
-                        <Setter Target="StatCard3.(Grid.Row)" Value="3" />
-                        <Setter Target="StatCard3.(Grid.Column)" Value="0" />
-                        
-                        <Setter Target="TweaksCard.(Grid.Row)" Value="0" />
-                        <Setter Target="TweaksCard.(Grid.Column)" Value="0" />
-                        <Setter Target="TweaksCard.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="RightPanelScroll.(Grid.Row)" Value="1" />
-                        <Setter Target="RightPanelScroll.(Grid.Column)" Value="0" />
-                        <Setter Target="RightPanelScroll.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="Col1.Width" Value="0" />
-                        <Setter Target="Row1.Height" Value="Auto" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> <!-- 0. Header & Presets -->
-            <RowDefinition Height="Auto" /> <!-- 1. 4-Deck Stat Ribbon -->
-            <RowDefinition Height="*" />    <!-- 2. Main Workspace -->
-            <RowDefinition Height="Auto" /> <!-- 3. Status Bar -->
+            <RowDefinition Height="Auto" /> <!-- 0. Header & Action Bar -->
+            <RowDefinition Height="*" />    <!-- 1. Main Tabbed Workspace -->
+            <RowDefinition Height="Auto" /> <!-- 2. Status Bar -->
         </Grid.RowDefinitions>
 
-        <!-- ==================== 0. MODERN HEADER & PRESETS ==================== -->
-        <Grid x:Name="HeaderGrid" Grid.Row="0" Margin="0,0,0,14">
+        <!-- ==================== 0. FLAT HEADER & ACTION BAR ==================== -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
             <Grid.RowDefinitions>
-                <RowDefinition x:Name="HeaderRow0" Height="Auto" />
-                <RowDefinition x:Name="HeaderRow1" Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="HeaderCol0" Width="*" />
-                <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <!-- Left: Title & Subtitle -->
-            <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Spacing="4">
-                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <StackPanel Spacing="2" VerticalAlignment="Center">
-                        <TextBlock Text="System Optimizer" Style="{StaticResource PageHeaderTitleStyle}" />
-                        <TextBlock Text="Optimize performance &amp; RAM." Style="{StaticResource PageHeaderSubtitleStyle}" />
-                    </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="0" Spacing="3" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <FontIcon Glyph="&#xE9D9;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="System Optimizer &amp; Policy Suite" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center" />
                 </StackPanel>
+                <TextBlock Text="Windows performance tuning, startup program management, and telemetry service controls." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
 
-            <!-- Right: Action Toolbar (Direct Profile Pills -> Apply Tweaks -> More Options) -->
-            <StackPanel x:Name="HeaderButtons" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <!-- Refresh Button -->
-                <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="11.5" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" ToolTipService.ToolTip="Refresh Telemetry &amp; Tweaks (Ctrl+R)">
+            <!-- Right: Action Buttons -->
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <!-- Restore Defaults Button (1-Click Revert Option) -->
+                <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="11.5" Click="OnRestoreDefaultsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" ToolTipService.ToolTip="Restore Windows Default Settings">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE72C;" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        <TextBlock Text="Refresh" FontWeight="SemiBold"/>
+                        <FontIcon Glyph="&#xE777;" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <TextBlock Text="Restore Defaults" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
@@ -144,17 +63,15 @@
                     </StackPanel>
                 </Button>
 
-                <!-- Restore Defaults Button (Direct 1-Click Revert Option) -->
-                <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="11.5" Click="OnRestoreDefaultsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" ToolTipService.ToolTip="Restore Windows Default Settings"
-                        AutomationProperties.Name="Restore Windows Defaults"
-                        AutomationProperties.HelpText="Reverts all applied tweaks back to standard Windows defaults safely.">
+                <!-- Refresh Button -->
+                <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="11.5" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" ToolTipService.ToolTip="Refresh Telemetry (Ctrl+R)">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="&#xE777;" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                        <TextBlock Text="Restore Defaults" FontWeight="SemiBold"/>
+                        <FontIcon Glyph="&#xE72C;" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <TextBlock Text="Refresh" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
 
-                <!-- Apply Selected Tweaks (Primary Hero CTA with Ambient Glow) -->
+                <!-- Apply Selected Tweaks -->
                 <Button x:Name="ApplyTweaksBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" FontWeight="Bold" Height="34" CornerRadius="8" Padding="18,0" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ProgressRing x:Name="ApplyTweaksRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center" />
@@ -173,588 +90,376 @@
                      IsClosable="True" />
         </Grid>
 
-        <!-- ==================== 1. 4-CARD FROSTED STAT RIBBON (Collapsed to eliminate redundant telemetry clutter) ==================== -->
-        <Grid x:Name="StatRibbonGrid" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,10" ColumnSpacing="10" RowSpacing="8" helpers:AnimationHelper.StaggerIndex="0">
-            <Grid.RowDefinitions>
-                <RowDefinition x:Name="StatRibbonRow0" Height="Auto" />
-                <RowDefinition x:Name="StatRibbonRow1" Height="Auto" />
-                <RowDefinition x:Name="StatRibbonRow2" Height="Auto" />
-                <RowDefinition x:Name="StatRibbonRow3" Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="StatCol0" Width="*" />
-                <ColumnDefinition x:Name="StatCol1" Width="*" />
-                <ColumnDefinition x:Name="StatCol2" Width="*" />
-                <ColumnDefinition x:Name="StatCol3" Width="*" />
-            </Grid.ColumnDefinitions>
+        <!-- ==================== 1. MAIN TABBED WORKSPACE ==================== -->
+        <Pivot Grid.Row="1" Margin="0,-4,0,0">
+            <Pivot.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" FontSize="13.5" FontWeight="SemiBold" Margin="0,0,10,0" />
+                </DataTemplate>
+            </Pivot.HeaderTemplate>
 
-            <!-- Card 0: AI Efficiency & Health Score -->
-            <Border x:Name="StatCard0" Grid.Row="0" Grid.Column="0" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+            <!-- ==================== TAB 1: SYSTEM TWEAKS ==================== -->
+            <PivotItem Header="System Tweaks">
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" /> <!-- 0: Goal Presets Strip -->
+                            <RowDefinition Height="Auto" /> <!-- 1: Category Filter & Search Bar -->
+                            <RowDefinition Height="Auto" /> <!-- 2: Quick Selection & Counters -->
+                            <RowDefinition Height="*" />    <!-- 3: Tweaks List -->
+                        </Grid.RowDefinitions>
 
-                    <Grid Grid.Column="0" Width="40" Height="40" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <Ellipse Stroke="{StaticResource PrimaryAccentGradient}" StrokeThickness="3" Opacity="0.25" />
-                        <ProgressRing Value="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" Width="38" Height="38" 
-                                      Foreground="{StaticResource PrimaryAccentBrush}" Background="Transparent" />
-                        <TextBlock Text="{x:Bind ViewModel.AiHealthScore, Mode=OneWay}" 
-                                   FontSize="13" FontWeight="ExtraBold" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                   Foreground="{StaticResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
-                    </Grid>
-
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                        <TextBlock Text="Efficiency" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <Border Background="{x:Bind ViewModel.EfficiencyGradeBadgeBg, Mode=OneWay}" CornerRadius="6" Padding="6,2" HorizontalAlignment="Left">
-                            <TextBlock Text="{x:Bind ViewModel.EfficiencyGradeText, Mode=OneWay}" FontSize="10" FontWeight="ExtraBold" Foreground="{x:Bind ViewModel.EfficiencyGradeBadgeFg, Mode=OneWay}" />
-                        </Border>
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Card 1: System Tweaks Active Ratio -->
-            <Border x:Name="StatCard1" Grid.Row="0" Grid.Column="1" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE9D9;" FontSize="16" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                        <Grid>
+                        <!-- Goal Presets Strip -->
+                        <Grid Grid.Row="0" Margin="0,0,0,10" ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Applied" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
-                                <TextBlock Text="{x:Bind ViewModel.OptimizedTweaksCount, Mode=OneWay}" FontSize="12" FontWeight="ExtraBold" Foreground="{ThemeResource AppStatusGoodBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                                <TextBlock Text="/" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                <TextBlock Text="{x:Bind ViewModel.TotalTweaksCount, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                            </StackPanel>
-                        </Grid>
-                        <ProgressBar Value="{x:Bind ViewModel.OptimizedTweaksCount, Mode=OneWay}" Maximum="{x:Bind ViewModel.TotalTweaksCount, Mode=OneWay}" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Card 2: RAM Memory Utilization -->
-            <Border x:Name="StatCard2" Grid.Row="0" Grid.Column="2" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusInfoBackground}" BorderBrush="{ThemeResource AppStatusInfoBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE7F1;" FontSize="16" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Memory" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource AppStatusInfoBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                        </Grid>
-                        <ProgressBar Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{ThemeResource AppStatusInfoBrush}" Background="{ThemeResource ControlStrokeColorDefaultBrush}" />
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Card 3: Monitored Services Telemetry -->
-            <Border x:Name="StatCard3" Grid.Row="0" Grid.Column="3" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusPurpleBackground}" BorderBrush="{ThemeResource AppStatusPurpleBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE713;" FontSize="16" Foreground="{ThemeResource AppStatusPurpleBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Services" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                            <Border Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="4" Padding="4,1">
-                                <TextBlock Text="Active" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
-                            </Border>
-                        </Grid>
-                        <TextBlock Text="{x:Bind ViewModel.ActiveServicesCountText, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusPurpleBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
-        </Grid>
 
-        <!-- ==================== 2. MAIN WORKSPACE GRID ==================== -->
-        <Grid Grid.Row="2" ColumnSpacing="0" RowSpacing="12" helpers:AnimationHelper.StaggerIndex="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" x:Name="Row0" />
-                <RowDefinition Height="Auto" x:Name="Row1" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" x:Name="Col0" />
-                <ColumnDefinition Width="0" x:Name="Col1" />
-            </Grid.ColumnDefinitions>
-
-            <!-- Left Pane: Tweaks Management Center (Full Width) -->
-            <Border x:Name="TweaksCard" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" /> <!-- 0: 1-Click Goal Presets Strip -->
-                        <RowDefinition Height="Auto" /> <!-- 1: Category Filter & Search Bar -->
-                        <RowDefinition Height="Auto" /> <!-- 2: Quick Selection & Counters -->
-                        <RowDefinition Height="*" />    <!-- 3: Tweaks List -->
-                    </Grid.RowDefinitions>
-
-                    <!-- 1-Click Goal Presets Strip (Compact Single-Line Bar) -->
-                    <Grid Grid.Row="0" Margin="0,0,0,10" ColumnSpacing="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Preset 1: Gaming Focus -->
-                        <Button Grid.Column="0" Click="OnSelectGamingProfileClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Height="34" Padding="12,0" CornerRadius="8"
-                                ToolTipService.ToolTip="Gaming Focus: Enable Windows Game Mode, HAGS, and optimize input latency">
-                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xEA3A;" FontSize="13" Foreground="#FF8B5CF6" VerticalAlignment="Center"/>
-                                <TextBlock Text="Gaming Focus" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Preset 2: Office & Productivity -->
-                        <Button Grid.Column="1" Click="OnSelectRecommendedProfileClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Height="34" Padding="12,0" CornerRadius="8"
-                                ToolTipService.ToolTip="Office &amp; Productivity: Maximum stability for Word, Excel, Teams, smooth multi-tab browsing">
-                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE99A;" FontSize="13" Foreground="#FF06B6D4" VerticalAlignment="Center"/>
-                                <TextBlock Text="Office &amp; Productivity" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Preset 3: Daily Balanced -->
-                        <Button Grid.Column="2" Click="OnSelectEcoProfileClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Height="34" Padding="12,0" CornerRadius="8"
-                                ToolTipService.ToolTip="Daily Balanced: Balance system performance, keep PC cool, and preserve battery life">
-                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xEC0A;" FontSize="13" Foreground="#FF3B82F6" VerticalAlignment="Center"/>
-                                <TextBlock Text="Daily Balanced" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Preset 4: Privacy Shield -->
-                        <Button Grid.Column="3" Click="OnSelectPrivacyProfileClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Height="34" Padding="12,0" CornerRadius="8"
-                                ToolTipService.ToolTip="Privacy Shield: Block background diagnostic telemetry, tracking &amp; Windows targeted logs">
-                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="#FF10B981" VerticalAlignment="Center"/>
-                                <TextBlock Text="Privacy Shield" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                    </Grid>
-
-                    <!-- Category Segmented Filter & Search Box (Row 1) -->
-                    <Grid Grid.Row="1" Margin="0,0,0,8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="200" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Category Segmented Pills (Pivot) -->
-                        <Pivot x:Name="CategoryPivot" Grid.Column="0" SelectionChanged="OnPivotSelectionChanged" Margin="0,-8,0,0">
-                            <Pivot.HeaderTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" FontSize="13.5" FontWeight="SemiBold" Margin="0,0,6,0" />
-                                </DataTemplate>
-                            </Pivot.HeaderTemplate>
-                            <PivotItem Header="All" Tag="All" />
-                            <PivotItem Header="Performance" Tag="Performance" />
-                            <PivotItem Header="System &amp; Disk" Tag="System &amp; Disk" />
-                            <PivotItem Header="Privacy &amp; Logs" Tag="Privacy &amp; Logs" />
-                        </Pivot>
-
-                        <!-- Sort Order Dropdown -->
-                        <ComboBox Grid.Column="1" SelectionChanged="OnSortSelectionChanged" SelectedIndex="0" CornerRadius="8" Height="34" VerticalAlignment="Center" Margin="0,0,8,0" ToolTipService.ToolTip="Sort tweaks">
-                            <ComboBoxItem Content="Default Order" Tag="Default" />
-                            <ComboBoxItem Content="Sort: Name" Tag="Name" />
-                            <ComboBoxItem Content="Sort: Risk Level" Tag="Risk" />
-                            <ComboBoxItem Content="Sort: Optimized First" Tag="Status" />
-                        </ComboBox>
-
-                        <!-- Instant Search Filter -->
-                        <TextBox Grid.Column="2" x:Name="TweakSearchBox" 
-                                 PlaceholderText="Search tweaks (Ctrl+F)..." 
-                                 TextChanged="OnSearchTextChanged"
-                                 CornerRadius="8" Height="34" VerticalAlignment="Center">
-                        </TextBox>
-                    </Grid>
-
-                    <!-- Quick Selection Bar (Row 2) -->
-                    <Grid Grid.Row="2" Margin="0,0,0,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Clean Selection Actions: Master CheckBox + Filter -->
-                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <CheckBox Content="Select All" Checked="OnMasterSelectAllChanged" Unchecked="OnMasterSelectAllChanged" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center" />
-                            <Button Click="OnSelectUnappliedClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Padding="10,4" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE71C;" FontSize="10.5" Foreground="{ThemeResource PrimaryAccentBrush}"/>
-                                    <TextBlock Text="Unapplied Only" FontSize="11" FontWeight="SemiBold"/>
+                            <Button Grid.Column="0" Click="OnSelectGamingProfileClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Height="34" Padding="12,0" CornerRadius="8">
+                                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xEA3A;" FontSize="13" Foreground="#FF8B5CF6"/>
+                                    <TextBlock Text="Gaming Focus" FontSize="12" FontWeight="SemiBold"/>
                                 </StackPanel>
                             </Button>
-                        </StackPanel>
 
-                        <!-- Tweak Counter Badges -->
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="Total:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.TotalTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
-                                </StackPanel>
-                            </Border>
-                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="6" Padding="6,2">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="Selected:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.SelectedTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
-                                </StackPanel>
-                            </Border>
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="Optimized:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.OptimizedTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
-                                </StackPanel>
-                            </Border>
-                            <Border Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" CornerRadius="6" Padding="6,2">
-                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock Text="Available:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                                    <TextBlock Text="{x:Bind ViewModel.AvailableTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusWarningBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- Tweaks Virtualized List (Row 3) -->
-                    <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.FilteredTweaks, Mode=OneWay}" SelectionMode="None" ItemContainerStyle="{StaticResource ModernCardListViewItemStyle}">
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsStackPanel />
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:SystemTweak">
-                                <Border Style="{StaticResource Tilt3DCardStyle}" Padding="12,9" Margin="0,0,0,4"
-                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />  <!-- 0: CheckBox -->
-                                            <ColumnDefinition Width="Auto" />  <!-- 1: Icon -->
-                                            <ColumnDefinition Width="*" />     <!-- 2: Details -->
-                                            <ColumnDefinition Width="Auto" />  <!-- 3: Status Badge -->
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <!-- CheckBox -->
-                                        <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,8,0" MinWidth="0" />
-                                        
-                                        <!-- Category Icon with 3D Elevation -->
-                                        <Border Grid.Column="1" Width="34" Height="34" CornerRadius="17" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1.2" Margin="0,0,10,0" VerticalAlignment="Center">
-                                            <FontIcon Glyph="{x:Bind IconGlyph}" Foreground="{ThemeResource SystemAccentColor}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                        </Border>
-                                        
-                                        <!-- Details: Title, Registry Path & Comparison -->
-                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2" Margin="0,0,12,0">
-                                            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" ToolTipService.ToolTip="{x:Bind Description}" />
-                                                <FontIcon Glyph="&#xE946;" FontSize="10.5" Foreground="{ThemeResource SystemAccentColor}" ToolTipService.ToolTip="{x:Bind RegistryPath}" VerticalAlignment="Center" />
-                                            </StackPanel>
-                                            <TextBlock Text="{x:Bind ComparisonText, Mode=OneWay}" FontSize="10" Foreground="{ThemeResource SystemAccentColor}" FontWeight="SemiBold" />
-                                        </StackPanel>
-                                        
-                                        <!-- Status Badge -->
-                                        <Border Grid.Column="3" Background="{x:Bind views:SystemOptimizerPage.GetTweakBadgeBg(IsOptimized), Mode=OneWay}" BorderBrush="{x:Bind views:SystemOptimizerPage.GetTweakBadgeBorder(IsOptimized), Mode=OneWay}" BorderThickness="1" CornerRadius="6" Padding="8,4" VerticalAlignment="Center">
-                                            <TextBlock Text="{x:Bind StatusFormatted, Mode=OneWay}" Foreground="{x:Bind views:SystemOptimizerPage.GetTweakBadgeFg(IsOptimized), Mode=OneWay}" FontSize="10" FontWeight="Bold" />
-                                        </Border>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-
-                    <!-- Empty State (Shown when search/filter yields 0 items) -->
-                    <Border Grid.Row="3"
-                            Visibility="{x:Bind BoolToVisibility(ViewModel.HasNoTweaks), Mode=OneWay}"
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                            BorderThickness="1" CornerRadius="12" Padding="28,32" Margin="0,16,0,0" HorizontalAlignment="Stretch">
-                        <StackPanel HorizontalAlignment="Center" Spacing="10">
-                            <Border Width="48" Height="48" CornerRadius="24" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xE721;" FontSize="20" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Text="No tweaks match your filter" FontWeight="Bold" FontSize="14" HorizontalAlignment="Center" />
-                            <TextBlock Text="Try searching for a different keyword or switch the category filter to 'All'." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" TextAlignment="Center" MaxWidth="360" TextWrapping="Wrap"/>
-                            <Button Click="OnResetFilterClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="14,6" Margin="0,6,0,0" HorizontalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" Spacing="6">
-                                    <FontIcon Glyph="&#xE894;" FontSize="11" Foreground="{ThemeResource PrimaryAccentBrush}"/>
-                                    <TextBlock Text="Reset Filter" FontWeight="SemiBold" FontSize="11.5"/>
+                            <Button Grid.Column="1" Click="OnSelectRecommendedProfileClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Height="34" Padding="12,0" CornerRadius="8">
+                                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE99A;" FontSize="13" Foreground="#FF06B6D4"/>
+                                    <TextBlock Text="Office &amp; Productivity" FontSize="12" FontWeight="SemiBold"/>
                                 </StackPanel>
                             </Button>
-                        </StackPanel>
-                    </Border>
-                </Grid>
-            </Border>
 
-            <!-- Right Pane: Collapsed to eliminate redundant memory/advisor/services sidebar -->
-            <ScrollViewer x:Name="RightPanelScroll" Grid.Column="1" Grid.Row="0" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,2,0">
-                <StackPanel x:Name="RightPanelGrid" Spacing="12">
-                    
-                    <!-- 1. System Memory Telemetry Card -->
-                    <Border x:Name="RamBoosterCard" Style="{StaticResource NeonGlowBorderStyle}" Padding="14,12">
-                        <StackPanel Spacing="8">
-                            <!-- Header -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Border Width="28" Height="28" Background="{ThemeResource AppStatusInfoBackground}" CornerRadius="14" Grid.Column="0">
-                                    <FontIcon Glyph="&#xE7F1;" FontSize="13" Foreground="{ThemeResource AppStatusInfoBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                </Border>
-                                <TextBlock Grid.Column="1" Text="System Memory" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
-                                <Border Grid.Column="2" Background="{ThemeResource AppBadgeGoodBg}" CornerRadius="6" Padding="6,2" VerticalAlignment="Center">
-                                    <TextBlock Text="Optimal" FontSize="10" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
-                                </Border>
-                            </Grid>
-
-                            <!-- RAM Gauge & Metrics Breakdown -->
-                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="10" Padding="12,8">
-                                <Grid ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Gauge Ring -->
-                                    <Grid Width="46" Height="46" Grid.Column="0" VerticalAlignment="Center">
-                                        <ProgressRing Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" 
-                                                      Minimum="0" Maximum="100" 
-                                                      Width="44" Height="44" 
-                                                      Background="{ThemeResource ControlStrokeColorDefaultBrush}" 
-                                                      Foreground="{ThemeResource SystemAccentColor}"
-                                                      IsIndeterminate="False"/>
-                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            <TextBlock Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
-                                            <TextBlock Text="RAM" FontSize="7" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" />
-                                        </StackPanel>
-                                    </Grid>
-
-                                    <!-- Detailed metrics -->
-                                    <Grid Grid.Column="1" RowSpacing="3" VerticalAlignment="Center">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Total:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.TotalRamText, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
-
-                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Used:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.UsedRamText, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
-
-                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Available:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.AvailableRamText, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" />
-                                    </Grid>
-                                </Grid>
-                            </Border>
-
-                            <!-- Authentic Operating System Status Message -->
-                            <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="10,6">
-                                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                    <FontIcon Glyph="&#xE73E;" FontSize="11" Foreground="{ThemeResource AppStatusGoodBrush}" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Memory allocated dynamically by Windows" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                            <Button Grid.Column="2" Click="OnSelectEcoProfileClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Height="34" Padding="12,0" CornerRadius="8">
+                                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xEC0A;" FontSize="13" Foreground="#FF3B82F6"/>
+                                    <TextBlock Text="Daily Balanced" FontSize="12" FontWeight="SemiBold"/>
                                 </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </Border>
+                            </Button>
 
-                    <!-- 2. AI Hardware & Optimization Insight Card -->
-                    <Border Style="{StaticResource AiSmartInsightCardStyle}" Padding="14,12">
-                        <StackPanel Spacing="8">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Border Width="28" Height="28" Background="{ThemeResource AppStatusPurpleBackground}" CornerRadius="14" Grid.Column="0">
-                                    <FontIcon Glyph="&#xE99A;" FontSize="13" Foreground="{ThemeResource AppStatusPurpleBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                </Border>
-                                <TextBlock Grid.Column="1" Text="System Profile Advisor" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
-                                <Button Grid.Column="2" Click="OnRunAiScanClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Height="26" Padding="8,0" FontSize="10.5" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
-                                    <StackPanel Orientation="Horizontal" Spacing="4">
-                                        <FontIcon Glyph="&#xE777;" FontSize="10" Foreground="{ThemeResource SystemAccentColor}" />
-                                        <TextBlock Text="Rescan" />
+                            <Button Grid.Column="3" Click="OnSelectPrivacyProfileClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" Height="34" Padding="12,0" CornerRadius="8">
+                                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="#FF10B981"/>
+                                    <TextBlock Text="Privacy Shield" FontSize="12" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+
+                        <!-- Filter, Sort & Search Box -->
+                        <Grid Grid.Row="1" Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="220" />
+                            </Grid.ColumnDefinitions>
+
+                            <Pivot x:Name="CategoryPivot" Grid.Column="0" SelectionChanged="OnPivotSelectionChanged" Margin="0,-8,0,0">
+                                <Pivot.HeaderTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" FontSize="12.5" FontWeight="SemiBold" Margin="0,0,6,0" />
+                                    </DataTemplate>
+                                </Pivot.HeaderTemplate>
+                                <PivotItem Header="All" Tag="All" />
+                                <PivotItem Header="Performance" Tag="Performance" />
+                                <PivotItem Header="System &amp; Disk" Tag="System &amp; Disk" />
+                                <PivotItem Header="Privacy &amp; Logs" Tag="Privacy &amp; Logs" />
+                            </Pivot>
+
+                            <ComboBox Grid.Column="1" SelectionChanged="OnSortSelectionChanged" SelectedIndex="0" CornerRadius="8" Height="34" VerticalAlignment="Center" Margin="0,0,8,0">
+                                <ComboBoxItem Content="Default Order" Tag="Default" />
+                                <ComboBoxItem Content="Sort: Name" Tag="Name" />
+                                <ComboBoxItem Content="Sort: Risk Level" Tag="Risk" />
+                                <ComboBoxItem Content="Sort: Optimized First" Tag="Status" />
+                            </ComboBox>
+
+                            <TextBox Grid.Column="2" x:Name="TweakSearchBox" 
+                                     PlaceholderText="Search tweaks (Ctrl+F)..." 
+                                     TextChanged="OnSearchTextChanged"
+                                     CornerRadius="8" Height="34" VerticalAlignment="Center">
+                            </TextBox>
+                        </Grid>
+
+                        <!-- Selection Bar & Counters -->
+                        <Grid Grid.Row="2" Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <CheckBox Content="Select All" Checked="OnMasterSelectAllChanged" Unchecked="OnMasterSelectAllChanged" FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                <Button Click="OnSelectUnappliedClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="10,4" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}">
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <FontIcon Glyph="&#xE71C;" FontSize="10.5" Foreground="{ThemeResource PrimaryAccentBrush}"/>
+                                        <TextBlock Text="Unapplied Only" FontSize="11" FontWeight="SemiBold"/>
                                     </StackPanel>
                                 </Button>
-                            </Grid>
-                            <TextBlock Text="{x:Bind ViewModel.AiOptimizationInsight, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
-                            <TextBlock Text="{x:Bind ViewModel.CurrentProfileDescription, Mode=OneWay}" FontSize="10.5" Foreground="{ThemeResource AppStatusInfoBrush}" FontWeight="SemiBold" TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
+                            </StackPanel>
 
-                    <!-- 3. Background Services Monitor Card -->
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
-                        <StackPanel Spacing="8">
-                            <!-- Header -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Border Width="28" Height="28" Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="14" Grid.Column="0">
-                                    <FontIcon Glyph="&#xE713;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="6" Padding="8,2">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <TextBlock Text="Total:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind ViewModel.TotalTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Typography.NumeralAlignment="Tabular" />
+                                    </StackPanel>
                                 </Border>
-                                <TextBlock Grid.Column="1" Text="Monitored Services" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
-                                <Border Grid.Column="2" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="6,1.5" VerticalAlignment="Center">
-                                    <TextBlock Text="Active" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
+                                <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="6" Padding="8,2">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <TextBlock Text="Selected:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind ViewModel.SelectedTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" Typography.NumeralAlignment="Tabular" />
+                                    </StackPanel>
                                 </Border>
-                            </Grid>
+                                <Border Background="#2010B981" BorderBrush="#4010B981" BorderThickness="1" CornerRadius="6" Padding="8,2">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <TextBlock Text="Optimized:" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                        <TextBlock Text="{x:Bind ViewModel.OptimizedTweaksCount, Mode=OneWay}" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981" Typography.NumeralAlignment="Tabular" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
 
-                            <!-- Services Items Control -->
-                            <ItemsControl ItemsSource="{x:Bind ViewModel.BackgroundServices, Mode=OneWay}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="viewmodels:ServiceStatusItem">
-                                        <Grid Padding="0,3" BorderThickness="0,0,0,1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}">
+                        <!-- Virtualized Tweaks List -->
+                        <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.FilteredTweaks, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:SystemTweak">
+                                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="12,10" Margin="0,0,0,6">
+                                        <Grid ColumnSpacing="12">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />  <!-- 0: CheckBox -->
+                                                <ColumnDefinition Width="Auto" />  <!-- 1: Icon -->
+                                                <ColumnDefinition Width="*" />     <!-- 2: Details -->
+                                                <ColumnDefinition Width="Auto" />  <!-- 3: Status Badge -->
                                             </Grid.ColumnDefinitions>
-                                            <FontIcon Glyph="{x:Bind StatusGlyph}" Foreground="{x:Bind StatusColor}" FontSize="10" Margin="0,0,6,0" VerticalAlignment="Center" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind DisplayName}" FontSize="10" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-                                            <Border Grid.Column="2" CornerRadius="4" Padding="5,1" VerticalAlignment="Center" Background="{x:Bind StatusColor}">
-                                                <TextBlock Text="{x:Bind Status}" FontSize="7.5" FontWeight="Bold" Foreground="White" />
+                                            
+                                            <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,4,0" MinWidth="0" />
+                                            
+                                            <Border Grid.Column="1" Width="34" Height="34" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" VerticalAlignment="Center">
+                                                <FontIcon Glyph="{x:Bind IconGlyph}" Foreground="{ThemeResource SystemAccentColor}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
+                                                <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                                    <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5" VerticalAlignment="Center" />
+                                                    <Border CornerRadius="4" Padding="5,1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                                                        <TextBlock Text="{x:Bind Category}" FontSize="9" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                                    </Border>
+                                                </StackPanel>
+                                                <TextBlock Text="{x:Bind Description}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap" />
+                                                <TextBlock Text="{x:Bind ComparisonText, Mode=OneWay}" FontSize="10" Foreground="{ThemeResource SystemAccentColor}" FontWeight="SemiBold" />
+                                            </StackPanel>
+                                            
+                                            <Border Grid.Column="3" Background="{x:Bind views:SystemOptimizerPage.GetTweakBadgeBg(IsOptimized), Mode=OneWay}" BorderBrush="{x:Bind views:SystemOptimizerPage.GetTweakBadgeBorder(IsOptimized), Mode=OneWay}" BorderThickness="1" CornerRadius="6" Padding="8,4" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind StatusFormatted, Mode=OneWay}" Foreground="{x:Bind views:SystemOptimizerPage.GetTweakBadgeFg(IsOptimized), Mode=OneWay}" FontSize="10" FontWeight="Bold" />
                                             </Border>
                                         </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- 3. Kernel & Latency Engine Profile Card -->
-                    <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="14,12">
-                        <StackPanel Spacing="8">
-                            <!-- Header -->
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Border Width="28" Height="28" Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="14" Grid.Column="0">
-                                    <FontIcon Glyph="&#xE9D9;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                </Border>
-                                <TextBlock Grid.Column="1" Text="Kernel &amp; Latency Tuning" FontWeight="Bold" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center" />
-                                <Border Grid.Column="2" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="6,1.5" VerticalAlignment="Center">
-                                    <TextBlock Text="Optimized" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
-                                </Border>
-                            </Grid>
-
-                            <!-- Profile Specs Grid -->
-                            <Grid RowSpacing="4" Margin="0,2,0,4">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Multimedia Scheduling -->
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Multimedia Scheduling:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                                <Border Grid.Row="0" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
-                                    <TextBlock Text="{x:Bind ViewModel.MultimediaSchedulingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
-                                </Border>
-
-                                <!-- Network Throttling -->
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Network Packet Rate:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                                <Border Grid.Row="1" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
-                                    <TextBlock Text="{x:Bind ViewModel.NetworkThrottlingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
-                                </Border>
-
-                                <!-- Kernel Paging -->
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Kernel RAM Resident:" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" />
-                                <Border Grid.Row="2" Grid.Column="1" Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="4" Padding="5,1">
-                                    <TextBlock Text="{x:Bind ViewModel.KernelPagingStatus, Mode=OneWay}" FontSize="8.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
-                                </Border>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
-
-        <!-- ==================== 3. STATUS BAR FOOTER ==================== -->
-        <TextBlock Grid.Row="3" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,8,0,0" />
-
-        <!-- Loading Overlay Indicator — smooth fade in/out -->
-        <Grid x:Name="LoadingOverlayGrid" Grid.Row="0" Grid.RowSpan="4" Background="{ThemeResource AppLoadingOverlayBackground}" Visibility="Collapsed" Opacity="0" Canvas.ZIndex="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Grid.Resources>
-                <Storyboard x:Name="FadeInLoading">
-                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.25">
-                        <DoubleAnimation.EasingFunction>
-                            <CubicEase EasingMode="EaseOut"/>
-                        </DoubleAnimation.EasingFunction>
-                    </DoubleAnimation>
-                </Storyboard>
-                <Storyboard x:Name="FadeOutLoading" Completed="FadeOutLoading_Completed">
-                    <DoubleAnimation Storyboard.TargetName="LoadingOverlayGrid" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.25">
-                        <DoubleAnimation.EasingFunction>
-                            <CubicEase EasingMode="EaseOut"/>
-                        </DoubleAnimation.EasingFunction>
-                    </DoubleAnimation>
-                </Storyboard>
-            </Grid.Resources>
-            <Border Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="16" Padding="36,24" HorizontalAlignment="Center" VerticalAlignment="Center" Width="360">
-                <StackPanel Spacing="14" HorizontalAlignment="Center">
-                    <!-- Glowing Rocket Badge -->
-                    <Grid Width="60" Height="60" HorizontalAlignment="Center">
-                        <Border Width="60" Height="60" CornerRadius="18" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.5">
-                            <FontIcon Glyph="&#xE9D9;" FontSize="22" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
                     </Grid>
+                </Border>
+            </PivotItem>
 
-                    <TextBlock Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="13.5" FontWeight="SemiBold" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="300" />
+            <!-- ==================== TAB 2: STARTUP MANAGER ==================== -->
+            <PivotItem Header="Startup Applications">
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                    <!-- Linear Progress Bar -->
-                    <Border Background="{ThemeResource ControlFillColorDefaultBrush}" CornerRadius="4" Height="8" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" Padding="1" Width="260">
-                        <ProgressBar IsIndeterminate="True" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch"/>
-                    </Border>
-                </StackPanel>
-            </Border>
-        </Grid>
+                        <!-- Header & Search Strip -->
+                        <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="220"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Spacing="2">
+                                <TextBlock Text="Startup Program Execution Manager" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock Text="Verified startup programs parsed from Registry Run hives, Startup folders, and Task Scheduler." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            </StackPanel>
+                            <TextBox Grid.Column="1" Text="{x:Bind ViewModel.StartupSearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                     PlaceholderText="Filter startup apps..." CornerRadius="8" Height="34" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <!-- Virtualized Startup List -->
+                        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.FilteredStartupItems, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:StartupEntry">
+                                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="12,10" Margin="0,0,0,6">
+                                        <Grid ColumnSpacing="12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/> <!-- Icon -->
+                                                <ColumnDefinition Width="*"/>    <!-- Details -->
+                                                <ColumnDefinition Width="Auto"/> <!-- Source Badge -->
+                                                <ColumnDefinition Width="Auto"/> <!-- Impact Badge -->
+                                                <ColumnDefinition Width="Auto"/> <!-- Toggle Switch -->
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xE777;" FontSize="15" Foreground="{ThemeResource SystemAccentColor}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="12.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{x:Bind Command}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+
+                                            <Border Grid.Column="2" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind SourceFormatted}" FontSize="9.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontWeight="SemiBold"/>
+                                            </Border>
+
+                                            <Border Grid.Column="3" Background="#15F59E0B" BorderBrush="#30F59E0B" BorderThickness="1" CornerRadius="4" Padding="6,2" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind Impact}" FontSize="9.5" Foreground="#FFF59E0B" FontWeight="Bold"/>
+                                            </Border>
+
+                                            <ToggleSwitch Grid.Column="4" IsOn="{x:Bind IsEnabled, Mode=TwoWay}" Toggled="OnStartupItemToggled" OnContent="Enabled" OffContent="Disabled" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Border>
+            </PivotItem>
+
+            <!-- ==================== TAB 3: TELEMETRY & SAFE SERVICES ==================== -->
+            <PivotItem Header="Safe Services &amp; Telemetry">
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Info Header with Safety Shield Indicator -->
+                        <Grid Grid.Row="0" Margin="0,0,0,14">
+                            <StackPanel Spacing="3">
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE713;" FontSize="16" Foreground="{ThemeResource SystemAccentColor}"/>
+                                    <TextBlock Text="Telemetry &amp; Background Services Management" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                    <Border Background="#2010B981" BorderBrush="#4010B981" BorderThickness="1" CornerRadius="4" Padding="6,1">
+                                        <TextBlock Text="SafeServiceGuard Shield Active" FontSize="9.5" FontWeight="Bold" Foreground="#FF10B981"/>
+                                    </Border>
+                                </StackPanel>
+                                <TextBlock Text="Safe management of diagnostic telemetry services. Core Windows kernel services (RpcSs, DcomLaunch, WinDefend, PlugPlay) are strictly protected." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Services List -->
+                        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.BackgroundServices, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="viewmodels:ServiceStatusItem">
+                                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" Margin="0,0,0,8">
+                                        <Grid ColumnSpacing="14">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" VerticalAlignment="Center">
+                                                <FontIcon Glyph="{x:Bind StatusGlyph}" Foreground="{x:Bind StatusColor}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                                <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="12.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Bind ServiceName}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            </StackPanel>
+
+                                            <Border Grid.Column="2" Background="{x:Bind StatusColor}" CornerRadius="5" Padding="8,3" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind Status}" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                                            </Border>
+
+                                            <Button Grid.Column="3" Click="OnToggleServiceClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="12,5" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind views:SystemOptimizerPage.GetServiceActionText(IsRunning), Mode=OneWay}" FontSize="11" FontWeight="SemiBold"/>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </Border>
+            </PivotItem>
+
+            <!-- ==================== TAB 4: MEMORY TELEMETRY ==================== -->
+            <PivotItem Header="Hardware Memory">
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="16" HorizontalAlignment="Stretch">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="Physical Hardware RAM Telemetry" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock Text="Authentic physical RAM metrics reported via Windows GlobalMemoryStatusEx. No artificial working-set purge or page-file paging." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            </StackPanel>
+
+                            <!-- Metric Cards Grid -->
+                            <Grid ColumnSpacing="12" RowSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Total Physical RAM -->
+                                <Border Grid.Column="0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="16,14">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Total Physical RAM" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.TotalRamText, Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="Installed motherboard capacity" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- In-Use RAM -->
+                                <Border Grid.Column="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="16,14">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Currently In Use" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.UsedRamText, Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Available RAM -->
+                                <Border Grid.Column="2" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="16,14">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Text="Available Free Memory" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                        <TextBlock Text="{x:Bind ViewModel.AvailableRamText, Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="#FF10B981" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="Standby and free pages ready" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <!-- Progress Bar -->
+                            <StackPanel Spacing="6" Margin="0,4,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Memory Allocation Ratio" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                    <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.RamUsageText, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" Typography.NumeralAlignment="Tabular"/>
+                                </Grid>
+                                <ProgressBar Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{ThemeResource SystemAccentColor}" Background="{ThemeResource ControlStrokeColorDefaultBrush}"/>
+                            </StackPanel>
+
+                            <!-- Architectural Note Banner -->
+                            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10">
+                                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                    <FontIcon Glyph="&#xE783;" FontSize="15" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Memory Architecture: Modern Windows actively utilizes available RAM to cache frequently accessed binaries and files. Unused RAM is wasted RAM; forcing working-set trims causes hard page faults and application stutter." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </PivotItem>
+        </Pivot>
+
+        <!-- ==================== 2. STATUS BAR FOOTER ==================== -->
+        <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,8,0,0" />
     </Grid>
 </Page>

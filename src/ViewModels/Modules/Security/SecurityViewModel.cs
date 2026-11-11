@@ -42,6 +42,26 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     private string _firewallStatusText = "Checking...".T();
 
     [ObservableProperty]
+    private bool _isDefenderRealtimeActive;
+
+    [ObservableProperty]
+    private bool _isFirewallDomainActive;
+
+    [ObservableProperty]
+    private bool _isFirewallPrivateActive;
+
+    [ObservableProperty]
+    private bool _isFirewallPublicActive;
+
+    [ObservableProperty]
+    private bool _isUacActive;
+
+    [ObservableProperty]
+    private string _uacLevelDescription = "Checking...".T();
+
+    public ObservableCollection<WinCarePro.Models.SecurityStatusItem> SecurityMatrixItems { get; } = new();
+
+    [ObservableProperty]
     private bool _isSecureBootEnabled;
 
     [ObservableProperty]
@@ -233,7 +253,10 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
         {
             // Execute checks in parallel for maximum performance (< 400ms)
             var avTask = Task.Run(() => _securityEngine.GetAntivirusStatus(), ct);
+            var realtimeTask = Task.Run(() => _securityEngine.GetDefenderRealtimeStatus(), ct);
             var fwTask = Task.Run(() => _securityEngine.GetFirewallStatus(), ct);
+            var fwProfilesTask = Task.Run(() => _securityEngine.GetFirewallProfilesStatus(), ct);
+            var uacTask = Task.Run(() => _securityEngine.GetUacLevelDetails(), ct);
             var sbTask = Task.Run(() => _securityEngine.CheckSecureBootStatus(), ct);
             var tpmTask = Task.Run(() => _securityEngine.CheckTpmStatus(), ct);
             var ciTask = Task.Run(() => _securityEngine.CheckCoreIsolationStatus(), ct);
@@ -242,7 +265,7 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             var auditItemsTask = Task.Run(() => _securityEngine.RunSecurityAuditItems(), ct);
             var legacyAlertsTask = Task.Run(() => _securityEngine.RunSecurityAudits(), ct);
 
-            await Task.WhenAll(avTask, fwTask, sbTask, tpmTask, ciTask, tpTask, nlaTask, auditItemsTask, legacyAlertsTask);
+            await Task.WhenAll(avTask, realtimeTask, fwTask, fwProfilesTask, uacTask, sbTask, tpmTask, ciTask, tpTask, nlaTask, auditItemsTask, legacyAlertsTask);
 
             if (ct.IsCancellationRequested || _isDisposed)
             {
@@ -252,7 +275,10 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             }
 
             var av = await avTask;
+            bool realtimeOk = await realtimeTask;
             bool fw = await fwTask;
+            var (fwDomain, fwPrivate, fwPublic) = await fwProfilesTask;
+            var (uacOk, uacConsent, uacDesc) = await uacTask;
             var (sbEnabled, sbText) = await sbTask;
             var (tpmOk, tpmText) = await tpmTask;
             var (ciOk, ciText) = await ciTask;
@@ -261,7 +287,7 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             var auditItems = await auditItemsTask;
             var legacyAlerts = await legacyAlertsTask;
 
-            // Calculate Security Score
+            // Retain score property for backward compatibility with existing tests
             int score = 100;
             if (!av.Contains("Enabled") && !av.Contains("Running")) score -= 25;
             if (!fw) score -= 20;
@@ -275,8 +301,14 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             RunOnUI(() =>
             {
                 AntivirusStatus = av.Replace("Enabled", "Enabled".T()).Replace("Disabled", "Disabled".T()).Replace("Running", "Running".T());
+                IsDefenderRealtimeActive = realtimeOk;
                 IsFirewallActive = fw;
+                IsFirewallDomainActive = fwDomain;
+                IsFirewallPrivateActive = fwPrivate;
+                IsFirewallPublicActive = fwPublic;
                 FirewallStatusText = fw ? "Windows Firewall Active".T() : "Firewall Disabled or Inactive".T();
+                IsUacActive = uacOk;
+                UacLevelDescription = uacDesc;
                 IsSecureBootEnabled = sbEnabled;
                 SecureBootStatusText = sbText;
                 IsTpmEnabled = tpmOk;
@@ -288,27 +320,127 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
                 IsRdpNlaEnabled = nlaOk;
                 RdpNlaStatusText = nlaText;
                 SecurityScore = score;
+                SecurityScoreGrade = score >= 90 ? "OPTIMAL".T() : score >= 70 ? "SECURE".T() : "MODERATE".T();
+                DefenseStatusBadge = fw && realtimeOk ? "PROTECTED".T() : "ATTENTION NEEDED".T();
 
-                if (score >= 90)
+                // Populate SysInternals-style Binary Status Table
+                SecurityMatrixItems.Clear();
+                SecurityMatrixItems.Add(new WinCarePro.Models.SecurityStatusItem
                 {
-                    SecurityScoreGrade = "OPTIMAL".T();
-                    DefenseStatusBadge = "SHIELD ARMED".T();
-                }
-                else if (score >= 70)
+                    Id = "defender_realtime",
+                    Name = "Microsoft Defender Real-Time Protection",
+                    Category = "Antivirus / Endpoint Defense",
+                    Description = "Continuous kernel-level malware inspection and real-time execution scanning.",
+                    StatusText = realtimeOk ? "Active (Protected)" : "Disabled (Attention Required)",
+                    IsSecure = realtimeOk,
+                    IconGlyph = "\uE73A",
+                    ActionText = "Open Defender",
+                    ActionTarget = "windowsdefender:"
+                });
+
+                SecurityMatrixItems.Add(new WinCarePro.Models.SecurityStatusItem
                 {
-                    SecurityScoreGrade = "SECURE".T();
-                    DefenseStatusBadge = "PROTECTED".T();
-                }
-                else if (score >= 50)
+                    Id = "fw_domain",
+                    Name = "Windows Firewall - Domain Network Profile",
+                    Category = "Network Stateful Inspection",
+                    Description = "Inbound/outbound packet filtering active for enterprise domain connections.",
+                    StatusText = fwDomain ? "Active (Protected)" : "Inactive / Disabled",
+                    IsSecure = fwDomain,
+                    IconGlyph = "\uE83D",
+                    ActionText = "Firewall Rules",
+                    ActionTarget = "wf.msc"
+                });
+
+                SecurityMatrixItems.Add(new WinCarePro.Models.SecurityStatusItem
                 {
-                    SecurityScoreGrade = "MODERATE".T();
-                    DefenseStatusBadge = "ATTENTION NEEDED".T();
-                }
-                else
+                    Id = "fw_private",
+                    Name = "Windows Firewall - Private Network Profile",
+                    Category = "Network Stateful Inspection",
+                    Description = "Stateful packet filtering for trusted home and private local office networks.",
+                    StatusText = fwPrivate ? "Active (Protected)" : "Inactive / Disabled",
+                    IsSecure = fwPrivate,
+                    IconGlyph = "\uE83D",
+                    ActionText = "Firewall Rules",
+                    ActionTarget = "wf.msc"
+                });
+
+                SecurityMatrixItems.Add(new WinCarePro.Models.SecurityStatusItem
                 {
-                    SecurityScoreGrade = "CRITICAL".T();
-                    DefenseStatusBadge = "EXPOSED".T();
-                }
+                    Id = "fw_public",
+                    Name = "Windows Firewall - Public Network Profile",
+                    Category = "Network Stateful Inspection",
+                    Description = "Strict inbound connection blocking for untrusted public Wi-Fi hotspots.",
+                    StatusText = fwPublic ? "Active (Protected)" : "Inactive / Disabled",
+                    IsSecure = fwPublic,
+                    IconGlyph = "\uE83D",
+                    ActionText = "Firewall Rules",
+                    ActionTarget = "wf.msc"
+                });
+
+                SecurityMatrixItems.Add(new WinCarePro.Models.SecurityStatusItem
+                {
+                    Id = "core_isolation",
+                    Name = "Core Isolation (Hypervisor-Enforced Code Integrity - HVCI)",
+                    Category = "Virtualization-Based Security (VBS)",
+                    Description = "Prevents malicious code execution in kernel mode using hardware virtualization.",
+                    StatusText = ciOk ? "Active (Memory Integrity Enforced)" : "Inactive / Disabled in Windows Settings",
+                    IsSecure = ciOk,
+                    IconGlyph = "\uE72E",
+                    ActionText = "Core Isolation Settings",
+                    ActionTarget = "windowsdefender://coreisolation"
+                });
+
+                SecurityMatrixItems.Add(new WinCarePro.Models.SecurityStatusItem
+                {
+                    Id = "tamper_protection",
+                    Name = "Microsoft Defender Tamper Protection",
+                    Category = "Anti-Tamper & Policy Guard",
+                    Description = "Prevents malicious apps and scripts from overriding or turning off Defender features.",
+                    StatusText = tpOk ? "Active (Locked against unauthorized overrides)" : "Inactive",
+                    IsSecure = tpOk,
+                    IconGlyph = "\uE8A9",
+                    ActionText = "Defender Settings",
+                    ActionTarget = "windowsdefender:"
+                });
+
+                SecurityMatrixItems.Add(new WinCarePro.Models.SecurityStatusItem
+                {
+                    Id = "uac",
+                    Name = "User Account Control (UAC)",
+                    Category = "Authorization & Privilege Elevation",
+                    Description = $"Current Elevation Policy: {uacDesc}",
+                    StatusText = uacOk ? $"Enabled ({uacDesc})" : "Disabled (Never notify - High Risk)",
+                    IsSecure = uacOk,
+                    IconGlyph = "\uE7EF",
+                    ActionText = "Configure UAC",
+                    ActionTarget = "UserAccountControlSettings.exe"
+                });
+
+                SecurityMatrixItems.Add(new WinCarePro.Models.SecurityStatusItem
+                {
+                    Id = "secure_boot",
+                    Name = "UEFI Secure Boot Firmware Guard",
+                    Category = "Platform Hardware Trust",
+                    Description = sbText,
+                    StatusText = sbEnabled ? "Active (UEFI CA Verified)" : "Inactive (Legacy / CSM Mode)",
+                    IsSecure = sbEnabled,
+                    IconGlyph = "\uE950",
+                    ActionText = "System Info",
+                    ActionTarget = "msinfo32.exe"
+                });
+
+                SecurityMatrixItems.Add(new WinCarePro.Models.SecurityStatusItem
+                {
+                    Id = "tpm",
+                    Name = "Trusted Platform Module (TPM 2.0)",
+                    Category = "Hardware Cryptographic Processor",
+                    Description = tpmText,
+                    StatusText = tpmOk ? "Detected & Operational" : "Not Detected or Disabled in BIOS",
+                    IsSecure = tpmOk,
+                    IconGlyph = "\uE950",
+                    ActionText = "TPM Console",
+                    ActionTarget = "tpm.msc"
+                });
 
                 // Populate rich audit items
                 SecurityAuditItems.Clear();
@@ -351,7 +483,7 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
                 OnPropertyChanged(nameof(CriticalAlertCount));
                 OnPropertyChanged(nameof(WarningAlertCount));
 
-                StatusMessage = string.Format("Scan complete. Security Score: {0}/100".T(), SecurityScore);
+                StatusMessage = "Security status refreshed directly from Windows Security Center.".T();
                 SetOperationState(OperationState.Completed);
             });
         }

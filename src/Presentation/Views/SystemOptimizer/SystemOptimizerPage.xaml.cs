@@ -10,15 +10,12 @@ using WinCarePro.Models;
 using WinCarePro.Services;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Infrastructure.Logging;
-using WinCarePro.Shared.Animations;
 using WinCarePro.Shared.Components;
 
 namespace WinCarePro.Views;
 
 public sealed partial class SystemOptimizerPage : Page
 {
-    private DispatcherTimer? _ramTimer;
-
     public SystemOptimizerViewModel ViewModel { get; }
 
     public SystemOptimizerPage()
@@ -31,7 +28,6 @@ public sealed partial class SystemOptimizerPage : Page
         this.Loaded += (s, e) =>
         {
             TranslationManager.Instance.Translate(this);
-            UpdateLoadingOverlayState();
         };
         var langHandler = new EventHandler((s, e) =>
         {
@@ -39,14 +35,6 @@ public sealed partial class SystemOptimizerPage : Page
         });
         TranslationManager.Instance.LanguageChanged += langHandler;
         this.Unloaded += (s, e) => TranslationManager.Instance.LanguageChanged -= langHandler;
-
-        ViewModel.PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName == nameof(ViewModel.IsLoading))
-            {
-                UpdateLoadingOverlayState();
-            }
-        };
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
@@ -55,96 +43,50 @@ public sealed partial class SystemOptimizerPage : Page
         
         ViewModel.Initialize();
 
-        // Refresh values on page entry
+        // Refresh values on page entry on-demand (zero continuous background polling)
         ViewModel.UpdateRamAndServices();
         ViewModel.LoadTweaks();
-
-        // Auto-run AI Diagnostics scan for optimizer recommendations
-        _ = ViewModel.RunAiScanAsync();
-
-        // Setup periodic RAM update timer (1.5 seconds)
-        if (_ramTimer == null)
-        {
-            _ramTimer = new DispatcherTimer();
-            _ramTimer.Interval = TimeSpan.FromMilliseconds(1500);
-            _ramTimer.Tick += RamTimer_Tick;
-        }
-        _ramTimer.Start();
+        _ = ViewModel.LoadStartupItemsAsync();
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        
-        // Stop timer when navigating away to conserve resources
-        _ramTimer?.Stop();
-        try
-        {
-            if (TweaksCard != null)
-            {
-                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
-            }
-        }
-        catch { }
         ViewModel.Cleanup();
-    }
-
-    private void RamTimer_Tick(object? sender, object e)
-    {
-        if (ViewModel.IsBusy || ViewModel.IsLoading || ViewModel.IsOperationActive) return;
-        ViewModel.UpdateRamAndServices();
     }
 
     private void OnSelectRecommendedProfileClick(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.06f, 300);
         int count = ViewModel.SelectPresetProfile("Recommended");
-        HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 6, 182, 212), "Recommended Auto-Tune".T(), count);
+        HighlightPresetSelection("Office & Productivity".T(), count);
     }
 
     private void OnSelectPerformanceProfileClick(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.06f, 300);
         int count = ViewModel.SelectPresetProfile("Performance");
-        HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 245, 158, 11), "Max Performance".T(), count);
+        HighlightPresetSelection("Max Performance".T(), count);
     }
 
     private void OnSelectPrivacyProfileClick(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.06f, 300);
         int count = ViewModel.SelectPresetProfile("Privacy");
-        HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 16, 185, 129), "Privacy Shield".T(), count);
+        HighlightPresetSelection("Privacy Shield".T(), count);
     }
 
     private void OnSelectGamingProfileClick(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.06f, 300);
         int count = ViewModel.SelectPresetProfile("Gaming");
-        HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 139, 92, 246), "Gaming Ultra".T(), count);
+        HighlightPresetSelection("Gaming Focus".T(), count);
     }
 
     private void OnSelectEcoProfileClick(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.06f, 300);
         int count = ViewModel.SelectPresetProfile("Eco");
-        HighlightPresetSelection(Windows.UI.Color.FromArgb(255, 59, 130, 246), "Eco Balanced".T(), count);
+        HighlightPresetSelection("Daily Balanced".T(), count);
     }
 
-    private void HighlightPresetSelection(Windows.UI.Color glowColor, string presetName, int count)
+    private void HighlightPresetSelection(string presetName, int count)
     {
-        try
-        {
-            if (TweaksCard != null)
-            {
-                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, glowColor);
-            }
-            if (ApplyTweaksBtn != null)
-            {
-                FluidAnimationHelper.ApplyGlowSparkBurst(ApplyTweaksBtn, 1.08f, 350);
-            }
-        }
-        catch { }
-
         if (App.MainWindowInstance is MainWindow mw)
         {
             mw.ShowToastFromDb(string.Format("Preset: {0}".T(), presetName), 
@@ -155,13 +97,9 @@ public sealed partial class SystemOptimizerPage : Page
     private async void OnApplyTweaksClick(object sender, RoutedEventArgs e)
     {
         var btn = ApplyTweaksBtn ?? (sender as Button);
-        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 350);
-
         int applied = 0;
         try
         {
-            if (TweaksCard != null) WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(TweaksCard, Windows.UI.Color.FromArgb(220, 139, 92, 246));
-
             await UiLoadingHelper.ExecuteWithLoadingAsync(
                 btn, ApplyTweaksRing, ApplyTweaksText, ApplyTweaksIcon,
                 "Applying...", "Apply Tweaks",
@@ -169,26 +107,16 @@ public sealed partial class SystemOptimizerPage : Page
                 {
                     applied = await ViewModel.ApplySelectedAsync();
                 },
-                minDurationMs: 1000);
+                minDurationMs: 400);
         }
-        finally
+        catch (Exception ex)
         {
-            try
-            {
-                if (TweaksCard != null)
-                {
-                    WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(TweaksCard);
-                    WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(TweaksCard, Windows.UI.Color.FromArgb(255, 16, 185, 129));
-                }
-                if (StatCard1 != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(StatCard1);
-                if (btn != null) WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(btn, 1.10f, 400);
-            }
-            catch { }
+            CrashLogger.LogException("SystemOptimizerPage.OnApplyTweaksClick", ex);
         }
 
         string msg = applied > 0 
-            ? string.Format("Successfully applied {0} Windows system tweaks and purged memory cache for maximum responsiveness.".T(), applied)
-            : "Your selected system tweaks and memory resources are already fully optimized!".T();
+            ? string.Format("Successfully applied {0} Windows system policy tweaks.".T(), applied)
+            : "Your selected system tweaks are already fully applied!".T();
 
         try
         {
@@ -197,20 +125,20 @@ public sealed partial class SystemOptimizerPage : Page
         catch { }
     }
 
-    private async void OnRunAiScanClick(object sender, RoutedEventArgs e)
+    private async void OnStartupItemToggled(object sender, RoutedEventArgs e)
     {
-        await ViewModel.RunAiScanAsync();
-
-        if (App.MainWindowInstance is MainWindow mw)
+        if (sender is ToggleSwitch ts && ts.DataContext is StartupEntry entry)
         {
-            mw.ShowToastFromDb("AI Diagnostics Complete".T(), 
-                $"AI Efficiency Score: {ViewModel.AiHealthScore}/100 ({ViewModel.EfficiencyGradeText}). {ViewModel.AiSummaryText}", "Success");
+            await ViewModel.ToggleStartupItemAsync(entry, ts.IsOn);
         }
     }
 
-    private async void OnBoostRamClick(object sender, RoutedEventArgs e)
+    private async void OnToggleServiceClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.BoostRamAsync();
+        if (sender is Button btn && btn.DataContext is ServiceStatusItem item)
+        {
+            await ViewModel.ToggleServiceStateAsync(item);
+        }
     }
 
     private async void OnRestoreDefaultsClick(object sender, RoutedEventArgs e)
@@ -279,53 +207,6 @@ public sealed partial class SystemOptimizerPage : Page
         }
     }
 
-    private async void OnCleanDeliveryCacheClick(object sender, RoutedEventArgs e)
-    {
-        long freed = await ViewModel.CleanDeliveryCacheAsync();
-        if (App.MainWindowInstance is MainWindow mw && freed > 0)
-        {
-            double mb = freed / 1024.0 / 1024.0;
-            mw.ShowToastFromDb("Delivery Cache Purged".T(), 
-                string.Format("Successfully freed {0:F1} MB from Windows Delivery Optimization cache.".T(), mb), "Success");
-        }
-    }
-
-    private async void OnOptimizeRamClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button b)
-        {
-            FluidAnimationHelper.ApplyGlowSparkBurst(b, 1.1f, 300);
-            await ViewModel.OptimizeRamAsync();
-        }
-        else
-        {
-            await ViewModel.OptimizeRamAsync();
-        }
-    }
-
-    private void UpdateLoadingOverlayState()
-    {
-        if (LoadingOverlayGrid == null || FadeInLoading == null || FadeOutLoading == null) return;
-
-        if (ViewModel.IsLoading)
-        {
-            LoadingOverlayGrid.Visibility = Visibility.Visible;
-            FadeInLoading.Begin();
-        }
-        else
-        {
-            FadeOutLoading.Begin();
-        }
-    }
-
-    private void FadeOutLoading_Completed(object? sender, object e)
-    {
-        if (!ViewModel.IsLoading && LoadingOverlayGrid != null)
-        {
-            LoadingOverlayGrid.Visibility = Visibility.Collapsed;
-        }
-    }
-
     public static Microsoft.UI.Xaml.Media.Brush GetTweakBadgeBg(bool isOptimized) =>
         isOptimized 
             ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(30, 16, 185, 129))
@@ -341,16 +222,19 @@ public sealed partial class SystemOptimizerPage : Page
             ? new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129))
             : new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246));
 
+    public static string GetServiceActionText(bool isRunning) => isRunning ? "Stop" : "Start";
+
     private async void OnRefreshClick(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.08f, 300);
         await ViewModel.RefreshAsync();
+        _ = ViewModel.LoadStartupItemsAsync();
     }
 
     private void OnRefreshAcceleratorInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
     {
         args.Handled = true;
         _ = ViewModel.RefreshAsync();
+        _ = ViewModel.LoadStartupItemsAsync();
     }
 
     private void OnFindAcceleratorInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
@@ -390,8 +274,6 @@ public sealed partial class SystemOptimizerPage : Page
 
     private async void OnExportReportClick(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement fe) FluidAnimationHelper.ApplyGlowSparkBurst(fe, 1.08f, 300);
-
         try
         {
             var savePicker = new Windows.Storage.Pickers.FileSavePicker();

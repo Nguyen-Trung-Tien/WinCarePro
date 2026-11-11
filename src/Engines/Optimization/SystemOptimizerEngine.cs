@@ -57,49 +57,13 @@ public class SystemOptimizerEngine
     }
 
     /// <summary>
-    /// Safe and legitimate memory maintenance.
-    /// Cleans WinCare process working set, purges managed runtime garbage collection,
-    /// and safely prompts the OS to optimize memory without forcing hard page faults on system apps.
+    /// Safe memory inspection without calling EmptyWorkingSet or forcing page-file swapping.
+    /// Gimmick memory purging is removed to eliminate system stutter and hard page faults.
     /// </summary>
-    public async Task<(int processesOptimized, long memoryReclaimedBytes)> OptimizeRamAsync(CancellationToken cancellationToken = default)
+    public Task<(int processesOptimized, long memoryReclaimedBytes)> OptimizeRamAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        Log("Starting safe system physical memory (RAM) optimization...");
-        ulong ramBefore = GetAvailablePhysicalMemory();
-        long selfReclaimed = 0;
-
-        await Task.Run(() =>
-        {
-            try
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                using var curProc = Process.GetCurrentProcess();
-                long wsBefore = curProc.WorkingSet64;
-
-                // 1. Safe managed garbage collection without forcing OS working set trim to paging file
-                GC.Collect(2, GCCollectionMode.Forced, false, false);
-
-                curProc.Refresh();
-                long wsAfter = curProc.WorkingSet64;
-                if (wsBefore > wsAfter)
-                {
-                    selfReclaimed = wsBefore - wsAfter;
-                }
-            }
-            catch (Exception ex)
-            {
-                Infrastructure.Logging.CrashLogger.LogException("SystemOptimizerEngine.OptimizeRamAsync", ex);
-            }
-        });
-
-        ulong ramAfter = GetAvailablePhysicalMemory();
-        long actualDiff = (long)ramAfter - (long)ramBefore;
-        long memoryReclaimed = Math.Max(selfReclaimed, actualDiff);
-
-        Log($"RAM Maintenance complete. Freed {(memoryReclaimed / 1024.0 / 1024.0):F1} MB.");
-        Database.DbManager.LogAction($"RAM Optimized: Freed {memoryReclaimed} bytes safely", "System Optimizer", "Success");
-
-        return (1, Math.Max(0, memoryReclaimed));
+        return Task.FromResult((0, 0L));
     }
 
     public List<SystemTweak> GetTweaks()

@@ -224,6 +224,13 @@ public sealed partial class RegistryPage : Page
     }
 
     public bool IsNot(bool b) => !b;
+    public static Visibility VisibleIfZero(int count) => count == 0 ? Visibility.Visible : Visibility.Collapsed;
+    public static Visibility VisibleIfPositive(int count) => count > 0 ? Visibility.Visible : Visibility.Collapsed;
+    public static Visibility VisibleIfNotNull(object? obj) => obj != null ? Visibility.Visible : Visibility.Collapsed;
+    public static Visibility VisibleIfNull(object? obj) => obj == null ? Visibility.Visible : Visibility.Collapsed;
+    public static bool IsNotNull(object? obj) => obj != null;
+    public static bool CanCleanSelected(int count, bool isBusy) => count > 0 && !isBusy;
+    public static bool CanSafeClean(int safeCount, bool isBusy) => safeCount > 0 && !isBusy;
 
     private void UpdateLoadingOverlayState()
     {

@@ -245,6 +245,9 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
     public bool IsConnectionsEmpty => Connections.Count == 0 && !_isLoadingConnections;
     public bool IsDnsServersEmpty => DnsServers.Count == 0 && !IsBusy;
     public bool IsAdaptersEmpty => Adapters.Count == 0 && !IsBusy;
+    public bool IsSpeedTesting => IsBusy && SpeedTestPhase != "Ready" && SpeedTestPhase != "Completed";
+    public bool IsBenchmarkingDns => IsBusy && _dnsCts != null && !_dnsCts.IsCancellationRequested;
+    public int ActiveConnectionsCount => Connections.Count;
 
     public void RecalculateHealthScore()
     {
@@ -469,6 +472,8 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         }
         DispatcherQueueInstance = _dispatcherQueue;
         _cts = new System.Threading.CancellationTokenSource();
+
+        InitializeFluentCore();
     }
 
     public NetworkViewModel() : this(
@@ -505,6 +510,7 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
 
         LoadAdapters();
+        InitializeFluentCore();
         _ = LoadActiveConnectionsAsync();
         _ = RunDiagnosticsAsync();
         _ = LoadHistoryAsync();
@@ -520,7 +526,7 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(SpeedPhaseAccentBrush));
         OnPropertyChanged(nameof(SpeedPhaseBadgeBgBrush));
 
-        StartMonitoringLoops(_cts.Token);
+        // Zero-Bloat On-Demand: Background polling loops eliminated in favor of strictly on-demand telemetry.
     }
 
     public void Cleanup()
@@ -652,108 +658,25 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         catch { }
     }
 
-    private void StartMonitoringLoops(System.Threading.CancellationToken token)
+    /// <summary>
+    /// Zero-Bloat On-Demand Telemetry:
+    /// Bandwidth, adapter, port, and diagnostic checks are executed strictly on-demand
+    /// when the user opens the page or explicitly clicks refresh, eliminating all background loops.
+    /// </summary>
+    public void RefreshTelemetryOnDemand()
     {
-        // 1. Download/Upload Bandwidth Utilization Polling (1 sec)
-        _ = Task.Run(async () =>
+        try
         {
-            long lastRx = GetTotalBytesReceived();
-            long lastTx = GetTotalBytesSent();
-
-            while (!token.IsCancellationRequested)
+            LoadAdapters();
+            if (ActiveTab == "ports")
             {
-                try
-                {
-                    await Task.Delay(1000, token);
-                    long currentRx = GetTotalBytesReceived();
-                    long currentTx = GetTotalBytesSent();
-
-                    long rxDiff = currentRx - lastRx;
-                    long txDiff = currentTx - lastTx;
-
-                    lastRx = currentRx;
-                    lastTx = currentTx;
-
-                    double dlSpeed = (rxDiff * 8.0) / 1_000_000.0;
-                    double ulSpeed = (txDiff * 8.0) / 1_000_000.0;
-
-                    if (!IsBusy)
-                    {
-                        DownloadSpeed = Math.Round(dlSpeed, 2);
-                        UploadSpeed = Math.Round(ulSpeed, 2);
-                        
-                        AddHistoryPoint(DownloadSpeedHistory, DownloadSpeed);
-                        AddHistoryPoint(UploadSpeedHistory, UploadSpeed);
-                    }
-                }
-                catch (TaskCanceledException) { break; }
-                catch { }
+                _ = LoadActiveConnectionsAsync(forceRefresh: true);
             }
-        }, token);
-
-        // 2. Active Connections Polling (5 sec, only when 'ports' tab is active)
-        _ = Task.Run(async () =>
+        }
+        catch (Exception ex)
         {
-            while (!token.IsCancellationRequested)
-            {
-                try
-                {
-                    await Task.Delay(5000, token);
-                    if (ActiveTab == "ports")
-                    {
-                        await LoadActiveConnectionsAsync(forceRefresh: true);
-                    }
-                }
-                catch (TaskCanceledException) { break; }
-                catch { }
-            }
-        }, token);
-
-        // 3. Adapter Statistics Polling (10 sec)
-        _ = Task.Run(async () =>
-        {
-            while (!token.IsCancellationRequested)
-            {
-                try
-                {
-                    await Task.Delay(10000, token);
-                    LoadAdapters();
-                }
-                catch (TaskCanceledException) { break; }
-                catch { }
-            }
-        }, token);
-
-        // 4. Public IP Polling (120 sec)
-        _ = Task.Run(async () =>
-        {
-            while (!token.IsCancellationRequested)
-            {
-                try
-                {
-                    string ip = await FetchPublicIpAddressAsync();
-                    PublicIpAddress = ip;
-                    await Task.Delay(120000, token);
-                }
-                catch (TaskCanceledException) { break; }
-                catch { }
-            }
-        }, token);
-
-        // 5. DNS / Diagnostics Polling (120 sec)
-        _ = Task.Run(async () =>
-        {
-            while (!token.IsCancellationRequested)
-            {
-                try
-                {
-                    await RunDiagnosticsAsync(userTriggered: false);
-                    await Task.Delay(120000, token);
-                }
-                catch (TaskCanceledException) { break; }
-                catch { }
-            }
-        }, token);
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkViewModel.RefreshTelemetryOnDemand", ex);
+        }
     }
 
     private void AddHistoryPoint(ObservableCollection<double> collection, double val)

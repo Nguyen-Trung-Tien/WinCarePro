@@ -8,7 +8,7 @@ $root = Resolve-Path "$PSScriptRoot\..\..\..\.."
 Write-Host "Verifying Version Synchronization across WinCare Pro..." -ForegroundColor Cyan
 
 # 1. Read SSOT version from Core/AppConstants.cs
-$appConstantsPath = Join-Path $root "Core\AppConstants.cs"
+$appConstantsPath = if (Test-Path (Join-Path $root "src\Core\AppConstants.cs")) { Join-Path $root "src\Core\AppConstants.cs" } else { Join-Path $root "Core\AppConstants.cs" }
 $appConstantsContent = Get-Content $appConstantsPath -Raw
 if ($appConstantsContent -match 'DefaultVersionString\s*=\s*"([^"]+)"') {
     $ssotVersion = $matches[1]
@@ -21,7 +21,7 @@ Write-Host "SSOT Version from AppConstants.cs: $ssotVersion (Assembly: $assembly
 $mismatches = 0
 
 # 2. Check WinCarePro.csproj
-$csprojPath = Join-Path $root "WinCarePro.csproj"
+$csprojPath = if (Test-Path (Join-Path $root "src\WinCarePro.csproj")) { Join-Path $root "src\WinCarePro.csproj" } else { Join-Path $root "WinCarePro.csproj" }
 $csproj = Get-Content $csprojPath -Raw
 if ($csproj -match '<Version>([^<]+)</Version>') {
     $v = $matches[1]
@@ -39,7 +39,7 @@ if ($csproj -match '<AssemblyVersion>([^<]+)</AssemblyVersion>') {
 }
 
 # 3. Check app.manifest
-$manifestPath = Join-Path $root "app.manifest"
+$manifestPath = if (Test-Path (Join-Path $root "src\app.manifest")) { Join-Path $root "src\app.manifest" } else { Join-Path $root "app.manifest" }
 if (Test-Path $manifestPath) {
     $manifest = Get-Content $manifestPath -Raw
     if ($manifest -match '<assemblyIdentity[^>]+version="([^"]+)"') {
@@ -52,7 +52,7 @@ if (Test-Path $manifestPath) {
 }
 
 # 4. Check Package.appxmanifest
-$appxPath = Join-Path $root "Package.appxmanifest"
+$appxPath = if (Test-Path (Join-Path $root "src\Package.appxmanifest")) { Join-Path $root "src\Package.appxmanifest" } else { Join-Path $root "Package.appxmanifest" }
 if (Test-Path $appxPath) {
     $appx = Get-Content $appxPath -Raw
     if ($appx -match '<Identity[^>]+Version="([^"]+)"') {
@@ -65,7 +65,7 @@ if (Test-Path $appxPath) {
 }
 
 # 5. Check setup.iss
-$setupPath = Join-Path $root "setup.iss"
+$setupPath = if (Test-Path (Join-Path $root "build\setup.iss")) { Join-Path $root "build\setup.iss" } else { Join-Path $root "setup.iss" }
 if (Test-Path $setupPath) {
     $setup = Get-Content $setupPath -Raw
     if ($setup -match '#define\s+MyAppVersion\s+"([^"]+)"') {
@@ -78,7 +78,7 @@ if (Test-Path $setupPath) {
 }
 
 # 6. Check update.json
-$updatePath = Join-Path $root "update.json"
+$updatePath = if (Test-Path (Join-Path $root "build\update.json")) { Join-Path $root "build\update.json" } else { Join-Path $root "update.json" }
 if (Test-Path $updatePath) {
     $update = Get-Content $updatePath -Raw
     if ($update -match '"version":\s*"([^"]+)"') {

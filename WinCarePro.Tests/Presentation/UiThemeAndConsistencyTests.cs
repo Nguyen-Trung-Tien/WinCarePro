@@ -502,7 +502,7 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("Dọn các mục đã chọn", manager.GetTranslationForLanguage("Clean Selected", AppLanguage.Vietnamese));
         Assert.Equal("Trình kiểm tra AI thông minh", manager.GetTranslationForLanguage("Smart AI Inspector", AppLanguage.Vietnamese));
 
-        // 6. Polaris v5.2.0 Search, Vitality, Network segmented tabs, System Repair
+        // 6. Polaris v6.0.0 Search, Vitality, Network segmented tabs, System Repair
         Assert.Equal("Tìm kiếm công cụ, chẩn đoán, cài đặt... (Ctrl + K)", manager.GetTranslationForLanguage("Search tools, diagnostics, settings... (Ctrl + K)", AppLanguage.Vietnamese));
         Assert.Contains(manager.GetTranslationForLanguage("VITALITY", AppLanguage.Vietnamese), new[] { "SỨC SỐNG", "Sức sống" });
         Assert.Equal("🚀 Băng thông & Radar", manager.GetTranslationForLanguage("🚀 Bandwidth & Radar", AppLanguage.Vietnamese));
@@ -517,7 +517,7 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("🚀 Bandwidth & Radar", manager.GetTranslationForLanguage("🚀 Băng thông & Radar", AppLanguage.English));
         Assert.Equal("🌐 DNS Intelligence", manager.GetTranslationForLanguage("🌐 Trí tuệ DNS", AppLanguage.English));
 
-        // 8. Polaris v5.2.0 Settings actions & Risk Advisory
+        // 8. Polaris v6.0.0 Settings actions & Risk Advisory
         Assert.Equal("Đặt lại mặc định", manager.GetTranslationForLanguage("Reset Defaults", AppLanguage.Vietnamese));
         Assert.Equal("Xuất bản sao lưu", manager.GetTranslationForLanguage("Export Backup", AppLanguage.Vietnamese));
         Assert.Equal("Cảnh báo rủi ro thử nghiệm", manager.GetTranslationForLanguage("Experimental Risk Advisory", AppLanguage.Vietnamese));

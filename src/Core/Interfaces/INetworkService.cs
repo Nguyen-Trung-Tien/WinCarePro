@@ -55,4 +55,13 @@ public interface INetworkService
         IEnumerable<NetworkAdapterInfo> adapters,
         IEnumerable<DnsServerInfo> dnsServers,
         IEnumerable<ActiveConnectionInfo> connections);
+
+    NetworkAdapterInfo? GetActiveAdapterSummary();
+    (string? AdapterName, List<string> DnsServers, bool IsDhcp) BackupCurrentDns();
+    bool HasDnsBackup { get; }
+    IReadOnlyList<DnsProfileOption> GetPresetDnsProfiles();
+    Task<bool> ApplyDnsProfileAsync(string profileName, string primaryDns, string secondaryDns, System.Threading.CancellationToken cancellationToken = default);
+    Task<bool> RestoreDnsBackupAsync(System.Threading.CancellationToken cancellationToken = default);
+    Task<NetworkDiagnosticsResult> RunOnDemandDiagnosticsAsync(System.Threading.CancellationToken cancellationToken = default);
+    Task<bool> ResetWinsockAndTcpIpAsync(System.Threading.CancellationToken cancellationToken = default);
 }

@@ -33,11 +33,16 @@ public sealed partial class MainWindow : Window
             ThemeIcon.Glyph = isDark ? "\uE708" : "\uE706";
             
             ApplyAppTheme(isDark);
-            ThemeManager.Instance.AccentChanged += (s, e) => DispatcherQueue?.TryEnqueue(() =>
+            if (_themeAccentChangedHandler != null)
+            {
+                ThemeManager.Instance.AccentChanged -= _themeAccentChangedHandler;
+            }
+            _themeAccentChangedHandler = (s, e) => DispatcherQueue?.TryEnqueue(() =>
             {
                 UpdateAuraMesh();
                 ApplyTransparency(CurrentTransparencyLevel);
             });
+            ThemeManager.Instance.AccentChanged += _themeAccentChangedHandler;
             App.ApplyAccentColor(settings.AccentColor ?? "Default");
             SetBackdropType(settings.BackdropType ?? (isDark ? "micaalt" : "mica"));
             ApplyTransparency(settings.TransparencyLevel);

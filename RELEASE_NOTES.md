@@ -2,6 +2,19 @@
 
 ---
 
+## 🚀 WinCare Pro v6.0.0 (Codename: Polaris) — Polaris Next-Gen Architecture & Unified Dynamic Ecosystem
+
+> **Phiên bản:** v6.0.0 (Codename: Polaris) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Ngày phát hành:** 11/11/2026 · **Trạng thái:** Bản Phát Hành Chính Thức (Official Release) · **Chứng nhận:** 100% Tests PASS · 0 Warnings / 0 Errors
+
+**WinCare Pro v6.0.0 (Codename: Polaris)** là bản phát hành đột phá, hoàn thiện quá trình chuẩn hóa toàn bộ cấu trúc dự án, đồng bộ hóa phiên bản động trên toàn hệ thống và loại bỏ hoàn toàn các chuỗi phiên bản hardcoded.
+
+### 🌟 Điểm Nhấn Trong v6.0.0:
+- **Tập trung hóa cấu hình & metadata:** Đồng bộ hóa toàn bộ touchpoint từ `AppConstants` SSOT, `WinCarePro.csproj`, `Directory.Build.props`, `app.manifest`, `Package.appxmanifest`, `setup.iss` và `update.json` lên phiên bản **6.0.0**.
+- **Triệt tiêu chuỗi cứng phiên bản:** Chuyển đổi toàn diện thuộc tính `AppVersion` trong `MainWindow` và `SettingsViewModel` sang cơ chế phân giải động runtime (`Assembly.GetExecutingAssembly().GetName().Version` và `Package.Current.Id.Version`).
+- **Nâng cao độ ổn định:** Bổ sung `SettingsViewModel` chuẩn MVVM và các bài kiểm thử tự động `AppVersionManagementTests` xác nhận tính toàn vẹn 100%.
+
+---
+
 ## 🚀 WinCare Pro v5.2.0 (Codename: Polaris) — Aura Fluidic 3.0 & Intelligent Diagnostic Sentinel Suite
 
 > **Phiên bản:** v5.2.0 (Codename: Polaris) · **Nền tảng:** Windows 10 (Build 19041+) & Windows 11 (x64) · **Ngày phát hành:** 06/11/2026 · **Trạng thái:** Bản Phát Hành Chính Thức (Official Release) · **Chứng nhận:** 100% Tests PASS (482/482) · 0 Warnings / 0 Errors

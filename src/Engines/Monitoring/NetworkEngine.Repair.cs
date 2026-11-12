@@ -92,6 +92,15 @@ public partial class NetworkEngine
                 onOutput: Log,
                 onError: Log
             );
+            if (result.ExitCode != 0 && !ProcessRunner.IsRunningAsAdministrator())
+            {
+                Log("Standard adapter restart failed due to permissions. Requesting elevated privileges (UAC)...");
+                result = await ProcessRunner.RunElevatedAsync(
+                    "powershell.exe",
+                    new[] { "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Restart-NetAdapter -Confirm:$false" },
+                    TimeSpan.FromSeconds(60)
+                );
+            }
             if (result.ExitCode == 0)
             {
                 Log("Restart adapter command triggered via PowerShell.");
@@ -122,6 +131,15 @@ public partial class NetworkEngine
                 onOutput: Log,
                 onError: Log
             );
+            if (result.ExitCode != 0 && !ProcessRunner.IsRunningAsAdministrator())
+            {
+                Log($"Execution of {filename} failed with code {result.ExitCode}. Requesting elevated privileges (UAC)...");
+                result = await ProcessRunner.RunElevatedAsync(
+                    filename,
+                    arguments,
+                    TimeSpan.FromSeconds(45)
+                );
+            }
             return result.ExitCode == 0;
         }
         catch (Exception ex)

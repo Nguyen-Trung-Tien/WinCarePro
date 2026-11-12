@@ -133,14 +133,11 @@ public partial class NetworkEngine
 
             if (isDhcp)
             {
-                script = "$route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object RouteMetric | Select-Object -First 1; " +
-                         "if ($route) { " +
-                         "  Set-DnsClientServerAddress -InterfaceIndex $route.InterfaceIndex -ResetServerAddresses; " +
-                         "} else { " +
-                         "  $adapters = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }; " +
-                         "  foreach ($adapter in $adapters) { " +
-                         "    Set-DnsClientServerAddress -InterfaceAlias $adapter.Name -ResetServerAddresses; " +
-                         "  } " +
+                script = "$route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue | Sort-Object RouteMetric | Select-Object -First 1; " +
+                         "$alias = if ($route) { $route.InterfaceAlias } else { (Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Select-Object -First 1).Name }; " +
+                         "if ($alias) { " +
+                         "  try { Set-DnsClientServerAddress -InterfaceAlias $alias -ResetServerAddresses -ErrorAction Stop } " +
+                         "  catch { netsh interface ipv4 set dnsservers name=$alias source=dhcp; netsh interface ipv6 set dnsservers name=$alias source=dhcp } " +
                          "}";
             }
             else
@@ -152,22 +149,24 @@ public partial class NetworkEngine
                 }
 
                 string serverAddresses;
+                string secArg = "";
                 if (!string.IsNullOrWhiteSpace(secondaryIp) && System.Net.IPAddress.TryParse(secondaryIp.Trim(), out var parsedSecondary))
                 {
                     serverAddresses = $"('{parsedPrimary}', '{parsedSecondary}')";
+                    secArg = parsedSecondary.ToString();
                 }
                 else
                 {
                     serverAddresses = $"('{parsedPrimary}')";
                 }
 
-                script = "$route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Sort-Object RouteMetric | Select-Object -First 1; " +
-                         "if ($route) { " +
-                         "  Set-DnsClientServerAddress -InterfaceIndex $route.InterfaceIndex -ServerAddresses " + serverAddresses + "; " +
-                         "} else { " +
-                         "  $adapters = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }; " +
-                         "  foreach ($adapter in $adapters) { " +
-                         "    Set-DnsClientServerAddress -InterfaceAlias $adapter.Name -ServerAddresses " + serverAddresses + "; " +
+                script = "$route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue | Sort-Object RouteMetric | Select-Object -First 1; " +
+                         "$alias = if ($route) { $route.InterfaceAlias } else { (Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Select-Object -First 1).Name }; " +
+                         "if ($alias) { " +
+                         "  try { Set-DnsClientServerAddress -InterfaceAlias $alias -ServerAddresses " + serverAddresses + " -ErrorAction Stop } " +
+                         "  catch { " +
+                         "    netsh interface ipv4 set dnsservers name=$alias static " + parsedPrimary + " primary; " +
+                         (string.IsNullOrEmpty(secArg) ? "" : "netsh interface ipv4 add dnsservers name=$alias " + secArg + " index=2; ") +
                          "  } " +
                          "}";
             }
@@ -180,6 +179,17 @@ public partial class NetworkEngine
                 onError: Log,
                 cancellationToken: cancellationToken
             );
+
+            if (result.ExitCode != 0 && !ProcessRunner.IsRunningAsAdministrator())
+            {
+                Log("Standard execution failed due to permissions. Requesting elevated privileges (UAC)...");
+                result = await ProcessRunner.RunElevatedAsync(
+                    "powershell.exe",
+                    new[] { "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-Command", script },
+                    TimeSpan.FromSeconds(30),
+                    cancellationToken: cancellationToken
+                );
+            }
 
             if (result.ExitCode == 0)
             {

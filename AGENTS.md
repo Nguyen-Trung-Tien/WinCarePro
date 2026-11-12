@@ -1,6 +1,6 @@
 # 🤖 WinCare Pro Suite — AI Agent Operational Directive
 
-> **Version:** v5.2.0 (Codename: Polaris) | **Target Platform:** Windows 10/11 x64  
+> **Version:** v6.0.0 (Codename: Polaris) | **Target Platform:** Windows 10/11 x64  
 > **Core Stack:** .NET 10.0 • C# 13 • Windows App SDK (WinUI 3) • SQLite 3 WAL • CommunityToolkit.Mvvm  
 > **Deep Reference Docs:** [AI Symbol Index & Architecture Map](docs/00_AI_SYMBOL_INDEX.md) • [11 Technical Rulebooks](.agents/rules/README.md) • [11 Technical Architecture Chapters](docs/README.md) • [11 Specialized Skills](.agents/skills/README.md)
 
@@ -44,7 +44,14 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 7. **SQLite WAL Concurrency:** ALL SQLite read/write operations in [DbManager.cs](Infrastructure/Database/DbManager.cs) MUST be guarded with `lock (_dbLock)`. MUST NOT invoke external I/O or long-running logic inside the lock.
 8. **Result Pattern & Zero-Silent Catch:** Fallible methods MUST return `OperationResult` or `OperationResult<T>`. NEVER swallow exceptions with empty `catch { }`. Unexpected errors MUST be recorded to [CrashLogger.cs](Infrastructure/Logging/CrashLogger.cs).
 9. **Mandatory Internationalization (i18n):** Hardcoded UI strings are STRICTLY FORBIDDEN. ALL display text MUST be registered in both `vi-VN` and `en-US` dictionaries in [TranslationManager.Translations.cs](Services/TranslationService/TranslationManager.Translations.cs).
-10. **Resource & Memory Discipline:** ALWAYS detach event handlers (`-=`) during `Unloaded`/`Dispose()`. MUST pause 3D/canvas animations when navigating away. Cache shell icons via `IconCacheService`. ALWAYS set `Typography.NumeralAlignment="Tabular"` on telemetry metrics.
+10. **Flagship Visual System & GPU Motion Discipline:** 
+    - **Obsidian & Ambient Mesh:** Deep canvas `#0D0F14` with static Ambient Mesh Glow (`Opacity="0.12"` Cyan `#00D2FF` & Indigo `#7B2CBF`).
+    - **Precision Glass Cards:** Background `#161922` with Specular Top-Edge Rim `LinearGradientBrush` (`#45FFFFFF` to `#0F1218`).
+    - **Visual Telemetry:** Replace default linear ProgressBars with Custom Circular Ring Gauges (`Path` arc with `StrokeStartLineCap="Round"` `StrokeEndLineCap="Round"`) & dynamic load aura glow.
+    - **Themed Icon Badges:** Feature groups MUST declare rounded `IconBadge` (`CornerRadius="10"`), translucent themed gradient, and sharp glyph.
+    - **GPU Composition Motion:** Interactive Hover Lift `Offset.Y = -3` in `150ms` (`CubicBezierEasingFunction`), Spring Natural Motion click physics (`DampingRatio = 0.6f`, `Period = 100ms`), and Shimmer Specular Light Sweep on primary CTA (`#0072FF` -> `#00C6FF`).
+    - **Page Transitions:** MUST declare `EntranceNavigationTransitionInfo` with `FromVerticalOffset="24"`.
+    - **Resource & Memory Discipline:** ALWAYS detach event handlers (`-=`) during `Unloaded`/`Dispose()`. MUST pause 3D/canvas animations when navigating away. Cache shell icons via `IconCacheService`. ALWAYS set `Typography.NumeralAlignment="Tabular"` on telemetry metrics.
 11. **Token Economy & Targeted Precision:**
     - **Context Economy & Log Suppression:**
       - Pinpoint symbols via `grep_search` (`Includes: ["*.cs"]`). Read narrow slices (30-60 lines around symbol) via `view_file`. NEVER read entire large files (> 150 lines).
@@ -78,6 +85,11 @@ $$\text{Presentation (Views/XAML)} \longrightarrow \text{ViewModel} \longrightar
 | **Test Execution** | `dotnet test` entire 465 suite (verbose) | `dotnet test --filter "..." --logger "console;verbosity=minimal"` |
 | **Syntax Verification** | `dotnet build` default verbosity | `dotnet build -c Debug -v q --nologo` |
 | **Legacy Symbol Calling** | Guessing signature or parameter overloads | `grep_search` original signature in `Core/` or `Engines/` |
+| **Telemetry Visuals** | Default `<ProgressBar Value="..." />` | Circular Ring Gauge (`Path` arc + round caps + aura glow) |
+| **Card Borders** | Flat gray solid border lines | `SpecularGlassBorderBrush` (top-edge specular highlight) |
+| **Iconography** | Monochromatic plain font icons | Themed `IconBadge` (CornerRadius 10, themed gradient) |
+| **Card Motion** | Static, non-responsive cards | `FluidAnimationHelper.ApplyCardHoverElevation` (-3px) |
+| **Button Clicks** | Instant, jumpy button clicks | `FluidAnimationHelper.ApplyButtonPressPhysics` (SpringVector3) |
 
 ---
 

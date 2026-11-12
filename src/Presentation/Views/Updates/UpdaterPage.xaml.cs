@@ -164,6 +164,8 @@ public sealed partial class UpdaterPage : Page
 
     public Visibility IsListEmpty(int count, bool isBusy) => (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 
+    public Visibility IsListLoading(int count, bool isBusy) => (count == 0 && isBusy) ? Visibility.Visible : Visibility.Collapsed;
+
     public Visibility HasPendingUpdatesVisibility(int pendingCount, bool isBusy) => (pendingCount > 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 
     public Visibility HasNoPendingUpdatesVisibility(int pendingCount) => (pendingCount <= 0) ? Visibility.Visible : Visibility.Collapsed;

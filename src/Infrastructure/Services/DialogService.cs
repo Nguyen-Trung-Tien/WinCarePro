@@ -38,7 +38,11 @@ public class DialogService : IDialogService
         var xamlRoot = ActiveXamlRoot;
         if (xamlRoot == null) return CleaningAction.CleanAnyway;
 
-        await _dialogSemaphore.WaitAsync();
+        if (!await _dialogSemaphore.WaitAsync(2000))
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogMessage("DialogService", "Dialog semaphore acquisition timed out after 2000ms");
+            return CleaningAction.CleanAnyway;
+        }
         try
         {
             // Allow time for previous dialog's closing transition to complete

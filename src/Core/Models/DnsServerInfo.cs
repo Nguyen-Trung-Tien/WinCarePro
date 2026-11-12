@@ -13,6 +13,7 @@ public class DnsServerInfo
     public bool IsFastest { get; set; }
     public string PingFormatted => PingMs < 0 ? "Timeout".T() : $"{PingMs:F0} ms";
     public string LatencyFormatted => PingFormatted;
+    public string LatencyDisplay => LatencyFormatted;
     public string Provider => Name;
 
     // New optimized DNS benchmark fields

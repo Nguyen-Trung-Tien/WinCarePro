@@ -5,6 +5,13 @@ All notable changes to **WinCare Pro** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0] - 2026-11-11 (Polaris Next-Gen Architecture & Unified Dynamic Ecosystem)
+
+### Changed & Standardized
+- **Centralized Version Bump (v6.0.0):** Cập nhật đồng bộ toàn diện phiên bản 6.0.0 / 6.0.0.0 qua `AppConstants.cs`, `WinCarePro.csproj`, `Directory.Build.props`, `app.manifest`, `Package.appxmanifest`, `setup.iss` và `update.json`.
+- **Eliminated Hardcoded Versions:** Triệt tiêu hoàn toàn các chuỗi phiên bản cứng trong toàn bộ source C# và XAML; chuyển đổi thuộc tính `AppVersion` trong `MainWindow` và `SettingsViewModel` sang cơ chế phân giải động `Assembly.GetExecutingAssembly().GetName().Version` và `Package.Current.Id.Version`.
+- **Settings Architecture:** Bổ sung `SettingsViewModel` chuẩn hóa theo kiến trúc MVVM, quản lý dữ liệu phiên bản và thông số hệ thống.
+
 ## [5.2.0] - 2026-11-06 (Polaris Aura Fluidic 3.0 & Intelligent Diagnostic Sentinel Suite)
 
 ### Aura Fluidic 3.0 & Unified UX Architecture

@@ -20,6 +20,91 @@ public class ProcessResult
 public static class ProcessRunner
 {
     /// <summary>
+    /// Checks if the current application process is running with elevated Administrator privileges.
+    /// </summary>
+    public static bool IsRunningAsAdministrator()
+    {
+        try
+        {
+            using var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+            var principal = new System.Security.Principal.WindowsPrincipal(identity);
+            return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Executes a system process with elevated Administrator privileges (triggers UAC elevation prompt if not already admin).
+    /// </summary>
+    public static async Task<ProcessResult> RunElevatedAsync(
+        string fileName,
+        System.Collections.Generic.IEnumerable<string> argumentList,
+        TimeSpan timeout,
+        CancellationToken cancellationToken = default)
+    {
+        var result = new ProcessResult();
+        string resolvedPath = ResolveSafeExecutablePath(fileName);
+
+        var psi = new ProcessStartInfo
+        {
+            FileName = resolvedPath,
+            UseShellExecute = true,
+            Verb = "runas",
+            CreateNoWindow = true,
+            WindowStyle = ProcessWindowStyle.Hidden
+        };
+
+        foreach (var arg in argumentList)
+        {
+            psi.ArgumentList.Add(arg);
+        }
+
+        try
+        {
+            using var process = Process.Start(psi);
+            if (process == null)
+            {
+                result.ExitCode = -1;
+                result.Error = "Failed to launch elevated process.";
+                return result;
+            }
+
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            linkedCts.CancelAfter(timeout);
+
+            try
+            {
+                await process.WaitForExitAsync(linkedCts.Token);
+                result.ExitCode = process.ExitCode;
+            }
+            catch (OperationCanceledException)
+            {
+                if (cancellationToken.IsCancellationRequested) throw;
+                result.TimedOut = true;
+                result.ExitCode = -1;
+                result.Error = "Elevated process execution timed out.";
+                try { process.Kill(true); } catch { }
+            }
+        }
+        catch (System.ComponentModel.Win32Exception w32Ex) when (w32Ex.NativeErrorCode == 1223)
+        {
+            // ERROR_CANCELLED (User cancelled the UAC prompt)
+            result.ExitCode = 1223;
+            result.Error = "Thao tác đã bị hủy bởi người dùng (Từ chối quyền Quản trị viên).";
+        }
+        catch (Exception ex)
+        {
+            result.ExitCode = -1;
+            result.Error = ex.Message;
+        }
+
+        return result;
+    }
+
+    /// <summary>
     /// Resolves common Windows system executables to their canonical, fully qualified paths
     /// in System32 / Windows directory to prevent DLL/EXE search-order and PATH hijacking.
     /// </summary>
@@ -193,13 +278,18 @@ public static class ProcessRunner
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    try { process.Kill(true); } catch { }
+                    try { process.Kill(true); process.WaitForExit(1000); } catch { }
                     throw;
                 }
 
                 // If cancelled because of timeout
                 result.TimedOut = true;
-                try { process.Kill(true); } catch { }
+                try
+                {
+                    process.Kill(true);
+                    process.WaitForExit(1000);
+                }
+                catch { }
                 result.ExitCode = -1;
                 result.Error = "Process execution timed out.";
             }
@@ -231,6 +321,7 @@ public static class ProcessRunner
                 if (!process.HasExited)
                 {
                     process.Kill(true);
+                    process.WaitForExit(1000);
                 }
             }
             catch { }
@@ -245,6 +336,7 @@ public static class ProcessRunner
                 if (!process.HasExited)
                 {
                     process.Kill(true);
+                    process.WaitForExit(1000);
                 }
             }
             catch { }

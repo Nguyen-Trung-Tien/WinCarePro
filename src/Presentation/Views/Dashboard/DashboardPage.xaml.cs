@@ -17,8 +17,10 @@ namespace WinCarePro.Views;
 
 public sealed partial class DashboardPage : Page
 {
-    public DashboardViewModel ViewModel { get; }
+    public DashboardViewModel ViewModel { get; set; } = null!;
     private readonly EventHandler<WinCarePro.Services.Contracts.SettingsChangedEventArgs> _settingsChangedHandler;
+    private readonly System.ComponentModel.PropertyChangedEventHandler? _vmPropertyChangedHandler;
+    private readonly EventHandler? _themeChangedHandler;
 
     public DashboardPage()
     {
@@ -27,6 +29,22 @@ public sealed partial class DashboardPage : Page
         
         ViewModel = App.Services?.GetService<DashboardViewModel>() ?? new DashboardViewModel(this.DispatcherQueue);
         ViewModel.DispatcherQueue = this.DispatcherQueue;
+        ViewModel.IsExtendedLayerLoaded = true;
+        ThemeManager.Instance.RegisterPage(this);
+
+        _themeChangedHandler = (s, e) =>
+        {
+            this.DispatcherQueue?.TryEnqueue(() =>
+            {
+                this.RequestedTheme = ThemeManager.Instance.CurrentTheme;
+                if (AmbientMeshGlowGrid != null)
+                {
+                    AmbientMeshGlowGrid.Visibility = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark ? Visibility.Visible : Visibility.Collapsed;
+                }
+                Bindings.Update();
+            });
+        };
+        ThemeManager.Instance.ThemeChanged += _themeChangedHandler;
 
         _settingsChangedHandler = (s, e) =>
         {
@@ -38,14 +56,55 @@ public sealed partial class DashboardPage : Page
         };
         WinCarePro.Services.Implementations.SettingsService.Instance.SettingsChanged += _settingsChangedHandler;
 
+        _vmPropertyChangedHandler = (s, e) =>
+        {
+            if (string.IsNullOrEmpty(e.PropertyName)) return;
+            this.DispatcherQueue?.TryEnqueue(() =>
+            {
+                switch (e.PropertyName)
+                {
+                    case nameof(DashboardViewModel.CpuUsage):
+                        UpdateCircularGauge(CpuPathFigure, CpuArcSegment, CpuGlowBorder, ViewModel.CpuUsage);
+                        break;
+                    case nameof(DashboardViewModel.RamUsage):
+                        UpdateCircularGauge(RamPathFigure, RamArcSegment, RamGlowBorder, ViewModel.RamUsage);
+                        break;
+                    case nameof(DashboardViewModel.GpuUsage):
+                        UpdateCircularGauge(GpuPathFigure, GpuArcSegment, GpuGlowBorder, ViewModel.GpuUsage);
+                        break;
+                    case nameof(DashboardViewModel.DiskUsage):
+                        UpdateCircularGauge(DiskPathFigure, DiskArcSegment, DiskGlowBorder, ViewModel.DiskUsage);
+                        break;
+                    case nameof(DashboardViewModel.HealthScore):
+                        UpdateCircularGauge(HealthPathFigure, HealthArcSegment, HealthGlowBorder, ViewModel.HealthScore);
+                        break;
+                }
+            });
+        };
+        if (ViewModel != null)
+        {
+            ViewModel.PropertyChanged += _vmPropertyChangedHandler;
+        }
+
         this.Loaded += async (s, e) => 
         {
-            ViewModel.DispatcherQueue = this.DispatcherQueue;
-            DataContext = ViewModel;
+            if (ViewModel != null)
+            {
+                ViewModel.DispatcherQueue = this.DispatcherQueue;
+                DataContext = ViewModel;
+            }
 
             // Sync current experience mode
             var curMode = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings;
             UpdateExperienceMode(curMode.IsProMode);
+
+            if (AmbientMeshGlowGrid != null)
+            {
+                AmbientMeshGlowGrid.Visibility = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            // Setup GPU Visual Effects (Hover Lift & Button Spring Physics) and Circular Gauges
+            SetupVisualEffectsAndGauges();
 
             // Ensure GaugeRingGrid has full 100% crisp opacity
             if (GaugeRingGrid != null)
@@ -60,25 +119,13 @@ public sealed partial class DashboardPage : Page
 
             // Lazy load the extended layer after initial UI renders to prevent lag
             await Task.Delay(100);
-            ViewModel.IsExtendedLayerLoaded = true;
+            if (ViewModel != null)
+            {
+                ViewModel.IsExtendedLayerLoaded = true;
+            }
             
             // Force responsive update after extended layer is fully initialized
             UpdateResponsiveLayout(this.ActualWidth);
-
-            // v4.0.0 — Auto-trigger embedded AI WinCare Engine scan
-            _ = ViewModel.RunEmbeddedAiScanAsync().ContinueWith(_ =>
-            {
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    // Animate the AI score count-up after scan completes
-                    if (ViewModel.HasAiScanned && ViewModel.AiRecommendations.Count > 0)
-                    {
-                        var topRec = ViewModel.AiRecommendations[0];
-                        TopRecommendationTitle.Text = topRec.Title;
-                        TopRecommendationDesc.Text = topRec.Description;
-                    }
-                });
-            }, TaskScheduler.Default);
 
             // Translate page content
             TranslationManager.Instance.Translate(this);
@@ -93,8 +140,17 @@ public sealed partial class DashboardPage : Page
         this.Unloaded += (s, e) =>
         {
             try { ViewModel?.StopMonitoring(); } catch { }
+            ThemeManager.Instance.UnregisterPage(this);
+            if (_themeChangedHandler != null)
+            {
+                ThemeManager.Instance.ThemeChanged -= _themeChangedHandler;
+            }
             TranslationManager.Instance.LanguageChanged -= langHandler;
             WinCarePro.Services.Implementations.SettingsService.Instance.SettingsChanged -= _settingsChangedHandler;
+            if (ViewModel != null && _vmPropertyChangedHandler != null)
+            {
+                ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            }
         };
 
         this.SizeChanged += (s, e) =>
@@ -141,21 +197,6 @@ public sealed partial class DashboardPage : Page
         }
     }
 
-    private void OnLaunchAiWinCareEngineClick(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            if (App.MainWindowInstance is MainWindow mw && mw.MainFrame.Content is MainPage mp)
-            {
-                mp.NavigateToPageExternal("aiwincareengine");
-            }
-        }
-        catch (Exception ex)
-        {
-            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("DashboardPage.OnLaunchAiWinCareEngineClick", ex);
-        }
-    }
-
     private void OnLaunchDesktopWidgetClick(object sender, RoutedEventArgs e)
     {
     }
@@ -178,28 +219,11 @@ public sealed partial class DashboardPage : Page
         }
     }
 
-    /// <summary>
-    /// v4.0.0 — Handles the embedded AI WinCare Engine scan button click on Dashboard.
-    /// </summary>
-    private async void OnEmbeddedAiScanClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.RunEmbeddedAiScanAsync();
-
-        // Update top recommendation card after scan
-        if (ViewModel.HasAiScanned && ViewModel.AiRecommendations.Count > 0)
-        {
-            var topRec = ViewModel.AiRecommendations[0];
-            TopRecommendationTitle.Text = topRec.Title;
-            TopRecommendationDesc.Text = topRec.Description;
-
-            // Animate the recommendation card entrance
-            FluidAnimationHelper.ApplySpringEntranceAnimation(TopAiRecommendationCard, 100);
-        }
-    }
-
     private void UpdateResponsiveLayout(double width)
     {
-        bool isWide = width >= 768;
+        if (width <= 0) return;
+
+        bool isWide = width >= 850;
         
         if (LeftCol != null && RightCol != null)
         {
@@ -209,19 +233,13 @@ public sealed partial class DashboardPage : Page
                 LeftCol.Width = new GridLength(1, GridUnitType.Star);
                 RightCol.Width = new GridLength(1, GridUnitType.Star);
                 
-                // Row 0: System Health Overview spanning full width
                 if (HealthGaugeCard != null)
                 {
                     Grid.SetRow(HealthGaugeCard, 0);
                     Grid.SetColumn(HealthGaugeCard, 0);
                     Grid.SetColumnSpan(HealthGaugeCard, 2);
                 }
-                if (AiWinCareEngineEmbeddedPanel != null)
-                {
-                    AiWinCareEngineEmbeddedPanel.Visibility = Visibility.Collapsed;
-                }
 
-                // Row 1: 4-Pillar Quick Vital Capsules spanning both columns
                 if (QuickStatsGrid != null)
                 {
                     Grid.SetRow(QuickStatsGrid, 1);
@@ -229,63 +247,30 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumnSpan(QuickStatsGrid, 2);
                 }
 
-                // Row 2: CPU/RAM (Left Col 0) & GPU/Disk (Right Col 1) — UNIFIED 4-SENSOR HARDWARE STRIP
-                if (CpuRamGrid != null)
+                if (HardwareSensorsPanel != null)
                 {
-                    Grid.SetRow(CpuRamGrid, 2);
-                    Grid.SetColumn(CpuRamGrid, 0);
-                    Grid.SetColumnSpan(CpuRamGrid, 1);
-                }
-                if (CpuCard != null)
-                {
-                    Grid.SetRow(CpuCard, 0);
-                    Grid.SetColumn(CpuCard, 0);
-                    Grid.SetColumnSpan(CpuCard, 1);
-                }
-                if (RamCard != null)
-                {
-                    Grid.SetRow(RamCard, 0);
-                    Grid.SetColumn(RamCard, 1);
-                    Grid.SetColumnSpan(RamCard, 1);
-                }
-                if (GpuDiskGrid != null)
-                {
-                    Grid.SetRow(GpuDiskGrid, 2);
-                    Grid.SetColumn(GpuDiskGrid, 1);
-                    Grid.SetColumnSpan(GpuDiskGrid, 1);
-                }
-                if (GpuCard != null)
-                {
-                    Grid.SetRow(GpuCard, 0);
-                    Grid.SetColumn(GpuCard, 0);
-                    Grid.SetColumnSpan(GpuCard, 1);
-                }
-                if (DiskCard != null)
-                {
-                    Grid.SetRow(DiskCard, 0);
-                    Grid.SetColumn(DiskCard, 1);
-                    Grid.SetColumnSpan(DiskCard, 1);
-                }
-
-                // Row 3: Smart AI Advice (Left Col 0) & Performance Trend Chart (Right Col 1)
-                if (RecommendationsCard != null)
-                {
-                    Grid.SetRow(RecommendationsCard, 3);
-                    Grid.SetColumn(RecommendationsCard, 0);
-                    Grid.SetColumnSpan(RecommendationsCard, 1);
-                    Grid.SetRowSpan(RecommendationsCard, 1);
+                    Grid.SetRow(HardwareSensorsPanel, 2);
+                    Grid.SetColumn(HardwareSensorsPanel, 0);
+                    Grid.SetColumnSpan(HardwareSensorsPanel, 1);
                 }
 
                 if (PerformanceChartCard != null)
                 {
-                    Grid.SetRow(PerformanceChartCard, 3);
+                    Grid.SetRow(PerformanceChartCard, 2);
                     Grid.SetColumn(PerformanceChartCard, 1);
                     Grid.SetColumnSpan(PerformanceChartCard, 1);
+                }
+
+                if (RecommendationsCard != null)
+                {
+                    Grid.SetRow(RecommendationsCard, 3);
+                    Grid.SetColumn(RecommendationsCard, 0);
+                    Grid.SetColumnSpan(RecommendationsCard, 2);
                 }
             }
             else
             {
-                // Narrow layout: 1 column
+                // Narrow layout: Stacked
                 LeftCol.Width = new GridLength(1, GridUnitType.Star);
                 RightCol.Width = new GridLength(0, GridUnitType.Pixel);
                 
@@ -295,74 +280,60 @@ public sealed partial class DashboardPage : Page
                     Grid.SetColumn(HealthGaugeCard, 0);
                     Grid.SetColumnSpan(HealthGaugeCard, 2);
                 }
-                if (AiWinCareEngineEmbeddedPanel != null)
-                {
-                    AiWinCareEngineEmbeddedPanel.Visibility = Visibility.Collapsed;
-                }
                 if (QuickStatsGrid != null)
                 {
-                    Grid.SetRow(QuickStatsGrid, 2);
+                    Grid.SetRow(QuickStatsGrid, 1);
                     Grid.SetColumn(QuickStatsGrid, 0);
                     Grid.SetColumnSpan(QuickStatsGrid, 2);
                 }
-                if (CpuRamGrid != null)
+                if (HardwareSensorsPanel != null)
                 {
-                    Grid.SetRow(CpuRamGrid, 3);
-                    Grid.SetColumn(CpuRamGrid, 0);
-                    Grid.SetColumnSpan(CpuRamGrid, 2);
-                }
-                if (CpuCard != null)
-                {
-                    Grid.SetRow(CpuCard, 0);
-                    Grid.SetColumn(CpuCard, 0);
-                    Grid.SetColumnSpan(CpuCard, 2);
-                }
-                if (RamCard != null)
-                {
-                    Grid.SetRow(RamCard, 1);
-                    Grid.SetColumn(RamCard, 0);
-                    Grid.SetColumnSpan(RamCard, 2);
-                }
-                if (GpuDiskGrid != null)
-                {
-                    Grid.SetRow(GpuDiskGrid, 4);
-                    Grid.SetColumn(GpuDiskGrid, 0);
-                    Grid.SetColumnSpan(GpuDiskGrid, 2);
-                }
-                if (GpuCard != null)
-                {
-                    Grid.SetRow(GpuCard, 0);
-                    Grid.SetColumn(GpuCard, 0);
-                    Grid.SetColumnSpan(GpuCard, 2);
-                }
-                if (DiskCard != null)
-                {
-                    Grid.SetRow(DiskCard, 1);
-                    Grid.SetColumn(DiskCard, 0);
-                    Grid.SetColumnSpan(DiskCard, 2);
-                }
-                if (RecommendationsCard != null)
-                {
-                    Grid.SetRow(RecommendationsCard, 5);
-                    Grid.SetColumn(RecommendationsCard, 0);
-                    Grid.SetColumnSpan(RecommendationsCard, 2);
-                    Grid.SetRowSpan(RecommendationsCard, 1);
+                    Grid.SetRow(HardwareSensorsPanel, 2);
+                    Grid.SetColumn(HardwareSensorsPanel, 0);
+                    Grid.SetColumnSpan(HardwareSensorsPanel, 2);
                 }
                 if (PerformanceChartCard != null)
                 {
-                    Grid.SetRow(PerformanceChartCard, 6);
+                    Grid.SetRow(PerformanceChartCard, 3);
                     Grid.SetColumn(PerformanceChartCard, 0);
                     Grid.SetColumnSpan(PerformanceChartCard, 2);
+                }
+                if (RecommendationsCard != null)
+                {
+                    Grid.SetRow(RecommendationsCard, 4);
+                    Grid.SetColumn(RecommendationsCard, 0);
+                    Grid.SetColumnSpan(RecommendationsCard, 2);
+                }
+            }
+
+            // Adapt GaugeActionPanel if window width is tight
+            if (GaugeActionPanel != null)
+            {
+                if (width < 740)
+                {
+                    Grid.SetRow(GaugeActionPanel, 1);
+                    Grid.SetColumn(GaugeActionPanel, 0);
+                    Grid.SetColumnSpan(GaugeActionPanel, 2);
+                    GaugeActionPanel.Margin = new Thickness(0, 12, 0, 0);
+                    GaugeActionPanel.HorizontalAlignment = HorizontalAlignment.Left;
+                }
+                else
+                {
+                    Grid.SetRow(GaugeActionPanel, 0);
+                    Grid.SetColumn(GaugeActionPanel, 1);
+                    Grid.SetColumnSpan(GaugeActionPanel, 1);
+                    GaugeActionPanel.Margin = new Thickness(0);
+                    GaugeActionPanel.HorizontalAlignment = HorizontalAlignment.Right;
                 }
             }
 
             // Dynamically adapt QuickStatsGrid columns based on container width
-            // Under 900px: 2 columns x 2 rows for maximum legibility and zero truncation
-            // 900px and above: 4 columns x 1 row
+            // Under 1050px: 2 columns x 2 rows (Disk & Startup in Row 0; Security & Registry in Row 1)
+            // 1050px and above: 4 columns x 1 row
             if (QuickStatsGrid != null && QuickStatsCardDisk != null && QuickStatsCardStartup != null && 
                 QuickStatsCardSecurity != null && QuickStatsCardRegistry != null)
             {
-                if (width < 900)
+                if (width < 1050)
                 {
                     // 2x2 Layout
                     QuickStatsGrid.ColumnDefinitions.Clear();
@@ -648,7 +619,6 @@ public sealed partial class DashboardPage : Page
                 if (RamCard != null) rippleCards.Add(RamCard);
                 if (GpuCard != null) rippleCards.Add(GpuCard);
                 if (DiskCard != null) rippleCards.Add(DiskCard);
-                if (TopAiRecommendationCard != null) rippleCards.Add(TopAiRecommendationCard);
 
                 WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DCascadeWave(rippleCards, 70);
             }
@@ -1392,4 +1362,106 @@ public sealed partial class DashboardPage : Page
         }
         return $"RAM {val:F0}%";
     }
+
+    #region Flagship Visual Effects & Circular Gauges
+
+    private void SetupVisualEffectsAndGauges()
+    {
+        // 1. Initial gauge calculations
+        UpdateAllCircularGauges();
+
+        // 2. Interactive Hover Lift (Offset.Y = -3f over 150ms cubic-bezier) & Specular Luminous Rim
+        if (HealthGaugeCard != null) FluidAnimationHelper.ApplyCardHoverElevation(HealthGaugeCard, -3f);
+        if (QuickStatsCardDisk != null) FluidAnimationHelper.ApplyCardHoverElevation(QuickStatsCardDisk, -3f);
+        if (QuickStatsCardStartup != null) FluidAnimationHelper.ApplyCardHoverElevation(QuickStatsCardStartup, -3f);
+        if (QuickStatsCardSecurity != null) FluidAnimationHelper.ApplyCardHoverElevation(QuickStatsCardSecurity, -3f);
+        if (QuickStatsCardRegistry != null) FluidAnimationHelper.ApplyCardHoverElevation(QuickStatsCardRegistry, -3f);
+        if (CpuCard != null) FluidAnimationHelper.ApplyCardHoverElevation(CpuCard, -3f);
+        if (RamCard != null) FluidAnimationHelper.ApplyCardHoverElevation(RamCard, -3f);
+        if (GpuCard != null) FluidAnimationHelper.ApplyCardHoverElevation(GpuCard, -3f);
+        if (DiskCard != null) FluidAnimationHelper.ApplyCardHoverElevation(DiskCard, -3f);
+        if (PerformanceChartCard != null) FluidAnimationHelper.ApplyCardHoverElevation(PerformanceChartCard, -3f);
+
+        // 3. Spring Natural Motion Button Physics (DampingRatio = 0.6f, Period = 100ms)
+        if (OneClickCareBtn != null) FluidAnimationHelper.ApplyButtonPressPhysics(OneClickCareBtn);
+        if (ScanSystemBtn != null) FluidAnimationHelper.ApplyButtonPressPhysics(ScanSystemBtn);
+        if (OptimizeBtn != null) FluidAnimationHelper.ApplyButtonPressPhysics(OptimizeBtn);
+
+        // 4. Shimmer Specular Sweep on Primary CTA Button
+        ApplyPrimaryCtaShimmerSweep();
+    }
+
+    private void ApplyPrimaryCtaShimmerSweep()
+    {
+        if (OneClickCareBtn == null) return;
+        try
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(OneClickCareBtn);
+            if (visual == null) return;
+            var compositor = visual.Compositor;
+
+            OneClickCareBtn.PointerEntered += (s, e) =>
+            {
+                try
+                {
+                    var anim = compositor.CreateScalarKeyFrameAnimation();
+                    anim.InsertKeyFrame(0.0f, 1.0f);
+                    anim.InsertKeyFrame(0.5f, 1.025f, compositor.CreateCubicBezierEasingFunction(new System.Numerics.Vector2(0.1f, 0.9f), new System.Numerics.Vector2(0.2f, 1.0f)));
+                    anim.InsertKeyFrame(1.0f, 1.0f);
+                    anim.Duration = TimeSpan.FromMilliseconds(400);
+                    visual.StartAnimation("Scale.X", anim);
+                    visual.StartAnimation("Scale.Y", anim);
+                }
+                catch { }
+            };
+        }
+        catch { }
+    }
+
+    private void UpdateAllCircularGauges()
+    {
+        UpdateCircularGauge(CpuPathFigure, CpuArcSegment, CpuGlowBorder, ViewModel.CpuUsage, 28, 36, 36);
+        UpdateCircularGauge(RamPathFigure, RamArcSegment, RamGlowBorder, ViewModel.RamUsage, 28, 36, 36);
+        UpdateCircularGauge(GpuPathFigure, GpuArcSegment, GpuGlowBorder, ViewModel.GpuUsage, 28, 36, 36);
+        UpdateCircularGauge(DiskPathFigure, DiskArcSegment, DiskGlowBorder, ViewModel.DiskUsage, 28, 36, 36);
+        UpdateCircularGauge(HealthPathFigure, HealthArcSegment, HealthGlowBorder, ViewModel.HealthScore, 28, 38, 38);
+    }
+
+    private void UpdateCircularGauge(PathFigure? figure, ArcSegment? arc, Border? glowBorder, double percentage, double radius = 28, double centerX = 36, double centerY = 36)
+    {
+        if (figure == null || arc == null) return;
+
+        double pct = Math.Clamp(percentage, 0.01, 99.99);
+        double angleDegrees = pct * 3.6;
+        double angleRadians = (angleDegrees - 90.0) * Math.PI / 180.0;
+
+        double startX = centerX;
+        double startY = centerY - radius;
+        figure.StartPoint = new Windows.Foundation.Point(startX, startY);
+
+        double endX = centerX + radius * Math.Cos(angleRadians);
+        double endY = centerY + radius * Math.Sin(angleRadians);
+
+        arc.Point = new Windows.Foundation.Point(endX, endY);
+        arc.Size = new Windows.Foundation.Size(radius, radius);
+        arc.IsLargeArc = angleDegrees > 180.0;
+        arc.SweepDirection = SweepDirection.Clockwise;
+
+        if (glowBorder != null)
+        {
+            string glowKey = pct switch
+            {
+                > 85.0 => "GaugeGlowCriticalBrush",
+                > 65.0 => "GaugeGlowWarningBrush",
+                _ => "GaugeGlowGoodBrush"
+            };
+
+            if (Application.Current.Resources.TryGetValue(glowKey, out var brushObj) && brushObj is Brush b)
+            {
+                glowBorder.Background = b;
+            }
+        }
+    }
+
+    #endregion
 }

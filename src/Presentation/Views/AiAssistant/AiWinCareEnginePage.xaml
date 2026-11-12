@@ -644,11 +644,11 @@
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                            <Border Background="{Binding ImpactBadgeBackgroundBrush}" 
-                                                    BorderBrush="{Binding ImpactBadgeBorderBrush}" 
+                                            <Border Background="{Binding ImpactBadgeBackgroundHex, Converter={StaticResource HexToBrushConverter}}" 
+                                                    BorderBrush="{Binding ImpactBadgeBorderHex, Converter={StaticResource HexToBrushConverter}}" 
                                                     BorderThickness="1" CornerRadius="4" Padding="6,2">
                                                 <TextBlock Text="{Binding ImpactLevelDisplayName}" FontSize="10" FontWeight="Bold" 
-                                                           Foreground="{Binding ImpactBadgeForegroundBrush}"/>
+                                                           Foreground="{Binding ImpactBadgeForegroundHex, Converter={StaticResource HexToBrushConverter}}"/>
                                             </Border>
                                         </StackPanel>
                                         <TextBlock Text="{Binding Description}" FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" LineHeight="17"/>

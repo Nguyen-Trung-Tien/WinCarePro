@@ -20,6 +20,8 @@ public class RestorePointInfo
 
 public class RegistryBackupEngine
 {
+    private static readonly SemaphoreSlim _backupSemaphore = new(1, 1);
+
     private static readonly string BackupFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         @"WinCarePro\Backups"
@@ -293,66 +295,79 @@ public class RegistryBackupEngine
     // Registry Backup
     public async Task<bool> CreateRegistryBackupAsync(string name)
     {
-        if (!Directory.Exists(BackupFolder))
+        if (!await _backupSemaphore.WaitAsync(2000))
         {
-            Directory.CreateDirectory(BackupFolder);
+            Database.DbManager.LogAction("Registry backup timed out acquiring lock", "Registry Tools", "Timeout");
+            return false;
         }
-
-        string cleanName = string.Join("_", name.Split(Path.GetInvalidFileNameChars()));
-        string backupFile = Path.Combine(BackupFolder, $"{cleanName}_{DateTime.Now:yyyyMMdd_HHmmss}.reg");
 
         try
         {
-            // 1. We export HKCU hive (user settings) which is safe and easy, and does not require exclusive locks
-            var result = await ProcessRunner.RunAsync("reg.exe", new[] { "export", "HKCU", backupFile, "/y" }, TimeSpan.FromSeconds(10));
-            bool success = result.ExitCode == 0;
-
-            // 2. Export key HKLM paths we modify and append them to the backup file
-            string[] hklmPaths = new[]
+            if (!Directory.Exists(BackupFolder))
             {
-                @"HKLM\SYSTEM\CurrentControlSet\Control\FileSystem",
-                @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile",
-                @"HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers"
-            };
+                Directory.CreateDirectory(BackupFolder);
+            }
 
-            foreach (var path in hklmPaths)
+            string cleanName = string.Join("_", name.Split(Path.GetInvalidFileNameChars()));
+            string backupFile = Path.Combine(BackupFolder, $"{cleanName}_{DateTime.Now:yyyyMMdd_HHmmss}.reg");
+
+            try
             {
-                string tempFile = Path.Combine(BackupFolder, $"temp_{Guid.NewGuid():N}.reg");
-                try
+                // 1. We export HKCU hive (user settings) which is safe and easy, and does not require exclusive locks
+                var result = await ProcessRunner.RunAsync("reg.exe", new[] { "export", "HKCU", backupFile, "/y" }, TimeSpan.FromSeconds(10));
+                bool success = result.ExitCode == 0;
+
+                // 2. Export key HKLM paths we modify and append them to the backup file
+                string[] hklmPaths = new[]
                 {
-                    var resultHklm = await ProcessRunner.RunAsync("reg.exe", new[] { "export", path, tempFile, "/y" }, TimeSpan.FromSeconds(10));
-                    if (resultHklm.ExitCode == 0 && File.Exists(tempFile))
+                    @"HKLM\SYSTEM\CurrentControlSet\Control\FileSystem",
+                    @"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile",
+                    @"HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers"
+                };
+
+                foreach (var path in hklmPaths)
+                {
+                    string tempFile = Path.Combine(BackupFolder, $"temp_{Guid.NewGuid():N}.reg");
+                    try
                     {
-                        var lines = await File.ReadAllLinesAsync(tempFile, System.Text.Encoding.Unicode);
-                        using (var sw = new StreamWriter(backupFile, true, System.Text.Encoding.Unicode))
+                        var resultHklm = await ProcessRunner.RunAsync("reg.exe", new[] { "export", path, tempFile, "/y" }, TimeSpan.FromSeconds(10));
+                        if (resultHklm.ExitCode == 0 && File.Exists(tempFile))
                         {
-                            sw.WriteLine();
-                            foreach (var line in lines)
+                            var lines = await File.ReadAllLinesAsync(tempFile, System.Text.Encoding.Unicode);
+                            using (var sw = new StreamWriter(backupFile, true, System.Text.Encoding.Unicode))
                             {
-                                if (line.Trim().StartsWith("Windows Registry Editor", StringComparison.OrdinalIgnoreCase))
-                                    continue;
-                                sw.WriteLine(line);
+                                sw.WriteLine();
+                                foreach (var line in lines)
+                                {
+                                    if (line.Trim().StartsWith("Windows Registry Editor", StringComparison.OrdinalIgnoreCase))
+                                        continue;
+                                    sw.WriteLine(line);
+                                }
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] Export {path} error: {ex.Message}");
+                    }
+                    finally
+                    {
+                        try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
+                    }
                 }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] Export {path} error: {ex.Message}");
-                }
-                finally
-                {
-                    try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
-                }
-            }
 
-            Database.DbManager.LogAction($"Created Registry Backup: {name}", "Registry Tools", success ? "Success" : "Failed");
-            return success;
+                Database.DbManager.LogAction($"Created Registry Backup: {name}", "Registry Tools", success ? "Success" : "Failed");
+                return success;
+            }
+            catch (Exception ex)
+            {
+                Database.DbManager.LogAction($"Registry backup failed: {ex.Message}", "Registry Tools", "Failed");
+                return false;
+            }
         }
-        catch (Exception ex)
+        finally
         {
-            Database.DbManager.LogAction($"Registry backup failed: {ex.Message}", "Registry Tools", "Failed");
-            return false;
+            _backupSemaphore.Release();
         }
     }
 
@@ -362,6 +377,13 @@ public class RegistryBackupEngine
     public static async Task<bool> BackupKeyAsync(string keyPath, string? targetFilePath = null)
     {
         if (string.IsNullOrWhiteSpace(keyPath)) return false;
+
+        if (!await _backupSemaphore.WaitAsync(2000))
+        {
+            System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] Timeout acquiring semaphore for {keyPath}");
+            return false;
+        }
+
         try
         {
             if (!Directory.Exists(BackupFolder)) Directory.CreateDirectory(BackupFolder);
@@ -377,6 +399,10 @@ public class RegistryBackupEngine
         {
             System.Diagnostics.Debug.WriteLine($"[RegistryBackupEngine] BackupKeyAsync failed for {keyPath}: {ex.Message}");
             return false;
+        }
+        finally
+        {
+            _backupSemaphore.Release();
         }
     }
 
@@ -417,6 +443,13 @@ public class RegistryBackupEngine
     public async Task<bool> RestoreRegistryBackupAsync(string filePath)
     {
         if (!File.Exists(filePath)) return false;
+
+        if (!await _backupSemaphore.WaitAsync(2000))
+        {
+            Database.DbManager.LogAction("Registry restore timed out acquiring lock", "Registry Tools", "Timeout");
+            return false;
+        }
+
         try
         {
             // Verify header to ensure valid .reg backup file
@@ -437,6 +470,10 @@ public class RegistryBackupEngine
         {
             Database.DbManager.LogAction($"Registry restore failed: {ex.Message}", "Registry Tools", "Failed");
             return false;
+        }
+        finally
+        {
+            _backupSemaphore.Release();
         }
     }
 

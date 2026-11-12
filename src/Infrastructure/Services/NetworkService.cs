@@ -148,4 +148,24 @@ public class NetworkService : INetworkService
             dnsServers,
             connections);
     }
+
+    public NetworkAdapterInfo? GetActiveAdapterSummary() => _engine.GetActiveAdapterSummary();
+
+    public (string? AdapterName, List<string> DnsServers, bool IsDhcp) BackupCurrentDns() => _engine.BackupCurrentDns();
+
+    public bool HasDnsBackup => _engine.HasDnsBackup;
+
+    public IReadOnlyList<DnsProfileOption> GetPresetDnsProfiles() => NetworkEngine.GetPresetDnsProfiles();
+
+    public Task<bool> ApplyDnsProfileAsync(string profileName, string primaryDns, string secondaryDns, System.Threading.CancellationToken cancellationToken = default) =>
+        _engine.ApplyDnsProfileAsync(profileName, primaryDns, secondaryDns, cancellationToken);
+
+    public Task<bool> RestoreDnsBackupAsync(System.Threading.CancellationToken cancellationToken = default) =>
+        _engine.RestoreDnsBackupAsync(cancellationToken);
+
+    public Task<NetworkDiagnosticsResult> RunOnDemandDiagnosticsAsync(System.Threading.CancellationToken cancellationToken = default) =>
+        _engine.RunOnDemandDiagnosticsAsync(cancellationToken);
+
+    public Task<bool> ResetWinsockAndTcpIpAsync(System.Threading.CancellationToken cancellationToken = default) =>
+        _engine.ResetWinsockAndTcpIpAsync(cancellationToken);
 }

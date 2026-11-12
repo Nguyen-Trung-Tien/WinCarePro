@@ -30,18 +30,18 @@ public class AppVersionManagementTests
     }
 
     [Fact]
-    public void AppConstants_VersionProperties_AreStandardizedTo520()
+    public void AppConstants_VersionProperties_AreStandardizedTo600()
     {
-        Assert.Equal(5, AppConstants.CurrentVersion.Major);
-        Assert.Equal(2, AppConstants.CurrentVersion.Minor);
+        Assert.Equal(6, AppConstants.CurrentVersion.Major);
+        Assert.Equal(0, AppConstants.CurrentVersion.Minor);
         Assert.Equal(0, AppConstants.CurrentVersion.Build);
-        Assert.Equal("5.2.0", AppConstants.VersionString);
-        Assert.Equal("v5.2.0", AppConstants.DisplayVersion);
-        Assert.Equal("v5.2.0", AppConstants.DisplayVersionFull);
+        Assert.Equal("6.0.0", AppConstants.VersionString);
+        Assert.Equal("v6.0.0", AppConstants.DisplayVersion);
+        Assert.Equal("v6.0.0", AppConstants.DisplayVersionFull);
         Assert.Equal("WinCare Pro", AppConstants.AppName);
         Assert.Equal("Polaris", AppConstants.Codename);
-        Assert.Contains("WinCare Pro v5.2.0", AppConstants.TitleWithVersion);
-        Assert.Contains("Version 5.2.0 (Codename: Polaris)", AppConstants.SystemBadgeText);
+        Assert.Contains("WinCare Pro v6.0.0", AppConstants.TitleWithVersion);
+        Assert.Contains("Version 6.0.0 (Codename: Polaris)", AppConstants.SystemBadgeText);
     }
 
     [Fact]
@@ -134,5 +134,14 @@ public class AppVersionManagementTests
             Assert.Contains($"Text=\"{AppConstants.DisplayVersion}\"", settingsPageText);
             Assert.Contains($"Text=\"{AppConstants.DisplayVersion} {AppConstants.Codename}\"", settingsPageText);
         }
+    }
+
+    [Fact]
+    public void SettingsViewModel_AppVersion_IsDynamicAndMatchesCurrentVersion()
+    {
+        var vm = new WinCarePro.ViewModels.SettingsViewModel();
+        Assert.Equal(AppConstants.DisplayVersion, vm.AppVersion);
+        Assert.Equal("v6.0.0", vm.AppVersion);
+        Assert.Equal("v6.0.0 Polaris", vm.VersionWithCodename);
     }
 }

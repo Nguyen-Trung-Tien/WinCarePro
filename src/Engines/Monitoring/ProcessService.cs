@@ -158,7 +158,10 @@ public partial class ProcessService
 
     public async Task<List<ProcessInfo>> GetRunningProcessesAsync()
     {
-        await _querySemaphore.WaitAsync();
+        if (!await _querySemaphore.WaitAsync(2000))
+        {
+            return new List<ProcessInfo>();
+        }
         var rawProcesses = Process.GetProcesses();
         try
         {

@@ -8,6 +8,7 @@
     xmlns:models="using:WinCarePro.Models"
     xmlns:vm="using:WinCarePro.ViewModels"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     mc:Ignorable="d">
 
     <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -568,6 +569,11 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
+            </Border>
+
+            <!-- Skeleton Shimmer Loading State (While WinGet queries packages) -->
+            <Border Visibility="{x:Bind IsListLoading(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}" Padding="12">
+                <controls:SkeletonCardControl />
             </Border>
 
             <!-- Empty State (Aura Glass Synced) -->

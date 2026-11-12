@@ -9,6 +9,8 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <ResourceDictionary Source="ms-appx:///Presentation/Styles/Fluent2DesignTokens.xaml" />
+                <ResourceDictionary Source="ms-appx:///Presentation/Styles/AppStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <ResourceDictionary.ThemeDictionaries>
@@ -484,21 +486,6 @@
                 <GradientStop Color="#250F6CBD" Offset="1" />
             </LinearGradientBrush>
 
-            <LinearGradientBrush x:Key="HealthGoodGradient" StartPoint="0,0" EndPoint="1,0">
-                <GradientStop Color="#FF10B981" Offset="0" />
-                <GradientStop Color="#FF059669" Offset="1" />
-            </LinearGradientBrush>
-
-            <LinearGradientBrush x:Key="HealthWarningGradient" StartPoint="0,0" EndPoint="1,0">
-                <GradientStop Color="#FFF59E0B" Offset="0" />
-                <GradientStop Color="#FFD97706" Offset="1" />
-            </LinearGradientBrush>
-
-            <LinearGradientBrush x:Key="HealthCriticalGradient" StartPoint="0,0" EndPoint="1,0">
-                <GradientStop Color="#FFEF4444" Offset="0" />
-                <GradientStop Color="#FFDC2626" Offset="1" />
-            </LinearGradientBrush>
-
             <!-- Clean Modern Health and Accent Brushes -->
             <LinearGradientBrush x:Key="Asc19ReactorGradient" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#FF0F6CBD" Offset="0" />
@@ -510,46 +497,6 @@
                 <GradientStop Color="#000F6CBD" Offset="1" />
             </LinearGradientBrush>
 
-            <LinearGradientBrush x:Key="Asc19EmeraldGlowBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF10B981" Offset="0" />
-                <GradientStop Color="#FF059669" Offset="1" />
-            </LinearGradientBrush>
-
-            <LinearGradientBrush x:Key="Asc19AmberTurboBrush" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FFF59E0B" Offset="0" />
-                <GradientStop Color="#FFD97706" Offset="1" />
-            </LinearGradientBrush>
-
-            <LinearGradientBrush x:Key="AuraNeonPurpleGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF0F6CBD" Offset="0" />
-                <GradientStop Color="#FF0F6CBD" Offset="1" />
-            </LinearGradientBrush>
-
-            <LinearGradientBrush x:Key="AuraNeonCyanGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF0F6CBD" Offset="0" />
-                <GradientStop Color="#FF0F6CBD" Offset="1" />
-            </LinearGradientBrush>
-
-            <LinearGradientBrush x:Key="RainbowChromaGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF0F6CBD" Offset="0.0" />
-                <GradientStop Color="#FF0F6CBD" Offset="1.0" />
-            </LinearGradientBrush>
-
-            <LinearGradientBrush x:Key="AuraShimmerSweepBrush" StartPoint="0,0" EndPoint="1,0">
-                <GradientStop Color="#00FFFFFF" Offset="0.0" />
-                <GradientStop Color="#00FFFFFF" Offset="1.0" />
-            </LinearGradientBrush>
-
-            <LinearGradientBrush x:Key="SkeletonShimmerBrush" StartPoint="0,0" EndPoint="1,0">
-                <GradientStop Color="#08FFFFFF" Offset="0.0" />
-                <GradientStop Color="#08FFFFFF" Offset="1.0" />
-            </LinearGradientBrush>
-
-            <LinearGradientBrush x:Key="AiInsightBorderGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#250F6CBD" Offset="0" />
-                <GradientStop Color="#250F6CBD" Offset="1" />
-            </LinearGradientBrush>
-
             <!-- Unified Flat Fluent 2.0 Card Containers Styling (8px CornerRadius Across Entire System) -->
             <Style x:Key="CockpitBentoCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
@@ -557,28 +504,6 @@
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
-            </Style>
-
-            <Style x:Key="FloatingCommandIslandStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="12,4" />
-            </Style>
-
-            <Style x:Key="ModernCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-            </Style>
-
-            <Style x:Key="GradientBorderCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
             <Style x:Key="GlowCardStyle" TargetType="Border">
@@ -593,24 +518,6 @@
                 <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
-            </Style>
-
-            <Style x:Key="SpatialNebulaCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="16" />
-            </Style>
-
-            <Style x:Key="QuantumBoostButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource PrimaryAccentBrush}" />
-                <Setter Property="Foreground" Value="White" />
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="FontSize" Value="12" />
-                <Setter Property="Padding" Value="16,7" />
             </Style>
 
             <!-- Unified Stat Chip / Capsule Styles (8px CornerRadius) -->
@@ -640,15 +547,6 @@
                 <Setter Property="Padding" Value="16" />
             </Style>
 
-            <Style x:Key="CyberStatCapsuleStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="12,10" />
-                <Setter Property="MinHeight" Value="54" />
-            </Style>
-
             <Style x:Key="CyberTactileButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
                 <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
@@ -657,97 +555,6 @@
                 <Setter Property="Padding" Value="12,6" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="FontSize" Value="12" />
-            </Style>
-
-            <Style x:Key="SpatialBentoCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="16" />
-            </Style>
-
-            <Style x:Key="LuminescentHeroCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="16" />
-            </Style>
-
-            <Style x:Key="BentoStatCapsuleStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="12,10" />
-                <Setter Property="MinHeight" Value="54" />
-            </Style>
-
-            <!-- Status Badge Styles -->
-            <Style x:Key="StatusBadgeGoodStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppBadgeGoodBg}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeGoodBorder}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Padding" Value="8,3" />
-            </Style>
-
-            <Style x:Key="StatusBadgeWarningStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppBadgeWarningBg}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeWarningBorder}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Padding" Value="8,3" />
-            </Style>
-
-            <Style x:Key="StatusBadgeCriticalStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppBadgeCriticalBg}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeCriticalBorder}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Padding" Value="8,3" />
-            </Style>
-
-            <Style x:Key="NeonGlowBorderStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-            </Style>
-
-            <Style x:Key="FluidInteractiveCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-            </Style>
-
-            <Style x:Key="AuraCelebrationBadgeStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource AppBadgeGoodBg}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeGoodBorder}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Padding" Value="12,8" />
-            </Style>
-
-            <Style x:Key="AuraPulseCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-            </Style>
-
-            <Style x:Key="CyberPulseGlowCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-            </Style>
-
-            <Style x:Key="MasterInteractiveButtonStyle" TargetType="Button">
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="FontWeight" Value="SemiBold" />
             </Style>
 
             <Style x:Key="Tilt3DCardStyle" TargetType="Border">
@@ -771,75 +578,6 @@
                 <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="12" />
-            </Style>
-
-            <Style x:Key="Glass3DCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="14" />
-            </Style>
-
-            <Style x:Key="AuraGlassLayerCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="16" />
-            </Style>
-
-            <Style x:Key="AiSmartInsightCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="14,10" />
-            </Style>
-
-            <Style x:Key="Magnetic3DButtonStyle" TargetType="Button">
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Padding" Value="14,7" />
-            </Style>
-
-            <Style x:Key="HeroScan3DButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource PrimaryAccentBrush}" />
-                <Setter Property="Foreground" Value="White" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="FontSize" Value="12" />
-                <Setter Property="Padding" Value="16,7" />
-                <Setter Property="BorderThickness" Value="0" />
-            </Style>
-
-            <Style x:Key="Action3DButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="FontWeight" Value="SemiBold" />
-                <Setter Property="Padding" Value="14,7" />
-                <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
-            </Style>
-
-            <Style x:Key="Spatial3DChipStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="10,6" />
-            </Style>
-
-            <Style x:Key="DarkTerminalStyle" TargetType="TextBox">
-                <Setter Property="Background" Value="{ThemeResource AppTerminalBackground}" />
-                <Setter Property="Foreground" Value="{ThemeResource AppTerminalForeground}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="FontFamily" Value="Consolas, Cascadia Code, Segoe UI Mono" />
-                <Setter Property="FontSize" Value="12" />
                 <Setter Property="Padding" Value="12" />
             </Style>
 
@@ -873,18 +611,6 @@
                 <Setter Property="FontSize" Value="15.5" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
-            </Style>
-
-            <!-- Tabular Figures for Real-time Telemetry (Jitter-free numbers) -->
-            <Style x:Key="TelemetryTabularTextStyle" TargetType="TextBlock">
-                <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
-                <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
-            </Style>
-
-            <Style x:Key="MetricNumberLargeStyle" TargetType="TextBlock">
-                <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
             </Style>
 
             <!-- Global default style for standard buttons -->
@@ -1070,13 +796,13 @@
             <!-- GLOBAL DESIGN SYSTEM TOKENS (WinUI 3 Modern Suite)        -->
             <!-- ======================================================== -->
 
-            <!-- Standard Corner Radius Tokens -->
-            <CornerRadius x:Key="AppControlCornerRadius">8</CornerRadius>
+            <!-- Standard Corner Radius Tokens (Fluent 2 V6.0: 8px Cards, 4px Controls & Inputs) -->
+            <CornerRadius x:Key="AppControlCornerRadius">4</CornerRadius>
             <CornerRadius x:Key="AppCardCornerRadius">8</CornerRadius>
-            <CornerRadius x:Key="AppSubCardCornerRadius">6</CornerRadius>
-            <CornerRadius x:Key="AppBadgeCornerRadius">6</CornerRadius>
+            <CornerRadius x:Key="AppSubCardCornerRadius">4</CornerRadius>
+            <CornerRadius x:Key="AppBadgeCornerRadius">4</CornerRadius>
             <CornerRadius x:Key="AppDialogCornerRadius">8</CornerRadius>
-            <CornerRadius x:Key="AppPillCornerRadius">8</CornerRadius>
+            <CornerRadius x:Key="AppPillCornerRadius">4</CornerRadius>
 
             <!-- Standard Spacing & Padding Tokens -->
             <Thickness x:Key="AppPagePadding">24,18,24,18</Thickness>
@@ -1100,12 +826,6 @@
             <!-- Navigation Active Indicator Gradient -->
             <SolidColorBrush x:Key="NavActiveIndicatorBrush" Color="#FF0F6CBD" />
 
-            <!-- AI WinCare Engine Gradient -->
-            <LinearGradientBrush x:Key="AiWinCareEngineGradient" StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FF0F6CBD" Offset="0" />
-                <GradientStop Color="#FF0F6CBD" Offset="1" />
-            </LinearGradientBrush>
-
             <!-- Aura Glass Card Style -->
             <Style x:Key="AuraGlassCardStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
@@ -1122,27 +842,6 @@
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
-            </Style>
-
-            <!-- AI WinCare Engine Card Style -->
-            <Style x:Key="AiWinCareEngineCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="16" />
-            </Style>
-
-            <!-- Floating Action Deck Style -->
-            <Style x:Key="FloatingActionDeckStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="12,8" />
-                <Setter Property="HorizontalAlignment" Value="Center" />
-                <Setter Property="VerticalAlignment" Value="Bottom" />
-                <Setter Property="Margin" Value="0,0,0,16" />
             </Style>
 
             <Style x:Key="VibrantPrimaryButtonStyle" TargetType="Button">
@@ -1362,17 +1061,6 @@
             <x:Double x:Key="ContentDialogButtonMaxWidth">260</x:Double>
             <x:Double x:Key="ContentDialogButtonMinWidth">80</x:Double>
 
-            <!-- Tile Action Secondary Button Style (Unified Secondary Button for compact modular repair & tool tiles matching system theme) -->
-            <Style x:Key="RepairTileButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
-                <Setter Property="CornerRadius" Value="6" />
-                <Setter Property="Height" Value="28" />
-                <Setter Property="Padding" Value="6,0" />
-                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="FontSize" Value="11" />
-                <Setter Property="FontWeight" Value="SemiBold" />
-            </Style>
-
             <!-- Destructive / Danger Action Button Style -->
             <Style x:Key="DangerButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="{ThemeResource AppBadgeCriticalBg}" />
@@ -1497,81 +1185,12 @@
                 </Setter>
             </Style>
 
-            <!-- Compact Action Button Style (for items in tables/lists/cards) -->
-            <Style x:Key="CompactActionButtonStyle" TargetType="Button" BasedOn="{StaticResource StandardSecondaryButtonStyle}">
-                <Setter Property="Height" Value="28" />
-                <Setter Property="Padding" Value="10,2" />
-                <Setter Property="FontSize" Value="11" />
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="CornerRadius" Value="6" />
-            </Style>
-
-            <!-- Power Option Item Button Style -->
-            <Style x:Key="PowerOptionItemButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{ThemeResource AppFlyoutItemBackground}" />
-                <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppFlyoutItemBorder}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Padding" Value="12,10" />
-                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                <Setter Property="HorizontalContentAlignment" Value="Left" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <ContentPresenter x:Name="ContentPresenter"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                Padding="{TemplateBinding Padding}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup x:Name="CommonStates">
-                                        <VisualState x:Name="Normal" />
-                                        <VisualState x:Name="PointerOver">
-                                            <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.Background" Value="{ThemeResource AppFlyoutItemPointerOver}" />
-                                                <Setter Target="ContentPresenter.BorderBrush" Value="{StaticResource PrimaryAccentBrush}" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Pressed">
-                                            <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.Background" Value="{ThemeResource AppFlyoutItemBackground}" />
-                                                <Setter Target="ContentPresenter.Opacity" Value="0.8" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Disabled">
-                                            <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.Opacity" Value="0.4" />
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </ContentPresenter>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
             <!-- Shimmer Skeleton Loading Style -->
             <Style x:Key="ShimmerSkeletonStyle" TargetType="Border">
                 <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Opacity" Value="0.65" />
-            </Style>
-
-            <!-- Staggered Entrance Card Style -->
-            <Style x:Key="StaggeredEntranceCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="CornerRadius" Value="8" />
             </Style>
 
             <!-- Active Preset Profile Chip Button Style -->
@@ -1597,8 +1216,6 @@
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
             </Style>
-
-            <Style x:Key="StandardPrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource VibrantPrimaryButtonStyle}" />
 
             <!-- Value Converters -->
             <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

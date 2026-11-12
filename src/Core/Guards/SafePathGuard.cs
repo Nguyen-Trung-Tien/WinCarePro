@@ -318,6 +318,20 @@ public static class SafePathGuard
                 {
                     return false;
                 }
+
+                // Directory depth validation: Prohibit deleting root or shallow directories (depth < 3)
+                // e.g. C:\Windows, C:\Program Files, C:\ProgramData, C:\Users
+                string[] segments = fullPath.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+                if (segments.Length < 3)
+                {
+                    return false;
+                }
+
+                // Explicitly protect C:\Users\<Username> user profile roots
+                if (segments.Length == 3 && segments[1].Equals("Users", StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -326,6 +340,23 @@ public static class SafePathGuard
         {
             return false;
         }
+    }
+
+    /// <summary>
+    /// Validates if a directory itself is safe to delete.
+    /// Strictly requires directory depth >= 3 and forbids Windows root, Program Files, ProgramData, and Users profile trees.
+    /// </summary>
+    public static bool IsSafeToDeleteDirectory(string dirPath)
+    {
+        if (string.IsNullOrWhiteSpace(dirPath)) return false;
+        string norm = NormalizePath(dirPath);
+        if (string.IsNullOrEmpty(norm)) return false;
+
+        string[] segments = norm.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+        if (segments.Length < 3) return false;
+        if (segments.Length == 3 && segments[1].Equals("Users", StringComparison.OrdinalIgnoreCase)) return false;
+
+        return IsPathSafeForDeletion(norm);
     }
 
     /// <summary>
@@ -495,7 +526,7 @@ public static class SafePathGuard
                 {
                     try
                     {
-                        if ((subDir.Attributes & FileAttributes.ReparsePoint) == 0 && IsPathSafeForDeletion(subDir.FullName))
+                        if ((subDir.Attributes & FileAttributes.ReparsePoint) == 0 && IsSafeToDeleteDirectory(subDir.FullName))
                         {
                             var (subBytes, subFiles) = SafeCleanDirectoryWithStats(subDir.FullName, true);
                             deletedBytes += subBytes;

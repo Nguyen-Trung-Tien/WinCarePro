@@ -463,5 +463,40 @@ public partial class TranslationManager
         vi["Process '{0}' is protected by Windows OS."] = "Tiến trình '{0}' được bảo vệ bởi hệ điều hành Windows.";
         vi["Action Blocked"] = "Thao tác bị chặn";
         vi["Select Socket to Inspect"] = "Chọn Socket để kiểm tra";
+
+        // Fluent 2 Network Center & Rescue (Polaris v6.0.0)
+        vi["Network Center & Connection Rescue"] = "Trung tâm Mạng & Cứu hộ Kết nối";
+        vi["Manage adapters, switch secure DNS with 1-click and rescue connection issues."] = "Quản lý kết nối, đổi nhanh DNS bảo mật và khắc phục sự cố mạng tức thì.";
+        vi["Active Network Connection"] = "Thông tin kết nối hiện tại";
+        vi["Active Adapter"] = "Tên Card mạng";
+        vi["IPv4 Address"] = "Địa chỉ IPv4";
+        vi["Subnet Mask"] = "Mặt nạ mạng (Subnet Mask)";
+        vi["Default Gateway"] = "Cổng mặc định (Gateway)";
+        vi["Current DNS"] = "DNS hiện hành";
+        vi["MAC Address"] = "Địa chỉ vật lý (MAC)";
+        vi["Check Connection"] = "Kiểm tra kết nối";
+        vi["Checking Connection..."] = "Đang kiểm tra kết nối...";
+        vi["Secure DNS Switcher"] = "Chuyển đổi DNS nhanh";
+        vi["Fast and secure DNS switching for optimal speed and privacy."] = "Chuyển đổi DNS an toàn, tăng tốc truy cập và bảo vệ quyền riêng tư.";
+        vi["Select DNS Provider"] = "Chọn nhà cung cấp DNS";
+        vi["Apply DNS"] = "Áp dụng DNS";
+        vi["Restore DHCP"] = "Khôi phục DHCP";
+        vi["Revert Backup"] = "Hoàn tác DNS";
+        vi["Network Rescue & Reset"] = "Cứu hộ & Đặt lại mạng";
+        vi["1-Click tools to fix socket stalls, corrupted resolver cache, and IP lease failures."] = "Khắc phục triệt để lỗi không vào được mạng, kẹt proxy sau khi gỡ VPN và nghẽn giao thức.";
+        vi["Flush DNS Cache"] = "Xóa Cache DNS";
+        vi["Flush DNS cache (ipconfig /flushdns)"] = "Xóa bộ nhớ đệm phân giải DNS (ipconfig /flushdns)";
+        vi["Renew IP Address"] = "Cấp lại IP";
+        vi["Release & renew DHCP lease (ipconfig /renew)"] = "Giải phóng và xin cấp lại IP (ipconfig /release & renew)";
+        vi["Reset Winsock & IP"] = "Đặt lại Winsock & IP";
+        vi["Reset Winsock catalog & TCP/IP stack (netsh reset)"] = "Đặt lại Winsock catalog & ngăn xếp TCP/IP (netsh reset)";
+        vi["Restart Required"] = "Yêu cầu khởi động lại máy";
+        vi["Please restart your computer to complete the Winsock and TCP/IP stack reset."] = "Vui lòng khởi động lại máy tính để hoàn tất việc đặt lại ngăn xếp mạng.";
+        vi["Ready to test"] = "Sẵn sàng kiểm tra";
+        vi["Internet Stable"] = "Kết nối internet ổn định";
+        vi["Unreachable"] = "Không phản hồi";
+        vi["Timeout"] = "Hết thời gian";
+        vi["Latency"] = "Độ trễ";
+        vi["Gateway"] = "Cổng Gateway";
     }
 }

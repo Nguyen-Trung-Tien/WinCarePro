@@ -418,6 +418,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
             new Axis
             {
                 LabelsPaint = new SolidColorPaint(SKColor.Parse("#94A3B8")),
+                SeparatorsPaint = new SolidColorPaint(SKColor.Parse("#1AFFFFFF")),
                 MinLimit = 0,
                 MaxLimit = 100,
                 TextSize = 10

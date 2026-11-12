@@ -1,0 +1,380 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ========================================================================= -->
+    <!-- WINCARE PRO V6.0.0 — FLAGSHIP AURA GLASS & VISUAL EFFECTS SYSTEM          -->
+    <!-- Inspired by CleanMyMac X, Raycast & Linear: Deep Obsidian & Specular Rim  -->
+    <!-- ========================================================================= -->
+
+    <!-- ========================================================================= -->
+    <!-- 1. DEEP OBSIDIAN CANVAS & AMBIENT MESH GLOW BRUSHES                       -->
+    <!-- ========================================================================= -->
+
+    <ResourceDictionary.ThemeDictionaries>
+        <!-- ==================== DARK MODE (MICA ALT / DEEP OBSIDIAN) ==================== -->
+        <ResourceDictionary x:Key="Default">
+            <!-- Deep Obsidian Canvas Base (#0D0F14) -->
+            <SolidColorBrush x:Key="AppDeepObsidianBackground" Color="#FF0D0F14" />
+            <SolidColorBrush x:Key="AppCanvasBackgroundBrush" Color="#FF0D0F14" />
+
+            <!-- Translucent High-Density Obsidian Glass Card Surface (#161922 with subtle alpha) -->
+            <SolidColorBrush x:Key="GlassCardBackgroundBrush" Color="#E6161922" />
+            <SolidColorBrush x:Key="GlassCardHoverBackgroundBrush" Color="#F21C202C" />
+            <SolidColorBrush x:Key="GlassCardPressedBackgroundBrush" Color="#F8141720" />
+
+            <!-- Specular Top-Edge Rim: #45FFFFFF at top fading to #0F1218 at bottom -->
+            <LinearGradientBrush x:Key="SpecularGlassBorderBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Color="#45FFFFFF" Offset="0.0" />
+                <GradientStop Color="#1AFFFFFF" Offset="0.25" />
+                <GradientStop Color="#08FFFFFF" Offset="0.65" />
+                <GradientStop Color="#0F1218" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!-- Specular Top-Edge Rim (Hover State): Neon Cyan specular highlights -->
+            <LinearGradientBrush x:Key="SpecularGlassBorderHoverBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Color="#9900D2FF" Offset="0.0" />
+                <GradientStop Color="#407B2CBF" Offset="0.45" />
+                <GradientStop Color="#15FFFFFF" Offset="0.80" />
+                <GradientStop Color="#121622" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!-- Specular Top-Edge Rim (Active/Focus State) -->
+            <LinearGradientBrush x:Key="SpecularGlassBorderActiveBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Color="#CC00C6FF" Offset="0.0" />
+                <GradientStop Color="#600072FF" Offset="0.50" />
+                <GradientStop Color="#1AFFFFFF" Offset="1.0" />
+            </LinearGradientBrush>
+
+            <!-- Background Arc Track: Translucent white ring -->
+            <SolidColorBrush x:Key="GaugeTrackBrush" Color="#18FFFFFF" />
+        </ResourceDictionary>
+
+        <!-- ==================== LIGHT MODE (MICA CLEAN SURFACE) ==================== -->
+        <ResourceDictionary x:Key="Light">
+            <!-- Canvas Base: Clean transparent / light canvas for Mica -->
+            <SolidColorBrush x:Key="AppDeepObsidianBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="AppCanvasBackgroundBrush" Color="Transparent" />
+
+            <!-- Crisp Clean Modern Fluent Card Surface -->
+            <SolidColorBrush x:Key="GlassCardBackgroundBrush" Color="#F8FFFFFF" />
+            <SolidColorBrush x:Key="GlassCardHoverBackgroundBrush" Color="#FFF1F5F9" />
+            <SolidColorBrush x:Key="GlassCardPressedBackgroundBrush" Color="#FFE2E8F0" />
+
+            <!-- Subtle Border for Light Mode -->
+            <SolidColorBrush x:Key="SpecularGlassBorderBrush" Color="#18000000" />
+            <SolidColorBrush x:Key="SpecularGlassBorderHoverBrush" Color="#350072FF" />
+            <SolidColorBrush x:Key="SpecularGlassBorderActiveBrush" Color="#700072FF" />
+
+            <!-- Background Arc Track: Subtle dark track -->
+            <SolidColorBrush x:Key="GaugeTrackBrush" Color="#14000000" />
+        </ResourceDictionary>
+
+        <!-- ==================== HIGH CONTRAST MODE ==================== -->
+        <ResourceDictionary x:Key="HighContrast">
+            <StaticResource x:Key="AppDeepObsidianBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="AppCanvasBackgroundBrush" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="GlassCardBackgroundBrush" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="GlassCardHoverBackgroundBrush" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="GlassCardPressedBackgroundBrush" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="SpecularGlassBorderBrush" ResourceKey="SystemColorWindowTextBrush" />
+            <StaticResource x:Key="SpecularGlassBorderHoverBrush" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="SpecularGlassBorderActiveBrush" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="GaugeTrackBrush" ResourceKey="SystemColorWindowTextBrush" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <!-- Static Ambient Mesh Glow: Cyan (#00D2FF) to Indigo Purple (#7B2CBF) -->
+    <RadialGradientBrush x:Key="AppAmbientMeshGlowBrush"
+                         Center="0.0,0.0"
+                         GradientOrigin="0.0,0.0"
+                         RadiusX="0.85"
+                         RadiusY="0.85">
+        <GradientStop Color="#00D2FF" Offset="0.0" />
+        <GradientStop Color="#7B2CBF" Offset="0.45" />
+        <GradientStop Color="#251E1035" Offset="0.75" />
+        <GradientStop Color="#00000000" Offset="1.0" />
+    </RadialGradientBrush>
+
+    <!-- Secondary Ambient Mesh Glow: Soft Indigo to Electric Blue -->
+    <RadialGradientBrush x:Key="AppSecondaryMeshGlowBrush"
+                         Center="1.0,1.0"
+                         GradientOrigin="1.0,1.0"
+                         RadiusX="0.75"
+                         RadiusY="0.75">
+        <GradientStop Color="#7B2CBF" Offset="0.0" />
+        <GradientStop Color="#0072FF" Offset="0.4" />
+        <GradientStop Color="#00000000" Offset="1.0" />
+    </RadialGradientBrush>
+
+    <!-- Base Style for Precision Glass Card -->
+    <Style x:Key="PrecisionGlassCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource GlassCardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="12" />
+    </Style>
+
+    <!-- ========================================================================= -->
+    <!-- 3. PRIMARY CTA GRADIENT BUTTON WITH SPECULAR SHIMMER SWEEP                -->
+    <!-- ========================================================================= -->
+
+    <!-- Vibrant Electric Blue to Cyan Gradient (#0072FF -> #00C6FF) -->
+    <LinearGradientBrush x:Key="PrimaryCtaGradientBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF0072FF" Offset="0.0" />
+        <GradientStop Color="#FF00C6FF" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="PrimaryCtaGradientHoverBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF1A82FF" Offset="0.0" />
+        <GradientStop Color="#FF1AD4FF" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="PrimaryCtaGradientPressedBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF005ECC" Offset="0.0" />
+        <GradientStop Color="#FF00A3D9" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <!-- Shimmer Specular Light Sweep Gradient Mask -->
+    <LinearGradientBrush x:Key="ShimmerSweepBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#00FFFFFF" Offset="0.0" />
+        <GradientStop Color="#60FFFFFF" Offset="0.5" />
+        <GradientStop Color="#00FFFFFF" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <!-- Flagship Primary Gradient Button Style -->
+    <Style x:Key="PrimaryGradientButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource PrimaryCtaGradientBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="#4000C6FF" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+        <Setter Property="FocusVisualMargin" Value="-2" />
+        <Setter Property="FocusVisualPrimaryBrush" Value="#FF00D2FF" />
+        <Setter Property="FocusVisualSecondaryBrush" Value="#FF0D0F14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid">
+                        <!-- Main Gradient Button Surface -->
+                        <Border x:Name="BackgroundBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}">
+                            <Grid>
+                                <!-- Shimmer Specular Light Sweep Overlay -->
+                                <Border x:Name="ShimmerOverlay"
+                                        Opacity="0"
+                                        CornerRadius="{TemplateBinding CornerRadius}"
+                                        Background="{StaticResource ShimmerSweepBrush}"
+                                        IsHitTestVisible="False" />
+
+                                <!-- Button Content -->
+                                <ContentPresenter x:Name="ContentPresenter"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"
+                                    Padding="{TemplateBinding Padding}"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Grid>
+                        </Border>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundBorder.Background" Value="{StaticResource PrimaryCtaGradientHoverBrush}" />
+                                        <Setter Target="BackgroundBorder.BorderBrush" Value="#8000D2FF" />
+                                        <Setter Target="ShimmerOverlay.Opacity" Value="0.25" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundBorder.Background" Value="{StaticResource PrimaryCtaGradientPressedBrush}" />
+                                        <Setter Target="BackgroundBorder.BorderBrush" Value="#500072FF" />
+                                        <Setter Target="ShimmerOverlay.Opacity" Value="0.1" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundBorder.Opacity" Value="0.45" />
+                                        <Setter Target="ShimmerOverlay.Opacity" Value="0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Transparent Wrapper Button for Interactive Cards -->
+    <Style x:Key="InteractiveCardButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+        <Setter Property="FocusVisualMargin" Value="-1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Background="Transparent">
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ========================================================================= -->
+    <!-- 4. ICON BADGES WITH THEMED GRADIENTS & SHARP GLYPHS                       -->
+    <!-- ========================================================================= -->
+
+    <!-- Base Icon Badge Style (CornerRadius="10") -->
+    <Style x:Key="IconBadgeStyle" TargetType="Border">
+        <Setter Property="Width" Value="38" />
+        <Setter Property="Height" Value="38" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- CPU Badge: Amber Spectrum -->
+    <LinearGradientBrush x:Key="IconBadgeCpuBackground" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#33F59E0B" Offset="0.0" />
+        <GradientStop Color="#10F59E0B" Offset="1.0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="IconBadgeCpuBorder" Color="#45F59E0B" />
+    <SolidColorBrush x:Key="IconBadgeCpuGlyph" Color="#FFFBBF24" />
+
+    <!-- RAM Badge: Electric Cyan/Blue Spectrum -->
+    <LinearGradientBrush x:Key="IconBadgeRamBackground" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#330284C7" Offset="0.0" />
+        <GradientStop Color="#100284C7" Offset="1.0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="IconBadgeRamBorder" Color="#450284C7" />
+    <SolidColorBrush x:Key="IconBadgeRamGlyph" Color="#FF38BDF8" />
+
+    <!-- GPU Badge: Cosmic Purple Spectrum -->
+    <LinearGradientBrush x:Key="IconBadgeGpuBackground" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#338B5CF6" Offset="0.0" />
+        <GradientStop Color="#108B5CF6" Offset="1.0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="IconBadgeGpuBorder" Color="#458B5CF6" />
+    <SolidColorBrush x:Key="IconBadgeGpuGlyph" Color="#FFA78BFA" />
+
+    <!-- Disk Badge: Emerald Spectrum -->
+    <LinearGradientBrush x:Key="IconBadgeDiskBackground" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#3310B981" Offset="0.0" />
+        <GradientStop Color="#1010B981" Offset="1.0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="IconBadgeDiskBorder" Color="#4510B981" />
+    <SolidColorBrush x:Key="IconBadgeDiskGlyph" Color="#FF34D399" />
+
+    <!-- Security & Armor Badge: Shield Green -->
+    <LinearGradientBrush x:Key="IconBadgeSecurityBackground" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#3310B981" Offset="0.0" />
+        <GradientStop Color="#10059669" Offset="1.0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="IconBadgeSecurityBorder" Color="#4510B981" />
+    <SolidColorBrush x:Key="IconBadgeSecurityGlyph" Color="#FF10B981" />
+
+    <!-- Startup & Performance Audit Badge: Amber Boost -->
+    <LinearGradientBrush x:Key="IconBadgeStartupBackground" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#33F59E0B" Offset="0.0" />
+        <GradientStop Color="#10D97706" Offset="1.0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="IconBadgeStartupBorder" Color="#45F59E0B" />
+    <SolidColorBrush x:Key="IconBadgeStartupGlyph" Color="#FFF59E0B" />
+
+    <!-- Registry & Disk Health Badge: Violet Diamond -->
+    <LinearGradientBrush x:Key="IconBadgeRegistryBackground" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#338B5CF6" Offset="0.0" />
+        <GradientStop Color="#107C3AED" Offset="1.0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="IconBadgeRegistryBorder" Color="#458B5CF6" />
+    <SolidColorBrush x:Key="IconBadgeRegistryGlyph" Color="#FFA78BFA" />
+
+    <!-- Primary Accent Badge: Luminous Cyan -->
+    <LinearGradientBrush x:Key="IconBadgePrimaryBackground" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#3300D2FF" Offset="0.0" />
+        <GradientStop Color="#100072FF" Offset="1.0" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="IconBadgePrimaryBorder" Color="#4500D2FF" />
+    <SolidColorBrush x:Key="IconBadgePrimaryGlyph" Color="#FF00D2FF" />
+
+    <!-- ========================================================================= -->
+    <!-- 5. CIRCULAR RING GAUGES & DYNAMIC GLOW BRUSHES                            -->
+    <!-- ========================================================================= -->
+
+    <!-- Telemetry Indicator Gradients -->
+    <LinearGradientBrush x:Key="GaugeCpuBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FFF59E0B" Offset="0.0" />
+        <GradientStop Color="#FFFBBF24" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="GaugeRamBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF0284C7" Offset="0.0" />
+        <GradientStop Color="#FF38BDF8" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="GaugeGpuBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF8B5CF6" Offset="0.0" />
+        <GradientStop Color="#FFA78BFA" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="GaugeDiskBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF10B981" Offset="0.0" />
+        <GradientStop Color="#FF34D399" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="GaugeHealthBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF00D2FF" Offset="0.0" />
+        <GradientStop Color="#FF10B981" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <!-- Dynamic Aura Glow Brushes behind Circular Rings -->
+    <!-- Low Load (Normal): Emerald Glow -->
+    <RadialGradientBrush x:Key="GaugeGlowGoodBrush" Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+        <GradientStop Color="#2810B981" Offset="0.0" />
+        <GradientStop Color="#1210B981" Offset="0.5" />
+        <GradientStop Color="#00000000" Offset="1.0" />
+    </RadialGradientBrush>
+
+    <!-- Medium Load: Amber Glow -->
+    <RadialGradientBrush x:Key="GaugeGlowWarningBrush" Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+        <GradientStop Color="#30F59E0B" Offset="0.0" />
+        <GradientStop Color="#15F59E0B" Offset="0.5" />
+        <GradientStop Color="#00000000" Offset="1.0" />
+    </RadialGradientBrush>
+
+    <!-- High/Critical Load: Ruby Red Glow -->
+    <RadialGradientBrush x:Key="GaugeGlowCriticalBrush" Center="0.5,0.5" GradientOrigin="0.5,0.5" RadiusX="0.5" RadiusY="0.5">
+        <GradientStop Color="#38EF4444" Offset="0.0" />
+        <GradientStop Color="#18EF4444" Offset="0.5" />
+        <GradientStop Color="#00000000" Offset="1.0" />
+    </RadialGradientBrush>
+
+</ResourceDictionary>
+

@@ -50,10 +50,10 @@ To upgrade the version cleanly and atomically without human error, execute:
 
 ```powershell
 # Preview changes (Dry Run):
-powershell -ExecutionPolicy Bypass -File .agents/skills/wincare-version-bumper/scripts/bump-version.ps1 -NewVersion "5.2.0" -DryRun
+powershell -ExecutionPolicy Bypass -File .agents/skills/wincare-version-bumper/scripts/bump-version.ps1 -NewVersion "6.0.0" -DryRun
 
 # Execute atomic version bump:
-powershell -ExecutionPolicy Bypass -File .agents/skills/wincare-version-bumper/scripts/bump-version.ps1 -NewVersion "5.2.0"
+powershell -ExecutionPolicy Bypass -File .agents/skills/wincare-version-bumper/scripts/bump-version.ps1 -NewVersion "6.0.0"
 ```
 
 The script automatically updates:

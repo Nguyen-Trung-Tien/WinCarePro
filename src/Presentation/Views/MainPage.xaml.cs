@@ -264,7 +264,14 @@ public sealed partial class MainPage : Page
         {
             if (curType == typeof(SettingsPage))
             {
-                NavView.SelectedItem = NavView.SettingsItem;
+                try
+                {
+                    NavView.SelectedItem = NavSettings;
+                }
+                catch
+                {
+                    NavView.SelectedItem = null;
+                }
                 UpdateHubSubNavBar(null);
                 return;
             }
@@ -278,15 +285,15 @@ public sealed partial class MainPage : Page
             string? activeSubTag = curType.Name switch
             {
                 nameof(DashboardPage) => "Dashboard",
-                "AiWinCareEnginePage" => "AiWinCareEngine",
-                nameof(JunkPage) => "Junk",
-                nameof(RegistryPage) => "Registry",
+                nameof(CleanerPage) => "Cleaner",
+                nameof(JunkPage) => "Cleaner",
+                nameof(RegistryPage) => "Cleaner",
                 nameof(UninstallPage) => "Uninstall",
                 nameof(UpdaterPage) => "Updater",
-                nameof(SystemOptimizerPage) => "Optimizer",
-                nameof(StartupPage) => "Startup",
-                nameof(ContextMenuPage) => "ContextMenu",
-                nameof(RepairPage) => "Repair",
+                nameof(SystemOptimizerPage) => "Security",
+                nameof(StartupPage) => "Uninstall",
+                nameof(ContextMenuPage) => "Uninstall",
+                nameof(RepairPage) => "Security",
                 nameof(NetworkPage) => "Network",
                 nameof(SecurityPage) => "Security",
                 _ => null
@@ -351,7 +358,14 @@ public sealed partial class MainPage : Page
                 sectionIndex = idx;
             }
 
-            NavView.SelectedItem = NavView.SettingsItem;
+            try
+            {
+                NavView.SelectedItem = NavSettings;
+            }
+            catch
+            {
+                NavView.SelectedItem = null;
+            }
             NavigateToPage("Settings");
 
             if (ContentFrame.Content is SettingsPage settingsPage)
@@ -376,6 +390,7 @@ public sealed partial class MainPage : Page
         Type? pageType = tag.ToLower() switch
         {
             "dashboard" => typeof(DashboardPage),
+            "cleaner" => typeof(CleanerPage),
             "junk" => typeof(JunkPage),
             "uninstall" => typeof(UninstallPage),
             "network" => typeof(NetworkPage),
@@ -543,26 +558,30 @@ public sealed partial class MainPage : Page
 
     public void UpdateExperienceMode(bool isPro)
     {
-        // Unified 4-Group Sidebar Architecture: All core modules directly accessible on the Nav Bar
+        // WinCare Pro v6.0.0 6-Hub Streamlined Navigation Architecture
         if (NavDashboard != null) NavDashboard.Visibility = Visibility.Visible;
-        if (NavJunk != null) NavJunk.Visibility = Visibility.Visible;
-        if (NavRegistry != null) NavRegistry.Visibility = Visibility.Visible;
+        if (NavCleaner != null) NavCleaner.Visibility = Visibility.Visible;
         if (NavUninstall != null) NavUninstall.Visibility = Visibility.Visible;
         if (NavUpdater != null) NavUpdater.Visibility = Visibility.Visible;
-        if (NavOptimizer != null) NavOptimizer.Visibility = Visibility.Visible;
-        if (NavStartup != null) NavStartup.Visibility = Visibility.Visible;
-        if (NavContextMenu != null) NavContextMenu.Visibility = Visibility.Visible;
-        if (NavRepair != null) NavRepair.Visibility = Visibility.Visible;
         if (NavNetwork != null) NavNetwork.Visibility = Visibility.Visible;
         if (NavSecurity != null) NavSecurity.Visibility = Visibility.Visible;
+        if (NavSettings != null) NavSettings.Visibility = Visibility.Visible;
 
-        if (NavHeaderOverview != null) NavHeaderOverview.Visibility = Visibility.Visible;
-        if (NavSepApps != null) NavSepApps.Visibility = Visibility.Visible;
-        if (NavHeaderApps != null) NavHeaderApps.Visibility = Visibility.Visible;
-        if (NavSepClean != null) NavSepClean.Visibility = Visibility.Visible;
-        if (NavHeaderClean != null) NavHeaderClean.Visibility = Visibility.Visible;
-        if (NavSepTweaks != null) NavSepTweaks.Visibility = Visibility.Visible;
-        if (NavHeaderTweaks != null) NavHeaderTweaks.Visibility = Visibility.Visible;
+        // Legacy sub-pages are folded into the 6 core hubs
+        if (NavJunk != null) NavJunk.Visibility = Visibility.Collapsed;
+        if (NavRegistry != null) NavRegistry.Visibility = Visibility.Collapsed;
+        if (NavOptimizer != null) NavOptimizer.Visibility = Visibility.Collapsed;
+        if (NavStartup != null) NavStartup.Visibility = Visibility.Collapsed;
+        if (NavContextMenu != null) NavContextMenu.Visibility = Visibility.Collapsed;
+        if (NavRepair != null) NavRepair.Visibility = Visibility.Collapsed;
+
+        if (NavHeaderOverview != null) NavHeaderOverview.Visibility = Visibility.Collapsed;
+        if (NavSepApps != null) NavSepApps.Visibility = Visibility.Collapsed;
+        if (NavHeaderApps != null) NavHeaderApps.Visibility = Visibility.Collapsed;
+        if (NavSepClean != null) NavSepClean.Visibility = Visibility.Collapsed;
+        if (NavHeaderClean != null) NavHeaderClean.Visibility = Visibility.Collapsed;
+        if (NavSepTweaks != null) NavSepTweaks.Visibility = Visibility.Collapsed;
+        if (NavHeaderTweaks != null) NavHeaderTweaks.Visibility = Visibility.Collapsed;
 
         if (ContentFrame.Content is DashboardPage dbPage)
         {

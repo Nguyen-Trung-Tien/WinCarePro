@@ -36,7 +36,7 @@ $patch = [int]$vParts[2]
 Write-Host "Initiating WinCare Pro Version Bump to v$NewVersion (Assembly: $assemblyVersion, Codename: $Codename, BuildDate: $BuildDate)..." -ForegroundColor Cyan
 
 # 1. Update Core/AppConstants.cs
-$appConstantsPath = Join-Path $root "Core\AppConstants.cs"
+$appConstantsPath = if (Test-Path (Join-Path $root "src\Core\AppConstants.cs")) { Join-Path $root "src\Core\AppConstants.cs" } else { Join-Path $root "Core\AppConstants.cs" }
 $c1 = Get-Content $appConstantsPath -Raw
 $c1 = [regex]::Replace($c1, 'public const string DefaultVersionString = "[^"]+";', "public const string DefaultVersionString = `"$NewVersion`";")
 $c1 = [regex]::Replace($c1, 'public const string DefaultAssemblyVersionString = "[^"]+";', "public const string DefaultAssemblyVersionString = `"$assemblyVersion`";")
@@ -45,8 +45,8 @@ $c1 = [regex]::Replace($c1, 'new Version\(\d+, \d+, \d+, \d+\)', "new Version($m
 if (-not $DryRun) { Set-Content -Path $appConstantsPath -Value $c1 -NoNewline }
 Write-Host " [OK] Core/AppConstants.cs" -ForegroundColor Green
 
-# 2. Update WinCarePro.csproj
-$csprojPath = Join-Path $root "WinCarePro.csproj"
+# 2. Update WinCarePro.csproj and Directory.Build.props
+$csprojPath = if (Test-Path (Join-Path $root "src\WinCarePro.csproj")) { Join-Path $root "src\WinCarePro.csproj" } else { Join-Path $root "WinCarePro.csproj" }
 $c2 = Get-Content $csprojPath -Raw
 $c2 = [regex]::Replace($c2, '<Version>[^<]+</Version>', "<Version>$NewVersion</Version>")
 $c2 = [regex]::Replace($c2, '<AssemblyVersion>[^<]+</AssemblyVersion>', "<AssemblyVersion>$assemblyVersion</AssemblyVersion>")
@@ -56,8 +56,19 @@ $c2 = [regex]::Replace($c2, '<Product>[^<]+</Product>', "<Product>WinCare Pro v$
 if (-not $DryRun) { Set-Content -Path $csprojPath -Value $c2 -NoNewline }
 Write-Host " [OK] WinCarePro.csproj" -ForegroundColor Green
 
+$propsPath = Join-Path $root "Directory.Build.props"
+if (Test-Path $propsPath) {
+    $cp = Get-Content $propsPath -Raw
+    $cp = [regex]::Replace($cp, '<Version>[^<]+</Version>', "<Version>$NewVersion</Version>")
+    $cp = [regex]::Replace($cp, '<AssemblyVersion>[^<]+</AssemblyVersion>', "<AssemblyVersion>$assemblyVersion</AssemblyVersion>")
+    $cp = [regex]::Replace($cp, '<FileVersion>[^<]+</FileVersion>', "<FileVersion>$assemblyVersion</FileVersion>")
+    $cp = [regex]::Replace($cp, '<InformationalVersion>[^<]+</InformationalVersion>', "<InformationalVersion>$NewVersion (Codename: $Codename)</InformationalVersion>")
+    if (-not $DryRun) { Set-Content -Path $propsPath -Value $cp -NoNewline }
+    Write-Host " [OK] Directory.Build.props" -ForegroundColor Green
+}
+
 # 3. Update app.manifest
-$manifestPath = Join-Path $root "app.manifest"
+$manifestPath = if (Test-Path (Join-Path $root "src\app.manifest")) { Join-Path $root "src\app.manifest" } else { Join-Path $root "app.manifest" }
 if (Test-Path $manifestPath) {
     $c3 = Get-Content $manifestPath -Raw
     $c3 = [regex]::Replace($c3, '<assemblyIdentity\s+version="[^"]+"', "<assemblyIdentity version=`"$assemblyVersion`"")
@@ -66,7 +77,7 @@ if (Test-Path $manifestPath) {
 }
 
 # 4. Update Package.appxmanifest
-$appxPath = Join-Path $root "Package.appxmanifest"
+$appxPath = if (Test-Path (Join-Path $root "src\Package.appxmanifest")) { Join-Path $root "src\Package.appxmanifest" } else { Join-Path $root "Package.appxmanifest" }
 if (Test-Path $appxPath) {
     $c4 = Get-Content $appxPath -Raw
     $c4 = [regex]::Replace($c4, '(?i)(<Identity[^>]+Version=")[^"]+(")', "`${1}$assemblyVersion`${2}")
@@ -75,7 +86,7 @@ if (Test-Path $appxPath) {
 }
 
 # 5. Update setup.iss
-$setupPath = Join-Path $root "setup.iss"
+$setupPath = if (Test-Path (Join-Path $root "build\setup.iss")) { Join-Path $root "build\setup.iss" } else { Join-Path $root "setup.iss" }
 if (Test-Path $setupPath) {
     $c5 = Get-Content $setupPath -Raw
     $c5 = [regex]::Replace($c5, '#define\s+MyAppVersion\s+"[^"]+"', "#define MyAppVersion `"$NewVersion`"")
@@ -84,17 +95,19 @@ if (Test-Path $setupPath) {
 }
 
 # 6. Update update.json
-$updatePath = Join-Path $root "update.json"
+$updatePath = if (Test-Path (Join-Path $root "build\update.json")) { Join-Path $root "build\update.json" } else { Join-Path $root "update.json" }
 if (Test-Path $updatePath) {
     $c6 = Get-Content $updatePath -Raw
-    $c6 = [regex]::Replace($c6, '"version":\s*"[^"]+"', "`"version`":  `"$NewVersion`"")
+    $c6 = [regex]::Replace($c6, '"version":\s*"[^"]+"', "`"version`": `"$NewVersion`"")
+    $c6 = [regex]::Replace($c6, '"beta_version":\s*"[^"]+"', "`"beta_version`": `"$NewVersion-beta`"")
     $c6 = [regex]::Replace($c6, 'releases/download/v[^/]+/WinCareProSetup\.exe', "releases/download/v$NewVersion/WinCareProSetup.exe")
+    $c6 = [regex]::Replace($c6, 'releases/download/v[^/]+/WinCareProSetup_Beta\.exe', "releases/download/v$NewVersion-beta/WinCareProSetup_Beta.exe")
     if (-not $DryRun) { Set-Content -Path $updatePath -Value $c6 -NoNewline }
     Write-Host " [OK] update.json" -ForegroundColor Green
 }
 
-# 7. Update WinCarePro.Tests/AppVersionManagementTests.cs
-$testPath = Join-Path $root "WinCarePro.Tests\AppVersionManagementTests.cs"
+# 7. Update WinCarePro.Tests
+$testPath = if (Test-Path (Join-Path $root "WinCarePro.Tests\Core\AppVersionManagementTests.cs")) { Join-Path $root "WinCarePro.Tests\Core\AppVersionManagementTests.cs" } else { Join-Path $root "WinCarePro.Tests\AppVersionManagementTests.cs" }
 if (Test-Path $testPath) {
     $c7 = Get-Content $testPath -Raw
     $c7 = [regex]::Replace($c7, 'Assert\.Equal\(\d+,\s*AppConstants\.CurrentVersion\.Major\);', "Assert.Equal($major, AppConstants.CurrentVersion.Major);")

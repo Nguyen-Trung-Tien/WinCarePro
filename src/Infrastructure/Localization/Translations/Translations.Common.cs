@@ -26,6 +26,13 @@ public partial class TranslationManager
         vi["Visual disk breakdown & folder hierarchy analysis."] = "Phân tích trực quan dung lượng ổ đĩa & cấu trúc thư mục.";
         vi["Preparing"] = "Đang chuẩn bị";
         vi["Cancelling"] = "Đang hủy";
+        vi["Cancelling..."] = "Đang hủy...";
+        vi["Operation cancelled by user."] = "Tác vụ đã bị người dùng hủy.";
+        vi["Auditing junk directories, registry orphans, and app leftovers..."] = "Đang kiểm tra thư mục rác, registry mồ côi và tệp thừa...";
+        vi["Scanning orphaned registry keys..."] = "Đang quét các khóa registry mồ côi...";
+        vi["Auditing application leftovers..."] = "Đang kiểm tra các tệp ứng dụng thừa...";
+        vi["Cleaning selected clutter..."] = "Đang dọn dẹp các mục đã chọn...";
+        vi["Cleanup successfully completed."] = "Dọn dẹp hoàn tất thành công.";
         vi["APPLICATIONS"] = "ỨNG DỤNG";
         vi["CLEAN & REPAIR"] = "DỌN DẸP & SỬA LỖI";
         vi["CLEAN &amp; REPAIR"] = "DỌN DẸP & SỬA LỖI";
@@ -524,7 +531,7 @@ public partial class TranslationManager
         vi["Critical Storage Alert"] = "Cảnh báo lưu trữ nguy cấp";
         vi["Low Battery Threshold"] = "Ngưỡng pin thấp";
         vi["Battery level is below 20%. Background maintenance deferred to conserve power."] = "Mức pin dưới 20%. Tác vụ bảo trì nền được tạm hoãn để tiết kiệm năng lượng.";
-        vi["v5.2.0 (Polaris)"] = "v5.2.0 (Polaris)";
+        vi["v6.0.0 (Polaris)"] = "v6.0.0 (Polaris)";
         vi["Aura Fluidic 3.0 & Intelligent Diagnostic Sentinel Suite"] = "Kiến Trúc Aura Fluidic 3.0 & Bộ Phòng Thủ Trí Tuệ Nhân Tạo";
         vi["Action(s)"] = "Yêu cầu xử lý";
         vi["Review Apps"] = "Xem ứng dụng";

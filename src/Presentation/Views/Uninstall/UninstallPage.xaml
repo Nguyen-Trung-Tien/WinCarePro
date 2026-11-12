@@ -685,6 +685,36 @@
                         <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}" FontSize="12.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" LineHeight="18" MaxWidth="360"/>
                     </StackPanel>
 
+                    <!-- 3-Step Clear Visual Stepper: (1) Close Processes -> (2) Run Uninstaller -> (3) Purge Leftovers -->
+                    <Grid ColumnSpacing="6" Width="360" Margin="0,2,0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="{ThemeResource V6SurfaceCardHover}" BorderBrush="{ThemeResource V6SubtleBorder}" BorderThickness="1" CornerRadius="6" Padding="6,4">
+                            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE768;" FontSize="10" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                <TextBlock Text="1. Terminate" FontSize="9.5" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Background="{ThemeResource V6SurfaceCardHover}" BorderBrush="{ThemeResource V6SubtleBorder}" BorderThickness="1" CornerRadius="6" Padding="6,4">
+                            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE74D;" FontSize="10" Foreground="{ThemeResource AppStatusWarningBrush}"/>
+                                <TextBlock Text="2. Uninstall" FontSize="9.5" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Background="{ThemeResource V6SurfaceCardHover}" BorderBrush="{ThemeResource V6SubtleBorder}" BorderThickness="1" CornerRadius="6" Padding="6,4">
+                            <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE721;" FontSize="10" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                                <TextBlock Text="3. Leftovers" FontSize="9.5" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
                     <!-- Percentage Progress Bar -->
                     <StackPanel Spacing="8" Width="360" HorizontalAlignment="Center">
                         <Grid>

@@ -408,13 +408,6 @@ public partial class ThemeManager
                 startupPercentBrush.Color = c0;
             }
 
-            if (Application.Current.Resources.TryGetValue("AiWinCareEngineGradient", out var aiBrushObj) &&
-                aiBrushObj is LinearGradientBrush aiBrush && aiBrush.GradientStops.Count >= 2)
-            {
-                aiBrush.GradientStops[0].Color = c0;
-                aiBrush.GradientStops[1].Color = c1;
-            }
-
             if (Application.Current.Resources.TryGetValue("Asc19ReactorGradient", out var reactorObj) &&
                 reactorObj is LinearGradientBrush reactorBrush)
             {

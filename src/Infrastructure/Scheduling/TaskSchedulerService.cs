@@ -19,7 +19,11 @@ public class TaskSchedulerService
     public async Task<T> RunTaskAsync<T>(string category, Func<CancellationToken, Task<T>> taskFunc, CancellationToken token)
     {
         var semaphore = GetSemaphoreForCategory(category);
-        await semaphore.WaitAsync(token);
+        if (!await semaphore.WaitAsync(2000, token))
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogMessage("TaskSchedulerService", $"Semaphore acquisition timed out after 2000ms for category '{category}'");
+            throw new TimeoutException($"TaskScheduler timed out acquiring semaphore for category '{category}'");
+        }
         try
         {
             token.ThrowIfCancellationRequested();
@@ -34,7 +38,11 @@ public class TaskSchedulerService
     public async Task RunTaskAsync(string category, Func<CancellationToken, Task> taskFunc, CancellationToken token)
     {
         var semaphore = GetSemaphoreForCategory(category);
-        await semaphore.WaitAsync(token);
+        if (!await semaphore.WaitAsync(2000, token))
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogMessage("TaskSchedulerService", $"Semaphore acquisition timed out after 2000ms for category '{category}'");
+            throw new TimeoutException($"TaskScheduler timed out acquiring semaphore for category '{category}'");
+        }
         try
         {
             token.ThrowIfCancellationRequested();

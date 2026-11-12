@@ -26,11 +26,33 @@ public sealed partial class MainWindow : Window
     public StackPanel ToastStackContainer => ToastContainer;
     public Frame MainFrame => RootFrame;
 
+    /// <summary>
+    /// Dynamically resolved application version using Assembly or Package identity.
+    /// </summary>
+    public string AppVersion
+    {
+        get
+        {
+            try
+            {
+                var packageVer = Windows.ApplicationModel.Package.Current.Id.Version;
+                return $"v{packageVer.Major}.{packageVer.Minor}.{packageVer.Build}";
+            }
+            catch
+            {
+                var asmVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                return asmVer != null ? $"v{asmVer.Major}.{asmVer.Minor}.{asmVer.Build}" : WinCarePro.Core.AppConstants.DisplayVersion;
+            }
+        }
+    }
+
     private IntPtr _hwnd = IntPtr.Zero;
     private bool _forceClose = false;
     private Microsoft.UI.Xaml.DispatcherTimer? _clockTimer;
     private IntPtr _hIconBig = IntPtr.Zero;
     private IntPtr _hIconSmall = IntPtr.Zero;
+    private EventHandler? _mainLanguageChangedHandler;
+    internal EventHandler? _themeAccentChangedHandler;
 
     public MainWindow()
     {
@@ -138,7 +160,7 @@ public sealed partial class MainWindow : Window
             InitializeAppAsync();
         }
 
-        TranslationManager.Instance.LanguageChanged += (s, e) =>
+        _mainLanguageChangedHandler = (s, e) =>
         {
             PopulateSearchRegistry();
             if (SearchBox != null)
@@ -147,6 +169,7 @@ public sealed partial class MainWindow : Window
             }
             UpdateTitleBarExperienceMode(WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.IsProMode);
         };
+        TranslationManager.Instance.LanguageChanged += _mainLanguageChangedHandler;
 
         if (SearchBox != null)
         {
@@ -231,7 +254,7 @@ public sealed partial class MainWindow : Window
             // 6. Deferred background tasks: Database maintenance
             if (AppTitleVersionBadge != null)
             {
-                AppTitleVersionBadge.Text = WinCarePro.Core.AppConstants.DisplayVersion;
+                AppTitleVersionBadge.Text = AppVersion;
             }
             var currentVersion = WinCarePro.Core.AppConstants.CurrentVersion;
             CheckAndShowChangelog(currentVersion);
@@ -403,6 +426,14 @@ public sealed partial class MainWindow : Window
         ThemeManager.Instance.UnregisterWindow(this);
         TranslationManager.Instance.UnregisterWindow(this);
         ThemeManager.Instance.MotionPreferenceChanged -= OnMotionPreferenceChanged;
+        if (_mainLanguageChangedHandler != null)
+        {
+            TranslationManager.Instance.LanguageChanged -= _mainLanguageChangedHandler;
+        }
+        if (_themeAccentChangedHandler != null)
+        {
+            ThemeManager.Instance.AccentChanged -= _themeAccentChangedHandler;
+        }
         DbManager.OnNotificationAdded -= OnDbNotificationAdded;
         DbManager.OnNotificationsChanged -= UpdateNotificationBadge;
         CleanupTrayIcon();

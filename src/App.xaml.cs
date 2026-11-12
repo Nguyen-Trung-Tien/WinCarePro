@@ -131,6 +131,7 @@ public partial class App : Application
 
         // Register ViewModels
         services.AddTransient<DashboardViewModel>();
+        services.AddTransient<CleanerViewModel>();
         services.AddTransient<NetworkViewModel>();
         services.AddTransient<JunkViewModel>();
         services.AddTransient<UninstallViewModel>();
@@ -141,6 +142,7 @@ public partial class App : Application
         services.AddTransient<UpdaterViewModel>();
         services.AddTransient<ContextMenuViewModel>();
         services.AddTransient<SecurityViewModel>();
+        services.AddTransient<SettingsViewModel>();
 
         Services = services.BuildServiceProvider();
     }

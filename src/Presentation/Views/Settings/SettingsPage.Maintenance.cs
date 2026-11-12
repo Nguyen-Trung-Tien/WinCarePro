@@ -288,7 +288,7 @@ public sealed partial class SettingsPage
             var mRow = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8, VerticalAlignment = VerticalAlignment.Center };
             mRow.Children.Add(new TextBlock
             {
-                Text = "v5.2.0 Polaris",
+                Text = $"{WinCarePro.Core.AppConstants.DisplayVersion} {WinCarePro.Core.AppConstants.Codename}",
                 FontSize = 13,
                 FontWeight = Microsoft.UI.Text.FontWeights.Bold,
                 Foreground = (Brush)Application.Current.Resources["PrimaryAccentBrush"]
@@ -407,7 +407,7 @@ public sealed partial class SettingsPage
 
             var dialog = new ContentDialog
             {
-                Title = "What's New in v5.2.0".T(),
+                Title = $"What's New in {WinCarePro.Core.AppConstants.DisplayVersion}".T(),
                 Content = rootStack,
                 CloseButtonText = "Close".T(),
                 DefaultButton = ContentDialogButton.Close,

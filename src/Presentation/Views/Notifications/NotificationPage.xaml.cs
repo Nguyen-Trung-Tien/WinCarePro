@@ -47,6 +47,16 @@ public sealed partial class NotificationPage : Page
         await LoadLogsAsync();
     }
 
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        _searchDebounceTimer?.Stop();
+        if (_languageChangedHandler != null)
+        {
+            TranslationManager.Instance.LanguageChanged -= _languageChangedHandler;
+        }
+    }
+
     private void NotificationPage_Unloaded(object sender, RoutedEventArgs e)
     {
         _searchDebounceTimer?.Stop();

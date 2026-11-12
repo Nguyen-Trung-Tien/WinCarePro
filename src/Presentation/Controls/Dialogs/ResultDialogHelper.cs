@@ -163,7 +163,11 @@ public static class ResultDialogHelper
     {
         if (xamlRoot == null) return ContentDialogResult.None;
 
-        await _dialogSemaphore.WaitAsync();
+        if (!await _dialogSemaphore.WaitAsync(2000))
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogMessage("ResultDialogHelper", "Dialog semaphore acquisition timed out after 2000ms");
+            return ContentDialogResult.None;
+        }
         try
         {
             await Task.Delay(100);

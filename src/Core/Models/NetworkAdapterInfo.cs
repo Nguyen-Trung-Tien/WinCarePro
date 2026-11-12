@@ -58,6 +58,7 @@ public class NetworkAdapterInfo
     }
 
     // New optimized telemetry fields
+    public string SubnetMask { get; set; } = "";
     public string CurrentDnsServers { get; set; } = "";
     public double LatencyMs { get; set; }
     public double JitterMs { get; set; }

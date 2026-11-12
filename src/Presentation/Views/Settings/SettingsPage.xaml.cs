@@ -68,6 +68,24 @@ public sealed partial class SettingsPage : Page
                 DeviceOsInfoText.Text = $"{Environment.OSVersion.VersionString} • {(Environment.Is64BitOperatingSystem ? "64-bit Architecture".T() : "32-bit Architecture".T())}";
             }
 
+            // Dynamically populate version tags from AppConstants
+            if (DistributionVersionBadge != null)
+            {
+                DistributionVersionBadge.Text = WinCarePro.Core.AppConstants.DisplayVersion;
+            }
+            if (AboutVersionBadge != null)
+            {
+                AboutVersionBadge.Text = $"{WinCarePro.Core.AppConstants.DisplayVersion} {WinCarePro.Core.AppConstants.Codename}";
+            }
+            if (AboutSystemBadge != null)
+            {
+                AboutSystemBadge.Text = WinCarePro.Core.AppConstants.SystemBadgeText;
+            }
+            if (WhatsNewBadgeText != null)
+            {
+                WhatsNewBadgeText.Text = $"What's New in {WinCarePro.Core.AppConstants.DisplayVersion}".T();
+            }
+
             // Sync with current theme on load
             bool isDark = ThemeManager.Instance.CurrentTheme == ElementTheme.Dark;
             ApplyThemeCardSelection(isDark);
@@ -129,6 +147,10 @@ public sealed partial class SettingsPage : Page
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+        if (_aboutTelemetryTimer != null && !_aboutTelemetryTimer.IsRunning)
+        {
+            _aboutTelemetryTimer.Start();
+        }
         if (e.Parameter is int sectionIndex)
         {
             SelectSection(sectionIndex);
@@ -142,6 +164,18 @@ public sealed partial class SettingsPage : Page
                 SelectSection(10);
             }
         }
+    }
+
+    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        _aboutTelemetryTimer?.Stop();
+        try
+        {
+            System.Net.NetworkInformation.NetworkChange.NetworkAddressChanged -= OnNetworkStatusChanged;
+            System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged -= OnNetworkAvailabilityChanged;
+        }
+        catch { }
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)

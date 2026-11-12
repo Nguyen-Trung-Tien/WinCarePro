@@ -205,6 +205,7 @@ public partial class NetworkViewModel
                         Connections.Add(item);
                     }
                     OnPropertyChanged(nameof(IsConnectionsEmpty));
+                    OnPropertyChanged(nameof(ActiveConnectionsCount));
 
                     // Populate TopProcesses from raw connections (grouped by application)
                     var topGrouped = _rawConnections

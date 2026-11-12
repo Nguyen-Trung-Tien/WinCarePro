@@ -1,16 +1,15 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using WinCarePro.ViewModels;
-using WinCarePro.Models;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Shapes;
-using WinCarePro.Services;
+using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using Windows.ApplicationModel.DataTransfer;
+using WinCarePro.ViewModels;
+using WinCarePro.Models;
+using WinCarePro.Services;
+using WinCarePro.Infrastructure.Logging;
 
 namespace WinCarePro.Views;
 
@@ -24,7 +23,7 @@ public sealed partial class NetworkPage : Page
     {
         ViewModel = App.Services?.GetService<NetworkViewModel>() ?? new NetworkViewModel();
         InitializeComponent();
-        this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
+        this.NavigationCacheMode = NavigationCacheMode.Required;
         this.DataContext = ViewModel;
 
         _vmPropertyChangedHandler = (s, e) =>
@@ -43,43 +42,83 @@ public sealed partial class NetworkPage : Page
         };
         ViewModel.PropertyChanged += _vmPropertyChangedHandler;
 
-        this.Loaded += (s, e) =>
-        {
-            try
-            {
-                TranslationManager.Instance.Translate(this);
-                SetActiveTab(ViewModel.ActiveTab ?? "quality");
-                UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
-                InitDohComboBox();
-            }
-            catch (Exception ex)
-            {
-                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkPage.Loaded", ex);
-            }
-        };
-
-        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
-        TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
-
+        this.Loaded += OnPageLoaded;
         this.Unloaded += OnPageUnloaded;
+    }
 
-        this.ActualThemeChanged += (s, e) =>
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        try
         {
-            DispatcherQueue?.TryEnqueue(() =>
+            ViewModel.Initialize();
+            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            ViewModel.PropertyChanged += _vmPropertyChangedHandler;
+
+            if (MainPivot != null)
             {
-                try
+                MainPivot.SelectedIndex = ViewModel.ActiveTab switch
                 {
-                    SetActiveTab(ViewModel.ActiveTab ?? "quality");
-                    UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
-                }
-                catch (Exception ex)
-                {
-                    WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkPage.ActualThemeChanged", ex);
-                }
-            });
-        };
+                    "quality" => 0,
+                    "dns" => 1,
+                    "ports" => 2,
+                    "repairs" => 3,
+                    _ => 0
+                };
+            }
 
+            InitDohComboBox();
+            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+            TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+            TranslationManager.Instance.Translate(this);
+            this.Bindings.Update();
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("NetworkPage.OnNavigatedTo", ex);
+        }
+    }
 
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+        base.OnNavigatedFrom(e);
+        try
+        {
+            ViewModel.Cleanup();
+            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("NetworkPage.OnNavigatedFrom", ex);
+        }
+    }
+
+    private void OnPageLoaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            TranslationManager.Instance.Translate(this);
+            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+            TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+            InitDohComboBox();
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("NetworkPage.OnPageLoaded", ex);
+        }
+    }
+
+    private void OnPageUnloaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+        }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("NetworkPage.OnPageUnloaded", ex);
+        }
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)
@@ -89,11 +128,10 @@ public sealed partial class NetworkPage : Page
             try
             {
                 TranslationManager.Instance.Translate(this);
-                UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
             }
             catch (Exception ex)
             {
-                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkPage.OnLanguageChanged", ex);
+                CrashLogger.LogException("NetworkPage.OnLanguageChanged", ex);
             }
         });
     }
@@ -117,82 +155,62 @@ public sealed partial class NetworkPage : Page
         }
     }
 
-    protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    private void OnPivotSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        base.OnNavigatedTo(e);
-        try
+        if (sender is Pivot pivot)
         {
-            ViewModel.Initialize();
-            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
-            ViewModel.PropertyChanged += _vmPropertyChangedHandler;
-            this.Bindings.Update();
-            SetActiveTab(ViewModel.ActiveTab ?? "quality");
-            UpdateFilterCategoryButtons(ViewModel.ConnectionFilterCategory);
-            InitDohComboBox();
-            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
-            TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
-            TranslationManager.Instance.Translate(this);
-        }
-        catch (Exception ex)
-        {
-            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkPage.OnNavigatedTo", ex);
+            ViewModel.ActiveTab = pivot.SelectedIndex switch
+            {
+                0 => "quality",
+                1 => "dns",
+                2 => "ports",
+                3 => "repairs",
+                _ => "quality"
+            };
+
+            if (pivot.SelectedIndex == 2)
+            {
+                _ = ViewModel.LoadActiveConnectionsAsync(true);
+            }
         }
     }
 
-    protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    // ==================== HEADER ACTIONS ====================
+    private void OnRefreshClick(object sender, RoutedEventArgs e)
     {
-        base.OnNavigatedFrom(e);
-        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
-        if (ViewModel != null)
+        ViewModel.RefreshActiveAdapter();
+        ViewModel.RefreshTelemetryOnDemand();
+    }
+
+    private async void OnExportReportClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.ExportNetworkReportAsync();
+    }
+
+    // ==================== TAB 1: SPEED TEST ====================
+    private async void OnStartSpeedTestClick(object sender, RoutedEventArgs e)
+    {
+        await ViewModel.RunSpeedTestAsync();
+    }
+
+    private void OnCopyPublicIpClick(object sender, RoutedEventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(ViewModel.PublicIpAddress))
         {
-            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
-            ViewModel.Cleanup();
+            try
+            {
+                var package = new DataPackage();
+                package.SetText(ViewModel.PublicIpAddress);
+                Clipboard.SetContent(package);
+            }
+            catch { }
         }
     }
 
-    public void OnTabQualityClick(object sender, RoutedEventArgs e) => SetActiveTab("quality");
-    public void OnTabDnsClick(object sender, RoutedEventArgs e) => SetActiveTab("dns");
-    public void OnTabPortsClick(object sender, RoutedEventArgs e) => SetActiveTab("ports");
-    public void OnTabRepairsClick(object sender, RoutedEventArgs e) => SetActiveTab("repairs");
-
-    private Style? _accentStyle;
-    private Style? _defaultStyle;
-
-    private Style? GetButtonStyle(string key)
+    // ==================== TAB 2: DNS BENCHMARK ====================
+    private async void OnStartDnsBenchmarkClick(object sender, RoutedEventArgs e)
     {
-        if (Application.Current.Resources.TryGetValue(key, out var styleObj) && styleObj is Style style)
-        {
-            return style;
-        }
-        return null;
-    }
-
-    private void SetActiveTab(string tabName)
-    {
-        ViewModel.ActiveTab = tabName;
-
-        _accentStyle ??= GetButtonStyle("VibrantPrimaryButtonStyle") ?? GetButtonStyle("AccentButtonStyle");
-        _defaultStyle ??= GetButtonStyle("DefaultButtonStyle");
-
-        if (BtnTabQuality != null) BtnTabQuality.Style = tabName == "quality" ? _accentStyle : _defaultStyle;
-        if (BtnTabDns != null) BtnTabDns.Style = tabName == "dns" ? _accentStyle : _defaultStyle;
-        if (BtnTabPorts != null) BtnTabPorts.Style = tabName == "ports" ? _accentStyle : _defaultStyle;
-        if (BtnTabRepairs != null) BtnTabRepairs.Style = tabName == "repairs" ? _accentStyle : _defaultStyle;
-
-        if (SectionQuality != null) SectionQuality.Visibility = tabName == "quality" ? Visibility.Visible : Visibility.Collapsed;
-        if (SectionDns != null) SectionDns.Visibility = tabName == "dns" ? Visibility.Visible : Visibility.Collapsed;
-        if (SectionPorts != null) SectionPorts.Visibility = tabName == "ports" ? Visibility.Visible : Visibility.Collapsed;
-        if (SectionRepairs != null) SectionRepairs.Visibility = tabName == "repairs" ? Visibility.Visible : Visibility.Collapsed;
-
-        if (tabName == "ports" && ViewModel.Connections.Count == 0)
-        {
-            _ = Task.Run(async () => await ViewModel.LoadActiveConnectionsAsync());
-        }
-    }
-
-    private async void OnSmartAutoHealClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.RunRepairOperationAsync("smartrepair");
+        await ViewModel.StartDnsBenchmarkAsync();
     }
 
     private async void OnSwitchToFastestDnsClick(object sender, RoutedEventArgs e)
@@ -200,349 +218,74 @@ public sealed partial class NetworkPage : Page
         await ViewModel.SwitchToFastestDnsAsync();
     }
 
-    private async void OnRefreshClick(object sender, RoutedEventArgs e)
+    private async void OnApplyDnsServerClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.RunDiagnosticsAsync(userTriggered: true);
-        ViewModel.LoadAdapters();
-        await ViewModel.LoadActiveConnectionsAsync(forceRefresh: true);
-    }
-
-    private async void OnSpeedTestClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.RunSpeedTestAsync();
-    }
-
-    private async void OnViewSpeedHistoryClick(object sender, RoutedEventArgs e)
-    {
-        var history = ViewModel.SpeedTestHistory.ToList();
-        var tm = TranslationManager.Instance;
-        
-        var currentTheme = ThemeManager.Instance.CurrentTheme;
-        bool isDark = ThemeManager.Instance.IsDark;
-
-        var dialogBg = isDark
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 18, 20, 29))
-            : new SolidColorBrush(Windows.UI.Color.FromArgb(254, 255, 255, 255));
-        var dialogBorder = isDark
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(38, 255, 255, 255))
-            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 232, 240));
-        var textPrimary = isDark
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 248, 250, 252))
-            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 15, 23, 42));
-        var textSecondary = isDark
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 148, 163, 184))
-            : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 100, 116, 139));
-
-        var stack = new StackPanel { Spacing = 14, MinWidth = 500 };
-
-        // 0. Radiant Header with Ambient Glowing Aura
-        var bannerGrid = new Grid { Margin = new Thickness(0, 2, 0, 4) };
-        bannerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-        bannerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-        var iconContainer = new Grid
+        if (sender is FrameworkElement fe && fe.DataContext is DnsServerInfo server)
         {
-            Width = 54,
-            Height = 54,
-            Margin = new Thickness(0, 0, 12, 0),
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        var auraHalo = new Ellipse
-        {
-            Width = 54,
-            Height = 54,
-            Fill = new RadialGradientBrush
-            {
-                GradientStops =
-                {
-                    new GradientStop { Color = Windows.UI.Color.FromArgb((byte)(isDark ? 40 : 30), 6, 182, 212), Offset = 0 },
-                    new GradientStop { Color = Windows.UI.Color.FromArgb(0, 6, 182, 212), Offset = 1 }
-                }
-            }
-        };
-        iconContainer.Children.Add(auraHalo);
-
-        var iconBox = new Border
-        {
-            Width = 44,
-            Height = 44,
-            CornerRadius = new CornerRadius(14),
-            Background = isDark
-                ? new SolidColorBrush(Windows.UI.Color.FromArgb(32, 6, 182, 212))
-                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 236, 254, 255)),
-            BorderBrush = isDark
-                ? new SolidColorBrush(Windows.UI.Color.FromArgb(70, 6, 182, 212))
-                : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 165, 243, 252)),
-            BorderThickness = new Thickness(1.5),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            Child = new FontIcon
-            {
-                Glyph = "\uE774",
-                FontSize = 20,
-                Foreground = isDark 
-                    ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 6, 182, 212))
-                    : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 8, 145, 178)),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center
-            }
-        };
-        iconContainer.Children.Add(iconBox);
-        Grid.SetColumn(iconContainer, 0);
-        bannerGrid.Children.Add(iconContainer);
-
-        var titleStack = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Spacing = 2 };
-        titleStack.Children.Add(new TextBlock
-        {
-            Text = tm.T("Speed Test Telemetry History"),
-            FontSize = 17,
-            FontWeight = Microsoft.UI.Text.FontWeights.Bold,
-            FontFamily = new FontFamily("Segoe UI Variable Display"),
-            Foreground = textPrimary
-        });
-        titleStack.Children.Add(new TextBlock
-        {
-            Text = tm.T("Historic network throughput benchmarks, latency and jitter analytics."),
-            FontSize = 12,
-            Foreground = textSecondary
-        });
-        Grid.SetColumn(titleStack, 1);
-        bannerGrid.Children.Add(titleStack);
-        stack.Children.Add(bannerGrid);
-
-        // 1. Summary Analytics Header
-        double maxDl = history.Count > 0 ? history.Max(h => h.DownloadMbps) : 0;
-        double maxUl = history.Count > 0 ? history.Max(h => h.UploadMbps) : 0;
-        double avgPing = history.Count > 0 ? history.Average(h => h.PingMs) : 0;
-
-        var statsGrid = new Grid { ColumnSpacing = 8 };
-        statsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        statsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        statsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        statsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-        Border CreateStatChip(string title, string value, Windows.UI.Color color)
-        {
-            var b = new Border
-            {
-                Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(20, color.R, color.G, color.B)),
-                CornerRadius = new CornerRadius(8),
-                Padding = new Thickness(8, 6, 8, 6),
-                BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(50, color.R, color.G, color.B)),
-                BorderThickness = new Thickness(1)
-            };
-            var sp = new StackPanel { Spacing = 2 };
-            sp.Children.Add(new TextBlock { Text = title, FontSize = 9, FontWeight = Microsoft.UI.Text.FontWeights.Bold, Opacity = 0.7 });
-            sp.Children.Add(new TextBlock
-            {
-                Text = value,
-                FontSize = 13.5,
-                FontWeight = Microsoft.UI.Text.FontWeights.ExtraBold,
-                Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(color)
-            });
-            b.Child = sp;
-            return b;
-        }
-
-        var dlChip = CreateStatChip(tm.T("PEAK DOWNLOAD"), $"{maxDl:F1} Mbps", Windows.UI.Color.FromArgb(255, 16, 185, 129));
-        Grid.SetColumn(dlChip, 0);
-        statsGrid.Children.Add(dlChip);
-
-        var ulChip = CreateStatChip(tm.T("PEAK UPLOAD"), $"{maxUl:F1} Mbps", Windows.UI.Color.FromArgb(255, 139, 92, 246));
-        Grid.SetColumn(ulChip, 1);
-        statsGrid.Children.Add(ulChip);
-
-        var pingChip = CreateStatChip(tm.T("AVG LATENCY"), $"{avgPing:F0} ms", Windows.UI.Color.FromArgb(255, 6, 182, 212));
-        Grid.SetColumn(pingChip, 2);
-        statsGrid.Children.Add(pingChip);
-
-        var countChip = CreateStatChip(tm.T("TOTAL TESTS"), $"{history.Count}", Windows.UI.Color.FromArgb(255, 245, 158, 11));
-        Grid.SetColumn(countChip, 3);
-        statsGrid.Children.Add(countChip);
-
-        stack.Children.Add(statsGrid);
-
-        // 2. Table Column Headers
-        var headerGrid = new Grid { Margin = new Thickness(4, 4, 4, 0) };
-        headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1.5, GridUnitType.Star) });
-        headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        headerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-        headerGrid.Children.Add(new TextBlock { Text = tm.T("TIMESTAMP"), FontSize = 9.5, FontWeight = Microsoft.UI.Text.FontWeights.Bold, Opacity = 0.6 });
-        var hDl = new TextBlock { Text = tm.T("DOWNLOAD"), FontSize = 9.5, FontWeight = Microsoft.UI.Text.FontWeights.Bold, Opacity = 0.6 };
-        Grid.SetColumn(hDl, 1);
-        headerGrid.Children.Add(hDl);
-        var hUl = new TextBlock { Text = tm.T("UPLOAD"), FontSize = 9.5, FontWeight = Microsoft.UI.Text.FontWeights.Bold, Opacity = 0.6 };
-        Grid.SetColumn(hUl, 2);
-        headerGrid.Children.Add(hUl);
-        var hPing = new TextBlock { Text = tm.T("PING"), FontSize = 9.5, FontWeight = Microsoft.UI.Text.FontWeights.Bold, Opacity = 0.6 };
-        Grid.SetColumn(hPing, 3);
-        headerGrid.Children.Add(hPing);
-
-        stack.Children.Add(headerGrid);
-
-        // 3. Scrollable List of History items
-        var listScrollViewer = new ScrollViewer { MaxHeight = 260, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
-        var listStack = new StackPanel { Spacing = 4 };
-
-        if (history.Count == 0)
-        {
-            listStack.Children.Add(new TextBlock
-            {
-                Text = tm.T("No speed test records found."),
-                FontSize = 11.5,
-                Opacity = 0.6,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 20, 0, 20)
-            });
-        }
-        else
-        {
-            foreach (var item in history)
-            {
-                var row = new Grid { Padding = new Thickness(6, 4, 6, 4) };
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1.5, GridUnitType.Star) });
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-                var tBlock = new TextBlock { Text = item.TimeFormatted, FontSize = 11, Opacity = 0.8, VerticalAlignment = VerticalAlignment.Center };
-                row.Children.Add(tBlock);
-
-                var dlBadge = new Border
-                {
-                    Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(25, 16, 185, 129)),
-                    CornerRadius = new CornerRadius(4),
-                    Padding = new Thickness(6, 2, 6, 2),
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Child = new TextBlock { Text = item.DownloadFormatted, FontSize = 11, FontWeight = Microsoft.UI.Text.FontWeights.Bold, Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)) }
-                };
-                Grid.SetColumn(dlBadge, 1);
-                row.Children.Add(dlBadge);
-
-                var ulBadge = new Border
-                {
-                    Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(25, 139, 92, 246)),
-                    CornerRadius = new CornerRadius(4),
-                    Padding = new Thickness(6, 2, 6, 2),
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Child = new TextBlock { Text = item.UploadFormatted, FontSize = 11, FontWeight = Microsoft.UI.Text.FontWeights.Bold, Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 139, 92, 246)) }
-                };
-                Grid.SetColumn(ulBadge, 2);
-                row.Children.Add(ulBadge);
-
-                var pingBadge = new Border
-                {
-                    Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(25, 6, 182, 212)),
-                    CornerRadius = new CornerRadius(4),
-                    Padding = new Thickness(6, 2, 6, 2),
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Child = new TextBlock { Text = item.PingFormatted, FontSize = 11, FontWeight = Microsoft.UI.Text.FontWeights.Bold, Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Windows.UI.Color.FromArgb(255, 6, 182, 212)) }
-                };
-                Grid.SetColumn(pingBadge, 3);
-                row.Children.Add(pingBadge);
-
-                listStack.Children.Add(row);
-            }
-        }
-
-        listScrollViewer.Content = listStack;
-        stack.Children.Add(listScrollViewer);
-
-        var dialog = new ContentDialog
-        {
-            Content = stack,
-            PrimaryButtonText = tm.T("Close"),
-            SecondaryButtonText = history.Count > 0 ? tm.T("Clear All History") : null,
-            DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = this.XamlRoot,
-            RequestedTheme = currentTheme,
-            Background = dialogBg,
-            BorderBrush = dialogBorder,
-            CornerRadius = new CornerRadius(16),
-            BorderThickness = new Thickness(1)
-        };
-
-        if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style accentStyle)
-        {
-            dialog.PrimaryButtonStyle = accentStyle;
-        }
-
-        var res = await dialog.ShowAsync();
-        if (res == ContentDialogResult.Secondary)
-        {
-            await ViewModel.ClearSpeedTestHistoryAsync();
-        }
-    }
-
-    private async void OnDnsBenchmarkClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.StartDnsBenchmarkAsync();
-    }
-
-    private async void OnRestoreDefaultDnsClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.RestoreDefaultDnsAsync();
-    }
-
-    private async void OnApplyDnsClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is DnsServerInfo dns)
-        {
-            await ViewModel.ApplyDnsAsync(dns);
+            await ViewModel.ApplyDnsAsync(server);
         }
     }
 
     private async void OnApplyDohClick(object sender, RoutedEventArgs e)
     {
-        await ViewModel.ApplyDohSettingsAsync();
-    }
-
-    private void OnDohProviderSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
         if (CmbDohProvider?.SelectedItem is string provider)
         {
             ViewModel.SelectedDohProvider = provider;
         }
+        await ViewModel.ApplyDohSettingsAsync();
     }
 
-    private async void OnRepairClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is string op)
-        {
-            await ViewModel.RunRepairOperationAsync(op);
-        }
-    }
-
-    private async void OnRefreshConnectionsClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.LoadActiveConnectionsAsync(forceRefresh: true);
-    }
-
+    // ==================== TAB 3: SOCKETS & TRAFFIC ====================
     private void OnFilterSocketCategoryClick(object sender, RoutedEventArgs e)
     {
         if (sender is Button btn && btn.Tag is string category)
         {
             ViewModel.ConnectionFilterCategory = category;
-            UpdateFilterCategoryButtons(category);
         }
     }
 
-    private void UpdateFilterCategoryButtons(string activeCategory)
+    private void OnRefreshSocketsClick(object sender, RoutedEventArgs e)
     {
-        _accentStyle ??= GetButtonStyle("VibrantPrimaryButtonStyle") ?? GetButtonStyle("AccentButtonStyle");
-        _defaultStyle ??= GetButtonStyle("DefaultButtonStyle");
+        _ = ViewModel.LoadActiveConnectionsAsync(true);
+    }
 
-        if (BtnFilterAll != null) BtnFilterAll.Style = activeCategory.Equals("All", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
-        if (BtnFilterEstablished != null) BtnFilterEstablished.Style = activeCategory.Equals("Established", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
-        if (BtnFilterListening != null) BtnFilterListening.Style = activeCategory.Equals("Listening", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
-        if (BtnFilterTcp != null) BtnFilterTcp.Style = activeCategory.Equals("TCP", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
-        if (BtnFilterUdp != null) BtnFilterUdp.Style = activeCategory.Equals("UDP", StringComparison.OrdinalIgnoreCase) ? _accentStyle : _defaultStyle;
+    private void OnCopySocketClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.DataContext is ActiveConnectionInfo conn)
+        {
+            try
+            {
+                var package = new DataPackage();
+                package.SetText($"Process: {conn.ProcessName} (PID: {conn.Pid})\nProtocol: {conn.Protocol}\nLocal: {conn.LocalAddress}\nRemote: {conn.RemoteAddress}\nState: {conn.State}");
+                Clipboard.SetContent(package);
+            }
+            catch { }
+        }
+    }
+
+    private void OnOpenProcessLocationClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.DataContext is ActiveConnectionInfo conn)
+        {
+            ViewModel.OpenProcessLocation(conn.Pid, conn.ProcessName);
+        }
+    }
+
+    private async void OnKillProcessClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.DataContext is ActiveConnectionInfo conn)
+        {
+            await ViewModel.TerminateProcessAsync(conn.Pid, conn.ProcessName);
+        }
+    }
+
+    // ==================== TAB 4: REPAIRS & DIAGNOSTICS ====================
+    private async void OnRepairTileClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is string operation)
+        {
+            await ViewModel.RunRepairOperationAsync(operation);
+        }
     }
 
     private void OnHostKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
@@ -592,52 +335,8 @@ public sealed partial class NetworkPage : Page
         }
     }
 
-    private void OnCopySocketClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement fe && fe.DataContext is ActiveConnectionInfo conn)
-        {
-            try
-            {
-                var package = new DataPackage();
-                package.SetText($"Process: {conn.ProcessName} (PID: {conn.Pid})\nProtocol: {conn.Protocol}\nLocal: {conn.LocalAddress}\nRemote: {conn.RemoteAddress}\nState: {conn.State}");
-                Clipboard.SetContent(package);
-            }
-            catch { }
-        }
-    }
-
-    private void OnOpenProcessLocationClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement fe && fe.DataContext is ActiveConnectionInfo conn)
-        {
-            ViewModel.OpenProcessLocation(conn.Pid, conn.ProcessName);
-        }
-    }
-
-    private async void OnKillProcessClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is FrameworkElement fe && fe.DataContext is ActiveConnectionInfo conn)
-        {
-            await ViewModel.TerminateProcessAsync(conn.Pid, conn.ProcessName);
-        }
-    }
-
-    private void OnCopyPublicIpClick(object sender, RoutedEventArgs e)
-    {
-        if (!string.IsNullOrWhiteSpace(ViewModel.PublicIpAddress))
-        {
-            try
-            {
-                var package = new DataPackage();
-                package.SetText(ViewModel.PublicIpAddress);
-                Clipboard.SetContent(package);
-            }
-            catch { }
-        }
-    }
-
+    // ==================== FORMATTING & BINDING HELPERS ====================
     public bool IsNot(bool val) => !val;
-
     public string FormatMs(double val) => val >= 1000 ? $"{val / 1000.0:F2} s" : $"{val:F0} ms";
     public string FormatPercent(double val) => $"{val:F1}%";
     public string FormatMbps(double val) => val >= 1000 ? $"{val / 1000.0:F2} Gbps" : $"{val:F1} Mbps";
@@ -662,101 +361,5 @@ public sealed partial class NetworkPage : Page
         return "Mbps";
     }
 
-    public string FormatConnectionCount(int count) => $"{count} Sockets Active";
-
-    private void OnPageUnloaded(object sender, RoutedEventArgs e)
-    {
-        TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
-        if (ViewModel != null)
-        {
-            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
-            ViewModel.Cleanup();
-        }
-    }
-
-    private void OnRefreshAcceleratorInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
-    {
-        args.Handled = true;
-        OnRefreshClick(this, new RoutedEventArgs());
-    }
-
-    private void OnFindAcceleratorInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
-    {
-        args.Handled = true;
-        SetActiveTab("ports");
-        TxtSocketSearch?.Focus(FocusState.Programmatic);
-    }
-
-    private void OnExportAcceleratorInvoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
-    {
-        args.Handled = true;
-        OnExportSocketsClick(this, new RoutedEventArgs());
-    }
-
-    private async void OnExportNetworkReportClick(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            string? report = await ViewModel.ExportNetworkReportAsync();
-            if (!string.IsNullOrEmpty(report))
-            {
-                var package = new DataPackage();
-                package.SetText(report);
-                Clipboard.SetContent(package);
-                if (sender is Button btn) WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(btn, 1.08f, 350);
-            }
-        }
-        catch (Exception ex)
-        {
-            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkPage.OnExportNetworkReportClick", ex);
-        }
-    }
-
-    private void OnExportSocketsClick(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            string csv = ViewModel.ExportSocketsListToCsv();
-            var package = new DataPackage();
-            package.SetText(csv);
-            Clipboard.SetContent(package);
-
-            var notif = App.Services?.GetService<WinCarePro.Services.Contracts.INotificationService>();
-            string msg = string.Format("Exported {0} active sockets to CSV report.".T(), ViewModel.Connections.Count);
-            notif?.ShowSuccess("Sockets CSV Exported".T(), msg);
-            if (sender is Button btn) WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(btn, 1.08f, 350);
-        }
-        catch (Exception ex)
-        {
-            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkPage.OnExportSocketsClick", ex);
-        }
-    }
-
-    private void OnSocketSortSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (CmbSocketSort?.SelectedItem is ComboBoxItem item && item.Content is string sortName)
-        {
-            ViewModel.ConnectionSortBy = sortName switch
-            {
-                "PID" => "PID",
-                "Protocol" => "Protocol",
-                "Local Port" => "LocalPort",
-                "State" => "State",
-                _ => "ProcessName"
-            };
-        }
-    }
-
-    private void OnResetSocketFiltersClick(object sender, RoutedEventArgs e)
-    {
-        ViewModel.ResetSocketFilters();
-        if (CmbSocketSort != null) CmbSocketSort.SelectedIndex = 0;
-        UpdateFilterCategoryButtons("All");
-        TxtSocketSearch?.Focus(FocusState.Programmatic);
-    }
-
-    private async void OnBenchmarkDnsClick(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.StartDnsBenchmarkAsync();
-    }
+    public string FormatConnectionCount(int count) => $"{count} Sockets";
 }

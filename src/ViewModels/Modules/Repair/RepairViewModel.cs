@@ -549,6 +549,8 @@ public class RepairViewModel : ViewModelBase, IDisposable
     public async Task RunDiagnosticsScanAsync()
     {
         if (IsBusy || IsScanningDiagnostics) return;
+        int reqVersion = NextRequestVersion();
+
         IsScanningDiagnostics = true;
         SetOperationState(OperationState.Running);
         RepairProgressPercent = 0;
@@ -558,7 +560,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
         CurrentScanStepText = "Starting System Diagnostics Scan...".T();
         LogText("Starting System Diagnostics Scan...".T());
 
-        DiscoveredIssues.Clear();
+        var localDiscovered = new List<DiagnosticIssueItem>();
 
         try
         {
@@ -617,7 +619,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
 
             foreach (var svc in stoppedServices.list)
             {
-                DiscoveredIssues.Add(new DiagnosticIssueItem
+                localDiscovered.Add(new DiagnosticIssueItem
                 {
                     Id = $"SVC_{svc.Name}",
                     Title = string.Format("Service '{0}' is stopped".T(), svc.Display),
@@ -699,7 +701,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
 
             foreach (var restriction in restrictions)
             {
-                DiscoveredIssues.Add(new DiagnosticIssueItem
+                localDiscovered.Add(new DiagnosticIssueItem
                 {
                     Id = restriction.Id,
                     Title = restriction.Title,
@@ -733,7 +735,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
 
                     if (ping > 250)
                     {
-                        DiscoveredIssues.Add(new DiagnosticIssueItem
+                        localDiscovered.Add(new DiagnosticIssueItem
                         {
                             Id = "NET_LATENCY",
                             Title = "High DNS Latency".T(),
@@ -748,7 +750,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
                 else
                 {
                     NetworkPingStatus = "Timeout".T();
-                    DiscoveredIssues.Add(new DiagnosticIssueItem
+                    localDiscovered.Add(new DiagnosticIssueItem
                     {
                         Id = "NET_OFFLINE",
                         Title = "DNS Resolution Timed Out".T(),
@@ -763,7 +765,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
             catch
             {
                 NetworkPingStatus = "Offline".T();
-                DiscoveredIssues.Add(new DiagnosticIssueItem
+                localDiscovered.Add(new DiagnosticIssueItem
                 {
                     Id = "NET_OFFLINE",
                     Title = "DNS Resolution Failed / Offline".T(),
@@ -776,7 +778,7 @@ public class RepairViewModel : ViewModelBase, IDisposable
             }
 
             // Always add a recommendation to run SFC
-            DiscoveredIssues.Add(new DiagnosticIssueItem
+            localDiscovered.Add(new DiagnosticIssueItem
             {
                 Id = "SYS_SFC",
                 Title = "System Integrity Check Recommendation".T(),
@@ -787,24 +789,34 @@ public class RepairViewModel : ViewModelBase, IDisposable
                 IsSelected = false
             });
 
-            RepairProgressPercent = 100;
-            HasDiagnosticsRun = true;
-            CurrentScanStepText = "Diagnostics Scan completed successfully.".T();
-            LogText("Diagnostics Scan completed successfully.".T());
+            if (token.IsCancellationRequested || _isDisposed || !IsCurrentRequestVersion(reqVersion)) return;
 
-            // Calculate health score
-            int penalty = 0;
-            foreach (var issue in DiscoveredIssues)
+            RunOnUI(() =>
             {
-                if (issue.Severity == "Critical") penalty += 20;
-                else if (issue.Severity == "Warning") penalty += 10;
-            }
-            HealthScore = Math.Max(100 - penalty, 0);
-            DiscoveredIssuesCount = DiscoveredIssues.Count;
+                DiscoveredIssues.Clear();
+                foreach (var item in localDiscovered)
+                {
+                    DiscoveredIssues.Add(item);
+                }
+                RepairProgressPercent = 100;
+                HasDiagnosticsRun = true;
+                CurrentScanStepText = "Diagnostics Scan completed successfully.".T();
+                LogText("Diagnostics Scan completed successfully.".T());
 
-            ApplyFilter();
-            LoadServices();
-            SetOperationState(OperationState.Completed);
+                // Calculate health score
+                int penalty = 0;
+                foreach (var issue in DiscoveredIssues)
+                {
+                    if (issue.Severity == "Critical") penalty += 20;
+                    else if (issue.Severity == "Warning") penalty += 10;
+                }
+                HealthScore = Math.Max(100 - penalty, 0);
+                DiscoveredIssuesCount = DiscoveredIssues.Count;
+
+                ApplyFilter();
+                LoadServices();
+                SetOperationState(OperationState.Completed);
+            });
         }
         catch (OperationCanceledException)
         {

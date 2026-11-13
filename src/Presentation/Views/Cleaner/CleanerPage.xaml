@@ -85,6 +85,25 @@
 
         <!-- 1. Contextual Status Banners & Execution Progress -->
         <StackPanel Grid.Row="1" Spacing="8">
+            <!-- Smart Action Suggestion Card (Aura Glass Banner) -->
+            <Border Style="{StaticResource V6FlatCardStyle}" Padding="14,10" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                <Grid ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Grid.Column="0" Glyph="&#xE946;" FontSize="16" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+                        <TextBlock Text="{x:Bind ViewModel.ActionSuggestionText, Mode=OneWay}" FontSize="12.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind ViewModel.LastScanTimeFormatted, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Visibility="{x:Bind ViewModel.HasCompletedScan, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </StackPanel>
+                    <Button Grid.Column="2" Style="{StaticResource SecondaryGlassButtonStyle}" Height="28" CornerRadius="6" Padding="12,0" Command="{x:Bind ViewModel.ScanAllCommand}" IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock Text="{Binding Source='Scan Now', Converter={StaticResource TranslationConverter}}" FontSize="11.5" />
+                    </Button>
+                </Grid>
+            </Border>
+
             <!-- Inline Safety Protection Notice Card -->
             <controls:InlineStatusCard
                 CardType="SafetyNotice"

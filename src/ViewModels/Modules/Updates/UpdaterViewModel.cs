@@ -363,10 +363,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
 
-        if (_allUpdates.Count == 0 && !IsBusy)
-        {
-            _ = ScanUpdatesAsync();
-        }
+        // Smart Lifecycle: Preserve update list if already scanned; do not trigger heavy winget/driver audit on every tab navigation.
     }
 
     public void Cleanup()
@@ -406,6 +403,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
     public async Task ScanUpdatesAsync()
     {
         if (IsBusy) return;
+        int reqVersion = NextRequestVersion();
+
         IsBusy = true;
         SetOperationState(OperationState.Running);
         try { _operationCts?.Dispose(); }
@@ -413,8 +412,6 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
 
-        _allUpdates.Clear();
-        Updates.Clear();
         ProgressMessage = "Auditing software packages and repositories...".T();
         ProgressPercent = 0;
 
@@ -424,6 +421,9 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
             _dispatcherQueue?.TryEnqueue(() =>
             {
+                if (ct.IsCancellationRequested || _isDisposed || !IsCurrentRequestVersion(reqVersion)) return;
+                _allUpdates.Clear();
+                Updates.Clear();
                 foreach (var item in list)
                 {
                     _allUpdates.Add(item);

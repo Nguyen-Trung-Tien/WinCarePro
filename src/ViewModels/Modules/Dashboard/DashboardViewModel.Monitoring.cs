@@ -242,6 +242,7 @@ public partial class DashboardViewModel
 
     public void StartMonitoring()
     {
+        ActiveInstance = this;
         _isDisposed = false;
         if (_languageChangedHandler != null)
         {
@@ -263,6 +264,7 @@ public partial class DashboardViewModel
 
     public void StopMonitoring()
     {
+        if (ActiveInstance == this) ActiveInstance = null;
         _monitorCts?.Cancel();
         _isHistoricalDataLoaded = false;
         CancelScanIfRunning();

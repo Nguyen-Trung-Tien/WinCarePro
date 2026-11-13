@@ -55,10 +55,7 @@ namespace WinCarePro.Modules.AiAssistant
         {
             base.OnNavigatedTo(e);
             _isNavigatedAway = false;
-            if (ScoreText != null && (ScoreText.Text == "--" || string.IsNullOrEmpty(ScoreText.Text)))
-            {
-                _ = RunAiScanAsync();
-            }
+            // Smart Lifecycle: Preserve existing AI evaluation. User initiates scan manually via Start Diagnostics button.
         }
 
         protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)

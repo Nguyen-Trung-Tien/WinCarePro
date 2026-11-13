@@ -36,6 +36,8 @@ public enum OptimizationMode
 
 public partial class DashboardViewModel : ViewModelBase, IDisposable
 {
+    public static DashboardViewModel? ActiveInstance { get; private set; }
+
     private DispatcherQueue? _dispatcherQueue;
     public DispatcherQueue? DispatcherQueue
     {

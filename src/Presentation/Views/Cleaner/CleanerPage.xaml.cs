@@ -16,6 +16,7 @@ public sealed partial class CleanerPage : Page
     public CleanerPage()
     {
         InitializeComponent();
+        this.NavigationCacheMode = NavigationCacheMode.Required;
         ViewModel = App.Services.GetRequiredService<CleanerViewModel>();
         DataContext = ViewModel;
 
@@ -23,14 +24,10 @@ public sealed partial class CleanerPage : Page
         this.Unloaded += OnPageUnloaded;
     }
 
-    private async void OnPageLoaded(object sender, RoutedEventArgs e)
+    private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
-        _pageCts = new CancellationTokenSource();
-        try
-        {
-            await ViewModel.ScanAllAsync(_pageCts.Token);
-        }
-        catch (OperationCanceledException) { }
+        // Smart Lifecycle: Preserve cached scan results. Do NOT auto-trigger heavy scans on tab navigation.
+        WinCarePro.Services.TranslationManager.Instance.Translate(this);
     }
 
     private void OnPageUnloaded(object sender, RoutedEventArgs e)

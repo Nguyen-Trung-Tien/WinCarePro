@@ -341,7 +341,11 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         };
         TranslationManager.Instance.LanguageChanged += _languageChangedHandler;
 
-        _ = ScanAppsAsync();
+        // Lazy initialization: apps are loaded once or on manual click, preventing repeated registry thrashing
+        if (_allApps.Count == 0 && !IsBusy)
+        {
+            _ = ScanAppsAsync();
+        }
     }
 
     public void CancelScan()
@@ -361,6 +365,8 @@ public class UninstallViewModel : ViewModelBase, IDisposable
     public async Task ScanAppsAsync()
     {
         if (IsBusy) return;
+        int reqVersion = NextRequestVersion();
+
         _scanCts?.Cancel();
         _scanCts?.Dispose();
         _scanCts = new CancellationTokenSource();
@@ -371,23 +377,22 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         ProgressPercent = 10;
         ProgressMessage = "Scanning registry for installed applications...".T();
 
-        FilteredApps.Clear();
-        _allApps.Clear();
-
         try
         {
             var apps = await Task.Run(() => _uninstallEngine.ScanInstalledApps(token), token);
-            if (token.IsCancellationRequested || _isDisposed) return;
+            if (token.IsCancellationRequested || _isDisposed || !IsCurrentRequestVersion(reqVersion)) return;
             ProgressPercent = 80;
 
             RunOnUI(() =>
             {
-                if (token.IsCancellationRequested || _isDisposed)
+                if (token.IsCancellationRequested || _isDisposed || !IsCurrentRequestVersion(reqVersion))
                 {
                     IsBusy = false;
                     SetOperationState(OperationState.Idle);
                     return;
                 }
+                FilteredApps.Clear();
+                _allApps.Clear();
                 _allApps = apps;
                 UpdateStatistics();
                 ApplyAppFilter();

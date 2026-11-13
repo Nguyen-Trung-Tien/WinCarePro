@@ -586,5 +586,9 @@ public partial class TranslationManager
         if (en != null) en["CPU"] = "CPU";
         vi["RAM Usage Monitor — Click to view Dashboard memory metrics"] = "Giám sát sử dụng RAM — Nhấp để xem số liệu bộ nhớ trên Bảng điều khiển";
         if (en != null) en["RAM Usage Monitor — Click to view Dashboard memory metrics"] = "RAM Usage Monitor — Click to view Dashboard memory metrics";
+        vi["Scan Now"] = "Quét ngay";
+        if (en != null) en["Scan Now"] = "Scan Now";
+        vi["Ready to audit. Click 'Scan Clutter' to inspect temporary files and registry leftovers."] = "Hệ thống sẵn sàng. Nhấn 'Quét hệ thống' để kiểm tra tệp rác và tệp thừa.";
+        if (en != null) en["Ready to audit. Click 'Scan Clutter' to inspect temporary files and registry leftovers."] = "Ready to audit. Click 'Scan Clutter' to inspect temporary files and registry leftovers.";
     }
 }

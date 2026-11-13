@@ -75,8 +75,14 @@ public sealed partial class SecurityPage : Page
         }
         this.DataContext = ViewModel;
         ViewModel?.LoadPrivacySettings();
-        _ = ViewModel?.ScanSecurityAsync();
+        
+        // Smart Lifecycle: Load safeguards and check cache. Only scan on-demand if cache is empty.
         _ = ViewModel?.LoadSafeguardsAsync();
+        if (ViewModel != null && ViewModel.SecurityAuditItems.Count == 0 && !ViewModel.IsScanning)
+        {
+            _ = ViewModel.ScanSecurityAsync();
+        }
+
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
         TranslationManager.Instance.Translate(this);

@@ -240,11 +240,12 @@ public class RegistryViewModel : ViewModelBase, IDisposable
     public async Task ScanRegistryAsync()
     {
         if (IsBusy || _isDisposed) return;
+        int reqVersion = NextRequestVersion();
+
         IsBusy = true;
         SetOperationState(OperationState.Running);
         ScanProgress = 0;
         StatusText = "Scanning registry for broken paths...".T();
-        Issues.Clear();
 
         try
         {
@@ -263,7 +264,8 @@ public class RegistryViewModel : ViewModelBase, IDisposable
             var list = await Task.Run(() => _engine.ScanRegistryIssues(token), token);
             RunOnUI(() =>
             {
-                if (token.IsCancellationRequested || _isDisposed) return;
+                if (token.IsCancellationRequested || _isDisposed || !IsCurrentRequestVersion(reqVersion)) return;
+                Issues.Clear();
                 foreach (var issue in list)
                 {
                     Issues.Add(issue);

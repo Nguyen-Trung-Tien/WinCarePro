@@ -347,6 +347,7 @@ public class JunkViewModel : ViewModelBase, IDisposable
     public async Task ScanAsync()
     {
         if (IsScanning || IsCleaning) return;
+        int reqVersion = NextRequestVersion();
 
         try
         {
@@ -365,9 +366,6 @@ public class JunkViewModel : ViewModelBase, IDisposable
         ProgressPercent = 0;
         lock (_logBuffer) { _logBuffer.Clear(); }
         LiveLogs = "";
-        Categories.Clear();
-        SelectedCategory = null;
-        ActiveLockingApps.Clear();
 
         try
         {
@@ -389,6 +387,10 @@ public class JunkViewModel : ViewModelBase, IDisposable
 
             await RunOnUIActionAsync(() =>
             {
+                if (token.IsCancellationRequested || _isDisposed || !IsCurrentRequestVersion(reqVersion)) return;
+                Categories.Clear();
+                SelectedCategory = null;
+                ActiveLockingApps.Clear();
                 _allCategories.Clear();
                 foreach (var cat in results)
                 {

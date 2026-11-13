@@ -47,6 +47,19 @@ public class ViewModelBase : ObservableObject
     }
 
 
+    private int _activeRequestVersion = 0;
+
+    /// <summary>
+    /// Thread-safe increment of active request sequence number.
+    /// Used by ViewModels to invalidate lagging responses and prevent race conditions.
+    /// </summary>
+    public int NextRequestVersion() => System.Threading.Interlocked.Increment(ref _activeRequestVersion);
+
+    /// <summary>
+    /// Checks whether the captured version is still the latest active request.
+    /// </summary>
+    public bool IsCurrentRequestVersion(int version) => Volatile.Read(ref _activeRequestVersion) == version;
+
     public static DispatcherQueue? SafeGetDispatcherQueue()
     {
         try

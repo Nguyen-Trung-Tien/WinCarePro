@@ -52,6 +52,15 @@ public partial class CleanerViewModel : AsyncTaskViewModelBase
     [ObservableProperty]
     private bool _isElevationNoticeVisible;
 
+    [ObservableProperty]
+    private string _lastScanTimeFormatted = string.Empty;
+
+    [ObservableProperty]
+    private bool _hasCompletedScan;
+
+    [ObservableProperty]
+    private string _actionSuggestionText = "Ready to audit. Click 'Scan Clutter' to inspect temporary files and registry leftovers.";
+
     public ObservableCollection<CleanerCategoryItem> CleanerCategories { get; } = new();
 
     public bool CanClean => !IsBusy && CleanerCategories.Count > 0;
@@ -145,6 +154,11 @@ public partial class CleanerViewModel : AsyncTaskViewModelBase
 
                     long grandTotal = junkTotal + leftoversBytes;
                     StatusMessage = $"Scan completed. Found {FormatBytes(grandTotal)} of clutter and {orphanKeyCount} orphaned keys.";
+                    HasCompletedScan = true;
+                    LastScanTimeFormatted = $"Updated at {DateTime.Now:HH:mm} — Cached data preserved";
+                    ActionSuggestionText = grandTotal > 0
+                        ? $"Found {FormatBytes(grandTotal)} of reclaimable clutter. Click 'Clean Selected' to safely recover space."
+                        : "System storage is pristine. No unnecessary clutter found.";
                     UpdateTotalSelected();
                     OnPropertyChanged(nameof(CanClean));
                 });

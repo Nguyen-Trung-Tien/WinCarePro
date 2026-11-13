@@ -64,5 +64,13 @@ public partial class TranslationManager
         vi["Operations Today"] = "Thao tác hôm nay";
         vi["Live Telemetry Pulse"] = "Nhịp đập hệ thống";
         vi["Working sets trimmed successfully."] = "Đã giải phóng bộ nhớ đệm thành công.";
+        vi["Refresh Telemetry & Logs"] = "Làm mới dữ liệu & Nhật ký";
+        if (en != null) en["Refresh Telemetry & Logs"] = "Refresh Telemetry & Logs";
+        vi["Refresh Telemetry &amp; Logs"] = "Làm mới dữ liệu & Nhật ký";
+        if (en != null) en["Refresh Telemetry &amp; Logs"] = "Refresh Telemetry &amp; Logs";
+        vi["• System Idle"] = "• Hệ thống rảnh";
+        if (en != null) en["• System Idle"] = "• System Idle";
+        vi["Delete Notification"] = "Xóa thông báo";
+        if (en != null) en["Delete Notification"] = "Delete Notification";
     }
 }

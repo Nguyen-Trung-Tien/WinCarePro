@@ -86,5 +86,11 @@ public partial class TranslationManager
         vi["What's New in WinCare Pro"] = "Những điểm mới trong WinCare Pro";
         vi["Integrated Third-Party Software Updater"] = "Trình Cập Nhật Phần Mềm Bên Thứ Ba Tích Hợp";
         vi["Restore Now"] = "Khôi phục ngay";
+        vi["Backup Installed Hardware Drivers"] = "Sao lưu Driver phần cứng đã cài đặt";
+        if (en != null) en["Backup Installed Hardware Drivers"] = "Backup Installed Hardware Drivers";
+        vi["Restore Drivers from Backup"] = "Khôi phục Driver từ bản sao lưu";
+        if (en != null) en["Restore Drivers from Backup"] = "Restore Drivers from Backup";
+        vi["Restore Drivers"] = "Khôi phục Driver";
+        if (en != null) en["Restore Drivers"] = "Restore Drivers";
     }
 }

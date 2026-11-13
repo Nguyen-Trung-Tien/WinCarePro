@@ -17,10 +17,14 @@ public sealed partial class CircularProgressMeter : UserControl
         set => SetValue(ValueProperty, value);
     }
 
+    private readonly RoutedEventHandler _loadedHandler;
+
     public CircularProgressMeter()
     {
         this.InitializeComponent();
-        this.Loaded += (s, e) => UpdateUI(Value);
+        _loadedHandler = (s, e) => UpdateUI(Value);
+        this.Loaded += _loadedHandler;
+        this.Unloaded += (s, e) => this.Loaded -= _loadedHandler;
     }
 
     private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -33,42 +37,71 @@ public sealed partial class CircularProgressMeter : UserControl
 
     private void UpdateUI(int val)
     {
-        if (HealthProgressRing == null || ScoreLabel == null || StatusLabel == null)
+        if (ScoreLabel == null || StatusLabel == null)
             return;
 
-        HealthProgressRing.Value = val;
         ScoreLabel.Text = val.ToString();
+
+        // Calculate circular arc geometry (Radius = 60, Center = 85, 85)
+        if (ArcFigure != null && ProgressArc != null)
+        {
+            double pct = Math.Clamp(val, 0.01, 99.99);
+            double angleDegrees = pct * 3.6;
+            double angleRadians = (angleDegrees - 90.0) * Math.PI / 180.0;
+            const double radius = 60.0;
+            const double centerX = 85.0;
+            const double centerY = 85.0;
+
+            ArcFigure.StartPoint = new Windows.Foundation.Point(centerX, centerY - radius);
+            double endX = centerX + radius * Math.Cos(angleRadians);
+            double endY = centerY + radius * Math.Sin(angleRadians);
+            ProgressArc.Point = new Windows.Foundation.Point(endX, endY);
+            ProgressArc.Size = new Windows.Foundation.Size(radius, radius);
+            ProgressArc.IsLargeArc = angleDegrees > 180.0;
+            ProgressArc.SweepDirection = SweepDirection.Clockwise;
+        }
 
         Brush color;
         string status;
+        string glowKey;
 
         if (val >= 90)
         {
             status = "Excellent";
             color = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 16, 185, 129)); // Emerald Green
-            ScoreLabel.Foreground = color;
+            glowKey = "GaugeGlowGoodBrush";
         }
         else if (val >= 70)
         {
             status = "Good";
             color = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 59, 130, 246)); // Blue
-            ScoreLabel.Foreground = color;
+            glowKey = "GaugeGlowGoodBrush";
         }
         else if (val >= 50)
         {
             status = "Warning";
             color = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 245, 158, 11)); // Amber
-            ScoreLabel.Foreground = color;
+            glowKey = "GaugeGlowWarningBrush";
         }
         else
         {
             status = "Critical";
             color = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 239, 68, 68)); // Red
-            ScoreLabel.Foreground = color;
+            glowKey = "GaugeGlowCriticalBrush";
         }
 
+        ScoreLabel.Foreground = color;
         StatusLabel.Text = status.T();
         StatusLabel.Foreground = color;
-        HealthProgressRing.Foreground = color;
+
+        if (GaugeProgressPath != null)
+        {
+            GaugeProgressPath.Stroke = color;
+        }
+
+        if (AuraGlowBorder != null && Application.Current.Resources.TryGetValue(glowKey, out var brushObj) && brushObj is Brush b)
+        {
+            AuraGlowBorder.Background = b;
+        }
     }
 }

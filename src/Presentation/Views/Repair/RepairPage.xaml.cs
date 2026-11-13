@@ -39,12 +39,20 @@ public sealed partial class RepairPage : Page
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
 
-        this.ActualThemeChanged += (s, e) =>
+        Windows.Foundation.TypedEventHandler<FrameworkElement, object> themeChangedHandler = (s, e) =>
         {
             DispatcherQueue?.TryEnqueue(() =>
             {
                 Bindings.Update();
             });
+        };
+        this.ActualThemeChanged += themeChangedHandler;
+
+        this.Unloaded += (s, e) =>
+        {
+            if (ViewModel != null) ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+            this.ActualThemeChanged -= themeChangedHandler;
         };
     }
 
@@ -229,12 +237,14 @@ public sealed partial class RepairPage : Page
 
     private async void OnCreateRestorePointClick(object sender, RoutedEventArgs e)
     {
-        try { if (ViewModel != null) await ViewModel.CreateRestorePointAsync(); } catch { }
+        if (ViewModel == null || ViewModel.IsBusy) return;
+        try { await ViewModel.CreateRestorePointAsync(); } catch { }
     }
 
     private async void OnRepairNetworkStackClick(object sender, RoutedEventArgs e)
     {
-        try { if (ViewModel != null) await ViewModel.RepairNetworkStackAsync(); } catch { }
+        if (ViewModel == null || ViewModel.IsBusy) return;
+        try { await ViewModel.RepairNetworkStackAsync(); } catch { }
     }
 
     private async void OnSfcScanClick(object sender, RoutedEventArgs e)

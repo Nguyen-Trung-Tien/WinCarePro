@@ -10,7 +10,34 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <EntranceNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+            <EntranceThemeTransition FromVerticalOffset="24" />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource AppDeepObsidianBackground}">
+        <!-- Ambient Mesh Glow (Deep Obsidian Canvas with Cyan/Indigo Luminous Atmosphere in Dark Mode) -->
+        <Grid x:Name="AmbientMeshGlowGrid" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- Top-Left Radial Mesh Glow (Cyan #00D2FF &amp; Indigo #7B2CBF) -->
+            <Rectangle HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Width="720" Height="540" Margin="-100,-100,0,0"
+                       Opacity="0.12"
+                       Fill="{StaticResource AppAmbientMeshGlowBrush}" />
+
+            <!-- Bottom-Right Subtle Accent Glow -->
+            <Rectangle HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Width="560" Height="440" Margin="0,0,-80,-80"
+                       Opacity="0.08"
+                       Fill="{StaticResource AppSecondaryMeshGlowBrush}" />
+        </Grid>
+
+        <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Header & Action Bar -->
             <RowDefinition Height="*" />    <!-- 1. Pivot Workspace -->
@@ -34,18 +61,18 @@
                          Foreground="{StaticResource PrimaryAccentBrush}"
                          HorizontalAlignment="Stretch"/>
 
-            <!-- Left: Title & Subtitle -->
-            <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center">
-                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Border Background="{StaticResource PrimaryAccentLightBrush}" CornerRadius="6" Padding="6" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE968;" FontSize="18" Foreground="{StaticResource PrimaryAccentBrush}" />
-                    </Border>
-                    <TextBlock Text="Network Center &amp; Diagnostics"
+            <!-- Left: Title & Subtitle (Standardized Aura Header) -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                <Border Style="{StaticResource IconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
+                    <FontIcon Glyph="&#xE968;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Source='Network Center &amp; Diagnostics', Converter={StaticResource TranslationConverter}}"
                                Style="{StaticResource PageHeaderTitleStyle}"
                                VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Source='Network telemetry, DNS speed &amp; TCP/IP repairs.', Converter={StaticResource TranslationConverter}}"
+                               Style="{StaticResource PageHeaderSubtitleStyle}" />
                 </StackPanel>
-                <TextBlock Text="Network telemetry, DNS speed &amp; TCP/IP repairs."
-                           Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
 
             <!-- Right: Action Buttons -->
@@ -59,7 +86,7 @@
                         FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xEDE1;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
-                        <TextBlock Text="Xuất báo cáo" FontWeight="SemiBold" />
+                        <TextBlock Text="Export Report" FontWeight="SemiBold" />
                     </StackPanel>
                 </Button>
 
@@ -71,7 +98,7 @@
                         FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE72C;" FontSize="12" />
-                        <TextBlock Text="Làm mới" FontWeight="SemiBold" />
+                        <TextBlock Text="Refresh" FontWeight="SemiBold" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -149,7 +176,7 @@
                                                 CornerRadius="8"
                                                 Padding="14,10">
                                             <StackPanel Spacing="3">
-                                                <TextBlock Text="Card mạng" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                <TextBlock Text="Network Adapter" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                                 <TextBlock Text="{x:Bind ViewModel.ActiveAdapterName, Mode=OneWay}"
                                                            FontSize="13"
                                                            FontWeight="Bold"
@@ -169,7 +196,7 @@
                                                 CornerRadius="8"
                                                 Padding="14,10">
                                             <StackPanel Spacing="3">
-                                                <TextBlock Text="Địa chỉ IPv4" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                <TextBlock Text="IPv4 Address" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                                 <TextBlock Text="{x:Bind ViewModel.Ipv4Address, Mode=OneWay}"
                                                            FontSize="13"
                                                            FontWeight="Bold"
@@ -191,7 +218,7 @@
                                                 CornerRadius="8"
                                                 Padding="14,10">
                                             <StackPanel Spacing="3">
-                                                <TextBlock Text="Cổng mặc định (Gateway)" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="Default Gateway" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 <TextBlock Text="{x:Bind ViewModel.GatewayAddress, Mode=OneWay}"
                                                            FontSize="13"
                                                            FontWeight="Bold"
@@ -213,13 +240,13 @@
                                                 CornerRadius="8"
                                                 Padding="14,10">
                                             <StackPanel Spacing="3">
-                                                <TextBlock Text="Máy chủ DNS hiện tại" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="Current DNS Server" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 <TextBlock Text="{x:Bind ViewModel.CurrentDnsDisplay, Mode=OneWay}"
                                                            FontSize="13"
                                                            FontWeight="Bold"
                                                            Typography.NumeralAlignment="Tabular"
                                                            TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="Bộ giải quyết đang hoạt động"
+                                                <TextBlock Text="Active Resolver"
                                                            FontSize="11"
                                                            Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                                                            TextTrimming="CharacterEllipsis" />
@@ -612,7 +639,9 @@
                                                         <TextBlock Text="{x:Bind Description}"
                                                                    FontSize="11.5"
                                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                                   VerticalAlignment="Center" />
+                                                                   VerticalAlignment="Center"
+                                                                   TextTrimming="CharacterEllipsis"
+                                                                   MaxWidth="260" />
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
@@ -661,7 +690,7 @@
                                                 Visibility="{x:Bind ViewModel.HasDnsBackup, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
                                                 <FontIcon Glyph="&#xE7A7;" FontSize="13" />
-                                                <TextBlock Text="Hoàn tác DNS" FontSize="13" FontWeight="SemiBold" />
+                                                <TextBlock Text="Restore Default DNS" FontSize="13" FontWeight="SemiBold" />
                                             </StackPanel>
                                         </Button>
                                     </Grid>
@@ -1014,12 +1043,12 @@
                                                    TextTrimming="CharacterEllipsis" />
                                     </StackPanel>
 
-                                    <!-- Restart Warning Banner -->
+                                    <!-- Restart Warning Banner (Rule 09 Localized) -->
                                     <InfoBar IsOpen="{x:Bind ViewModel.RequiresRestart, Mode=OneWay}"
                                              Severity="Warning"
                                              IsClosable="False"
-                                             Title="Yêu cầu khởi động lại máy"
-                                             Message="Vui lòng khởi động lại máy tính để hoàn tất việc cài đặt lại ngăn xếp Winsock và TCP/IP." />
+                                             Title="{Binding Source='Restart Required', Converter={StaticResource TranslationConverter}}"
+                                             Message="{Binding Source='Please restart your computer to complete the Winsock and TCP/IP stack reset.', Converter={StaticResource TranslationConverter}}" />
 
                                     <!-- 8 Action Buttons Grid (2 rows x 4 columns) -->
                                     <Grid ColumnSpacing="12" RowSpacing="12">
@@ -1330,5 +1359,6 @@
                 </ScrollViewer>
             </PivotItem>
         </Pivot>
+    </Grid>
     </Grid>
 </Page>

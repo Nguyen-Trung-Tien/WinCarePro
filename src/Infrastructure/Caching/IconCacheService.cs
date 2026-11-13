@@ -1,18 +1,25 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace WinCarePro.Services.Implementations;
 
-public class IconCacheService
+public partial class IconCacheService
 {
-    private const int MaxMemoryCacheSize = 500;
+    private const int MaxMemoryCacheSize = 250;
     private readonly string _cacheDirectory;
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> _memoryCache = new(StringComparer.OrdinalIgnoreCase);
-    private static readonly System.Collections.Concurrent.ConcurrentQueue<string> _cacheKeys = new();
+    private static readonly object _lruLock = new();
+    private static readonly Dictionary<string, (string IconPath, long LastAccessTicks)> _lruCache = new(StringComparer.OrdinalIgnoreCase);
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Task<string>> _activeIconTasks = new();
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool DestroyIcon(IntPtr hIcon);
 
     public IconCacheService()
     {
@@ -28,29 +35,81 @@ public class IconCacheService
             {
                 Directory.CreateDirectory(_cacheDirectory);
             }
+            PruneDiskCacheIfNeeded();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("IconCacheService.Init", ex);
+        }
+    }
+
+    private void PruneDiskCacheIfNeeded()
+    {
+        Task.Run(() =>
+        {
+            try
+            {
+                if (!Directory.Exists(_cacheDirectory)) return;
+                var dir = new DirectoryInfo(_cacheDirectory);
+                var files = dir.GetFiles("*.png").OrderBy(f => f.LastAccessTimeUtc).ToList();
+                long totalSize = files.Sum(f => f.Length);
+                const long maxSizeBytes = 25 * 1024 * 1024; // 25 MB max disk cache
+
+                if (totalSize > maxSizeBytes || files.Count > 350)
+                {
+                    int filesToDelete = Math.Max(files.Count - 200, 0);
+                    for (int i = 0; i < filesToDelete && i < files.Count; i++)
+                    {
+                        try
+                        {
+                            if (Core.Helpers.SafePathGuard.IsSafeToDelete(files[i].FullName))
+                            {
+                                files[i].Delete();
+                            }
+                        }
+                        catch { }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("IconCacheService.PruneDiskCache", ex);
+            }
+        });
     }
 
     private static void CacheIcon(string filePath, string iconPath)
     {
-        if (_memoryCache.Count >= MaxMemoryCacheSize)
+        lock (_lruLock)
         {
-            // Prune oldest keys when cache exceeds maximum bound
-            while (_memoryCache.Count >= MaxMemoryCacheSize && _cacheKeys.TryDequeue(out var oldKey))
+            if (_lruCache.Count >= MaxMemoryCacheSize && !_lruCache.ContainsKey(filePath))
             {
-                _memoryCache.TryRemove(oldKey, out _);
+                var oldestKeys = _lruCache.OrderBy(kv => kv.Value.LastAccessTicks)
+                                          .Take(MaxMemoryCacheSize / 5)
+                                          .Select(kv => kv.Key)
+                                          .ToList();
+                foreach (var k in oldestKeys)
+                {
+                    _lruCache.Remove(k);
+                }
+            }
+            _lruCache[filePath] = (iconPath, Environment.TickCount64);
+        }
+    }
+
+    private static bool TryGetCachedIcon(string filePath, out string iconPath)
+    {
+        lock (_lruLock)
+        {
+            if (_lruCache.TryGetValue(filePath, out var item))
+            {
+                _lruCache[filePath] = (item.IconPath, Environment.TickCount64);
+                iconPath = item.IconPath;
+                return true;
             }
         }
-
-        if (_memoryCache.TryAdd(filePath, iconPath))
-        {
-            _cacheKeys.Enqueue(filePath);
-        }
-        else
-        {
-            _memoryCache[filePath] = iconPath;
-        }
+        iconPath = "";
+        return false;
     }
 
     public async Task<string> GetIconForExecutableAsync(string filePath)
@@ -60,7 +119,7 @@ public class IconCacheService
             return "";
         }
 
-        if (_memoryCache.TryGetValue(filePath, out var cachedPath) && !string.IsNullOrEmpty(cachedPath) && File.Exists(cachedPath))
+        if (TryGetCachedIcon(filePath, out var cachedPath) && !string.IsNullOrEmpty(cachedPath) && File.Exists(cachedPath))
         {
             return cachedPath;
         }
@@ -115,7 +174,7 @@ public class IconCacheService
         }
 
         // Fast RAM Cache lookup (0 disk I/O)
-        if (_memoryCache.TryGetValue(filePath, out var cachedPath) && !string.IsNullOrEmpty(cachedPath))
+        if (TryGetCachedIcon(filePath, out var cachedPath) && !string.IsNullOrEmpty(cachedPath))
         {
             return cachedPath;
         }

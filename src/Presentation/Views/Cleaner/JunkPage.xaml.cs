@@ -25,6 +25,10 @@ public sealed partial class JunkPage : Page
         set => SetValue(WideLayoutVisibilityProperty, value);
     }
 
+    private System.ComponentModel.PropertyChangedEventHandler? _propChangedHandler;
+    private SizeChangedEventHandler? _sizeChangedHandler;
+    private RoutedEventHandler? _loadedHandler;
+
     public JunkPage()
     {
         ViewModel = App.Services.GetRequiredService<JunkViewModel>();
@@ -32,31 +36,43 @@ public sealed partial class JunkPage : Page
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
 
-        ViewModel.PropertyChanged += (s, e) =>
+        _propChangedHandler = (s, e) =>
         {
             if (e.PropertyName == nameof(ViewModel.IsScanning) || e.PropertyName == nameof(ViewModel.IsCleaning))
             {
                 this.DispatcherQueue?.TryEnqueue(() => UpdateProgressOverlayState());
             }
         };
+        ViewModel.PropertyChanged += _propChangedHandler;
 
-        this.Loaded += (s, e) =>
+        _loadedHandler = (s, e) =>
         {
             UpdateProgressOverlayState();
             TranslationManager.Instance.Translate(this);
             UpdateResponsiveLayout(this.ActualWidth);
+
+            if (ScanJunkBtn != null) FluidAnimationHelper.ApplyButtonPressPhysics(ScanJunkBtn);
+            if (CleanJunkBtn != null) FluidAnimationHelper.ApplyButtonPressPhysics(CleanJunkBtn);
         };
+        this.Loaded += _loadedHandler;
 
         var langHandler = new EventHandler((s, e) =>
         {
             this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
         });
         TranslationManager.Instance.LanguageChanged += langHandler;
-        this.Unloaded += (s, e) => TranslationManager.Instance.LanguageChanged -= langHandler;
 
-        this.SizeChanged += (s, e) =>
+        _sizeChangedHandler = (s, e) =>
         {
             UpdateResponsiveLayout(e.NewSize.Width);
+        };
+        this.SizeChanged += _sizeChangedHandler;
+
+        this.Unloaded += (s, e) =>
+        {
+            TranslationManager.Instance.LanguageChanged -= langHandler;
+            if (_propChangedHandler != null) ViewModel.PropertyChanged -= _propChangedHandler;
+            if (_sizeChangedHandler != null) this.SizeChanged -= _sizeChangedHandler;
         };
     }
 

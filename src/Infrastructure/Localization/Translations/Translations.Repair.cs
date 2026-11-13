@@ -178,5 +178,33 @@ public partial class TranslationManager
         vi["Cleaned &amp; Optimized"] = "Đã tối ưu gọn gàng";
         vi["Slightly Stalled"] = "Bị nghẽn nhẹ";
         vi["Auto-Fix Now"] = "Tự động sửa";
+        vi["Auto Scan & Fix All: Comprehensive diagnostic scan of all system components"] = "Tự động Quét & Sửa Tất Cả: Quét chẩn đoán toàn diện tất cả thành phần hệ thống";
+        if (en != null) en["Auto Scan & Fix All: Comprehensive diagnostic scan of all system components"] = "Auto Scan & Fix All: Comprehensive diagnostic scan of all system components";
+        vi["Auto Scan &amp; Fix All: Comprehensive diagnostic scan of all system components"] = "Tự động Quét & Sửa Tất Cả: Quét chẩn đoán toàn diện tất cả thành phần hệ thống";
+        if (en != null) en["Auto Scan &amp; Fix All: Comprehensive diagnostic scan of all system components"] = "Auto Scan &amp; Fix All: Comprehensive diagnostic scan of all system components";
+        vi["Corrupted System Files: Verify and restore damaged Windows components"] = "Tệp hệ thống hỏng: Xác thực và khôi phục các thành phần Windows hư hại";
+        if (en != null) en["Corrupted System Files: Verify and restore damaged Windows components"] = "Corrupted System Files: Verify and restore damaged Windows components";
+        vi["Network Issues & Latency: Flush DNS and reset network stack"] = "Sự cố mạng & Độ trễ: Xóa đệm DNS và đặt lại ngăn xếp mạng";
+        if (en != null) en["Network Issues & Latency: Flush DNS and reset network stack"] = "Network Issues & Latency: Flush DNS and reset network stack";
+        vi["Network Issues &amp; Latency: Flush DNS and reset network stack"] = "Sự cố mạng & Độ trễ: Xóa đệm DNS và đặt lại ngăn xếp mạng";
+        if (en != null) en["Network Issues &amp; Latency: Flush DNS and reset network stack"] = "Network Issues &amp; Latency: Flush DNS and reset network stack";
+        vi["Windows Update Errors: Fix update services and clear corrupted caches"] = "Lỗi Windows Update: Khắc phục dịch vụ cập nhật và xóa bộ đệm hỏng";
+        if (en != null) en["Windows Update Errors: Fix update services and clear corrupted caches"] = "Windows Update Errors: Fix update services and clear corrupted caches";
+        vi["Smart Auto-Healing Orchestrator"] = "Trình điều phối tự phục hồi thông minh";
+        if (en != null) en["Smart Auto-Healing Orchestrator"] = "Smart Auto-Healing Orchestrator";
+        vi["Scanned system tree"] = "Cây hệ thống đã quét";
+        if (en != null) en["Scanned system tree"] = "Scanned system tree";
+        vi["Auto Restore Point"] = "Điểm khôi phục tự động";
+        if (en != null) en["Auto Restore Point"] = "Auto Restore Point";
+        vi["SFC & DISM store"] = "Kho lưu trữ SFC & DISM";
+        if (en != null) en["SFC & DISM store"] = "SFC & DISM store";
+        vi["SFC &amp; DISM store"] = "Kho lưu trữ SFC & DISM";
+        if (en != null) en["SFC &amp; DISM store"] = "SFC &amp; DISM store";
+        vi["Unban & DNS flush"] = "Mở khóa & Xóa đệm DNS";
+        if (en != null) en["Unban & DNS flush"] = "Unban & DNS flush";
+        vi["Unban &amp; DNS flush"] = "Mở khóa & Xóa đệm DNS";
+        if (en != null) en["Unban &amp; DNS flush"] = "Unban &amp; DNS flush";
+        vi["Reclaims disk space by purging superseded component packages"] = "Giải phóng dung lượng ổ đĩa bằng cách dọn các gói thành phần đã bị thay thế";
+        if (en != null) en["Reclaims disk space by purging superseded component packages"] = "Reclaims disk space by purging superseded component packages";
     }
 }

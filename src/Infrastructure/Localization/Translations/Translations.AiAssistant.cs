@@ -154,5 +154,15 @@ public partial class TranslationManager
         vi["Predictive neural diagnostics, automated bottleneck detection & smart PC optimization."] = "Chẩn đoán thông minh & tự động khắc phục.";
         vi["AI Assistant"] = "AI WinCare Engine";
         vi["Embedded AI WinCare Diagnostics & Predictive Engine"] = "Chẩn Đoán AI WinCare & Động Cơ Phân Tích Dự Đoán";
+        vi["Export"] = "Xuất";
+        if (en != null) en["Export"] = "Export";
+        vi["Level 1: Silent & Safe (No apps closed, zero risk)"] = "Cấp 1: Yên lặng & An toàn (Không đóng ứng dụng, không rủi ro)";
+        if (en != null) en["Level 1: Silent & Safe (No apps closed, zero risk)"] = "Level 1: Silent & Safe (No apps closed, zero risk)";
+        vi["Level 1: Silent &amp; Safe (No apps closed, zero risk)"] = "Cấp 1: Yên lặng & An toàn (Không đóng ứng dụng, không rủi ro)";
+        if (en != null) en["Level 1: Silent &amp; Safe (No apps closed, zero risk)"] = "Level 1: Silent &amp; Safe (No apps closed, zero risk)";
+        vi["Level 2: Balanced Boost (Recommended tune-up)"] = "Cấp 2: Tăng tốc Cân bằng (Khuyên dùng)";
+        if (en != null) en["Level 2: Balanced Boost (Recommended tune-up)"] = "Level 2: Balanced Boost (Recommended tune-up)";
+        vi["Level 3: Deep Velocity (Maximum game/app performance)"] = "Cấp 3: Tối đa Tốc độ (Hiệu năng game/ứng dụng tối đa)";
+        if (en != null) en["Level 3: Deep Velocity (Maximum game/app performance)"] = "Level 3: Deep Velocity (Maximum game/app performance)";
     }
 }

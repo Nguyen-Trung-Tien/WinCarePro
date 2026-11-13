@@ -33,6 +33,7 @@ public sealed partial class MainPage : Page
         // Register to theme changes to force update RequestedTheme for this page, children, and navigated content
         ThemeManager.Instance.RegisterPage(this);
         TranslationManager.Instance.RegisterPage(this);
+        this.Unloaded += (s, e) => Cleanup();
 
         _themeChangedHandler = (s, e) =>
         {
@@ -417,10 +418,7 @@ public sealed partial class MainPage : Page
             {
                 if (_animationsEnabled)
                 {
-                    var transition = new Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionInfo
-                    {
-                        Effect = Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionEffect.FromBottom
-                    };
+                    var transition = new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo();
                     ContentFrame.Navigate(pageType, null, transition);
                 }
                 else

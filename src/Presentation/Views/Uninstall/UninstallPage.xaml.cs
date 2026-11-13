@@ -92,6 +92,9 @@ public sealed partial class UninstallPage : Page
         }
     }
 
+    private readonly System.ComponentModel.PropertyChangedEventHandler _vmPropertyChangedHandler;
+    private readonly SizeChangedEventHandler _sizeChangedHandler;
+
     public UninstallPage()
     {
         ViewModel = App.Services.GetRequiredService<UninstallViewModel>();
@@ -110,13 +113,7 @@ public sealed partial class UninstallPage : Page
             UpdateDetailsPaneVisibility();
         };
 
-        this.Unloaded += (s, e) =>
-        {
-            ThemeManager.Instance.UnregisterPage(this);
-            TranslationManager.Instance.UnregisterPage(this);
-        };
-
-        ViewModel.PropertyChanged += (s, e) =>
+        _vmPropertyChangedHandler = (s, e) =>
         {
             if (e.PropertyName == nameof(ViewModel.SelectedApp))
             {
@@ -127,14 +124,27 @@ public sealed partial class UninstallPage : Page
                 UpdateSkeletonShimmerState();
             }
         };
+        ViewModel.PropertyChanged += _vmPropertyChangedHandler;
 
-        this.SizeChanged += (s, e) =>
+        _sizeChangedHandler = (s, e) =>
         {
             bool isWide = e.NewSize.Width >= 850;
             BadgesColumnWidth = isWide ? GridLength.Auto : new GridLength(0);
             SizeColumnWidth = isWide ? new GridLength(100) : new GridLength(0);
             WideLayoutVisibility = isWide ? Visibility.Visible : Visibility.Collapsed;
             UpdateDetailsPaneVisibility();
+        };
+        this.SizeChanged += _sizeChangedHandler;
+
+        this.Unloaded += (s, e) =>
+        {
+            ThemeManager.Instance.UnregisterPage(this);
+            TranslationManager.Instance.UnregisterPage(this);
+            if (ViewModel != null && _vmPropertyChangedHandler != null)
+            {
+                ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            }
+            this.SizeChanged -= _sizeChangedHandler;
         };
     }
 

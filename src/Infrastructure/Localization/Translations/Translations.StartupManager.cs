@@ -252,5 +252,23 @@ public partial class TranslationManager
         vi["Scan cancelled."] = "Đã hủy quét.";
         vi["Accelerate Windows boot velocity, disable heavy startup applications & configure background services."] = "Quản lý ứng dụng khởi động & dịch vụ nền.";
         vi["Manage startup applications, background services, and boot velocity."] = "Quản lý ứng dụng khởi động, dịch vụ chạy nền và tốc độ boot hệ thống.";
+        vi["Startup Apps"] = "Ứng dụng khởi động";
+        if (en != null) en["Startup Apps"] = "Startup Apps";
+        vi["Services"] = "Dịch vụ";
+        if (en != null) en["Services"] = "Services";
+        vi["Export Startup & Services Report (CSV)"] = "Xuất báo cáo Khởi động & Dịch vụ (CSV)";
+        if (en != null) en["Export Startup & Services Report (CSV)"] = "Export Startup & Services Report (CSV)";
+        vi["Export Startup &amp; Services Report (CSV)"] = "Xuất báo cáo Khởi động & Dịch vụ (CSV)";
+        if (en != null) en["Export Startup &amp; Services Report (CSV)"] = "Export Startup &amp; Services Report (CSV)";
+        vi["Undo last configuration change"] = "Hoàn tác thay đổi cấu hình gần nhất";
+        if (en != null) en["Undo last configuration change"] = "Undo last configuration change";
+        vi["14 Core Protected"] = "14 Thành phần cốt lõi được bảo vệ";
+        if (en != null) en["14 Core Protected"] = "14 Core Protected";
+        vi["Open Windows Services Manager (services.msc)"] = "Mở Trình quản lý Dịch vụ Windows (services.msc)";
+        if (en != null) en["Open Windows Services Manager (services.msc)"] = "Open Windows Services Manager (services.msc)";
+        vi["services.msc"] = "services.msc";
+        if (en != null) en["services.msc"] = "services.msc";
+        vi["Restart Service"] = "Khởi động lại Dịch vụ";
+        if (en != null) en["Restart Service"] = "Restart Service";
     }
 }

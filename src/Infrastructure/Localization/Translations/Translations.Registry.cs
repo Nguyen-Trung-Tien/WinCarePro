@@ -138,5 +138,29 @@ public partial class TranslationManager
         vi["Restore Snapshot"] = "Khôi phục bản sao lưu";
         vi["Repair Registry Now"] = "Sửa chữa Registry ngay";
         vi["Operating system files intact, Registry strictly protected, and Restore Point active."] = "Tập tin hệ điều hành toàn vẹn, Registry bảo vệ nghiêm ngặt và tự động tạo Restore Point.";
+        vi["1-Click automatic repair of all 100% verified zero-risk entries with rollback snapshot"] = "Tự động sửa 1-chạm tất cả các mục an toàn 100% đã xác minh với bản sao lưu hoàn tác";
+        if (en != null) en["1-Click automatic repair of all 100% verified zero-risk entries with rollback snapshot"] = "1-Click automatic repair of all 100% verified zero-risk entries with rollback snapshot";
+        vi["Clean and repair all currently selected registry entries"] = "Dọn dẹp và sửa chữa tất cả các mục registry đang chọn";
+        if (en != null) en["Clean and repair all currently selected registry entries"] = "Clean and repair all currently selected registry entries";
+        vi["AUTO ROLLBACK SNAPSHOT"] = "SAO LƯU HOÀN TÁC TỰ ĐỘNG";
+        if (en != null) en["AUTO ROLLBACK SNAPSHOT"] = "AUTO ROLLBACK SNAPSHOT";
+        vi["Select item to view key details"] = "Chọn mục để xem chi tiết khóa";
+        if (en != null) en["Select item to view key details"] = "Select item to view key details";
+        vi["Ready to Scan Registry"] = "Sẵn sàng quét Registry";
+        if (en != null) en["Ready to Scan Registry"] = "Ready to Scan Registry";
+        vi["Scan the Windows Registry to detect broken file associations, orphaned paths, and invalid startup keys safely with automatic rollback backup."] = "Quét Windows Registry để phát hiện liên kết tệp hỏng, đường dẫn mồ côi và khóa khởi động không hợp lệ an toàn với sao lưu tự động.";
+        if (en != null) en["Scan the Windows Registry to detect broken file associations, orphaned paths, and invalid startup keys safely with automatic rollback backup."] = "Scan the Windows Registry to detect broken file associations, orphaned paths, and invalid startup keys safely with automatic rollback backup.";
+        vi["Scan Registry Now"] = "Quét Registry ngay";
+        if (en != null) en["Scan Registry Now"] = "Scan Registry Now";
+        vi["regedit.exe"] = "regedit.exe";
+        if (en != null) en["regedit.exe"] = "regedit.exe";
+        vi["rstrui.exe"] = "rstrui.exe";
+        if (en != null) en["rstrui.exe"] = "rstrui.exe";
+        vi["Registry Key Inspector"] = "Trình kiểm tra khóa Registry";
+        if (en != null) en["Registry Key Inspector"] = "Registry Key Inspector";
+        vi["Root Cause & AI Safety Insight"] = "Nguyên nhân gốc & Phân tích an toàn AI";
+        if (en != null) en["Root Cause & AI Safety Insight"] = "Root Cause & AI Safety Insight";
+        vi["Root Cause &amp; AI Safety Insight"] = "Nguyên nhân gốc & Phân tích an toàn AI";
+        if (en != null) en["Root Cause &amp; AI Safety Insight"] = "Root Cause &amp; AI Safety Insight";
     }
 }

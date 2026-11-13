@@ -129,10 +129,15 @@ public class NetworkHistoryService : INetworkHistoryService
             {
                 try
                 {
-                    if (File.Exists(SpeedHistoryPath)) File.Delete(SpeedHistoryPath);
-                    if (File.Exists(DnsHistoryPath)) File.Delete(DnsHistoryPath);
+                    if (File.Exists(SpeedHistoryPath) && Core.Helpers.SafePathGuard.IsSafeToDelete(SpeedHistoryPath))
+                        File.Delete(SpeedHistoryPath);
+                    if (File.Exists(DnsHistoryPath) && Core.Helpers.SafePathGuard.IsSafeToDelete(DnsHistoryPath))
+                        File.Delete(DnsHistoryPath);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("NetworkHistoryService.ClearAllHistoryAsync", ex);
+                }
             }
         });
     }

@@ -894,13 +894,30 @@ public class SoftwareUpdaterEngine
             var psi = new ProcessStartInfo
             {
                 FileName = cleanExt.Equals(".msi", StringComparison.OrdinalIgnoreCase) ? msiexecPath : filePath,
-                Arguments = cleanExt.Equals(".msi", StringComparison.OrdinalIgnoreCase) 
-                    ? $"/i \"{filePath}\" {app.SilentArguments}" 
-                    : app.SilentArguments,
                 UseShellExecute = true,
                 Verb = "runas",
                 WorkingDirectory = Path.GetDirectoryName(filePath) ?? Environment.SystemDirectory
             };
+
+            if (cleanExt.Equals(".msi", StringComparison.OrdinalIgnoreCase))
+            {
+                psi.ArgumentList.Add("/i");
+                psi.ArgumentList.Add(filePath);
+                if (!string.IsNullOrWhiteSpace(app.SilentArguments))
+                {
+                    foreach (var arg in app.SilentArguments.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        psi.ArgumentList.Add(arg);
+                    }
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(app.SilentArguments))
+            {
+                foreach (var arg in app.SilentArguments.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    psi.ArgumentList.Add(arg);
+                }
+            }
 
             using var process = Process.Start(psi);
             if (process == null)
@@ -910,7 +927,8 @@ public class SoftwareUpdaterEngine
 
             using var procReg = cancellationToken.Register(() =>
             {
-                try { if (!process.HasExited) process.Kill(true); } catch { }
+                try { if (!process.HasExited) process.Kill(true); }
+                catch (Exception killEx) { Infrastructure.Logging.CrashLogger.LogException("SoftwareUpdaterEngine.KillOnCancel", killEx); }
             });
 
             Log("Installer running in background, waiting for completion...");
@@ -919,7 +937,8 @@ public class SoftwareUpdaterEngine
             var completedTask = await Task.WhenAny(exitTask, Task.Delay(180000, cancellationToken));
             if (completedTask != exitTask)
             {
-                try { if (!process.HasExited) process.Kill(true); } catch {}
+                try { if (!process.HasExited) process.Kill(true); }
+                catch (Exception killEx) { Infrastructure.Logging.CrashLogger.LogException("SoftwareUpdaterEngine.KillOnTimeout", killEx); }
                 throw new TimeoutException("Installer process timed out.");
             }
 

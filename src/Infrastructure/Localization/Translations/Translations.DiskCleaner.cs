@@ -262,5 +262,29 @@ public partial class TranslationManager
         vi["Web cache &amp; history (passwords kept)"] = "Cache web & lịch sử (giữ mật khẩu)";
         vi["Recycle Bin & old Windows backups"] = "Thùng rác & sao lưu Windows cũ";
         vi["Recycle Bin &amp; old Windows backups"] = "Thùng rác & sao lưu Windows cũ";
+        vi["ARMORED"] = "ĐƯỢC BẢO VỆ";
+        if (en != null) en["ARMORED"] = "ARMORED";
+        vi["System Cleaner (Zero-Risk Engine)"] = "Trình Dọn Hệ Thống (Động Cơ Không Rủi Ro)";
+        if (en != null) en["System Cleaner (Zero-Risk Engine)"] = "System Cleaner (Zero-Risk Engine)";
+        vi["Safely audit and clean temporary clutter, orphaned uninstall registry keys, and leftover app files."] = "Kiểm tra và dọn dẹp an toàn tệp rác tạm thời, khóa registry mồ côi và tệp ứng dụng thừa.";
+        if (en != null) en["Safely audit and clean temporary clutter, orphaned uninstall registry keys, and leftover app files."] = "Safely audit and clean temporary clutter, orphaned uninstall registry keys, and leftover app files.";
+        vi["Scan Clutter"] = "Quét tệp rác";
+        if (en != null) en["Scan Clutter"] = "Scan Clutter";
+        vi["Export Junk & Storage Report (CSV)"] = "Xuất báo cáo Tệp rác & Lưu trữ (CSV)";
+        if (en != null) en["Export Junk & Storage Report (CSV)"] = "Export Junk & Storage Report (CSV)";
+        vi["Export Junk &amp; Storage Report (CSV)"] = "Xuất báo cáo Tệp rác & Lưu trữ (CSV)";
+        if (en != null) en["Export Junk &amp; Storage Report (CSV)"] = "Export Junk &amp; Storage Report (CSV)";
+        vi["Select only 100% safe items (Recommended)"] = "Chỉ chọn các mục an toàn 100% (Khuyên dùng)";
+        if (en != null) en["Select only 100% safe items (Recommended)"] = "Select only 100% safe items (Recommended)";
+        vi["Safe Cache"] = "Bộ đệm an toàn";
+        if (en != null) en["Safe Cache"] = "Safe Cache";
+        vi["Safe Cache:"] = "Bộ đệm an toàn:";
+        if (en != null) en["Safe Cache:"] = "Safe Cache:";
+        vi["Select all detected junk categories"] = "Chọn tất cả danh mục rác phát hiện";
+        if (en != null) en["Select all detected junk categories"] = "Select all detected junk categories";
+        vi["Working sets and debris cleared. Disk and cache performance are at peak efficiency."] = "Đã dọn dẹp working set và tệp rác. Hiệu năng ổ đĩa và bộ đệm đạt mức tối ưu.";
+        if (en != null) en["Working sets and debris cleared. Disk and cache performance are at peak efficiency."] = "Working sets and debris cleared. Disk and cache performance are at peak efficiency.";
+        vi["Progress"] = "Tiến trình";
+        if (en != null) en["Progress"] = "Progress";
     }
 }

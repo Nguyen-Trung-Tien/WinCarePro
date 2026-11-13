@@ -362,7 +362,7 @@ public static partial class UpdateSecurityValidator
 
         try
         {
-            if (File.Exists(filePath))
+            if (File.Exists(filePath) && Core.Helpers.SafePathGuard.IsSafeToDelete(filePath))
             {
                 File.SetAttributes(filePath, FileAttributes.Normal);
                 try
@@ -374,13 +374,17 @@ public static partial class UpdateSecurityValidator
                         fs.Write(zeros, 0, zeros.Length);
                     }
                 }
-                catch { }
+                catch (Exception overwriteEx)
+                {
+                    Logging.CrashLogger.LogException("UpdateSecurityValidator.ZeroFill", overwriteEx);
+                }
 
                 File.Delete(filePath);
             }
         }
         catch (Exception ex)
         {
+            Logging.CrashLogger.LogException("UpdateSecurityValidator.DeleteFileSecurely", ex);
             System.Diagnostics.Debug.WriteLine($"[UpdateSecurity] Failed to delete file '{filePath}': {ex.Message}");
         }
     }

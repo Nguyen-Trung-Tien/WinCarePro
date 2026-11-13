@@ -35,7 +35,7 @@ public static class UpdateDialogHelper
     private static Brush GetDialogBackground(bool isDark)
     {
         return isDark
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 18, 20, 29))
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 22, 25, 34))
             : new SolidColorBrush(Windows.UI.Color.FromArgb(252, 255, 255, 255));
     }
 
@@ -393,7 +393,7 @@ public static class UpdateDialogHelper
             Background = GetDialogBackground(isDark),
             BorderBrush = GetCardBorder(isDark),
             BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(16)
+            CornerRadius = new CornerRadius(12)
         };
 
         if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj1) && styleObj1 is Style accentStyle1)
@@ -531,7 +531,7 @@ public static class UpdateDialogHelper
             Background = GetDialogBackground(isDark),
             BorderBrush = GetCardBorder(isDark),
             BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(16)
+            CornerRadius = new CornerRadius(12)
         };
 
         if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj2) && styleObj2 is Style accentStyle2)
@@ -657,7 +657,7 @@ public static class UpdateDialogHelper
             Background = GetDialogBackground(isDark),
             BorderBrush = GetCardBorder(isDark),
             BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(16)
+            CornerRadius = new CornerRadius(12)
         };
 
         dialog.Resources["ContentDialogMaxWidth"] = 660.0;
@@ -812,7 +812,7 @@ public static class UpdateDialogHelper
             Background = GetDialogBackground(isDark),
             BorderBrush = GetCardBorder(isDark),
             BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(16)
+            CornerRadius = new CornerRadius(12)
         };
 
         dialog.Resources["ContentDialogMaxWidth"] = 660.0;

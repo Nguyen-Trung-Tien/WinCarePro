@@ -10,7 +10,8 @@ public class TranslationConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        if (value is string key)
+        string? key = value as string ?? parameter as string;
+        if (!string.IsNullOrEmpty(key))
         {
             return TranslationManager.Instance.T(key);
         }

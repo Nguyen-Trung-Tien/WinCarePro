@@ -18,7 +18,34 @@
         <KeyboardAccelerator Key="Escape" Invoked="OnEscapeAcceleratorInvoked"/>
     </Page.KeyboardAccelerators>
 
-    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <EntranceNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+            <EntranceThemeTransition FromVerticalOffset="24" />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource AppDeepObsidianBackground}">
+        <!-- Ambient Mesh Glow (Deep Obsidian Canvas with Cyan/Indigo Luminous Atmosphere in Dark Mode) -->
+        <Grid x:Name="AmbientMeshGlowGrid" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- Top-Left Radial Mesh Glow (Cyan #00D2FF &amp; Indigo #7B2CBF) -->
+            <Rectangle HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Width="720" Height="540" Margin="-100,-100,0,0"
+                       Opacity="0.12"
+                       Fill="{StaticResource AppAmbientMeshGlowBrush}" />
+
+            <!-- Bottom-Right Subtle Accent Glow -->
+            <Rectangle HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Width="560" Height="440" Margin="0,0,-80,-80"
+                       Opacity="0.08"
+                       Fill="{StaticResource AppSecondaryMeshGlowBrush}" />
+        </Grid>
+
+        <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Header & Action Bar -->
             <RowDefinition Height="*" />    <!-- 1. Main Tabbed Workspace -->
@@ -36,13 +63,15 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left: Title & Subtitle -->
-            <StackPanel Grid.Row="0" Grid.Column="0" Spacing="3" VerticalAlignment="Center">
-                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <FontIcon Glyph="&#xE9D9;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
-                    <TextBlock Text="System Optimizer &amp; Policy Suite" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center" />
+            <!-- Left: Title & Subtitle (Standardized Aura Header) -->
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                <Border Style="{StaticResource IconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
+                    <FontIcon Glyph="&#xE9D9;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Source='System Optimizer &amp; Policy Suite', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center" />
+                    <TextBlock Text="{Binding Source='Windows performance tuning, startup program management, and telemetry service controls.', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderSubtitleStyle}" />
                 </StackPanel>
-                <TextBlock Text="Windows performance tuning, startup program management, and telemetry service controls." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
 
             <!-- Right: Action Buttons -->
@@ -224,7 +253,7 @@
                         <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.FilteredTweaks, Mode=OneWay}" SelectionMode="None">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:SystemTweak">
-                                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="12,10" Margin="0,0,0,6">
+                                    <Border BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="12,10" Margin="0,0,0,6">
                                         <Grid ColumnSpacing="12">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />  <!-- 0: CheckBox -->
@@ -264,7 +293,7 @@
 
             <!-- ==================== TAB 2: STARTUP MANAGER ==================== -->
             <PivotItem Header="Startup Applications">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                <Border BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -289,7 +318,7 @@
                         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.FilteredStartupItems, Mode=OneWay}" SelectionMode="None">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:StartupEntry">
-                                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="12,10" Margin="0,0,0,6">
+                                    <Border BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="12,10" Margin="0,0,0,6">
                                         <Grid ColumnSpacing="12">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/> <!-- Icon -->
@@ -316,7 +345,7 @@
                                                 <TextBlock Text="{x:Bind Impact}" FontSize="9.5" Foreground="#FFF59E0B" FontWeight="Bold"/>
                                             </Border>
 
-                                            <ToggleSwitch Grid.Column="4" IsOn="{x:Bind IsEnabled, Mode=TwoWay}" Toggled="OnStartupItemToggled" OnContent="Enabled" OffContent="Disabled" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                            <ToggleSwitch Grid.Column="4" IsOn="{x:Bind IsEnabled, Mode=TwoWay}" Toggled="OnStartupItemToggled" OnContent="{Binding Source='Enabled', Converter={StaticResource TranslationConverter}}" OffContent="{Binding Source='Disabled', Converter={StaticResource TranslationConverter}}" VerticalAlignment="Center" Margin="8,0,0,0"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -328,7 +357,7 @@
 
             <!-- ==================== TAB 3: TELEMETRY & SAFE SERVICES ==================== -->
             <PivotItem Header="Safe Services &amp; Telemetry">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                <Border BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -353,7 +382,7 @@
                         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.BackgroundServices, Mode=OneWay}" SelectionMode="None">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="viewmodels:ServiceStatusItem">
-                                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" Margin="0,0,0,8">
+                                    <Border BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" Margin="0,0,0,8">
                                         <Grid ColumnSpacing="14">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
@@ -367,7 +396,7 @@
                                             </Border>
 
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                                                <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="12.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                                <TextBlock Text="{x:Bind DisplayName}" FontWeight="Bold" FontSize="12.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="350"/>
                                                 <TextBlock Text="{x:Bind ServiceName}" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
 
@@ -406,7 +435,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Total Physical RAM -->
-                                <Border Grid.Column="0" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="16,14">
+                                <Border Grid.Column="0" BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource GlassCardBackgroundBrush}" CornerRadius="8" Padding="16,14">
                                     <StackPanel Spacing="4">
                                         <TextBlock Text="Total Physical RAM" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         <TextBlock Text="{x:Bind ViewModel.TotalRamText, Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Typography.NumeralAlignment="Tabular"/>
@@ -415,16 +444,16 @@
                                 </Border>
 
                                 <!-- In-Use RAM -->
-                                <Border Grid.Column="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="16,14">
+                                <Border Grid.Column="1" BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource GlassCardBackgroundBrush}" CornerRadius="8" Padding="16,14">
                                     <StackPanel Spacing="4">
                                         <TextBlock Text="Currently In Use" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                        <TextBlock Text="{x:Bind ViewModel.UsedRamText, Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="{x:Bind ViewModel.UsedRamText, Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="{StaticResource GaugeRamBrush}" Typography.NumeralAlignment="Tabular"/>
                                         <TextBlock Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     </StackPanel>
                                 </Border>
 
                                 <!-- Available RAM -->
-                                <Border Grid.Column="2" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="16,14">
+                                <Border Grid.Column="2" BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource GlassCardBackgroundBrush}" CornerRadius="8" Padding="16,14">
                                     <StackPanel Spacing="4">
                                         <TextBlock Text="Available Free Memory" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         <TextBlock Text="{x:Bind ViewModel.AvailableRamText, Mode=OneWay}" FontSize="20" FontWeight="Bold" Foreground="#FF10B981" Typography.NumeralAlignment="Tabular"/>
@@ -433,21 +462,55 @@
                                 </Border>
                             </Grid>
 
-                            <!-- Progress Bar -->
-                            <StackPanel Spacing="6" Margin="0,4,0,0">
+                            <!-- Circular Ring Gauge & Telemetry Strip -->
+                            <Border BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource GlassCardBackgroundBrush}" CornerRadius="8" Padding="16,12" Margin="0,4,0,0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="Memory Allocation Ratio" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                    <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.RamUsageText, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" Typography.NumeralAlignment="Tabular"/>
+
+                                    <!-- Circular Ring Gauge with Dynamic Load Aura Glow -->
+                                    <Grid Grid.Column="0" Width="64" Height="64" Margin="0,0,16,0" VerticalAlignment="Center">
+                                        <Border x:Name="RamGlowBorder" Width="44" Height="44" CornerRadius="22" Background="{StaticResource GaugeGlowGoodBrush}" IsHitTestVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Path Stroke="{ThemeResource GaugeTrackBrush}" StrokeThickness="5" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                                            <Path.Data>
+                                                <PathGeometry>
+                                                    <PathFigure StartPoint="32,7">
+                                                        <ArcSegment Point="31.99,7" Size="25,25" SweepDirection="Clockwise" IsLargeArc="True"/>
+                                                    </PathFigure>
+                                                </PathGeometry>
+                                            </Path.Data>
+                                        </Path>
+                                        <Path Stroke="{StaticResource GaugeRamBrush}" StrokeThickness="5" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                                            <Path.Data>
+                                                <PathGeometry>
+                                                    <PathFigure x:Name="RamPathFigure" StartPoint="32,7">
+                                                        <ArcSegment x:Name="RamArcSegment" Point="32,7" Size="25,25" SweepDirection="Clockwise" IsLargeArc="False"/>
+                                                    </PathFigure>
+                                                </PathGeometry>
+                                            </Path.Data>
+                                        </Path>
+                                        <TextBlock Text="{x:Bind ViewModel.RamUsagePercentageText, Mode=OneWay}" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource TextFillColorPrimaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Grid>
+
+                                    <!-- Allocation Metrics and Progress Bar with Tabular Numerals -->
+                                    <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Center">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Memory Allocation Ratio" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.RamUsageText, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" Typography.NumeralAlignment="Tabular"/>
+                                        </Grid>
+                                        <ProgressBar Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{StaticResource GaugeRamBrush}" Background="{ThemeResource GaugeTrackBrush}"/>
+                                    </StackPanel>
                                 </Grid>
-                                <ProgressBar Value="{x:Bind ViewModel.RamUsagePercentage, Mode=OneWay}" Maximum="100" Height="6" CornerRadius="3" Foreground="{ThemeResource SystemAccentColor}" Background="{ThemeResource ControlStrokeColorDefaultBrush}"/>
-                            </StackPanel>
+                            </Border>
 
                             <!-- Architectural Note Banner -->
-                            <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10">
+                            <Border BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource GlassCardBackgroundBrush}" CornerRadius="8" Padding="14,10">
                                 <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                                     <FontIcon Glyph="&#xE783;" FontSize="15" Foreground="{ThemeResource SystemAccentColor}" VerticalAlignment="Center"/>
                                     <TextBlock Text="Memory Architecture: Modern Windows actively utilizes available RAM to cache frequently accessed binaries and files. Unused RAM is wasted RAM; forcing working-set trims causes hard page faults and application stutter." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextWrapping="Wrap"/>
@@ -461,5 +524,6 @@
 
         <!-- ==================== 2. STATUS BAR FOOTER ==================== -->
         <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,8,0,0" />
+    </Grid>
     </Grid>
 </Page>

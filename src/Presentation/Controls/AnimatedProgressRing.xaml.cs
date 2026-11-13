@@ -16,6 +16,7 @@ namespace WinCarePro.Shared.Components
             this.InitializeComponent();
             this.Loaded += OnLoaded;
             this.SizeChanged += OnSizeChanged;
+            this.Unloaded += OnUnloaded;
         }
 
         // ============================================
@@ -159,6 +160,13 @@ namespace WinCarePro.Shared.Components
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateDimensions();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            this.Loaded -= OnLoaded;
+            this.SizeChanged -= OnSizeChanged;
+            this.Unloaded -= OnUnloaded;
         }
 
         private void UpdateDimensions()

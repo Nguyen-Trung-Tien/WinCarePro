@@ -643,7 +643,7 @@ public sealed partial class DashboardPage : Page
 
         // Core dynamic palette for optimal contrast in Dark Mode & Light Mode
         var dialogBg = isDark
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 18, 20, 29))
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 22, 25, 34))
             : new SolidColorBrush(Windows.UI.Color.FromArgb(254, 255, 255, 255));
         var dialogBorder = isDark
             ? new SolidColorBrush(Windows.UI.Color.FromArgb(38, 255, 255, 255))
@@ -709,7 +709,7 @@ public sealed partial class DashboardPage : Page
         {
             Width = 54,
             Height = 54,
-            CornerRadius = new CornerRadius(16),
+            CornerRadius = new CornerRadius(12),
             Background = isDark 
                 ? new SolidColorBrush(Windows.UI.Color.FromArgb(36, 16, 185, 129)) 
                 : new SolidColorBrush(Windows.UI.Color.FromArgb(255, 236, 253, 245)),
@@ -1062,7 +1062,7 @@ public sealed partial class DashboardPage : Page
             RequestedTheme = currentTheme,
             Background = dialogBg,
             BorderBrush = dialogBorder,
-            CornerRadius = new CornerRadius(16),
+            CornerRadius = new CornerRadius(12),
             BorderThickness = new Thickness(1)
         };
 

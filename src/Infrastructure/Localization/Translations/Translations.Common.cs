@@ -572,5 +572,19 @@ public partial class TranslationManager
         vi["Cleaned & Optimized"] = "Đã tối ưu gọn gàng";
         vi["[!] Windows Update"] = "[!] Dịch vụ cập nhật";
         vi["Largest Footprint"] = "Chiếm nhiều dung lượng nhất";
+        vi["Dismiss Notification"] = "Đóng thông báo";
+        if (en != null) en["Dismiss Notification"] = "Dismiss Notification";
+        vi["System Cleaner"] = "Dọn dẹp hệ thống";
+        if (en != null) en["System Cleaner"] = "System Cleaner";
+        vi["App Manager"] = "Quản lý ứng dụng";
+        if (en != null) en["App Manager"] = "App Manager";
+        vi["Security & Health"] = "Bảo mật & Sức khỏe";
+        if (en != null) en["Security & Health"] = "Security & Health";
+        vi["Security &amp; Health"] = "Bảo mật & Sức khỏe";
+        if (en != null) en["Security &amp; Health"] = "Security &amp; Health";
+        vi["CPU"] = "CPU";
+        if (en != null) en["CPU"] = "CPU";
+        vi["RAM Usage Monitor — Click to view Dashboard memory metrics"] = "Giám sát sử dụng RAM — Nhấp để xem số liệu bộ nhớ trên Bảng điều khiển";
+        if (en != null) en["RAM Usage Monitor — Click to view Dashboard memory metrics"] = "RAM Usage Monitor — Click to view Dashboard memory metrics";
     }
 }

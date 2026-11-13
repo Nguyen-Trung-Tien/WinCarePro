@@ -12,7 +12,34 @@
     xmlns:views="using:WinCarePro.Views"
     mc:Ignorable="d">
 
-    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <EntranceNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+            <EntranceThemeTransition FromVerticalOffset="24" />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource AppDeepObsidianBackground}">
+        <!-- Ambient Mesh Glow (Deep Obsidian Canvas with Cyan/Indigo Luminous Atmosphere in Dark Mode) -->
+        <Grid x:Name="AmbientMeshGlowGrid" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- Top-Left Radial Mesh Glow (Cyan #00D2FF &amp; Indigo #7B2CBF) -->
+            <Rectangle HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Width="720" Height="540" Margin="-100,-100,0,0"
+                       Opacity="0.12"
+                       Fill="{StaticResource AppAmbientMeshGlowBrush}" />
+
+            <!-- Bottom-Right Subtle Accent Glow -->
+            <Rectangle HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Width="560" Height="440" Margin="0,0,-80,-80"
+                       Opacity="0.08"
+                       Fill="{StaticResource AppSecondaryMeshGlowBrush}" />
+        </Grid>
+
+        <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Header & Action Bar -->
             <RowDefinition Height="*" />    <!-- 1. SysInternals-style Tabbed Matrix -->
@@ -36,13 +63,15 @@
                          Foreground="{StaticResource PrimaryAccentBrush}"
                          HorizontalAlignment="Stretch"/>
 
-            <!-- Left: Title & Subtitle -->
-            <StackPanel Grid.Column="0" Spacing="3" VerticalAlignment="Center">
-                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <FontIcon Glyph="&#xE727;" FontSize="20" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
-                    <TextBlock Text="Security &amp; Defense Center" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+            <!-- Left: Title & Subtitle (Standardized Aura Header) -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                <Border Style="{StaticResource IconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
+                    <FontIcon Glyph="&#xE727;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Source='Security &amp; Defense Center', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Source='Authentic Windows Security Center status and verified system policy hardening.', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderSubtitleStyle}" />
                 </StackPanel>
-                <TextBlock Text="Authentic Windows Security Center status and verified system policy hardening." Style="{StaticResource PageHeaderSubtitleStyle}" />
             </StackPanel>
 
             <!-- Right: Action Buttons -->
@@ -87,7 +116,7 @@
 
             <!-- ==================== TAB 1: WINDOWS SECURITY MATRIX ==================== -->
             <PivotItem Header="Windows Security Matrix">
-                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
+                <Border BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="16">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -104,14 +133,14 @@
                                 <TextBlock Text="Live Security Subsystem Telemetry" FontWeight="Bold" FontSize="14" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                 <TextBlock Text="Binary state verification direct from Windows Security Center, Hypervisor (VBS), and UEFI firmware." FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
-                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="280"/>
                         </Grid>
 
                         <!-- Virtualized Table of Security Components -->
                         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.SecurityMatrixItems, Mode=OneWay}" SelectionMode="None">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="models:SecurityStatusItem">
-                                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,12" Margin="0,0,0,8">
+                                    <Border BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,12" Margin="0,0,0,8">
                                         <Grid ColumnSpacing="14">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>  <!-- Icon -->
@@ -565,5 +594,6 @@
                 </Border>
             </PivotItem>
         </Pivot>
+    </Grid>
     </Grid>
 </Page>

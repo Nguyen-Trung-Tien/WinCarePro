@@ -42,7 +42,7 @@ public static class ResultDialogHelper
     private static Brush GetDialogBackground(bool isDark)
     {
         return isDark
-            ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 18, 20, 29))
+            ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 22, 25, 34))
             : new SolidColorBrush(Windows.UI.Color.FromArgb(252, 255, 255, 255));
     }
 
@@ -415,7 +415,7 @@ public static class ResultDialogHelper
                 Background = GetDialogBackground(isDark),
                 BorderBrush = GetCardBorder(isDark),
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(16)
+                CornerRadius = new CornerRadius(12)
             };
 
             if (isDestructive)

@@ -14,7 +14,34 @@
         <CollectionViewSource x:Name="GroupedNotificationsCVS" IsSourceGrouped="True" />
     </Page.Resources>
 
-    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <EntranceNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+            <EntranceThemeTransition FromVerticalOffset="24" />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource AppDeepObsidianBackground}">
+        <!-- Ambient Mesh Glow (Deep Obsidian Canvas with Cyan/Indigo Luminous Atmosphere in Dark Mode) -->
+        <Grid x:Name="AmbientMeshGlowGrid" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- Top-Left Radial Mesh Glow (Cyan #00D2FF &amp; Indigo #7B2CBF) -->
+            <Rectangle HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Width="720" Height="540" Margin="-100,-100,0,0"
+                       Opacity="0.12"
+                       Fill="{StaticResource AppAmbientMeshGlowBrush}" />
+
+            <!-- Bottom-Right Subtle Accent Glow -->
+            <Rectangle HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Width="560" Height="440" Margin="0,0,-80,-80"
+                       Opacity="0.08"
+                       Fill="{StaticResource AppSecondaryMeshGlowBrush}" />
+        </Grid>
+
+        <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1050px -->
@@ -58,12 +85,17 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left: Title & Subtitle -->
-            <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                <TextBlock x:Name="PageTitleTextBlock" Text="Notifications &amp; Activity Log"
-                           Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
-                <TextBlock x:Name="PageSubtitleTextBlock" Text="System telemetry alerts, diagnostic logs &amp; operation records."
-                           Style="{StaticResource PageHeaderSubtitleStyle}"/>
+            <!-- Left: Title & Subtitle (Standardized Aura Header) -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                <Border Style="{StaticResource IconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
+                    <FontIcon Glyph="&#xEA8F;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock x:Name="PageTitleTextBlock" Text="{Binding Source='Notifications &amp; Activity Log', Converter={StaticResource TranslationConverter}}"
+                               Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="PageSubtitleTextBlock" Text="{Binding Source='System telemetry alerts, diagnostic logs &amp; operation records.', Converter={StaticResource TranslationConverter}}"
+                               Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                </StackPanel>
             </StackPanel>
 
             <!-- Center/Right: Segmented Tabs -->
@@ -75,14 +107,14 @@
                     <Button x:Name="BtnTabAlerts" Click="OnTabAlertsClick" Style="{StaticResource ActivePresetChipButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <FontIcon Glyph="&#xE7BA;" FontSize="12"/>
-                            <TextBlock Text="System Alerts" FontSize="12" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Source='System Alerts', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Button>
 
                     <Button x:Name="BtnTabLogs" Click="OnTabLogsClick" Style="{StaticResource InactivePresetChipButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <FontIcon Glyph="&#xE81C;" FontSize="12"/>
-                            <TextBlock Text="Activity History" FontSize="12" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Source='Activity History', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -91,10 +123,10 @@
             <!-- Quick Action Controls -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                 <Button x:Name="HeaderRefreshBtn" Click="OnRefreshClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="8"
-                        ToolTipService.ToolTip="Refresh Telemetry &amp; Logs">
+                        ToolTipService.ToolTip="{Binding Source='Refresh Telemetry &amp; Logs', Converter={StaticResource TranslationConverter}}">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                        <TextBlock Text="Refresh" FontSize="12" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Source='Refresh', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -537,6 +569,7 @@
                 </Border>
             </Grid>
         </Grid>
+    </Grid>
     </Grid>
 </Page>
 

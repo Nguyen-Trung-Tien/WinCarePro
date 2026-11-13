@@ -45,6 +45,9 @@ public sealed partial class StartupPage : Page
         set => SetValue(WideLayoutVisibilityProperty, value);
     }
 
+    private System.ComponentModel.PropertyChangedEventHandler? _propChangedHandler;
+    private SizeChangedEventHandler? _sizeChangedHandler;
+
     public StartupPage()
     {
         ViewModel = App.Services.GetRequiredService<StartupViewModel>();
@@ -52,18 +55,20 @@ public sealed partial class StartupPage : Page
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
 
-        ViewModel.PropertyChanged += (s, e) =>
+        _propChangedHandler = (s, e) =>
         {
             if (e.PropertyName == nameof(ViewModel.IsLoading))
             {
                 UpdateLoadingOverlayState();
             }
         };
+        ViewModel.PropertyChanged += _propChangedHandler;
 
         this.Loaded += (s, e) =>
         {
             TranslationManager.Instance.Translate(this);
             UpdateLoadingOverlayState();
+            if (ScanButton != null) WinCarePro.Shared.Animations.FluidAnimationHelper.ApplyButtonPressPhysics(ScanButton);
         };
 
         var langHandler = new EventHandler((s, e) =>
@@ -71,15 +76,21 @@ public sealed partial class StartupPage : Page
             this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
         });
         TranslationManager.Instance.LanguageChanged += langHandler;
-        this.Unloaded += (s, e) => TranslationManager.Instance.LanguageChanged -= langHandler;
 
-        this.SizeChanged += (s, e) =>
+        _sizeChangedHandler = (s, e) =>
         {
             bool isWide = e.NewSize.Width >= 800;
             PublisherColWidth = isWide ? new GridLength(2, GridUnitType.Star) : new GridLength(0);
             ImpactColWidth = isWide ? new GridLength(1.2, GridUnitType.Star) : new GridLength(0);
             WideLayoutVisibility = isWide ? Visibility.Visible : Visibility.Collapsed;
+        };
+        this.SizeChanged += _sizeChangedHandler;
 
+        this.Unloaded += (s, e) =>
+        {
+            TranslationManager.Instance.LanguageChanged -= langHandler;
+            if (_propChangedHandler != null) ViewModel.PropertyChanged -= _propChangedHandler;
+            if (_sizeChangedHandler != null) this.SizeChanged -= _sizeChangedHandler;
         };
     }
 

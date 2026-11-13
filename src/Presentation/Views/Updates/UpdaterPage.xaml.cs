@@ -25,6 +25,13 @@ public sealed partial class UpdaterPage : Page
             WinCarePro.Services.TranslationManager.Instance.Translate(this);
             this.DispatcherQueue?.TryEnqueue(() => WinCarePro.Services.TranslationManager.Instance.Translate(this));
         };
+        this.Unloaded += OnUnloaded;
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        WinCarePro.Services.TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        ViewModel?.Cleanup();
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)

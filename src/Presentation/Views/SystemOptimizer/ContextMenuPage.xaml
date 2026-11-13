@@ -11,7 +11,34 @@
     xmlns:helpers="using:WinCarePro.Core.Helpers"
     mc:Ignorable="d">
 
-    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <EntranceNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+            <EntranceThemeTransition FromVerticalOffset="24" />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource AppDeepObsidianBackground}">
+        <!-- Ambient Mesh Glow (Deep Obsidian Canvas with Cyan/Indigo Luminous Atmosphere in Dark Mode) -->
+        <Grid x:Name="AmbientMeshGlowGrid" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- Top-Left Radial Mesh Glow (Cyan #00D2FF &amp; Indigo #7B2CBF) -->
+            <Rectangle HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Width="720" Height="540" Margin="-100,-100,0,0"
+                       Opacity="0.12"
+                       Fill="{StaticResource AppAmbientMeshGlowBrush}" />
+
+            <!-- Bottom-Right Subtle Accent Glow -->
+            <Rectangle HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Width="560" Height="440" Margin="0,0,-80,-80"
+                       Opacity="0.08"
+                       Fill="{StaticResource AppSecondaryMeshGlowBrush}" />
+        </Grid>
+
+        <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 960px -->
@@ -61,11 +88,14 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left: Title & Subtitle with Gradient Icon Badge -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+            <!-- Left: Title & Subtitle with Gradient Icon Badge (Standardized Aura Header) -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                <Border Style="{StaticResource IconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
+                    <FontIcon Glyph="&#xE8EC;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
                 <StackPanel Spacing="2" VerticalAlignment="Center">
-                    <TextBlock Text="Context Menu Manager" Style="{StaticResource PageHeaderTitleStyle}" />
-                    <TextBlock Text="Manage shell extensions and declutter right-click menus." Style="{StaticResource PageHeaderSubtitleStyle}" />
+                    <TextBlock Text="{Binding Source='Context Menu Manager', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderTitleStyle}" />
+                    <TextBlock Text="{Binding Source='Manage shell extensions and declutter right-click menus.', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderSubtitleStyle}" />
                 </StackPanel>
             </StackPanel>
 
@@ -105,7 +135,7 @@
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="Total Handlers" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.TotalCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.TotalCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Typography.NumeralAlignment="Tabular"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -123,7 +153,7 @@
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="Active in Context Menu" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.ActiveCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.ActiveCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" Typography.NumeralAlignment="Tabular"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -141,7 +171,7 @@
                     </Border>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
                         <TextBlock Text="Disabled / Shelved" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.DisabledCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource AppStatusWarningBrush}" />
+                        <TextBlock Text="{x:Bind ViewModel.DisabledCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource AppStatusWarningBrush}" Typography.NumeralAlignment="Tabular"/>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -304,5 +334,6 @@
                 </StackPanel>
             </Border>
         </Grid>
+    </Grid>
     </Grid>
 </Page>

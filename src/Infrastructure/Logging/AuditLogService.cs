@@ -48,7 +48,7 @@ public class AuditLogService
                 if (fileInfo.Length > 10 * 1024 * 1024)
                 {
                     string oldPath = _logFilePath + ".old";
-                    if (File.Exists(oldPath))
+                    if (File.Exists(oldPath) && Core.Helpers.SafePathGuard.IsSafeToDelete(oldPath))
                     {
                         File.Delete(oldPath);
                     }
@@ -56,7 +56,10 @@ public class AuditLogService
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("AuditLogService.RotateLogIfNeeded", ex);
+        }
     }
 
     public void LogAction(string category, string actionName, string target, string result, string details = "")

@@ -40,6 +40,12 @@ public sealed partial class SecurityPage : Page
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
 
+        this.Unloaded += (s, e) =>
+        {
+            if (ViewModel != null) ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        };
+
         this.ActualThemeChanged += (s, e) =>
         {
             DispatcherQueue?.TryEnqueue(() =>

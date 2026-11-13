@@ -11,7 +11,34 @@
     xmlns:controls="using:WinCarePro.Presentation.Controls"
     mc:Ignorable="d">
 
-    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <EntranceNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+            <EntranceThemeTransition FromVerticalOffset="24" />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource AppDeepObsidianBackground}">
+        <!-- Ambient Mesh Glow (Deep Obsidian Canvas with Cyan/Indigo Luminous Atmosphere in Dark Mode) -->
+        <Grid x:Name="AmbientMeshGlowGrid" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- Top-Left Radial Mesh Glow (Cyan #00D2FF &amp; Indigo #7B2CBF) -->
+            <Rectangle HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Width="720" Height="540" Margin="-100,-100,0,0"
+                       Opacity="0.12"
+                       Fill="{StaticResource AppAmbientMeshGlowBrush}" />
+
+            <!-- Bottom-Right Subtle Accent Glow -->
+            <Rectangle HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Width="560" Height="440" Margin="0,0,-80,-80"
+                       Opacity="0.08"
+                       Fill="{StaticResource AppSecondaryMeshGlowBrush}" />
+        </Grid>
+
+        <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1024px (1 single neat row for stats & toolbar) -->
@@ -90,13 +117,14 @@
                 <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left: Title & Subtitle with Gradient Icon Badge -->
-            <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Spacing="4">
-                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <StackPanel Spacing="2" VerticalAlignment="Center">
-                        <TextBlock Text="Software Updater" Style="{StaticResource PageHeaderTitleStyle}" />
-                        <TextBlock Text="Apps &amp; packages updates via WinGet." Style="{StaticResource PageHeaderSubtitleStyle}" />
-                    </StackPanel>
+            <!-- Left: Title & Subtitle with Gradient Icon Badge (Standardized Aura Header) -->
+            <StackPanel x:Name="HeaderTitlePanel" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                <Border Style="{StaticResource IconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
+                    <FontIcon Glyph="&#xE895;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Source='Software Updater', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderTitleStyle}" />
+                    <TextBlock Text="{Binding Source='Apps &amp; packages updates via WinGet.', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderSubtitleStyle}" />
                 </StackPanel>
             </StackPanel>
 
@@ -341,12 +369,12 @@
                 <PivotItem Header="Pending" Tag="Pending" />
                 <PivotItem Header="Completed" Tag="Completed" />
             </Pivot>
-            
+
             <!-- Master Selection & Search Box (Right) -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <CheckBox Content="Select All" 
-                          Checked="OnMasterSelectAllChanged" 
-                          Unchecked="OnMasterSelectAllChanged" 
+                <CheckBox Content="Select All"
+                          Checked="OnMasterSelectAllChanged"
+                          Unchecked="OnMasterSelectAllChanged"
                           FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
                 <TextBox x:Name="SearchBox" Width="220" PlaceholderText="Search package..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CornerRadius="8" Height="34" VerticalAlignment="Center"/>
             </StackPanel>
@@ -374,7 +402,7 @@
                             <ProgressRing IsActive="True" Width="16" Height="16" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center"/>
                             <TextBlock Text="{x:Bind ViewModel.ActiveUpdatingAppName, Mode=OneWay}" FontSize="13.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" VerticalAlignment="Center"
                                        AutomationProperties.LiveSetting="Polite"/>
-                            
+
                             <!-- Phase Badge (Downloading / Verifying / Installing) -->
                             <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="8,2" VerticalAlignment="Center">
                                 <StackPanel Orientation="Horizontal" Spacing="5">
@@ -396,7 +424,7 @@
                     </Grid>
 
                     <!-- Row 1: Live URL Stream Pill (Terminal Monospace Card) -->
-                    <Border Grid.Row="1" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="12,6" Visibility="{x:Bind HasTextVisibility(ViewModel.CurrentDownloadUrl), Mode=OneWay}">
+                    <Border Grid.Row="1" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12,6" Visibility="{x:Bind HasTextVisibility(ViewModel.CurrentDownloadUrl), Mode=OneWay}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -456,10 +484,10 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    
+
                                     <!-- Checkbox for multi selection -->
                                     <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" IsEnabled="{x:Bind CanUpdate, Mode=OneWay}" Visibility="{x:Bind IsNotUpdatingVisibility, Mode=OneWay}" VerticalAlignment="Center"/>
-                                    
+
                                     <!-- Package Brand Icon with Crisp Glowing Container -->
                                     <Grid Grid.Column="1" Width="44" Height="44" VerticalAlignment="Center">
                                         <Border CornerRadius="12" Background="{x:Bind BrandBgBrush, Mode=OneWay}" />
@@ -598,5 +626,6 @@
                 </Border>
             </Grid>
         </Grid>
+    </Grid>
     </Grid>
 </Page>

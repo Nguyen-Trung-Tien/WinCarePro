@@ -253,7 +253,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
             try
             {
                 var logs = Database.DbManager.GetLogs();
-                _dispatcherQueue?.TryEnqueue(() =>
+                RunOnUI(() =>
                 {
                     ActionLogs.Clear();
                     foreach (var log in logs.Take(15))

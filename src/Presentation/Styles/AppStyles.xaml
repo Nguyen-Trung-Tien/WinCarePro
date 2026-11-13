@@ -48,6 +48,69 @@
 
             <!-- Background Arc Track: Translucent white ring -->
             <SolidColorBrush x:Key="GaugeTrackBrush" Color="#18FFFFFF" />
+
+            <!-- Secondary / Ghost Button Background: #1E222E -->
+            <SolidColorBrush x:Key="SecondaryButtonBackgroundBrush" Color="#FF1E222E" />
+            <SolidColorBrush x:Key="SecondaryButtonHoverBackgroundBrush" Color="#FF252B3A" />
+            <SolidColorBrush x:Key="SecondaryButtonPressedBackgroundBrush" Color="#FF181B24" />
+
+            <!-- Input Controls Background: #12151C & Focus Cyan #00D2FF -->
+            <SolidColorBrush x:Key="InputControlBackgroundBrush" Color="#FF12151C" />
+            <SolidColorBrush x:Key="InputControlHoverBackgroundBrush" Color="#FF181C26" />
+            <SolidColorBrush x:Key="InputControlFocusBorderBrush" Color="#FF00D2FF" />
+
+            <!-- Table & List Tokens: Header #1A1E29, Row Hover #1F2430 -->
+            <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="#FF1A1E29" />
+            <SolidColorBrush x:Key="TableRowHoverBackgroundBrush" Color="#FF1F2430" />
+            <SolidColorBrush x:Key="TableRowSelectedBackgroundBrush" Color="#FF232A3B" />
+
+            <!-- Navigation Pane (#11141B) & Active Cyan Indicator (#00D2FF) -->
+            <SolidColorBrush x:Key="NavPaneBackgroundBrush" Color="#FF11141B" />
+            <SolidColorBrush x:Key="NavIndicatorCyanBrush" Color="#FF00D2FF" />
+
+            <!-- WinUI 3 Control Overrides for Input, Dialog, List, ScrollBar -->
+            <SolidColorBrush x:Key="TextControlBackground" Color="#FF12151C" />
+            <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="#FF181C26" />
+            <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="#FF12151C" />
+            <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#FF00D2FF" />
+            <CornerRadius x:Key="TextControlCornerRadius">8</CornerRadius>
+
+            <SolidColorBrush x:Key="ComboBoxBackground" Color="#FF12151C" />
+            <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="#FF181C26" />
+            <SolidColorBrush x:Key="ComboBoxBackgroundFocused" Color="#FF12151C" />
+            <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="#FF151822" />
+            <SolidColorBrush x:Key="ComboBoxBorderBrushFocused" Color="#FF00D2FF" />
+            <CornerRadius x:Key="ComboBoxCornerRadius">8</CornerRadius>
+
+            <SolidColorBrush x:Key="AutoSuggestBoxBackground" Color="#FF12151C" />
+
+            <!-- ContentDialog Aura Glass Tokens -->
+            <SolidColorBrush x:Key="ContentDialogBackground" Color="#FF161922" />
+            <SolidColorBrush x:Key="ContentDialogBorderBrush" Color="#30FFFFFF" />
+            <SolidColorBrush x:Key="ContentDialogSmokeFill" Color="#B00D0F14" />
+            <CornerRadius x:Key="ContentDialogCornerRadius">12</CornerRadius>
+
+            <!-- ScrollBar Minimalist Overlay Tokens -->
+            <SolidColorBrush x:Key="ScrollBarTrackFill" Color="Transparent" />
+            <SolidColorBrush x:Key="ScrollBarThumbFill" Color="#30FFFFFF" />
+            <SolidColorBrush x:Key="ScrollBarThumbFillPointerOver" Color="#55FFFFFF" />
+            <SolidColorBrush x:Key="ScrollBarThumbFillPressed" Color="#8000D2FF" />
+            <CornerRadius x:Key="ScrollBarCornerRadius">4</CornerRadius>
+
+            <!-- ListView Row Hover Highlight -->
+            <SolidColorBrush x:Key="ListViewItemBackgroundPointerOver" Color="#FF1F2430" />
+            <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="#FF232A3B" />
+            <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="#FF283248" />
+
+            <!-- InfoBar Semantic Tokens -->
+            <SolidColorBrush x:Key="InfoBarInformationalSeverityIconBackground" Color="#2000D2FF" />
+            <SolidColorBrush x:Key="InfoBarInformationalSeverityIconForeground" Color="#FF00D2FF" />
+            <SolidColorBrush x:Key="InfoBarSuccessSeverityIconBackground" Color="#2010B981" />
+            <SolidColorBrush x:Key="InfoBarSuccessSeverityIconForeground" Color="#FF10B981" />
+            <SolidColorBrush x:Key="InfoBarWarningSeverityIconBackground" Color="#20F59E0B" />
+            <SolidColorBrush x:Key="InfoBarWarningSeverityIconForeground" Color="#FFF59E0B" />
+            <SolidColorBrush x:Key="InfoBarErrorSeverityIconBackground" Color="#20EF4444" />
+            <SolidColorBrush x:Key="InfoBarErrorSeverityIconForeground" Color="#FFEF4444" />
         </ResourceDictionary>
 
         <!-- ==================== LIGHT MODE (MICA CLEAN SURFACE) ==================== -->
@@ -68,6 +131,65 @@
 
             <!-- Background Arc Track: Subtle dark track -->
             <SolidColorBrush x:Key="GaugeTrackBrush" Color="#14000000" />
+
+            <!-- Secondary / Ghost Button Background: Clean slate -->
+            <SolidColorBrush x:Key="SecondaryButtonBackgroundBrush" Color="#FFF1F5F9" />
+            <SolidColorBrush x:Key="SecondaryButtonHoverBackgroundBrush" Color="#FFE2E8F0" />
+            <SolidColorBrush x:Key="SecondaryButtonPressedBackgroundBrush" Color="#FFCBD5E1" />
+
+            <!-- Input Controls Background & Focus -->
+            <SolidColorBrush x:Key="InputControlBackgroundBrush" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="InputControlHoverBackgroundBrush" Color="#FFF8FAFC" />
+            <SolidColorBrush x:Key="InputControlFocusBorderBrush" Color="#FF0072FF" />
+
+            <!-- Table & List Tokens -->
+            <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="#FFF1F5F9" />
+            <SolidColorBrush x:Key="TableRowHoverBackgroundBrush" Color="#FFF8FAFC" />
+            <SolidColorBrush x:Key="TableRowSelectedBackgroundBrush" Color="#FFE2E8F0" />
+
+            <!-- Navigation Pane & Indicator -->
+            <SolidColorBrush x:Key="NavPaneBackgroundBrush" Color="#FFF1F5F9" />
+            <SolidColorBrush x:Key="NavIndicatorCyanBrush" Color="#FF0072FF" />
+
+            <!-- Control Overrides -->
+            <SolidColorBrush x:Key="TextControlBackground" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="#FFF8FAFC" />
+            <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#FF0072FF" />
+            <CornerRadius x:Key="TextControlCornerRadius">8</CornerRadius>
+
+            <SolidColorBrush x:Key="ComboBoxBackground" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="#FFF8FAFC" />
+            <SolidColorBrush x:Key="ComboBoxBackgroundFocused" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="#FFF1F5F9" />
+            <SolidColorBrush x:Key="ComboBoxBorderBrushFocused" Color="#FF0072FF" />
+            <CornerRadius x:Key="ComboBoxCornerRadius">8</CornerRadius>
+
+            <SolidColorBrush x:Key="AutoSuggestBoxBackground" Color="#FFFFFFFF" />
+
+            <SolidColorBrush x:Key="ContentDialogBackground" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="ContentDialogBorderBrush" Color="#20000000" />
+            <SolidColorBrush x:Key="ContentDialogSmokeFill" Color="#80000000" />
+            <CornerRadius x:Key="ContentDialogCornerRadius">12</CornerRadius>
+
+            <SolidColorBrush x:Key="ScrollBarTrackFill" Color="Transparent" />
+            <SolidColorBrush x:Key="ScrollBarThumbFill" Color="#30000000" />
+            <SolidColorBrush x:Key="ScrollBarThumbFillPointerOver" Color="#50000000" />
+            <SolidColorBrush x:Key="ScrollBarThumbFillPressed" Color="#800072FF" />
+            <CornerRadius x:Key="ScrollBarCornerRadius">4</CornerRadius>
+
+            <SolidColorBrush x:Key="ListViewItemBackgroundPointerOver" Color="#FFF1F5F9" />
+            <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="#FFE2E8F0" />
+            <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="#FFCBD5E1" />
+
+            <SolidColorBrush x:Key="InfoBarInformationalSeverityIconBackground" Color="#180072FF" />
+            <SolidColorBrush x:Key="InfoBarInformationalSeverityIconForeground" Color="#FF0072FF" />
+            <SolidColorBrush x:Key="InfoBarSuccessSeverityIconBackground" Color="#18059669" />
+            <SolidColorBrush x:Key="InfoBarSuccessSeverityIconForeground" Color="#FF059669" />
+            <SolidColorBrush x:Key="InfoBarWarningSeverityIconBackground" Color="#18D97706" />
+            <SolidColorBrush x:Key="InfoBarWarningSeverityIconForeground" Color="#FFD97706" />
+            <SolidColorBrush x:Key="InfoBarErrorSeverityIconBackground" Color="#18DC2626" />
+            <SolidColorBrush x:Key="InfoBarErrorSeverityIconForeground" Color="#FFDC2626" />
         </ResourceDictionary>
 
         <!-- ==================== HIGH CONTRAST MODE ==================== -->
@@ -81,6 +203,56 @@
             <StaticResource x:Key="SpecularGlassBorderHoverBrush" ResourceKey="SystemColorHighlightBrush" />
             <StaticResource x:Key="SpecularGlassBorderActiveBrush" ResourceKey="SystemColorHighlightBrush" />
             <StaticResource x:Key="GaugeTrackBrush" ResourceKey="SystemColorWindowTextBrush" />
+
+            <StaticResource x:Key="SecondaryButtonBackgroundBrush" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="SecondaryButtonHoverBackgroundBrush" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="SecondaryButtonPressedBackgroundBrush" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="InputControlBackgroundBrush" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="InputControlHoverBackgroundBrush" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="InputControlFocusBorderBrush" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="TableHeaderBackgroundBrush" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="TableRowHoverBackgroundBrush" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="TableRowSelectedBackgroundBrush" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="NavPaneBackgroundBrush" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="NavIndicatorCyanBrush" ResourceKey="SystemColorHighlightBrush" />
+
+            <StaticResource x:Key="TextControlBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="TextControlBackgroundPointerOver" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="TextControlBackgroundFocused" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="SystemColorHighlightBrush" />
+            <CornerRadius x:Key="TextControlCornerRadius">8</CornerRadius>
+
+            <StaticResource x:Key="ComboBoxBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="ComboBoxBackgroundPointerOver" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="ComboBoxBackgroundFocused" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="ComboBoxBackgroundPressed" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="ComboBoxBorderBrushFocused" ResourceKey="SystemColorHighlightBrush" />
+            <CornerRadius x:Key="ComboBoxCornerRadius">8</CornerRadius>
+
+            <StaticResource x:Key="AutoSuggestBoxBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="ContentDialogBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="SystemColorWindowTextBrush" />
+            <StaticResource x:Key="ContentDialogSmokeFill" ResourceKey="SystemColorWindowBrush" />
+            <CornerRadius x:Key="ContentDialogCornerRadius">12</CornerRadius>
+
+            <SolidColorBrush x:Key="ScrollBarTrackFill" Color="Transparent" />
+            <StaticResource x:Key="ScrollBarThumbFill" ResourceKey="SystemColorWindowTextBrush" />
+            <StaticResource x:Key="ScrollBarThumbFillPointerOver" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="ScrollBarThumbFillPressed" ResourceKey="SystemColorHighlightBrush" />
+            <CornerRadius x:Key="ScrollBarCornerRadius">4</CornerRadius>
+
+            <StaticResource x:Key="ListViewItemBackgroundPointerOver" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="ListViewItemBackgroundSelected" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="ListViewItemBackgroundSelectedPointerOver" ResourceKey="SystemColorHighlightBrush" />
+
+            <StaticResource x:Key="InfoBarInformationalSeverityIconBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="InfoBarInformationalSeverityIconForeground" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="InfoBarSuccessSeverityIconBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="InfoBarSuccessSeverityIconForeground" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="InfoBarWarningSeverityIconBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="InfoBarWarningSeverityIconForeground" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="InfoBarErrorSeverityIconBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="InfoBarErrorSeverityIconForeground" ResourceKey="SystemColorHighlightBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -107,12 +279,12 @@
         <GradientStop Color="#00000000" Offset="1.0" />
     </RadialGradientBrush>
 
-    <!-- Base Style for Precision Glass Card -->
+    <!-- Base Style for Precision Glass Card (Standard 8px Radius, Specular Rim) -->
     <Style x:Key="PrecisionGlassCardStyle" TargetType="Border">
         <Setter Property="Background" Value="{ThemeResource GlassCardBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="CornerRadius" Value="8" />
     </Style>
 
     <!-- ========================================================================= -->
@@ -219,6 +391,176 @@
         </Setter>
     </Style>
 
+    <!-- Secondary / Ghost Button: #1E222E Surface, Specular Rim, Subtle Hover Glow -->
+    <Style x:Key="SecondaryGlassButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{ThemeResource SecondaryButtonBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="14,7" />
+        <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+        <Setter Property="FocusVisualMargin" Value="-2" />
+        <Setter Property="FocusVisualPrimaryBrush" Value="#FF00D2FF" />
+        <Setter Property="FocusVisualSecondaryBrush" Value="#FF0D0F14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootButtonGrid">
+                        <Border x:Name="BackgroundBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}">
+                            <ContentPresenter x:Name="ContentPresenter"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Padding="{TemplateBinding Padding}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource SecondaryButtonHoverBackgroundBrush}" />
+                                        <Setter Target="BackgroundBorder.BorderBrush" Value="{ThemeResource SpecularGlassBorderHoverBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource SecondaryButtonPressedBackgroundBrush}" />
+                                        <Setter Target="BackgroundBorder.BorderBrush" Value="{ThemeResource SpecularGlassBorderActiveBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundBorder.Opacity" Value="0.45" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Danger / Destructive Action Button Style -->
+    <Style x:Key="DangerDestructiveButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{ThemeResource AppStatusDangerBackground}" />
+        <Setter Property="Foreground" Value="{ThemeResource AppStatusDangerBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource AppStatusDangerBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="14,7" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+        <Setter Property="FocusVisualMargin" Value="-2" />
+        <Setter Property="FocusVisualPrimaryBrush" Value="#FFEF4444" />
+        <Setter Property="FocusVisualSecondaryBrush" Value="#FF0D0F14" />
+    </Style>
+
+    <!-- ========================================================================= -->
+    <!-- TABLE & VIRTUALIZED LIST STANDARDIZATION                                  -->
+    <!-- ========================================================================= -->
+
+    <!-- Standard Table Header Container (#1A1E29, Specular Bottom Rim) -->
+    <Style x:Key="TableHeaderBorderStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource TableHeaderBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="CornerRadius" Value="6,6,0,0" />
+    </Style>
+
+    <!-- Standard Table Header Text (Subtle Uppercase, Tabular Figures) -->
+    <Style x:Key="TableHeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
+        <Setter Property="FontSize" Value="11.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+        <Setter Property="CharacterSpacing" Value="50" />
+        <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
+    </Style>
+
+    <!-- Standard Empty State Container & Typographic Components -->
+    <Style x:Key="EmptyStateContainerStyle" TargetType="StackPanel">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Spacing" Value="10" />
+        <Setter Property="Padding" Value="32,24" />
+    </Style>
+
+    <Style x:Key="EmptyStateIconStyle" TargetType="FontIcon">
+        <Setter Property="FontSize" Value="36" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorTertiaryBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="EmptyStateTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="EmptyStateSubtitleStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI Variable Text" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+        <Setter Property="Opacity" Value="0.75" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="MaxWidth" Value="380" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <!-- ========================================================================= -->
+    <!-- INPUT CONTROLS STANDARDIZATION (#12151C, 8px Corner Radius, Cyan Focus)   -->
+    <!-- ========================================================================= -->
+
+    <Style x:Key="StandardTextBoxStyle" TargetType="TextBox">
+        <Setter Property="Background" Value="{ThemeResource InputControlBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Height" Value="34" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="StandardComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="Background" Value="{ThemeResource InputControlBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Height" Value="34" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="StandardAutoSuggestBoxStyle" TargetType="AutoSuggestBox">
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Height" Value="34" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
     <!-- Transparent Wrapper Button for Interactive Cards -->
     <Style x:Key="InteractiveCardButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
@@ -245,10 +587,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-    <!-- ========================================================================= -->
-    <!-- 4. ICON BADGES WITH THEMED GRADIENTS & SHARP GLYPHS                       -->
-    <!-- ========================================================================= -->
 
     <!-- Base Icon Badge Style (CornerRadius="10") -->
     <Style x:Key="IconBadgeStyle" TargetType="Border">

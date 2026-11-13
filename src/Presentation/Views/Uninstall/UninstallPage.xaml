@@ -15,7 +15,34 @@
         <KeyboardAccelerator Key="F" Modifiers="Control" Invoked="OnFindAcceleratorInvoked"/>
     </Page.KeyboardAccelerators>
 
-    <Grid Padding="24,18" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <EntranceNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+            <EntranceThemeTransition FromVerticalOffset="24" />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource AppDeepObsidianBackground}">
+        <!-- Ambient Mesh Glow (Deep Obsidian Canvas with Cyan/Indigo Luminous Atmosphere in Dark Mode) -->
+        <Grid x:Name="AmbientMeshGlowGrid" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- Top-Left Radial Mesh Glow (Cyan #00D2FF &amp; Indigo #7B2CBF) -->
+            <Rectangle HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Width="720" Height="540" Margin="-100,-100,0,0"
+                       Opacity="0.12"
+                       Fill="{StaticResource AppAmbientMeshGlowBrush}" />
+
+            <!-- Bottom-Right Subtle Accent Glow -->
+            <Rectangle HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Width="560" Height="440" Margin="0,0,-80,-80"
+                       Opacity="0.08"
+                       Fill="{StaticResource AppSecondaryMeshGlowBrush}" />
+        </Grid>
+
+        <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 1050px -->
@@ -73,10 +100,15 @@
                 <ColumnDefinition x:Name="HeaderCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Left: Title & Subtitle -->
-            <StackPanel Grid.Row="0" Grid.Column="0" Spacing="4">
-                <TextBlock Text="App Uninstaller" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
-                <TextBlock Text="Manage &amp; uninstall installed applications." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+            <!-- Left: Title & Subtitle (IconBadge + Standard Header) -->
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                <Border Style="{StaticResource IconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
+                    <FontIcon Glyph="&#xE71D;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Source='App Uninstaller', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Source='Manage &amp; uninstall installed applications.', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                </StackPanel>
             </StackPanel>
 
             <!-- Right: Async Scan & Smart Bloatware Action Buttons -->
@@ -223,10 +255,10 @@
                     <ColumnDefinition x:Name="FiltersCol1" Width="*" />
                     <ColumnDefinition x:Name="FiltersCol2" Width="Auto" />
                 </Grid.ColumnDefinitions>
-                
+
                 <!-- Instant Search Box -->
                 <TextBox x:Name="AppSearch" PlaceholderText="Search apps..." Text="{x:Bind ViewModel.SearchText, Mode=TwoWay}" VerticalAlignment="Center" Height="34" CornerRadius="8"/>
-                
+
                 <!-- Segmented Pills Controls -->
                 <StackPanel Grid.Column="1" x:Name="FilterStack" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="16,0,0,0">
                     <Button Tag="0" Click="OnFilterPillClick" Style="{StaticResource CyberTactileButtonStyle}" Padding="10,5" CornerRadius="8">
@@ -322,7 +354,7 @@
                                         <ColumnDefinition Width="100" />  <!-- Size -->
                                         <ColumnDefinition Width="Auto" /> <!-- Action Button -->
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox Grid.Column="0" IsChecked="{x:Bind ViewModel.IsAllAppsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" ToolTipService.ToolTip="Select / Deselect All" />
+                                    <CheckBox Grid.Column="0" IsChecked="{x:Bind ViewModel.IsAllAppsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" ToolTipService.ToolTip="{Binding Source='Select / Deselect All', Converter={StaticResource TranslationConverter}}" />
                                     <Border Grid.Column="1" Width="40" Margin="0,0,12,0" Background="Transparent" />
                                     <TextBlock Grid.Column="2" Text="Application Name" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="3" Text="Type &amp; Health" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" Margin="8,0,8,0"/>
@@ -377,9 +409,9 @@
                                             <ColumnDefinition Width="90" />   <!-- Size -->
                                             <ColumnDefinition Width="Auto" /> <!-- Action Button -->
                                         </Grid.ColumnDefinitions>
-                                        
+
                                         <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" />
-                                        
+
                                         <Grid Grid.Column="1" Width="40" Height="40" CornerRadius="8" Background="{x:Bind IconBackground}" Margin="0,0,12,0" VerticalAlignment="Center">
                                             <FontIcon Glyph="{x:Bind DefaultIconGlyph}" Foreground="{x:Bind IconForeground}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind FallbackVisibility, Mode=OneWay}"/>
                                             <Image Source="{x:Bind IconImageSource, Mode=OneWay}" Width="32" Height="32" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{x:Bind IconVisibility, Mode=OneWay}"/>
@@ -524,7 +556,7 @@
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
                                         <TextBlock Text="{x:Bind ViewModel.SelectedApp.DisplayName, Mode=OneWay}" FontWeight="Bold" FontSize="15" TextWrapping="Wrap" />
                                         <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                                            <TextBlock Text="{x:Bind ViewModel.SelectedApp.Publisher, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxWidth="180"/>
                                             <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="4" Padding="6,1" VerticalAlignment="Center">
                                                 <TextBlock Text="{x:Bind ViewModel.SelectedApp.TypeBadgeText, Mode=OneWay}" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}"/>
                                             </Border>
@@ -561,7 +593,7 @@
                                         <TextBlock Text="Registry Hive:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         <TextBlock Text="{x:Bind ViewModel.SelectedApp.Hive, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Right"/>
                                     </Grid>
-                                    
+
                                     <StackPanel Spacing="4" Margin="0,4,0,0">
                                         <TextBlock Text="Install Location:" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                         <Grid>
@@ -569,7 +601,7 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBox Text="{x:Bind ViewModel.SelectedApp.InstallLocation, Mode=OneWay}" IsReadOnly="True" FontSize="10.5" CornerRadius="6" VerticalAlignment="Center" Height="28" Padding="6,4"/>
+                                            <TextBox Text="{x:Bind ViewModel.SelectedApp.InstallLocation, Mode=OneWay, FallbackValue=''}" IsReadOnly="True" FontSize="10.5" CornerRadius="6" VerticalAlignment="Center" Height="28" Padding="6,4"/>
                                             <Button Grid.Column="1" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Height="28" Width="32" Padding="0" Margin="4,0,0,0" Click="OnOpenFolderClick" ToolTipService.ToolTip="Open Installation Folder" AutomationProperties.Name="Open Installation Folder" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xE838;" FontSize="12"/>
                                             </Button>
@@ -583,7 +615,7 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
-                                            <TextBox Text="{x:Bind ViewModel.SelectedApp.RegistryPath, Mode=OneWay}" IsReadOnly="True" FontSize="10.5" CornerRadius="6" VerticalAlignment="Center" Height="28" Padding="6,4"/>
+                                            <TextBox Text="{x:Bind ViewModel.SelectedApp.RegistryPath, Mode=OneWay, FallbackValue=''}" IsReadOnly="True" FontSize="10.5" CornerRadius="6" VerticalAlignment="Center" Height="28" Padding="6,4"/>
                                             <Button Grid.Column="1" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="6" Height="28" Width="32" Padding="0" Margin="4,0,0,0" Click="OnOpenRegistryClick" ToolTipService.ToolTip="Jump to Registry Key" AutomationProperties.Name="Jump to Registry Key" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xEDA2;" FontSize="12"/>
                                             </Button>
@@ -636,7 +668,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    
+
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                         <Border Width="34" Height="34" CornerRadius="17" Background="{StaticResource PrimaryAccentLightBrush}">
                             <FontIcon Glyph="&#xE73E;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -649,7 +681,7 @@
                             <TextBlock Text="{x:Bind ViewModel.SelectedAppsSizeFormatted, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                         </StackPanel>
                     </StackPanel>
-                    
+
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
                         <Button Content="Invert Selection" Click="OnInvertSelectionClick" Style="{StaticResource DefaultButtonStyle}" FontSize="12" Padding="12,6" CornerRadius="8" ToolTipService.ToolTip="Invert selection for all listed applications" AutomationProperties.Name="Invert Selection"/>
                         <Button Content="Deselect All" Click="OnDeselectAllClick" Style="{StaticResource DefaultButtonStyle}" FontSize="12" Padding="12,6" CornerRadius="8" ToolTipService.ToolTip="Deselect all applications" AutomationProperties.Name="Deselect All"/>
@@ -749,7 +781,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="12">
                             <StackPanel Orientation="Horizontal" Spacing="12">
                                 <FontIcon Glyph="&#xE7BA;" FontSize="22" Foreground="{ThemeResource AppStatusDangerBrush}" VerticalAlignment="Center"/>
@@ -781,7 +813,7 @@
                                         <ColumnDefinition Width="*" />    <!-- Name & Path -->
                                         <ColumnDefinition Width="100" />  <!-- Size -->
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox Grid.Column="0" IsChecked="{x:Bind ViewModel.IsAllLeftoversSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" ToolTipService.ToolTip="Select / Deselect All Leftovers" />
+                                    <CheckBox Grid.Column="0" IsChecked="{x:Bind ViewModel.IsAllLeftoversSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" ToolTipService.ToolTip="{Binding Source='Select / Deselect All Leftovers', Converter={StaticResource TranslationConverter}}" />
                                     <Border Grid.Column="1" Width="28" Margin="0,0,12,0" Background="Transparent" />
                                     <TextBlock Grid.Column="2" Text="Residual Item Details" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center"/>
                                     <TextBlock Grid.Column="3" Text="Size" FontSize="11.5" FontWeight="Bold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
@@ -797,7 +829,7 @@
                                             <ColumnDefinition Width="100" />
                                         </Grid.ColumnDefinitions>
                                         <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0" MinWidth="20" />
-                                        
+
                                         <Grid Grid.Column="1" Width="28" Height="28" CornerRadius="6" Background="{x:Bind IconBackground, Mode=OneWay}" Margin="0,0,12,0" VerticalAlignment="Center">
                                             <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}" Foreground="{x:Bind IconForeground, Mode=OneWay}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Grid>
@@ -826,5 +858,6 @@
                 </Grid>
             </Border>
         </Grid>
+    </Grid>
     </Grid>
 </Page>

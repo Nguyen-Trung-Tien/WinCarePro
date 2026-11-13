@@ -110,7 +110,7 @@ public class SystemSnapshotService : ISystemSnapshotService
         return await Task.Run(() =>
         {
             string metadataFile = Path.Combine(SnapshotMetadataDir, $"{snapshotId}.txt");
-            if (File.Exists(metadataFile))
+            if (File.Exists(metadataFile) && WinCarePro.Core.Helpers.SafePathGuard.IsSafeToDelete(metadataFile))
             {
                 try
                 {
@@ -118,7 +118,10 @@ public class SystemSnapshotService : ISystemSnapshotService
                     Database.DbManager.LogAction($"Deleted Snapshot Metadata: {snapshotId}", "Snapshot Service", "Success");
                     return true;
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("SystemSnapshotService.DeleteSnapshotAsync", ex);
+                }
             }
             return false;
         });

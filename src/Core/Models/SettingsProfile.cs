@@ -49,4 +49,24 @@ public class SettingsProfile
     public bool NotifyOnMaintenance { get; set; } = true;
     public bool ShowUpdateNotifications { get; set; } = true;
     public bool NotificationSound { get; set; } = true;
+
+    // Encrypted Sensitive Settings (DPAPI protected)
+    public string EncryptedApiKey { get; set; } = "";
+    public string EncryptedCustomToken { get; set; } = "";
+    public string EncryptedBackupPassword { get; set; } = "";
+
+    public void SetSensitiveCredential(string key, string plainValue)
+    {
+        if (key == "ApiKey") EncryptedApiKey = Infrastructure.Security.CryptoHelper.ProtectString(plainValue);
+        else if (key == "CustomToken") EncryptedCustomToken = Infrastructure.Security.CryptoHelper.ProtectString(plainValue);
+        else if (key == "BackupPassword") EncryptedBackupPassword = Infrastructure.Security.CryptoHelper.ProtectString(plainValue);
+    }
+
+    public string GetSensitiveCredential(string key)
+    {
+        if (key == "ApiKey") return Infrastructure.Security.CryptoHelper.UnprotectString(EncryptedApiKey);
+        if (key == "CustomToken") return Infrastructure.Security.CryptoHelper.UnprotectString(EncryptedCustomToken);
+        if (key == "BackupPassword") return Infrastructure.Security.CryptoHelper.UnprotectString(EncryptedBackupPassword);
+        return string.Empty;
+    }
 }

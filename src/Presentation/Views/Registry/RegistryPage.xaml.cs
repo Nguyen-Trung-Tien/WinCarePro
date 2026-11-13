@@ -51,6 +51,12 @@ public sealed partial class RegistryPage : Page
 
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
+
+        this.Unloaded += (s, e) =>
+        {
+            ViewModel.PropertyChanged -= _vmPropertyChangedHandler;
+            TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        };
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)

@@ -10,11 +10,11 @@
     <ResourceDictionary.ThemeDictionaries>
         <!-- ==================== DARK MODE (MICA ALT NATIVE) ==================== -->
         <ResourceDictionary x:Key="Default">
-            <!-- Surface Layer 1 Tokens -->
-            <SolidColorBrush x:Key="V6SurfaceCardBackground" Color="#E8161824" />
-            <SolidColorBrush x:Key="V6SurfaceCardHover" Color="#F01E2232" />
-            <SolidColorBrush x:Key="V6SurfaceCardBorder" Color="#1FFFFFFF" />
-            <SolidColorBrush x:Key="V6SubtleBorder" Color="#12FFFFFF" />
+            <!-- Surface Layer 1 Tokens (#161922 Obsidian Card Background) -->
+            <SolidColorBrush x:Key="V6SurfaceCardBackground" Color="#E6161922" />
+            <SolidColorBrush x:Key="V6SurfaceCardHover" Color="#F21C202C" />
+            <SolidColorBrush x:Key="V6SurfaceCardBorder" Color="#25FFFFFF" />
+            <SolidColorBrush x:Key="V6SubtleBorder" Color="#15FFFFFF" />
 
             <!-- Semantic Flat Badges (Flat, Zero-Glow) -->
             <SolidColorBrush x:Key="V6BadgeGoodBg" Color="#1810B981" />

@@ -125,7 +125,7 @@ public class DialogService : IDialogService
             bool isDark = WinCarePro.Services.ThemeManager.Instance.IsDark;
 
             var dialogBg = isDark
-                ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 18, 20, 29))
+                ? new SolidColorBrush(Windows.UI.Color.FromArgb(248, 22, 25, 34))
                 : new SolidColorBrush(Windows.UI.Color.FromArgb(254, 255, 255, 255));
             var dialogBorder = isDark
                 ? new SolidColorBrush(Windows.UI.Color.FromArgb(38, 255, 255, 255))
@@ -143,7 +143,7 @@ public class DialogService : IDialogService
                 RequestedTheme = currentTheme,
                 Background = dialogBg,
                 BorderBrush = dialogBorder,
-                CornerRadius = new CornerRadius(16),
+                CornerRadius = new CornerRadius(12),
                 BorderThickness = new Thickness(1)
             };
 

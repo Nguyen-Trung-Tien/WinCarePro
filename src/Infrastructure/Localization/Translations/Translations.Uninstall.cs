@@ -269,5 +269,37 @@ public partial class TranslationManager
         en["Open Folder"] = "Open Folder";
         en["Open Registry"] = "Open Registry";
         en["Search Online"] = "Search Online";
+        vi["Select and queue all detected bloatware applications"] = "Chọn và đưa vào hàng đợi tất cả ứng dụng rác được phát hiện";
+        if (en != null) en["Select and queue all detected bloatware applications"] = "Select and queue all detected bloatware applications";
+        vi["Export applications list to CSV report"] = "Xuất danh sách ứng dụng ra báo cáo CSV";
+        if (en != null) en["Export applications list to CSV report"] = "Export applications list to CSV report";
+        vi["Detected"] = "Đã phát hiện";
+        if (en != null) en["Detected"] = "Detected";
+        vi["All Apps"] = "Tất cả ứng dụng";
+        if (en != null) en["All Apps"] = "All Apps";
+        vi["Desktop"] = "Ứng dụng máy tính";
+        if (en != null) en["Desktop"] = "Desktop";
+        vi["Store"] = "Ứng dụng Store";
+        if (en != null) en["Store"] = "Store";
+        vi["Uninstall this application"] = "Gỡ cài đặt ứng dụng này";
+        if (en != null) en["Uninstall this application"] = "Uninstall this application";
+        vi["Launch standard uninstaller"] = "Khởi chạy trình gỡ cài đặt tiêu chuẩn";
+        if (en != null) en["Launch standard uninstaller"] = "Launch standard uninstaller";
+        vi["Force remove application files, registry entries, and leftovers"] = "Buộc xóa tệp ứng dụng, mục registry và tàn dư";
+        if (en != null) en["Force remove application files, registry entries, and leftovers"] = "Force remove application files, registry entries, and leftovers";
+        vi["Invert selection for all listed applications"] = "Đảo ngược lựa chọn cho các ứng dụng đã liệt kê";
+        if (en != null) en["Invert selection for all listed applications"] = "Invert selection for all listed applications";
+        vi["Deselect all applications"] = "Bỏ chọn tất cả ứng dụng";
+        if (en != null) en["Deselect all applications"] = "Deselect all applications";
+        vi["Run sequential uninstaller for all selected apps"] = "Chạy trình gỡ cài đặt tuần tự cho tất cả ứng dụng đã chọn";
+        if (en != null) en["Run sequential uninstaller for all selected apps"] = "Run sequential uninstaller for all selected apps";
+        vi["Force remove all selected apps and residuals"] = "Buộc xóa tất cả ứng dụng đã chọn và tàn dư";
+        if (en != null) en["Force remove all selected apps and residuals"] = "Force remove all selected apps and residuals";
+        vi["1. Terminate"] = "1. Buộc dừng";
+        if (en != null) en["1. Terminate"] = "1. Terminate";
+        vi["2. Uninstall"] = "2. Gỡ cài đặt";
+        if (en != null) en["2. Uninstall"] = "2. Uninstall";
+        vi["3. Leftovers"] = "3. Dọn tàn dư";
+        if (en != null) en["3. Leftovers"] = "3. Leftovers";
     }
 }

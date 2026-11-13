@@ -66,62 +66,26 @@ namespace WinCarePro.Modules.AiAssistant
         public string SubDetail { get; set; } = string.Empty;
         public string ActionKey { get; set; } = "None";
 
-        private Microsoft.UI.Xaml.Media.Brush? _statusBrush;
-        public Microsoft.UI.Xaml.Media.Brush StatusBrush
+        public string StatusColorHex => Status switch
         {
-            get
-            {
-                if (_statusBrush == null)
-                {
-                    var color = Status switch
-                    {
-                        "Critical" => Windows.UI.Color.FromArgb(255, 239, 68, 68),
-                        "Warning" => Windows.UI.Color.FromArgb(255, 245, 158, 11),
-                        _ => Windows.UI.Color.FromArgb(255, 16, 185, 129)
-                    };
-                    _statusBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(color);
-                }
-                return _statusBrush;
-            }
-        }
+            "Critical" => "#EF4444",
+            "Warning" => "#F59E0B",
+            _ => "#10B981"
+        };
 
-        private Microsoft.UI.Xaml.Media.Brush? _statusBgBrush;
-        public Microsoft.UI.Xaml.Media.Brush StatusBgBrush
+        public string StatusBgColorHex => Status switch
         {
-            get
-            {
-                if (_statusBgBrush == null)
-                {
-                    var color = Status switch
-                    {
-                        "Critical" => Windows.UI.Color.FromArgb(0x22, 239, 68, 68),
-                        "Warning" => Windows.UI.Color.FromArgb(0x22, 245, 158, 11),
-                        _ => Windows.UI.Color.FromArgb(0x22, 16, 185, 129)
-                    };
-                    _statusBgBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(color);
-                }
-                return _statusBgBrush;
-            }
-        }
+            "Critical" => "#22EF4444",
+            "Warning" => "#22F59E0B",
+            _ => "#2210B981"
+        };
 
-        private Microsoft.UI.Xaml.Media.Brush? _statusBorderBrush;
-        public Microsoft.UI.Xaml.Media.Brush StatusBorderBrush
+        public string StatusBorderColorHex => Status switch
         {
-            get
-            {
-                if (_statusBorderBrush == null)
-                {
-                    var color = Status switch
-                    {
-                        "Critical" => Windows.UI.Color.FromArgb(0x55, 239, 68, 68),
-                        "Warning" => Windows.UI.Color.FromArgb(0x55, 245, 158, 11),
-                        _ => Windows.UI.Color.FromArgb(0x55, 16, 185, 129)
-                    };
-                    _statusBorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(color);
-                }
-                return _statusBorderBrush;
-            }
-        }
+            "Critical" => "#55EF4444",
+            "Warning" => "#55F59E0B",
+            _ => "#5510B981"
+        };
     }
 
     public class CausalChainItem
@@ -136,24 +100,12 @@ namespace WinCarePro.Modules.AiAssistant
         public string ActionTitle { get; set; } = "Resolve Now".T();
         public string IconGlyph { get; set; } = "\uE7BA";
 
-        private Microsoft.UI.Xaml.Media.Brush? _sevBrush;
-        public Microsoft.UI.Xaml.Media.Brush SeverityBrush
+        public string SeverityColorHex => Severity switch
         {
-            get
-            {
-                if (_sevBrush == null)
-                {
-                    var color = Severity switch
-                    {
-                        "Critical" => Windows.UI.Color.FromArgb(255, 239, 68, 68),
-                        "Warning" => Windows.UI.Color.FromArgb(255, 245, 158, 11),
-                        _ => Windows.UI.Color.FromArgb(255, 59, 130, 246)
-                    };
-                    _sevBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(color);
-                }
-                return _sevBrush;
-            }
-        }
+            "Critical" => "#EF4444",
+            "Warning" => "#F59E0B",
+            _ => "#3B82F6"
+        };
     }
 
     public class AiWinCareReport
@@ -243,7 +195,10 @@ namespace WinCarePro.Modules.AiAssistant
                         }
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.StorageAnalysis", ex);
+                }
 
                 // 2. Predictive Boot Time Overhead Profiling & Memory Working Set (Single-Pass Process Scan)
                 try
@@ -308,7 +263,10 @@ namespace WinCarePro.Modules.AiAssistant
                         });
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.StorageAnalysis", ex);
+                }
 
                 // 3. Analyze Temp Junk Accumulation (Safe enumeration across temp folders)
                 try
@@ -350,7 +308,10 @@ namespace WinCarePro.Modules.AiAssistant
                         });
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.StorageAnalysis", ex);
+                }
 
                 // 5. Check Non-System Drive Storage (Secondary Drives D:, E:, etc.)
                 try
@@ -375,7 +336,10 @@ namespace WinCarePro.Modules.AiAssistant
                         }
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.StorageAnalysis", ex);
+                }
 
                 // 6. Calculate final health score and status text
                 report.OverallScore = Math.Clamp(100 - penaltyScore, 20, 100);
@@ -557,7 +521,10 @@ namespace WinCarePro.Modules.AiAssistant
                     result.FixedActionsCount++;
                     result.ActionLogs.Add("Memory Working Set and Standby List optimized.".T());
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.PurgeMemory", ex);
+                }
 
                 // 2. Safe Temp Cleaning (Scoped to safe user temp folder)
                 try
@@ -578,14 +545,20 @@ namespace WinCarePro.Modules.AiAssistant
                                     cleaned += len;
                                 }
                             }
-                            catch { }
+                            catch (Exception fEx)
+                            {
+                                Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.DeleteTempFile", fEx);
+                            }
                         }
                     }
                     result.CleanedTempBytes = cleaned;
                     result.FixedActionsCount++;
                     result.ActionLogs.Add(string.Format("Safe temp files cleaned ({0:F1} MB freed).".T(), cleaned / (1024.0 * 1024.0)));
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.SafeTempCleaning", ex);
+                }
 
                 // 3. Flush DNS & Winsock Cache
                 try
@@ -595,7 +568,10 @@ namespace WinCarePro.Modules.AiAssistant
                     result.FixedActionsCount++;
                     result.ActionLogs.Add("DNS Resolver cache flushed.".T());
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.FlushDns", ex);
+                }
 
                 return result;
             });
@@ -619,7 +595,10 @@ namespace WinCarePro.Modules.AiAssistant
                     result.FixedActionsCount++;
                     result.ActionLogs.Add("Memory Working Set and Standby List optimized.".T());
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.PurgeMemoryLevel", ex);
+                }
 
                 // Safe Temp Cleaning (Level 1: > 24h, Level 2: > 6h, Level 3: > 1h)
                 try
@@ -641,14 +620,20 @@ namespace WinCarePro.Modules.AiAssistant
                                     cleaned += len;
                                 }
                             }
-                            catch { }
+                            catch (Exception fEx)
+                            {
+                                Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.DeleteTempFileLevel", fEx);
+                            }
                         }
                     }
                     result.CleanedTempBytes = cleaned;
                     result.FixedActionsCount++;
                     result.ActionLogs.Add(string.Format("Safe temp files cleaned ({0:F1} MB freed).".T(), cleaned / (1024.0 * 1024.0)));
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.SafeTempCleaningLevel", ex);
+                }
 
                 // Flush DNS & Winsock Cache
                 try
@@ -658,7 +643,10 @@ namespace WinCarePro.Modules.AiAssistant
                     result.FixedActionsCount++;
                     result.ActionLogs.Add("DNS Resolver cache flushed.".T());
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("AiWinCareEngine.FlushDnsLevel", ex);
+                }
 
                 return result;
             });

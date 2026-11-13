@@ -18,6 +18,8 @@ public sealed partial class SystemOptimizerPage : Page
 {
     public SystemOptimizerViewModel ViewModel { get; }
 
+    private System.ComponentModel.PropertyChangedEventHandler? _propChangedHandler;
+
     public SystemOptimizerPage()
     {
         ViewModel = App.Services.GetRequiredService<SystemOptimizerViewModel>();
@@ -25,16 +27,69 @@ public sealed partial class SystemOptimizerPage : Page
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
 
+        _propChangedHandler = (s, e) =>
+        {
+            if (e.PropertyName == nameof(ViewModel.RamUsagePercentage) || e.PropertyName == nameof(ViewModel.UsedRamText))
+            {
+                this.DispatcherQueue?.TryEnqueue(() => UpdateRamGauge());
+            }
+        };
+        ViewModel.PropertyChanged += _propChangedHandler;
+
         this.Loaded += (s, e) =>
         {
             TranslationManager.Instance.Translate(this);
+            UpdateRamGauge();
         };
+
         var langHandler = new EventHandler((s, e) =>
         {
             this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
         });
         TranslationManager.Instance.LanguageChanged += langHandler;
-        this.Unloaded += (s, e) => TranslationManager.Instance.LanguageChanged -= langHandler;
+
+        this.Unloaded += (s, e) =>
+        {
+            TranslationManager.Instance.LanguageChanged -= langHandler;
+            if (_propChangedHandler != null) ViewModel.PropertyChanged -= _propChangedHandler;
+        };
+    }
+
+    private void UpdateRamGauge()
+    {
+        if (RamPathFigure == null || RamArcSegment == null) return;
+
+        double percentage = ViewModel.RamUsagePercentage;
+        double pct = Math.Clamp(percentage, 0.01, 99.99);
+        double angleDegrees = pct * 3.6;
+        double angleRadians = (angleDegrees - 90.0) * Math.PI / 180.0;
+        const double radius = 25.0;
+        const double centerX = 32.0;
+        const double centerY = 32.0;
+
+        RamPathFigure.StartPoint = new Windows.Foundation.Point(centerX, centerY - radius);
+        double endX = centerX + radius * Math.Cos(angleRadians);
+        double endY = centerY + radius * Math.Sin(angleRadians);
+
+        RamArcSegment.Point = new Windows.Foundation.Point(endX, endY);
+        RamArcSegment.Size = new Windows.Foundation.Size(radius, radius);
+        RamArcSegment.IsLargeArc = angleDegrees > 180.0;
+        RamArcSegment.SweepDirection = Microsoft.UI.Xaml.Media.SweepDirection.Clockwise;
+
+        if (RamGlowBorder != null)
+        {
+            string glowKey = pct switch
+            {
+                > 85.0 => "GaugeGlowCriticalBrush",
+                > 65.0 => "GaugeGlowWarningBrush",
+                _ => "GaugeGlowGoodBrush"
+            };
+
+            if (Application.Current.Resources.TryGetValue(glowKey, out var brushObj) && brushObj is Microsoft.UI.Xaml.Media.Brush b)
+            {
+                RamGlowBorder.Background = b;
+            }
+        }
     }
 
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)

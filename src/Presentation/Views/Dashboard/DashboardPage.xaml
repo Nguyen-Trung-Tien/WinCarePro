@@ -42,17 +42,27 @@
         </Grid>
 
         <!-- Main Responsive Content Canvas -->
-        <Grid Padding="24,18" HorizontalAlignment="Stretch">
+        <Grid Padding="24" HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Clean Fluent Page Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,14">
-            <StackPanel Spacing="2">
-                <TextBlock Text="System Dashboard" Style="{StaticResource PageHeaderTitleStyle}"/>
-                <TextBlock Text="Live system metrics &amp; 1-click care." Style="{StaticResource PageHeaderSubtitleStyle}"/>
+        <!-- Clean Fluent Page Header (IconBadge + Title + Subtitle + Action Toolbar) -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                <Border Style="{StaticResource IconBadgeStyle}" Background="{StaticResource PrimaryAccentGradient}">
+                    <FontIcon Glyph="&#xE80F;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Source='System Dashboard', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderTitleStyle}"/>
+                    <TextBlock Text="{Binding Source='Live system metrics &amp; 1-click care.', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderSubtitleStyle}"/>
+                </StackPanel>
             </StackPanel>
         </Grid>
 
@@ -648,7 +658,7 @@
                     </Border>
 
                     <!-- Row 3: Recommendations Card (Actionable layout) -->
-                    <Border x:Name="RecommendationsCard" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="4" Padding="14" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Visibility="Collapsed">
+                    <Border x:Name="RecommendationsCard" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="4" Padding="14" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Visibility="Collapsed">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -667,7 +677,7 @@
                                     <ItemsControl ItemsSource="{x:Bind ViewModel.Recommendations, Mode=OneWay}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="x:String">
-                                                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="10" Margin="0,0,0,10" Padding="14">
+                                                <Border BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1" Background="{ThemeResource ControlAltFillColorSecondaryBrush}" CornerRadius="10" Margin="0,0,0,10" Padding="14">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="*" />
@@ -773,7 +783,7 @@
                                 <TextBlock x:Name="ExportStatusText" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="MediumSeaGreen" Visibility="Collapsed"/>
                             </StackPanel>
 
-                            <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.DiagnosticItems, Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False">
+                            <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.DiagnosticItems, Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False" MaxHeight="360">
                                 <ListView.ItemContainerTransitions>
                                     <TransitionCollection>
                                         <AddDeleteThemeTransition />
@@ -837,7 +847,7 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.ActionLogs, Mode=OneWay}" SelectionMode="None">
+                            <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.ActionLogs, Mode=OneWay}" SelectionMode="None" MaxHeight="360">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Padding="10,10" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">

@@ -115,7 +115,7 @@ public partial class UninstallEngine
             var psi = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = exe,
-                Arguments = args,
+                Arguments = WinCarePro.Infrastructure.Security.InputSanitizer.Sanitize(args),
                 UseShellExecute = true,
                 Verb = "runas"
             };

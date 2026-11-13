@@ -498,5 +498,25 @@ public partial class TranslationManager
         vi["Timeout"] = "Hết thời gian";
         vi["Latency"] = "Độ trễ";
         vi["Gateway"] = "Cổng Gateway";
+        vi["Network Adapter"] = "Card mạng";
+        if (en != null) en["Network Adapter"] = "Network Adapter";
+        vi["Current DNS Server"] = "Máy chủ DNS hiện tại";
+        if (en != null) en["Current DNS Server"] = "Current DNS Server";
+        vi["Active Resolver"] = "Bộ giải quyết đang hoạt động";
+        if (en != null) en["Active Resolver"] = "Active Resolver";
+        vi["On-Demand Diagnostics"] = "Chẩn đoán kết nối tức thì";
+        if (en != null) en["On-Demand Diagnostics"] = "On-Demand Diagnostics";
+        vi["Sao chép thông tin socket"] = "Sao chép thông tin socket";
+        if (en != null) en["Sao chép thông tin socket"] = "Sao chép thông tin socket";
+        vi["Mở vị trí tệp"] = "Mở vị trí tệp";
+        if (en != null) en["Mở vị trí tệp"] = "Mở vị trí tệp";
+        vi["Đóng kết nối / Dừng tiến trình"] = "Đóng kết nối / Dừng tiến trình";
+        if (en != null) en["Đóng kết nối / Dừng tiến trình"] = "Đóng kết nối / Dừng tiến trình";
+        vi["Xóa Cache DNS"] = "Xóa Cache DNS";
+        if (en != null) en["Xóa Cache DNS"] = "Xóa Cache DNS";
+        vi["ipconfig /flushdns"] = "ipconfig /flushdns";
+        if (en != null) en["ipconfig /flushdns"] = "ipconfig /flushdns";
+        vi["Cấp lại IP"] = "Cấp lại IP";
+        if (en != null) en["Cấp lại IP"] = "Cấp lại IP";
     }
 }

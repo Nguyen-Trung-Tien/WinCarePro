@@ -327,5 +327,13 @@ public partial class TranslationManager
         vi["Heuristic auto-remediations execute background system adjustments without prompt confirmations. Keep disabled for stable enterprise production environments."] = "Tính năng tự động khắc phục phỏng đoán thực hiện các điều chỉnh hệ thống chạy ngầm mà không có thông báo xác nhận. Nên tắt đối với môi trường doanh nghiệp ổn định.";
         vi["WinCare Pro Active"] = "WinCare Pro Đang Hoạt Động";
         vi["Microsoft Windows x64 • High Performance Workstation"] = "Microsoft Windows x64 • Máy Trạm Hiệu Năng Cao";
+        vi["WIN-DEVICE"] = "WIN-DEVICE";
+        if (en != null) en["WIN-DEVICE"] = "WIN-DEVICE";
+        vi["Enable UI fluid translation and animations (Turn off for Reduced Motion)"] = "Bật chuyển cảnh mượt mà và hoạt ảnh giao diện (Tắt để giảm chuyển động)";
+        if (en != null) en["Enable UI fluid translation and animations (Turn off for Reduced Motion)"] = "Enable UI fluid translation and animations (Turn off for Reduced Motion)";
+        vi["Controls smooth transitions, acrylic mesh and glow effects. Turn off to enforce Reduced Motion for accessibility and lower GPU usage."] = "Điều khiển chuyển cảnh mượt, lưới acrylic và hiệu ứng phát sáng. Tắt để áp dụng Giảm chuyển động cho khả năng truy cập và giảm tải GPU.";
+        if (en != null) en["Controls smooth transitions, acrylic mesh and glow effects. Turn off to enforce Reduced Motion for accessibility and lower GPU usage."] = "Controls smooth transitions, acrylic mesh and glow effects. Turn off to enforce Reduced Motion for accessibility and lower GPU usage.";
+        vi["Polaris Suite"] = "Bộ Polaris";
+        if (en != null) en["Polaris Suite"] = "Polaris Suite";
     }
 }

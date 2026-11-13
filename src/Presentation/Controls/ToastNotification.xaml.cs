@@ -138,8 +138,8 @@ public sealed partial class ToastNotification : UserControl
             ActionBtn.Visibility = Visibility.Collapsed;
         }
 
-        // Start / Reset countdown progress
-        StartCountdown(5500);
+        // Start / Reset countdown progress (Standard 4.5s duration)
+        StartCountdown(4500);
     }
 
     private void ActionBtn_Click(object sender, RoutedEventArgs e)
@@ -158,7 +158,7 @@ public sealed partial class ToastNotification : UserControl
         DismissRequested?.Invoke(this);
     }
 
-    public void StartCountdown(int durationMs = 5500)
+    public void StartCountdown(int durationMs = 4500)
     {
         _totalDurationMs = durationMs;
         _remainingDurationMs = durationMs;
@@ -262,30 +262,36 @@ public sealed partial class ToastNotification : UserControl
                 borderColor = Color.FromArgb(255, 254, 202, 202);// #FECACA
             }
         }
-        else if (level.Equals("Success", StringComparison.OrdinalIgnoreCase) || level.Equals("Info", StringComparison.OrdinalIgnoreCase))
+        else if (level.Equals("Success", StringComparison.OrdinalIgnoreCase))
         {
-            // Success uses checkmark glyph \uE73E, Info uses info glyph \uE946
-            glyph = level.Equals("Success", StringComparison.OrdinalIgnoreCase) ? "\uE73E" : "\uE946";
-            
-            var accent = ThemeManager.Instance.GetPrimaryAccentColor();
-            fgColor = accent;
-
+            glyph = "\uE73E"; // Checkmark
             if (isDark)
             {
-                bgColor = Color.FromArgb(32, accent.R, accent.G, accent.B);
-                borderColor = Color.FromArgb(70, accent.R, accent.G, accent.B);
+                fgColor = Color.FromArgb(255, 16, 185, 129);   // #10B981 Emerald
+                bgColor = Color.FromArgb(32, 16, 185, 129);    // 12% emerald
+                borderColor = Color.FromArgb(68, 16, 185, 129);// 27% emerald
             }
             else
             {
-                byte bgR = (byte)Math.Clamp(accent.R + (255 - accent.R) * 0.92, 0, 255);
-                byte bgG = (byte)Math.Clamp(accent.G + (255 - accent.G) * 0.92, 0, 255);
-                byte bgB = (byte)Math.Clamp(accent.B + (255 - accent.B) * 0.92, 0, 255);
-                bgColor = Color.FromArgb(255, bgR, bgG, bgB);
-
-                byte bdrR = (byte)Math.Clamp(accent.R + (255 - accent.R) * 0.65, 0, 255);
-                byte bdrG = (byte)Math.Clamp(accent.G + (255 - accent.G) * 0.65, 0, 255);
-                byte bdrB = (byte)Math.Clamp(accent.B + (255 - accent.B) * 0.65, 0, 255);
-                borderColor = Color.FromArgb(255, bdrR, bdrG, bdrB);
+                fgColor = Color.FromArgb(255, 5, 150, 105);    // #059669
+                bgColor = Color.FromArgb(255, 236, 253, 245);  // #ECFDF5
+                borderColor = Color.FromArgb(255, 167, 243, 208);// #A7F3D0
+            }
+        }
+        else if (level.Equals("Info", StringComparison.OrdinalIgnoreCase))
+        {
+            glyph = "\uE946"; // Info
+            if (isDark)
+            {
+                fgColor = Color.FromArgb(255, 0, 210, 255);    // #00D2FF Cyan
+                bgColor = Color.FromArgb(32, 0, 210, 255);     // 12% cyan
+                borderColor = Color.FromArgb(68, 0, 210, 255); // 27% cyan
+            }
+            else
+            {
+                fgColor = Color.FromArgb(255, 2, 132, 199);    // #0284C7
+                bgColor = Color.FromArgb(255, 240, 249, 255);  // #F0F9FF
+                borderColor = Color.FromArgb(255, 186, 230, 253);// #BAE6FD
             }
         }
         else // Default / Fallback

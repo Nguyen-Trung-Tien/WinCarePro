@@ -126,6 +126,20 @@ public sealed partial class MainWindow : Window
         }
 
         this.AppWindow.Closing += AppWindow_Closing;
+        this.AppWindow.Changed += (s, e) =>
+        {
+            if (e.DidPresenterChange || e.DidVisibilityChange)
+            {
+                if (this.AppWindow.Presenter is Microsoft.UI.Windowing.OverlappedPresenter presenter)
+                {
+                    if (presenter.State == Microsoft.UI.Windowing.OverlappedPresenterState.Minimized || !this.AppWindow.IsVisible)
+                    {
+                        // Pause background animations when minimized to keep CPU <= 0.3%
+                        WinCarePro.Core.Helpers.Animation3DHelper.StopAll3DScanEffects();
+                    }
+                }
+            }
+        };
         this.Closed += MainWindow_Closed;
 
         // Centralized Theme & Multi-Language Synchronization
@@ -144,20 +158,20 @@ public sealed partial class MainWindow : Window
             if (RootGrid.IsLoaded)
             {
                 CenterOnScreen(1560, 920);
-                InitializeAppAsync();
+                _ = InitializeAppAsync();
             }
             else
             {
                 RootGrid.Loaded += (s, e) => {
                     CenterOnScreen(1560, 920);
-                    InitializeAppAsync();
+                    _ = InitializeAppAsync();
                 };
             }
         }
         else
         {
             CenterOnScreen(1560, 920);
-            InitializeAppAsync();
+            _ = InitializeAppAsync();
         }
 
         _mainLanguageChangedHandler = (s, e) =>
@@ -212,13 +226,16 @@ public sealed partial class MainWindow : Window
             {
                 this.AppWindow.Resize(new Windows.Graphics.SizeInt32(width, height));
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Infrastructure.Logging.CrashLogger.LogException("MainWindow.ResizeWindowFallback", ex);
+            }
         }
     }
 
     private int _isAppInitialized = 0;
 
-    private async void InitializeAppAsync()
+    private async Task InitializeAppAsync()
     {
         if (Interlocked.Exchange(ref _isAppInitialized, 1) != 0)
         {
@@ -633,7 +650,9 @@ public sealed partial class MainWindow : Window
         ExitProgressPercent.Text = $"{(int)Math.Min(100, Math.Round(targetValue))}%";
     }
 
-    public async void PerformAppExit()
+    public async void PerformAppExit() => await PerformAppExitAsync();
+
+    public async Task PerformAppExitAsync()
     {
         try
         {

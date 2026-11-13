@@ -20,7 +20,34 @@
         </Storyboard>
     </Page.Resources>
 
-    <Grid Padding="24,20" HorizontalAlignment="Stretch" x:Name="SettingsRootGrid">
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <EntranceNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+            <EntranceThemeTransition FromVerticalOffset="24" />
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource AppDeepObsidianBackground}">
+        <!-- Ambient Mesh Glow (Deep Obsidian Canvas with Cyan/Indigo Luminous Atmosphere in Dark Mode) -->
+        <Grid x:Name="AmbientMeshGlowGrid" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <!-- Top-Left Radial Mesh Glow (Cyan #00D2FF &amp; Indigo #7B2CBF) -->
+            <Rectangle HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Width="720" Height="540" Margin="-100,-100,0,0"
+                       Opacity="0.12"
+                       Fill="{StaticResource AppAmbientMeshGlowBrush}" />
+
+            <!-- Bottom-Right Subtle Accent Glow -->
+            <Rectangle HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                       Width="560" Height="440" Margin="0,0,-80,-80"
+                       Opacity="0.08"
+                       Fill="{StaticResource AppSecondaryMeshGlowBrush}" />
+        </Grid>
+
+        <Grid Padding="24" HorizontalAlignment="Stretch" x:Name="SettingsRootGrid">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
                 <!-- Wide Layout: Viewport Width >= 840px -->
@@ -41,11 +68,11 @@
                         <Setter Target="SidebarBorder.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="SidebarBorder.BorderThickness" Value="0,0,0,1" />
                         <Setter Target="SidebarBorder.Padding" Value="0,0,0,12" />
-                        
+
                         <Setter Target="SettingsNavStackPanel.Orientation" Value="Horizontal" />
                         <Setter Target="SettingsNavList.ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
                         <Setter Target="SettingsNavList.ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
-                        
+
                         <Setter Target="ContentScrollViewer.(Grid.Row)" Value="1" />
                         <Setter Target="ContentScrollViewer.(Grid.Column)" Value="0" />
                         <Setter Target="ContentScrollViewer.(Grid.RowSpan)" Value="1" />
@@ -86,7 +113,7 @@
                             <ItemsStackPanel x:Name="SettingsNavStackPanel" Orientation="Vertical" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
-                        
+
                     <ListViewItem Height="38" Padding="8,0" CornerRadius="8" Margin="0,1">
                         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                             <Border Width="26" Height="26" CornerRadius="7" Background="{ThemeResource SubtleFillColorSecondaryBrush}" VerticalAlignment="Center">
@@ -243,7 +270,7 @@
                             <TextBlock Text="Core System" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                         </Border>
                     </Grid>
-                    
+
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <!-- Language Selection Row -->
@@ -294,18 +321,18 @@
                             <TextBlock Text="Aura Studio" FontSize="10.5" FontWeight="Bold" Foreground="#FF06B6D4"/>
                         </Border>
                     </Grid>
-                    
+
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <TextBlock Text="Application Color Theme Mode" FontSize="13.5" FontWeight="Bold" />
-                            
+
                             <!-- Segmented cards for theme selection -->
                             <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                
+
                                 <Button x:Name="LightThemeCard" Grid.Column="0" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" Click="OnLightModeCardClick" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                         AutomationProperties.Name="Light Theme" AutomationProperties.HelpText="Switch to clean and bright light interface mode."
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="12">
@@ -322,7 +349,7 @@
                                         <FontIcon x:Name="LightThemeCheck" Glyph="&#xE73E;" FontSize="13" Foreground="{ThemeResource PrimaryAccentBrush}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,2,0" Visibility="Collapsed"/>
                                     </Grid>
                                 </Button>
-                                
+
                                 <Button x:Name="DarkThemeCard" Grid.Column="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1.5" CornerRadius="12" Padding="16" Click="OnDarkModeCardClick" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                         AutomationProperties.Name="Dark Theme" AutomationProperties.HelpText="Switch to deep space and neon dark interface mode."
                                         helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="5.0" helpers:Animation3DHelper.DepthZ="12">
@@ -346,7 +373,7 @@
                             <StackPanel Spacing="8">
                                 <TextBlock Text="Window Accent Colors Palette" FontSize="13.5" FontWeight="Bold" />
                                 <TextBlock Text="Choose system-wide brand gradient and highlight color tone." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                
+
                                 <StackPanel Orientation="Horizontal" Spacing="14" x:Name="AccentSelectorPanel" Margin="0,6,0,0">
                                     <!-- Default Radiant Azure -->
                                     <Button Click="OnAccentClick" Tag="Default" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="36" Height="36" Padding="0" CornerRadius="18" ToolTipService.ToolTip="Radiant Azure (Default)" AutomationProperties.Name="Accent Color: Radiant Azure (Default)">
@@ -465,7 +492,7 @@
                             <TextBlock Text="Automation" FontSize="10.5" FontWeight="Bold" Foreground="#FF10B981"/>
                         </Border>
                     </Grid>
-                    
+
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <StackPanel Spacing="8">
@@ -482,7 +509,7 @@
                             <MenuFlyoutSeparator />
 
                             <components:LoadingToggleSwitch x:Name="TriggerSmartBoostToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Trigger Smart Boost optimization automatically if free RAM falls below 10%" />
-                            
+
                             <MenuFlyoutSeparator />
 
                             <Grid ColumnSpacing="16">
@@ -525,12 +552,12 @@
                             <TextBlock Text="Monitoring" FontSize="10.5" FontWeight="Bold" Foreground="#FFF59E0B"/>
                         </Border>
                     </Grid>
-                    
+
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <TextBlock Text="Notification Center Policy" FontSize="13.5" FontWeight="Bold" />
                             <components:LoadingToggleSwitch x:Name="ShowNotificationsToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Show dynamic in-app Toast Notifications" />
-                            
+
                             <StackPanel Spacing="8" MaxWidth="480" HorizontalAlignment="Left">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
@@ -555,7 +582,7 @@
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <TextBlock Text="Hardware Sensors Telemetry" FontSize="13.5" FontWeight="Bold" />
-                            
+
                             <Grid ColumnSpacing="16">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -615,12 +642,12 @@
                             <TextBlock Text="Safety Shield" FontSize="10.5" FontWeight="Bold" Foreground="#FF3B82F6"/>
                         </Border>
                     </Grid>
-                    
+
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <components:LoadingToggleSwitch x:Name="CreateRestorePointToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Automatically create a System Restore Point before major updates" ToolTipService.ToolTip="Saves a system restore point so you can roll back changes if optimizing causes issues." />
                             <components:LoadingToggleSwitch x:Name="BackupRegistryToggle" Toggled="OnSettingsChanged" IsOn="True" HeaderText="Automatically backup system registry hive partitions before repair" ToolTipService.ToolTip="Automatically backs up HKCU and modified HKLM keys before tweaking registry settings." />
-                            
+
                             <MenuFlyoutSeparator />
 
                             <StackPanel Spacing="8">
@@ -657,7 +684,7 @@
                             <TextBlock Text="Storage Engine" FontSize="10.5" FontWeight="Bold" Foreground="#FF8B5CF6"/>
                         </Border>
                     </Grid>
-                    
+
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <Grid>
@@ -672,7 +699,7 @@
                                     </StackPanel>
                                 </Button>
                             </Grid>
-                            
+
                             <!-- DB statistics cards -->
                             <Grid ColumnSpacing="12">
                                 <Grid.ColumnDefinitions>
@@ -713,9 +740,9 @@
 
                             <StackPanel Spacing="10">
                                 <TextBlock Text="Selective Purge Targets" FontSize="13" FontWeight="SemiBold"/>
-                                <CheckBox x:Name="PurgeLogsCheckbox" Content="Purge SQLite Activity History Logs" IsChecked="True" FontSize="12.5"/>
-                                <CheckBox x:Name="PurgeReportsCheckbox" Content="Wipe Saved Diagnostic Assessment Report Files" IsChecked="True" FontSize="12.5"/>
-                                <CheckBox x:Name="PurgeCacheCheckbox" Content="Clear Temporary Updates Installation Packages" IsChecked="True" FontSize="12.5"/>
+                                <CheckBox x:Name="PurgeLogsCheckbox" Content="{Binding Source='Purge SQLite Activity History Logs', Converter={StaticResource TranslationConverter}}" IsChecked="True" FontSize="12.5"/>
+                                <CheckBox x:Name="PurgeReportsCheckbox" Content="{Binding Source='Wipe Saved Diagnostic Assessment Report Files', Converter={StaticResource TranslationConverter}}" IsChecked="True" FontSize="12.5"/>
+                                <CheckBox x:Name="PurgeCacheCheckbox" Content="{Binding Source='Clear Temporary Updates Installation Packages', Converter={StaticResource TranslationConverter}}" IsChecked="True" FontSize="12.5"/>
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0">
@@ -752,7 +779,7 @@
                             <TextBlock Text="Release CDN" FontSize="10.5" FontWeight="Bold" Foreground="#FFEC4899"/>
                         </Border>
                     </Grid>
-                    
+
                     <!-- 1. Live Update Data Progress & Status Card -->
                     <Border Style="{StaticResource Holographic3DCardStyle}" Padding="22"
                             helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="14">
@@ -857,7 +884,7 @@
                             </StackPanel>
                         </Grid>
                     </Border>
-                    
+
                     <!-- 2. Update Configuration Settings -->
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
@@ -889,12 +916,12 @@
                             <TextBlock Text="Workbench" FontSize="10.5" FontWeight="Bold" Foreground="#FF6366F1"/>
                         </Border>
                     </Grid>
-                    
+
                     <!-- Diagnostic Traces & Sandbox Switches -->
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <components:LoadingToggleSwitch x:Name="EnableVerboseLogsToggle" Toggled="OnSettingsChanged" HeaderText="Enable verbose debug log trace files" />
-                            
+
                             <MenuFlyoutSeparator />
 
                             <Grid ColumnSpacing="16">
@@ -912,7 +939,7 @@
                             <MenuFlyoutSeparator />
 
                             <components:LoadingToggleSwitch x:Name="EnableExperimentalAiToggle" Toggled="OnSettingsChanged" HeaderText="Enable experimental AI diagnostics auto-remediations (Pre-release)" ToolTipService.ToolTip="Uses heuristic rules to automatically attempt fixing found system issues without user confirmation." />
-                            
+
                             <!-- Heuristic Auto-Remediation Risk Advisory Callout -->
                             <Border Background="{ThemeResource AppBadgeWarningBg}" BorderBrush="{ThemeResource AppBadgeWarningBorder}" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,4,0,0">
                                 <Grid ColumnSpacing="10">
@@ -1029,13 +1056,13 @@
                             <TextBlock Text="Profiles" FontSize="10.5" FontWeight="Bold" Foreground="#FFE81123"/>
                         </Border>
                     </Grid>
-                    
+
                     <Border Style="{StaticResource GlassmorphismCardStyle}" Padding="22">
                         <StackPanel Spacing="18">
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Configuration Profiles Backup &amp; Restore" FontSize="13.5" FontWeight="Bold" />
                                 <TextBlock Text="Save your entire personalization, scheduler, and security preferences to a portable JSON file." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                
+
                                 <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
                                     <Button Click="OnExportSettingsClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Padding="14,8">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
@@ -1057,7 +1084,7 @@
                             <StackPanel Spacing="6">
                                 <TextBlock Text="Factory Reset Preferences" FontSize="13.5" FontWeight="Bold" Foreground="#FFE81123"/>
                                 <TextBlock Text="Reset all settings, theme customizations, schedulers, and thresholds to pristine factory defaults." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                
+
                                 <Button Click="OnResetDefaultsClick" Style="{StaticResource DangerButtonStyle}" CornerRadius="8" Padding="16,8" Margin="0,8,0,0" FontWeight="Bold">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <FontIcon Glyph="&#xE777;" FontSize="13"/>
@@ -1090,7 +1117,7 @@
                             <TextBlock x:Name="AboutVersionBadge" Text="v6.0.0 Polaris" FontSize="10.5" FontWeight="Bold" Foreground="{ThemeResource PrimaryAccentBrush}"/>
                         </Border>
                     </Grid>
-                    
+
                     <!-- 1. Hero Identity & Live Telemetry Card -->
                     <Border Style="{StaticResource Holographic3DCardStyle}" Padding="24"
                             helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="4.5" helpers:Animation3DHelper.DepthZ="14">
@@ -1255,7 +1282,7 @@
                                 <FontIcon Glyph="&#xE727;" FontSize="16" Foreground="#FF10B981"/>
                                 <TextBlock Text="Zero-Telemetry &amp; Privacy Guarantee Pledge" FontSize="13.5" FontWeight="Bold" />
                             </StackPanel>
-                            
+
                             <Grid ColumnSpacing="16" RowSpacing="12">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -1360,5 +1387,6 @@
                 </Grid>
             </Grid>
         </ScrollViewer>
+    </Grid>
     </Grid>
 </Page>

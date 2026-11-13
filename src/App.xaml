@@ -4,7 +4,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:WinCarePro"
-    xmlns:helpers="using:WinCarePro.Core.Helpers">
+    xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:services="using:WinCarePro.Services">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -98,7 +99,7 @@
                     <SolidColorBrush x:Key="AppFlyoutItemPointerOver" Color="#FF282C3D" />
                     <SolidColorBrush x:Key="AppFlyoutItemBorder" Color="#20FFFFFF" />
 
-                    <!-- Explicit NavigationView tokens for Sidebar in Dark Mode -->
+                    <!-- Explicit NavigationView tokens for Sidebar in Dark Mode (#11141B Pane, #00D2FF Indicator) -->
                     <SolidColorBrush x:Key="NavigationViewItemForeground" Color="#F8FAFC" />
                     <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="NavigationViewItemForegroundPressed" Color="#CBD5E1" />
@@ -106,10 +107,12 @@
                     <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="#CBD5E1" />
                     <SolidColorBrush x:Key="NavigationViewItemHeaderForeground" Color="#94A3B8" />
-                    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#FF12141F" />
-                    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#FF12141F" />
-                    <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#FF12141F" />
-                    <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#FF12141F" />
+                    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#FF11141B" />
+                    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#FF11141B" />
+                    <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#FF11141B" />
+                    <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#FF11141B" />
+                    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="#FF00D2FF" />
+                    <SolidColorBrush x:Key="NavigationViewItemSelectionIndicatorForeground" Color="#FF00D2FF" />
                     <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
 
                     <!-- Aura Genesis Splash & Shutdown Overlay Tokens (Dark Mode) -->
@@ -208,7 +211,7 @@
                     <SolidColorBrush x:Key="AppFlyoutItemPointerOver" Color="#FF282C3D" />
                     <SolidColorBrush x:Key="AppFlyoutItemBorder" Color="#20FFFFFF" />
 
-                    <!-- Explicit NavigationView tokens for Sidebar in Dark Mode -->
+                    <!-- Explicit NavigationView tokens for Sidebar in Dark Mode (#11141B Pane, #00D2FF Indicator) -->
                     <SolidColorBrush x:Key="NavigationViewItemForeground" Color="#F8FAFC" />
                     <SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="NavigationViewItemForegroundPressed" Color="#CBD5E1" />
@@ -216,10 +219,12 @@
                     <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="#CBD5E1" />
                     <SolidColorBrush x:Key="NavigationViewItemHeaderForeground" Color="#94A3B8" />
-                    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#FF12141F" />
-                    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#FF12141F" />
-                    <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#FF12141F" />
-                    <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#FF12141F" />
+                    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#FF11141B" />
+                    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#FF11141B" />
+                    <SolidColorBrush x:Key="NavigationViewPaneBackground" Color="#FF11141B" />
+                    <SolidColorBrush x:Key="SplitViewPaneBackground" Color="#FF11141B" />
+                    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="#FF00D2FF" />
+                    <SolidColorBrush x:Key="NavigationViewItemSelectionIndicatorForeground" Color="#FF00D2FF" />
                     <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
 
                     <!-- Aura Genesis Splash & Shutdown Overlay Tokens (Dark Mode) -->
@@ -499,23 +504,23 @@
 
             <!-- Unified Flat Fluent 2.0 Card Containers Styling (8px CornerRadius Across Entire System) -->
             <Style x:Key="CockpitBentoCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource GlassCardBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
             </Style>
 
             <Style x:Key="GlowCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource GlassCardBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
             </Style>
 
             <Style x:Key="GlassmorphismCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource GlassCardBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
             </Style>
@@ -540,8 +545,8 @@
             </Style>
 
             <Style x:Key="CyberBentoHeroCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource GlassCardBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
@@ -581,12 +586,12 @@
                 <Setter Property="Padding" Value="12" />
             </Style>
 
-            <!-- Global typography & header standards -->
+            <!-- Global typography & header standards (Rule 10: IconBadge CornerRadius 10, Title 24 SemiBold, Subtitle Opacity 0.7) -->
             <Style x:Key="PageHeaderIconBadgeStyle" TargetType="Border">
                 <Setter Property="Background" Value="{StaticResource PrimaryAccentBrush}" />
-                <Setter Property="CornerRadius" Value="8" />
-                <Setter Property="Width" Value="36" />
-                <Setter Property="Height" Value="36" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Width" Value="38" />
+                <Setter Property="Height" Value="38" />
                 <Setter Property="Padding" Value="0" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Center" />
@@ -594,15 +599,16 @@
 
             <Style x:Key="PageHeaderTitleStyle" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI Variable Display" />
-                <Setter Property="FontSize" Value="22" />
+                <Setter Property="FontSize" Value="24" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
             </Style>
 
             <Style x:Key="PageHeaderSubtitleStyle" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI Variable Text" />
-                <Setter Property="FontSize" Value="12.5" />
-                <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+                <Setter Property="Opacity" Value="0.7" />
                 <Setter Property="Margin" Value="0,2,0,0" />
             </Style>
 
@@ -823,13 +829,13 @@
             <!-- Fluent Card Border Brushes -->
             <SolidColorBrush x:Key="AuroraGlowBorderBrush" Color="#250F6CBD" />
 
-            <!-- Navigation Active Indicator Gradient -->
-            <SolidColorBrush x:Key="NavActiveIndicatorBrush" Color="#FF0F6CBD" />
+            <!-- Navigation Active Indicator Gradient (Cyan #00D2FF) -->
+            <SolidColorBrush x:Key="NavActiveIndicatorBrush" Color="#FF00D2FF" />
 
-            <!-- Aura Glass Card Style -->
+            <!-- Aura Glass Card Style (100% Obsidian #161922, Specular Rim, 8px Corner Radius) -->
             <Style x:Key="AuraGlassCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource GlassCardBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
@@ -837,21 +843,22 @@
 
             <!-- Elevated Glass Card Style -->
             <Style x:Key="ElevatedGlassCardStyle" TargetType="Border">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource GlassCardBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16" />
             </Style>
 
+            <!-- Primary Action Gradient Button (#0072FF -> #00C6FF, Shimmer Specular Sweep) -->
             <Style x:Key="VibrantPrimaryButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="#FF0F6CBD" />
+                <Setter Property="Background" Value="{StaticResource PrimaryCtaGradientBrush}" />
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="FontWeight" Value="SemiBold" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="16,7" />
                 <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="BorderBrush" Value="#FF0D5CA6" />
+                <Setter Property="BorderBrush" Value="#4000C6FF" />
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -859,8 +866,8 @@
                 <Setter Property="UseSystemFocusVisuals" Value="True" />
                 <Setter Property="FocusVisualPrimaryThickness" Value="2" />
                 <Setter Property="FocusVisualMargin" Value="-2" />
-                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource FocusStrokeColorOuterBrush}" />
-                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource FocusStrokeColorInnerBrush}" />
+                <Setter Property="FocusVisualPrimaryBrush" Value="#FF00D2FF" />
+                <Setter Property="FocusVisualSecondaryBrush" Value="#FF0D0F14" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -883,12 +890,14 @@
                                         <VisualState x:Name="Normal" />
                                         <VisualState x:Name="PointerOver">
                                             <VisualState.Setters>
-                                                <Setter Target="MainButtonBorder.Background" Value="#FF115EA3" />
+                                                <Setter Target="MainButtonBorder.Background" Value="{StaticResource PrimaryCtaGradientHoverBrush}" />
+                                                <Setter Target="MainButtonBorder.BorderBrush" Value="#8000D2FF" />
                                             </VisualState.Setters>
                                         </VisualState>
                                         <VisualState x:Name="Pressed">
                                             <VisualState.Setters>
-                                                <Setter Target="MainButtonBorder.Background" Value="#FF0F548C" />
+                                                <Setter Target="MainButtonBorder.Background" Value="{StaticResource PrimaryCtaGradientPressedBrush}" />
+                                                <Setter Target="MainButtonBorder.BorderBrush" Value="#500072FF" />
                                             </VisualState.Setters>
                                         </VisualState>
                                         <VisualState x:Name="Disabled">
@@ -964,11 +973,11 @@
             <!-- Cleaner Hero Scan Button Style -->
             <Style x:Key="CleanerHeroScanButtonStyle" TargetType="Button" BasedOn="{StaticResource VibrantPrimaryButtonStyle}" />
 
-            <!-- Standard Secondary Button Style -->
+            <!-- Standard Secondary / Ghost Button Style (Nền #1E222E, Viền SpecularGlassBorderBrush) -->
             <Style x:Key="StandardSecondaryButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="Background" Value="{ThemeResource SecondaryButtonBackgroundBrush}" />
                 <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="14,7" />
@@ -981,8 +990,8 @@
                 <Setter Property="UseSystemFocusVisuals" Value="True" />
                 <Setter Property="FocusVisualPrimaryThickness" Value="2" />
                 <Setter Property="FocusVisualMargin" Value="-2" />
-                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource FocusStrokeColorOuterBrush}" />
-                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource FocusStrokeColorInnerBrush}" />
+                <Setter Property="FocusVisualPrimaryBrush" Value="#FF00D2FF" />
+                <Setter Property="FocusVisualSecondaryBrush" Value="#FF0D0F14" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -1003,14 +1012,14 @@
                                             <VisualState x:Name="Normal" />
                                             <VisualState x:Name="PointerOver">
                                                 <VisualState.Setters>
-                                                    <Setter Target="ContentPresenter.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                    <Setter Target="ContentPresenter.BorderBrush" Value="{StaticResource PrimaryAccentBorderBrush}" />
+                                                    <Setter Target="ContentPresenter.Background" Value="{ThemeResource SecondaryButtonHoverBackgroundBrush}" />
+                                                    <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource SpecularGlassBorderHoverBrush}" />
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Pressed">
                                                 <VisualState.Setters>
-                                                    <Setter Target="ContentPresenter.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                    <Setter Target="ContentPresenter.Opacity" Value="0.85" />
+                                                    <Setter Target="ContentPresenter.Background" Value="{ThemeResource SecondaryButtonPressedBackgroundBrush}" />
+                                                    <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource SpecularGlassBorderActiveBrush}" />
                                                 </VisualState.Setters>
                                             </VisualState>
                                             <VisualState x:Name="Disabled">
@@ -1063,9 +1072,9 @@
 
             <!-- Destructive / Danger Action Button Style -->
             <Style x:Key="DangerButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{ThemeResource AppBadgeCriticalBg}" />
-                <Setter Property="Foreground" Value="{ThemeResource AppBadgeCriticalFg}" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AppBadgeCriticalBorder}" />
+                <Setter Property="Background" Value="{ThemeResource AppStatusDangerBackground}" />
+                <Setter Property="Foreground" Value="{ThemeResource AppStatusDangerBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource AppStatusDangerBorder}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="14,6" />
@@ -1077,8 +1086,8 @@
                 <Setter Property="UseSystemFocusVisuals" Value="True" />
                 <Setter Property="FocusVisualPrimaryThickness" Value="2" />
                 <Setter Property="FocusVisualMargin" Value="-2" />
-                <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource FocusStrokeColorOuterBrush}" />
-                <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource FocusStrokeColorInnerBrush}" />
+                <Setter Property="FocusVisualPrimaryBrush" Value="#FFEF4444" />
+                <Setter Property="FocusVisualSecondaryBrush" Value="#FF0D0F14" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
@@ -1218,6 +1227,7 @@
             </Style>
 
             <!-- Value Converters -->
+            <services:TranslationConverter x:Key="TranslationConverter" />
             <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
             <local:StatusToBrushConverter x:Key="StatusToBrushConverter" />

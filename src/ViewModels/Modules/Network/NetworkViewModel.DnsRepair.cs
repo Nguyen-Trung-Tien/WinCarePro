@@ -55,7 +55,7 @@ public partial class NetworkViewModel
             {
                 WinCarePro.Infrastructure.Logging.CrashLogger.LogException("NetworkViewModel.DnsBenchmarkEnqueue", ex);
             }
-            
+
             await _historyService.SaveDnsBenchmarkResultAsync(result);
             _notificationService?.ShowSuccess("DNS Benchmark Completed".T(), string.Format("Fastest server: {0}".T(), FastestDnsText));
         }
@@ -183,7 +183,7 @@ public partial class NetworkViewModel
         if (IsBusy) return;
         IsBusy = true;
         LogText(string.Format("Initiating repair action: {0}...".T(), operation));
-        
+
         try
         {
             if (operation.Equals("smartrepair", StringComparison.OrdinalIgnoreCase) ||
@@ -191,13 +191,13 @@ public partial class NetworkViewModel
             {
                 LogText("[Smart Auto-Repair] Step 1/5: Flushing DNS & ARP cache...".T());
                 await _engine.FlushDnsAsync();
-                
+
                 LogText("[Smart Auto-Repair] Step 2/5: Resetting Winsock socket catalogs...".T());
                 await _engine.ResetWinsockAsync();
-                
+
                 LogText("[Smart Auto-Repair] Step 3/5: Rebuilding TCP/IP network stack...".T());
                 await _engine.ResetTcpIpAsync();
-                
+
                 LogText("[Smart Auto-Repair] Step 4/5: Rebinding IP & DHCP lease...".T());
                 await _engine.ReleaseRenewIpAsync();
 
@@ -206,6 +206,8 @@ public partial class NetworkViewModel
 
                 LogText("[Smart Auto-Repair] Completed: Network stack, DNS cache and socket routing successfully restored.".T());
                 _notificationService?.ShowSuccess("Smart Network Repair".T(), "Network stack, DNS cache and socket routing successfully restored and optimized.".T());
+                SummaryNetworkText = "Network stack, DNS cache and socket routing successfully restored and optimized.".T();
+                IsSummaryCardVisible = true;
                 await RunDiagnosticsAsync();
                 return;
             }
@@ -226,11 +228,13 @@ public partial class NetworkViewModel
             };
 
             if (_cts == null || _cts.IsCancellationRequested) return;
-            
+
             if (ok)
             {
                 LogText("Repair operation succeeded.".T());
                 _notificationService?.ShowSuccess("Network Repair".T(), string.Format("Operation '{0}' completed successfully.".T(), operation));
+                SummaryNetworkText = string.Format("Operation '{0}' completed successfully. Network adapter refreshed.".T(), operation);
+                IsSummaryCardVisible = true;
             }
             else
             {
@@ -287,7 +291,7 @@ public partial class NetworkViewModel
     {
         if (IsBusy) return;
         IsBusy = true;
-        
+
         try
         {
             bool enable = IsDohEnabled;
@@ -324,7 +328,7 @@ public partial class NetworkViewModel
             }
 
             bool success = await _engine.SetDohSettingsAsync(enable, primaryIp, secondaryIp, template);
-            
+
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 if (success)

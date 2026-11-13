@@ -10,6 +10,7 @@
     xmlns:local="using:WinCarePro.Views"
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     xmlns:db="using:WinCarePro.Database"
     mc:Ignorable="d"
     NavigationCacheMode="Required">
@@ -69,6 +70,21 @@
         <!-- Main Scrollable Content -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Spacing="10">
+
+                <!-- Contextual Status Banners -->
+                <controls:InlineStatusCard
+                    CardType="SafetyNotice"
+                    Title="{Binding Source='Autonomous Shield &amp; Real-Time Monitoring Active', Converter={StaticResource TranslationConverter}}"
+                    Message="{Binding Source='WinCare Pro background telemetry monitors RAM pressure, disk hygiene, and Windows services with near-zero overhead.', Converter={StaticResource TranslationConverter}}"
+                    IsDismissible="True"
+                    Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <controls:InlineStatusCard
+                    CardType="Summary"
+                    Title="{Binding Source='1-Click Care Optimization Summary', Converter={StaticResource TranslationConverter}}"
+                    Message="{x:Bind ViewModel.SummaryDashboardText, Mode=OneWay}"
+                    IsDismissible="True"
+                    Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <!-- Row 0: Flagship System Health Cockpit & Action Deck (Full Width) -->
                 <Border x:Name="HealthGaugeCard" Margin="4,0,4,2" Padding="20,16" CornerRadius="12" Background="{ThemeResource GlassCardBackgroundBrush}" BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1">

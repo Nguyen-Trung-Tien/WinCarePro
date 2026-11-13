@@ -51,6 +51,15 @@ public partial class NetworkViewModel
     [ObservableProperty]
     private bool _isInternetAvailable = true;
 
+    [ObservableProperty]
+    private bool _isSafetyNoticeVisible = true;
+
+    [ObservableProperty]
+    private bool _isSummaryCardVisible;
+
+    [ObservableProperty]
+    private string _summaryNetworkText = string.Empty;
+
     // ==================== 3. SECURE DNS SWITCHER PROPERTIES ====================
     public ObservableCollection<DnsProfileOption> DnsProfiles { get; } = new();
 
@@ -197,6 +206,8 @@ public partial class NetworkViewModel
                 {
                     DnsStatusMessage = string.Format("Đã chuyển sang {0} thành công.".T(), SelectedDnsProfile.Name);
                     _notificationService?.ShowSuccess("DNS Switcher".T(), DnsStatusMessage);
+                    SummaryNetworkText = DnsStatusMessage;
+                    IsSummaryCardVisible = true;
                 }
                 else
                 {
@@ -239,6 +250,8 @@ public partial class NetworkViewModel
                 {
                     DnsStatusMessage = "Đã khôi phục DNS tự động (DHCP) thành công.".T();
                     _notificationService?.ShowSuccess("DNS Switcher".T(), DnsStatusMessage);
+                    SummaryNetworkText = DnsStatusMessage;
+                    IsSummaryCardVisible = true;
                 }
                 else
                 {
@@ -281,6 +294,8 @@ public partial class NetworkViewModel
                 {
                     DnsStatusMessage = "Đã khôi phục DNS theo bản sao lưu trước đó.".T();
                     _notificationService?.ShowSuccess("DNS Switcher".T(), DnsStatusMessage);
+                    SummaryNetworkText = DnsStatusMessage;
+                    IsSummaryCardVisible = true;
                 }
                 else
                 {

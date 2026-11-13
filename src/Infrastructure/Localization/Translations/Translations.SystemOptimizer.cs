@@ -508,5 +508,23 @@ public partial class TranslationManager
         if (en != null) en["Enabled"] = "Enabled";
         vi["Disabled"] = "Tắt";
         if (en != null) en["Disabled"] = "Disabled";
+
+        vi["SafeRegistryGuard & Policy Armor Active"] = "Khiên Bảo Vệ SafeRegistryGuard & Policy Đang Kích Hoạt";
+        if (en != null) en["SafeRegistryGuard & Policy Armor Active"] = "SafeRegistryGuard & Policy Armor Active";
+        vi["All system modifications create restore snapshots and protect critical registry roots."] = "Mọi thao tác sửa đổi hệ thống đều tạo bản sao lưu khôi phục và bảo vệ an toàn các nhánh Registry trọng yếu.";
+        if (en != null) en["All system modifications create restore snapshots and protect critical registry roots."] = "All system modifications create restore snapshots and protect critical registry roots.";
+        vi["Optimization Profile Applied"] = "Đã Áp Dụng Hồ Sơ Tối Ưu";
+        if (en != null) en["Optimization Profile Applied"] = "Optimization Profile Applied";
+
+        vi["Shell Extension Safety Active"] = "Bảo Vệ Tiện Ích Mở Rộng Chuột Phải Đang Bật";
+        if (en != null) en["Shell Extension Safety Active"] = "Shell Extension Safety Active";
+        vi["Right-click shell extensions are safely toggled via non-destructive approval subkeys with instant rollback."] = "Các tiện ích menu chuột phải được bật/tắt an toàn qua khóa chứng thực không phá hủy, cho phép khôi phục tức thì.";
+        if (en != null) en["Right-click shell extensions are safely toggled via non-destructive approval subkeys with instant rollback."] = "Right-click shell extensions are safely toggled via non-destructive approval subkeys with instant rollback.";
+        vi["Shell Extension Modified"] = "Đã Thay Đổi Tiện Ích Mở Rộng";
+        if (en != null) en["Shell Extension Modified"] = "Shell Extension Modified";
+        vi["No handlers found"] = "Không tìm thấy tiện ích nào";
+        if (en != null) en["No handlers found"] = "No handlers found";
+        vi["No context menu handlers match your search query or filter category."] = "Không có tiện ích menu chuột phải nào khớp với từ khóa tìm kiếm hoặc bộ lọc.";
+        if (en != null) en["No context menu handlers match your search query or filter category."] = "No context menu handlers match your search query or filter category.";
     }
 }

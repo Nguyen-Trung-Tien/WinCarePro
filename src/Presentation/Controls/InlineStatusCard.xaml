@@ -1,0 +1,101 @@
+<UserControl
+    x:Class="WinCarePro.Presentation.Controls.InlineStatusCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinCarePro.Presentation.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Border x:Name="CardRootBorder"
+            Style="{x:Bind local:InlineStatusCard.ResolveCardStyle(CardType), Mode=OneWay}"
+            CornerRadius="8"
+            Padding="14,10"
+            Margin="0,0,0,12">
+        <Grid ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Icon Badge -->
+            <Border Grid.Column="0"
+                    Width="32" Height="32"
+                    CornerRadius="8"
+                    Background="{x:Bind local:InlineStatusCard.ResolveBadgeBackground(CardType), Mode=OneWay}"
+                    BorderBrush="{x:Bind local:InlineStatusCard.ResolveBadgeBorder(CardType), Mode=OneWay}"
+                    BorderThickness="1"
+                    VerticalAlignment="Center">
+                <FontIcon Glyph="{x:Bind local:InlineStatusCard.ResolveGlyph(CardType, CustomGlyph), Mode=OneWay}"
+                          FontSize="14"
+                          Foreground="{x:Bind local:InlineStatusCard.ResolveGlyphBrush(CardType), Mode=OneWay}"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center" />
+            </Border>
+
+            <!-- Text Content -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <TextBlock Text="{x:Bind Title, Mode=OneWay}"
+                               FontWeight="Bold"
+                               FontSize="12.5"
+                               FontFamily="Segoe UI Variable Display"
+                               Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                               VerticalAlignment="Center" />
+
+                    <!-- Semantic Badge Pill -->
+                    <Border Background="{x:Bind local:InlineStatusCard.ResolveBadgeBackground(CardType), Mode=OneWay}"
+                            BorderBrush="{x:Bind local:InlineStatusCard.ResolveBadgeBorder(CardType), Mode=OneWay}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="6,1.5"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind local:InlineStatusCard.ResolveBadgeLabel(CardType, CustomBadgeText), Mode=OneWay}"
+                                   FontSize="9"
+                                   FontWeight="ExtraBold"
+                                   Foreground="{x:Bind local:InlineStatusCard.ResolveGlyphBrush(CardType), Mode=OneWay}"
+                                   FontFamily="Segoe UI Variable Display" />
+                    </Border>
+                </StackPanel>
+
+                <TextBlock Text="{x:Bind Message, Mode=OneWay}"
+                           FontSize="11"
+                           FontFamily="Segoe UI Variable Text"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           TextWrapping="Wrap"
+                           LineHeight="16" />
+            </StackPanel>
+
+            <!-- Action Controls Cluster -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <!-- Action Button (Optional) -->
+                <Button Command="{x:Bind ActionCommand, Mode=OneWay}"
+                        Visibility="{x:Bind local:InlineStatusCard.HasTextVisibility(ActionText), Mode=OneWay}"
+                        Style="{StaticResource SecondaryGlassButtonStyle}"
+                        Height="28"
+                        Padding="10,0"
+                        CornerRadius="6"
+                        FontSize="11"
+                        FontWeight="SemiBold"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{x:Bind ActionText, Mode=OneWay}" />
+                </Button>
+
+                <!-- Dismiss Button (Optional) -->
+                <Button Click="OnDismissClick"
+                        Visibility="{x:Bind local:InlineStatusCard.BoolToVisibility(IsDismissible), Mode=OneWay}"
+                        AutomationProperties.Name="Dismiss"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Width="24" Height="24"
+                        CornerRadius="12"
+                        Padding="0"
+                        VerticalAlignment="Center"
+                        ToolTipService.ToolTip="Dismiss">
+                    <FontIcon Glyph="&#xE711;" FontSize="10" Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

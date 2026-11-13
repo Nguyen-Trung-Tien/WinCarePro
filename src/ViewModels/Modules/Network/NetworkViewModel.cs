@@ -11,6 +11,7 @@ using WinCarePro.Services.Contracts;
 using WinCarePro.Services.Implementations;
 using WinCarePro.Services;
 using WinCarePro.Models;
+using WinCarePro.Infrastructure.Logging;
 
 namespace WinCarePro.ViewModels;
 
@@ -28,7 +29,7 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
     private string _gatewayReachability = "Checking...";
     private string _dnsStatus = "Checking...";
     private string _ipStatus = "Checking...";
-    
+
     private string _testHost = "8.8.8.8";
     private string _consoleOutput = "";
     private string _portScannerHost = "localhost";
@@ -118,7 +119,8 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         get => _internetStatus.T();
         set
         {
-            SetPropertyOnUI(() => _internetStatus, v => {
+            SetPropertyOnUI(() => _internetStatus, v =>
+            {
                 _internetStatus = v;
                 RecalculateHealthScore();
             }, value);
@@ -190,7 +192,8 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         get => _latencyMs;
         set
         {
-            SetPropertyOnUI(() => _latencyMs, v => {
+            SetPropertyOnUI(() => _latencyMs, v =>
+            {
                 _latencyMs = v;
                 RecalculateHealthScore();
             }, value);
@@ -202,7 +205,8 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         get => _packetLossPercent;
         set
         {
-            SetPropertyOnUI(() => _packetLossPercent, v => {
+            SetPropertyOnUI(() => _packetLossPercent, v =>
+            {
                 _packetLossPercent = v;
                 RecalculateHealthScore();
             }, value);
@@ -214,7 +218,8 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         get => _jitterMs;
         set
         {
-            SetPropertyOnUI(() => _jitterMs, v => {
+            SetPropertyOnUI(() => _jitterMs, v =>
+            {
                 _jitterMs = v;
                 RecalculateHealthScore();
             }, value);
@@ -314,7 +319,8 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         get => _downloadSpeedMbps;
         set
         {
-            SetPropertyOnUI(() => _downloadSpeedMbps, v => {
+            SetPropertyOnUI(() => _downloadSpeedMbps, v =>
+            {
                 _downloadSpeedMbps = v;
                 OnPropertyChanged(nameof(DownloadSpeed));
                 OnPropertyChanged(nameof(DisplaySpeed));
@@ -328,7 +334,8 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         get => _uploadSpeedMbps;
         set
         {
-            SetPropertyOnUI(() => _uploadSpeedMbps, v => {
+            SetPropertyOnUI(() => _uploadSpeedMbps, v =>
+            {
                 _uploadSpeedMbps = v;
                 OnPropertyChanged(nameof(UploadSpeed));
                 OnPropertyChanged(nameof(DisplaySpeed));
@@ -499,13 +506,16 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
             _cts?.Cancel();
             _cts?.Dispose();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("NetworkViewModel.Initialize.Cancel", ex);
+        }
         _cts = new System.Threading.CancellationTokenSource();
 
         // Unsubscribe first to prevent double-registration when page is re-navigated
         _engine.OutputReceived -= OnOutputReceived;
         _engine.OutputReceived += OnOutputReceived;
-        
+
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
 
@@ -515,7 +525,7 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
         _ = RunDiagnosticsAsync();
         _ = LoadHistoryAsync();
         _ = InitializeDohAsync();
-        
+
         IsBusy = false;
         if (SpeedTestPhase != "Completed")
         {
@@ -538,7 +548,10 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
             _cts?.Cancel();
             _cts?.Dispose();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("NetworkViewModel.Cleanup.Cancel", ex);
+        }
         finally
         {
             _cts = null;
@@ -625,7 +638,10 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
             _dnsCts?.Cancel();
             _dnsCts?.Dispose();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("NetworkViewModel.CancelDnsBenchmark", ex);
+        }
         finally
         {
             _dnsCts = null;
@@ -652,10 +668,16 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
                 {
                     ConsoleOutput += msg + "\n";
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    CrashLogger.LogException("NetworkViewModel.LogText.Enqueue", ex);
+                }
             });
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("NetworkViewModel.LogText", ex);
+        }
     }
 
     /// <summary>
@@ -705,11 +727,17 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
                         var stats = ni.GetIPStatistics();
                         total += stats.BytesReceived;
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        CrashLogger.LogException("NetworkViewModel.GetTotalBytesReceived.Stats", ex);
+                    }
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("NetworkViewModel.GetTotalBytesReceived", ex);
+        }
         return total;
     }
 
@@ -727,11 +755,17 @@ public partial class NetworkViewModel : ViewModelBase, IDisposable
                         var stats = ni.GetIPStatistics();
                         total += stats.BytesSent;
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        CrashLogger.LogException("NetworkViewModel.GetTotalBytesSent.Stats", ex);
+                    }
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("NetworkViewModel.GetTotalBytesSent", ex);
+        }
         return total;
     }
 

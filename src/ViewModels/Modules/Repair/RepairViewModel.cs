@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Services;
+using WinCarePro.Infrastructure.Logging;
 
 namespace WinCarePro.ViewModels;
 
@@ -265,6 +266,27 @@ public class RepairViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _isConsoleVisible, value);
     }
 
+    private bool _isSafetyNoticeVisible = true;
+    public bool IsSafetyNoticeVisible
+    {
+        get => _isSafetyNoticeVisible;
+        set => SetProperty(ref _isSafetyNoticeVisible, value);
+    }
+
+    private bool _isSummaryCardVisible;
+    public bool IsSummaryCardVisible
+    {
+        get => _isSummaryCardVisible;
+        set => SetProperty(ref _isSummaryCardVisible, value);
+    }
+
+    private string _summaryRepairText = string.Empty;
+    public string SummaryRepairText
+    {
+        get => _summaryRepairText;
+        set => SetProperty(ref _summaryRepairText, value);
+    }
+
     private bool _isAutoScrollEnabled = true;
     public bool IsAutoScrollEnabled
     {
@@ -386,7 +408,10 @@ public class RepairViewModel : ViewModelBase, IDisposable
                         startupType = svc.StartType.ToString().T();
                         isRunning = svc.Status == System.ServiceProcess.ServiceControllerStatus.Running;
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        CrashLogger.LogException("RepairViewModel.LoadServices.CheckService", ex);
+                    }
 
                     if (isRunning) runningCount++;
 
@@ -473,7 +498,10 @@ public class RepairViewModel : ViewModelBase, IDisposable
             Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(dp);
             LogText("Console log copied to clipboard.".T());
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("RepairViewModel.CopyConsoleLog", ex);
+        }
     }
 
     public void ToggleConsoleVisibility()
@@ -567,7 +595,10 @@ public class RepairViewModel : ViewModelBase, IDisposable
                         startType = svc.StartType.ToString();
                         isRunning = svc.Status == System.ServiceProcess.ServiceControllerStatus.Running;
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        CrashLogger.LogException("RepairViewModel.ScanServicesAsync.CheckService", ex);
+                    }
 
                     if (isRunning)
                     {
@@ -655,7 +686,10 @@ public class RepairViewModel : ViewModelBase, IDisposable
                                 }
                             }
                         }
-                        catch { }
+                        catch (Exception ex)
+                        {
+                            CrashLogger.LogException("RepairViewModel.ScanRestrictionsAsync.CheckKey", ex);
+                        }
                     }
                 }
                 return list;
@@ -930,6 +964,9 @@ public class RepairViewModel : ViewModelBase, IDisposable
 
             CurrentScanStepText = string.Format("Automated repair finished. Fixed {0} of {1} issues.".T(), fixedCount, total);
             LogText(string.Format("Automated repair finished. Fixed {0} of {1} issues.".T(), fixedCount, total));
+
+            SummaryRepairText = string.Format("Automated repair finished. Fixed {0} of {1} issues successfully.".T(), fixedCount, total);
+            IsSummaryCardVisible = true;
         }
         catch (OperationCanceledException)
         {

@@ -66,7 +66,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     private readonly ISystemSnapshotService _snapshotService;
     private readonly INotificationService _notificationService;
     private readonly IMaintenanceSchedulerService _schedulerService;
-    
+
     private bool _isDisposed = false;
     private readonly EventHandler? _languageChangedHandler;
 
@@ -107,7 +107,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
 
     [ObservableProperty]
     private string _cpuTempFormatted = "-- °C";
-    
+
     [ObservableProperty]
     private string _networkStatus = "Connected";
 
@@ -130,9 +130,18 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     private string _junkFileSize = "0.0 MB";
 
     private long _junkSizeBytes;
-    
+
     [ObservableProperty]
     private bool _isScanning;
+
+    [ObservableProperty]
+    private bool _isSafetyNoticeVisible = true;
+
+    [ObservableProperty]
+    private bool _isSummaryCardVisible;
+
+    [ObservableProperty]
+    private string _summaryDashboardText = string.Empty;
 
     [ObservableProperty]
     private string _scanStatus = "System Status: Idle".T();
@@ -488,7 +497,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
                 _cachedRamCapacityGb = specs.RamCapacityGb;
                 RamCapacityFormatted = $"{specs.RamCapacityGb:F0} GB";
             });
-            
+
             // Check Network connection
             bool isConnected = await Task.Run(() => _networkEngine.CheckInternetConnection());
             _dispatcherQueue?.TryEnqueue(() =>

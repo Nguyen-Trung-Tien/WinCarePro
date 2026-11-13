@@ -39,6 +39,27 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private bool _isSafetyNoticeVisible = true;
+    public bool IsSafetyNoticeVisible
+    {
+        get => _isSafetyNoticeVisible;
+        set => SetPropertyOnUI(() => _isSafetyNoticeVisible, v => _isSafetyNoticeVisible = v, value);
+    }
+
+    private bool _isSummaryCardVisible;
+    public bool IsSummaryCardVisible
+    {
+        get => _isSummaryCardVisible;
+        set => SetPropertyOnUI(() => _isSummaryCardVisible, v => _isSummaryCardVisible = v, value);
+    }
+
+    private string _summaryUninstallText = string.Empty;
+    public string SummaryUninstallText
+    {
+        get => _summaryUninstallText;
+        set => SetPropertyOnUI(() => _summaryUninstallText, v => _summaryUninstallText = v, value);
+    }
+
     public bool IsEmptyState => FilteredApps.Count == 0 && !IsBusy;
 
     private string _progressMessage = "Ready".T();
@@ -804,6 +825,8 @@ public class UninstallViewModel : ViewModelBase, IDisposable
                 }
                 ProgressPercent = 100;
                 ProgressMessage = string.Format("Cleaned {0} leftover files and registry entries.".T(), deleted);
+                SummaryUninstallText = string.Format("Leftovers Purged: Cleaned {0} remnant files and registry keys safely.".T(), deleted);
+                IsSummaryCardVisible = true;
                 IsBusy = false;
                 UninstallStep = 0;
                 _ = ScanAppsAsync();

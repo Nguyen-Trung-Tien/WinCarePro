@@ -225,6 +225,8 @@ public partial class DashboardViewModel
                 
                 HasScanned = true; 
                 HealthBreakdownText = "Your PC is in optimal health condition with 0 bottlenecks detected.".T();
+                SummaryDashboardText = string.Format("1-Click Care optimization finished in {0} mode. Reclaimed {1:F1} MB RAM and cleaned {2:F1} MB junk files.".T(), mode, summary.RamBytesReclaimed / (1024.0 * 1024.0), summary.JunkBytesCleaned / (1024.0 * 1024.0));
+                IsSummaryCardVisible = true;
             });
 
             return summary;
@@ -482,7 +484,10 @@ public partial class DashboardViewModel
             {
                 Database.DbManager.AddNotification("Junk Clean Completed".T(), string.Format("Cleaned {0:F1} MB junk files.".T(), cleanedMb), "Info");
             }
-            catch { }
+            catch (Exception ex)
+            {
+                CrashLogger.LogException("DashboardViewModel.CleanJunkAsync.Notification", ex);
+            }
         }
         catch (Exception ex)
         {

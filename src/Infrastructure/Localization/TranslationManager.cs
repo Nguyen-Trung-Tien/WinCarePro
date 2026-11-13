@@ -21,11 +21,13 @@ public partial class TranslationManager
     public static TranslationManager Instance => _instance ??= new TranslationManager();
 
     private AppLanguage _currentLanguage = AppLanguage.English;
+    private static readonly System.Threading.AsyncLocal<AppLanguage?> _contextLanguage = new();
     public AppLanguage CurrentLanguage
     {
-        get => _currentLanguage;
+        get => _contextLanguage.Value ?? _currentLanguage;
         set
         {
+            _contextLanguage.Value = value;
             if (_currentLanguage != value)
             {
                 _currentLanguage = value;

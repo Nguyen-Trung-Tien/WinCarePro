@@ -54,6 +54,9 @@ id_ed25519
 *.reg
 *.bak
 *.backup
+*.tmp
+*.orig
+*.old
 [Bb]ackup*/
 [Ss]napshot*/
 RegistryBackups/

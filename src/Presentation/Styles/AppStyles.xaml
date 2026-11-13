@@ -111,6 +111,17 @@
             <SolidColorBrush x:Key="InfoBarWarningSeverityIconForeground" Color="#FFF59E0B" />
             <SolidColorBrush x:Key="InfoBarErrorSeverityIconBackground" Color="#20EF4444" />
             <SolidColorBrush x:Key="InfoBarErrorSeverityIconForeground" Color="#FFEF4444" />
+
+            <!-- Inline Status Banner Tokens (v6.0.0 Polaris) -->
+            <SolidColorBrush x:Key="InlineSafetyCardBackground" Color="#1810B981" />
+            <SolidColorBrush x:Key="InlineSafetyCardBorder" Color="#3510B981" />
+            <SolidColorBrush x:Key="InlineSafetyCardGlyph" Color="#FF10B981" />
+            <SolidColorBrush x:Key="InlineSummaryCardBackground" Color="#1800D2FF" />
+            <SolidColorBrush x:Key="InlineSummaryCardBorder" Color="#3500D2FF" />
+            <SolidColorBrush x:Key="InlineSummaryCardGlyph" Color="#FF00D2FF" />
+            <SolidColorBrush x:Key="InlineAlertCardBackground" Color="#18EF4444" />
+            <SolidColorBrush x:Key="InlineAlertCardBorder" Color="#35EF4444" />
+            <SolidColorBrush x:Key="InlineAlertCardGlyph" Color="#FFEF4444" />
         </ResourceDictionary>
 
         <!-- ==================== LIGHT MODE (MICA CLEAN SURFACE) ==================== -->
@@ -190,6 +201,17 @@
             <SolidColorBrush x:Key="InfoBarWarningSeverityIconForeground" Color="#FFD97706" />
             <SolidColorBrush x:Key="InfoBarErrorSeverityIconBackground" Color="#18DC2626" />
             <SolidColorBrush x:Key="InfoBarErrorSeverityIconForeground" Color="#FFDC2626" />
+
+            <!-- Inline Status Banner Tokens (Light Mode) -->
+            <SolidColorBrush x:Key="InlineSafetyCardBackground" Color="#10059669" />
+            <SolidColorBrush x:Key="InlineSafetyCardBorder" Color="#28059669" />
+            <SolidColorBrush x:Key="InlineSafetyCardGlyph" Color="#FF059669" />
+            <SolidColorBrush x:Key="InlineSummaryCardBackground" Color="#100284C7" />
+            <SolidColorBrush x:Key="InlineSummaryCardBorder" Color="#280284C7" />
+            <SolidColorBrush x:Key="InlineSummaryCardGlyph" Color="#FF0284C7" />
+            <SolidColorBrush x:Key="InlineAlertCardBackground" Color="#10DC2626" />
+            <SolidColorBrush x:Key="InlineAlertCardBorder" Color="#28DC2626" />
+            <SolidColorBrush x:Key="InlineAlertCardGlyph" Color="#FFDC2626" />
         </ResourceDictionary>
 
         <!-- ==================== HIGH CONTRAST MODE ==================== -->
@@ -253,6 +275,17 @@
             <StaticResource x:Key="InfoBarWarningSeverityIconForeground" ResourceKey="SystemColorHighlightBrush" />
             <StaticResource x:Key="InfoBarErrorSeverityIconBackground" ResourceKey="SystemColorWindowBrush" />
             <StaticResource x:Key="InfoBarErrorSeverityIconForeground" ResourceKey="SystemColorHighlightBrush" />
+
+            <!-- Inline Status Banner Tokens (High Contrast) -->
+            <StaticResource x:Key="InlineSafetyCardBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="InlineSafetyCardBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+            <StaticResource x:Key="InlineSafetyCardGlyph" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="InlineSummaryCardBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="InlineSummaryCardBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+            <StaticResource x:Key="InlineSummaryCardGlyph" ResourceKey="SystemColorHighlightBrush" />
+            <StaticResource x:Key="InlineAlertCardBackground" ResourceKey="SystemColorWindowBrush" />
+            <StaticResource x:Key="InlineAlertCardBorder" ResourceKey="SystemColorWindowTextColorBrush" />
+            <StaticResource x:Key="InlineAlertCardGlyph" ResourceKey="SystemColorHighlightBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -713,6 +746,62 @@
         <GradientStop Color="#18EF4444" Offset="0.5" />
         <GradientStop Color="#00000000" Offset="1.0" />
     </RadialGradientBrush>
+
+    <!-- ========================================================================= -->
+    <!-- 6. INLINE CONTEXTUAL STATUS & NOTICE CARDS (v6.0.0 POLARIS)               -->
+    <!-- Safety / Protection, Post-Action Summary & Alert / Elevation Notice Cards -->
+    <!-- ========================================================================= -->
+
+    <!-- Inline Safety & System Protection Notice Card (Shield Guard Emerald) -->
+    <Style x:Key="InlineSafetyNoticeCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource InlineSafetyCardBackground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource InlineSafetyCardBorder}" />
+        <Setter Property="BorderThickness" Value="1.2" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="14,10" />
+        <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+
+    <!-- Inline Post-Action Summary Card (Cyan / Emerald Optimization Pulse) -->
+    <Style x:Key="InlineSummaryCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource InlineSummaryCardBackground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource InlineSummaryCardBorder}" />
+        <Setter Property="BorderThickness" Value="1.2" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="14,10" />
+        <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+
+    <!-- Inline Alert / Elevation Warning Card (Ruby / Amber Administrative) -->
+    <Style x:Key="InlineAlertElevationCardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource InlineAlertCardBackground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource InlineAlertCardBorder}" />
+        <Setter Property="BorderThickness" Value="1.2" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="14,10" />
+        <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+
+    <!-- Standardized Empty State Card Container (Aura Glass 8px Radius, Specular Rim) -->
+    <Style x:Key="EmptyStateCardBorderStyle" TargetType="Border">
+        <Setter Property="Background" Value="{ThemeResource GlassCardBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SpecularGlassBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="24,32" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+
+    <!-- Empty State IconBadge Style (CornerRadius="10") -->
+    <Style x:Key="EmptyStateCardIconBadgeStyle" TargetType="Border">
+        <Setter Property="Width" Value="48" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Background" Value="{StaticResource PrimaryAccentLightBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryAccentBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
 
 </ResourceDictionary>
 

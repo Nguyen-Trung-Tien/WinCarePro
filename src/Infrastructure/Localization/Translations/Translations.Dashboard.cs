@@ -593,5 +593,16 @@ public partial class TranslationManager
         if (en != null) en["Load levels for CPU, RAM, GPU, Disk"] = "Load levels for CPU, RAM, GPU, Disk";
         vi["System Recommendations"] = "Đề xuất hệ thống";
         if (en != null) en["System Recommendations"] = "System Recommendations";
+
+        vi["Autonomous Shield & Real-Time Monitoring Active"] = "Lá chắn Tự động & Giám sát Thời gian Thực Đang Hoạt động";
+        if (en != null) en["Autonomous Shield & Real-Time Monitoring Active"] = "Autonomous Shield & Real-Time Monitoring Active";
+        vi["Autonomous Shield &amp; Real-Time Monitoring Active"] = "Lá chắn Tự động & Giám sát Thời gian Thực Đang Hoạt động";
+        if (en != null) en["Autonomous Shield &amp; Real-Time Monitoring Active"] = "Autonomous Shield &amp; Real-Time Monitoring Active";
+        vi["WinCare Pro background telemetry monitors RAM pressure, disk hygiene, and Windows services with near-zero overhead."] = "Hệ thống đo lường ngầm WinCare Pro giám sát áp lực RAM, vệ sinh ổ đĩa và dịch vụ Windows với mức tiêu tốn tài nguyên gần như bằng không.";
+        if (en != null) en["WinCare Pro background telemetry monitors RAM pressure, disk hygiene, and Windows services with near-zero overhead."] = "WinCare Pro background telemetry monitors RAM pressure, disk hygiene, and Windows services with near-zero overhead.";
+        vi["1-Click Care Optimization Summary"] = "Tóm tắt Tối ưu 1-Chạm";
+        if (en != null) en["1-Click Care Optimization Summary"] = "1-Click Care Optimization Summary";
+        vi["1-Click Care optimization finished in {0} mode. Reclaimed {1:F1} MB RAM and cleaned {2:F1} MB junk files."] = "Tối ưu 1-chạm hoàn tất ở chế độ {0}. Đã giải phóng {1:F1} MB RAM và dọn dẹp {2:F1} MB tệp rác.";
+        if (en != null) en["1-Click Care optimization finished in {0} mode. Reclaimed {1:F1} MB RAM and cleaned {2:F1} MB junk files."] = "1-Click Care optimization finished in {0} mode. Reclaimed {1:F1} MB RAM and cleaned {2:F1} MB junk files.";
     }
 }

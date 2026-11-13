@@ -30,6 +30,15 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
     private string _statusMessage = "Ready to scan security status".T();
 
     [ObservableProperty]
+    private bool _isSafetyNoticeVisible = true;
+
+    [ObservableProperty]
+    private bool _isSummaryCardVisible;
+
+    [ObservableProperty]
+    private string _summarySecurityText = string.Empty;
+
+    [ObservableProperty]
     private int _securityScore = 100;
 
     [ObservableProperty]
@@ -189,7 +198,10 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             _scanCts?.Dispose();
             _scanCts = null;
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.CancelScan", ex);
+        }
         IsScanning = false;
         SetOperationState(OperationState.Idle);
     }
@@ -219,7 +231,10 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             FeedbackTrackingEnabled = _securityEngine.GetPrivacySetting("feedback");
             AppDiagnosticsEnabled = _securityEngine.GetPrivacySetting("appdiagnostics");
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.LoadPrivacySettings", ex);
+        }
     }
 
     public async Task ScanSecurityAsync()
@@ -231,7 +246,10 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             _scanCts?.Cancel();
             _scanCts?.Dispose();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SecurityViewModel.ScanSecurityAsync.Cancel", ex);
+        }
 
         _scanCts = new System.Threading.CancellationTokenSource();
         var ct = _scanCts.Token;
@@ -866,7 +884,10 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
                         dp.SetText(report);
                         Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(dp);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        CrashLogger.LogException("SecurityViewModel.ExportSecurityReportAsync.Clipboard", ex);
+                    }
                 });
             });
             StatusMessage = "Security Audit Report copied to clipboard.".T();
@@ -906,6 +927,8 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             RunOnUI(() => LoadPrivacySettings());
             await ScanSecurityAsync();
             StatusMessage = string.Format("{0} Defense Profile activated successfully.".T(), profile);
+            SummarySecurityText = string.Format("{0} Defense Profile activated successfully. Live shields verified.".T(), profile);
+            IsSummaryCardVisible = true;
         }
         catch (Exception ex)
         {
@@ -941,6 +964,8 @@ public partial class SecurityViewModel : ViewModelBase, IDisposable
             RunOnUI(() => LoadPrivacySettings());
             await ScanSecurityAsync();
             StatusMessage = "Intelligent System Hardening complete. System protected.".T();
+            SummarySecurityText = "Intelligent System Hardening complete. Firewall active and privacy shields enforced.".T();
+            IsSummaryCardVisible = true;
         }
         catch (Exception ex)
         {

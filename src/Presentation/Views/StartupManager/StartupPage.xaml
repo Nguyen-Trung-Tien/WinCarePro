@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WinCarePro.Models"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -56,9 +57,10 @@
         </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> <!-- Page Header -->
-            <RowDefinition Height="Auto" /> <!-- Filter bar -->
-            <RowDefinition Height="*" />    <!-- Content Area -->
+            <RowDefinition Height="Auto" /> <!-- 0: Page Header -->
+            <RowDefinition Height="Auto" /> <!-- 1: Status Banners -->
+            <RowDefinition Height="Auto" /> <!-- 2: Filter bar -->
+            <RowDefinition Height="*" />    <!-- 3: Content Area -->
         </Grid.RowDefinitions>
 
         <!-- Page Header -->
@@ -103,8 +105,25 @@
             </StackPanel>
         </Grid>
 
-        <!-- 1. Filter & Actions Toolbar -->
-        <Border Grid.Row="1" Margin="0,0,0,14" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,8"
+        <!-- 1. Contextual Status Banners -->
+        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,10">
+            <controls:InlineStatusCard
+                CardType="SafetyNotice"
+                Title="{Binding Source='ServiceSafetyService Armed', Converter={StaticResource TranslationConverter}}"
+                Message="{Binding Source='45+ critical Windows infrastructure services (RpcSs, WinDefend, CryptSvc...) are permanently protected from termination or disabling.', Converter={StaticResource TranslationConverter}}"
+                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                IsDismissible="True" />
+
+            <controls:InlineStatusCard
+                CardType="Summary"
+                Title="{Binding Source='Startup Configuration Summary', Converter={StaticResource TranslationConverter}}"
+                Message="{x:Bind ViewModel.SummaryStartupText, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                IsDismissible="True" />
+        </StackPanel>
+
+        <!-- 2. Filter & Actions Toolbar -->
+        <Border Grid.Row="2" Margin="0,0,0,14" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,8"
                 helpers:AnimationHelper.StaggerIndex="0">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -164,8 +183,8 @@
             </Grid>
         </Border>
 
-        <!-- 2. Content Tabs Area (Pivot) -->
-        <Pivot x:Name="ContentPivot" Grid.Row="2" SelectionChanged="OnPivotSelectionChanged">
+        <!-- 3. Content Tabs Area (Pivot) -->
+        <Pivot x:Name="ContentPivot" Grid.Row="3" SelectionChanged="OnPivotSelectionChanged">
             <!-- Tab 1: Startup Applications -->
             <PivotItem Header="Startup Applications">
                 <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="12" Margin="0,10,0,0">

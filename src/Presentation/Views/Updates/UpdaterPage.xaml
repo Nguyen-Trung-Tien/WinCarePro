@@ -121,13 +121,13 @@
 
             <!-- Right: Action Buttons (Drivers + Scan + Update All) -->
             <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="12,0" CornerRadius="8" FontSize="11.5" FontWeight="SemiBold" Click="OnBackupDriversClick" ToolTipService.ToolTip="Backup Installed Hardware Drivers">
+                <Button Style="{StaticResource SecondaryGlassButtonStyle}" Height="34" Padding="12,0" CornerRadius="8" FontSize="11.5" FontWeight="SemiBold" Click="OnBackupDriversClick" ToolTipService.ToolTip="Backup Installed Hardware Drivers">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE74E;" FontSize="11.5" Foreground="{ThemeResource AppStatusInfoBrush}"/>
                         <TextBlock Text="{Binding Source='Backup Drivers', Converter={StaticResource TranslationConverter}}"/>
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="12,0" CornerRadius="8" FontSize="11.5" FontWeight="SemiBold" Click="OnRestoreDriversClick" ToolTipService.ToolTip="Restore Drivers from Backup">
+                <Button Style="{StaticResource SecondaryGlassButtonStyle}" Height="34" Padding="12,0" CornerRadius="8" FontSize="11.5" FontWeight="SemiBold" Click="OnRestoreDriversClick" ToolTipService.ToolTip="Restore Drivers from Backup">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE777;" FontSize="11.5" Foreground="{ThemeResource AppStatusWarningBrush}"/>
                         <TextBlock Text="{Binding Source='Restore Drivers', Converter={StaticResource TranslationConverter}}"/>
@@ -135,7 +135,7 @@
                 </Button>
 
                 <!-- Scan Updates Button (Hero CTA) -->
-                <Button x:Name="ScanUpdatesBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12"
+                <Button x:Name="ScanUpdatesBtn" Style="{StaticResource PrimaryGradientButtonStyle}" Foreground="White" Click="OnScanUpdatesClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12"
                         AutomationProperties.Name="Scan for Updates"
                         AutomationProperties.HelpText="Checks for software package updates via winget and Microsoft Store.">
                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -157,6 +157,25 @@
                 </Button>
             </StackPanel>
         </Grid>
+
+        <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
+        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12" helpers:AnimationHelper.StaggerIndex="0">
+            <!-- Safety Notice Card -->
+            <controls:InlineStatusCard
+                CardType="SafetyNotice"
+                Title="{Binding Source='Software Repository &amp; Digital Signature Armor Active', Converter={StaticResource TranslationConverter}}"
+                Message="{Binding Source='All package updates are verified via official Winget SHA-256 manifests and Microsoft Store signatures before silent installation.', Converter={StaticResource TranslationConverter}}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            <!-- Summary / Post-Action Card -->
+            <controls:InlineStatusCard
+                CardType="Summary"
+                Title="{Binding Source='Update Execution Summary', Converter={StaticResource TranslationConverter}}"
+                Message="{x:Bind ViewModel.SummaryUpdaterText, Mode=OneWay}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </StackPanel>
 
         <!-- ==================== 1. BENTO COCKPIT: RADAR & HUB (Collapsed to eliminate redundant radar/index cards) ==================== -->
         <Grid x:Name="StatsGrid" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,12" ColumnSpacing="12" RowSpacing="10">
@@ -620,14 +639,14 @@
                             <FontIcon Glyph="&#xE73E;" FontSize="26" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Spacing="3" HorizontalAlignment="Center">
-                            <TextBlock Text="All Applications Up to Date" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display"/>
-                            <TextBlock Text="No pending software updates detected for your system." FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding Source='All Applications Up to Date', Converter={StaticResource TranslationConverter}}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display"/>
+                            <TextBlock Text="{Binding Source='No pending software updates detected for your system.', Converter={StaticResource TranslationConverter}}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap"/>
                         </StackPanel>
 
                         <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="12,6" HorizontalAlignment="Center" Margin="0,4,0,0">
                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE777;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                <TextBlock Text="WinGet Repository &amp; Direct Channel Synced" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="{Binding Source='WinGet Repository &amp; Direct Channel Synced', Converter={StaticResource TranslationConverter}}" FontSize="11" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>

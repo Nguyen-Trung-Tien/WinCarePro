@@ -40,6 +40,18 @@ public partial class CleanerViewModel : AsyncTaskViewModelBase
     [ObservableProperty]
     private string _totalSelectedSizeFormatted = "Selected: 0 B";
 
+    [ObservableProperty]
+    private bool _isSafetyNoticeVisible = true;
+
+    [ObservableProperty]
+    private bool _isSummaryCardVisible;
+
+    [ObservableProperty]
+    private string _summaryCleanedText = string.Empty;
+
+    [ObservableProperty]
+    private bool _isElevationNoticeVisible;
+
     public ObservableCollection<CleanerCategoryItem> CleanerCategories { get; } = new();
 
     public bool CanClean => !IsBusy && CleanerCategories.Count > 0;
@@ -150,6 +162,9 @@ public partial class CleanerViewModel : AsyncTaskViewModelBase
 
         if (selectedList.Count == 0) return;
 
+        long totalToClean = 0;
+        foreach (var item in selectedList) totalToClean += item.SizeBytes;
+
         await ExecuteAsyncTaskAsync(
             "Purging selected junk and orphaned entries...",
             async (token, progress) =>
@@ -188,7 +203,13 @@ public partial class CleanerViewModel : AsyncTaskViewModelBase
                     StatusText: "Cleanup successfully completed with zero OS disruption.",
                     TargetItem: string.Empty));
 
-                StatusMessage = "Cleanup successfully completed with zero OS disruption.";
+                await RunOnUIActionAsync(() =>
+                {
+                    SummaryCleanedText = $"Cleanup Complete: Safely reclaimed {FormatBytes(totalToClean)} of system clutter with zero OS disruption.";
+                    IsSummaryCardVisible = true;
+                    StatusMessage = SummaryCleanedText;
+                });
+
                 await ScanAllAsync(token);
             }, isIndeterminate: false);
     }
@@ -288,7 +309,10 @@ public partial class CleanerViewModel : AsyncTaskViewModelBase
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                CrashLogger.LogException("CleanerViewModel.ScanAppLeftoversAsync", ex);
+            }
             return bytes;
         }, ct);
     }
@@ -309,12 +333,22 @@ public partial class CleanerViewModel : AsyncTaskViewModelBase
                         ct.ThrowIfCancellationRequested();
                         if (SafePathGuard.IsSafeToDelete(file.FullName))
                         {
-                            try { file.Delete(); } catch { }
+                            try 
+                            { 
+                                file.Delete(); 
+                            } 
+                            catch (Exception ex) 
+                            { 
+                                CrashLogger.LogException("CleanerViewModel.PurgeFile", ex); 
+                            }
                         }
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                CrashLogger.LogException("CleanerViewModel.PurgeAppLeftoversSafelyAsync", ex);
+            }
         }, ct);
     }
 

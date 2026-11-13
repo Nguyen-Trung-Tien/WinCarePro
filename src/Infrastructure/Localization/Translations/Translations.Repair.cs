@@ -206,5 +206,20 @@ public partial class TranslationManager
         if (en != null) en["Unban &amp; DNS flush"] = "Unban &amp; DNS flush";
         vi["Reclaims disk space by purging superseded component packages"] = "Giải phóng dung lượng ổ đĩa bằng cách dọn các gói thành phần đã bị thay thế";
         if (en != null) en["Reclaims disk space by purging superseded component packages"] = "Reclaims disk space by purging superseded component packages";
+
+        vi["System Doctor & Restore Point Armed"] = "Bác Sĩ Hệ Thống & Điểm Khôi Phục Đã Sẵn Sàng";
+        if (en != null) en["System Doctor & Restore Point Armed"] = "System Doctor & Restore Point Armed";
+        vi["System Doctor &amp; Restore Point Armed"] = "Bác Sĩ Hệ Thống & Điểm Khôi Phục Đã Sẵn Sàng";
+        if (en != null) en["System Doctor &amp; Restore Point Armed"] = "System Doctor & Restore Point Armed";
+        vi["An automated full system restore point is verified prior to all repair actions. Corrupted files and services are safely restored to pristine Microsoft baselines."] = "Điểm khôi phục hệ thống tự động luôn được kiểm tra và kích hoạt trước mọi thao tác sửa chữa. Các tệp tin và dịch vụ hỏng được khôi phục an toàn về nguyên bản Microsoft.";
+        if (en != null) en["An automated full system restore point is verified prior to all repair actions. Corrupted files and services are safely restored to pristine Microsoft baselines."] = "An automated full system restore point is verified prior to all repair actions. Corrupted files and services are safely restored to pristine Microsoft baselines.";
+        vi["System Integrity Resolved"] = "Khắc Phục Toàn Vẹn Hệ Thống Thành Công";
+        if (en != null) en["System Integrity Resolved"] = "System Integrity Resolved";
+        vi["All Systems Healthy & Intact"] = "Hệ Thống Khỏe Mạnh & Toàn Vẹn";
+        if (en != null) en["All Systems Healthy & Intact"] = "All Systems Healthy & Intact";
+        vi["All Systems Healthy &amp; Intact"] = "Hệ Thống Khỏe Mạnh & Toàn Vẹn";
+        if (en != null) en["All Systems Healthy &amp; Intact"] = "All Systems Healthy &amp; Intact";
+        vi["No critical registry bans, service failures, or system integrity violations detected."] = "Không phát hiện thấy khóa chính sách cấm, lỗi dịch vụ Windows hay vi phạm tính toàn vẹn nào.";
+        if (en != null) en["No critical registry bans, service failures, or system integrity violations detected."] = "No critical registry bans, service failures, or system integrity violations detected.";
     }
 }

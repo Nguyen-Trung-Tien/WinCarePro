@@ -92,5 +92,18 @@ public partial class TranslationManager
         if (en != null) en["Restore Drivers from Backup"] = "Restore Drivers from Backup";
         vi["Restore Drivers"] = "Khôi phục Driver";
         if (en != null) en["Restore Drivers"] = "Restore Drivers";
+
+        vi["Software Repository & Digital Signature Armor Active"] = "Lá chắn Kho Phần mềm & Chữ ký Số Đang Hoạt động";
+        if (en != null) en["Software Repository & Digital Signature Armor Active"] = "Software Repository & Digital Signature Armor Active";
+        vi["All package updates are verified via official Winget SHA-256 manifests and Microsoft Store signatures before silent installation."] = "Mọi bản cập nhật phần mềm được xác thực qua tệp kê khai SHA-256 của WinGet và chữ ký số Microsoft Store trước khi cài đặt ngầm.";
+        if (en != null) en["All package updates are verified via official Winget SHA-256 manifests and Microsoft Store signatures before silent installation."] = "All package updates are verified via official Winget SHA-256 manifests and Microsoft Store signatures before silent installation.";
+        vi["Update Execution Summary"] = "Tóm tắt Thực thi Cập nhật";
+        if (en != null) en["Update Execution Summary"] = "Update Execution Summary";
+        vi["Selected software package installations complete. System applications are up to date."] = "Cài đặt các gói phần mềm đã chọn hoàn tất. Ứng dụng hệ thống đã được cập nhật.";
+        if (en != null) en["Selected software package installations complete. System applications are up to date."] = "Selected software package installations complete. System applications are up to date.";
+        vi["All software package installations complete. All installed programs are current."] = "Cài đặt tất cả các gói phần mềm hoàn tất. Mọi chương trình đã cài đặt đều là phiên bản mới nhất.";
+        if (en != null) en["All software package installations complete. All installed programs are current."] = "All software package installations complete. All installed programs are current.";
+        vi["WinGet Repository & Direct Channel Synced"] = "Kho lưu trữ WinGet & Kênh cập nhật trực tiếp đã đồng bộ";
+        if (en != null) en["WinGet Repository & Direct Channel Synced"] = "WinGet Repository & Direct Channel Synced";
     }
 }

@@ -136,6 +136,27 @@ public class StartupViewModel : ViewModelBase, IDisposable
         set => SetProperty(ref _optimizationScore, value);
     }
 
+    private bool _isSafetyNoticeVisible = true;
+    public bool IsSafetyNoticeVisible
+    {
+        get => _isSafetyNoticeVisible;
+        set => SetProperty(ref _isSafetyNoticeVisible, value);
+    }
+
+    private bool _isSummaryCardVisible;
+    public bool IsSummaryCardVisible
+    {
+        get => _isSummaryCardVisible;
+        set => SetProperty(ref _isSummaryCardVisible, value);
+    }
+
+    private string _summaryStartupText = string.Empty;
+    public string SummaryStartupText
+    {
+        get => _summaryStartupText;
+        set => SetProperty(ref _summaryStartupText, value);
+    }
+
     private int _totalStartupApps;
     public int TotalStartupApps
     {
@@ -533,7 +554,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
             {
                 if (!FilterMicrosoft && svc.IsMicrosoftService) return false;
                 if (!FilterThirdParty && !svc.IsMicrosoftService) return false;
-                
+
                 if (!string.IsNullOrWhiteSpace(SearchQuery))
                 {
                     bool matchName = svc.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase);
@@ -602,7 +623,9 @@ public class StartupViewModel : ViewModelBase, IDisposable
         {
             _audit.LogAction("Startup", "Toggle", entry.Name, "Success", $"Toggled to {(enable ? "Enabled" : "Disabled")}");
             StatusText = string.Format("{0} startup setting updated.".T(), entry.Name);
-            
+            SummaryStartupText = string.Format("Startup Configuration Updated: '{0}' is now {1}. Core services remain shielded.".T(), entry.Name, enable ? "Enabled".T() : "Disabled".T());
+            IsSummaryCardVisible = true;
+
             entry.IsEnabled = enable;
             TotalStartupApps = _allStartupApps.Count(x => x.IsEnabled);
             CalculateOptimizationScore();
@@ -630,7 +653,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
         {
             _audit.LogAction("Startup", "Remove", entry.Name, "Success");
             StatusText = string.Format("Startup entry {0} permanently removed.".T(), entry.Name);
-            
+
             _allStartupApps.Remove(entry);
             TotalStartupApps = _allStartupApps.Count(x => x.IsEnabled);
             CalculateOptimizationScore();
@@ -663,7 +686,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
         {
             _audit.LogAction("Service", action, entry.Name, "Success");
             StatusText = string.Format("Service {0} command completed successfully.".T(), entry.DisplayName);
-            
+
             entry.Status = action == "Start" ? "Running" : (action == "Stop" ? "Stopped" : "Running");
             TotalRunningServices = _allServices.Count(x => x.Status == "Running");
             CalculateOptimizationScore();
@@ -716,7 +739,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
         {
             _audit.LogAction("Service", "ChangeStartupType", entry.Name, "Success", $"Changed startup type to {startupType}");
             StatusText = string.Format("Service {0} startup type changed to {1}.".T(), entry.DisplayName, startupType);
-            
+
             entry.StartupType = startupType;
             ApplyFilters();
         }
@@ -752,7 +775,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
         {
             _audit.LogAction("Task", "Toggle", entry.Name, "Success", $"Toggled to {(enable ? "Enabled" : "Disabled")}");
             StatusText = string.Format("Scheduled task {0} updated.".T(), entry.Name);
-            
+
             entry.IsEnabled = enable;
             TotalScheduledTasks = _allScheduledTasks.Count(x => x.IsEnabled);
             CalculateOptimizationScore();
@@ -780,7 +803,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
         {
             _audit.LogAction("Task", "Delete", entry.Name, "Success", $"Deleted path {entry.Path}");
             StatusText = string.Format("Scheduled task {0} deleted successfully.".T(), entry.Name);
-            
+
             _allScheduledTasks.Remove(entry);
             TotalScheduledTasks = _allScheduledTasks.Count(x => x.IsEnabled);
             CalculateOptimizationScore();
@@ -847,7 +870,7 @@ public class StartupViewModel : ViewModelBase, IDisposable
 
         var notifier = _notificationService ?? App.Services?.GetService<INotificationService>();
         notifier?.ShowToast(
-            "Startup & Services Optimized".T(), 
+            "Startup & Services Optimized".T(),
             string.Format("Disabled {0} third-party startup apps and optimized {1} background services.".T(), disabledApps, disabledServices),
             NotificationSeverity.Success
         );

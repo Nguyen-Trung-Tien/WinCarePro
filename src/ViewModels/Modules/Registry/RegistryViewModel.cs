@@ -8,6 +8,7 @@ using System.Threading;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Infrastructure.Logging;
 
 namespace WinCarePro.ViewModels;
 
@@ -37,6 +38,27 @@ public class RegistryViewModel : ViewModelBase, IDisposable
     {
         get => _scanProgress;
         set => SetProperty(ref _scanProgress, value);
+    }
+
+    private bool _isSafetyNoticeVisible = true;
+    public bool IsSafetyNoticeVisible
+    {
+        get => _isSafetyNoticeVisible;
+        set => SetProperty(ref _isSafetyNoticeVisible, value);
+    }
+
+    private bool _isSummaryCardVisible;
+    public bool IsSummaryCardVisible
+    {
+        get => _isSummaryCardVisible;
+        set => SetProperty(ref _isSummaryCardVisible, value);
+    }
+
+    private string _summaryRepairText = string.Empty;
+    public string SummaryRepairText
+    {
+        get => _summaryRepairText;
+        set => SetProperty(ref _summaryRepairText, value);
     }
 
     public ObservableCollection<RegistryIssue> Issues { get; } = new();
@@ -187,7 +209,10 @@ public class RegistryViewModel : ViewModelBase, IDisposable
             _scanCts?.Dispose();
             _scanCts = null;
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("RegistryViewModel.Cleanup", ex);
+        }
         IsBusy = false;
         SetOperationState(OperationState.Idle);
     }
@@ -204,7 +229,10 @@ public class RegistryViewModel : ViewModelBase, IDisposable
         {
             _scanCts?.Cancel();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("RegistryViewModel.CancelScan", ex);
+        }
         IsBusy = false;
         SetOperationState(OperationState.Idle);
     }
@@ -223,7 +251,10 @@ public class RegistryViewModel : ViewModelBase, IDisposable
             _scanCts?.Cancel();
             _scanCts?.Dispose();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("RegistryViewModel.ScanRegistryAsync.CancelOld", ex);
+        }
         _scanCts = new CancellationTokenSource();
         var token = _scanCts.Token;
 
@@ -288,7 +319,10 @@ public class RegistryViewModel : ViewModelBase, IDisposable
             _scanCts?.Cancel();
             _scanCts?.Dispose();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("RegistryViewModel.RepairSelectedAsync.CancelOld", ex);
+        }
         _scanCts = new CancellationTokenSource();
         var token = _scanCts.Token;
 
@@ -309,6 +343,8 @@ public class RegistryViewModel : ViewModelBase, IDisposable
             StatusText = "Repairing selected registry issues...".T();
             await _engine.FixRegistryIssuesAsync(selected, token);
             StatusText = string.Format("Repaired {0} registry issues.".T(), selected.Count);
+            SummaryRepairText = string.Format("Registry Optimization Complete: Fixed {0} keys, backup snapshot created with 1-click restore.".T(), selected.Count);
+            IsSummaryCardVisible = true;
             SetOperationState(OperationState.Completed);
             IsBusy = false;
             await ScanRegistryAsync();

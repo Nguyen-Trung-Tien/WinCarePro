@@ -10,6 +10,7 @@
     xmlns:components="using:WinCarePro.Shared.Components"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
     xmlns:views="using:WinCarePro.Views"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     mc:Ignorable="d">
 
     <Page.KeyboardAccelerators>
@@ -48,8 +49,9 @@
         <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Header & Action Bar -->
-            <RowDefinition Height="*" />    <!-- 1. Main Tabbed Workspace -->
-            <RowDefinition Height="Auto" /> <!-- 2. Status Bar -->
+            <RowDefinition Height="Auto" /> <!-- 1. Contextual Status Banners -->
+            <RowDefinition Height="*" />    <!-- 2. Main Tabbed Workspace -->
+            <RowDefinition Height="Auto" /> <!-- 3. Status Bar -->
         </Grid.RowDefinitions>
 
         <!-- ==================== 0. FLAT HEADER & ACTION BAR ==================== -->
@@ -77,7 +79,7 @@
             <!-- Right: Action Buttons -->
             <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <!-- Restore Defaults Button (1-Click Revert Option) -->
-                <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="11.5" Click="OnRestoreDefaultsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" ToolTipService.ToolTip="Restore Windows Default Settings">
+                <Button Style="{StaticResource SecondaryGlassButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="11.5" Click="OnRestoreDefaultsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" ToolTipService.ToolTip="Restore Windows Default Settings">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE777;" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         <TextBlock Text="Restore Defaults" FontWeight="SemiBold"/>
@@ -85,7 +87,7 @@
                 </Button>
 
                 <!-- Export Report Button -->
-                <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="11.5" Click="OnExportReportClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" ToolTipService.ToolTip="Export Optimization Audit Report">
+                <Button Style="{StaticResource SecondaryGlassButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="11.5" Click="OnExportReportClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" ToolTipService.ToolTip="Export Optimization Audit Report">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xEDE1;" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         <TextBlock Text="Export Report" FontWeight="SemiBold"/>
@@ -93,7 +95,7 @@
                 </Button>
 
                 <!-- Refresh Button -->
-                <Button Style="{StaticResource DefaultButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="11.5" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" ToolTipService.ToolTip="Refresh Telemetry (Ctrl+R)">
+                <Button Style="{StaticResource SecondaryGlassButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" FontSize="11.5" Click="OnRefreshClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" ToolTipService.ToolTip="Refresh Telemetry (Ctrl+R)">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE72C;" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         <TextBlock Text="Refresh" FontWeight="SemiBold"/>
@@ -101,7 +103,7 @@
                 </Button>
 
                 <!-- Apply Selected Tweaks -->
-                <Button x:Name="ApplyTweaksBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" FontWeight="Bold" Height="34" CornerRadius="8" Padding="18,0" FontSize="12">
+                <Button x:Name="ApplyTweaksBtn" Style="{StaticResource PrimaryGradientButtonStyle}" Click="OnApplyTweaksClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" FontWeight="Bold" Height="34" CornerRadius="8" Padding="18,0" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ProgressRing x:Name="ApplyTweaksRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center" />
                         <FontIcon x:Name="ApplyTweaksIcon" Glyph="&#xE8FB;" FontSize="12" Foreground="White" />
@@ -119,8 +121,27 @@
                      IsClosable="True" />
         </Grid>
 
-        <!-- ==================== 1. MAIN TABBED WORKSPACE ==================== -->
-        <Pivot Grid.Row="1" Margin="0,-4,0,0">
+        <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
+        <StackPanel Grid.Row="1" Spacing="10" Margin="0,0,0,14">
+            <!-- Safety Notice Card -->
+            <controls:InlineStatusCard
+                CardType="SafetyNotice"
+                Title="{Binding Source='SafeRegistryGuard &amp; Policy Armor Active', Converter={StaticResource TranslationConverter}}"
+                Message="{Binding Source='All system modifications create restore snapshots and protect critical registry roots.', Converter={StaticResource TranslationConverter}}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            <!-- Summary / Post-Action Card -->
+            <controls:InlineStatusCard
+                CardType="Summary"
+                Title="{Binding Source='Optimization Profile Applied', Converter={StaticResource TranslationConverter}}"
+                Message="{x:Bind ViewModel.SummaryOptimizerText, Mode=OneWay}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </StackPanel>
+
+        <!-- ==================== 2. MAIN TABBED WORKSPACE ==================== -->
+        <Pivot Grid.Row="2" Margin="0,-4,0,0">
             <Pivot.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" FontSize="13.5" FontWeight="SemiBold" Margin="0,0,10,0" />
@@ -522,8 +543,8 @@
             </PivotItem>
         </Pivot>
 
-        <!-- ==================== 2. STATUS BAR FOOTER ==================== -->
-        <TextBlock Grid.Row="2" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,8,0,0" />
+        <!-- ==================== 3. STATUS BAR FOOTER ==================== -->
+        <TextBlock Grid.Row="3" Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" Margin="0,8,0,0" />
     </Grid>
     </Grid>
 </Page>

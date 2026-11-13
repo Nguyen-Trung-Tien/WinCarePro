@@ -1,0 +1,45 @@
+<UserControl
+    x:Class="WinCarePro.Presentation.Controls.EmptyStateCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WinCarePro.Presentation.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Border Style="{StaticResource EmptyStateCardBorderStyle}" MinHeight="180">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+            <!-- Centered Themed Icon Badge -->
+            <Border Style="{StaticResource EmptyStateCardIconBadgeStyle}">
+                <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}"
+                          FontSize="20"
+                          Foreground="{StaticResource PrimaryAccentBrush}"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center" />
+            </Border>
+
+            <!-- Title -->
+            <TextBlock Text="{x:Bind Title, Mode=OneWay}"
+                       Style="{StaticResource EmptyStateTitleStyle}" />
+
+            <!-- Subtitle / Guidance -->
+            <TextBlock Text="{x:Bind Description, Mode=OneWay}"
+                       Style="{StaticResource EmptyStateSubtitleStyle}" />
+
+            <!-- Optional CTA Action Button -->
+            <Button Command="{x:Bind ActionCommand, Mode=OneWay}"
+                    Visibility="{x:Bind local:EmptyStateCard.HasTextVisibility(ActionText), Mode=OneWay}"
+                    Style="{StaticResource SecondaryGlassButtonStyle}"
+                    Height="32"
+                    Padding="16,0"
+                    CornerRadius="6"
+                    FontSize="12"
+                    FontWeight="SemiBold"
+                    HorizontalAlignment="Center"
+                    Margin="0,4,0,0">
+                <TextBlock Text="{x:Bind ActionText, Mode=OneWay}" />
+            </Button>
+        </StackPanel>
+    </Border>
+</UserControl>
+

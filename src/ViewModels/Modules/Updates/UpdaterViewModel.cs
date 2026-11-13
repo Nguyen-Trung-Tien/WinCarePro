@@ -30,7 +30,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         get => _isBusy;
         set
         {
-            SetPropertyOnUI(() => _isBusy, v => 
+            SetPropertyOnUI(() => _isBusy, v =>
             {
                 _isBusy = v;
                 OnPropertyChanged(nameof(CanCancel));
@@ -56,6 +56,27 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         set => SetPropertyOnUI(() => _progressPercent, v => _progressPercent = v, value);
     }
 
+    private bool _isSafetyNoticeVisible = true;
+    public bool IsSafetyNoticeVisible
+    {
+        get => _isSafetyNoticeVisible;
+        set => SetPropertyOnUI(() => _isSafetyNoticeVisible, v => _isSafetyNoticeVisible = v, value);
+    }
+
+    private bool _isSummaryCardVisible;
+    public bool IsSummaryCardVisible
+    {
+        get => _isSummaryCardVisible;
+        set => SetPropertyOnUI(() => _isSummaryCardVisible, v => _isSummaryCardVisible = v, value);
+    }
+
+    private string _summaryUpdaterText = string.Empty;
+    public string SummaryUpdaterText
+    {
+        get => _summaryUpdaterText;
+        set => SetPropertyOnUI(() => _summaryUpdaterText, v => _summaryUpdaterText = v, value);
+    }
+
     // Live Download & Telemetry HUD Properties
     private string _activeUpdatingAppName = "Software Package".T();
     public string ActiveUpdatingAppName
@@ -68,7 +89,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
     public string CurrentDownloadUrl
     {
         get => _currentDownloadUrl;
-        set => SetPropertyOnUI(() => _currentDownloadUrl, v => 
+        set => SetPropertyOnUI(() => _currentDownloadUrl, v =>
         {
             _currentDownloadUrl = v;
             OnPropertyChanged(nameof(HasDownloadUrl));
@@ -81,7 +102,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
     public string CurrentBytesProgress
     {
         get => _currentBytesProgress;
-        set => SetPropertyOnUI(() => _currentBytesProgress, v => 
+        set => SetPropertyOnUI(() => _currentBytesProgress, v =>
         {
             _currentBytesProgress = v;
             OnPropertyChanged(nameof(HasBytesProgress));
@@ -293,7 +314,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         {
             var app = Updates.FirstOrDefault(x => x.Id.Equals(report.AppId, StringComparison.OrdinalIgnoreCase)) ??
                       _allUpdates.FirstOrDefault(x => x.Id.Equals(report.AppId, StringComparison.OrdinalIgnoreCase));
-            
+
             if (app != null)
             {
                 app.DownloadProgress = report.Percent;
@@ -352,7 +373,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
     {
         SetOperationState(OperationState.Cancelling);
         CancelOperations();
-        try { _operationCts?.Dispose(); } catch { }
+        try { _operationCts?.Dispose(); }
+        catch (Exception ex) { CrashLogger.LogException("UpdaterViewModel.Cleanup.Dispose", ex); }
         _operationCts = null;
         _searchDebounceTimer?.Stop();
         _updaterEngine.OutputReceived -= OnOutputReceived;
@@ -374,7 +396,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         if (_operationCts != null && !_operationCts.IsCancellationRequested)
         {
             SetOperationState(OperationState.Cancelling);
-            try { _operationCts.Cancel(); } catch { }
+            try { _operationCts.Cancel(); }
+            catch (Exception ex) { CrashLogger.LogException("UpdaterViewModel.CancelOperations", ex); }
             ProgressMessage = "Operation cancelled by user.".T();
             SetOperationState(OperationState.Idle);
         }
@@ -385,7 +408,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         if (IsBusy) return;
         IsBusy = true;
         SetOperationState(OperationState.Running);
-        try { _operationCts?.Dispose(); } catch { }
+        try { _operationCts?.Dispose(); }
+        catch (Exception ex) { CrashLogger.LogException("UpdaterViewModel.ScanUpdatesAsync.Dispose", ex); }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
 
@@ -397,7 +421,7 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         try
         {
             var list = await Task.Run(async () => await _updaterEngine.ScanUpdatesAsync(UpdateEngine, ct), ct);
-            
+
             _dispatcherQueue?.TryEnqueue(() =>
             {
                 foreach (var item in list)
@@ -526,7 +550,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
         IsBusy = true;
         SetOperationState(OperationState.Running);
-        try { _operationCts?.Dispose(); } catch { }
+        try { _operationCts?.Dispose(); }
+        catch (Exception ex) { CrashLogger.LogException("UpdaterViewModel.UpdateSelectedApps.Dispose", ex); }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
         ProgressPercent = 0;
@@ -549,9 +574,9 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
                 ProgressMessage = string.Format("Silent updating {0} ({1}/{2})...".T(), app.Name, i + 1, selected.Count);
 
                 bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine, ct);
-                _dispatcherQueue?.TryEnqueue(() => 
-                { 
-                    app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; 
+                _dispatcherQueue?.TryEnqueue(() =>
+                {
+                    app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed;
                 });
 
                 current += step;
@@ -560,6 +585,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
             ProgressPercent = 100;
             ProgressMessage = "Selected package installations complete.".T();
+            SummaryUpdaterText = "Selected software package installations complete. System applications are up to date.".T();
+            IsSummaryCardVisible = true;
             SetOperationState(OperationState.Completed);
         }
         catch (OperationCanceledException)
@@ -586,7 +613,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
         IsBusy = true;
         SetOperationState(OperationState.Running);
-        try { _operationCts?.Dispose(); } catch { }
+        try { _operationCts?.Dispose(); }
+        catch (Exception ex) { CrashLogger.LogException("UpdaterViewModel.UpdateSingleApp.Dispose", ex); }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
 
@@ -600,12 +628,17 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
         try
         {
             bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine, ct);
-            _dispatcherQueue?.TryEnqueue(() => 
-            { 
-                app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; 
+            _dispatcherQueue?.TryEnqueue(() =>
+            {
+                app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed;
             });
-            
+
             ProgressMessage = ok ? string.Format("Successfully updated {0}".T(), app.Name) : string.Format("Failed to update {0}".T(), app.Name);
+            if (ok)
+            {
+                SummaryUpdaterText = string.Format("Successfully updated {0} to latest version.".T(), app.Name);
+                IsSummaryCardVisible = true;
+            }
             SetOperationState(ok ? OperationState.Completed : OperationState.Failed);
         }
         catch (OperationCanceledException)
@@ -634,7 +667,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
         IsBusy = true;
         SetOperationState(OperationState.Running);
-        try { _operationCts?.Dispose(); } catch { }
+        try { _operationCts?.Dispose(); }
+        catch (Exception ex) { CrashLogger.LogException("UpdaterViewModel.UpdateAllApps.Dispose", ex); }
         _operationCts = new CancellationTokenSource();
         var ct = _operationCts.Token;
         ProgressPercent = 0;
@@ -657,9 +691,9 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
                 ProgressMessage = string.Format("Silent updating {0} ({1}/{2})...".T(), app.Name, i + 1, pending.Count);
 
                 bool ok = await _updaterEngine.UpdateApplicationAsync(app.Id, app.AvailableVersion, UpdateEngine, ct);
-                _dispatcherQueue?.TryEnqueue(() => 
-                { 
-                    app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed; 
+                _dispatcherQueue?.TryEnqueue(() =>
+                {
+                    app.UpdateStatus = ok ? SoftwareUpdateInfo.StatusCompleted : SoftwareUpdateInfo.StatusFailed;
                 });
 
                 current += step;
@@ -668,6 +702,8 @@ public class UpdaterViewModel : ViewModelBase, IDisposable
 
             ProgressPercent = 100;
             ProgressMessage = "All background installations complete.".T();
+            SummaryUpdaterText = "All software package installations complete. All installed programs are current.".T();
+            IsSummaryCardVisible = true;
             SetOperationState(OperationState.Completed);
         }
         catch (OperationCanceledException)

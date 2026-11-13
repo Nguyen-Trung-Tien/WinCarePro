@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WinCarePro.Models"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     mc:Ignorable="d"
     Background="Transparent">
 
@@ -40,7 +41,8 @@
         <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Header & Action Bar -->
-            <RowDefinition Height="*" />    <!-- 1. Pivot Workspace -->
+            <RowDefinition Height="Auto" /> <!-- 1. Contextual Status Banners -->
+            <RowDefinition Height="*" />    <!-- 2. Pivot Workspace -->
         </Grid.RowDefinitions>
 
         <!-- ==================== 0. FLAT HEADER & ACTION BAR ==================== -->
@@ -80,7 +82,7 @@
                 <!-- Export Audit Report -->
                 <Button Click="OnExportReportClick"
                         IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}"
-                        Style="{StaticResource DefaultButtonStyle}"
+                        Style="{StaticResource SecondaryGlassButtonStyle}"
                         CornerRadius="8"
                         Padding="12,7"
                         FontSize="12">
@@ -92,7 +94,8 @@
 
                 <!-- Refresh Button -->
                 <Button Click="OnRefreshClick"
-                        Style="{StaticResource AccentButtonStyle}"
+                        Style="{StaticResource PrimaryGradientButtonStyle}"
+                        Foreground="White"
                         CornerRadius="8"
                         Padding="14,7"
                         FontSize="12">
@@ -104,9 +107,28 @@
             </StackPanel>
         </Grid>
 
-        <!-- ==================== 1. MAIN TABBED WORKSPACE ==================== -->
+        <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
+        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12" helpers:AnimationHelper.StaggerIndex="0">
+            <!-- Safety Notice Card -->
+            <controls:InlineStatusCard
+                CardType="SafetyNotice"
+                Title="{Binding Source='Network Stack &amp; DNS Safety Guard Active', Converter={StaticResource TranslationConverter}}"
+                Message="{Binding Source='Automated DNS backups are preserved prior to changes. Loopback and virtual hypervisor adapters are shielded from disruption.', Converter={StaticResource TranslationConverter}}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            <!-- Summary / Post-Action Card -->
+            <controls:InlineStatusCard
+                CardType="Summary"
+                Title="{Binding Source='Network Operation Summary', Converter={StaticResource TranslationConverter}}"
+                Message="{x:Bind ViewModel.SummaryNetworkText, Mode=OneWay}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </StackPanel>
+
+        <!-- ==================== 2. MAIN TABBED WORKSPACE ==================== -->
         <Pivot x:Name="MainPivot"
-               Grid.Row="1"
+               Grid.Row="2"
                Margin="0,-4,0,0"
                SelectionChanged="OnPivotSelectionChanged">
             <Pivot.HeaderTemplate>
@@ -835,6 +857,12 @@
                                         </ListView.ItemTemplate>
                                     </ListView>
 
+                                    <controls:EmptyStateCard
+                                        Visibility="{x:Bind EmptyStateVisibility(ViewModel.DnsServers.Count, ViewModel.IsBusy), Mode=OneWay}"
+                                        IconGlyph="&#xE774;"
+                                        Title="{Binding Source='No Benchmark Results Yet', Converter={StaticResource TranslationConverter}}"
+                                        Description="{Binding Source='Run the DNS benchmark to test latency across popular public DNS resolvers.', Converter={StaticResource TranslationConverter}}" />
+
                                     <!-- SECTION 3: DOH SETTINGS STRIP -->
                                     <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                                             BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
@@ -1014,6 +1042,13 @@
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
+
+                            <controls:EmptyStateCard
+                                Grid.Row="1"
+                                Visibility="{x:Bind EmptyStateVisibility(ViewModel.Connections.Count, ViewModel.IsBusy), Mode=OneWay}"
+                                IconGlyph="&#xE968;"
+                                Title="{Binding Source='No Active Sockets Detected', Converter={StaticResource TranslationConverter}}"
+                                Description="{Binding Source='No active TCP or UDP socket connections match the current filter.', Converter={StaticResource TranslationConverter}}" />
                         </Grid>
                     </Border>
                 </Grid>

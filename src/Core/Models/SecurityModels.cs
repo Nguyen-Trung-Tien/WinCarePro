@@ -22,14 +22,6 @@ public partial class SecurityStatusItem : ObservableObject
     private string _statusText = string.Empty;
 }
 
-public enum SecurityCategory
-{
-    Safeguards,
-    Privacy,
-    TraceEradication,
-    ThreatHunter
-}
-
 public partial class SecuritySafeguardItem : ObservableObject
 {
     public string Id { get; set; } = string.Empty;

@@ -8,6 +8,7 @@
     xmlns:local="using:WinCarePro.Views"
     xmlns:components="using:WinCarePro.Shared.Components"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -210,12 +211,13 @@
         <ScrollViewer x:Name="ContentScrollViewer" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Padding="24,0,4,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <Grid HorizontalAlignment="Stretch">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/> <!-- Row 0: Device Identity -->
+                    <RowDefinition Height="Auto"/> <!-- Row 1: Contextual Status Banners -->
+                    <RowDefinition Height="*"/>    <!-- Row 2: Modular Settings Content Sections -->
                 </Grid.RowDefinitions>
 
                 <!-- Row 0: Device Identity & Master Control Glass Banner -->
-                <Border Grid.Row="0" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="16" Padding="20,16" Margin="0,0,0,20">
+                <Border Grid.Row="0" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="16" Padding="20,16" Margin="0,0,0,14">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -231,13 +233,13 @@
                         </StackPanel>
                         <!-- Quick Presets Actions in Header -->
                         <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Button Click="OnResetDefaultsClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="14,0" CornerRadius="10">
+                            <Button Click="OnResetDefaultsClick" Style="{StaticResource SecondaryGlassButtonStyle}" Height="34" Padding="14,0" CornerRadius="8">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <FontIcon Glyph="&#xE777;" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     <TextBlock Text="Reset Defaults" FontSize="11.5" FontWeight="SemiBold"/>
                                 </StackPanel>
                             </Button>
-                            <Button Click="OnExportSettingsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="34" Padding="16,0" CornerRadius="10">
+                            <Button Click="OnExportSettingsClick" Style="{StaticResource PrimaryGradientButtonStyle}" Foreground="White" Height="34" Padding="16,0" CornerRadius="8">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <FontIcon Glyph="&#xE898;" FontSize="11.5" Foreground="White"/>
                                     <TextBlock Text="Export Backup" FontSize="11.5" FontWeight="SemiBold"/>
@@ -247,8 +249,17 @@
                     </Grid>
                 </Border>
 
-                <!-- Row 1: Modular Settings Content Sections Container -->
-                <Grid Grid.Row="1">
+                <!-- Row 1: Contextual Safety & Persistence Banner -->
+                <controls:InlineStatusCard
+                    Grid.Row="1"
+                    Margin="0,0,0,16"
+                    CardType="SafetyNotice"
+                    Title="{Binding Source='SQLite 3 WAL Persistence &amp; Policy Protection Active', Converter={StaticResource TranslationConverter}}"
+                    Message="{Binding Source='All settings changes and user preferences are atomically written using SQLite WAL mode with zero file locking conflicts.', Converter={StaticResource TranslationConverter}}"
+                    IsDismissible="True" />
+
+                <!-- Row 2: Modular Settings Content Sections Container -->
+                <Grid Grid.Row="2">
                     <!-- Section 0: General Configuration -->
                     <StackPanel Spacing="20" Visibility="{x:Bind GetSectionVisibility(SettingsNavList.SelectedIndex, 0), Mode=OneWay}">
                     <!-- Section Header Banner -->

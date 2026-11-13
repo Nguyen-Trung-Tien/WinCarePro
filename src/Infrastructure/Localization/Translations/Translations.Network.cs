@@ -518,5 +518,20 @@ public partial class TranslationManager
         if (en != null) en["ipconfig /flushdns"] = "ipconfig /flushdns";
         vi["Cấp lại IP"] = "Cấp lại IP";
         if (en != null) en["Cấp lại IP"] = "Cấp lại IP";
+
+        vi["Network Stack & DNS Safety Guard Active"] = "Lá chắn An toàn Ngăn xếp Mạng & DNS Đang Hoạt động";
+        if (en != null) en["Network Stack & DNS Safety Guard Active"] = "Network Stack & DNS Safety Guard Active";
+        vi["Automated DNS backups are preserved prior to changes. Loopback and virtual hypervisor adapters are shielded from disruption."] = "Bản sao lưu DNS tự động được bảo lưu trước khi thay đổi. Card mạng loopback và card ảo hypervisor được bảo vệ khỏi gián đoạn.";
+        if (en != null) en["Automated DNS backups are preserved prior to changes. Loopback and virtual hypervisor adapters are shielded from disruption."] = "Automated DNS backups are preserved prior to changes. Loopback and virtual hypervisor adapters are shielded from disruption.";
+        vi["Network Operation Summary"] = "Tóm tắt Thao tác Mạng";
+        if (en != null) en["Network Operation Summary"] = "Network Operation Summary";
+        vi["No Benchmark Results Yet"] = "Chưa có Kết quả Đo kiểm";
+        if (en != null) en["No Benchmark Results Yet"] = "No Benchmark Results Yet";
+        vi["Run the DNS benchmark to test latency across popular public DNS resolvers."] = "Chạy kiểm thử DNS để đo độ trễ trên các máy chủ phân giải DNS công cộng phổ biến.";
+        if (en != null) en["Run the DNS benchmark to test latency across popular public DNS resolvers."] = "Run the DNS benchmark to test latency across popular public DNS resolvers.";
+        vi["No Active Sockets Detected"] = "Không Phát hiện Socket Đang Hoạt động";
+        if (en != null) en["No Active Sockets Detected"] = "No Active Sockets Detected";
+        vi["No active TCP or UDP socket connections match the current filter."] = "Không có kết nối socket TCP hoặc UDP đang hoạt động nào khớp với bộ lọc hiện tại.";
+        if (en != null) en["No active TCP or UDP socket connections match the current filter."] = "No active TCP or UDP socket connections match the current filter.";
     }
 }

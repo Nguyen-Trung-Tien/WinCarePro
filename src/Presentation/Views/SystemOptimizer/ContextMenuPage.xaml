@@ -9,6 +9,7 @@
     xmlns:viewmodels="using:WinCarePro.ViewModels"
     xmlns:components="using:WinCarePro.Shared.Components"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -100,7 +101,7 @@
             </StackPanel>
 
             <!-- Right: Scan Button -->
-            <Button x:Name="ScanBtn" Grid.Column="1" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12">
+            <Button x:Name="ScanBtn" Grid.Column="1" Click="OnScanClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource PrimaryGradientButtonStyle}" CornerRadius="8" Padding="16,7" FontWeight="Bold" FontSize="12">
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <ProgressRing x:Name="ScanRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center"/>
                     <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="White" Visibility="{x:Bind ViewModel.IsBusy, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" />
@@ -109,73 +110,24 @@
             </Button>
         </Grid>
 
-        <!-- ==================== 1. 3-CARD STAT RIBBON (Collapsed to eliminate redundant counter cards) ==================== -->
-        <Grid Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="StatCol0" Width="*" />
-                <ColumnDefinition x:Name="StatCol1" Width="*" />
-                <ColumnDefinition x:Name="StatCol2" Width="*" />
-            </Grid.ColumnDefinitions>
+        <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
+        <StackPanel Grid.Row="1" Spacing="10" Margin="0,0,0,14">
+            <!-- Safety Notice Card -->
+            <controls:InlineStatusCard
+                CardType="SafetyNotice"
+                Title="{Binding Source='Shell Extension Safety Active', Converter={StaticResource TranslationConverter}}"
+                Message="{Binding Source='Right-click shell extensions are safely toggled via non-destructive approval subkeys with instant rollback.', Converter={StaticResource TranslationConverter}}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-            <!-- Card 0: Total Handlers -->
-            <Border Grid.Column="0" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE8EC;" FontSize="16" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                        <TextBlock Text="Total Handlers" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.TotalCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Typography.NumeralAlignment="Tabular"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Card 1: Active & Enabled -->
-            <Border x:Name="StatCard1" Grid.Column="1" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                        <TextBlock Text="Active in Context Menu" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.ActiveCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" Typography.NumeralAlignment="Tabular"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Card 2: Disabled & Optimized -->
-            <Border x:Name="StatCard2" Grid.Column="2" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusWarningBackground}" BorderBrush="{ThemeResource AppStatusWarningBorder}" BorderThickness="1" Margin="0,0,10,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE711;" FontSize="16" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
-                        <TextBlock Text="Disabled / Shelved" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.DisabledCount, Mode=OneWay}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource AppStatusWarningBrush}" Typography.NumeralAlignment="Tabular"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
-        </Grid>
+            <!-- Summary / Post-Action Card -->
+            <controls:InlineStatusCard
+                CardType="Summary"
+                Title="{Binding Source='Shell Extension Modified', Converter={StaticResource TranslationConverter}}"
+                Message="{x:Bind ViewModel.SummaryContextMenuText, Mode=OneWay}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </StackPanel>
 
         <!-- ==================== 2. MAIN WORKSPACE ==================== -->
         <Grid Grid.Row="2" ColumnSpacing="0" RowSpacing="16">
@@ -265,6 +217,13 @@
 
                         <!-- Progress indicator -->
                         <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                        <!-- Empty State Card -->
+                        <controls:EmptyStateCard
+                            IconGlyph="&#xE8EC;"
+                            Title="{Binding Source='No handlers found', Converter={StaticResource TranslationConverter}}"
+                            Description="{Binding Source='No context menu handlers match your search query or filter category.', Converter={StaticResource TranslationConverter}}"
+                            Visibility="{x:Bind EmptyStateVisibility(ViewModel.FilteredItems.Count, ViewModel.IsBusy), Mode=OneWay}" />
                     </Grid>
                 </Grid>
             </Border>

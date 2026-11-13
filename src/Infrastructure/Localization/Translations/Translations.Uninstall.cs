@@ -301,5 +301,13 @@ public partial class TranslationManager
         if (en != null) en["2. Uninstall"] = "2. Uninstall";
         vi["3. Leftovers"] = "3. Dọn tàn dư";
         if (en != null) en["3. Leftovers"] = "3. Leftovers";
+        vi["Uninstall Armor Active"] = "Lớp Giáp Gỡ Cài Đặt Đang Kích Hoạt";
+        if (en != null) en["Uninstall Armor Active"] = "Uninstall Armor Active";
+        vi["Windows System Apps and core runtimes (DirectX, VC++ Redistributables) are protected from accidental removal."] = "Ứng dụng Hệ thống Windows và gói runtime cốt lõi (DirectX, VC++ Redistributables) được bảo vệ khỏi việc gỡ nhầm.";
+        if (en != null) en["Windows System Apps and core runtimes (DirectX, VC++ Redistributables) are protected from accidental removal."] = "Windows System Apps and core runtimes (DirectX, VC++ Redistributables) are protected from accidental removal.";
+        vi["Uninstall Summary"] = "Tóm Tắt Gỡ Cài Đặt";
+        if (en != null) en["Uninstall Summary"] = "Uninstall Summary";
+        vi["Leftovers Purged: Cleaned {0} remnant files and registry keys safely."] = "Đã dọn sạch tàn dư: Đã xóa an toàn {0} tệp và khóa registry còn sót.";
+        if (en != null) en["Leftovers Purged: Cleaned {0} remnant files and registry keys safely."] = "Leftovers Purged: Cleaned {0} remnant files and registry keys safely.";
     }
 }

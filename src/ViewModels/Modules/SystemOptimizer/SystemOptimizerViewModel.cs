@@ -42,7 +42,7 @@ public class ServiceStatusItem : System.ComponentModel.INotifyPropertyChanged
     }
 
     public bool IsRunning => RawStatus.Equals("Running", StringComparison.OrdinalIgnoreCase) ||
-                             Status.Equals("Running", StringComparison.OrdinalIgnoreCase) || 
+                             Status.Equals("Running", StringComparison.OrdinalIgnoreCase) ||
                              Status.Equals("Đang chạy", StringComparison.OrdinalIgnoreCase);
 
     public Microsoft.UI.Xaml.Media.Brush StatusColor => (RawStatus.Length > 0 ? RawStatus : Status) switch
@@ -97,6 +97,30 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         get => _statusText;
         set => SetProperty(ref _statusText, value);
     }
+
+    private bool _isSafetyNoticeVisible = true;
+    public bool IsSafetyNoticeVisible
+    {
+        get => _isSafetyNoticeVisible;
+        set => SetProperty(ref _isSafetyNoticeVisible, value);
+    }
+
+    private bool _isSummaryCardVisible;
+    public bool IsSummaryCardVisible
+    {
+        get => _isSummaryCardVisible;
+        set => SetProperty(ref _isSummaryCardVisible, value);
+    }
+
+    private string _summaryOptimizerText = string.Empty;
+    public string SummaryOptimizerText
+    {
+        get => _summaryOptimizerText;
+        set => SetProperty(ref _summaryOptimizerText, value);
+    }
+
+    public void DismissSafetyNotice() => IsSafetyNoticeVisible = false;
+    public void DismissSummaryCard() => IsSummaryCardVisible = false;
 
     public ObservableCollection<SystemTweak> Tweaks { get; } = new();
     public ObservableCollection<SystemTweak> FilteredTweaks { get; } = new();
@@ -292,7 +316,10 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         {
             _aiScanCts?.Cancel();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SystemOptimizerViewModel.CancelAiScan", ex);
+        }
         IsAiScanning = false;
         SetOperationState(OperationState.Idle);
     }
@@ -313,7 +340,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         {
             var report = await Modules.AiAssistant.AiWinCareEngine.AnalyzeSystemHealthAsync(token);
             if (token.IsCancellationRequested || _isDisposed) return;
-            
+
             RunOnUI(() =>
             {
                 if (token.IsCancellationRequested || _isDisposed)
@@ -593,7 +620,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 
             var notificationService = _notificationService ?? App.Services?.GetService<INotificationService>();
             notificationService?.ShowToast(
-                "Cache Cleanup".T(), 
+                "Cache Cleanup".T(),
                 string.Format("Successfully purged {0:F1} MB from Delivery Optimization cache.".T(), mb),
                 NotificationSeverity.Success
             );
@@ -637,7 +664,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         _notificationService = notificationService ?? App.Services?.GetService<INotificationService>();
         _dispatcherQueue = dispatcherQueue ?? SafeGetDispatcherQueue();
         DispatcherQueueInstance = _dispatcherQueue;
-        
+
         _progressHandler = (msg) => Log(msg.T());
         _optimizerEngine.ProgressMessage += _progressHandler;
 
@@ -753,7 +780,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         try
         {
             bool isRunning = item.IsRunning;
-            
+
             // Record snapshot in DbManager before modifying for rollback support
             Database.DbManager.SaveSnapshot("WindowsService", item.ServiceName, isRunning ? "Running" : "Stopped", isRunning ? "Stopped" : "Running");
 
@@ -965,11 +992,11 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
             case "Gaming":
                 foreach (var t in Tweaks)
                 {
-                    t.IsSelected = t.Id == "HwSchMode" || 
-                                   t.Id == "GameDVR_Enabled" || 
-                                   t.Id == "NetworkThrottlingIndex" || 
-                                   t.Id == "SystemResponsiveness" || 
-                                   t.Id == "MenuShowDelay" || 
+                    t.IsSelected = t.Id == "HwSchMode" ||
+                                   t.Id == "GameDVR_Enabled" ||
+                                   t.Id == "NetworkThrottlingIndex" ||
+                                   t.Id == "SystemResponsiveness" ||
+                                   t.Id == "MenuShowDelay" ||
                                    t.Id == "WaitToKillAppTimeout";
                     if (t.IsSelected) count++;
                 }
@@ -977,7 +1004,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
             case "Performance":
                 foreach (var t in Tweaks)
                 {
-                    t.IsSelected = t.Category.Contains("Performance", StringComparison.OrdinalIgnoreCase) || 
+                    t.IsSelected = t.Category.Contains("Performance", StringComparison.OrdinalIgnoreCase) ||
                                    t.Category.Contains("System", StringComparison.OrdinalIgnoreCase);
                     if (t.IsSelected) count++;
                 }
@@ -993,8 +1020,8 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
             case "Eco":
                 foreach (var t in Tweaks)
                 {
-                    t.IsSelected = t.Id == "NtfsDisableLastAccessUpdate" || 
-                                   t.Id == "MinAnimate" || 
+                    t.IsSelected = t.Id == "NtfsDisableLastAccessUpdate" ||
+                                   t.Id == "MinAnimate" ||
                                    t.Id == "AllowTelemetry";
                     if (t.IsSelected) count++;
                 }
@@ -1045,7 +1072,7 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
         // Select Performance & System tweaks
         foreach (var t in Tweaks)
         {
-            bool isPerf = t.Category.Contains("Performance", StringComparison.OrdinalIgnoreCase) || 
+            bool isPerf = t.Category.Contains("Performance", StringComparison.OrdinalIgnoreCase) ||
                           t.Category.Contains("System", StringComparison.OrdinalIgnoreCase);
             t.IsSelected = isPerf;
         }
@@ -1109,10 +1136,13 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
 
             StatusText = string.Format("Applied {0} tweaks successfully.".T(), applied);
             Log(string.Format("Registry Sweep completed. Successfully adjusted {0} settings.".T(), applied));
-            
+
+            SummaryOptimizerText = string.Format("Successfully applied {0} tweaks to optimize Windows system performance.".T(), applied);
+            IsSummaryCardVisible = true;
+
             var notificationService = _notificationService ?? App.Services?.GetService<INotificationService>();
             notificationService?.ShowToast(
-                "System Optimizer".T(), 
+                "System Optimizer".T(),
                 string.Format("Successfully applied {0} system performance tweaks.".T(), applied),
                 NotificationSeverity.Success
             );
@@ -1311,7 +1341,10 @@ public class SystemOptimizerViewModel : ViewModelBase, IDisposable
             _aiScanCts?.Cancel();
             _aiScanCts?.Dispose();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("SystemOptimizerViewModel.Cleanup", ex);
+        }
         _aiScanCts = null;
         IsLoading = false;
         IsBoosting = false;

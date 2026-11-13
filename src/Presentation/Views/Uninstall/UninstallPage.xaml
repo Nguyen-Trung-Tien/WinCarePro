@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WinCarePro.Models"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     mc:Ignorable="d">
 
     <Page.KeyboardAccelerators>
@@ -138,7 +139,26 @@
             </StackPanel>
         </Grid>
 
-        <!-- 1. Interactive Cyber-Bento Insights Deck (Collapsed to eliminate duplicate filter bar) -->
+        <!-- 1. Contextual Status Banners (Safety & Post-Action Summary) -->
+        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,14">
+            <!-- Inline Safety Notice Card -->
+            <controls:InlineStatusCard
+                CardType="SafetyNotice"
+                Title="{Binding Source='Uninstall Armor Active', Converter={StaticResource TranslationConverter}}"
+                Message="{Binding Source='Windows System Apps and core runtimes (DirectX, VC++ Redistributables) are protected from accidental removal.', Converter={StaticResource TranslationConverter}}"
+                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                IsDismissible="True" />
+
+            <!-- Inline Post-Action Summary Card -->
+            <controls:InlineStatusCard
+                CardType="Summary"
+                Title="{Binding Source='Uninstall Summary', Converter={StaticResource TranslationConverter}}"
+                Message="{x:Bind ViewModel.SummaryUninstallText, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                IsDismissible="True" />
+        </StackPanel>
+
+        <!-- Interactive Cyber-Bento Insights Deck (Collapsed to eliminate duplicate filter bar) -->
         <Border Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,16" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,10">
             <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
                 <Grid x:Name="TopStatsGrid" ColumnSpacing="12" MinWidth="720">

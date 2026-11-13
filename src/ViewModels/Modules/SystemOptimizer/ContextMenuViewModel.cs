@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WinCarePro.Engines;
 using WinCarePro.Models;
 using WinCarePro.Services;
+using WinCarePro.Infrastructure.Logging;
 
 namespace WinCarePro.ViewModels;
 
@@ -32,6 +33,30 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
         get => _statusText;
         set => SetProperty(ref _statusText, value);
     }
+
+    private bool _isSafetyNoticeVisible = true;
+    public bool IsSafetyNoticeVisible
+    {
+        get => _isSafetyNoticeVisible;
+        set => SetProperty(ref _isSafetyNoticeVisible, value);
+    }
+
+    private bool _isSummaryCardVisible;
+    public bool IsSummaryCardVisible
+    {
+        get => _isSummaryCardVisible;
+        set => SetProperty(ref _isSummaryCardVisible, value);
+    }
+
+    private string _summaryContextMenuText = string.Empty;
+    public string SummaryContextMenuText
+    {
+        get => _summaryContextMenuText;
+        set => SetProperty(ref _summaryContextMenuText, value);
+    }
+
+    public void DismissSafetyNotice() => IsSafetyNoticeVisible = false;
+    public void DismissSummaryCard() => IsSummaryCardVisible = false;
 
     private int _totalCount;
     public int TotalCount
@@ -112,7 +137,10 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
             _scanCts?.Dispose();
             _scanCts = null;
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("ContextMenuViewModel.Cleanup", ex);
+        }
         _engine.ProgressMessage -= _progressHandler;
         IsBusy = false;
     }
@@ -141,7 +169,10 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
         {
             _scanCts?.Cancel();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("ContextMenuViewModel.CancelScan", ex);
+        }
         IsBusy = false;
         SetOperationState(OperationState.Idle);
     }
@@ -160,7 +191,10 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
             _scanCts?.Cancel();
             _scanCts?.Dispose();
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("ContextMenuViewModel.ScanAsync.CancelPrev", ex);
+        }
         _scanCts = new CancellationTokenSource();
         var token = _scanCts.Token;
 
@@ -231,6 +265,8 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
                         enable ? "{0} enabled successfully.".T() : "{0} disabled successfully.".T(),
                         item.Name
                     );
+                    SummaryContextMenuText = StatusText;
+                    IsSummaryCardVisible = true;
                     ApplyFilter();
                 });
                 return true;
@@ -243,6 +279,7 @@ public class ContextMenuViewModel : ViewModelBase, IDisposable
         }
         catch (Exception ex)
         {
+            CrashLogger.LogException("ContextMenuViewModel.ToggleItemAsync", ex);
             StatusText = "Error: ".T() + ex.Message;
             return false;
         }

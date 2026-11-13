@@ -350,7 +350,14 @@ public sealed partial class RepairPage : Page
             "Cancel");
         if (!confirmed) return;
 
-        try { if (ViewModel != null) await ViewModel.RepairWindowsUpdateAsync(); } catch { }
+        try 
+        { 
+            if (ViewModel != null) await ViewModel.RepairWindowsUpdateAsync(); 
+        } 
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("RepairPage.OnFixWindowsUpdateClick", ex);
+        }
     }
 
     private async void OnRestoreServicesClick(object sender, RoutedEventArgs e)
@@ -363,12 +370,22 @@ public sealed partial class RepairPage : Page
             "Cancel");
         if (!confirmed) return;
 
-        try { if (ViewModel != null) await ViewModel.RepairServicesConfigAsync(); } catch { }
+        try 
+        { 
+            if (ViewModel != null) await ViewModel.RepairServicesConfigAsync(); 
+        } 
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("RepairPage.OnRestoreServicesClick", ex);
+        }
     }
 
     public bool IsNot(bool val) => !val;
 
     public bool CanFixSelected(int count, bool isBusy) => count > 0 && !isBusy;
+
+    public Visibility EmptyStateVisibility(int count, bool isBusy) =>
+        (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 
     public string GetProgressText(int percent) => $"{percent}%";
 

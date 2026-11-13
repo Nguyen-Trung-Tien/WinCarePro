@@ -335,5 +335,12 @@ public partial class TranslationManager
         if (en != null) en["Controls smooth transitions, acrylic mesh and glow effects. Turn off to enforce Reduced Motion for accessibility and lower GPU usage."] = "Controls smooth transitions, acrylic mesh and glow effects. Turn off to enforce Reduced Motion for accessibility and lower GPU usage.";
         vi["Polaris Suite"] = "Bộ Polaris";
         if (en != null) en["Polaris Suite"] = "Polaris Suite";
+
+        vi["SQLite 3 WAL Persistence & Policy Protection Active"] = "Cơ Chế Bền Vững SQLite 3 WAL & Bảo Vệ Chính Sách Đang Hoạt Động";
+        if (en != null) en["SQLite 3 WAL Persistence & Policy Protection Active"] = "SQLite 3 WAL Persistence & Policy Protection Active";
+        vi["SQLite 3 WAL Persistence &amp; Policy Protection Active"] = "Cơ Chế Bền Vững SQLite 3 WAL & Bảo Vệ Chính Sách Đang Hoạt Động";
+        if (en != null) en["SQLite 3 WAL Persistence &amp; Policy Protection Active"] = "SQLite 3 WAL Persistence &amp; Policy Protection Active";
+        vi["All settings changes and user preferences are atomically written using SQLite WAL mode with zero file locking conflicts."] = "Mọi thay đổi cài đặt và tùy chọn người dùng được ghi nguyên tử bằng chế độ SQLite WAL mà không xảy ra tranh chấp khóa tệp.";
+        if (en != null) en["All settings changes and user preferences are atomically written using SQLite WAL mode with zero file locking conflicts."] = "All settings changes and user preferences are atomically written using SQLite WAL mode with zero file locking conflicts.";
     }
 }

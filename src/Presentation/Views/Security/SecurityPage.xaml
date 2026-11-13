@@ -8,6 +8,7 @@
     xmlns:vm="using:WinCarePro.ViewModels"
     xmlns:models="using:WinCarePro.Models"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     xmlns:components="using:WinCarePro.Shared.Components"
     xmlns:views="using:WinCarePro.Views"
     mc:Ignorable="d">
@@ -42,7 +43,8 @@
         <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- 0. Header & Action Bar -->
-            <RowDefinition Height="*" />    <!-- 1. SysInternals-style Tabbed Matrix -->
+            <RowDefinition Height="Auto" /> <!-- 1. Contextual Status Banners -->
+            <RowDefinition Height="*" />    <!-- 2. SysInternals-style Tabbed Matrix -->
         </Grid.RowDefinitions>
 
         <!-- ==================== 0. FLAT HEADER & ACTION BAR ==================== -->
@@ -78,7 +80,7 @@
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <!-- Export Audit Report -->
                 <Button Click="OnExportReportClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" 
-                        Style="{StaticResource DefaultButtonStyle}" CornerRadius="4" Padding="14,7" FontSize="12">
+                        Style="{StaticResource SecondaryGlassButtonStyle}" CornerRadius="8" Padding="14,7" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xEDE1;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
                         <TextBlock Text="Export Report" FontWeight="SemiBold" />
@@ -87,7 +89,7 @@
 
                 <!-- 1-Click Quick Harden -->
                 <Button Click="OnQuickHardenClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" 
-                        Style="{StaticResource DefaultButtonStyle}" CornerRadius="4" Padding="14,7" FontSize="12">
+                        Style="{StaticResource SecondaryGlassButtonStyle}" CornerRadius="8" Padding="14,7" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE945;" FontSize="12" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
                         <TextBlock Text="Quick Harden" FontWeight="SemiBold" />
@@ -96,7 +98,7 @@
 
                 <!-- On-Demand Refresh Status Button -->
                 <Button Click="OnScanSecurityClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" 
-                        Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" CornerRadius="4" Padding="16,7" FontSize="12">
+                        Style="{StaticResource PrimaryGradientButtonStyle}" Foreground="White" CornerRadius="8" Padding="16,7" FontSize="12">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ProgressRing IsActive="{x:Bind ViewModel.IsScanning, Mode=OneWay}" Visibility="{x:Bind ViewModel.IsScanning, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" Width="13" Height="13" Foreground="White" VerticalAlignment="Center" />
                         <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="White" Visibility="{x:Bind ViewModel.IsScanning, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" />
@@ -106,8 +108,27 @@
             </StackPanel>
         </Grid>
 
-        <!-- ==================== 1. MAIN BODY PIVOTS ==================== -->
-        <Pivot Grid.Row="1" Margin="0,-4,0,0">
+        <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
+        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12" helpers:AnimationHelper.StaggerIndex="0">
+            <!-- Safety Notice Card -->
+            <controls:InlineStatusCard
+                CardType="SafetyNotice"
+                Title="{Binding Source='Windows Security Subsystem Armor Active', Converter={StaticResource TranslationConverter}}"
+                Message="{Binding Source='All telemetry is queried directly via verified Windows Security Center and hypervisor APIs. Policy hardening generates rollback backups.', Converter={StaticResource TranslationConverter}}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+            <!-- Summary / Post-Action Card -->
+            <controls:InlineStatusCard
+                CardType="Summary"
+                Title="{Binding Source='Security Optimization Summary', Converter={StaticResource TranslationConverter}}"
+                Message="{x:Bind ViewModel.SummarySecurityText, Mode=OneWay}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </StackPanel>
+
+        <!-- ==================== 2. MAIN BODY PIVOTS ==================== -->
+        <Pivot Grid.Row="2" Margin="0,-4,0,0">
             <Pivot.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" FontSize="13.5" FontWeight="SemiBold" Margin="0,0,10,0" />
@@ -185,6 +206,13 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
+
+                        <controls:EmptyStateCard
+                            Grid.Row="1"
+                            Visibility="{x:Bind EmptyStateVisibility(ViewModel.SecurityMatrixItems.Count, ViewModel.IsBusy), Mode=OneWay}"
+                            IconGlyph="&#xE727;"
+                            Title="{Binding Source='Security Matrix Initializing', Converter={StaticResource TranslationConverter}}"
+                            Description="{Binding Source='Windows security subsystems and hypervisor components are being queried.', Converter={StaticResource TranslationConverter}}" />
                     </Grid>
                 </Border>
             </PivotItem>
@@ -397,6 +425,13 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
+
+                        <controls:EmptyStateCard
+                            Grid.Row="1"
+                            Visibility="{x:Bind EmptyStateVisibility(ViewModel.FilteredSafeguards.Count, ViewModel.IsBusy), Mode=OneWay}"
+                            IconGlyph="&#xE727;"
+                            Title="{Binding Source='No Safeguards Match Query', Converter={StaticResource TranslationConverter}}"
+                            Description="{Binding Source='No security hardening rules or safeguards matched your current search criteria.', Converter={StaticResource TranslationConverter}}" />
                     </Grid>
                 </Border>
             </PivotItem>

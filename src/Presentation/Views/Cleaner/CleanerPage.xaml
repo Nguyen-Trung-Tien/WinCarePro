@@ -64,39 +64,66 @@
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <!-- Scan Button with Instant/Busy Visual Feedback (Mini ProgressRing 14x14) -->
-                    <Button Style="{StaticResource V6SecondaryActionButtonStyle}" Command="{x:Bind ViewModel.ScanAllCommand}" IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}">
+                    <Button Style="{StaticResource SecondaryGlassButtonStyle}" Height="34" CornerRadius="8" Padding="14,0" Command="{x:Bind ViewModel.ScanAllCommand}" IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                             <ProgressRing IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" Width="14" Height="14" Foreground="{StaticResource PrimaryAccentBrush}" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             <FontIcon Glyph="&#xE721;" FontSize="11.5" Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                            <TextBlock Text="Scan Clutter" />
+                            <TextBlock Text="{Binding Source='Scan Clutter', Converter={StaticResource TranslationConverter}}" />
                         </StackPanel>
                     </Button>
 
                     <!-- Clean Button -->
-                    <Button Style="{StaticResource V6PrimaryActionButtonStyle}" Command="{x:Bind ViewModel.CleanSelectedCommand}" IsEnabled="{x:Bind ViewModel.CanClean, Mode=OneWay}">
+                    <Button Style="{StaticResource PrimaryGradientButtonStyle}" Height="34" CornerRadius="8" Padding="16,0" Command="{x:Bind ViewModel.CleanSelectedCommand}" IsEnabled="{x:Bind ViewModel.CanClean, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE74D;" FontSize="11.5"/>
-                            <TextBlock Text="Clean Selected" />
+                            <FontIcon Glyph="&#xE74D;" FontSize="11.5" Foreground="White"/>
+                            <TextBlock Text="{Binding Source='Clean Selected', Converter={StaticResource TranslationConverter}}" Foreground="White" FontWeight="Bold"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- 1. Execution Progress Card / Overlay Banner (>5s tasks) -->
-        <controls:ExecutionProgressBanner
-            Grid.Row="1"
-            Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-            StatusText="{x:Bind ViewModel.CurrentStatusText, Mode=OneWay}"
-            TargetItem="{x:Bind ViewModel.CurrentTargetItem, Mode=OneWay}"
-            ProgressPercentage="{x:Bind ViewModel.ProgressPercentage, Mode=OneWay}"
-            IsIndeterminate="{x:Bind ViewModel.IsIndeterminate, Mode=OneWay}"
-            CancelCommand="{x:Bind ViewModel.CancelCurrentTaskCommand, Mode=OneWay}"
-            CanCancel="{x:Bind ViewModel.CanCancel, Mode=OneWay}" />
+        <!-- 1. Contextual Status Banners & Execution Progress -->
+        <StackPanel Grid.Row="1" Spacing="8">
+            <!-- Inline Safety Protection Notice Card -->
+            <controls:InlineStatusCard
+                CardType="SafetyNotice"
+                Title="{Binding Source='SafePathGuard Armor Active', Converter={StaticResource TranslationConverter}}"
+                Message="{Binding Source='Core Windows directories, user files, and system volumes are permanently shielded from deletion.', Converter={StaticResource TranslationConverter}}"
+                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                IsDismissible="True" />
+
+            <!-- Inline Post-Action Summary Card -->
+            <controls:InlineStatusCard
+                CardType="Summary"
+                Title="{Binding Source='Cleanup Summary', Converter={StaticResource TranslationConverter}}"
+                Message="{x:Bind ViewModel.SummaryCleanedText, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                IsDismissible="True" />
+
+            <!-- Execution Progress Card / Overlay Banner (>5s tasks) -->
+            <controls:ExecutionProgressBanner
+                Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                StatusText="{x:Bind ViewModel.CurrentStatusText, Mode=OneWay}"
+                TargetItem="{x:Bind ViewModel.CurrentTargetItem, Mode=OneWay}"
+                ProgressPercentage="{x:Bind ViewModel.ProgressPercentage, Mode=OneWay}"
+                IsIndeterminate="{x:Bind ViewModel.IsIndeterminate, Mode=OneWay}"
+                CancelCommand="{x:Bind ViewModel.CancelCurrentTaskCommand, Mode=OneWay}"
+                CanCancel="{x:Bind ViewModel.CanCancel, Mode=OneWay}" />
+        </StackPanel>
 
         <!-- 2. Main Workspace: Virtualized Checklist View & Skeleton Shimmer Loading -->
         <Border Grid.Row="2" Style="{StaticResource V6FlatCardStyle}" Padding="0">
             <Grid>
+                <!-- Empty State Card when no clutter found or ready to scan -->
+                <controls:EmptyStateCard
+                    Visibility="{x:Bind EmptyStateVisibility(ViewModel.CleanerCategories.Count, ViewModel.IsBusy), Mode=OneWay}"
+                    IconGlyph="&#xE74D;"
+                    Title="{Binding Source='Ready to Clean System', Converter={StaticResource TranslationConverter}}"
+                    Description="{Binding Source='Safely audit and clean temporary clutter, orphaned uninstall registry keys, and leftover app files.', Converter={StaticResource TranslationConverter}}"
+                    ActionText="{Binding Source='Scan Clutter', Converter={StaticResource TranslationConverter}}"
+                    ActionCommand="{x:Bind ViewModel.ScanAllCommand}" />
+
                 <!-- Skeleton Shimmer Loading State (1-5s tasks: prevents empty list layout flash) -->
                 <ScrollViewer Visibility="{x:Bind SkeletonVisibility(ViewModel.CleanerCategories.Count, ViewModel.IsBusy), Mode=OneWay}" Padding="8">
                     <controls:SkeletonCardControl />

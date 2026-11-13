@@ -290,6 +290,9 @@ public sealed partial class UpdaterPage : Page
 
     public bool IsNot(bool val) => !val;
 
+    public Visibility EmptyStateVisibility(int count, bool isBusy) =>
+        (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
+
     public Visibility HasTextVisibility(string? text) => !string.IsNullOrWhiteSpace(text) ? Visibility.Visible : Visibility.Collapsed;
 
     public string GetSpeedDisplay(string? speed) => string.IsNullOrWhiteSpace(speed) ? "" : $"•  {speed}";

@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:WinCarePro.ViewModels"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -118,14 +119,14 @@
             </StackPanel>
 
             <StackPanel x:Name="HeaderButtonsPanel" Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Button x:Name="CancelHeaderBtn" Click="OnCancelOperationClick" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" CornerRadius="8" Padding="14,8" Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" Foreground="{ThemeResource AppStatusDangerBrush}" FontWeight="Bold">
+                <Button x:Name="CancelHeaderBtn" Click="OnCancelOperationClick" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource DangerDestructiveButtonStyle}" CornerRadius="8" Padding="14,8" FontWeight="Bold">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE711;" FontSize="13" />
                         <TextBlock Text="Cancel" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" />
                     </StackPanel>
                 </Button>
 
-                <Button x:Name="ScanDiagnosticsBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnScanDiagnosticsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" Padding="16,8" FontWeight="Bold">
+                <Button x:Name="ScanDiagnosticsBtn" Style="{StaticResource SecondaryGlassButtonStyle}" Click="OnScanDiagnosticsClick" IsEnabled="{x:Bind IsNot(ViewModel.IsBusy), Mode=OneWay}" CornerRadius="8" Padding="16,8" FontWeight="Bold">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="ScanDiagRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                         <FontIcon x:Name="ScanDiagIcon" Glyph="&#xE721;" FontSize="13" />
@@ -133,7 +134,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button x:Name="FixSelectedBtn" Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource CyberAccentGradient}" Foreground="White" CornerRadius="10" helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97" Padding="16,8" FontWeight="Bold">
+                <Button x:Name="FixSelectedBtn" Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" Style="{StaticResource PrimaryGradientButtonStyle}" CornerRadius="8" Padding="16,8" FontWeight="Bold">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <ProgressRing x:Name="FixSelectedRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                         <FontIcon x:Name="FixSelectedIcon" Glyph="&#xE77F;" FontSize="13" />
@@ -143,94 +144,24 @@
             </StackPanel>
         </Grid>
 
-        <!-- ==================== 1. UNIFIED STAT RIBBON (Collapsed to eliminate redundant stat cards) ==================== -->
-        <Grid x:Name="StatsRibbonGrid" Grid.Row="1" Visibility="Collapsed" Margin="0,0,0,14" ColumnSpacing="12" RowSpacing="12" helpers:AnimationHelper.StaggerIndex="0">
-            <Grid.RowDefinitions>
-                <RowDefinition x:Name="StatRow0" Height="Auto" />
-                <RowDefinition x:Name="StatRow1" Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="StatCol0" Width="*" />
-                <ColumnDefinition x:Name="StatCol1" Width="*" />
-                <ColumnDefinition x:Name="StatCol2" Width="*" />
-                <ColumnDefinition x:Name="StatCol3" Width="*" />
-            </Grid.ColumnDefinitions>
+        <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
+        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12" helpers:AnimationHelper.StaggerIndex="0">
+            <!-- Safety Notice Card -->
+            <controls:InlineStatusCard
+                CardType="SafetyNotice"
+                Title="{Binding Source='System Doctor &amp; Restore Point Armed', Converter={StaticResource TranslationConverter}}"
+                Message="{Binding Source='All repair actions create an automated Windows Restore Point and verify safe SFC/DISM parameters before execution.', Converter={StaticResource TranslationConverter}}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-            <!-- Card 1: Core Services Status -->
-            <Border x:Name="StatsGridCol0" Grid.Row="0" Grid.Column="0" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE713;" FontSize="17" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Core Services Active" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <StackPanel Orientation="Horizontal" Spacing="4">
-                            <TextBlock Text="{x:Bind ViewModel.ServicesHealthyCount, Mode=OneWay}" FontSize="17" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" Typography.NumeralAlignment="Tabular"/>
-                            <TextBlock Text="/ 5" FontSize="11.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Card 2: Registry Policy Bans -->
-            <Border x:Name="StatsGridCol1" Grid.Row="0" Grid.Column="1" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusDangerBackground}" BorderBrush="{ThemeResource AppStatusDangerBorder}" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xEDA2;" FontSize="17" Foreground="{ThemeResource AppStatusDangerBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Policy Bans Found" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.RegistryRestrictionsCount, Mode=OneWay}" FontSize="17" FontWeight="ExtraBold" Foreground="{x:Bind GetRestrictionColor(ViewModel.RegistryRestrictionsCount), Mode=OneWay}" Typography.NumeralAlignment="Tabular"/>
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Card 3: DNS Query Response -->
-            <Border x:Name="StatsGridCol2" Grid.Row="0" Grid.Column="2" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{ThemeResource AppStatusInfoBackground}" BorderBrush="{ThemeResource AppStatusInfoBorder}" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE774;" FontSize="17" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="DNS Query Ping" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind ViewModel.NetworkPingStatus, Mode=OneWay}" FontSize="17" FontWeight="ExtraBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                    </StackPanel>
-                </Grid>
-            </Border>
-
-            <!-- Card 4: Security Health Score -->
-            <Border x:Name="StatsGridCol3" Grid.Row="0" Grid.Column="3" Style="{StaticResource CockpitQuickStatCardStyle}"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="6.5" helpers:Animation3DHelper.DepthZ="14">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="10" Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" Margin="0,0,12,0" VerticalAlignment="Center">
-                        <FontIcon Glyph="&#xE73E;" FontSize="17" Foreground="{x:Bind GetScoreColor(ViewModel.HealthScore), Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="System Security Score" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" />
-                        <TextBlock Text="{x:Bind GetScoreText(ViewModel.HealthScore), Mode=OneWay}" FontSize="15.5" FontWeight="ExtraBold" Foreground="{x:Bind GetScoreColor(ViewModel.HealthScore), Mode=OneWay}" />
-                    </StackPanel>
-                </Grid>
-            </Border>
-        </Grid>
+            <!-- Summary / Post-Action Card -->
+            <controls:InlineStatusCard
+                CardType="Summary"
+                Title="{Binding Source='Repair Execution Summary', Converter={StaticResource TranslationConverter}}"
+                Message="{x:Bind ViewModel.SummaryRepairText, Mode=OneWay}"
+                IsDismissible="True"
+                Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </StackPanel>
 
         <!-- ==================== 2. QUICK PROBLEM SOLVER (Collapsed to eliminate duplicate tab buttons) ==================== -->
         <Border Grid.Row="2" Visibility="Collapsed" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,10" Margin="0,0,0,12">
@@ -641,6 +572,12 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+
+                            <controls:EmptyStateCard
+                                Visibility="{x:Bind EmptyStateVisibility(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}"
+                                IconGlyph="&#xE90F;"
+                                Title="{Binding Source='All Systems Healthy &amp; Intact', Converter={StaticResource TranslationConverter}}"
+                                Description="{Binding Source='No critical registry bans, service failures, or system integrity violations detected.', Converter={StaticResource TranslationConverter}}" />
 
                             <Button x:Name="AutoRepairBtn" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" Click="OnFixSelectedClick" IsEnabled="{x:Bind CanFixSelected(ViewModel.DiscoveredIssuesCount, ViewModel.IsBusy), Mode=OneWay}" CornerRadius="9" Padding="20,10" FontWeight="Bold" HorizontalAlignment="Right">
                                 <StackPanel Orientation="Horizontal" Spacing="8">

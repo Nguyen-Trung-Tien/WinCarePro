@@ -470,4 +470,7 @@ public sealed partial class SecurityPage : Page
     }
 
     public bool IsNot(bool val) => !val;
+
+    public Visibility EmptyStateVisibility(int count, bool isBusy) =>
+        (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 }

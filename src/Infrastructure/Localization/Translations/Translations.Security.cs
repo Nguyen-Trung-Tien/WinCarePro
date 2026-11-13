@@ -337,5 +337,24 @@ public partial class TranslationManager
         if (en != null) en["State: Engaged & Guarding"] = "State: Engaged & Guarding";
         vi["State: Engaged &amp; Guarding"] = "Trạng thái: Đang hoạt động & Bảo vệ";
         if (en != null) en["State: Engaged &amp; Guarding"] = "State: Engaged &amp; Guarding";
+
+        vi["Windows Security Subsystem Armor Active"] = "Lá chắn Phân hệ Bảo mật Windows Đang Hoạt động";
+        if (en != null) en["Windows Security Subsystem Armor Active"] = "Windows Security Subsystem Armor Active";
+        vi["All telemetry is queried directly via verified Windows Security Center and hypervisor APIs. Policy hardening generates rollback backups."] = "Mọi thông số đo lường được truy vấn trực tiếp qua Windows Security Center và API hypervisor đã kiểm chứng. Gia cố chính sách tự động tạo bản sao lưu hoàn tác.";
+        if (en != null) en["All telemetry is queried directly via verified Windows Security Center and hypervisor APIs. Policy hardening generates rollback backups."] = "All telemetry is queried directly via verified Windows Security Center and hypervisor APIs. Policy hardening generates rollback backups.";
+        vi["Security Optimization Summary"] = "Tóm tắt Tối ưu Bảo mật";
+        if (en != null) en["Security Optimization Summary"] = "Security Optimization Summary";
+        vi["{0} Defense Profile activated successfully. Live shields verified."] = "Đã kích hoạt thành công Hồ sơ Phòng thủ {0}. Các lá chắn thời gian thực đã được xác thực.";
+        if (en != null) en["{0} Defense Profile activated successfully. Live shields verified."] = "{0} Defense Profile activated successfully. Live shields verified.";
+        vi["Intelligent System Hardening complete. Firewall active and privacy shields enforced."] = "Gia cố hệ thống thông minh hoàn tất. Tường lửa đã kích hoạt và khiên riêng tư được áp dụng.";
+        if (en != null) en["Intelligent System Hardening complete. Firewall active and privacy shields enforced."] = "Intelligent System Hardening complete. Firewall active and privacy shields enforced.";
+        vi["Security Matrix Initializing"] = "Đang Khởi tạo Ma trận Bảo mật";
+        if (en != null) en["Security Matrix Initializing"] = "Security Matrix Initializing";
+        vi["Windows security subsystems and hypervisor components are being queried."] = "Các phân hệ bảo mật Windows và thành phần hypervisor đang được truy vấn.";
+        if (en != null) en["Windows security subsystems and hypervisor components are being queried."] = "Windows security subsystems and hypervisor components are being queried.";
+        vi["No Safeguards Match Query"] = "Không có Biện pháp Bảo vệ Khớp Truy vấn";
+        if (en != null) en["No Safeguards Match Query"] = "No Safeguards Match Query";
+        vi["No security hardening rules or safeguards matched your current search criteria."] = "Không có quy tắc gia cố hoặc biện pháp bảo vệ nào khớp với tiêu chí tìm kiếm hiện tại của bạn.";
+        if (en != null) en["No security hardening rules or safeguards matched your current search criteria."] = "No security hardening rules or safeguards matched your current search criteria.";
     }
 }

@@ -50,7 +50,10 @@ public sealed partial class CleanerPage : Page
     }
 
     public Visibility ListVisibility(int count, bool isBusy) =>
-        (count > 0 || !isBusy) ? Visibility.Visible : Visibility.Collapsed;
+        (count > 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
+
+    public Visibility EmptyStateVisibility(int count, bool isBusy) =>
+        (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 
     public Visibility SkeletonVisibility(int count, bool isBusy) =>
         (count == 0 && isBusy) ? Visibility.Visible : Visibility.Collapsed;

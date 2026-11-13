@@ -36,7 +36,10 @@ public sealed partial class NetworkPage : Page
                     {
                         TerminalScrollViewer?.ChangeView(null, TerminalScrollViewer.ScrollableHeight, null);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        CrashLogger.LogException("NetworkPage.ConsoleOutputScroll", ex);
+                    }
                 });
             }
         };
@@ -331,12 +334,17 @@ public sealed partial class NetworkPage : Page
                 package.SetText(ViewModel.ConsoleOutput);
                 Clipboard.SetContent(package);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                CrashLogger.LogException("NetworkPage.OnCopyConsoleClick", ex);
+            }
         }
     }
 
     // ==================== FORMATTING & BINDING HELPERS ====================
     public bool IsNot(bool val) => !val;
+    public Visibility EmptyStateVisibility(int count, bool isBusy) =>
+        (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
     public string FormatMs(double val) => val >= 1000 ? $"{val / 1000.0:F2} s" : $"{val:F0} ms";
     public string FormatPercent(double val) => $"{val:F1}%";
     public string FormatMbps(double val) => val >= 1000 ? $"{val / 1000.0:F2} Gbps" : $"{val:F1} Mbps";

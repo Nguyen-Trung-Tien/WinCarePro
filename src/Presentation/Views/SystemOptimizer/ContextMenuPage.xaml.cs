@@ -128,4 +128,7 @@ public sealed partial class ContextMenuPage : Page
     }
 
     public bool IsNot(bool b) => !b;
+
+    public Visibility EmptyStateVisibility(int count, bool isBusy) =>
+        (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 }

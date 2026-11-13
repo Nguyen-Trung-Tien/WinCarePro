@@ -13,6 +13,13 @@ public class TranslationConverter : IValueConverter
         string? key = value as string ?? parameter as string;
         if (!string.IsNullOrEmpty(key))
         {
+            if (!string.IsNullOrEmpty(language))
+            {
+                if (language.StartsWith("vi", StringComparison.OrdinalIgnoreCase))
+                    return TranslationManager.Instance.GetTranslationForLanguage(key, AppLanguage.Vietnamese);
+                if (language.StartsWith("en", StringComparison.OrdinalIgnoreCase))
+                    return TranslationManager.Instance.GetTranslationForLanguage(key, AppLanguage.English);
+            }
             return TranslationManager.Instance.T(key);
         }
         return value ?? string.Empty;

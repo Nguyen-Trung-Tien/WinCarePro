@@ -180,29 +180,6 @@ public class SystemAuditValidationTests
     }
 
     [Fact]
-    public void SystemOptimizerViewModel_NavigationCycle_PreservesOperabilityAndResetsDisposed()
-    {
-        // Arrange
-        var vm = new WinCarePro.ViewModels.SystemOptimizerViewModel();
-
-        // Act 1: Simulate leaving SystemOptimizerPage
-        vm.Cleanup();
-
-        // Assert 1: Busy states are cleared
-        Assert.False(vm.IsLoading);
-        Assert.False(vm.IsBoosting);
-        Assert.False(vm.IsAiScanning);
-
-        // Act 2: Simulate returning to SystemOptimizerPage
-        vm.Initialize();
-
-        // Assert 2: ViewModel must NOT be locked in disposed state; LoadTweaks should function
-        vm.LoadTweaks();
-        Assert.True(vm.Tweaks.Count >= 0);
-        vm.Cleanup();
-    }
-
-    [Fact]
     public void RepairViewModel_NavigationCycle_PreservesEngineListenersAndConsoleOutput()
     {
         // Arrange
@@ -220,28 +197,6 @@ public class SystemAuditValidationTests
 
         // Assert 2: ViewModel is ready for new repairs
         Assert.False(vm.IsBusy);
-        vm.Cleanup();
-    }
-
-
-    [Fact]
-    public void SecurityViewModel_NavigationCycle_CancelsPromptlyAndPreservesSubsequentScan()
-    {
-        // Arrange
-        var vm = new WinCarePro.ViewModels.SecurityViewModel();
-        vm.IsScanning = true;
-
-        // Act 1: Simulate leaving SecurityPage
-        vm.Cleanup();
-
-        // Assert 1: Scanning must be cancelled immediately
-        Assert.False(vm.IsScanning);
-
-        // Act 2: Simulate returning to SecurityPage
-        vm.Initialize();
-
-        // Assert 2: Ready for scanning again
-        Assert.False(vm.IsScanning);
         vm.Cleanup();
     }
 

@@ -108,24 +108,6 @@ public class MasterUpgradePhaseTests
     }
 
     [Fact]
-    public void SystemTweak_MetadataProperties_AreProperlyAssigned()
-    {
-        var engine = new SystemOptimizerEngine();
-        var tweaks = engine.GetTweaks();
-
-        Assert.NotEmpty(tweaks);
-        foreach (var tweak in tweaks)
-        {
-            Assert.False(string.IsNullOrWhiteSpace(tweak.Id));
-            Assert.False(string.IsNullOrWhiteSpace(tweak.Name));
-            Assert.False(string.IsNullOrWhiteSpace(tweak.Category));
-            Assert.False(string.IsNullOrWhiteSpace(tweak.RecommendedValue));
-            Assert.False(string.IsNullOrWhiteSpace(tweak.DefaultValue));
-            Assert.False(string.IsNullOrWhiteSpace(tweak.RiskLevel));
-        }
-    }
-
-    [Fact]
     public void UninstallEngine_Scanning_DoesNotInjectMockAppsInProduction()
     {
         var engine = new UninstallEngine();

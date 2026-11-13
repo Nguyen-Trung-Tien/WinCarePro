@@ -113,15 +113,7 @@ public partial class DashboardViewModel
             details.Add(string.Format("{0:F1} MB Junk (-{1} pts)".T(), mb, penalty));
         }
 
-        // 4. Registry Issues Deductions
-        if (_scannedRegistryIssues != null && _scannedRegistryIssues.Count > 0)
-        {
-            int penalty = Math.Min(15, _scannedRegistryIssues.Count);
-            calculatedScore -= penalty;
-            details.Add(string.Format("{0} Registry errors (-{1} pts)".T(), _scannedRegistryIssues.Count, penalty));
-        }
-
-        // 5. Outdated Software Deductions
+        // 4. Outdated Software Deductions
         if (AvailableUpdatesCount > 0)
         {
             int penalty = Math.Min(10, AvailableUpdatesCount * 2);
@@ -347,28 +339,7 @@ public partial class DashboardViewModel
                 _dispatcherQueue?.TryEnqueue(() =>
                 {
                     JunkFileSize = $"{(_junkSizeBytes / 1024.0 / 1024.0):F1} MB";
-                    ScanProgress = 30;
-                    ScanStatus = "Status: Scanning Registry Issues...".T();
-                });
-                await Task.Delay(250, scanToken).ConfigureAwait(false);
-
-                // 2. Scan Registry (synchronous method — runs safely on thread pool)
-                scanToken.ThrowIfCancellationRequested();
-                List<RegistryIssue> regIssues = new();
-                try
-                {
-                    regIssues = _registryEngine.ScanRegistryIssues(scanToken);
-                }
-                catch (OperationCanceledException) { throw; }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("Warning: Registry scan fallback: " + ex.Message);
-                }
-
-                _scannedRegistryIssues = regIssues;
-                _dispatcherQueue?.TryEnqueue(() =>
-                {
-                    ScanProgress = 55;
+                    ScanProgress = 50;
                     ScanStatus = "Status: Checking Available Software Updates...".T();
                 });
                 await Task.Delay(250, scanToken).ConfigureAwait(false);
@@ -411,30 +382,6 @@ public partial class DashboardViewModel
                 }
                 scanToken.ThrowIfCancellationRequested();
 
-                List<StartupEntry> startupApps = new();
-                try
-                {
-                    startupApps = _startupEngine.GetStartupEntries();
-                }
-                catch (OperationCanceledException) { throw; }
-                catch (Exception ex)
-                {
-                    CrashLogger.LogException("DashboardViewModel.RunFullDiagnostics.StartupApps", ex);
-                }
-                scanToken.ThrowIfCancellationRequested();
-
-                List<string> securityAudits = new();
-                try
-                {
-                    securityAudits = _securityEngine.RunSecurityAudits(startupApps);
-                }
-                catch (OperationCanceledException) { throw; }
-                catch (Exception ex)
-                {
-                    CrashLogger.LogException("DashboardViewModel.RunFullDiagnostics.SecurityAudits", ex);
-                }
-                scanToken.ThrowIfCancellationRequested();
-
                 _dispatcherQueue?.TryEnqueue(() =>
                 {
                     ScanProgress = 90;
@@ -442,18 +389,7 @@ public partial class DashboardViewModel
                 });
                 await Task.Delay(250, scanToken).ConfigureAwait(false);
 
-                // 5. Evaluate AI Health Score
-                int servicesCount = 50;
-                try
-                {
-                    servicesCount = ServiceController.GetServices().Length;
-                }
-                catch (Exception ex)
-                {
-                    CrashLogger.LogException("DashboardViewModel.RunFullDiagnostics.GetServices", ex);
-                }
-                scanToken.ThrowIfCancellationRequested();
-
+                // 5. Evaluate Health Score from live metrics
                 double freeSpacePercent = 50.0;
                 try
                 {
@@ -469,75 +405,17 @@ public partial class DashboardViewModel
                     CrashLogger.LogException("DashboardViewModel.RunFullDiagnostics.FreeSpace", ex);
                 }
 
-                double cpuTemp = 45.0;
-                try
-                {
-                    cpuTemp = _hardwareEngine.GetCpuTemperature(currentCpuUsage);
-                }
-                catch (Exception ex)
-                {
-                    CrashLogger.LogException("DashboardViewModel.RunFullDiagnostics.CpuTemp", ex);
-                }
-                scanToken.ThrowIfCancellationRequested();
-
-                bool isExplorerOptimized = true;
-                try
-                {
-                    var tweaks = _optimizerEngine.GetTweaks();
-                    var menuTweak = tweaks.FirstOrDefault(t => t.Id == "MenuShowDelay");
-                    var animTweak = tweaks.FirstOrDefault(t => t.Id == "MinAnimate");
-                    if ((menuTweak != null && !menuTweak.IsOptimized) || (animTweak != null && !animTweak.IsOptimized))
-                    {
-                        isExplorerOptimized = false;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    CrashLogger.LogException("DashboardViewModel.RunFullDiagnostics.ExplorerTweaks", ex);
-                }
-
-                double ssdHealth = 100;
-                bool isThrottling = false;
-                try
-                {
-                    ssdHealth = _hardwareEngine.GetSsdHealthPercent();
-                    isThrottling = _hardwareEngine.IsCpuThrottling(currentCpuUsage);
-                }
-                catch (Exception ex)
-                {
-                    CrashLogger.LogException("DashboardViewModel.RunFullDiagnostics.SsdHealth", ex);
-                }
-
-                var summary = await _aiEngine.RunHealthEvaluationAsync(
-                    _junkSizeBytes,
-                    regIssues.Count,
-                    updates.Count,
-                    avgLatency,
-                    pingLoss,
-                    startupApps.Count,
-                    securityAudits,
-                    cpuUsage: currentCpuUsage,
-                    cpuTemp: cpuTemp,
-                    ramUsagePercent: currentRamUsage,
-                    servicesCount: servicesCount,
-                    diskActiveTime: currentDiskUsage,
-                    freeSpacePercent: freeSpacePercent,
-                    ssdHealthPercent: ssdHealth,
-                    isThrottling: isThrottling,
-                    isExplorerOptimized: isExplorerOptimized
-                ).ConfigureAwait(false);
+                int calculatedScore = 100;
+                if (currentCpuUsage > 80) calculatedScore -= 15;
+                if (currentRamUsage > 85) calculatedScore -= 15;
+                if (currentDiskUsage > 90) calculatedScore -= 15;
+                if (freeSpacePercent < 10) calculatedScore -= 15;
+                if (avgLatency > 100) calculatedScore -= 10;
+                calculatedScore = Math.Clamp(calculatedScore, 10, 100);
 
                 _dispatcherQueue?.TryEnqueue(() =>
                 {
-                    HealthScore = summary.HealthScore;
-                    foreach (var rec in summary.Recommendations)
-                    {
-                        Recommendations.Add(rec);
-                    }
-                    foreach (var res in summary.Results)
-                    {
-                        DiagnosticItems.Add(res);
-                    }
+                    HealthScore = calculatedScore;
                     ScanProgress = 100;
                     IsScanning = false;
                     HasScanned = true;

@@ -267,8 +267,7 @@ public class SettingsAndStateTests
     public void BackgroundWatchdogService_Lifecycle_StartsAndStopsCleanly()
     {
         // Arrange
-        var optimizer = new Engines.SystemOptimizerEngine();
-        var service = new BackgroundWatchdogService(optimizer, SettingsService.Instance);
+        var service = new BackgroundWatchdogService(SettingsService.Instance);
 
         // Act & Assert
         Assert.False(service.IsRunning);

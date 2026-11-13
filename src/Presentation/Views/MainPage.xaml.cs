@@ -288,15 +288,11 @@ public sealed partial class MainPage : Page
                 nameof(DashboardPage) => "Dashboard",
                 nameof(CleanerPage) => "Cleaner",
                 nameof(JunkPage) => "Cleaner",
-                nameof(RegistryPage) => "Cleaner",
                 nameof(UninstallPage) => "Uninstall",
                 nameof(UpdaterPage) => "Updater",
-                nameof(SystemOptimizerPage) => "Security",
-                nameof(StartupPage) => "Uninstall",
-                nameof(ContextMenuPage) => "Uninstall",
-                nameof(RepairPage) => "Security",
                 nameof(NetworkPage) => "Network",
-                nameof(SecurityPage) => "Security",
+                nameof(RepairPage) => "Repair",
+                nameof(SettingsPage) => "Settings",
                 _ => null
             };
 
@@ -396,14 +392,14 @@ public sealed partial class MainPage : Page
             "uninstall" => typeof(UninstallPage),
             "network" => typeof(NetworkPage),
             "repair" => typeof(RepairPage),
-            "security" => typeof(SecurityPage),
-            "optimizer" => typeof(SystemOptimizerPage),
-            "contextmenu" => typeof(ContextMenuPage),
-            "startup" => typeof(StartupPage),
-            "registry" => typeof(RegistryPage),
             "updater" => typeof(UpdaterPage),
             "settings" => typeof(SettingsPage),
             "notification" => typeof(NotificationPage),
+            "security" => typeof(RepairPage),
+            "optimizer" => typeof(DashboardPage),
+            "startup" => typeof(UninstallPage),
+            "registry" => typeof(CleanerPage),
+            "contextmenu" => typeof(UninstallPage),
             _ => null
         };
 
@@ -556,30 +552,14 @@ public sealed partial class MainPage : Page
 
     public void UpdateExperienceMode(bool isPro)
     {
-        // WinCare Pro v6.0.0 6-Hub Streamlined Navigation Architecture
+        // WinCare Pro v6.0.0 Streamlined Navigation Architecture
         if (NavDashboard != null) NavDashboard.Visibility = Visibility.Visible;
         if (NavCleaner != null) NavCleaner.Visibility = Visibility.Visible;
         if (NavUninstall != null) NavUninstall.Visibility = Visibility.Visible;
         if (NavUpdater != null) NavUpdater.Visibility = Visibility.Visible;
         if (NavNetwork != null) NavNetwork.Visibility = Visibility.Visible;
-        if (NavSecurity != null) NavSecurity.Visibility = Visibility.Visible;
+        if (NavRepair != null) NavRepair.Visibility = Visibility.Visible;
         if (NavSettings != null) NavSettings.Visibility = Visibility.Visible;
-
-        // Legacy sub-pages are folded into the 6 core hubs
-        if (NavJunk != null) NavJunk.Visibility = Visibility.Collapsed;
-        if (NavRegistry != null) NavRegistry.Visibility = Visibility.Collapsed;
-        if (NavOptimizer != null) NavOptimizer.Visibility = Visibility.Collapsed;
-        if (NavStartup != null) NavStartup.Visibility = Visibility.Collapsed;
-        if (NavContextMenu != null) NavContextMenu.Visibility = Visibility.Collapsed;
-        if (NavRepair != null) NavRepair.Visibility = Visibility.Collapsed;
-
-        if (NavHeaderOverview != null) NavHeaderOverview.Visibility = Visibility.Collapsed;
-        if (NavSepApps != null) NavSepApps.Visibility = Visibility.Collapsed;
-        if (NavHeaderApps != null) NavHeaderApps.Visibility = Visibility.Collapsed;
-        if (NavSepClean != null) NavSepClean.Visibility = Visibility.Collapsed;
-        if (NavHeaderClean != null) NavHeaderClean.Visibility = Visibility.Collapsed;
-        if (NavSepTweaks != null) NavSepTweaks.Visibility = Visibility.Collapsed;
-        if (NavHeaderTweaks != null) NavHeaderTweaks.Visibility = Visibility.Collapsed;
 
         if (ContentFrame.Content is DashboardPage dbPage)
         {

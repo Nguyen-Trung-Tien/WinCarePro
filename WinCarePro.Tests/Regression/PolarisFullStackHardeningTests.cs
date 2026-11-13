@@ -3,7 +3,6 @@ using System.IO;
 using WinCarePro.Core;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Infrastructure.Security;
-using WinCarePro.Modules.AiAssistant;
 using WinCarePro.Services.Implementations;
 using Xunit;
 
@@ -57,28 +56,6 @@ public class PolarisFullStackHardeningTests
         Assert.False(InputSanitizer.IsSafeUri("file:///C:/Windows/System32/cmd.exe"));
         Assert.False(InputSanitizer.IsSafeUri("javascript:alert(1)"));
         Assert.False(InputSanitizer.IsSafeUri("powershell.exe -enc ..."));
-    }
-
-    [Fact]
-    public void AiWinCareEngine_DecoupledFromWinUI_HexColorTokensAreValid()
-    {
-        var nodeOptimal = new SubsystemTopologyNode { Status = "Optimal" };
-        var nodeWarning = new SubsystemTopologyNode { Status = "Warning" };
-        var nodeCritical = new SubsystemTopologyNode { Status = "Critical" };
-
-        Assert.StartsWith("#", nodeOptimal.StatusColorHex);
-        Assert.StartsWith("#", nodeOptimal.StatusBgColorHex);
-        Assert.StartsWith("#", nodeOptimal.StatusBorderColorHex);
-
-        Assert.Equal("#EF4444", nodeCritical.StatusColorHex);
-        Assert.Equal("#F59E0B", nodeWarning.StatusColorHex);
-        Assert.Equal("#10B981", nodeOptimal.StatusColorHex);
-
-        var chainItem = new CausalChainItem { Severity = "Critical" };
-        Assert.Equal("#EF4444", chainItem.SeverityColorHex);
-
-        var chainItemWarn = new CausalChainItem { Severity = "Warning" };
-        Assert.Equal("#F59E0B", chainItemWarn.SeverityColorHex);
     }
 
     [Fact]

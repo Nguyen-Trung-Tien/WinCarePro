@@ -372,12 +372,12 @@ public sealed partial class MainWindow : Window
             }
             else if (cmd == ID_TRAY_RAM)
             {
-                System.Threading.Tasks.Task.Run(async () =>
+                System.Threading.Tasks.Task.Run(() =>
                 {
                     try
                     {
-                        var optEngine = App.Services.GetRequiredService<Engines.SystemOptimizerEngine>();
-                        await optEngine.OptimizeRamAsync();
+                        GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+                        GC.WaitForPendingFinalizers();
 
                         App.MainDispatcherQueue?.TryEnqueue(() =>
                         {

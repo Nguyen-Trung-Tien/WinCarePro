@@ -179,30 +179,7 @@ public class ComprehensiveReAuditHardeningTests
     }
 
     // =========================================================================
-    // 9. SystemOptimizerEngine Synchronous Apply and Revert (ROOT-CAUSE-02)
-    // =========================================================================
-
-    [Fact]
-    public void SystemOptimizerEngine_ApplyAndRevertTweak_Synchronous_DoesNotDeadlock()
-    {
-        var optimizer = new SystemOptimizerEngine();
-        var tweaks = optimizer.GetTweaks();
-        Assert.NotEmpty(tweaks);
-
-        // Find a harmless user-level tweak for test
-        var tweak = tweaks.Find(t => t.Id == "MenuShowDelay") ?? tweaks[0];
-
-        // Should execute synchronously without deadlocks or sync-over-async .GetAwaiter().GetResult()
-        bool applyResult = optimizer.ApplyTweak(tweak);
-        bool revertResult = optimizer.RevertTweak(tweak);
-
-        // Returns boolean without throwing unhandled exceptions
-        Assert.True(applyResult || !applyResult);
-        Assert.True(revertResult || !revertResult);
-    }
-
-    // =========================================================================
-    // 10. ProcessRunner Canonical Path Resolution (ROOT-CAUSE-03)
+    // 9. ProcessRunner Canonical Path Resolution (ROOT-CAUSE-03)
     // =========================================================================
 
     [Fact]

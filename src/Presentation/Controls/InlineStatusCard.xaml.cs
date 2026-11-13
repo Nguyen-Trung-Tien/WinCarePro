@@ -109,6 +109,33 @@ public sealed partial class InlineStatusCard : UserControl
         Dismissed?.Invoke(this, e);
     }
 
+    private static bool TryGetAppResource<T>(string key, out T resource)
+    {
+        if (Application.Current?.Resources == null)
+        {
+            resource = default!;
+            return false;
+        }
+
+        if (Application.Current.Resources.TryGetValue(key, out var val) && val is T res)
+        {
+            resource = res;
+            return true;
+        }
+
+        foreach (var md in Application.Current.Resources.MergedDictionaries)
+        {
+            if (md.TryGetValue(key, out var mVal) && mVal is T mRes)
+            {
+                resource = mRes;
+                return true;
+            }
+        }
+
+        resource = default!;
+        return false;
+    }
+
     public static Style? ResolveCardStyle(InlineStatusCardType type)
     {
         var key = type switch
@@ -119,7 +146,35 @@ public sealed partial class InlineStatusCard : UserControl
             _ => "InlineSafetyNoticeCardStyle"
         };
 
-        return Application.Current.Resources.TryGetValue(key, out var style) && style is Style s ? s : null;
+        return TryGetAppResource<Style>(key, out var style) ? style : null;
+    }
+
+    public static Brush ResolveCardBackground(InlineStatusCardType type)
+    {
+        var key = type switch
+        {
+            InlineStatusCardType.SafetyNotice => "InlineSafetyCardBackground",
+            InlineStatusCardType.Summary => "InlineSummaryCardBackground",
+            InlineStatusCardType.AlertElevation => "InlineAlertCardBackground",
+            _ => "InlineSafetyCardBackground"
+        };
+
+        if (TryGetAppResource<Brush>(key, out var b)) return b;
+        return new SolidColorBrush(ColorHelper.FromArgb(0x18, 0x10, 0xB9, 0x81));
+    }
+
+    public static Brush ResolveCardBorder(InlineStatusCardType type)
+    {
+        var key = type switch
+        {
+            InlineStatusCardType.SafetyNotice => "InlineSafetyCardBorder",
+            InlineStatusCardType.Summary => "InlineSummaryCardBorder",
+            InlineStatusCardType.AlertElevation => "InlineAlertCardBorder",
+            _ => "InlineSafetyCardBorder"
+        };
+
+        if (TryGetAppResource<Brush>(key, out var b)) return b;
+        return new SolidColorBrush(ColorHelper.FromArgb(0x35, 0x10, 0xB9, 0x81));
     }
 
     public static Brush ResolveBadgeBackground(InlineStatusCardType type)
@@ -132,7 +187,7 @@ public sealed partial class InlineStatusCard : UserControl
             _ => "InlineSafetyCardBackground"
         };
 
-        if (Application.Current.Resources.TryGetValue(key, out var brush) && brush is Brush b) return b;
+        if (TryGetAppResource<Brush>(key, out var brush)) return brush;
         return new SolidColorBrush(ColorHelper.FromArgb(0x18, 0x10, 0xB9, 0x81));
     }
 
@@ -146,7 +201,7 @@ public sealed partial class InlineStatusCard : UserControl
             _ => "InlineSafetyCardBorder"
         };
 
-        if (Application.Current.Resources.TryGetValue(key, out var brush) && brush is Brush b) return b;
+        if (TryGetAppResource<Brush>(key, out var brush)) return brush;
         return new SolidColorBrush(ColorHelper.FromArgb(0x35, 0x10, 0xB9, 0x81));
     }
 
@@ -160,7 +215,7 @@ public sealed partial class InlineStatusCard : UserControl
             _ => "InlineSafetyCardGlyph"
         };
 
-        if (Application.Current.Resources.TryGetValue(key, out var brush) && brush is Brush b) return b;
+        if (TryGetAppResource<Brush>(key, out var brush)) return brush;
         return new SolidColorBrush(ColorHelper.FromArgb(0xFF, 0x10, 0xB9, 0x81));
     }
 

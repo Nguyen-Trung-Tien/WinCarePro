@@ -71,20 +71,22 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Spacing="10">
 
-                <!-- Contextual Status Banners -->
-                <controls:InlineStatusCard
-                    CardType="SafetyNotice"
-                    Title="{Binding Source='Autonomous Shield &amp; Real-Time Monitoring Active', Converter={StaticResource TranslationConverter}}"
-                    Message="{Binding Source='WinCare Pro background telemetry monitors RAM pressure, disk hygiene, and Windows services with near-zero overhead.', Converter={StaticResource TranslationConverter}}"
-                    IsDismissible="True"
-                    Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <!-- Contextual Status Banners (Safely placed inside scroll flow to eliminate layout collision) -->
+                <StackPanel Spacing="8" Margin="4,0,4,4" helpers:AnimationHelper.StaggerIndex="0">
+                    <controls:InlineStatusCard
+                        CardType="SafetyNotice"
+                        Title="{Binding Source='Autonomous Shield &amp; Real-Time Monitoring Active', Converter={StaticResource TranslationConverter}}"
+                        Message="{Binding Source='WinCare Pro background telemetry monitors RAM pressure, disk hygiene, and Windows services with near-zero overhead.', Converter={StaticResource TranslationConverter}}"
+                        IsDismissible="True"
+                        Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <controls:InlineStatusCard
-                    CardType="Summary"
-                    Title="{Binding Source='1-Click Care Optimization Summary', Converter={StaticResource TranslationConverter}}"
-                    Message="{x:Bind ViewModel.SummaryDashboardText, Mode=OneWay}"
-                    IsDismissible="True"
-                    Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <controls:InlineStatusCard
+                        CardType="Summary"
+                        Title="{Binding Source='1-Click Care Optimization Summary', Converter={StaticResource TranslationConverter}}"
+                        Message="{x:Bind ViewModel.SummaryDashboardText, Mode=OneWay}"
+                        IsDismissible="True"
+                        Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </StackPanel>
 
                 <!-- Row 0: Flagship System Health Cockpit & Action Deck (Full Width) -->
                 <Border x:Name="HealthGaugeCard" Margin="4,0,4,2" Padding="20,16" CornerRadius="12" Background="{ThemeResource GlassCardBackgroundBrush}" BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1">
@@ -190,17 +192,17 @@
                                                     <FontIcon Glyph="&#xEA99;"/>
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
-                                            <MenuFlyoutItem Text="Startup &amp; Performance Audit" Tag="StartupAndPerformance" Click="OnScanCategoryMenuClick">
+                                            <MenuFlyoutItem Text="Network Quality &amp; Latency" Tag="StartupAndPerformance" Click="OnScanCategoryMenuClick">
                                                 <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE7F4;"/>
+                                                    <FontIcon Glyph="&#xE968;"/>
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
-                                            <MenuFlyoutItem Text="Security &amp; Network Armor" Tag="SecurityCheck" Click="OnScanCategoryMenuClick">
+                                            <MenuFlyoutItem Text="System Health &amp; Defense" Tag="SecurityCheck" Click="OnScanCategoryMenuClick">
                                                 <MenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xEA18;"/>
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
-                                            <MenuFlyoutItem Text="Registry &amp; Disk Health" Tag="RegistryAndDiskHealth" Click="OnScanCategoryMenuClick">
+                                            <MenuFlyoutItem Text="Drive &amp; S.M.A.R.T Inspection" Tag="RegistryAndDiskHealth" Click="OnScanCategoryMenuClick">
                                                 <MenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xEDA2;"/>
                                                 </MenuFlyoutItem.Icon>
@@ -219,16 +221,13 @@
                                         AutomationProperties.HelpText="Optimizes system performance using the selected profile mode.">
                                     <Button.ContextFlyout>
                                         <MenuFlyout Placement="Bottom">
-                                            <MenuFlyoutItem Text="Recommended Mode (Caches &amp; Startup)" Click="OnRecommendedOptimizeClick" />
-                                            <MenuFlyoutItem Text="Safe Mode (Temp &amp; DNS)" Click="OnSafeOptimizeClick" />
-                                            <MenuFlyoutItem Text="Advanced Mode (Registry &amp; Tweaks)" Click="OnAdvancedOptimizeClick" />
-                                            <MenuFlyoutSeparator />
-                                            <MenuFlyoutItem Text="Undo Last Optimization" Click="OnUndoOptimizeClick" />
+                                            <MenuFlyoutItem Text="Clean Cache &amp; Temp" Click="OnSafeOptimizeClick" />
+                                            <MenuFlyoutItem Text="Reclaim Memory (RAM)" Click="OnRecommendedOptimizeClick" />
                                         </MenuFlyout>
                                     </Button.ContextFlyout>
                                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                         <FontIcon Glyph="&#xE945;" FontSize="12" Foreground="{ThemeResource AppStatusGoodBrush}"/>
-                                        <TextBlock Text="Optimize" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="Clean &amp; Boost" FontWeight="SemiBold" FontSize="12"/>
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
@@ -278,9 +277,9 @@
                             </Border>
                         </Button>
 
-                        <!-- Card 2: Startup & Performance Audit -->
+                        <!-- Card 2: Network Center -->
                         <Button x:Name="QuickStatsCardStartup" Grid.Row="0" Grid.Column="1" Style="{StaticResource InteractiveCardButtonStyle}" Click="OnScanCardStartupClick"
-                                AutomationProperties.Name="Startup and Performance Audit Scan" AutomationProperties.HelpText="Open Startup and Performance Audit Scan Hub">
+                                AutomationProperties.Name="Network Center" AutomationProperties.HelpText="Open Network Center">
                             <Border Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="76" Padding="14,12" CornerRadius="12" Background="{ThemeResource GlassCardBackgroundBrush}" BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
@@ -291,20 +290,20 @@
                                     <Border Grid.Column="0" Style="{StaticResource IconBadgeStyle}"
                                             Background="{StaticResource IconBadgeStartupBackground}"
                                             BorderBrush="{StaticResource IconBadgeStartupBorder}">
-                                        <FontIcon Glyph="&#xE7F4;" FontSize="16" Foreground="{StaticResource IconBadgeStartupGlyph}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE968;" FontSize="16" Foreground="{StaticResource IconBadgeStartupGlyph}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                        <TextBlock Text="Startup &amp; Performance" FontSize="12.5" FontWeight="SemiBold" FontFamily="Segoe UI Variable Display" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                        <TextBlock Text="High impact apps &amp; services" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Text="{x:Bind ViewModel.SystemUptime, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="Network Center" FontSize="12.5" FontWeight="SemiBold" FontFamily="Segoe UI Variable Display" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                        <TextBlock Text="Ping, DNS &amp; Quality" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{x:Bind ViewModel.NetworkStatus, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>
                         </Button>
 
-                        <!-- Card 3: Security & Network Armor -->
+                        <!-- Card 3: App Manager -->
                         <Button x:Name="QuickStatsCardSecurity" Grid.Row="0" Grid.Column="2" Style="{StaticResource InteractiveCardButtonStyle}" Click="OnScanCardSecurityClick"
-                                AutomationProperties.Name="Security Check Scan" AutomationProperties.HelpText="Open Security and Network Armor Scan Hub">
+                                AutomationProperties.Name="App Manager" AutomationProperties.HelpText="Open App Manager">
                             <Border Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="76" Padding="14,12" CornerRadius="12" Background="{ThemeResource GlassCardBackgroundBrush}" BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
@@ -315,20 +314,20 @@
                                     <Border Grid.Column="0" Style="{StaticResource IconBadgeStyle}"
                                             Background="{StaticResource IconBadgeSecurityBackground}"
                                             BorderBrush="{StaticResource IconBadgeSecurityBorder}">
-                                        <FontIcon Glyph="&#xEA18;" FontSize="16" Foreground="{StaticResource IconBadgeSecurityGlyph}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE71D;" FontSize="16" Foreground="{StaticResource IconBadgeSecurityGlyph}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                        <TextBlock Text="Security &amp; Network" FontSize="12.5" FontWeight="SemiBold" FontFamily="Segoe UI Variable Display" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                        <TextBlock Text="Defender, UAC &amp; Ports" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Text="{x:Bind ViewModel.NetworkStatus, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display"/>
+                                        <TextBlock Text="App Manager" FontSize="12.5" FontWeight="SemiBold" FontFamily="Segoe UI Variable Display" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                        <TextBlock Text="Installed &amp; Leftovers" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{x:Bind ViewModel.InstalledAppsCount, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0} apps installed'}" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>
                         </Button>
 
-                        <!-- Card 4: Registry & Disk Health -->
+                        <!-- Card 4: System Repair -->
                         <Button x:Name="QuickStatsCardRegistry" Grid.Row="0" Grid.Column="3" Style="{StaticResource InteractiveCardButtonStyle}" Click="OnScanCardRegistryClick"
-                                AutomationProperties.Name="Registry and Disk Health Scan" AutomationProperties.HelpText="Open Registry and Disk S.M.A.R.T Health Scan Hub">
+                                AutomationProperties.Name="System Repair" AutomationProperties.HelpText="Open System Repair">
                             <Border Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="76" Padding="14,12" CornerRadius="12" Background="{ThemeResource GlassCardBackgroundBrush}" BorderBrush="{ThemeResource SpecularGlassBorderBrush}" BorderThickness="1">
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
@@ -339,12 +338,12 @@
                                     <Border Grid.Column="0" Style="{StaticResource IconBadgeStyle}"
                                             Background="{StaticResource IconBadgeRegistryBackground}"
                                             BorderBrush="{StaticResource IconBadgeRegistryBorder}">
-                                        <FontIcon Glyph="&#xEDA2;" FontSize="16" Foreground="{StaticResource IconBadgeRegistryGlyph}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <FontIcon Glyph="&#xE90F;" FontSize="16" Foreground="{StaticResource IconBadgeRegistryGlyph}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                        <TextBlock Text="Registry &amp; Disk Health" FontSize="12.5" FontWeight="SemiBold" FontFamily="Segoe UI Variable Display" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                        <TextBlock Text="Orphan keys &amp; S.M.A.R.T" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Text="{x:Bind ViewModel.InstalledAppsCount, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0} apps installed'}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="System Repair" FontSize="12.5" FontWeight="SemiBold" FontFamily="Segoe UI Variable Display" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                        <TextBlock Text="DISM, SFC &amp; Health" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{x:Bind ViewModel.SystemUptime, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>

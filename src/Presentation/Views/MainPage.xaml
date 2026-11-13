@@ -38,20 +38,20 @@
             </NavigationView.PaneFooter>
 
             <NavigationView.MenuItems>
-                <!-- WINCARE PRO V6.0.0 6-HUB STREAMLINED ARCHITECTURE -->
+                <!-- WINCARE PRO V6.0.0 STREAMLINED CORE SUITE -->
                 <NavigationViewItem x:Name="NavDashboard" Tag="Dashboard" Content="Dashboard" Visibility="Visible" AutomationProperties.Name="Dashboard" AutomationProperties.HelpText="Overview of system health, hardware telemetry, and one-click quick boost.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE80F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavCleaner" Tag="Cleaner" Content="System Cleaner" Visibility="Visible" AutomationProperties.Name="System Cleaner" AutomationProperties.HelpText="Unified cleanup for temporary junk, registry orphans, and remnant app files.">
+                <NavigationViewItem x:Name="NavCleaner" Tag="Cleaner" Content="System Cleaner" Visibility="Visible" AutomationProperties.Name="System Cleaner" AutomationProperties.HelpText="Unified cleanup for temporary junk, system cache, and remnant app files.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE74D;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavUninstall" Tag="Uninstall" Content="App Manager" Visibility="Visible" AutomationProperties.Name="App Manager" AutomationProperties.HelpText="Manage installed applications, startup processes, and safe system services.">
+                <NavigationViewItem x:Name="NavUninstall" Tag="Uninstall" Content="App Manager" Visibility="Visible" AutomationProperties.Name="App Manager" AutomationProperties.HelpText="Manage and uninstall desktop and Store applications with deep leftover sweep.">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE71D;" />
                     </NavigationViewItem.Icon>
@@ -69,26 +69,11 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Name="NavSecurity" Tag="Security" Content="Security &amp; Health" Visibility="Visible" AutomationProperties.Name="Security &amp; Health" AutomationProperties.HelpText="Windows Defender, Firewall, HVCI, SFC/DISM repairs, and native security tools.">
+                <NavigationViewItem x:Name="NavRepair" Tag="Repair" Content="System Repair" Visibility="Visible" AutomationProperties.Name="System Repair" AutomationProperties.HelpText="Windows component doctor, SFC/DISM repairs, Windows Update Fixer, and restore points.">
                     <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEA18;" />
+                        <FontIcon Glyph="&#xE90F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-
-                <!-- LEGACY SUB-PAGES FOLDED INTO 6 HUBS (COLLAPSED FOR COMPATIBILITY) -->
-                <NavigationViewItemHeader x:Name="NavHeaderOverview" Content="OVERVIEW" Visibility="Collapsed" />
-                <NavigationViewItemSeparator x:Name="NavSepApps" Visibility="Collapsed" />
-                <NavigationViewItemHeader x:Name="NavHeaderApps" Content="APPLICATIONS" Visibility="Collapsed" />
-                <NavigationViewItem x:Name="NavStartup" Tag="Startup" Content="Startup" Visibility="Collapsed" />
-                <NavigationViewItem x:Name="NavContextMenu" Tag="ContextMenu" Content="Context Menu" Visibility="Collapsed" />
-                <NavigationViewItemSeparator x:Name="NavSepClean" Visibility="Collapsed" />
-                <NavigationViewItemHeader x:Name="NavHeaderClean" Content="CLEAN &amp; REPAIR" Visibility="Collapsed" />
-                <NavigationViewItem x:Name="NavJunk" Tag="Junk" Content="Junk Cleaner" Visibility="Collapsed" />
-                <NavigationViewItem x:Name="NavRegistry" Tag="Registry" Content="Registry" Visibility="Collapsed" />
-                <NavigationViewItem x:Name="NavRepair" Tag="Repair" Content="Repair" Visibility="Collapsed" />
-                <NavigationViewItemSeparator x:Name="NavSepTweaks" Visibility="Collapsed" />
-                <NavigationViewItemHeader x:Name="NavHeaderTweaks" Content="TWEAKS &amp; SECURITY" Visibility="Collapsed" />
-                <NavigationViewItem x:Name="NavOptimizer" Tag="Optimizer" Content="Optimizer" Visibility="Collapsed" />
             </NavigationView.MenuItems>
 
             <!-- Navigation Footer Menu Items (Settings) -->

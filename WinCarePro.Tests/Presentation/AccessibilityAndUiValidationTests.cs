@@ -362,7 +362,6 @@ public class AccessibilityAndUiValidationTests
             new(Path.Combine("Modules", "Uninstall", "UninstallPage.xaml.cs"), "OnDetailsForceUninstallClick", "Force Remove Now", "UninstallSelectedAppsAsync"),
             new(Path.Combine("Modules", "Uninstall", "UninstallPage.xaml.cs"), "OnBatchUninstallClick", "Uninstall Selected", "UninstallSelectedAppsAsync"),
             new(Path.Combine("Modules", "Uninstall", "UninstallPage.xaml.cs"), "OnBatchForceUninstallClick", "Force Remove All Selected", "UninstallSelectedAppsAsync"),
-            new(Path.Combine("Modules", "Registry", "RegistryPage.xaml.cs"), "OnRepairClick", "Repair Registry Now", "RepairSelectedAsync"),
             new(Path.Combine("Modules", "Repair", "RepairPage.xaml.cs"), "OnDismCleanClick", "Start Component Cleanup", "RunDismOperationAsync"),
             new(Path.Combine("Modules", "Repair", "RepairPage.xaml.cs"), "OnResetUpdateClick", "Reset Components Now", "RepairWindowsUpdateAsync"),
             new(Path.Combine("Modules", "Repair", "RepairPage.xaml.cs"), "OnRestoreServicesClick", "Restore Defaults Now", "RepairServicesConfigAsync"),

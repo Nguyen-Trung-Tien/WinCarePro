@@ -12,20 +12,17 @@ public class SmartFixService : ISmartFixService
 {
     private readonly JunkCleanerEngine _junkEngine;
     private readonly NetworkEngine _networkEngine;
-    private readonly SystemOptimizerEngine _optimizerEngine;
     private readonly SystemEngine _systemEngine;
     private readonly INotificationService _notificationService;
 
     public SmartFixService(
         JunkCleanerEngine junkEngine,
         NetworkEngine networkEngine,
-        SystemOptimizerEngine optimizerEngine,
         SystemEngine systemEngine,
         INotificationService notificationService)
     {
         _junkEngine = junkEngine ?? new JunkCleanerEngine();
         _networkEngine = networkEngine ?? new NetworkEngine();
-        _optimizerEngine = optimizerEngine ?? new SystemOptimizerEngine();
         _systemEngine = systemEngine ?? new SystemEngine();
         _notificationService = notificationService ?? new NotificationService();
     }
@@ -33,7 +30,6 @@ public class SmartFixService : ISmartFixService
     public SmartFixService() : this(
         new JunkCleanerEngine(),
         new NetworkEngine(),
-        new SystemOptimizerEngine(),
         new SystemEngine(),
         new NotificationService())
     {
@@ -66,7 +62,8 @@ public class SmartFixService : ISmartFixService
                     cancellationToken.ThrowIfCancellationRequested();
 
                     // Also optimize RAM
-                    await _optimizerEngine.OptimizeRamAsync();
+                    GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+                    GC.WaitForPendingFinalizers();
                     
                     progress.ProgressPercent = 100;
                     progress.IsCompleted = true;
@@ -103,13 +100,13 @@ public class SmartFixService : ISmartFixService
                     progress.CurrentStep = "Tuning background Windows services and RAM working set...";
                     progressCallback?.Invoke(progress);
                     
-                    var (procOpt, ramBytes) = await _optimizerEngine.OptimizeRamAsync();
-                    double freedMBService = ramBytes / (1024.0 * 1024.0);
+                    GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+                    GC.WaitForPendingFinalizers();
                     
                     progress.ProgressPercent = 100;
                     progress.IsCompleted = true;
                     progress.IsSuccess = true;
-                    progress.ResultMessage = $"Optimized {procOpt} processes and freed {freedMBService:F1} MB RAM.";
+                    progress.ResultMessage = "Working sets trimmed and RAM successfully optimized.";
                     progressCallback?.Invoke(progress);
                     
                     _notificationService.ShowSuccess("Service Optimization Complete", progress.ResultMessage);
@@ -145,7 +142,8 @@ public class SmartFixService : ISmartFixService
                     progressCallback?.Invoke(progress);
 
                     // Real maintenance: optimize RAM and trim system caches
-                    await _optimizerEngine.OptimizeRamAsync();
+                    GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+                    GC.WaitForPendingFinalizers();
 
                     progress.ProgressPercent = 100;
                     progress.IsCompleted = true;

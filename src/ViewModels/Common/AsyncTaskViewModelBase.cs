@@ -72,10 +72,10 @@ public abstract partial class AsyncTaskViewModelBase : ViewModelBase
         {
             try
             {
-                _cts.Cancel();
-                CurrentStatusText = "Cancelling...".T();
                 SetOperationState(OperationState.Cancelling);
+                CurrentStatusText = "Cancelling...".T();
                 OnPropertyChanged(nameof(CanCancel));
+                _cts.Cancel();
             }
             catch (Exception ex)
             {

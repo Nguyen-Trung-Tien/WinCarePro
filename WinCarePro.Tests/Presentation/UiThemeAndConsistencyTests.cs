@@ -209,19 +209,11 @@ public class UiThemeAndConsistencyTests
         var manager = TranslationManager.Instance;
         var subtitles = new[]
         {
-            "Real-time hardware telemetry & AI care.",
-            "Intelligent diagnostics & automated optimization.",
+            "Live system metrics & 1-click care.",
             "Purge system caches, temp files & debris.",
             "Cleanly uninstall apps & remove leftover data.",
             "Network telemetry, DNS speed & TCP/IP repairs.",
             "SFC integrity, DISM & core Windows services.",
-            "Hardware trust, credential safety & privacy.",
-            "Kernel tuning, process scheduling & memory caching.",
-            "Prioritize CPU threads & minimize latency.",
-            "Manage shell extensions and declutter right-click menus.",
-            "Control startup apps & boot velocity.",
-            "S.M.A.R.T telemetry, storage & duplicate finder.",
-            "Invalid registry entries, repairs & backups.",
             "Apps & packages updates via WinGet.",
             "System telemetry alerts, diagnostic logs & operation records.",
             "Personalize preferences, language & updates."
@@ -236,26 +228,6 @@ public class UiThemeAndConsistencyTests
             string backToEn = manager.GetTranslationForLanguage(vi, AppLanguage.English);
             Assert.Equal(sub, backToEn);
         }
-
-        // Context Menu Guideline card tests
-        string guideDesc = manager.GetTranslationForLanguage("Disabling unused shell extensions removes right-click popup delay and prevents File Explorer freezes.", AppLanguage.Vietnamese);
-        Assert.Equal("Vô hiệu hóa tiện ích không dùng giúp menu chuột phải mở tức thì và tránh đơ File Explorer.", guideDesc);
-
-        string safeModDesc = manager.GetTranslationForLanguage("Disabled keys are safely prefixed with '-' rather than deleted, allowing instant restoration anytime.", AppLanguage.Vietnamese);
-        Assert.Equal("Các khóa bị tắt được gắn tiền tố '-' thay vì bị xóa, cho phép khôi phục tức thì bất kỳ lúc nào.", safeModDesc);
-
-        // Startup Health & Smart Insights tests
-        string startupHealth = manager.GetTranslationForLanguage("Startup Health", AppLanguage.Vietnamese);
-        Assert.Equal("Sức khỏe khởi động", startupHealth);
-
-        string smartInsights = manager.GetTranslationForLanguage("Smart Insights", AppLanguage.Vietnamese);
-        Assert.Equal("Đề xuất thông minh", smartInsights);
-
-        string boostBtn = manager.GetTranslationForLanguage("Boost Boot Speed", AppLanguage.Vietnamese);
-        Assert.Equal("Tăng tốc khởi động", boostBtn);
-
-        string svcInsight = string.Format(manager.GetTranslationForLanguage("There are {0} running non-Microsoft background services. Consider disabling those you don't use regularly.", AppLanguage.Vietnamese), 10);
-        Assert.Equal("Có 10 dịch vụ nền bên thứ ba đang chạy. Hãy tắt các dịch vụ không thường xuyên dùng.", svcInsight);
 
         // Disk Stat Ribbon tests
         string drivesVols = manager.GetTranslationForLanguage("Drives & Volumes", AppLanguage.Vietnamese);
@@ -275,19 +247,6 @@ public class UiThemeAndConsistencyTests
 
         string reclaimClusters = manager.GetTranslationForLanguage("Reclaimable Clusters", AppLanguage.Vietnamese);
         Assert.Equal("Cụm có thể giải phóng", reclaimClusters);
-
-        // AI Quick Actions Hub tests
-        string aiHubTitle = manager.GetTranslationForLanguage("AI Automated Quick Remedies", AppLanguage.Vietnamese);
-        Assert.Equal("Tác vụ khắc phục nhanh từ AI", aiHubTitle);
-
-        string freeWs = manager.GetTranslationForLanguage("Free Working Set", AppLanguage.Vietnamese);
-        Assert.Equal("Xóa bộ đệm RAM", freeWs);
-
-        string trimBoot = manager.GetTranslationForLanguage("Trim Boot Overhead", AppLanguage.Vietnamese);
-        Assert.Equal("Rút ngắn mở máy", trimBoot);
-
-        string repairSocket = manager.GetTranslationForLanguage("Repair Socket Cache", AppLanguage.Vietnamese);
-        Assert.Equal("Sửa kết nối socket", repairSocket);
 
         // Header User Guide button tests
         string guideTip = manager.GetTranslationForLanguage("User Guide & Documentation", AppLanguage.Vietnamese);
@@ -346,21 +305,9 @@ public class UiThemeAndConsistencyTests
     }
 
     [Fact]
-    public void Translations_StartupEmptyStates_ShouldBeLocalized()
-    {
-        var manager = TranslationManager.Instance;
-        Assert.Equal("Khởi động & Dịch vụ", manager.GetTranslationForLanguage("Startup & Services", AppLanguage.Vietnamese));
-    }
-
-    [Fact]
     public void Translations_AiDiagnosticsAndNetwork_ShouldBeLocalizedAndReversible()
     {
         var manager = TranslationManager.Instance;
-
-        // AI Diagnostics Engine header
-        Assert.Equal("Động cơ chẩn đoán thông minh", manager.GetTranslationForLanguage("Smart Diagnostics Engine", AppLanguage.Vietnamese));
-        Assert.Equal("Lõi sức khỏe hệ thống", manager.GetTranslationForLanguage("System Health Core", AppLanguage.Vietnamese));
-        Assert.Equal("Chẩn đoán thông minh đa yếu tố & đề xuất sức khỏe hệ thống.", manager.GetTranslationForLanguage("Intelligent multi-factor diagnostics & system health recommendations.", AppLanguage.Vietnamese));
 
         // Network Center & Diagnostics
         Assert.Equal("Trung tâm Mạng & Chẩn đoán", manager.GetTranslationForLanguage("Network Center & Diagnostics", AppLanguage.Vietnamese));
@@ -375,8 +322,6 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("Kho lưu trữ WinGet & Kênh cập nhật trực tiếp đã đồng bộ", manager.GetTranslationForLanguage("WinGet Repository &amp; Direct Channel Synced", AppLanguage.Vietnamese));
 
         // Bi-directional reversibility
-        Assert.Equal("Smart Diagnostics Engine", manager.GetTranslationForLanguage("Động cơ chẩn đoán thông minh", AppLanguage.English));
-        Assert.Equal("System Health Core", manager.GetTranslationForLanguage("Lõi sức khỏe hệ thống", AppLanguage.English));
         Assert.Equal("Network Center & Diagnostics", manager.GetTranslationForLanguage("Trung tâm Mạng & Chẩn đoán", AppLanguage.English));
         Assert.Equal("All Applications Up to Date", manager.GetTranslationForLanguage("Tất cả ứng dụng đã mới nhất", AppLanguage.English));
     }
@@ -493,14 +438,10 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("Reset to Factory Defaults?", manager.GetTranslationForLanguage("Đặt lại về mặc định gốc?", AppLanguage.English));
         Assert.Contains(manager.GetTranslationForLanguage("NGUY HIỂM", AppLanguage.English), new[] { "DESTRUCTIVE", "Bad" });
 
-        // 5. Dashboard Health & Registry translations from user reports
+        // 5. Dashboard Health translations
         Assert.Equal("Tình trạng sức khỏe hệ thống", manager.GetTranslationForLanguage("System Health Status", AppLanguage.Vietnamese));
         Assert.Equal("Tốt", manager.GetTranslationForLanguage("Good", AppLanguage.Vietnamese));
-        Assert.Equal("Trung tâm Registry & Tối ưu AI", manager.GetTranslationForLanguage("Registry Center & AI Optimizer", AppLanguage.Vietnamese));
-        Assert.Equal("Lá chắn Registry Zero-Trust", manager.GetTranslationForLanguage("Zero-Trust Registry Armor", AppLanguage.Vietnamese));
-        Assert.Equal("Sửa an toàn 1 chạm", manager.GetTranslationForLanguage("1-Click Safe Fix", AppLanguage.Vietnamese));
-        Assert.Equal("Dọn các mục đã chọn", manager.GetTranslationForLanguage("Clean Selected", AppLanguage.Vietnamese));
-        Assert.Equal("Trình kiểm tra AI thông minh", manager.GetTranslationForLanguage("Smart AI Inspector", AppLanguage.Vietnamese));
+        Assert.Equal("Dọn Các Mục Đã Chọn", manager.GetTranslationForLanguage("Clean Selected", AppLanguage.Vietnamese));
 
         // 6. Polaris v6.0.0 Search, Vitality, Network segmented tabs, System Repair
         Assert.Equal("Tìm kiếm công cụ, chẩn đoán, cài đặt... (Ctrl + K)", manager.GetTranslationForLanguage("Search tools, diagnostics, settings... (Ctrl + K)", AppLanguage.Vietnamese));
@@ -510,8 +451,6 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("⚡ Socket ứng dụng & Lưu lượng", manager.GetTranslationForLanguage("⚡ App Sockets & Traffic", AppLanguage.Vietnamese));
         Assert.Equal("🛠️ Tự phục hồi & Công cụ", manager.GetTranslationForLanguage("🛠️ Self-Healing & Tools", AppLanguage.Vietnamese));
         Assert.Equal("Sửa chữa Hệ thống & Tự phục hồi", manager.GetTranslationForLanguage("System Repair & Self-Healing", AppLanguage.Vietnamese));
-        Assert.Equal("Động cơ Thông minh 6.0", manager.GetTranslationForLanguage("Smart Engine 6.0", AppLanguage.Vietnamese));
-        Assert.Equal("Xác minh linh kiện SFC/DISM chuyên sâu, bỏ chặn registry an toàn và bảo vệ sao lưu hoàn tác tự động.", manager.GetTranslationForLanguage("Deep SFC/DISM component verification, registry safety unban, and automated rollback protection.", AppLanguage.Vietnamese));
 
         // 7. Dynamic emoji round-trip back to English
         Assert.Equal("🚀 Bandwidth & Radar", manager.GetTranslationForLanguage("🚀 Băng thông & Radar", AppLanguage.English));
@@ -524,7 +463,6 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("Tính năng tự động khắc phục phỏng đoán thực hiện các điều chỉnh hệ thống chạy ngầm mà không có thông báo xác nhận. Nên tắt đối với môi trường doanh nghiệp ổn định.", manager.GetTranslationForLanguage("Heuristic auto-remediations execute background system adjustments without prompt confirmations. Keep disabled for stable enterprise production environments.", AppLanguage.Vietnamese));
 
         // 9. Resource Insights Telemetry Banner
-        Assert.Equal("Phát hiện mức sử dụng bộ xử lý cao. Hãy tối ưu các dịch vụ chạy ngầm và ứng dụng khởi động.", manager.GetTranslationForLanguage("High processor demand observed. Optimize background services and startup applications.", AppLanguage.Vietnamese));
         Assert.Equal("CPU TB: {0}% | RAM: {1}%", manager.GetTranslationForLanguage("Avg CPU: {0}% | RAM: {1}%", AppLanguage.Vietnamese));
 
         // 10. Settings Hub Sidebar Header
@@ -541,11 +479,11 @@ public class UiThemeAndConsistencyTests
         manager.CurrentLanguage = AppLanguage.Vietnamese;
 
         // 1. Indexer API: TranslationManager.Instance[key]
-        Assert.Equal("Tổng quan", manager["Dashboard"]);
+        Assert.Equal("Bảng điều khiển", manager["Dashboard"]);
         Assert.Equal("BẢNG ĐIỀU KHIỂN HỆ THỐNG", manager["SYSTEM COCKPIT"]);
 
         // 2. GetString API: TranslationManager.Instance.GetString(key)
-        Assert.Equal("Tổng quan", manager.GetString("Dashboard"));
+        Assert.Equal("Bảng điều khiển", manager.GetString("Dashboard"));
         Assert.Equal("Dọn dẹp", manager.GetString("Clean"));
 
         // 3. Culture dictionaries
@@ -553,35 +491,25 @@ public class UiThemeAndConsistencyTests
         var enDict = manager.GetTranslations("en-US");
         Assert.NotNull(viDict);
         Assert.NotNull(enDict);
-        Assert.True(viDict.Count >= 3300, $"Expected >= 3300 keys in viDict, got {viDict.Count}");
-        Assert.True(enDict.Count >= 3300, $"Expected >= 3300 keys in enDict, got {enDict.Count}");
+        Assert.True(viDict.Count >= 2500, $"Expected >= 2500 keys in viDict, got {viDict.Count}");
+        Assert.True(enDict.Count >= 2500, $"Expected >= 2500 keys in enDict, got {enDict.Count}");
 
         // 4. TranslationConverter verification
         var converter = new TranslationConverter();
         var converted = converter.Convert("Dashboard", typeof(string), null!, "vi-VN");
-        Assert.Equal("Tổng quan", converted);
+        Assert.Equal("Bảng điều khiển", converted);
 
-        // 5. Test keys across all 15 modular subsets
+        // 5. Test keys across active modular subsets
         // Common
         Assert.Equal("Đang chuẩn bị", manager["Preparing"]);
         // Dashboard
         Assert.Equal("Lõi trực tuyến", manager["Core Online"]);
-        // AiAssistant
-        Assert.Equal("Chẩn đoán thông minh", manager["Smart Diagnostics & AI Health Advisor"]);
         // DiskCleaner
         Assert.Equal("Dọn dẹp & Lưu trữ", manager["Clean & Storage"]);
-        // StartupManager
-        Assert.Equal("Tăng tốc & Khởi động", manager["Speed & Startup"]);
-        // SystemOptimizer
-        Assert.Equal("Bác sĩ Hệ thống", manager["System Doctor"]);
-        // Registry
-        Assert.Equal("Dọn dẹp Registry", manager["Registry Cleaner"]);
         // Repair
         Assert.Equal("Sửa chữa Hệ thống & Tự phục hồi", manager["System Repair & Self-Healing"]);
         // Network
         Assert.Equal("Trung tâm Mạng", manager["Network Center"]);
-        // Security
-        Assert.Equal("Bảo vệ an ninh & quyền riêng tư Windows.", manager["Windows security & privacy protection."]);
         // Uninstall
         Assert.Equal("Cập nhật Phần mềm", manager["Software Updater"]);
         // Updates
@@ -590,8 +518,6 @@ public class UiThemeAndConsistencyTests
         Assert.Equal("Widget HUD", manager["Widget HUD"]);
         // Notifications
         Assert.Equal("Thông báo", manager["Notifications"]);
-        // Settings
-        Assert.Equal("Tối ưu hóa", manager["System Optimizer"]);
 
         // Reset to English
         manager.CurrentLanguage = AppLanguage.English;

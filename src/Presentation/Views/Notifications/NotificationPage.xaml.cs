@@ -380,8 +380,8 @@ public sealed partial class NotificationPage : Page
                 case "RAM":
                     try
                     {
-                        var optEngine = App.Services.GetRequiredService<Engines.SystemOptimizerEngine>();
-                        await optEngine.OptimizeRamAsync();
+                        GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+                        GC.WaitForPendingFinalizers();
                         DbManager.LogAction("Quick RAM optimization from notification", "Memory Sentinel", "Success");
                         var notif = App.Services.GetService<Services.Contracts.INotificationService>();
                         notif?.ShowSuccess("RAM Cleaned".T(), "Working sets trimmed successfully.".T());

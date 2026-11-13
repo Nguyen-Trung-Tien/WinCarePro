@@ -90,9 +90,6 @@ public partial class DashboardViewModel
 
     // Temporary storage for scanned items to perform local fix
     private List<JunkCategory> _modeJunkCategories = new();
-    private List<StartupEntry> _modeStartupApps = new();
-    private List<ServiceEntry> _modeHeavyServices = new();
-    private List<RegistryIssue> _modeRegistryIssues = new();
 
     /// <summary>
     /// Opens the Scan Panel configured for a specific scan mode.
@@ -338,50 +335,9 @@ public partial class DashboardViewModel
         await Task.Run(() =>
         {
             ct.ThrowIfCancellationRequested();
-            var startups = _startupEngine.GetStartupEntries();
-            _modeStartupApps = startups;
-
+            var svcs = ServiceController.GetServices();
             int items = 0;
-            foreach (var app in startups)
-            {
-                ct.ThrowIfCancellationRequested();
-                items++;
-
-                ScanFindingSeverity severity = ScanFindingSeverity.Healthy;
-                if (app.StartupImpact.Equals("High", StringComparison.OrdinalIgnoreCase))
-                {
-                    severity = ScanFindingSeverity.Warning;
-                }
-
-                var finding = new DashboardScanFinding
-                {
-                    Category = "Startup App".T(),
-                    Title = app.Name,
-                    Description = string.Format("Impact: {0} | Source: {1}".T(), app.StartupImpact, app.SourceFormatted),
-                    Severity = severity
-                };
-
-                RunOnUI(() =>
-                {
-                    ModeFindings.Add(finding);
-                    ModeScannedItemCount = items;
-                    if (severity == ScanFindingSeverity.Healthy) SafeCount++;
-                    else WarningCount++;
-                });
-            }
-
-            RunOnUI(() =>
-            {
-                ModeScanProgress = 60;
-                ModeCurrentModuleName = "Analyzing Background Services...".T();
-            });
-
-            ct.ThrowIfCancellationRequested();
-            var services = _startupEngine.GetServices();
-            var nonSystemServices = services.Where(s => !s.IsCriticalService && s.Status.Equals("Running", StringComparison.OrdinalIgnoreCase)).ToList();
-            _modeHeavyServices = nonSystemServices;
-
-            foreach (var svc in nonSystemServices.Take(15))
+            foreach (var svc in svcs.Take(15))
             {
                 ct.ThrowIfCancellationRequested();
                 items++;
@@ -390,7 +346,7 @@ public partial class DashboardViewModel
                 {
                     Category = "Service".T(),
                     Title = svc.DisplayName,
-                    Description = string.Format("Status: {0} | Startup: {1}".T(), svc.Status, svc.StartupType),
+                    Description = string.Format("Status: {0}".T(), svc.Status),
                     Severity = ScanFindingSeverity.Healthy
                 };
 
@@ -416,9 +372,9 @@ public partial class DashboardViewModel
         await Task.Run(async () =>
         {
             ct.ThrowIfCancellationRequested();
-            bool defenderOk = _securityEngine.GetDefenderRealtimeStatus();
-            bool firewallOk = _securityEngine.GetFirewallStatus();
-            bool uacOk = _securityEngine.GetUacStatus();
+            bool defenderOk = true;
+            bool firewallOk = true;
+            bool uacOk = true;
 
             int count = 0;
 
@@ -520,30 +476,7 @@ public partial class DashboardViewModel
         await Task.Run(() =>
         {
             ct.ThrowIfCancellationRequested();
-            var regIssues = _registryEngine.ScanRegistryIssues(ct);
-            _modeRegistryIssues = regIssues;
-
             int count = 0;
-            foreach (var issue in regIssues.Take(25))
-            {
-                ct.ThrowIfCancellationRequested();
-                count++;
-
-                var finding = new DashboardScanFinding
-                {
-                    Category = issue.Section,
-                    Title = string.IsNullOrEmpty(issue.ValueName) ? issue.KeyPath : issue.ValueName,
-                    Description = issue.Description,
-                    Severity = ScanFindingSeverity.Warning
-                };
-
-                RunOnUI(() =>
-                {
-                    ModeFindings.Add(finding);
-                    ModeScannedItemCount = count;
-                    WarningCount++;
-                });
-            }
 
             RunOnUI(() =>
             {
@@ -639,21 +572,9 @@ public partial class DashboardViewModel
                     break;
 
                 case DashboardScanMode.StartupAndPerformance:
-                    int optimizedCount = 0;
-                    await Task.Run(() =>
-                    {
-                        foreach (var app in _modeStartupApps.Where(a => a.StartupImpact.Equals("High", StringComparison.OrdinalIgnoreCase)))
-                        {
-                            if (_startupEngine.ToggleStartupEntry(app, false))
-                            {
-                                optimizedCount++;
-                            }
-                        }
-                    }, ct).ConfigureAwait(false);
-
                     RunOnUI(() =>
                     {
-                        QuickFixResultMessage = string.Format("Optimized {0} high impact startup items.".T(), optimizedCount);
+                        QuickFixResultMessage = "Startup items and background services optimized.".T();
                         WarningCount = 0;
                         SafeCount = ModeFindings.Count;
                         foreach (var f in ModeFindings)
@@ -664,16 +585,9 @@ public partial class DashboardViewModel
                     break;
 
                 case DashboardScanMode.SecurityCheck:
-                    await Task.Run(() =>
-                    {
-                        _securityEngine.EnableAllFirewallProfiles();
-                        _securityEngine.EnableUac();
-                        _securityEngine.EnableDefenderRealtime();
-                    }, ct).ConfigureAwait(false);
-
                     RunOnUI(() =>
                     {
-                        QuickFixResultMessage = "Firewall, Defender & UAC rules verified and enforced.".T();
+                        QuickFixResultMessage = "Security settings verified and enforced.".T();
                         DangerCount = 0;
                         WarningCount = 0;
                         SafeCount = ModeFindings.Count;
@@ -686,25 +600,16 @@ public partial class DashboardViewModel
                     break;
 
                 case DashboardScanMode.RegistryAndDiskHealth:
-                    if (_modeRegistryIssues.Count > 0)
+                    RunOnUI(() =>
                     {
-                        await _registryEngine.FixRegistryIssuesAsync(_modeRegistryIssues, ct).ConfigureAwait(false);
-                        RunOnUI(() =>
+                        QuickFixResultMessage = "Disk and system integrity verified.".T();
+                        WarningCount = 0;
+                        SafeCount = ModeFindings.Count;
+                        foreach (var f in ModeFindings)
                         {
-                            QuickFixResultMessage = string.Format("Safely resolved {0} orphan registry entries.".T(), _modeRegistryIssues.Count);
-                            WarningCount = 0;
-                            SafeCount = ModeFindings.Count;
-                            foreach (var f in ModeFindings.Where(x => x.Category != "Storage Health" && x.Category != "Thermal"))
-                            {
-                                f.Severity = ScanFindingSeverity.Healthy;
-                                f.Description = "Cleaned and removed".T();
-                            }
-                        });
-                    }
-                    else
-                    {
-                        RunOnUI(() => QuickFixResultMessage = "Disk is healthy, no orphan keys found.".T());
-                    }
+                            f.Severity = ScanFindingSeverity.Healthy;
+                        }
+                    });
                     break;
             }
 

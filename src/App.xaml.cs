@@ -114,20 +114,14 @@ public partial class App : Application
         services.AddSingleton<AuditLogService>();
 
         // Register engines in DI
-        services.AddSingleton<Engines.AiDiagnosticsEngine>();
-        services.AddSingleton<Engines.AiWinCareScoringEngine>();
-        services.AddSingleton<Engines.PredictiveAnalysisEngine>();
         services.AddSingleton<Engines.JunkCleanerEngine>();
-        services.AddSingleton<Engines.SecurityPrivacyEngine>();
-        services.AddSingleton<Engines.SystemOptimizerEngine>();
-        services.AddSingleton<Engines.StartupEngine>();
         services.AddSingleton<Engines.RegistryBackupEngine>();
         services.AddSingleton<Engines.SoftwareUpdaterEngine>();
         services.AddSingleton<Engines.HardwareDriverEngine>();
         services.AddSingleton<Engines.ProcessService>();
         services.AddSingleton<Engines.NetworkEngine>();
-        services.AddSingleton<Engines.ContextMenuEngine>();
         services.AddSingleton<Engines.SystemEngine>();
+        services.AddSingleton<Engines.UninstallEngine>();
 
         // Register ViewModels
         services.AddTransient<DashboardViewModel>();
@@ -136,12 +130,7 @@ public partial class App : Application
         services.AddTransient<JunkViewModel>();
         services.AddTransient<UninstallViewModel>();
         services.AddTransient<RepairViewModel>();
-        services.AddTransient<SystemOptimizerViewModel>();
-        services.AddTransient<StartupViewModel>();
-        services.AddTransient<RegistryViewModel>();
         services.AddTransient<UpdaterViewModel>();
-        services.AddTransient<ContextMenuViewModel>();
-        services.AddTransient<SecurityViewModel>();
         services.AddTransient<SettingsViewModel>();
 
         Services = services.BuildServiceProvider();

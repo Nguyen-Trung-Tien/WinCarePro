@@ -11,19 +11,6 @@ namespace WinCarePro.Tests;
 public class SystemHardeningRegressionTests
 {
     [Fact]
-    public void StartupEngine_GetLastBootTimeSeconds_DoesNotThrowException()
-    {
-        // Arrange
-        var engine = new StartupEngine();
-
-        // Act & Assert: Phải chạy an toàn, không ném FileNotFoundException hay bất kỳ unhandled exception nào
-        var bootSec = engine.GetLastBootTimeSeconds();
-
-        // Trả về -1 (khi không tìm thấy/không mở được log) hoặc số dương (thời gian boot)
-        Assert.True(bootSec >= -1);
-    }
-
-    [Fact]
     public void ViewModelBase_RunOnUI_ExecutesActionSafelyWithoutDispatcher()
     {
         // Arrange
@@ -66,19 +53,5 @@ public class SystemHardeningRegressionTests
         Assert.False(SafeRegistryGuard.IsSafeToDeleteKey(@"HKEY_LOCAL_MACHINE\SAM"));
         Assert.False(SafeRegistryGuard.IsSafeToDeleteKey(@"HKEY_CLASSES_ROOT"));
         Assert.False(SafeRegistryGuard.IsSafeToDeleteKey(@"HKEY_CURRENT_USER"));
-    }
-
-    [Fact]
-    public void SecurityViewModel_CancelScan_ResetsStateSafely()
-    {
-        // Arrange
-        var vm = new SecurityViewModel();
-
-        // Act
-        vm.CancelScan();
-
-        // Assert
-        Assert.False(vm.IsScanning);
-        Assert.Equal(OperationState.Idle, vm.CurrentOperationState);
     }
 }

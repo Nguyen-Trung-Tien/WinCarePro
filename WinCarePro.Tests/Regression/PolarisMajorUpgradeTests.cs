@@ -11,25 +11,6 @@ namespace WinCarePro.Tests;
 
 public class PolarisMajorUpgradeTests
 {
-
-    [Fact]
-    public void SecurityPrivacyEngine_KernelIsolationAndDefenses_ReturnValidStatus()
-    {
-        var engine = new SecurityPrivacyEngine();
-
-        var (hvciOk, hvciStatus) = engine.CheckCoreIsolationStatus();
-        Assert.NotNull(hvciStatus);
-        Assert.Contains("Memory Integrity", hvciStatus);
-
-        var (tamperOk, tamperStatus) = engine.CheckTamperProtectionStatus();
-        Assert.NotNull(tamperStatus);
-        Assert.Contains("Tamper Protection", tamperStatus);
-
-        var (rdpOk, rdpStatus) = engine.CheckRdpNlaStatus();
-        Assert.NotNull(rdpStatus);
-        Assert.True(rdpStatus.Contains("RDP") || rdpStatus.Contains("Remote Desktop"));
-    }
-
     [Fact]
     public void NativeApi_GetSystemPowerStatus_ExecutesSafely()
     {
@@ -50,12 +31,6 @@ public class PolarisMajorUpgradeTests
 
         string viVolumes = tm.GetTranslationForLanguage("Logical Volumes", AppLanguage.Vietnamese);
         Assert.Equal("Phân vùng ổ đĩa", viVolumes);
-
-        string viHvci = tm.GetTranslationForLanguage("Memory Integrity (HVCI)", AppLanguage.Vietnamese);
-        Assert.Equal("Toàn vẹn bộ nhớ (HVCI)", viHvci);
-
-        string viTamper = tm.GetTranslationForLanguage("Tamper Protection", AppLanguage.Vietnamese);
-        Assert.Equal("Bảo vệ chống can thiệp", viTamper);
 
         string viAnalyze = tm.GetTranslationForLanguage("Analyze Space", AppLanguage.Vietnamese);
         Assert.Equal("Phân tích dung lượng", viAnalyze);

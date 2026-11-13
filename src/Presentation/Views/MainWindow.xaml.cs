@@ -572,12 +572,12 @@ public sealed partial class MainWindow : Window
                     Label = "Optimize RAM".T(),
                     Action = () =>
                     {
-                        Task.Run(async () =>
+                        Task.Run(() =>
                         {
                             try
                             {
-                                var optEngine = App.Services.GetRequiredService<Engines.SystemOptimizerEngine>();
-                                await optEngine.OptimizeRamAsync();
+                                GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+                                GC.WaitForPendingFinalizers();
                                 
                                 App.MainDispatcherQueue?.TryEnqueue(() =>
                                 {

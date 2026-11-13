@@ -114,19 +114,6 @@ public class OperationStateMachineAndAuditTests
     }
 
     [Fact]
-    public async Task ContextMenuEngine_PreCancelledToken_ThrowsOperationCanceledException()
-    {
-        var engine = new ContextMenuEngine();
-        using var cts = new CancellationTokenSource();
-        cts.Cancel();
-
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(async () =>
-        {
-            await engine.ScanContextMenuItemsAsync(cts.Token);
-        });
-    }
-
-    [Fact]
     public void UninstallEngine_PreCancelledToken_ThrowsOperationCanceledException()
     {
         var engine = new UninstallEngine();
@@ -157,37 +144,10 @@ public class OperationStateMachineAndAuditTests
     }
 
     [Fact]
-    public void SecurityViewModel_CancelScan_RestoresIdleState()
-    {
-        var vm = new SecurityViewModel();
-        vm.CancelScan();
-        Assert.Equal(OperationState.Idle, vm.CurrentOperationState);
-        Assert.False(vm.IsScanning);
-    }
-
-    [Fact]
     public void UpdaterViewModel_CancelOperations_RestoresIdleState()
     {
         var vm = new UpdaterViewModel();
         vm.CancelOperations();
         Assert.Equal(OperationState.Idle, vm.CurrentOperationState);
-    }
-
-    [Fact]
-    public void StartupViewModel_Cleanup_SetsStateToIdle()
-    {
-        var vm = new StartupViewModel();
-        vm.Cleanup();
-        Assert.Equal(OperationState.Idle, vm.CurrentOperationState);
-        Assert.False(vm.IsLoading);
-    }
-
-    [Fact]
-    public void RegistryViewModel_Cleanup_SetsStateToIdle()
-    {
-        var vm = new RegistryViewModel();
-        vm.Cleanup();
-        Assert.Equal(OperationState.Idle, vm.CurrentOperationState);
-        Assert.False(vm.IsBusy);
     }
 }

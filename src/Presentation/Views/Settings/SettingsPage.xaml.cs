@@ -479,8 +479,16 @@ public sealed partial class SettingsPage : Page
             {
                 await Task.Run(() =>
                 {
-                    var engine = new WinCarePro.Engines.StartupEngine();
-                    engine.RegisterScheduledMaintenanceTask(AutoScanToggle.IsOn);
+                    var scheduler = new WinCarePro.Services.Implementations.MaintenanceSchedulerService();
+                    if (AutoScanToggle.IsOn)
+                    {
+                        string exe = Environment.ProcessPath ?? "";
+                        scheduler.ScheduleTask("WinCarePro_Maintenance", exe, "--autoclean", DateTime.Today.AddHours(3), "WEEKLY");
+                    }
+                    else
+                    {
+                        scheduler.DeleteTask("WinCarePro_Maintenance");
+                    }
                 });
             }
             catch { }
@@ -493,8 +501,16 @@ public sealed partial class SettingsPage : Page
         {
             try
             {
-                var engine = new WinCarePro.Engines.StartupEngine();
-                engine.RegisterScheduledMaintenanceTask(AutoScanToggle.IsOn);
+                var scheduler = new WinCarePro.Services.Implementations.MaintenanceSchedulerService();
+                if (AutoScanToggle.IsOn)
+                {
+                    string exe = Environment.ProcessPath ?? "";
+                    scheduler.ScheduleTask("WinCarePro_Maintenance", exe, "--autoclean", DateTime.Today.AddHours(3), "WEEKLY");
+                }
+                else
+                {
+                    scheduler.DeleteTask("WinCarePro_Maintenance");
+                }
             }
             catch { }
         }
@@ -601,8 +617,13 @@ public sealed partial class SettingsPage : Page
 
         try
         {
-            var engine = new WinCarePro.Engines.StartupEngine();
-            engine.RegisterScheduledMaintenanceTask(AutoScanToggle.IsOn);
+            if (AutoScanToggle.IsOn)
+            {
+                var scheduler = new WinCarePro.Services.Implementations.MaintenanceSchedulerService();
+                string exe = Environment.ProcessPath ?? "";
+                string frequencyStr = freq == 0 ? "DAILY" : "WEEKLY";
+                scheduler.ScheduleTask("WinCarePro_Maintenance", exe, "--autoclean", DateTime.Today.AddHours(3), frequencyStr);
+            }
         }
         catch { }
     }

@@ -209,7 +209,7 @@ public sealed partial class DashboardPage : Page
             {
                 if (mw.MainFrame.Content is MainPage mp)
                 {
-                    mp.NavigateToPageExternal("optimizer");
+                    mp.NavigateToPageExternal("repair");
                 }
             }
         }

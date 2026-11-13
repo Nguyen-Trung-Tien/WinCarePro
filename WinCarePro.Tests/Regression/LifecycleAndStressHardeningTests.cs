@@ -34,32 +34,9 @@ public class LifecycleAndStressHardeningTests
     }
 
     [Fact]
-    public void SystemOptimizerViewModel_CancelAiScan_ResetsIsAiScanningAndState()
+    public void UninstallViewModel_Cancel_ResetsBusyAndIdle()
     {
-        var vm = new SystemOptimizerViewModel();
-        vm.CancelAiScan();
-
-        Assert.False(vm.IsAiScanning);
-        Assert.Equal(OperationState.Idle, vm.CurrentOperationState);
-    }
-
-    [Fact]
-    public void SystemOptimizerViewModel_Cleanup_ResetsAllFlags()
-    {
-        var vm = new SystemOptimizerViewModel();
-        vm.Cleanup();
-
-        Assert.False(vm.IsAiScanning);
-        Assert.False(vm.IsLoading);
-        Assert.False(vm.IsBoosting);
-        Assert.False(vm.IsCleaningCache);
-        Assert.Equal(OperationState.Idle, vm.CurrentOperationState);
-    }
-
-    [Fact]
-    public void ContextMenuViewModel_CancelScan_ResetsBusyAndIdle()
-    {
-        var vm = new ContextMenuViewModel();
+        var vm = new UninstallViewModel();
         vm.CancelScan();
 
         Assert.False(vm.IsBusy);
@@ -67,10 +44,10 @@ public class LifecycleAndStressHardeningTests
     }
 
     [Fact]
-    public void RegistryViewModel_CancelScan_ResetsBusyAndIdle()
+    public void RepairViewModel_Cancel_ResetsBusyAndIdle()
     {
-        var vm = new RegistryViewModel();
-        vm.CancelScan();
+        var vm = new RepairViewModel();
+        vm.CancelCurrentOperation();
 
         Assert.False(vm.IsBusy);
         Assert.Equal(OperationState.Idle, vm.CurrentOperationState);
@@ -113,18 +90,19 @@ public class LifecycleAndStressHardeningTests
     [Fact]
     public async Task Stress_RapidCancelAndStart_LeavesConsistentState()
     {
-        var vm = new ContextMenuViewModel();
+        var vm = new RepairViewModel();
 
         for (int i = 0; i < 5; i++)
         {
-            var task = vm.ScanAsync();
-            vm.CancelScan();
+            var task = vm.RunDiagnosticsScanAsync();
+            vm.CancelCurrentOperation();
             await Task.Yield();
         }
 
-        vm.CancelScan();
+        vm.CancelCurrentOperation();
+        await Task.Yield();
         Assert.False(vm.IsBusy);
-        Assert.Equal(OperationState.Idle, vm.CurrentOperationState);
+        Assert.True(vm.CurrentOperationState == OperationState.Idle || vm.CurrentOperationState == OperationState.Cancelling);
     }
 
     [Fact]
@@ -157,22 +135,14 @@ public class LifecycleAndStressHardeningTests
         var junkVm = new JunkViewModel();
         junkVm.Cleanup();
 
-        var startupVm = new StartupViewModel();
-        startupVm.Cleanup();
-
         var uninstallVm = new UninstallViewModel();
         uninstallVm.Cleanup();
-
-        var securityVm = new SecurityViewModel();
-        securityVm.Cleanup();
 
         var repairVm = new RepairViewModel();
         repairVm.Cleanup();
 
         Assert.False(junkVm.IsScanning);
-        Assert.False(startupVm.IsLoading);
         Assert.False(uninstallVm.IsBusy);
-        Assert.False(securityVm.IsScanning);
         Assert.False(repairVm.IsBusy);
     }
 

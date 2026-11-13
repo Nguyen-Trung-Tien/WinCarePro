@@ -16,7 +16,6 @@ namespace WinCarePro.Services.Implementations;
 /// </summary>
 public sealed class BackgroundWatchdogService : IBackgroundWatchdogService
 {
-    private readonly SystemOptimizerEngine _optimizerEngine;
     private readonly ISettingsService _settingsService;
     private readonly INotificationService? _notificationService;
     private int _isRunningState = 0;
@@ -24,11 +23,9 @@ public sealed class BackgroundWatchdogService : IBackgroundWatchdogService
     public bool IsRunning => Volatile.Read(ref _isRunningState) == 1;
 
     public BackgroundWatchdogService(
-        SystemOptimizerEngine optimizerEngine,
         ISettingsService settingsService,
         INotificationService? notificationService = null)
     {
-        _optimizerEngine = optimizerEngine ?? throw new ArgumentNullException(nameof(optimizerEngine));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _notificationService = notificationService;
     }

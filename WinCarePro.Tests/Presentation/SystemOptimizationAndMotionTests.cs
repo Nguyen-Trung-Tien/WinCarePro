@@ -53,56 +53,6 @@ public class SystemOptimizationAndMotionTests
     }
 
     [Fact]
-    public void AiWinCareScoringEngine_HighLoadMetrics_CalculatesAppropriateScoreAndInsights()
-    {
-        var engine = new AiWinCareScoringEngine();
-        var assessment = engine.EvaluateHealth(
-            cpuUsage: 95.0,
-            ramUsage: 92.0,
-            diskActiveTime: 90.0,
-            freeSpaceGB: 5.0,
-            totalSpaceGB: 500.0,
-            startupAppsCount: 25,
-            junkSizeBytes: 15L * 1024 * 1024 * 1024, // 15 GB
-            registryIssuesCount: 40,
-            outdatedAppsCount: 6,
-            pingLatencyMs: 150.0,
-            packetLossPercent: 12.0,
-            securityAudits: new List<string> { "Windows Defender Real-time protection disabled" }
-        );
-
-        Assert.NotNull(assessment);
-        Assert.True(assessment.OverallScore < 60, "Severe metric saturation should yield degraded overall score.");
-        Assert.NotEmpty(assessment.Insights);
-        Assert.NotEmpty(assessment.Categories);
-        Assert.Contains(assessment.Insights, i => i.ImpactLevel == "Critical" || i.ImpactLevel == "High");
-    }
-
-    [Fact]
-    public void AiWinCareScoringEngine_CleanSystemMetrics_YieldsOptimalHealthScore()
-    {
-        var engine = new AiWinCareScoringEngine();
-        var assessment = engine.EvaluateHealth(
-            cpuUsage: 12.0,
-            ramUsage: 35.0,
-            diskActiveTime: 5.0,
-            freeSpaceGB: 350.0,
-            totalSpaceGB: 500.0,
-            startupAppsCount: 3,
-            junkSizeBytes: 100L * 1024 * 1024, // 100 MB
-            registryIssuesCount: 0,
-            outdatedAppsCount: 0,
-            pingLatencyMs: 15.0,
-            packetLossPercent: 0.0,
-            securityAudits: new List<string>()
-        );
-
-        Assert.NotNull(assessment);
-        Assert.True(assessment.OverallScore >= 90, "Clean system metrics must yield optimal score >= 90.");
-        Assert.True(assessment.RiskLevel is "Low" or "Thấp", $"Expected Low risk level but got {assessment.RiskLevel}");
-    }
-
-    [Fact]
     public async Task JunkCleanerEngine_Cancellation_GracefullyCancels()
     {
         var engine = new JunkCleanerEngine();
@@ -155,16 +105,6 @@ public class SystemOptimizationAndMotionTests
     }
 
     [Fact]
-    public async Task SystemOptimizerEngine_WorkingSetOptimization_ReturnsNonNegativeMetrics()
-    {
-        var engine = new SystemOptimizerEngine();
-        var (processesOptimized, memoryReclaimedBytes) = await engine.OptimizeRamAsync();
-
-        Assert.True(processesOptimized >= 0);
-        Assert.True(memoryReclaimedBytes >= 0);
-    }
-
-    [Fact]
     public void SoftwareUpdaterEngine_VerifyDigitalSignature_NullOrEmptyRejects()
     {
         Assert.False(SoftwareUpdaterEngine.VerifyDigitalSignature("", "Microsoft Corporation"));
@@ -184,16 +124,5 @@ public class SystemOptimizationAndMotionTests
         Assert.NotNull(reportedProgress);
         Assert.True(reportedProgress.IsCompleted);
         Assert.False(reportedProgress.IsSuccess);
-    }
-
-    [Fact]
-    public void SecurityAlertItem_Properties_InitializeCorrectly()
-    {
-        var criticalItem = new SecurityAlertItem { Severity = "Critical", FixActionKey = "defender_realtime" };
-        var warnItem = new SecurityAlertItem { Severity = "Warning" };
-
-        Assert.Equal("Critical", criticalItem.Severity);
-        Assert.True(criticalItem.CanFix);
-        Assert.False(warnItem.CanFix);
     }
 }

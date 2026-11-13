@@ -54,21 +54,14 @@ public partial class TranslationManager
         RegisterNotificationsTranslations(_translations, en);
 
         // Intelligence & Diagnostics
-        RegisterAiAssistantTranslations(_translations, en);
         RegisterRepairTranslations(_translations, en);
 
         // System Care & Storage
         RegisterDiskCleanerTranslations(_translations, en);
-        RegisterRegistryTranslations(_translations, en);
         RegisterUninstallTranslations(_translations, en);
 
-        // Performance & Tuning
-        RegisterStartupManagerTranslations(_translations, en);
-        RegisterSystemOptimizerTranslations(_translations, en);
-
-        // Network & Security
+        // Network
         RegisterNetworkTranslations(_translations, en);
-        RegisterSecurityTranslations(_translations, en);
 
         // Maintenance & Settings
         RegisterUpdatesTranslations(_translations, en);
@@ -93,21 +86,11 @@ public partial class TranslationManager
     private void LoadDashboardCockpitTranslations() => RegisterDashboardTranslations(_translations, null!);
     private void LoadCleanerStorageTranslations() => RegisterDiskCleanerTranslations(_translations, null!);
     private void LoadAppStudioTranslations() => RegisterUninstallTranslations(_translations, null!);
-    private void LoadSpeedProcessTranslations() => RegisterStartupManagerTranslations(_translations, null!);
-    private void LoadSystemDoctorRegistryTranslations()
-    {
-        RegisterSystemOptimizerTranslations(_translations, null!);
-        RegisterRegistryTranslations(_translations, null!);
-        RegisterRepairTranslations(_translations, null!);
-    }
-    private void LoadNetworkSecurityTranslations()
-    {
-        RegisterNetworkTranslations(_translations, null!);
-        RegisterSecurityTranslations(_translations, null!);
-    }
+    private void LoadSpeedProcessTranslations() { }
+    private void LoadSystemDoctorRegistryTranslations() => RegisterRepairTranslations(_translations, null!);
+    private void LoadNetworkSecurityTranslations() => RegisterNetworkTranslations(_translations, null!);
     private void LoadSettingsCommonTranslations()
     {
-        RegisterAiAssistantTranslations(_translations, null!);
         RegisterNotificationsTranslations(_translations, null!);
         RegisterUpdatesTranslations(_translations, null!);
         RegisterSettingsTranslations(_translations, null!);

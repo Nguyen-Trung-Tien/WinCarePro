@@ -9,9 +9,11 @@
 
     <Border x:Name="CardRootBorder"
             Style="{x:Bind local:InlineStatusCard.ResolveCardStyle(CardType), Mode=OneWay}"
+            Background="{x:Bind local:InlineStatusCard.ResolveCardBackground(CardType), Mode=OneWay}"
+            BorderBrush="{x:Bind local:InlineStatusCard.ResolveCardBorder(CardType), Mode=OneWay}"
+            BorderThickness="1.2"
             CornerRadius="8"
-            Padding="14,10"
-            Margin="0,0,0,12">
+            Padding="14,10">
         <Grid ColumnSpacing="12">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

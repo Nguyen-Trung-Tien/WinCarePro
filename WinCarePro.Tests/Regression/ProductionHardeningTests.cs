@@ -224,24 +224,6 @@ public class ProductionHardeningTests
         Assert.Equal(expected, isCritical);
     }
 
-    [Fact]
-    public void StartupEngine_RejectsDisablingCriticalService()
-    {
-        var engine = new StartupEngine();
-        // Disabling RpcSs must be rejected by fail-safe
-        bool result = engine.SetServiceStartupType("RpcSs", ServiceStartMode.Disabled);
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void StartupEngine_RejectsStoppingCriticalService()
-    {
-        var engine = new StartupEngine();
-        // Stopping WinDefend must be rejected by fail-safe
-        bool result = engine.ControlService("WinDefend", "Stop");
-        Assert.False(result);
-    }
-
     // ============================================================
     // 5. Cancellation Resilience Tests
     // ============================================================
@@ -264,81 +246,14 @@ public class ProductionHardeningTests
         Assert.Empty(leftovers);
     }
 
-    [Fact]
-    public void RegistryBackupEngine_Scan_RespectsCancellationToken()
-    {
-        var engine = new RegistryBackupEngine();
-        using var cts = new CancellationTokenSource();
-        cts.Cancel(); // Pre-cancelled
-
-        Assert.Throws<OperationCanceledException>(() => engine.ScanRegistryIssues(cts.Token));
-    }
-
-    [Fact]
-    public async Task AiWinCareEngine_AnalyzeSystemHealthAsync_RespectsCancellation()
-    {
-        using var cts = new CancellationTokenSource();
-        cts.Cancel(); // Pre-cancelled
-
-        await Assert.ThrowsAsync<OperationCanceledException>(() => Modules.AiAssistant.AiWinCareEngine.AnalyzeSystemHealthAsync(cts.Token));
-    }
-
     // ============================================================
     // 6. Navigation & ViewModel Lifecycle Tests
     // ============================================================
 
     [Fact]
-    public void RegistryViewModel_NavigationCycle_CancelsPromptlyAndResetsState()
-    {
-        var vm = new RegistryViewModel();
-        vm.IsBusy = true;
-
-        // Navigate away
-        vm.Cleanup();
-        Assert.False(vm.IsBusy);
-
-        // Navigate back
-        vm.Initialize();
-        Assert.False(vm.IsBusy);
-        vm.Cleanup();
-    }
-
-    [Fact]
-    public void StartupViewModel_NavigationCycle_CancelsPromptlyAndResetsLoading()
-    {
-        var vm = new StartupViewModel();
-        vm.IsLoading = true;
-
-        // Navigate away
-        vm.Cleanup();
-        Assert.False(vm.IsLoading);
-
-        // Navigate back
-        vm.Initialize();
-        Assert.False(vm.IsLoading);
-        vm.Cleanup();
-    }
-
-    [Fact]
     public void UninstallViewModel_NavigationCycle_CancelsPromptlyAndResetsState()
     {
         var vm = new UninstallViewModel();
-        vm.IsBusy = true;
-
-        // Navigate away
-        vm.Cleanup();
-        Assert.False(vm.IsBusy);
-
-        // Navigate back
-        vm.Initialize();
-        Assert.False(vm.IsBusy);
-        vm.Cleanup();
-    }
-
-    [Fact]
-    public void ContextMenuViewModel_NavigationCycle_CancelsPromptlyAndResetsState()
-    {
-        var vm = new ContextMenuViewModel();
         vm.IsBusy = true;
 
         // Navigate away

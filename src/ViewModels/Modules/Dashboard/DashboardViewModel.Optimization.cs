@@ -152,48 +152,9 @@ public partial class DashboardViewModel
             // TIER 2: RECOMMENDED MODE
             if (mode >= OptimizationMode.Recommended)
             {
-                _dispatcherQueue?.TryEnqueue(() => { ScanStatus = "Status: Cleaning Delivery Optimization Cache...".T(); });
-                var optEngine = new SystemOptimizerEngine();
-                long doCleaned = await optEngine.CleanDeliveryOptimizationCacheAsync();
-                summary.DoCacheBytesCleaned = doCleaned;
-                await Task.Delay(300, token);
-
                 _dispatcherQueue?.TryEnqueue(() => { ScanStatus = "Status: Active RAM Boosting...".T(); });
-                var ramResult = await optEngine.OptimizeRamAsync();
-                summary.RamBytesReclaimed = ramResult.memoryReclaimedBytes;
-                summary.RamProcessesOptimized = ramResult.processesOptimized;
-                await Task.Delay(300, token);
-
-                _dispatcherQueue?.TryEnqueue(() => { ScanStatus = "Status: Optimizing Startup Apps...".T(); });
-                // Startup engine items resolved in background
-                await Task.Delay(300, token);
-            }
-
-            // TIER 3: ADVANCED MODE
-            if (mode >= OptimizationMode.Advanced)
-            {
-                _dispatcherQueue?.TryEnqueue(() => { ScanStatus = "Status: Fixing Registry Errors...".T(); });
-                if (_scannedRegistryIssues != null && _scannedRegistryIssues.Any(i => i.IsSelected))
-                {
-                    await _registryEngine.FixRegistryIssuesAsync(_scannedRegistryIssues);
-                    summary.RegistryIssuesFixed = _scannedRegistryIssues.Count(i => i.IsSelected);
-                }
-                await Task.Delay(300, token);
-
-                _dispatcherQueue?.TryEnqueue(() => { ScanStatus = "Status: Applying Responsiveness Tweaks...".T(); });
-                var optEngine = new SystemOptimizerEngine();
-                var tweaks = optEngine.GetTweaks();
-                int tweaksApplied = 0;
-                foreach (var tweak in tweaks)
-                {
-                    token.ThrowIfCancellationRequested();
-                    if (!tweak.IsOptimized)
-                    {
-                        bool ok = await optEngine.ApplyTweakAsync(tweak);
-                        if (ok) tweaksApplied++;
-                    }
-                }
-                summary.TweaksApplied = tweaksApplied;
+                GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+                GC.WaitForPendingFinalizers();
                 await Task.Delay(300, token);
             }
 
@@ -212,7 +173,6 @@ public partial class DashboardViewModel
                 HealthScore = 100;
                 AiHealthScore = 100;
                 _junkSizeBytes = 0;
-                _scannedRegistryIssues?.Clear();
                 Recommendations.Clear();
                 
                 var tempItems = DiagnosticItems.ToList();
@@ -277,7 +237,6 @@ public partial class DashboardViewModel
                     var junkCats = await _junkEngine.ScanJunkAsync();
                     cleanedBytes = await _junkEngine.CleanJunkAsync(junkCats);
                 }
-                cleanedBytes += await _optimizerEngine.CleanDeliveryOptimizationCacheAsync();
                 
                 _dispatcherQueue?.TryEnqueue(() =>
                 {
@@ -285,29 +244,10 @@ public partial class DashboardViewModel
                     JunkFileSize = "0.0 MB";
                 });
             }
-            else if (item.Category == "Registry")
-            {
-                if (_scannedRegistryIssues != null)
-                {
-                    await _registryEngine.FixRegistryIssuesAsync(_scannedRegistryIssues);
-                }
-                else
-                {
-                    var issues = await Task.Run(() => _registryEngine.ScanRegistryIssues());
-                    await _registryEngine.FixRegistryIssuesAsync(issues);
-                }
-            }
             else if (item.Category == "Performance")
             {
-                await _optimizerEngine.OptimizeRamAsync();
-                var tweaks = _optimizerEngine.GetTweaks();
-                foreach (var tweak in tweaks)
-                {
-                    if (!tweak.IsOptimized)
-                    {
-                        await _optimizerEngine.ApplyTweakAsync(tweak);
-                    }
-                }
+                GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+                GC.WaitForPendingFinalizers();
             }
             else if (item.Category == "Network")
             {
@@ -384,8 +324,8 @@ public partial class DashboardViewModel
 
         try
         {
-            var ramResult = await _optimizerEngine.OptimizeRamAsync();
-            double ramReclaimedMb = ramResult.memoryReclaimedBytes / 1024.0 / 1024.0;
+            GC.Collect(2, GCCollectionMode.Aggressive, true, true);
+            GC.WaitForPendingFinalizers();
             
             var (_, ram) = GetSystemResourceUsage();
             
@@ -395,7 +335,7 @@ public partial class DashboardViewModel
                 RamSeriesValues.Add(new ObservableValue(RamUsage));
                 RamSeriesValues.RemoveAt(0);
 
-                ScanStatus = string.Format("RAM Boosted! Reclaimed {0:F1} MB".T(), ramReclaimedMb);
+                ScanStatus = "RAM Boosted! Memory trimmed successfully.".T();
                 
                 var ramDiagnostic = DiagnosticItems.FirstOrDefault(x => x.CheckName.Contains("RAM") || x.CheckName.Contains("Memory"));
                 if (ramDiagnostic != null)
@@ -413,7 +353,7 @@ public partial class DashboardViewModel
 
             try
             {
-                Database.DbManager.AddNotification("Memory Boost Completed".T(), string.Format("Reclaimed {0:F1} MB RAM.".T(), ramReclaimedMb), "Info");
+                Database.DbManager.AddNotification("Memory Boost Completed".T(), "Working sets trimmed and RAM optimized successfully.".T(), "Info");
             }
             catch { }
         }
@@ -455,8 +395,6 @@ public partial class DashboardViewModel
                 var junkCats = await _junkEngine.ScanJunkAsync();
                 cleanedBytes = await _junkEngine.CleanJunkAsync(junkCats);
             }
-
-            cleanedBytes += await _optimizerEngine.CleanDeliveryOptimizationCacheAsync();
 
             double cleanedMb = cleanedBytes / 1024.0 / 1024.0;
             

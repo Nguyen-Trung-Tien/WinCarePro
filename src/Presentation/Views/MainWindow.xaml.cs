@@ -134,19 +134,8 @@ public sealed partial class MainWindow : Window
                 {
                     if (presenter.State == Microsoft.UI.Windowing.OverlappedPresenterState.Minimized || !this.AppWindow.IsVisible)
                     {
-                        // Pause background animations and telemetry when minimized to keep CPU <= 0.3% & RAM <= 15MB
+                        // Pause background animations when minimized to keep CPU <= 0.3%
                         WinCarePro.Core.Helpers.Animation3DHelper.StopAll3DScanEffects();
-                        WinCarePro.ViewModels.DashboardViewModel.ActiveInstance?.StopMonitoring();
-                    }
-                    else if (presenter.State == Microsoft.UI.Windowing.OverlappedPresenterState.Restored || presenter.State == Microsoft.UI.Windowing.OverlappedPresenterState.Maximized)
-                    {
-                        // Resume monitoring if Dashboard is currently the active page
-                        if (App.MainWindowInstance?.Content is Microsoft.UI.Xaml.Controls.Frame rootFrame &&
-                            rootFrame.Content is WinCarePro.MainPage mainPage &&
-                            mainPage.NavigationFrame?.Content is WinCarePro.Views.DashboardPage)
-                        {
-                            WinCarePro.ViewModels.DashboardViewModel.ActiveInstance?.StartMonitoring();
-                        }
                     }
                 }
             }

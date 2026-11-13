@@ -229,80 +229,41 @@ public sealed partial class DashboardPage : Page
         {
             if (isWide)
             {
-                // Wide layout: 2 equal 50/50 columns
+                // Wide layout: 2 equal 50/50 columns (Sensors Left, Chart Right)
                 LeftCol.Width = new GridLength(1, GridUnitType.Star);
                 RightCol.Width = new GridLength(1, GridUnitType.Star);
                 
-                if (HealthGaugeCard != null)
-                {
-                    Grid.SetRow(HealthGaugeCard, 0);
-                    Grid.SetColumn(HealthGaugeCard, 0);
-                    Grid.SetColumnSpan(HealthGaugeCard, 2);
-                }
-
-                if (QuickStatsGrid != null)
-                {
-                    Grid.SetRow(QuickStatsGrid, 1);
-                    Grid.SetColumn(QuickStatsGrid, 0);
-                    Grid.SetColumnSpan(QuickStatsGrid, 2);
-                }
-
                 if (HardwareSensorsPanel != null)
                 {
-                    Grid.SetRow(HardwareSensorsPanel, 2);
+                    Grid.SetRow(HardwareSensorsPanel, 0);
                     Grid.SetColumn(HardwareSensorsPanel, 0);
                     Grid.SetColumnSpan(HardwareSensorsPanel, 1);
                 }
 
                 if (PerformanceChartCard != null)
                 {
-                    Grid.SetRow(PerformanceChartCard, 2);
+                    Grid.SetRow(PerformanceChartCard, 0);
                     Grid.SetColumn(PerformanceChartCard, 1);
                     Grid.SetColumnSpan(PerformanceChartCard, 1);
-                }
-
-                if (RecommendationsCard != null)
-                {
-                    Grid.SetRow(RecommendationsCard, 3);
-                    Grid.SetColumn(RecommendationsCard, 0);
-                    Grid.SetColumnSpan(RecommendationsCard, 2);
                 }
             }
             else
             {
-                // Narrow layout: Stacked
+                // Narrow layout: Stacked in single column
                 LeftCol.Width = new GridLength(1, GridUnitType.Star);
                 RightCol.Width = new GridLength(0, GridUnitType.Pixel);
                 
-                if (HealthGaugeCard != null)
-                {
-                    Grid.SetRow(HealthGaugeCard, 0);
-                    Grid.SetColumn(HealthGaugeCard, 0);
-                    Grid.SetColumnSpan(HealthGaugeCard, 2);
-                }
-                if (QuickStatsGrid != null)
-                {
-                    Grid.SetRow(QuickStatsGrid, 1);
-                    Grid.SetColumn(QuickStatsGrid, 0);
-                    Grid.SetColumnSpan(QuickStatsGrid, 2);
-                }
                 if (HardwareSensorsPanel != null)
                 {
-                    Grid.SetRow(HardwareSensorsPanel, 2);
+                    Grid.SetRow(HardwareSensorsPanel, 0);
                     Grid.SetColumn(HardwareSensorsPanel, 0);
-                    Grid.SetColumnSpan(HardwareSensorsPanel, 2);
+                    Grid.SetColumnSpan(HardwareSensorsPanel, 1);
                 }
                 if (PerformanceChartCard != null)
                 {
-                    Grid.SetRow(PerformanceChartCard, 3);
+                    Grid.SetRow(PerformanceChartCard, 1);
                     Grid.SetColumn(PerformanceChartCard, 0);
-                    Grid.SetColumnSpan(PerformanceChartCard, 2);
-                }
-                if (RecommendationsCard != null)
-                {
-                    Grid.SetRow(RecommendationsCard, 4);
-                    Grid.SetColumn(RecommendationsCard, 0);
-                    Grid.SetColumnSpan(RecommendationsCard, 2);
+                    Grid.SetColumnSpan(PerformanceChartCard, 1);
                 }
             }
 

@@ -13,6 +13,7 @@ namespace WinCarePro.Views;
 public sealed partial class UpdaterPage : Page
 {
     public UpdaterViewModel ViewModel { get; }
+    private SizeChangedEventHandler? _sizeChangedHandler;
 
     public UpdaterPage()
     {
@@ -20,8 +21,13 @@ public sealed partial class UpdaterPage : Page
         InitializeComponent();
         this.NavigationCacheMode = Microsoft.UI.Xaml.Navigation.NavigationCacheMode.Required;
         this.DataContext = ViewModel;
+
+        _sizeChangedHandler = (s, e) => UpdateResponsiveLayout(e.NewSize.Width);
+        this.SizeChanged += _sizeChangedHandler;
+
         this.Loaded += (s, e) =>
         {
+            UpdateResponsiveLayout(this.ActualWidth);
             WinCarePro.Services.TranslationManager.Instance.Translate(this);
             this.DispatcherQueue?.TryEnqueue(() => WinCarePro.Services.TranslationManager.Instance.Translate(this));
         };
@@ -30,6 +36,7 @@ public sealed partial class UpdaterPage : Page
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
+        if (_sizeChangedHandler != null) this.SizeChanged -= _sizeChangedHandler;
         WinCarePro.Services.TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         ViewModel?.Cleanup();
     }
@@ -37,6 +44,7 @@ public sealed partial class UpdaterPage : Page
     protected override void OnNavigatedTo(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+        UpdateResponsiveLayout(this.ActualWidth);
         ViewModel.Initialize();
         WinCarePro.Services.TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
         WinCarePro.Services.TranslationManager.Instance.LanguageChanged += OnLanguageChanged;
@@ -165,9 +173,9 @@ public sealed partial class UpdaterPage : Page
 
     public bool CanUpdateSelected(bool hasSelected, bool isBusy) => hasSelected && !isBusy;
 
-    public Visibility HasItemsVisibility(int count, bool isBusy) => (count > 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility HasItemsVisibility(int count, bool isBusy) => count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-    public Visibility IsListNotEmpty(int count, bool isBusy) => (count > 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility IsListNotEmpty(int count, bool isBusy) => count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
     public Visibility IsListEmpty(int count, bool isBusy) => (count == 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 
@@ -176,6 +184,59 @@ public sealed partial class UpdaterPage : Page
     public Visibility HasPendingUpdatesVisibility(int pendingCount, bool isBusy) => (pendingCount > 0 && !isBusy) ? Visibility.Visible : Visibility.Collapsed;
 
     public Visibility HasNoPendingUpdatesVisibility(int pendingCount) => (pendingCount <= 0) ? Visibility.Visible : Visibility.Collapsed;
+
+    private void UpdateResponsiveLayout(double width)
+    {
+        if (width <= 0) return;
+
+        // 1. Header Action Buttons Responsive Stacking
+        if (HeaderCol0 != null && HeaderCol1 != null && HeaderActionsPanel != null)
+        {
+            if (width >= 1050)
+            {
+                HeaderCol0.Width = new GridLength(1, GridUnitType.Star);
+                HeaderCol1.Width = GridLength.Auto;
+                Grid.SetRow(HeaderActionsPanel, 0);
+                Grid.SetColumn(HeaderActionsPanel, 1);
+                Grid.SetColumnSpan(HeaderActionsPanel, 1);
+                HeaderActionsPanel.Margin = new Thickness(0);
+                HeaderActionsPanel.HorizontalAlignment = HorizontalAlignment.Right;
+            }
+            else
+            {
+                HeaderCol0.Width = new GridLength(1, GridUnitType.Star);
+                HeaderCol1.Width = new GridLength(0, GridUnitType.Pixel);
+                Grid.SetRow(HeaderActionsPanel, 1);
+                Grid.SetColumn(HeaderActionsPanel, 0);
+                Grid.SetColumnSpan(HeaderActionsPanel, 2);
+                HeaderActionsPanel.Margin = new Thickness(0, 10, 0, 0);
+                HeaderActionsPanel.HorizontalAlignment = HorizontalAlignment.Left;
+            }
+        }
+
+        // 2. Toolbar & Search Box Responsive Stacking
+        if (ToolbarCol0 != null && ToolbarCol1 != null && ToolbarActionsPanel != null)
+        {
+            if (width >= 780)
+            {
+                ToolbarCol0.Width = new GridLength(1, GridUnitType.Star);
+                ToolbarCol1.Width = GridLength.Auto;
+                Grid.SetRow(ToolbarActionsPanel, 0);
+                Grid.SetColumn(ToolbarActionsPanel, 1);
+                ToolbarActionsPanel.Margin = new Thickness(0);
+                ToolbarActionsPanel.HorizontalAlignment = HorizontalAlignment.Right;
+            }
+            else
+            {
+                ToolbarCol0.Width = new GridLength(1, GridUnitType.Star);
+                ToolbarCol1.Width = new GridLength(0, GridUnitType.Pixel);
+                Grid.SetRow(ToolbarActionsPanel, 1);
+                Grid.SetColumn(ToolbarActionsPanel, 0);
+                ToolbarActionsPanel.Margin = new Thickness(0, 8, 0, 0);
+                ToolbarActionsPanel.HorizontalAlignment = HorizontalAlignment.Left;
+            }
+        }
+    }
 
     public string GetUpdateAllButtonText(int pendingCount)
     {

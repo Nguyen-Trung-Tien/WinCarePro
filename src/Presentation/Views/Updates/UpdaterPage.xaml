@@ -41,17 +41,17 @@
         <Grid Padding="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LayoutVisualStates">
-                <!-- Wide Layout: Viewport Width >= 1024px (1 single neat row for stats & toolbar) -->
+                <!-- Wide Layout: Viewport Width >= 1050px -->
                 <VisualState x:Name="WideState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1024" />
+                        <AdaptiveTrigger MinWindowWidth="1050" />
                     </VisualState.StateTriggers>
                 </VisualState>
 
-                <!-- Medium Layout: Viewport Width between 720px and 1024px -->
+                <!-- Medium Layout: Viewport Width between 780px and 1050px -->
                 <VisualState x:Name="MediumState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720" />
+                        <AdaptiveTrigger MinWindowWidth="780" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="HeaderCol1.Width" Value="0" />
@@ -60,19 +60,11 @@
                         <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
                         <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="HeaderActionsPanel.Margin" Value="0,8,0,0" />
-
-                        <!-- Stats Bento Stacking to 2 vertical rows -->
-                        <Setter Target="StatCol0.Width" Value="*" />
-                        <Setter Target="StatCol1.Width" Value="0" />
-                        <Setter Target="StatCol2.Width" Value="0" />
-                        <Setter Target="StatCol3.Width" Value="0" />
-                        <Setter Target="StatCard1.(Grid.Row)" Value="1" />
-                        <Setter Target="StatCard1.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
                     </VisualState.Setters>
                 </VisualState>
 
-                <!-- Narrow Layout: Viewport Width < 720px -->
+                <!-- Narrow Layout: Viewport Width < 780px -->
                 <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0" />
@@ -85,15 +77,14 @@
                         <Setter Target="HeaderActionsPanel.(Grid.Column)" Value="0" />
                         <Setter Target="HeaderActionsPanel.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="HeaderActionsPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="HeaderActionsPanel.Margin" Value="0,8,0,0" />
+                        <Setter Target="HeaderActionsPanel.Margin" Value="0,10,0,0" />
 
-                        <!-- Stats Bento Stacking to 2 vertical rows -->
-                        <Setter Target="StatCol0.Width" Value="*" />
-                        <Setter Target="StatCol1.Width" Value="0" />
-                        <Setter Target="StatCol2.Width" Value="0" />
-                        <Setter Target="StatCol3.Width" Value="0" />
-                        <Setter Target="StatCard1.(Grid.Row)" Value="1" />
-                        <Setter Target="StatCard1.(Grid.Column)" Value="0" />
+                        <!-- Toolbar Stacking -->
+                        <Setter Target="ToolbarCol1.Width" Value="0" />
+                        <Setter Target="ToolbarActionsPanel.(Grid.Row)" Value="1" />
+                        <Setter Target="ToolbarActionsPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="ToolbarActionsPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="ToolbarActionsPanel.Margin" Value="0,8,0,0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -124,7 +115,7 @@
                 </Border>
                 <StackPanel Spacing="2" VerticalAlignment="Center">
                     <TextBlock Text="{Binding Source='Software Updater', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderTitleStyle}" />
-                    <TextBlock Text="{Binding Source='Apps &amp; packages updates via WinGet.', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderSubtitleStyle}" />
+                    <TextBlock Text="{Binding Source='Apps &amp; packages updates via WinGet.', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderSubtitleStyle}" TextTrimming="CharacterEllipsis" MaxWidth="380" />
                 </StackPanel>
             </StackPanel>
 
@@ -133,13 +124,13 @@
                 <Button Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="12,0" CornerRadius="8" FontSize="11.5" FontWeight="SemiBold" Click="OnBackupDriversClick" ToolTipService.ToolTip="Backup Installed Hardware Drivers">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE74E;" FontSize="11.5" Foreground="{ThemeResource AppStatusInfoBrush}"/>
-                        <TextBlock Text="Backup Drivers"/>
+                        <TextBlock Text="{Binding Source='Backup Drivers', Converter={StaticResource TranslationConverter}}"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" Padding="12,0" CornerRadius="8" FontSize="11.5" FontWeight="SemiBold" Click="OnRestoreDriversClick" ToolTipService.ToolTip="Restore Drivers from Backup">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE777;" FontSize="11.5" Foreground="{ThemeResource AppStatusWarningBrush}"/>
-                        <TextBlock Text="Restore Drivers"/>
+                        <TextBlock Text="{Binding Source='Restore Drivers', Converter={StaticResource TranslationConverter}}"/>
                     </StackPanel>
                 </Button>
 
@@ -150,7 +141,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <ProgressRing x:Name="ScanUpdatesRing" IsActive="False" Visibility="Collapsed" Width="13" Height="13" Foreground="White" VerticalAlignment="Center"/>
                         <FontIcon Glyph="&#xE72C;" FontSize="12" Foreground="White" />
-                        <TextBlock x:Name="ScanUpdatesText" Text="Scan for Updates" VerticalAlignment="Center" FontWeight="Bold"/>
+                        <TextBlock x:Name="ScanUpdatesText" Text="{Binding Source='Scan for Updates', Converter={StaticResource TranslationConverter}}" VerticalAlignment="Center" FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
 
@@ -353,13 +344,17 @@
 
         <!-- ==================== 2. TOOLBAR & FILTERS ==================== -->
         <Grid x:Name="ToolbarGrid" Grid.Row="2" Margin="0,0,0,10" Visibility="{x:Bind HasItemsVisibility(ViewModel.TotalFoundCount, ViewModel.IsBusy), Mode=OneWay}">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="ToolbarRow0" Height="Auto" />
+                <RowDefinition x:Name="ToolbarRow1" Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition x:Name="ToolbarCol0" Width="*" />
+                <ColumnDefinition x:Name="ToolbarCol1" Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <!-- Status Segmented Pills (Pivot) -->
-            <Pivot Grid.Column="0" SelectionChanged="OnFilterPivotSelectionChanged" Margin="0,-8,0,0">
+            <Pivot Grid.Row="0" Grid.Column="0" SelectionChanged="OnFilterPivotSelectionChanged" Margin="0,-8,0,0">
                 <Pivot.HeaderTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding}" FontSize="13" FontWeight="SemiBold" Margin="0,0,6,0" />
@@ -371,8 +366,8 @@
             </Pivot>
 
             <!-- Master Selection & Search Box (Right) -->
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <CheckBox Content="Select All"
+            <StackPanel x:Name="ToolbarActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <CheckBox Content="{Binding Source='Select All', Converter={StaticResource TranslationConverter}}"
                           Checked="OnMasterSelectAllChanged"
                           Unchecked="OnMasterSelectAllChanged"
                           FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
@@ -382,8 +377,13 @@
 
         <!-- ==================== 3. MAIN WORKSPACE ==================== -->
         <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" /> <!-- 0: Active Progress Banner HUD -->
+                <RowDefinition Height="*" />    <!-- 1: Workspace Body (List / Skeleton / Empty) -->
+            </Grid.RowDefinitions>
+
             <!-- Active Progress Banner Overlay / Live Download Stream HUD -->
-            <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14" VerticalAlignment="Top" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,12">
+            <Border Grid.Row="0" Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14" VerticalAlignment="Top" HorizontalAlignment="Stretch" Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,0,12">
                 <Grid RowSpacing="8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" /> <!-- Row 0: Top Status Header -->
@@ -461,72 +461,80 @@
                 </Grid>
             </Border>
 
-            <!-- Updates List View -->
-            <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="12" Visibility="{x:Bind IsListNotEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}">
-                <ListView ItemsSource="{x:Bind ViewModel.Updates, Mode=OneWay}" SelectionMode="None">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="Padding" Value="0" />
-                            <Setter Property="Margin" Value="0,2" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:SoftwareUpdateInfo">
-                            <Border Background="{x:Bind CardBackgroundBrush, Mode=OneWay}" BorderBrush="{x:Bind CardBorderBrush, Mode=OneWay}" BorderThickness="1" CornerRadius="14" Padding="14,10" Margin="0,3"
-                                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8">
-                                <Grid ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
+            <!-- Workspace Body in Grid.Row="1" -->
+            <Grid Grid.Row="1">
+                <!-- Updates List View -->
+                <Border Style="{StaticResource CockpitBentoCardStyle}" Padding="12" Visibility="{x:Bind IsListNotEmpty(ViewModel.Updates.Count, ViewModel.IsBusy), Mode=OneWay}">
+                    <ListView ItemsSource="{x:Bind ViewModel.Updates, Mode=OneWay}" SelectionMode="None">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Margin" Value="0,2" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:SoftwareUpdateInfo">
+                                <Border Background="{x:Bind CardBackgroundBrush, Mode=OneWay}" BorderBrush="{x:Bind CardBorderBrush, Mode=OneWay}" BorderThickness="1" CornerRadius="14" Padding="14,10" Margin="0,3"
+                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8">
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <!-- Checkbox for multi selection -->
-                                    <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" IsEnabled="{x:Bind CanUpdate, Mode=OneWay}" Visibility="{x:Bind IsNotUpdatingVisibility, Mode=OneWay}" VerticalAlignment="Center"/>
+                                        <!-- Checkbox for multi selection -->
+                                        <CheckBox Grid.Column="0" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" IsEnabled="{x:Bind CanUpdate, Mode=OneWay}" Visibility="{x:Bind IsNotUpdatingVisibility, Mode=OneWay}" VerticalAlignment="Center"/>
 
-                                    <!-- Package Brand Icon with Crisp Glowing Container -->
-                                    <Grid Grid.Column="1" Width="44" Height="44" VerticalAlignment="Center">
-                                        <Border CornerRadius="12" Background="{x:Bind BrandBgBrush, Mode=OneWay}" />
-                                        <Border CornerRadius="12" BorderBrush="{x:Bind BrandBorderBrush, Mode=OneWay}" BorderThickness="1.5" />
-                                        <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}" FontSize="22" FontWeight="SemiBold" Foreground="{x:Bind BrandColorBrush, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Grid>
+                                        <!-- Package Brand Icon with Crisp Glowing Container -->
+                                        <Grid Grid.Column="1" Width="44" Height="44" VerticalAlignment="Center">
+                                            <Border CornerRadius="12" Background="{x:Bind BrandBgBrush, Mode=OneWay}" />
+                                            <Border CornerRadius="12" BorderBrush="{x:Bind BrandBorderBrush, Mode=OneWay}" BorderThickness="1.5" />
+                                            <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}" FontSize="22" FontWeight="SemiBold" Foreground="{x:Bind BrandColorBrush, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Grid>
 
-                                    <!-- Name, Category Tag, AI SmartSummary, ID & Source -->
-                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
-                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="13.5" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                        <!-- Name, Category Tag, AI SmartSummary, ID & Source -->
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
+                                            <Grid ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="13.5" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
 
-                                            <!-- Dynamic Smart Category Badge (CVE Patch / Major Bump / Optimization) -->
-                                            <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" Padding="6,1.5" CornerRadius="5" VerticalAlignment="Center">
-                                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                                    <FontIcon Glyph="{x:Bind CategoryIconGlyph, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                                    <TextBlock Text="{x:Bind UpdateCategory, Mode=OneWay}" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                                    <!-- Dynamic Smart Category Badge (CVE Patch / Major Bump / Optimization) -->
+                                                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" Padding="6,1.5" CornerRadius="5" VerticalAlignment="Center">
+                                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                                            <FontIcon Glyph="{x:Bind CategoryIconGlyph, Mode=OneWay}" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                                            <TextBlock Text="{x:Bind UpdateCategory, Mode=OneWay}" FontSize="9.5" FontWeight="Bold" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                                        </StackPanel>
+                                                    </Border>
+
+                                                    <!-- Up to Date Badge (Completed state) -->
+                                                    <Border Visibility="{x:Bind IsCompleted, Mode=OneWay}" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" Padding="6,1" CornerRadius="4" VerticalAlignment="Center">
+                                                        <StackPanel Orientation="Horizontal" Spacing="4">
+                                                            <FontIcon Glyph="&#xE73E;" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                                                            <TextBlock Text="Up to Date" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}"/>
+                                                        </StackPanel>
+                                                    </Border>
                                                 </StackPanel>
-                                            </Border>
+                                            </Grid>
 
-                                            <!-- Up to Date Badge (Completed state) -->
-                                            <Border Visibility="{x:Bind IsCompleted, Mode=OneWay}" Background="{ThemeResource AppStatusGoodBackground}" BorderBrush="{ThemeResource AppStatusGoodBorder}" BorderThickness="1" Padding="6,1" CornerRadius="4" VerticalAlignment="Center">
-                                                <StackPanel Orientation="Horizontal" Spacing="4">
-                                                    <FontIcon Glyph="&#xE73E;" FontSize="11" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}"/>
-                                                    <TextBlock Text="Up to Date" FontSize="9" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}"/>
-                                                </StackPanel>
-                                            </Border>
+                                            <!-- AI Smart Insight / Summary -->
+                                            <TextBlock Text="{x:Bind SmartSummary, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="360"/>
+
+                                            <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,1,0,0">
+                                                <TextBlock Text="{x:Bind Id}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxWidth="200"/>
+                                                <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="4,1" CornerRadius="4" VerticalAlignment="Center">
+                                                    <TextBlock Text="{x:Bind Source}" FontSize="8.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                </Border>
+                                            </StackPanel>
                                         </StackPanel>
-
-                                        <!-- AI Smart Insight / Summary -->
-                                        <TextBlock Text="{x:Bind SmartSummary, Mode=OneWay}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxWidth="360"/>
-
-                                        <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,1,0,0">
-                                            <TextBlock Text="{x:Bind Id}" FontSize="10" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis" MaxWidth="200"/>
-                                            <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" Padding="4,1" CornerRadius="4" VerticalAlignment="Center">
-                                                <TextBlock Text="{x:Bind Source}" FontSize="8.5" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                            </Border>
-                                        </StackPanel>
-                                    </StackPanel>
 
                                     <!-- Version Comparison Pill -->
                                     <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="0,0,10,0">
@@ -624,6 +632,7 @@
                         </Border>
                     </StackPanel>
                 </Border>
+            </Grid>
             </Grid>
         </Grid>
     </Grid>

@@ -1,7 +1,7 @@
 # 🚀 WinCare Pro Suite v6.0.0 (Codename: Polaris)
 
 <div align="center">
-  <img src="Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(0, 120, 212, 0.45); margin-bottom: 20px;" />
+  <img src="src/Assets/Square150x150Logo.scale-200.png" alt="WinCare Pro Logo" width="120" height="120" style="border-radius: 24%; box-shadow: 0 10px 25px rgba(0, 120, 212, 0.45); margin-bottom: 20px;" />
 
   <h3>Hệ Thống Tối Ưu Hóa, Dọn Dẹp & Bảo Trì Windows Toàn Diện Thế Hệ Mới</h3>
   <p align="center">
@@ -65,24 +65,24 @@ graph TD
 
 ## ✨ 16 Phân Hệ Chức Năng Cốt Lõi (Core Modules)
 
-| STT | Module | Mô tả chi tiết & Điểm nổi bật |
-| :--- | :--- | :--- |
-| **1** | **📊 Dashboard & Live HUD** | Giám sát CPU/RAM/Disk/Network thời gian thực, điểm sức khỏe máy tính **Composite Health Score**, thẻ HUD chip trên TitleBar hỗ trợ Tabular figures chống giật số. |
-| **2** | **🤖 AI WinCare Engine** | Bộ máy chẩn đoán Heuristic phân tích rủi ro phần cứng, dự đoán thời gian đầy ổ C:, phát hiện ứng dụng nghẽn CPU và đề xuất hành động tối ưu hóa 1-Click. |
-| **3** | **🧹 Junk Cleaner** | Quét & dọn Temp, Cache, Recycle Bin, Delivery Optimization, Windows Update logs, Memory Dumps kết hợp **SafePathGuard** chống xóa nhầm file hệ thống. |
-| **4** | **📦 App Uninstaller** | Gỡ bỏ triệt để ứng dụng Win32 & Microsoft Store (UWP/AppX), quét sâu tàn dư Registry và thư mục sót lại (**Residual Scan & Force Uninstall**). |
-| **5** | **🌐 Network Center** | Đo băng thông mạng thời gian thực, kiểm tra Ping/SpeedTest, đổi DNS an toàn 1-Click (Cloudflare, Google, AdGuard, NextDNS), khôi phục Winsock/TCP-IP. |
-| **6** | **🛠️ System Repair** | Tích hợp công cụ SFC (`/scannow`), DISM (`RestoreHealth`), sửa lỗi Windows Update và dọn dẹp kho thành phần WinSxS Component Store an toàn. |
-| **7** | **🛡️ Security Shield** | Kiểm soát trạng thái Windows Defender, tường lửa Firewall, chính sách UAC, tắt Telemetry ngầm và quản lý quyền riêng tư (Camera, Micro, Location). |
-| **8** | **⚡ System Optimizer** | Thu hồi bộ nhớ RAM trống tức thì (`EmptyWorkingSet`), tinh chỉnh hiệu ứng thị giác Visual Effects, tối ưu hóa dịch vụ hệ thống và cấu hình Power Plan. |
-| **9** | **🎮 Gaming Turbo** | Tăng tốc độ mượt khi chơi game, tự động ưu tiên CPU High Priority cho tiến trình game, bật Ultimate Performance và tạm dừng các tác vụ nền dư thừa. |
-| **10** | **🖱️ Context Menu Manager** | Tùy biến sâu Menu chuột phải cho Tệp, Thư mục và Desktop trên cả Windows 10 & Windows 11 qua Registry an toàn với khả năng hoàn tác. |
-| **11** | **📂 Startup & Services** | Phân tích tác động khởi động (Boot Impact), bật/tắt ứng dụng khởi động cùng Windows và kiểm soát các dịch vụ nền với cảnh báo an toàn. |
-| **12** | **💾 Disk & Storage Tools** | Đọc dữ liệu sức khỏe ổ cứng S.M.A.R.T (SSD/HDD), biểu đồ phân tích dung lượng cây thư mục và tìm kiếm tệp tin trùng lặp nội dung. |
-| **13** | **🧬 Registry Center** | Quét và sửa chữa các khóa Registry lỗi, tối ưu hóa Registry Hive, luôn tự động tạo điểm sao lưu `.reg` trước khi thực hiện thay đổi. |
-| **14** | **🔄 Software Updater** | Quét và cập nhật hàng loạt các phần mềm đã cài đặt trên máy tính thông qua Windows Package Manager (`winget CLI`) với chế độ Silent Update. |
-| **15** | **🪟 Desktop HUD Widget** | Cửa sổ mini nổi mờ kính ghim trên Desktop (`Single-Instance`), hiển thị trực quan thông số CPU, RAM, Disk và tốc độ Download/Upload. |
-| **16** | **⚙️ Settings & System Care** | Đa ngôn ngữ 100% (**Tiếng Việt / English**), Theme Studio chuyển đổi tức thì (Dark/Light/Cyber), bộ lập lịch bảo trì tự động định kỳ. |
+| STT    | Module                        | Mô tả chi tiết & Điểm nổi bật                                                                                                                                     |
+| :----- | :---------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1**  | **📊 Dashboard & Live HUD**   | Giám sát CPU/RAM/Disk/Network thời gian thực, điểm sức khỏe máy tính **Composite Health Score**, thẻ HUD chip trên TitleBar hỗ trợ Tabular figures chống giật số. |
+| **2**  | **🤖 AI WinCare Engine**      | Bộ máy chẩn đoán Heuristic phân tích rủi ro phần cứng, dự đoán thời gian đầy ổ C:, phát hiện ứng dụng nghẽn CPU và đề xuất hành động tối ưu hóa 1-Click.          |
+| **3**  | **🧹 Junk Cleaner**           | Quét & dọn Temp, Cache, Recycle Bin, Delivery Optimization, Windows Update logs, Memory Dumps kết hợp **SafePathGuard** chống xóa nhầm file hệ thống.             |
+| **4**  | **📦 App Uninstaller**        | Gỡ bỏ triệt để ứng dụng Win32 & Microsoft Store (UWP/AppX), quét sâu tàn dư Registry và thư mục sót lại (**Residual Scan & Force Uninstall**).                    |
+| **5**  | **🌐 Network Center**         | Đo băng thông mạng thời gian thực, kiểm tra Ping/SpeedTest, đổi DNS an toàn 1-Click (Cloudflare, Google, AdGuard, NextDNS), khôi phục Winsock/TCP-IP.             |
+| **6**  | **🛠️ System Repair**          | Tích hợp công cụ SFC (`/scannow`), DISM (`RestoreHealth`), sửa lỗi Windows Update và dọn dẹp kho thành phần WinSxS Component Store an toàn.                       |
+| **7**  | **🛡️ Security Shield**        | Kiểm soát trạng thái Windows Defender, tường lửa Firewall, chính sách UAC, tắt Telemetry ngầm và quản lý quyền riêng tư (Camera, Micro, Location).                |
+| **8**  | **⚡ System Optimizer**       | Thu hồi bộ nhớ RAM trống tức thì (`EmptyWorkingSet`), tinh chỉnh hiệu ứng thị giác Visual Effects, tối ưu hóa dịch vụ hệ thống và cấu hình Power Plan.            |
+| **9**  | **🎮 Gaming Turbo**           | Tăng tốc độ mượt khi chơi game, tự động ưu tiên CPU High Priority cho tiến trình game, bật Ultimate Performance và tạm dừng các tác vụ nền dư thừa.               |
+| **10** | **🖱️ Context Menu Manager**   | Tùy biến sâu Menu chuột phải cho Tệp, Thư mục và Desktop trên cả Windows 10 & Windows 11 qua Registry an toàn với khả năng hoàn tác.                              |
+| **11** | **📂 Startup & Services**     | Phân tích tác động khởi động (Boot Impact), bật/tắt ứng dụng khởi động cùng Windows và kiểm soát các dịch vụ nền với cảnh báo an toàn.                            |
+| **12** | **💾 Disk & Storage Tools**   | Đọc dữ liệu sức khỏe ổ cứng S.M.A.R.T (SSD/HDD), biểu đồ phân tích dung lượng cây thư mục và tìm kiếm tệp tin trùng lặp nội dung.                                 |
+| **13** | **🧬 Registry Center**        | Quét và sửa chữa các khóa Registry lỗi, tối ưu hóa Registry Hive, luôn tự động tạo điểm sao lưu `.reg` trước khi thực hiện thay đổi.                              |
+| **14** | **🔄 Software Updater**       | Quét và cập nhật hàng loạt các phần mềm đã cài đặt trên máy tính thông qua Windows Package Manager (`winget CLI`) với chế độ Silent Update.                       |
+| **15** | **🪟 Desktop HUD Widget**     | Cửa sổ mini nổi mờ kính ghim trên Desktop (`Single-Instance`), hiển thị trực quan thông số CPU, RAM, Disk và tốc độ Download/Upload.                              |
+| **16** | **⚙️ Settings & System Care** | Đa ngôn ngữ 100% (**Tiếng Việt / English**), Theme Studio chuyển đổi tức thì (Dark/Light/Cyber), bộ lập lịch bảo trì tự động định kỳ.                             |
 
 ---
 
@@ -112,32 +112,35 @@ graph TD
 
 ## 🛠️ Công Nghệ & Thư Viện Sử Dụng
 
-| Thư viện / Công nghệ | Phiên bản | Vai trò trong hệ thống |
-| :--- | :--- | :--- |
-| **.NET SDK** | `10.0` | Môi trường thực thi thế hệ mới tối ưu bộ nhớ và hiệu năng xử lý. |
-| **Windows App SDK** | `2.2.0` | Nền tảng WinUI 3 mang lại giao diện Aura Glassmorphic Fluent 2.0. |
-| **CommunityToolkit.Mvvm** | `8.2.2` | Chuẩn hóa cấu trúc MVVM, Command Pattern và Data Binding hai chiều. |
-| **Microsoft.Data.Sqlite** | `10.0.9` | Cơ sở dữ liệu SQLite cục bộ lưu trữ nhật ký hoạt động chế độ WAL. |
-| **System.Management** | `10.0.9` | Truy vấn WMI lấy thông số phần cứng chuyên sâu. |
-| **TaskScheduler** | `2.12.2` | Đăng ký tác vụ bảo trì tự động định kỳ với Windows Task Scheduler. |
-| **LiveChartsCore** | `2.0.5` | Biểu đồ theo dõi tài nguyên phần cứng thời gian thực. |
+| Thư viện / Công nghệ      | Phiên bản | Vai trò trong hệ thống                                              |
+| :------------------------ | :-------- | :------------------------------------------------------------------ |
+| **.NET SDK**              | `10.0`    | Môi trường thực thi thế hệ mới tối ưu bộ nhớ và hiệu năng xử lý.    |
+| **Windows App SDK**       | `2.2.0`   | Nền tảng WinUI 3 mang lại giao diện Aura Glassmorphic Fluent 2.0.   |
+| **CommunityToolkit.Mvvm** | `8.2.2`   | Chuẩn hóa cấu trúc MVVM, Command Pattern và Data Binding hai chiều. |
+| **Microsoft.Data.Sqlite** | `10.0.9`  | Cơ sở dữ liệu SQLite cục bộ lưu trữ nhật ký hoạt động chế độ WAL.   |
+| **System.Management**     | `10.0.9`  | Truy vấn WMI lấy thông số phần cứng chuyên sâu.                     |
+| **TaskScheduler**         | `2.12.2`  | Đăng ký tác vụ bảo trì tự động định kỳ với Windows Task Scheduler.  |
+| **LiveChartsCore**        | `2.0.5`   | Biểu đồ theo dõi tài nguyên phần cứng thời gian thực.               |
 
 ---
 
 ## 📥 Hướng Dẫn Cài Đặt & Biên Dịch
 
 ### Cách 1: Cài đặt từ Bộ đóng gói (Khuyên dùng)
+
 1. Truy cập trang [Releases](https://github.com/Nguyen-Trung-Tien/WinCarePro/releases) hoặc bấm nút **Download** ở đầu bài để tải tệp **`WinCareProSetup.exe`**.
 2. Chạy file cài đặt để tiến hành cài đặt ứng dụng.
 
 ### Cách 2: Tự biên dịch từ mã nguồn (Dành cho Developer)
 
 #### **Yêu cầu môi trường:**
-* **Hệ điều hành:** Windows 10 (Build 19041 trở lên) hoặc Windows 11.
-* **IDE:** Visual Studio 2022 / Visual Studio Code (hỗ trợ .NET 10).
-* **SDK:** .NET 10.0 SDK.
+
+- **Hệ điều hành:** Windows 10 (Build 19041 trở lên) hoặc Windows 11.
+- **IDE:** Visual Studio 2022 / Visual Studio Code (hỗ trợ .NET 10).
+- **SDK:** .NET 10.0 SDK.
 
 #### **Các bước thực hiện:**
+
 ```bash
 # 1. Clone mã nguồn
 git clone https://github.com/Nguyen-Trung-Tien/WinCarePro.git
@@ -157,8 +160,8 @@ dotnet run
 
 ## 📦 Kịch Bản Đóng Gói & Phát Hành Tự Động
 
-* **Bản di động Portable (`publish.bat`):** Biên dịch thành một tệp thực thi duy nhất nén R2R (`PublishSingleFile=true`, `PublishReadyToRun=true`) tại `.\PublishOutput\WinCarePro.exe`.
-* **Bộ cài đặt chuyên nghiệp (`publish_installer.bat`):** Tự động gọi **Inno Setup 6** với kịch bản [setup.iss](file:///d:/WinCare/setup.iss) để đóng gói toàn bộ runtime .NET 10 tự cấp (Self-contained) thành tệp `.\PublishOutput\WinCareProSetup.exe`.
+- **Bản di động Portable (`publish.bat`):** Biên dịch thành một tệp thực thi duy nhất nén R2R (`PublishSingleFile=true`, `PublishReadyToRun=true`) tại `.\PublishOutput\WinCarePro.exe`.
+- **Bộ cài đặt chuyên nghiệp (`publish_installer.bat`):** Tự động gọi **Inno Setup 6** với kịch bản [setup.iss](file:///d:/WinCare/setup.iss) để đóng gói toàn bộ runtime .NET 10 tự cấp (Self-contained) thành tệp `.\PublishOutput\WinCareProSetup.exe`.
 
 ---
 
@@ -178,12 +181,14 @@ Passed!  - Failed: 0, Passed: 300, Skipped: 0, Total: 300, Duration: 8 s
 Dự án được phân phối dưới giấy phép mã nguồn mở. Mọi đóng góp, báo cáo lỗi hoặc đề xuất tính năng mới đều được hoan nghênh qua **GitHub Issues** và **Pull Requests**.
 
 > [!NOTE]
-> * Xem trọn bộ 11 tài liệu kỹ thuật & kiến trúc tại **[Trung Tâm Tài Liệu (docs/README.md)](file:///d:/WinCare/docs/README.md)**.
-> * Xem hướng dẫn bắt đầu nhanh cho lập trình viên tại **[Developer Onboarding (docs/10_DEVELOPER_ONBOARDING_GUIDE.md)](file:///d:/WinCare/docs/10_DEVELOPER_ONBOARDING_GUIDE.md)**.
-> * Xem nhật ký thay đổi qua từng phiên bản trong **[Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md)**.
+>
+> - Xem trọn bộ 11 tài liệu kỹ thuật & kiến trúc tại **[Trung Tâm Tài Liệu (docs/README.md)](file:///d:/WinCare/docs/README.md)**.
+> - Xem hướng dẫn bắt đầu nhanh cho lập trình viên tại **[Developer Onboarding (docs/10_DEVELOPER_ONBOARDING_GUIDE.md)](file:///d:/WinCare/docs/10_DEVELOPER_ONBOARDING_GUIDE.md)**.
+> - Xem nhật ký thay đổi qua từng phiên bản trong **[Nhật ký Phát hành (RELEASE_NOTES.md)](file:///d:/WinCare/RELEASE_NOTES.md)**.
 
 ---
 
 <div align="center">
   <sub>Được phát triển và thiết kế bởi <b>Nguyễn Trung Tiến</b></sub>
 </div>
+

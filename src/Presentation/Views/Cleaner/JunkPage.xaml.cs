@@ -28,6 +28,7 @@ public sealed partial class JunkPage : Page
     private System.ComponentModel.PropertyChangedEventHandler? _propChangedHandler;
     private SizeChangedEventHandler? _sizeChangedHandler;
     private RoutedEventHandler? _loadedHandler;
+    private readonly EventHandler _langChangedHandler;
 
     public JunkPage()
     {
@@ -56,11 +57,11 @@ public sealed partial class JunkPage : Page
         };
         this.Loaded += _loadedHandler;
 
-        var langHandler = new EventHandler((s, e) =>
+        _langChangedHandler = (s, e) =>
         {
             this.DispatcherQueue?.TryEnqueue(() => TranslationManager.Instance.Translate(this));
-        });
-        TranslationManager.Instance.LanguageChanged += langHandler;
+        };
+        TranslationManager.Instance.LanguageChanged += _langChangedHandler;
 
         _sizeChangedHandler = (s, e) =>
         {
@@ -70,7 +71,8 @@ public sealed partial class JunkPage : Page
 
         this.Unloaded += (s, e) =>
         {
-            TranslationManager.Instance.LanguageChanged -= langHandler;
+            this.Loaded -= _loadedHandler;
+            TranslationManager.Instance.LanguageChanged -= _langChangedHandler;
             if (_propChangedHandler != null) ViewModel.PropertyChanged -= _propChangedHandler;
             if (_sizeChangedHandler != null) this.SizeChanged -= _sizeChangedHandler;
         };
@@ -150,17 +152,29 @@ public sealed partial class JunkPage : Page
         ViewModel.Initialize();
         var dialogService = App.Services.GetService<IDialogService>();
         dialogService?.SetXamlRoot(this.XamlRoot);
+        TranslationManager.Instance.LanguageChanged -= _langChangedHandler;
+        TranslationManager.Instance.LanguageChanged += _langChangedHandler;
+        TranslationManager.Instance.Translate(this);
     }
 
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
+        TranslationManager.Instance.LanguageChanged -= _langChangedHandler;
         try
         {
             WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(this);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("JunkPage.Stop3DScanEffect", ex);
+        }
         ViewModel.Cleanup();
+    }
+
+    private void OnSwitchToSystemCleanerClick(object sender, RoutedEventArgs e)
+    {
+        this.Frame?.Navigate(typeof(CleanerPage), null, new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo());
     }
 
     private async void OnScanJunkClick(object sender, RoutedEventArgs e)

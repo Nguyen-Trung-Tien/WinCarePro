@@ -10,36 +10,36 @@
 ### 🛡️ Core Safety Guards & Interop
 | Class / Symbol | File Path | Core Responsibilities & Canonical Signatures |
 | :--- | :--- | :--- |
-| `SafePathGuard` | [Core/Helpers/SafePathGuard.cs](../Core/Helpers/SafePathGuard.cs) | `bool IsSafeToDelete(string path)`: Blocks deletions of root volumes, system directories, Windows trees, Reparse Points/Symlinks. |
-| `SafeRegistryGuard` | [Core/Helpers/SafeRegistryGuard.cs](../Core/Helpers/SafeRegistryGuard.cs) | `bool IsSafeToDeleteKey(RegistryKey root, string subKey)`: Blocks Root Hive deletion, enforces subkey depth $\ge 3$, validates safe whitelist. |
-| `ServiceSafetyService` | [Core/Helpers/ServiceSafetyService.cs](../Core/Helpers/ServiceSafetyService.cs) | `bool IsProtectedService(string serviceName)`: Shields 45+ critical Windows infrastructure services (`RpcSs`, `WinDefend`, `CryptSvc`, ...). |
-| `ProcessRunner` | [Core/Helpers/ProcessRunner.cs](../Core/Helpers/ProcessRunner.cs) | `Task<ProcessResult> RunAsync(string exe, IEnumerable<string> args, CancellationToken ct)`: Zero Command Injection runner using `ArgumentList`. |
-| `CryptoHelper` | [Core/Helpers/CryptoHelper.cs](../Core/Helpers/CryptoHelper.cs) | `string Protect(string plainText)`, `string Unprotect(string cipherText)`: Secure encryption utilizing Windows DPAPI. |
-| `InputSanitizer` | [Core/Helpers/InputSanitizer.cs](../Core/Helpers/InputSanitizer.cs) | `string SanitizeFileName(string input)`, `string SanitizeCliArg(string input)`: Input normalization and sanitization. |
+| `SafePathGuard` | [src/Core/Guards/SafePathGuard.cs](../src/Core/Guards/SafePathGuard.cs) | `bool IsSafeToDelete(string path)`: Blocks deletions of root volumes, system directories, Windows trees, Reparse Points/Symlinks. |
+| `SafeRegistryGuard` | [src/Core/Guards/SafeRegistryGuard.cs](../src/Core/Guards/SafeRegistryGuard.cs) | `bool IsSafeToDeleteKey(RegistryKey root, string subKey)`: Blocks Root Hive deletion, enforces subkey depth $\ge 3$, validates safe whitelist. |
+| `ServiceSafetyService` | [src/Infrastructure/Security/ServiceSafetyService.cs](../src/Infrastructure/Security/ServiceSafetyService.cs) | `bool IsProtectedService(string serviceName)`: Shields 45+ critical Windows infrastructure services (`RpcSs`, `WinDefend`, `CryptSvc`, ...). |
+| `ProcessRunner` | [src/Core/Helpers/ProcessRunner.cs](../src/Core/Helpers/ProcessRunner.cs) | `Task<ProcessResult> RunAsync(string exe, IEnumerable<string> args, CancellationToken ct)`: Zero Command Injection runner using `ArgumentList`. |
+| `CryptoHelper` | [src/Infrastructure/Security/CryptoHelper.cs](../src/Infrastructure/Security/CryptoHelper.cs) | `string Protect(string plainText)`, `string Unprotect(string cipherText)`: Secure encryption utilizing Windows DPAPI. |
+| `InputSanitizer` | [src/Core/Helpers/InputSanitizer.cs](../src/Core/Helpers/InputSanitizer.cs) | `string SanitizeFileName(string input)`, `string SanitizeCliArg(string input)`: Input normalization and sanitization. |
 
 ### 🧩 Base Models & Helpers
 | Class / Symbol | File Path | Core Responsibilities & Canonical Signatures |
 | :--- | :--- | :--- |
-| `OperationResult`, `OperationResult<T>` | [Core/Models/OperationResult.cs](../Core/Models/OperationResult.cs) | `Ok()`, `Ok(T data)`, `Fail(string msg)`, `Fail(Exception ex)`: Standardized result wrapper for fallible operations. |
-| `ViewModelBase` | [Core/Helpers/ViewModelBase.cs](../Core/Helpers/ViewModelBase.cs) | Inherits `ObservableObject`. Exposes `RunOnUI(Action)`, `IsBusy`, `OperationState`, `StatusMessage`. Mandatory for all ViewModels. |
-| `AppConstants` | [Core/AppConstants.cs](../Core/AppConstants.cs) | Single Source of Truth (SSOT) for product identity, version (`5.1.1`), codename (`Polaris`), build date, copyright. |
-| `UndoManager` | [Core/Helpers/UndoManager.cs](../Core/Helpers/UndoManager.cs) | Manages Undo rollbacks, restores registry hives and quarantined files safely. |
+| `OperationResult`, `OperationResult<T>` | [src/Core/Models/OperationResult.cs](../src/Core/Models/OperationResult.cs) | `Ok()`, `Ok(T data)`, `Fail(string msg)`, `Fail(Exception ex)`: Standardized result wrapper for fallible operations. |
+| `ViewModelBase` | [src/ViewModels/Common/ViewModelBase.cs](../src/ViewModels/Common/ViewModelBase.cs) | Inherits `ObservableObject`. Exposes `RunOnUI(Action)`, `IsBusy`, `OperationState`, `StatusMessage`. Mandatory for all ViewModels. |
+| `AppConstants` | [src/Core/AppConstants.cs](../src/Core/AppConstants.cs) | Single Source of Truth (SSOT) for product identity, version (`6.0.0`), codename (`Polaris`), build date, copyright. |
+| `UndoManagerEngine` | [src/Engines/Repair/UndoManagerEngine.cs](../src/Engines/Repair/UndoManagerEngine.cs) | Manages Undo rollbacks, restores registry hives and quarantined files safely. |
 
 ### 🗄️ Infrastructure & Persistence
 | Class / Symbol | File Path | Core Responsibilities & Canonical Signatures |
 | :--- | :--- | :--- |
-| `DbManager` | [Infrastructure/Database/DbManager.cs](../Infrastructure/Database/DbManager.cs) | Manages SQLite WAL. All operations MUST acquire `lock (_dbLock)`. Exposes `SaveAuditRecord()`, `GetHistory()`, `SaveSetting()`. |
-| `CrashLogger` | [Infrastructure/Logging/CrashLogger.cs](../Infrastructure/Logging/CrashLogger.cs) | `LogError(Exception ex, string context)`: Captures unhandled crashes, stack traces; enforces Zero-Silent Catch. |
-| `AppLogger` | [Infrastructure/Logging/AppLogger.cs](../Infrastructure/Logging/AppLogger.cs) | Records operational telemetry and business lifecycle events by level (Info, Warn, Error). |
+| `DbManager` | [src/Infrastructure/Database/DbManager.cs](../src/Infrastructure/Database/DbManager.cs) | Manages SQLite WAL. All operations MUST acquire `lock (_dbLock)`. Exposes `SaveAuditRecord()`, `GetHistory()`, `SaveSetting()`. |
+| `CrashLogger` | [src/Infrastructure/Logging/CrashLogger.cs](../src/Infrastructure/Logging/CrashLogger.cs) | `LogError(Exception ex, string context)`: Captures unhandled crashes, stack traces; enforces Zero-Silent Catch. |
+| `AuditLogService` | [src/Infrastructure/Logging/AuditLogService.cs](../src/Infrastructure/Logging/AuditLogService.cs) | Records operational telemetry and business lifecycle events by level (Info, Warn, Error). |
 
 ### 🌐 System Services
 | Class / Symbol | File Path | Core Responsibilities & Canonical Signatures |
 | :--- | :--- | :--- |
-| `TranslationManager` | [Services/TranslationService/TranslationManager.cs](../Services/TranslationService/TranslationManager.cs) | Dual-language i18n Singleton. Manages dictionaries in [TranslationManager.Translations.cs](../Services/TranslationService/TranslationManager.Translations.cs). |
-| `ThemeManager` | [Services/ThemeService/ThemeManager.cs](../Services/ThemeService/ThemeManager.cs) | Manages Aura Glass themes (Light, Dark, Windows Default, Mica Alt backdrop). |
-| `IconCacheService` | [Services/IconCacheService.cs](../Services/IconCacheService.cs) | Caches Win32/UWP application shell icons to eliminate disk I/O bottlenecks and GDI handle leaks. |
-| `NavigationService` | [Services/NavigationService.cs](../Services/NavigationService.cs) | Manages WinUI 3 page navigation and routing between feature views. |
-| `UpdateManager` | [Services/UpdateManager.cs](../Services/UpdateManager.cs) | Handles automated update checks and payload integrity validation via `UpdateSecurityValidator`. |
+| `TranslationManager` | [src/Infrastructure/Localization/TranslationManager.cs](../src/Infrastructure/Localization/TranslationManager.cs) | Dual-language i18n Singleton. Manages dictionaries in [TranslationManager.Translations.cs](../src/Infrastructure/Localization/TranslationManager.Translations.cs). |
+| `ThemeManager` | [src/Infrastructure/Services/ThemeManager.cs](../src/Infrastructure/Services/ThemeManager.cs) | Manages Aura Glass themes (Light, Dark, Windows Default, Mica Alt backdrop). |
+| `IconCacheService` | [src/Infrastructure/Caching/IconCacheService.cs](../src/Infrastructure/Caching/IconCacheService.cs) | Caches Win32/UWP application shell icons to eliminate disk I/O bottlenecks and GDI handle leaks. |
+| `NavigationService` | [src/Core/Interfaces/IDialogService.cs](../src/Core/Interfaces/IDialogService.cs) | Manages WinUI 3 dialog and navigation services. |
+| `UpdateManager` | [src/Infrastructure/Security/UpdateSecurityValidator.cs](../src/Infrastructure/Security/UpdateSecurityValidator.cs) | Handles automated update checks and payload integrity validation via `UpdateSecurityValidator`. |
 
 ---
 
@@ -49,37 +49,32 @@ All engines operate completely isolated from WinUI 3, accept `CancellationToken 
 
 | Engine | File Path | Core Domain Logic |
 | :--- | :--- | :--- |
-| `JunkCleanerEngine` | [Engines/JunkCleanerEngine.cs](../Engines/JunkCleanerEngine.cs) | Scans and purges system junk (Temp, Prefetch, Logs, Dumps); shielded by `SafePathGuard`. |
-| `RegistryEngine` | [Engines/RegistryEngine.cs](../Engines/RegistryEngine.cs) | Scans and optimizes Registry; automated backups via `RegistryBackupEngine`; shielded by `SafeRegistryGuard`. |
-| `SystemOptimizerEngine`| [Engines/SystemOptimizerEngine.cs](../Engines/SystemOptimizerEngine.cs)| OS performance tuning, Visual Effects configuration, network parameters, and service optimizations. |
-| `UninstallEngine` | [Engines/UninstallEngine.cs](../Engines/UninstallEngine.cs) | Program inventory detection, deep clean uninstallation with file/registry residual sweeps. |
-| `NetworkCenterEngine` | [Engines/NetworkCenterEngine.cs](../Engines/NetworkCenterEngine.cs) | Bandwidth benchmarking, DNS flush, TCP/IP stack resets, MTU optimization via `ProcessRunner`. |
-| `StartupEngine` | [Engines/StartupEngine.cs](../Engines/StartupEngine.cs) | Manages Windows autorun entries (Registry Run, Startup Folders, Task Scheduler). |
-| `SystemRepairEngine` | [Engines/SystemRepairEngine.cs](../Engines/SystemRepairEngine.cs) | OS integrity restoration, automated SFC (`sfc /scannow`), DISM (`DISM /Online /Cleanup-Image /RestoreHealth`). |
-| `SecurityCenterEngine`| [Engines/SecurityCenterEngine.cs](../Engines/SecurityCenterEngine.cs)| Inspects states for Windows Defender, Windows Firewall, UAC, BitLocker, Windows Update. |
-| `AiWinCareEngine` | [Engines/AiWinCareEngine.cs](../Engines/AiWinCareEngine.cs) | Intelligent heuristics engine predicting performance degradation and recommending optimizations. |
-| `AiDiagnosticsEngine` | [Engines/AiDiagnosticsEngine.cs](../Engines/AiDiagnosticsEngine.cs)| In-depth system log and hardware diagnostics using structured rule trees. |
+| `JunkCleanerEngine` | [src/Engines/Optimization/JunkCleanerEngine.cs](../src/Engines/Optimization/JunkCleanerEngine.cs) | Scans and purges system junk (Temp, Prefetch, Logs, Dumps); shielded by `SafePathGuard`. |
+| `RegistryBackupEngine` | [src/Engines/Repair/RegistryBackupEngine.cs](../src/Engines/Repair/RegistryBackupEngine.cs) | Automated registry hive backups and restore point tracking; shielded by `SafeRegistryGuard`. |
+| `HardwareDriverEngine` | [src/Engines/Repair/HardwareDriverEngine.cs](../src/Engines/Repair/HardwareDriverEngine.cs) | Hardware specs, hardware telemetry, and device driver package backups via `pnputil.exe` and `dism.exe`. |
+| `UninstallEngine` | [src/Engines/Repair/UninstallEngine.cs](../src/Engines/Repair/UninstallEngine.cs) | App inventory detection, deep clean uninstallation with file/registry residual sweeps. |
+| `NetworkEngine` | [src/Engines/Monitoring/NetworkEngine.cs](../src/Engines/Monitoring/NetworkEngine.cs) | Bandwidth benchmarking, DNS benchmark/repair, TCP/IP stack resets, DoH configurations via `ProcessRunner`. |
+| `ProcessService` | [src/Engines/Monitoring/ProcessService.cs](../src/Engines/Monitoring/ProcessService.cs) | Active process management, memory working set trimming, thread prioritization. |
+| `SmartFixEngine` | [src/Engines/Repair/SmartFixEngine.cs](../src/Engines/Repair/SmartFixEngine.cs) | Unified smart repair orchestrator combining junk purge, network stack fix, SFC/DISM repairs. |
+| `SoftwareUpdaterEngine`| [src/Engines/Repair/SoftwareUpdaterEngine.cs](../src/Engines/Repair/SoftwareUpdaterEngine.cs) | Detects and downloads updates for software packages with signature verification. |
+| `SystemEngine` | [src/Engines/Diagnostics/SystemEngine.cs](../src/Engines/Diagnostics/SystemEngine.cs) | OS integrity restoration, automated SFC (`sfc /scannow`), DISM, and Windows Update component resets. |
+| `SystemSnapshotEngine` | [src/Engines/Diagnostics/SystemSnapshotEngine.cs](../src/Engines/Diagnostics/SystemSnapshotEngine.cs) | Diagnostic system snapshots, differential system health audit and rollback tracking. |
 
 ---
 
-## 🖥️ 3. Fourteen Presentation Modules (Modules: ViewModel & View)
+## 🖥️ 3. WinCare Pro v6.0.0 Presentation Modules (ViewModel & View)
 
 | Module | ViewModel | View (XAML) |
 | :--- | :--- | :--- |
-| **Dashboard** | [Modules/Dashboard/DashboardViewModel.cs](../Modules/Dashboard/DashboardViewModel.cs) | [Modules/Dashboard/DashboardView.xaml](../Modules/Dashboard/DashboardView.xaml) |
-| **Junk Cleaner** | [Modules/JunkCleaner/JunkCleanerViewModel.cs](../Modules/JunkCleaner/JunkCleanerViewModel.cs) | [Modules/JunkCleaner/JunkCleanerView.xaml](../Modules/JunkCleaner/JunkCleanerView.xaml) |
-| **Registry** | [Modules/Registry/RegistryViewModel.cs](../Modules/Registry/RegistryViewModel.cs) | [Modules/Registry/RegistryView.xaml](../Modules/Registry/RegistryView.xaml) |
-| **System Optimizer**| [Modules/SystemOptimizer/SystemOptimizerViewModel.cs](../Modules/SystemOptimizer/SystemOptimizerViewModel.cs) | [Modules/SystemOptimizer/SystemOptimizerView.xaml](../Modules/SystemOptimizer/SystemOptimizerView.xaml) |
-| **Startup Manager** | [Modules/StartupManager/StartupManagerViewModel.cs](../Modules/StartupManager/StartupManagerViewModel.cs) | [Modules/StartupManager/StartupManagerView.xaml](../Modules/StartupManager/StartupManagerView.xaml) |
-| **Uninstall** | [Modules/Uninstall/UninstallViewModel.cs](../Modules/Uninstall/UninstallViewModel.cs) | [Modules/Uninstall/UninstallView.xaml](../Modules/Uninstall/UninstallView.xaml) |
-| **System Repair** | [Modules/Repair/SystemRepairViewModel.cs](../Modules/Repair/SystemRepairViewModel.cs) | [Modules/Repair/SystemRepairView.xaml](../Modules/Repair/SystemRepairView.xaml) |
-| **Security Center**| [Modules/Security/SecurityCenterViewModel.cs](../Modules/Security/SecurityCenterViewModel.cs) | [Modules/Security/SecurityCenterView.xaml](../Modules/Security/SecurityCenterView.xaml) |
-| **Network Center** | [Modules/Network/NetworkCenterViewModel.cs](../Modules/Network/NetworkCenterViewModel.cs) | [Modules/Network/NetworkCenterView.xaml](../Modules/Network/NetworkCenterView.xaml) |
-| **AI Assistant** | [Modules/AiAssistant/AiAssistantViewModel.cs](../Modules/AiAssistant/AiAssistantViewModel.cs) | [Modules/AiAssistant/AiAssistantView.xaml](../Modules/AiAssistant/AiAssistantView.xaml) |
-| **Desktop Widget** | [Modules/DesktopWidget/DesktopWidgetViewModel.cs](../Modules/DesktopWidget/DesktopWidgetViewModel.cs) | [Modules/DesktopWidget/DesktopWidgetWindow.xaml](../Modules/DesktopWidget/DesktopWidgetWindow.xaml) |
-| **Notifications** | [Modules/Notifications/NotificationCenterViewModel.cs](../Modules/Notifications/NotificationCenterViewModel.cs)| [Modules/Notifications/NotificationCenterView.xaml](../Modules/Notifications/NotificationCenterView.xaml)|
-| **Settings** | [Modules/Settings/SettingsViewModel.cs](../Modules/Settings/SettingsViewModel.cs) | [Modules/Settings/SettingsView.xaml](../Modules/Settings/SettingsView.xaml) |
-| **Updates** | [Modules/Updates/UpdateViewModel.cs](../Modules/Updates/UpdateViewModel.cs) | [Modules/Updates/UpdateView.xaml](../Modules/Updates/UpdateView.xaml) |
+| **Dashboard** | [src/ViewModels/Modules/Dashboard/DashboardViewModel.cs](../src/ViewModels/Modules/Dashboard/DashboardViewModel.cs) | [src/Presentation/Views/Dashboard/DashboardPage.xaml](../src/Presentation/Views/Dashboard/DashboardPage.xaml) |
+| **System Cleaner** | [src/ViewModels/Modules/Cleaner/CleanerViewModel.cs](../src/ViewModels/Modules/Cleaner/CleanerViewModel.cs) | [src/Presentation/Views/Cleaner/CleanerPage.xaml](../src/Presentation/Views/Cleaner/CleanerPage.xaml) |
+| **Deep Junk Cleaner** | [src/ViewModels/Modules/Cleaner/JunkViewModel.cs](../src/ViewModels/Modules/Cleaner/JunkViewModel.cs) | [src/Presentation/Views/Cleaner/JunkPage.xaml](../src/Presentation/Views/Cleaner/JunkPage.xaml) |
+| **App Manager** | [src/ViewModels/Modules/Uninstall/UninstallViewModel.cs](../src/ViewModels/Modules/Uninstall/UninstallViewModel.cs) | [src/Presentation/Views/Uninstall/UninstallPage.xaml](../src/Presentation/Views/Uninstall/UninstallPage.xaml) |
+| **Software Updater** | [src/ViewModels/Modules/Updates/UpdaterViewModel.cs](../src/ViewModels/Modules/Updates/UpdaterViewModel.cs) | [src/Presentation/Views/Updates/UpdaterPage.xaml](../src/Presentation/Views/Updates/UpdaterPage.xaml) |
+| **Network Center** | [src/ViewModels/Modules/Network/NetworkViewModel.cs](../src/ViewModels/Modules/Network/NetworkViewModel.cs) | [src/Presentation/Views/Network/NetworkPage.xaml](../src/Presentation/Views/Network/NetworkPage.xaml) |
+| **System Repair** | [src/ViewModels/Modules/Repair/RepairViewModel.cs](../src/ViewModels/Modules/Repair/RepairViewModel.cs) | [src/Presentation/Views/Repair/RepairPage.xaml](../src/Presentation/Views/Repair/RepairPage.xaml) |
+| **Notifications** | [src/Presentation/Views/Notifications/NotificationPage.xaml.cs](../src/Presentation/Views/Notifications/NotificationPage.xaml.cs) | [src/Presentation/Views/Notifications/NotificationPage.xaml](../src/Presentation/Views/Notifications/NotificationPage.xaml) |
+| **Settings & Guides**| [src/ViewModels/Modules/Settings/SettingsViewModel.cs](../src/ViewModels/Modules/Settings/SettingsViewModel.cs) | [src/Presentation/Views/Settings/SettingsPage.xaml](../src/Presentation/Views/Settings/SettingsPage.xaml) |
 
 ---
 

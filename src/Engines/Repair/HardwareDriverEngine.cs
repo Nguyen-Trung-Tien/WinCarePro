@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using WinCarePro.Models;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Core.Interop;
+using WinCarePro.Infrastructure.Logging;
 
 namespace WinCarePro.Engines;
 
@@ -59,7 +60,10 @@ public partial class HardwareDriverEngine
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("HardwareDriverEngine.GetCpuRegistrySpecs", ex);
+        }
 
         var cpuList = WmiHelper.Query("SELECT Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed FROM Win32_Processor", obj => new
         {
@@ -94,7 +98,10 @@ public partial class HardwareDriverEngine
                 fallbackRamGb = Math.Round(memStatus.ullTotalPhys / (1024.0 * 1024.0 * 1024.0), 1);
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("HardwareDriverEngine.GetRamNativeFallback", ex);
+        }
 
         var ramList = WmiHelper.Query("SELECT Capacity, Speed FROM Win32_PhysicalMemory", obj => new
         {
@@ -302,7 +309,10 @@ public partial class HardwareDriverEngine
                 if (t > 0) return t;
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("HardwareDriverEngine.GetDiskTemperature", ex);
+        }
 
         return 0.0;
     }
@@ -375,7 +385,8 @@ public partial class HardwareDriverEngine
         {
             foreach (var c in _gpuCounters)
             {
-                try { c.Dispose(); } catch { }
+                try { c.Dispose(); }
+                catch (Exception ex) { CrashLogger.LogException("HardwareDriverEngine.DisposeGpuCounters", ex); }
             }
             _gpuCounters = null;
         }
@@ -521,7 +532,10 @@ public partial class HardwareDriverEngine
                 }
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            CrashLogger.LogException("HardwareDriverEngine.IsCpuThrottling", ex);
+        }
         return false;
     }
 

@@ -296,5 +296,13 @@ public partial class TranslationManager
         if (en != null) en["Ready to Clean System"] = "Ready to Clean System";
         vi["Clean Selected"] = "Dọn Các Mục Đã Chọn";
         if (en != null) en["Clean Selected"] = "Clean Selected";
+        vi["Deep Junk Analyzer"] = "Phân Tích Rác Sâu";
+        if (en != null) en["Deep Junk Analyzer"] = "Deep Junk Analyzer";
+        vi["Open Deep Disk Analyzer"] = "Mở Trình Phân Tích Ổ Đĩa Sâu";
+        if (en != null) en["Open Deep Disk Analyzer"] = "Open Deep Disk Analyzer";
+        vi["Smart Optimization Suggestion"] = "Đề Xuất Tối Ưu Thông Minh";
+        if (en != null) en["Smart Optimization Suggestion"] = "Smart Optimization Suggestion";
+        vi["Scan Now"] = "Quét Ngay";
+        if (en != null) en["Scan Now"] = "Scan Now";
     }
 }

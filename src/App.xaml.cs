@@ -42,7 +42,10 @@ public partial class App : Application
             _singleInstanceMutex?.Dispose();
             _singleInstanceMutex = null;
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Infrastructure.Logging.CrashLogger.LogException("App.ReleaseSingleInstanceMutex", ex);
+        }
     }
 
     private static readonly string CrashLogDir = System.IO.Path.Combine(

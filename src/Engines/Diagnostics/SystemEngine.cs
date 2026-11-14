@@ -462,7 +462,10 @@ public class SystemEngine
                         fixedCount++;
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Log($"Notice: Failed to repair .exe association: {ex.Message}");
+                }
 
                 try
                 {
@@ -474,7 +477,10 @@ public class SystemEngine
                         fixedCount++;
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Log($"Notice: Failed to repair .lnk association: {ex.Message}");
+                }
 
                 ProgressChanged?.Invoke(100);
                 if (fixedCount > 0)

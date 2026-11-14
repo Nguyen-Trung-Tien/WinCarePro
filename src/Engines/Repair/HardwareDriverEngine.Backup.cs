@@ -54,7 +54,10 @@ public partial class HardwareDriverEngine
             {
                 infCount = Directory.GetFiles(backupDir, "*.inf", SearchOption.AllDirectories).Length;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                CrashLogger.LogException("HardwareDriverEngine.BackupPnpUtil.CountInf", ex);
+            }
 
             if (procResult.Success || infCount > 0)
             {
@@ -67,7 +70,14 @@ public partial class HardwareDriverEngine
                 // Fallback attempt with DISM online export
                 var dismArgs = new[] { "/online", "/export-driver", $"/destination:{backupDir}" };
                 var dismResult = await ProcessRunner.RunAsync("dism.exe", dismArgs, TimeSpan.FromMinutes(3), null, null, null, cancellationToken);
-                try { infCount = Directory.GetFiles(backupDir, "*.inf", SearchOption.AllDirectories).Length; } catch { }
+                try
+                {
+                    infCount = Directory.GetFiles(backupDir, "*.inf", SearchOption.AllDirectories).Length;
+                }
+                catch (Exception ex)
+                {
+                    CrashLogger.LogException("HardwareDriverEngine.BackupDism.CountInf", ex);
+                }
                 result.Success = infCount > 0 || dismResult.Success;
                 result.DriverCount = infCount;
                 result.Message = result.Success

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Win32;
 using WinCarePro.Models;
 using WinCarePro.Core.Helpers;
+using WinCarePro.Infrastructure.Logging;
 
 namespace WinCarePro.Engines;
 
@@ -106,7 +107,14 @@ public class RegistryBackupEngine
                     }
                     finally
                     {
-                        try { if (File.Exists(tempFile)) File.Delete(tempFile); } catch { }
+                        try 
+                        { 
+                            if (File.Exists(tempFile)) File.Delete(tempFile); 
+                        } 
+                        catch (Exception delEx) 
+                        { 
+                            CrashLogger.LogException("RegistryBackupEngine.DeleteTempFile", delEx); 
+                        }
                     }
                 }
 

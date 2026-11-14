@@ -63,6 +63,14 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <!-- Switch to Deep Junk & Disk Space Analyzer -->
+                    <Button Click="OnOpenDeepJunkCleanerClick" Style="{StaticResource StandardSecondaryButtonStyle}" Height="34" CornerRadius="8" Padding="12,0" ToolTipService.ToolTip="Open Deep Disk Space &amp; Clutter Analyzer" AutomationProperties.Name="Open Deep Disk Analyzer">
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE8B7;" FontSize="11.5" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="{Binding Source='Deep Junk Analyzer', Converter={StaticResource TranslationConverter}}" />
+                        </StackPanel>
+                    </Button>
+
                     <!-- Scan Button with Instant/Busy Visual Feedback (Mini ProgressRing 14x14) -->
                     <Button Style="{StaticResource SecondaryGlassButtonStyle}" Height="34" CornerRadius="8" Padding="14,0" Command="{x:Bind ViewModel.ScanAllCommand}" IsEnabled="{x:Bind ViewModel.IsNotBusy, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
@@ -85,6 +93,16 @@
 
         <!-- 1. Contextual Status Banners & Execution Progress -->
         <StackPanel Grid.Row="1" Spacing="8">
+            <!-- Smart Action Suggestion Card (Aura Glass Banner) -->
+            <controls:InlineStatusCard
+                CardType="Suggestion"
+                Title="{Binding Source='Smart Optimization Suggestion', Converter={StaticResource TranslationConverter}}"
+                Message="{x:Bind ViewModel.ActionSuggestionText, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.IsNotBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                ActionText="Scan Now"
+                ActionCommand="{x:Bind ViewModel.ScanAllCommand}"
+                IsDismissible="False" />
+
             <!-- Inline Safety Protection Notice Card -->
             <controls:InlineStatusCard
                 CardType="SafetyNotice"

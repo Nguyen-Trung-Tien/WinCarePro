@@ -114,6 +114,14 @@
 
                 <!-- Right: Scan & Clean Actions -->
                 <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <!-- Switch to Fast System Cleaner -->
+                    <Button Click="OnSwitchToSystemCleanerClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Height="34" Padding="12,0" ToolTipService.ToolTip="Switch back to Fast System Cleaner" AutomationProperties.Name="Switch to Fast System Cleaner">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon Glyph="&#xE72B;" FontSize="11.5"/>
+                            <TextBlock Text="{Binding Source='System Cleaner', Converter={StaticResource TranslationConverter}}" FontSize="12"/>
+                        </StackPanel>
+                    </Button>
+
                     <!-- Export Report -->
                     <Button Click="OnExportReportClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="8" Height="34" Padding="10,0" ToolTipService.ToolTip="Export Junk &amp; Storage Report (CSV)"
                             helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97">

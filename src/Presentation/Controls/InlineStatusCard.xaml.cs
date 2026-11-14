@@ -11,7 +11,8 @@ public enum InlineStatusCardType
 {
     SafetyNotice,
     Summary,
-    AlertElevation
+    AlertElevation,
+    Suggestion
 }
 
 public sealed partial class InlineStatusCard : UserControl
@@ -143,6 +144,7 @@ public sealed partial class InlineStatusCard : UserControl
             InlineStatusCardType.SafetyNotice => "InlineSafetyNoticeCardStyle",
             InlineStatusCardType.Summary => "InlineSummaryCardStyle",
             InlineStatusCardType.AlertElevation => "InlineAlertElevationCardStyle",
+            InlineStatusCardType.Suggestion => "V6FlatCardStyle",
             _ => "InlineSafetyNoticeCardStyle"
         };
 
@@ -156,6 +158,7 @@ public sealed partial class InlineStatusCard : UserControl
             InlineStatusCardType.SafetyNotice => "InlineSafetyCardBackground",
             InlineStatusCardType.Summary => "InlineSummaryCardBackground",
             InlineStatusCardType.AlertElevation => "InlineAlertCardBackground",
+            InlineStatusCardType.Suggestion => "CardBackgroundFillColorSecondaryBrush",
             _ => "InlineSafetyCardBackground"
         };
 
@@ -170,6 +173,7 @@ public sealed partial class InlineStatusCard : UserControl
             InlineStatusCardType.SafetyNotice => "InlineSafetyCardBorder",
             InlineStatusCardType.Summary => "InlineSummaryCardBorder",
             InlineStatusCardType.AlertElevation => "InlineAlertCardBorder",
+            InlineStatusCardType.Suggestion => "CardStrokeColorDefaultBrush",
             _ => "InlineSafetyCardBorder"
         };
 
@@ -184,6 +188,7 @@ public sealed partial class InlineStatusCard : UserControl
             InlineStatusCardType.SafetyNotice => "InlineSafetyCardBackground",
             InlineStatusCardType.Summary => "InlineSummaryCardBackground",
             InlineStatusCardType.AlertElevation => "InlineAlertCardBackground",
+            InlineStatusCardType.Suggestion => "CardBackgroundFillColorDefaultBrush",
             _ => "InlineSafetyCardBackground"
         };
 
@@ -198,6 +203,7 @@ public sealed partial class InlineStatusCard : UserControl
             InlineStatusCardType.SafetyNotice => "InlineSafetyCardBorder",
             InlineStatusCardType.Summary => "InlineSummaryCardBorder",
             InlineStatusCardType.AlertElevation => "InlineAlertCardBorder",
+            InlineStatusCardType.Suggestion => "SpecularGlassBorderBrush",
             _ => "InlineSafetyCardBorder"
         };
 
@@ -212,6 +218,7 @@ public sealed partial class InlineStatusCard : UserControl
             InlineStatusCardType.SafetyNotice => "InlineSafetyCardGlyph",
             InlineStatusCardType.Summary => "InlineSummaryCardGlyph",
             InlineStatusCardType.AlertElevation => "InlineAlertCardGlyph",
+            InlineStatusCardType.Suggestion => "PrimaryAccentBrush",
             _ => "InlineSafetyCardGlyph"
         };
 
@@ -227,6 +234,7 @@ public sealed partial class InlineStatusCard : UserControl
             InlineStatusCardType.SafetyNotice => "\uE72E",   // Lock / Shield
             InlineStatusCardType.Summary => "\uE73E",        // Checkmark
             InlineStatusCardType.AlertElevation => "\uE7BA", // Warning / Alert
+            InlineStatusCardType.Suggestion => "\uE946",     // Lightbulb / Info
             _ => "\uE72E"
         };
     }
@@ -239,6 +247,7 @@ public sealed partial class InlineStatusCard : UserControl
             InlineStatusCardType.SafetyNotice => "PROTECTED",
             InlineStatusCardType.Summary => "OPTIMIZED",
             InlineStatusCardType.AlertElevation => "ELEVATION NEEDED",
+            InlineStatusCardType.Suggestion => "RECOMMENDED",
             _ => "NOTICE"
         };
     }

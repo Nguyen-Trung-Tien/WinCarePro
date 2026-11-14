@@ -132,7 +132,7 @@ public partial class DashboardViewModel : ViewModelBase, IDisposable
     private bool _isScanning;
 
     [ObservableProperty]
-    private bool _isSafetyNoticeVisible = true;
+    private bool _isSafetyNoticeVisible;
 
     [ObservableProperty]
     private bool _isSummaryCardVisible;

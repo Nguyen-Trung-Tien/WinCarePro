@@ -71,21 +71,14 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Spacing="10">
 
-                <!-- Contextual Status Banners (Safely placed inside scroll flow to eliminate layout collision) -->
-                <StackPanel Spacing="8" Margin="4,0,4,4" helpers:AnimationHelper.StaggerIndex="0">
-                    <controls:InlineStatusCard
-                        CardType="SafetyNotice"
-                        Title="{Binding Source='Autonomous Shield &amp; Real-Time Monitoring Active', Converter={StaticResource TranslationConverter}}"
-                        Message="{Binding Source='WinCare Pro background telemetry monitors RAM pressure, disk hygiene, and Windows services with near-zero overhead.', Converter={StaticResource TranslationConverter}}"
-                        IsDismissible="True"
-                        Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
+                <!-- Contextual Status Banners (1-Click Care Summary Banner shown dynamically after optimization) -->
+                <StackPanel Spacing="8" Margin="4,0,4,8"
+                            Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <controls:InlineStatusCard
                         CardType="Summary"
                         Title="{Binding Source='1-Click Care Optimization Summary', Converter={StaticResource TranslationConverter}}"
                         Message="{x:Bind ViewModel.SummaryDashboardText, Mode=OneWay}"
-                        IsDismissible="True"
-                        Visibility="{x:Bind ViewModel.IsSummaryCardVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        IsDismissible="True" />
                 </StackPanel>
 
                 <!-- Row 0: Flagship System Health Cockpit & Action Deck (Full Width) -->
@@ -343,7 +336,7 @@
                                     <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
                                         <TextBlock Text="System Repair" FontSize="12.5" FontWeight="SemiBold" FontFamily="Segoe UI Variable Display" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                                         <TextBlock Text="DISM, SFC &amp; Health" FontSize="10.5" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Text="{x:Bind ViewModel.SystemUptime, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                        <TextBlock Text="{Binding Source='Optimal', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold" Foreground="{ThemeResource PrimaryAccentBrush}" FontFamily="Segoe UI Variable Display"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>

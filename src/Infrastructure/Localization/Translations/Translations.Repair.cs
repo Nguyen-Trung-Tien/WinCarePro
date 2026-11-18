@@ -221,5 +221,14 @@ public partial class TranslationManager
         if (en != null) en["All Systems Healthy &amp; Intact"] = "All Systems Healthy &amp; Intact";
         vi["No critical registry bans, service failures, or system integrity violations detected."] = "Không phát hiện thấy khóa chính sách cấm, lỗi dịch vụ Windows hay vi phạm tính toàn vẹn nào.";
         if (en != null) en["No critical registry bans, service failures, or system integrity violations detected."] = "No critical registry bans, service failures, or system integrity violations detected.";
+        vi["Cancels the active system diagnostic or repair process."] = "Hủy tiến trình chẩn đoán hoặc sửa chữa hệ thống đang chạy.";
+        vi["Checks whether component store corruption has been flagged."] = "Kiểm tra xem kho thành phần hệ thống có bị đánh dấu lỗi hay không.";
+        vi["Reclaims disk space by removing superseded component packages."] = "Giải phóng dung lượng ổ đĩa bằng cách xóa các gói thành phần cũ đã thay thế.";
+        vi["Repairs damaged component store files using Windows Update payloads."] = "Sửa chữa các tệp kho thành phần bị hỏng bằng dữ liệu từ Windows Update.";
+        vi["Runs System File Checker and restores corrupted system files."] = "Chạy trình kiểm tra tệp hệ thống (SFC) và khôi phục các tệp bị hỏng.";
+        vi["Runs System File Checker in verification mode without making repairs."] = "Chạy trình kiểm tra tệp hệ thống ở chế độ chỉ kiểm tra mà không sửa đổi.";
+        vi["Scans the component store for corruption without fixing."] = "Quét kho thành phần để tìm lỗi hỏng hóc mà không tự động sửa.";
+        vi["Stop update services, purge and rename corrupted SoftwareDistribution & Catroot2 folders."] = "Dừng dịch vụ cập nhật, dọn dẹp và đổi tên các thư mục SoftwareDistribution & Catroot2 bị lỗi.";
+        vi["Windows Update"] = "Windows Update";
     }
 }

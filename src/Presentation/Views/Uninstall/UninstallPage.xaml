@@ -484,13 +484,13 @@
                                     <FontIcon Glyph="&#xE721;" FontSize="26" Foreground="{ThemeResource AppStatusInfoBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                                 <StackPanel Spacing="4" HorizontalAlignment="Center">
-                                    <TextBlock Text="No matching applications found" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
-                                    <TextBlock Text="Try adjusting your search query or switching filters to locate the desired application." FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="320"/>
+                                    <TextBlock Text="{Binding Source='No matching applications found', Converter={StaticResource TranslationConverter}}" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextAlignment="Center"/>
+                                    <TextBlock Text="{Binding Source='Try adjusting your search query or switching filters to locate the desired application.', Converter={StaticResource TranslationConverter}}" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="320"/>
                                 </StackPanel>
                                 <Button Click="OnResetFiltersClick" Style="{StaticResource AccentButtonStyle}" Background="{StaticResource PrimaryAccentGradient}" Foreground="White" HorizontalAlignment="Center" Padding="16,8" CornerRadius="8">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
                                         <FontIcon Glyph="&#xE711;" FontSize="12" Foreground="White"/>
-                                        <TextBlock Text="Clear Search &amp; Filters" FontWeight="SemiBold" FontSize="12" Foreground="White"/>
+                                        <TextBlock Text="{Binding Source='Clear Search &amp; Filters', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12" Foreground="White"/>
                                     </StackPanel>
                                 </Button>
                             </StackPanel>

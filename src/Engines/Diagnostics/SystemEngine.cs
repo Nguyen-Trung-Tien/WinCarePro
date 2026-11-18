@@ -435,16 +435,28 @@ public class SystemEngine
                                 {
                                     if (key.GetValue(val) != null)
                                     {
-                                        Log($"Policy restriction found: {root.Name}\\{path}\\{val}. Removing limit...");
+                                        string hivePrefix = root == Registry.LocalMachine ? "HKLM" : "HKCU";
+                                        string fullKeyPath = $@"{hivePrefix}\{path}";
+                                        if (!SafeRegistryGuard.IsSafeToDeleteValue(fullKeyPath, val))
+                                        {
+                                            Log($"Safety Warning: Skipped protected registry value: {fullKeyPath}\\{val}");
+                                            continue;
+                                        }
+
+                                        try { RegistryBackupEngine.BackupKey(fullKeyPath); }
+                                        catch (Exception bkpEx) { WinCarePro.Infrastructure.Logging.CrashLogger.LogException("SystemEngine.BackupPolicyKey", bkpEx); }
+
+                                        Log($"Policy restriction found: {fullKeyPath}\\{val}. Removing limit...");
                                         key.DeleteValue(val);
                                         fixedCount++;
                                     }
                                 }
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            // Permissions check failed for specific key (common in HKLM if not full admin), skip
+                            // Permissions check failed for specific key (common in HKLM if not full admin), log and skip
+                            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("SystemEngine.FixPolicyRestrictions", ex);
                         }
                     }
                 }

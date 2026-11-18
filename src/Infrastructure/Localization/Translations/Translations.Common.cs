@@ -590,5 +590,15 @@ public partial class TranslationManager
         if (en != null) en["Scan Now"] = "Scan Now";
         vi["Ready to audit. Click 'Scan Clutter' to inspect temporary files and registry leftovers."] = "Hệ thống sẵn sàng. Nhấn 'Quét hệ thống' để kiểm tra tệp rác và tệp thừa.";
         if (en != null) en["Ready to audit. Click 'Scan Clutter' to inspect temporary files and registry leftovers."] = "Ready to audit. Click 'Scan Clutter' to inspect temporary files and registry leftovers.";
+        vi["Application configuration, backup rollback manager, and SQLite audit logs."] = "Cấu hình ứng dụng, trình quản lý khôi phục bản sao lưu và nhật ký kiểm toán SQLite.";
+        vi["Manage and uninstall desktop and Store applications with deep leftover sweep."] = "Quản lý và gỡ cài đặt ứng dụng Desktop & Store kèm quét sạch tàn dư chuyên sâu.";
+        vi["Scan, detect and update third-party apps and Windows components."] = "Quét, phát hiện và cập nhật ứng dụng bên thứ ba cùng các thành phần Windows.";
+        vi["Unified cleanup for temporary junk, system cache, and remnant app files."] = "Dọn dẹp hợp nhất tệp rác tạm thời, bộ nhớ đệm hệ thống và tệp ứng dụng dư thừa.";
+        vi["Windows component doctor, SFC/DISM repairs, Windows Update Fixer, and restore points."] = "Chẩn đoán thành phần Windows, sửa lỗi SFC/DISM, khắc phục Windows Update và điểm khôi phục.";
+        vi["Click to view real-time CPU diagnostics and telemetry on the Dashboard."] = "Nhấn để xem chẩn đoán và thông số CPU thời gian thực trên Bảng điều khiển.";
+        vi["Click to view real-time memory metrics on the Dashboard."] = "Nhấn để xem thông số bộ nhớ thời gian thực trên Bảng điều khiển.";
+        vi["Open menu for theme, user guide, and power controls."] = "Mở menu giao diện, hướng dẫn sử dụng và điều khiển nguồn.";
+        vi["Open notification center and review recent system alerts."] = "Mở trung tâm thông báo và xem lại các cảnh báo hệ thống gần đây.";
+        vi["Dismisses this alert toast."] = "Đóng thẻ thông báo này.";
     }
 }

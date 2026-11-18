@@ -112,13 +112,31 @@ public sealed partial class MainWindow : Window
         {
             rootElem.PreviewKeyDown += (s, e) =>
             {
+                var ctrlState = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control);
+                bool isCtrlDown = (ctrlState & Windows.UI.Core.CoreVirtualKeyStates.Down) == Windows.UI.Core.CoreVirtualKeyStates.Down;
+                if (!isCtrlDown) return;
+
                 if (e.Key == Windows.System.VirtualKey.F || e.Key == Windows.System.VirtualKey.K)
                 {
-                    var ctrlState = Microsoft.UI.Input.InputKeyboardSource.GetKeyStateForCurrentThread(Windows.System.VirtualKey.Control);
-                    bool isCtrlDown = (ctrlState & Windows.UI.Core.CoreVirtualKeyStates.Down) == Windows.UI.Core.CoreVirtualKeyStates.Down;
-                    if (isCtrlDown)
+                    SearchBox?.Focus(FocusState.Programmatic);
+                    e.Handled = true;
+                }
+                else
+                {
+                    string? targetTag = e.Key switch
                     {
-                        SearchBox?.Focus(FocusState.Programmatic);
+                        Windows.System.VirtualKey.Number1 => "dashboard",
+                        Windows.System.VirtualKey.Number2 => "cleaner",
+                        Windows.System.VirtualKey.Number3 => "network",
+                        Windows.System.VirtualKey.Number4 => "uninstall",
+                        Windows.System.VirtualKey.Number5 => "repair",
+                        Windows.System.VirtualKey.Number6 => "updater",
+                        Windows.System.VirtualKey.Number7 => "settings",
+                        _ => null
+                    };
+                    if (targetTag != null && RootFrame?.Content is MainPage mainPage)
+                    {
+                        mainPage.NavigateToPageExternal(targetTag);
                         e.Handled = true;
                     }
                 }

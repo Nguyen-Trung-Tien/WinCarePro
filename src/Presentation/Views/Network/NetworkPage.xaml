@@ -291,7 +291,7 @@
                                             <StackPanel Grid.Column="0" Spacing="6" VerticalAlignment="Center">
                                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                                     <FontIcon Glyph="&#xE9D9;" FontSize="13" Foreground="{ThemeResource SystemAccentColor}" />
-                                                    <TextBlock Text="Chẩn đoán kết nối tức thì (On-Demand Diagnostics)" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='On-Demand Diagnostics', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
                                                     <TextBlock Text="—" Foreground="{ThemeResource TextFillColorTertiaryBrush}" FontSize="12" />
                                                     <TextBlock Text="{x:Bind ViewModel.DiagnosticsStatusText, Mode=OneWay}" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
@@ -347,7 +347,7 @@
                                                     <FontIcon Glyph="&#xE768;"
                                                               FontSize="12"
                                                               Visibility="{x:Bind ViewModel.IsDiagnosing, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                                                    <TextBlock Text="Kiểm tra" FontSize="12" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding Source='Test', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold" />
                                                 </StackPanel>
                                             </Button>
                                         </Grid>
@@ -377,13 +377,13 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" Spacing="2">
-                                            <TextBlock Text="Độ trễ (Ping)" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Source='Latency (Ping)', Converter={StaticResource TranslationConverter}}" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                             <TextBlock Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}"
                                                        FontSize="22"
                                                        FontWeight="Bold"
                                                        Foreground="{ThemeResource AppStatusGoodBrush}"
                                                        Typography.NumeralAlignment="Tabular" />
-                                            <TextBlock Text="Thời gian phản hồi" FontSize="10.5" Foreground="{ThemeResource TextFillColorTertiaryBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Source='Response Time', Converter={StaticResource TranslationConverter}}" FontSize="10.5" Foreground="{ThemeResource TextFillColorTertiaryBrush}" TextTrimming="CharacterEllipsis" />
                                         </StackPanel>
                                         <Border Grid.Column="1" Background="{ThemeResource AppStatusGoodBackground}" CornerRadius="6" Padding="8" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE701;" FontSize="16" Foreground="{ThemeResource AppStatusGoodBrush}" />
@@ -404,13 +404,13 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" Spacing="2">
-                                            <TextBlock Text="Độ ổn định (Jitter)" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Source='Stability (Jitter)', Converter={StaticResource TranslationConverter}}" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                             <TextBlock Text="{x:Bind FormatMs(ViewModel.JitterMs), Mode=OneWay}"
                                                        FontSize="22"
                                                        FontWeight="Bold"
                                                        Foreground="{ThemeResource AppStatusPurpleBrush}"
                                                        Typography.NumeralAlignment="Tabular" />
-                                            <TextBlock Text="Biến thiên bộ đệm" FontSize="10.5" Foreground="{ThemeResource TextFillColorTertiaryBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Source='Buffer Variance', Converter={StaticResource TranslationConverter}}" FontSize="10.5" Foreground="{ThemeResource TextFillColorTertiaryBrush}" TextTrimming="CharacterEllipsis" />
                                         </StackPanel>
                                         <Border Grid.Column="1" Background="{ThemeResource AppStatusPurpleBackground}" CornerRadius="6" Padding="8" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE945;" FontSize="16" Foreground="{ThemeResource AppStatusPurpleBrush}" />
@@ -431,13 +431,13 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" Spacing="2">
-                                            <TextBlock Text="Mất gói tin" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Source='Packet Loss', Converter={StaticResource TranslationConverter}}" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                             <TextBlock Text="{x:Bind FormatPercent(ViewModel.PacketLossPercent), Mode=OneWay}"
                                                        FontSize="22"
                                                        FontWeight="Bold"
                                                        Foreground="{ThemeResource AppStatusWarningBrush}"
                                                        Typography.NumeralAlignment="Tabular" />
-                                            <TextBlock Text="Tỷ lệ khung hình rơi" FontSize="10.5" Foreground="{ThemeResource TextFillColorTertiaryBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Source='Dropped Packet Rate', Converter={StaticResource TranslationConverter}}" FontSize="10.5" Foreground="{ThemeResource TextFillColorTertiaryBrush}" TextTrimming="CharacterEllipsis" />
                                         </StackPanel>
                                         <Border Grid.Column="1" Background="{ThemeResource AppStatusWarningBackground}" CornerRadius="6" Padding="8" VerticalAlignment="Center">
                                             <FontIcon Glyph="&#xE7BA;" FontSize="16" Foreground="{ThemeResource AppStatusWarningBrush}" />
@@ -458,7 +458,7 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" Spacing="2">
-                                            <TextBlock Text="Điểm sức khỏe AI" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Source='AI Health Score', Converter={StaticResource TranslationConverter}}" FontSize="11.5" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                             <StackPanel Orientation="Horizontal" Spacing="2">
                                                 <TextBlock Text="{x:Bind ViewModel.NetworkHealthScore, Mode=OneWay}"
                                                            FontSize="22"
@@ -525,7 +525,7 @@
                                                     <FontIcon Glyph="&#xE768;"
                                                               FontSize="12"
                                                               Visibility="{x:Bind ViewModel.IsSpeedTesting, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                                                    <TextBlock Text="Bắt đầu đo" FontSize="12" FontWeight="Bold" />
+                                                    <TextBlock Text="{Binding Source='Start Test', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="Bold" />
                                                 </StackPanel>
                                             </Button>
                                         </StackPanel>
@@ -567,7 +567,7 @@
 
                                         <Border Grid.Column="0" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="6" Padding="12,10">
                                             <StackPanel Spacing="2">
-                                                <TextBlock Text="Tải xuống" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Source='Download', Converter={StaticResource TranslationConverter}}" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 <TextBlock Text="{x:Bind FormatMbps(ViewModel.DownloadSpeed), Mode=OneWay}"
                                                            FontSize="13.5" FontWeight="Bold" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource AppStatusGoodBrush}" TextTrimming="CharacterEllipsis" />
                                             </StackPanel>
@@ -575,7 +575,7 @@
 
                                         <Border Grid.Column="1" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="6" Padding="12,10">
                                             <StackPanel Spacing="2">
-                                                <TextBlock Text="Tải lên" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Source='Upload', Converter={StaticResource TranslationConverter}}" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 <TextBlock Text="{x:Bind FormatMbps(ViewModel.UploadSpeed), Mode=OneWay}"
                                                            FontSize="13.5" FontWeight="Bold" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource AppStatusPurpleBrush}" TextTrimming="CharacterEllipsis" />
                                             </StackPanel>
@@ -583,7 +583,7 @@
 
                                         <Border Grid.Column="2" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="6" Padding="12,10">
                                             <StackPanel Spacing="2">
-                                                <TextBlock Text="Độ trễ" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Source='Latency', Converter={StaticResource TranslationConverter}}" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 <TextBlock Text="{x:Bind FormatMs(ViewModel.LatencyMs), Mode=OneWay}"
                                                            FontSize="13.5" FontWeight="Bold" Typography.NumeralAlignment="Tabular" Foreground="{ThemeResource AppStatusCyanBrush}" TextTrimming="CharacterEllipsis" />
                                             </StackPanel>
@@ -596,11 +596,11 @@
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
-                                                    <TextBlock Text="IP Công cộng" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Public IP', Converter={StaticResource TranslationConverter}}" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                     <TextBlock Text="{x:Bind ViewModel.PublicIpAddress, Mode=OneWay}"
                                                                FontSize="12.5" FontWeight="Bold" Typography.NumeralAlignment="Tabular" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
-                                                <Button Grid.Column="1" Click="OnCopyPublicIpClick" Style="{StaticResource DefaultButtonStyle}" Padding="6,4" VerticalAlignment="Center" AutomationProperties.Name="Sao chép IP công cộng" ToolTipService.ToolTip="Sao chép IP công cộng">
+                                                <Button Grid.Column="1" Click="OnCopyPublicIpClick" Style="{StaticResource DefaultButtonStyle}" Padding="6,4" VerticalAlignment="Center" AutomationProperties.Name="Copy Public IP" ToolTipService.ToolTip="{Binding Source='Copy Public IP', Converter={StaticResource TranslationConverter}}">
                                                     <FontIcon Glyph="&#xE8C8;" FontSize="11" />
                                                 </Button>
                                             </Grid>
@@ -685,7 +685,7 @@
                                                 <FontIcon Glyph="&#xE73E;"
                                                           FontSize="13"
                                                           Visibility="{x:Bind ViewModel.IsApplyingDns, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                                                <TextBlock Text="Áp dụng" FontSize="13" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding Source='Apply', Converter={StaticResource TranslationConverter}}" FontSize="13" FontWeight="SemiBold" />
                                             </StackPanel>
                                         </Button>
 
@@ -698,7 +698,7 @@
                                                 CornerRadius="8">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
                                                 <FontIcon Glyph="&#xE72C;" FontSize="13" />
-                                                <TextBlock Text="Khôi phục DHCP" FontSize="13" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding Source='Restore DHCP', Converter={StaticResource TranslationConverter}}" FontSize="13" FontWeight="SemiBold" />
                                             </StackPanel>
                                         </Button>
 
@@ -758,7 +758,7 @@
                                                     Padding="12,7">
                                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                                     <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{ThemeResource AppStatusGoodBrush}" />
-                                                    <TextBlock Text="Áp dụng DNS nhanh nhất" FontSize="12" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding Source='Apply Fastest DNS', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold" />
                                                 </StackPanel>
                                             </Button>
 
@@ -774,7 +774,7 @@
                                                                   Width="13" Height="13" Foreground="White" />
                                                     <FontIcon Glyph="&#xE768;" FontSize="12"
                                                               Visibility="{x:Bind ViewModel.IsBenchmarkingDns, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-                                                    <TextBlock Text="Bắt đầu đo DNS" FontSize="12" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding Source='Start DNS Benchmark', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold" />
                                                 </StackPanel>
                                             </Button>
                                         </StackPanel>
@@ -792,10 +792,10 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                                <TextBlock Text="DNS nhanh nhất:" FontSize="12.5" FontWeight="SemiBold" Foreground="{ThemeResource AppStatusGoodBrush}" />
+                                                <TextBlock Text="{Binding Source='Fastest DNS:', Converter={StaticResource TranslationConverter}}" FontSize="12.5" FontWeight="SemiBold" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                                 <TextBlock Text="{x:Bind ViewModel.FastestDnsText, Mode=OneWay}" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                             </StackPanel>
-                                            <TextBlock Grid.Column="1" Text="Độ trễ truy vấn thấp giúp web tải tức thì và giảm lag trong trò chơi trực tuyến." FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Source='Low query latency helps web pages load instantly and reduces lag in online games.', Converter={StaticResource TranslationConverter}}" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                                         </Grid>
                                     </Border>
 
@@ -849,7 +849,7 @@
                                                                 Padding="12,5"
                                                                 CornerRadius="6"
                                                                 VerticalAlignment="Center">
-                                                            <TextBlock Text="Áp dụng" FontSize="11.5" FontWeight="SemiBold" />
+                                                            <TextBlock Text="{Binding Source='Apply', Converter={StaticResource TranslationConverter}}" FontSize="11.5" FontWeight="SemiBold" />
                                                         </Button>
                                                     </Grid>
                                                 </Border>
@@ -878,7 +878,7 @@
 
                                             <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
                                                 <TextBlock Text="DNS over HTTPS (DoH) Encryption" FontSize="12.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Text="Mã hóa mọi truy vấn DNS bằng TLS ngăn chặn nhà mạng theo dõi và chặn trang web."
+                                                <TextBlock Text="{Binding Source='Encrypt all DNS queries with TLS to prevent ISP tracking and website blocking.', Converter={StaticResource TranslationConverter}}"
                                                            FontSize="11"
                                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                            TextTrimming="CharacterEllipsis" />
@@ -896,7 +896,7 @@
                                                     Padding="12,6"
                                                     CornerRadius="6"
                                                     VerticalAlignment="Center">
-                                                <TextBlock Text="Áp dụng DoH" FontSize="11.5" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding Source='Apply DoH', Converter={StaticResource TranslationConverter}}" FontSize="11.5" FontWeight="SemiBold" />
                                             </Button>
                                         </Grid>
                                     </Border>
@@ -927,9 +927,9 @@
 
                         <!-- Filter Chips -->
                         <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                            <Button Content="Tất cả" Click="OnFilterSocketCategoryClick" Tag="All" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="12,5" FontSize="11.5" />
-                            <Button Content="Đang kết nối" Click="OnFilterSocketCategoryClick" Tag="Established" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="12,5" FontSize="11.5" />
-                            <Button Content="Đang lắng nghe" Click="OnFilterSocketCategoryClick" Tag="Listening" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="12,5" FontSize="11.5" />
+                            <Button Content="{Binding Source='All', Converter={StaticResource TranslationConverter}}" Click="OnFilterSocketCategoryClick" Tag="All" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="12,5" FontSize="11.5" />
+                            <Button Content="{Binding Source='Established', Converter={StaticResource TranslationConverter}}" Click="OnFilterSocketCategoryClick" Tag="Established" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="12,5" FontSize="11.5" />
+                            <Button Content="{Binding Source='Listening', Converter={StaticResource TranslationConverter}}" Click="OnFilterSocketCategoryClick" Tag="Listening" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="12,5" FontSize="11.5" />
                             <Button Content="TCP" Click="OnFilterSocketCategoryClick" Tag="TCP" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="12,5" FontSize="11.5" />
                             <Button Content="UDP" Click="OnFilterSocketCategoryClick" Tag="UDP" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="12,5" FontSize="11.5" />
                         </StackPanel>
@@ -937,7 +937,7 @@
                         <!-- Search Box -->
                         <TextBox Grid.Column="1"
                                  Text="{x:Bind ViewModel.ConnectionSearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 PlaceholderText="Tìm kiếm theo tiến trình, IP hoặc cổng..."
+                                 PlaceholderText="{Binding Source='Search process, IP or port...', Converter={StaticResource TranslationConverter}}"
                                  Margin="16,0"
                                  Height="34"
                                  FontSize="12"
@@ -952,7 +952,7 @@
                                            Typography.NumeralAlignment="Tabular" />
                             </Border>
 
-                            <Button Click="OnRefreshSocketsClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="10,6" AutomationProperties.Name="Làm mới danh sách socket" ToolTipService.ToolTip="Làm mới danh sách kết nối">
+                            <Button Click="OnRefreshSocketsClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="6" Padding="10,6" AutomationProperties.Name="Refresh connections" ToolTipService.ToolTip="{Binding Source='Refresh connections', Converter={StaticResource TranslationConverter}}">
                                 <FontIcon Glyph="&#xE72C;" FontSize="11.5" />
                             </Button>
                         </StackPanel>
@@ -981,12 +981,12 @@
                                     <ColumnDefinition Width="1.4*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="Tiến trình / PID" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                <TextBlock Grid.Column="1" Text="Giao thức" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                <TextBlock Grid.Column="2" Text="Địa chỉ cục bộ" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                <TextBlock Grid.Column="3" Text="Địa chỉ từ xa" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                <TextBlock Grid.Column="4" Text="Trạng thái" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                <TextBlock Grid.Column="5" Text="Thao tác" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,0,10,0" />
+                                <TextBlock Grid.Column="0" Text="{Binding Source='Process / PID', Converter={StaticResource TranslationConverter}}" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Source='Protocol', Converter={StaticResource TranslationConverter}}" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                <TextBlock Grid.Column="2" Text="{Binding Source='Local Address', Converter={StaticResource TranslationConverter}}" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                <TextBlock Grid.Column="3" Text="{Binding Source='Remote Address', Converter={StaticResource TranslationConverter}}" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                <TextBlock Grid.Column="4" Text="{Binding Source='Status', Converter={StaticResource TranslationConverter}}" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                <TextBlock Grid.Column="5" Text="{Binding Source='Action', Converter={StaticResource TranslationConverter}}" FontWeight="Bold" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,0,10,0" />
                             </Grid>
 
                             <!-- Virtualized Sockets -->
@@ -1027,13 +1027,13 @@
 
                                                 <!-- Action Buttons -->
                                                 <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="4">
-                                                    <Button Click="OnCopySocketClick" Style="{StaticResource DefaultButtonStyle}" Padding="6,4" AutomationProperties.Name="Sao chép thông tin socket" ToolTipService.ToolTip="Sao chép thông tin socket">
+                                                    <Button Click="OnCopySocketClick" Style="{StaticResource DefaultButtonStyle}" Padding="6,4" AutomationProperties.Name="Copy socket info" ToolTipService.ToolTip="{Binding Source='Copy socket info', Converter={StaticResource TranslationConverter}}">
                                                         <FontIcon Glyph="&#xE8C8;" FontSize="11" />
                                                     </Button>
-                                                    <Button Click="OnOpenProcessLocationClick" Style="{StaticResource DefaultButtonStyle}" Padding="6,4" AutomationProperties.Name="Mở vị trí tệp tiến trình" ToolTipService.ToolTip="Mở vị trí tệp">
+                                                    <Button Click="OnOpenProcessLocationClick" Style="{StaticResource DefaultButtonStyle}" Padding="6,4" AutomationProperties.Name="Open file location" ToolTipService.ToolTip="{Binding Source='Open file location', Converter={StaticResource TranslationConverter}}">
                                                         <FontIcon Glyph="&#xE8DA;" FontSize="11" />
                                                     </Button>
-                                                    <Button Click="OnKillProcessClick" Style="{StaticResource DestructiveButtonStyle}" Padding="6,4" AutomationProperties.Name="Đóng kết nối socket" ToolTipService.ToolTip="Đóng kết nối / Dừng tiến trình">
+                                                    <Button Click="OnKillProcessClick" Style="{StaticResource DestructiveButtonStyle}" Padding="6,4" AutomationProperties.Name="Close connection / End process" ToolTipService.ToolTip="{Binding Source='Close connection / End process', Converter={StaticResource TranslationConverter}}">
                                                         <FontIcon Glyph="&#xE711;" FontSize="11" />
                                                     </Button>
                                                 </StackPanel>
@@ -1108,7 +1108,7 @@
                                                     <FontIcon Glyph="&#xE749;" FontSize="14" Foreground="{ThemeResource AppStatusCyanBrush}" />
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                                    <TextBlock Text="Xóa Cache DNS" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Flush DNS Cache', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
                                                     <TextBlock Text="ipconfig /flushdns" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </StackPanel>
@@ -1124,7 +1124,7 @@
                                                     <FontIcon Glyph="&#xE72C;" FontSize="14" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                                    <TextBlock Text="Cấp lại IP" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Renew IP Address', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
                                                     <TextBlock Text="release &amp; renew" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </StackPanel>
@@ -1140,7 +1140,7 @@
                                                     <FontIcon Glyph="&#xE7BA;" FontSize="14" Foreground="{ThemeResource AppStatusWarningBrush}" />
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                                    <TextBlock Text="Đặt lại Winsock" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Reset Winsock', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
                                                     <TextBlock Text="netsh winsock reset" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </StackPanel>
@@ -1156,7 +1156,7 @@
                                                     <FontIcon Glyph="&#xE9D9;" FontSize="14" Foreground="{ThemeResource AppStatusDangerBrush}" />
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                                    <TextBlock Text="Đặt lại TCP/IP" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Reset TCP/IP', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
                                                     <TextBlock Text="netsh int ip reset" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </StackPanel>
@@ -1172,7 +1172,7 @@
                                                     <FontIcon Glyph="&#xE727;" FontSize="14" Foreground="{ThemeResource AppStatusPurpleBrush}" />
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                                    <TextBlock Text="Đặt lại Firewall" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Reset Firewall', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
                                                     <TextBlock Text="advfirewall reset" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </StackPanel>
@@ -1188,8 +1188,8 @@
                                                     <FontIcon Glyph="&#xE8A5;" FontSize="14" Foreground="{ThemeResource AppStatusInfoBrush}" />
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                                    <TextBlock Text="Khôi phục Hosts" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
-                                                    <TextBlock Text="Mặc định localhost" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Restore Hosts', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Default localhost', Converter={StaticResource TranslationConverter}}" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </StackPanel>
                                         </Button>
@@ -1204,7 +1204,7 @@
                                                     <FontIcon Glyph="&#xE839;" FontSize="14" Foreground="{ThemeResource AppStatusGoodBrush}" />
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                                    <TextBlock Text="Khởi động Card mạng" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Restart Adapter', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
                                                     <TextBlock Text="Restart-NetAdapter" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </StackPanel>
@@ -1220,7 +1220,7 @@
                                                     <FontIcon Glyph="&#xE73E;" FontSize="14" Foreground="{ThemeResource AppStatusCyanBrush}" />
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center" Spacing="1">
-                                                    <TextBlock Text="Tối ưu TCP Window" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Optimize TCP Window', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12.5" TextTrimming="CharacterEllipsis" />
                                                     <TextBlock Text="autotuning=normal" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </StackPanel>
@@ -1252,15 +1252,15 @@
                                     <StackPanel Spacing="12">
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <FontIcon Glyph="&#xE9D9;" FontSize="14" Foreground="{ThemeResource SystemAccentColor}" />
-                                            <TextBlock Text="Công cụ chẩn đoán chuyên sâu" FontSize="13.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="{Binding Source='Deep Diagnostic Tools', Converter={StaticResource TranslationConverter}}" FontSize="13.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
                                         </StackPanel>
 
                                         <!-- Target Host Input -->
                                         <StackPanel Spacing="4">
-                                            <TextBlock Text="Địa chỉ máy chủ đích:" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                            <TextBlock Text="{Binding Source='Target Host Address:', Converter={StaticResource TranslationConverter}}" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                             <TextBox Text="{x:Bind ViewModel.TestHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                      KeyDown="OnHostKeyDown"
-                                                     PlaceholderText="Nhập host (ví dụ: 8.8.8.8, google.com)..."
+                                                     PlaceholderText="{Binding Source='Enter host (e.g. 8.8.8.8, google.com)...', Converter={StaticResource TranslationConverter}}"
                                                      Height="34"
                                                      FontSize="12"
                                                      CornerRadius="6" />
@@ -1268,7 +1268,7 @@
 
                                         <!-- Port Scanner Ports Input -->
                                         <StackPanel Spacing="4">
-                                            <TextBlock Text="Danh sách cổng quét (Port Scanner):" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                            <TextBlock Text="{Binding Source='Port Scanner List:', Converter={StaticResource TranslationConverter}}" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                                             <TextBox Text="{x:Bind ViewModel.PortScannerPorts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                      PlaceholderText="80,443,3389,8080"
                                                      Height="34"
@@ -1290,7 +1290,7 @@
                                             <Button Grid.Row="0" Grid.Column="0" Click="OnPingClick" Style="{StaticResource DefaultButtonStyle}" Height="34" HorizontalAlignment="Stretch" CornerRadius="6">
                                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                                     <FontIcon Glyph="&#xE8B7;" FontSize="11.5" Foreground="{ThemeResource AppStatusGoodBrush}" />
-                                                    <TextBlock Text="Kiểm tra Ping" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Ping Test', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </Button>
 
@@ -1311,7 +1311,7 @@
                                             <Button Grid.Row="1" Grid.Column="1" Click="OnPortScanClick" Style="{StaticResource DefaultButtonStyle}" Height="34" HorizontalAlignment="Stretch" CornerRadius="6">
                                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                                     <FontIcon Glyph="&#xE71E;" FontSize="11.5" Foreground="{ThemeResource AppStatusWarningBrush}" />
-                                                    <TextBlock Text="Quét Port" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Source='Port Scan', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
                                             </Button>
                                         </Grid>
@@ -1324,7 +1324,7 @@
                                                 CornerRadius="6">
                                             <StackPanel Orientation="Horizontal" Spacing="8">
                                                 <FontIcon Glyph="&#xE945;" FontSize="13" />
-                                                <TextBlock Text="Tự động sửa chữa thông minh (5 bước)" FontSize="12" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Source='Smart Auto-Repair (5 Steps)', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
                                             </StackPanel>
                                         </Button>
                                     </StackPanel>
@@ -1353,14 +1353,14 @@
 
                                             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                                 <FontIcon Glyph="&#xE756;" FontSize="12" Foreground="{ThemeResource SystemAccentColor}" />
-                                                <TextBlock Text="Bảng điều khiển nhật ký trực tiếp (Terminal Console)" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Source='Live Terminal Console', Converter={StaticResource TranslationConverter}}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
                                             </StackPanel>
 
                                             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
-                                                <Button Click="OnCopyConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="28" Padding="8,0" CornerRadius="4" AutomationProperties.Name="Sao chép nhật ký console" ToolTipService.ToolTip="Sao chép nhật ký">
+                                                <Button Click="OnCopyConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="28" Padding="8,0" CornerRadius="4" AutomationProperties.Name="Copy console log" ToolTipService.ToolTip="{Binding Source='Copy console log', Converter={StaticResource TranslationConverter}}">
                                                     <FontIcon Glyph="&#xE8C8;" FontSize="11" />
                                                 </Button>
-                                                <Button Click="OnClearConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="28" Padding="8,0" CornerRadius="4" AutomationProperties.Name="Xóa bảng điều khiển console" ToolTipService.ToolTip="Xóa bảng điều khiển">
+                                                <Button Click="OnClearConsoleClick" Style="{StaticResource DefaultButtonStyle}" Height="28" Padding="8,0" CornerRadius="4" AutomationProperties.Name="Clear console" ToolTipService.ToolTip="{Binding Source='Clear console', Converter={StaticResource TranslationConverter}}">
                                                     <FontIcon Glyph="&#xE74D;" FontSize="11" />
                                                 </Button>
                                             </StackPanel>

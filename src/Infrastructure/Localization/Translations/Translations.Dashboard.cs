@@ -604,5 +604,30 @@ public partial class TranslationManager
         if (en != null) en["1-Click Care Optimization Summary"] = "1-Click Care Optimization Summary";
         vi["1-Click Care optimization finished in {0} mode. Reclaimed {1:F1} MB RAM and cleaned {2:F1} MB junk files."] = "Tối ưu 1-chạm hoàn tất ở chế độ {0}. Đã giải phóng {1:F1} MB RAM và dọn dẹp {2:F1} MB tệp rác.";
         if (en != null) en["1-Click Care optimization finished in {0} mode. Reclaimed {1:F1} MB RAM and cleaned {2:F1} MB junk files."] = "1-Click Care optimization finished in {0} mode. Reclaimed {1:F1} MB RAM and cleaned {2:F1} MB junk files.";
+        vi["Clean & Boost"] = "Dọn Dẹp & Tăng Tốc";
+        vi["Clean &amp; Boost"] = "Dọn Dẹp & Tăng Tốc";
+        vi["Clean Cache & Temp"] = "Dọn Cache & Tệp Tạm";
+        vi["Clean Cache &amp; Temp"] = "Dọn Cache & Tệp Tạm";
+        vi["Reclaim Memory (RAM)"] = "Giải Phóng Bộ Nhớ (RAM)";
+        vi["Disk"] = "Ổ đĩa";
+        vi["DISM, SFC & Health"] = "DISM, SFC & Sức khỏe";
+        vi["DISM, SFC &amp; Health"] = "DISM, SFC & Sức khỏe";
+        vi["Drive & S.M.A.R.T Inspection"] = "Kiểm tra Ổ đĩa & S.M.A.R.T";
+        vi["Drive &amp; S.M.A.R.T Inspection"] = "Kiểm tra Ổ đĩa & S.M.A.R.T";
+        vi["Fix Now"] = "Sửa Ngay";
+        vi["Initiates deep system scan for junk files, performance issues, and security status."] = "Khởi chạy quét hệ thống chuyên sâu tìm tệp rác, vấn đề hiệu năng và trạng thái bảo mật.";
+        vi["Installed & Leftovers"] = "Ứng dụng & Tệp thừa";
+        vi["Installed &amp; Leftovers"] = "Ứng dụng & Tệp thừa";
+        vi["Network Quality & Latency"] = "Chất lượng Mạng & Độ trễ";
+        vi["Network Quality &amp; Latency"] = "Chất lượng Mạng & Độ trễ";
+        vi["Open App Manager"] = "Mở Trình Quản Lý Ứng Dụng";
+        vi["Open Disk and Cache Cleaner Scan Hub"] = "Mở Trung Tâm Quét Dọn Ổ Đĩa & Cache";
+        vi["Open Network Center"] = "Mở Trung Tâm Mạng";
+        vi["Open System Repair"] = "Mở Sửa Chữa Hệ Thống";
+        vi["Optimizes system performance using the selected profile mode."] = "Tối ưu hiệu năng hệ thống theo chế độ hồ sơ đã chọn.";
+        vi["Ping, DNS & Quality"] = "Ping, DNS & Chất lượng";
+        vi["Ping, DNS &amp; Quality"] = "Ping, DNS & Chất lượng";
+        vi["System Health & Defense"] = "Sức khỏe Hệ thống & Bảo vệ";
+        vi["System Health &amp; Defense"] = "Sức khỏe Hệ thống & Bảo vệ";
     }
 }

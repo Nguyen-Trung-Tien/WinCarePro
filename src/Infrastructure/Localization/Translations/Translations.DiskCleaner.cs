@@ -304,5 +304,15 @@ public partial class TranslationManager
         if (en != null) en["Smart Optimization Suggestion"] = "Smart Optimization Suggestion";
         vi["Scan Now"] = "Quét Ngay";
         if (en != null) en["Scan Now"] = "Scan Now";
+        vi["Advanced:"] = "Nâng cao:";
+        vi["Browser Data:"] = "Dữ liệu trình duyệt:";
+        vi["Deselects all junk categories."] = "Bỏ chọn tất cả danh mục rác.";
+        vi["Evaluates safe-to-clean junk files and system caching logs."] = "Đánh giá các tệp rác an toàn để dọn và nhật ký bộ nhớ đệm hệ thống.";
+        vi["Export CSV"] = "Xuất CSV";
+        vi["Name (A-Z)"] = "Tên (A-Z)";
+        vi["Name (Z-A)"] = "Tên (Z-A)";
+        vi["Opens this category folder in Windows File Explorer."] = "Mở thư mục danh mục này trong Windows File Explorer.";
+        vi["Permanently removes selected temporary junk and cache files."] = "Xóa vĩnh viễn các tệp rác tạm thời và bộ nhớ đệm đã chọn.";
+        vi["Selects all junk categories for cleaning."] = "Chọn tất cả danh mục rác để dọn dẹp.";
     }
 }

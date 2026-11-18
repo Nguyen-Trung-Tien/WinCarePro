@@ -342,5 +342,9 @@ public partial class TranslationManager
         if (en != null) en["SQLite 3 WAL Persistence &amp; Policy Protection Active"] = "SQLite 3 WAL Persistence &amp; Policy Protection Active";
         vi["All settings changes and user preferences are atomically written using SQLite WAL mode with zero file locking conflicts."] = "Mọi thay đổi cài đặt và tùy chọn người dùng được ghi nguyên tử bằng chế độ SQLite WAL mà không xảy ra tranh chấp khóa tệp.";
         if (en != null) en["All settings changes and user preferences are atomically written using SQLite WAL mode with zero file locking conflicts."] = "All settings changes and user preferences are atomically written using SQLite WAL mode with zero file locking conflicts.";
+        vi["Next-Generation System Optimizer, Security Shield & Care Suite"] = "Bộ Công Cụ Tối Ưu Hệ Thống, Lá Chắn Bảo Mật & Chăm Sóc Máy Tính Thế Hệ Mới";
+        vi["Next-Generation System Optimizer, Security Shield &amp; Care Suite"] = "Bộ Công Cụ Tối Ưu Hệ Thống, Lá Chắn Bảo Mật & Chăm Sóc Máy Tính Thế Hệ Mới";
+        vi["Switch to clean and bright light interface mode."] = "Chuyển sang chế độ giao diện sáng gọn gàng và tươi sáng.";
+        vi["Switch to deep space and neon dark interface mode."] = "Chuyển sang chế độ giao diện tối không gian sâu và ánh sáng neon.";
     }
 }

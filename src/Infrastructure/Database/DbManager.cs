@@ -343,7 +343,10 @@ public class DbManager
                 CreatedAt = DateTime.Now
             });
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("DbManager.OnLogAdded", ex);
+        }
     }
 
     public static List<LogEntry> GetLogs(string? module = null, string? search = null)
@@ -739,7 +742,7 @@ public class DbManager
                 cleanCmd.Parameters.AddWithValue("@cutoff", DateTime.Now.AddDays(-retentionDays).ToString("yyyy-MM-dd HH:mm:ss"));
                 cleanCmd.ExecuteNonQuery();
             }
-            catch { }
+            catch (Exception ex) { WinCarePro.Infrastructure.Logging.CrashLogger.LogException("DbManager.Maintenance.CleanLogs", ex); }
 
             // 2. Auto clean state snapshots older than 30 days
             try
@@ -749,7 +752,7 @@ public class DbManager
                 cleanSnapCmd.Parameters.AddWithValue("@cutoff", DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd HH:mm:ss"));
                 cleanSnapCmd.ExecuteNonQuery();
             }
-            catch { }
+            catch (Exception ex) { WinCarePro.Infrastructure.Logging.CrashLogger.LogException("DbManager.Maintenance.CleanSnapshots", ex); }
 
             // 3. Reclaim freed disk space, defragment tables, and truncate WAL logs
             try
@@ -757,7 +760,7 @@ public class DbManager
                 using var cmd = new SqliteCommand("PRAGMA optimize; VACUUM; ANALYZE; PRAGMA wal_checkpoint(TRUNCATE);", connection);
                 cmd.ExecuteNonQuery();
             }
-            catch { }
+            catch (Exception ex) { WinCarePro.Infrastructure.Logging.CrashLogger.LogException("DbManager.Maintenance.Vacuum", ex); }
         });
 
         // Log the completion of database maintenance to schedule the next run in 7 days

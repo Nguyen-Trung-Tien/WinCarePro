@@ -223,4 +223,59 @@ public class SystemAuditValidationTests
         Assert.False(vm.IsCleaning);
         vm.Cleanup();
     }
+
+    [Fact]
+    public void NetworkPage_Xaml_ContainsNoHardcodedVietnameseStrings()
+    {
+        var root = Directory.GetCurrentDirectory();
+        while (!Directory.Exists(Path.Combine(root, "src")) && Directory.GetParent(root) != null)
+        {
+            root = Directory.GetParent(root)!.FullName;
+        }
+
+        var networkXamlPath = Path.Combine(root, "src", "Presentation", "Views", "Network", "NetworkPage.xaml");
+        Assert.True(File.Exists(networkXamlPath), $"NetworkPage.xaml not found at {networkXamlPath}");
+
+        var lines = File.ReadAllLines(networkXamlPath);
+        foreach (var line in lines)
+        {
+            // Check for Vietnamese diacritic characters (Latin Extended-A/B & Vietnamese block)
+            bool hasVietnamese = System.Text.RegularExpressions.Regex.IsMatch(line, @"[\u00C0-\u024F\u1E00-\u1EFF]");
+            Assert.False(hasVietnamese, $"NetworkPage.xaml contains hardcoded Vietnamese text: {line.Trim()}");
+        }
+    }
+
+    [Theory]
+    [InlineData("Flush DNS Cache")]
+    [InlineData("Smart Auto-Repair (5 Steps)")]
+    [InlineData("Clean & Boost")]
+    [InlineData("Export CSV")]
+    [InlineData("Clear Search & Filters")]
+    [InlineData("System Health & Defense")]
+    public void TranslationManager_NewlyAddedUiKeys_TranslateToVietnamese(string englishKey)
+    {
+        var vi = WinCarePro.Services.TranslationManager.Instance.GetTranslationForLanguage(
+            englishKey,
+            WinCarePro.Services.AppLanguage.Vietnamese);
+
+        Assert.False(string.IsNullOrWhiteSpace(vi));
+        Assert.NotEqual(englishKey, vi);
+    }
+
+    [Fact]
+    public void DashboardMonitoring_DoesNotMixDiskCapacityIntoDiskIoMetric()
+    {
+        var root = Directory.GetCurrentDirectory();
+        while (!Directory.Exists(Path.Combine(root, "src")) && Directory.GetParent(root) != null)
+        {
+            root = Directory.GetParent(root)!.FullName;
+        }
+
+        var monitoringPath = Path.Combine(root, "src", "ViewModels", "Modules", "Dashboard", "DashboardViewModel.Monitoring.cs");
+        Assert.True(File.Exists(monitoringPath), $"DashboardViewModel.Monitoring.cs not found at {monitoringPath}");
+
+        var content = File.ReadAllText(monitoringPath);
+        Assert.DoesNotContain("GetDiskFreeSpaceEx", content);
+        Assert.DoesNotContain("cpu = 2.0;", content);
+    }
 }

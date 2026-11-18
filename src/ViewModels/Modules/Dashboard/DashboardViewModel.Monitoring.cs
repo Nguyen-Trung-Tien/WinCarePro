@@ -56,7 +56,8 @@ public partial class DashboardViewModel
                 }
                 else
                 {
-                    cpu = 2.0;
+                    // First sample has no prior baseline delta yet; report 0% honestly instead of a hardcoded placeholder.
+                    cpu = 0.0;
                     cpuReadSuccess = true;
                 }
 
@@ -280,8 +281,8 @@ public partial class DashboardViewModel
         if (_scanCts != null && !_scanCts.IsCancellationRequested)
         {
             SetOperationState(OperationState.Cancelling);
-            try { _scanCts.Cancel(); } catch { }
-            SetOperationState(OperationState.Idle);
+            try { _scanCts.Cancel(); }
+            catch (ObjectDisposedException) { }
         }
     }
 
@@ -301,22 +302,13 @@ public partial class DashboardViewModel
                 return Math.Clamp(val, 0, 100);
             }
         }
-        catch { }
-
-        // Fallback using P/Invoke GetDiskFreeSpaceEx
-        try
+        catch (Exception ex)
         {
-            if (NativeApi.GetDiskFreeSpaceEx("C:\\", out ulong freeBytes, out ulong totalBytes, out _))
-            {
-                if (totalBytes > 0)
-                {
-                    double usedPercent = ((double)(totalBytes - freeBytes) / totalBytes) * 100.0;
-                    return Math.Clamp(usedPercent, 0, 100);
-                }
-            }
+            CrashLogger.LogException("DashboardViewModel.GetDiskUsageMetric", ex);
+            _diskTimeCounter = null;
         }
-        catch { }
 
+        // Do not mix Disk Capacity % with Disk I/O % when PerformanceCounter is unavailable.
         return 0.0;
     }
 

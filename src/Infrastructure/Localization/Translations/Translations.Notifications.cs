@@ -72,5 +72,9 @@ public partial class TranslationManager
         if (en != null) en["• System Idle"] = "• System Idle";
         vi["Delete Notification"] = "Xóa thông báo";
         if (en != null) en["Delete Notification"] = "Delete Notification";
+        vi["Permanently purge all notifications and alerts from history."] = "Xóa vĩnh viễn toàn bộ thông báo và cảnh báo khỏi lịch sử.";
+        vi["Protected"] = "Được bảo vệ";
+        vi["Security Shield"] = "Lá Chắn Bảo Mật";
+        vi["System Optimizer"] = "Tối Ưu Hệ Thống";
     }
 }

@@ -309,5 +309,7 @@ public partial class TranslationManager
         if (en != null) en["Uninstall Summary"] = "Uninstall Summary";
         vi["Leftovers Purged: Cleaned {0} remnant files and registry keys safely."] = "Đã dọn sạch tàn dư: Đã xóa an toàn {0} tệp và khóa registry còn sót.";
         if (en != null) en["Leftovers Purged: Cleaned {0} remnant files and registry keys safely."] = "Leftovers Purged: Cleaned {0} remnant files and registry keys safely.";
+        vi["Name (A-Z)"] = "Tên (A-Z)";
+        vi["Name (Z-A)"] = "Tên (Z-A)";
     }
 }

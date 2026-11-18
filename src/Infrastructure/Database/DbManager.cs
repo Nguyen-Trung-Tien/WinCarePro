@@ -16,7 +16,7 @@ public class DbManager
     public static event Action<LogEntry>? OnLogAdded;
 
     private static readonly string AppDataPath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), 
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "WinCarePro"
     );
     private static readonly string DbPath = Path.Combine(AppDataPath, "wincaredb.db");

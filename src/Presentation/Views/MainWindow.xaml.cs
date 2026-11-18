@@ -191,7 +191,8 @@ public sealed partial class MainWindow : Window
             }
             else
             {
-                RootGrid.Loaded += (s, e) => {
+                RootGrid.Loaded += (s, e) =>
+                {
                     CenterOnScreen(1560, 920);
                     _ = InitializeAppAsync();
                 };
@@ -590,8 +591,8 @@ public sealed partial class MainWindow : Window
         List<Services.Contracts.NotificationAction>? actions = null;
 
         // Context-aware actions
-        if (title.Contains("RAM", StringComparison.OrdinalIgnoreCase) || 
-            message.Contains("RAM", StringComparison.OrdinalIgnoreCase) || 
+        if (title.Contains("RAM", StringComparison.OrdinalIgnoreCase) ||
+            message.Contains("RAM", StringComparison.OrdinalIgnoreCase) ||
             message.Contains("Memory", StringComparison.OrdinalIgnoreCase))
         {
             actions = new List<Services.Contracts.NotificationAction>
@@ -607,7 +608,7 @@ public sealed partial class MainWindow : Window
                             {
                                 GC.Collect(2, GCCollectionMode.Aggressive, true, true);
                                 GC.WaitForPendingFinalizers();
-                                
+
                                 App.MainDispatcherQueue?.TryEnqueue(() =>
                                 {
                                     DbManager.LogAction("Manual RAM optimization triggered from toast", "Smart Boost", "Success");
@@ -621,8 +622,8 @@ public sealed partial class MainWindow : Window
                 }
             };
         }
-        else if (title.Contains("Disk", StringComparison.OrdinalIgnoreCase) || 
-                 title.Contains("Junk", StringComparison.OrdinalIgnoreCase) || 
+        else if (title.Contains("Disk", StringComparison.OrdinalIgnoreCase) ||
+                 title.Contains("Junk", StringComparison.OrdinalIgnoreCase) ||
                  message.Contains("junk", StringComparison.OrdinalIgnoreCase) ||
                  message.Contains("files", StringComparison.OrdinalIgnoreCase))
         {

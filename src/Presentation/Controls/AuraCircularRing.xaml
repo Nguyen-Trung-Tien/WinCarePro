@@ -1,0 +1,42 @@
+<UserControl
+    x:Class="WinCarePro.Presentation.Controls.AuraCircularRing"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid x:Name="RootGrid"
+          Width="{x:Bind Size, Mode=OneWay}"
+          Height="{x:Bind Size, Mode=OneWay}"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center">
+
+        <!-- Background Track Ring -->
+        <Ellipse Stroke="{ThemeResource V6TrackBrush}"
+                 StrokeThickness="{x:Bind StrokeThickness, Mode=OneWay}"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch" />
+
+        <!-- Active Arc Gauge with Round Caps -->
+        <Path x:Name="ArcPath"
+              Stroke="{x:Bind EffectiveRingBrush, Mode=OneWay}"
+              StrokeThickness="{x:Bind StrokeThickness, Mode=OneWay}"
+              StrokeStartLineCap="Round"
+              StrokeEndLineCap="Round"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch" />
+
+        <!-- Center Tabular Percentage Label -->
+        <TextBlock x:Name="PercentLabel"
+                   Text="{x:Bind FormattedPercent, Mode=OneWay}"
+                   Visibility="{x:Bind ShowPercentage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   FontSize="{x:Bind LabelFontSize, Mode=OneWay}"
+                   FontWeight="Bold"
+                   FontFamily="Segoe UI Variable Display"
+                   Typography.NumeralAlignment="Tabular"
+                   Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+    </Grid>
+</UserControl>

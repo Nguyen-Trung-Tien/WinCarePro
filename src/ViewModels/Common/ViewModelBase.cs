@@ -243,4 +243,40 @@ public class ViewModelBase : ObservableObject
             Infrastructure.Logging.CrashLogger.LogException("ViewModelBase.RunOnUI.TryEnqueue", ex);
         }
     }
+
+    private EventHandler? _vmLanguageChangedHandler;
+
+    /// <summary>
+    /// Subscribes to live language changes so dynamic localized properties refresh immediately.
+    /// Always pair with UnsubscribeLanguageChanged() in Cleanup/Unloaded.
+    /// </summary>
+    protected void SubscribeLanguageChanged()
+    {
+        if (_vmLanguageChangedHandler == null)
+        {
+            _vmLanguageChangedHandler = (_, _) => RunOnUI(() =>
+            {
+                OnPropertyChanged(nameof(OperationStateText));
+                OnLanguageChanged();
+            });
+        }
+        TranslationManager.Instance.LanguageChanged -= _vmLanguageChangedHandler;
+        TranslationManager.Instance.LanguageChanged += _vmLanguageChangedHandler;
+    }
+
+    /// <summary>
+    /// Detaches the live language change handler to prevent memory leaks.
+    /// </summary>
+    protected void UnsubscribeLanguageChanged()
+    {
+        if (_vmLanguageChangedHandler != null)
+        {
+            TranslationManager.Instance.LanguageChanged -= _vmLanguageChangedHandler;
+        }
+    }
+
+    /// <summary>
+    /// Override in derived ViewModels to raise OnPropertyChanged for dynamic .T() properties when language switches.
+    /// </summary>
+    protected virtual void OnLanguageChanged() { }
 }

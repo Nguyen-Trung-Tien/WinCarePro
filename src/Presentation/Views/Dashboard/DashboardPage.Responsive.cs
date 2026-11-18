@@ -57,7 +57,7 @@ public sealed partial class DashboardPage : Page
             // Adapt GaugeActionPanel if window width is tight
             if (GaugeActionPanel != null)
             {
-                if (width < 740)
+                if (width < 820)
                 {
                     Grid.SetRow(GaugeActionPanel, 1);
                     Grid.SetColumn(GaugeActionPanel, 0);

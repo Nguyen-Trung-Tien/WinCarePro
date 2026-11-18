@@ -278,4 +278,42 @@ public class SystemAuditValidationTests
         Assert.DoesNotContain("GetDiskFreeSpaceEx", content);
         Assert.DoesNotContain("cpu = 2.0;", content);
     }
+
+    [Fact]
+    public void AuraCircularRing_Control_ExistsAndUsesTabularNumerals()
+    {
+        var root = Directory.GetCurrentDirectory();
+        while (!Directory.Exists(Path.Combine(root, "src")) && Directory.GetParent(root) != null)
+        {
+            root = Directory.GetParent(root)!.FullName;
+        }
+
+        var ringXaml = Path.Combine(root, "src", "Presentation", "Controls", "AuraCircularRing.xaml");
+        Assert.True(File.Exists(ringXaml), "AuraCircularRing.xaml should exist");
+
+        var content = File.ReadAllText(ringXaml);
+        Assert.Contains("StrokeStartLineCap=\"Round\"", content);
+        Assert.Contains("StrokeEndLineCap=\"Round\"", content);
+        Assert.Contains("Typography.NumeralAlignment=\"Tabular\"", content);
+    }
+
+    [Fact]
+    public void TranslationManager_OperationStateText_UpdatesAcrossLanguages()
+    {
+        var tm = WinCarePro.Services.TranslationManager.Instance;
+        var prev = tm.CurrentLanguage;
+        try
+        {
+            tm.CurrentLanguage = WinCarePro.Services.AppLanguage.English;
+            var vm = new WinCarePro.ViewModels.ViewModelBase();
+            Assert.Equal("Idle", vm.OperationStateText);
+
+            tm.CurrentLanguage = WinCarePro.Services.AppLanguage.Vietnamese;
+            Assert.NotEqual("Idle", vm.OperationStateText);
+        }
+        finally
+        {
+            tm.CurrentLanguage = prev;
+        }
+    }
 }

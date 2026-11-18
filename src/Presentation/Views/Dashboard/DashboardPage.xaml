@@ -87,6 +87,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="HealthGaugeRow0" Height="Auto" />
                                 <RowDefinition x:Name="HealthGaugeRow1" Height="Auto" />
+                                <RowDefinition x:Name="HealthGaugeRow2" Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition x:Name="HealthGaugeCol0" Width="*" />
@@ -157,19 +158,19 @@
                             </Grid>
 
                             <!-- Flagship Action Bar (Right Column) -->
-                            <StackPanel x:Name="GaugeActionPanel" Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                                <Button x:Name="OneClickCareBtn" Style="{StaticResource PrimaryGradientButtonStyle}" Click="OnOneClickSmartCareClick" IsEnabled="{x:Bind GetOneClickEnabled(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Height="36" Padding="16,0" CornerRadius="8"
+                            <StackPanel x:Name="GaugeActionPanel" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <Button x:Name="OneClickCareBtn" Style="{StaticResource PrimaryGradientButtonStyle}" Click="OnOneClickSmartCareClick" IsEnabled="{x:Bind GetOneClickEnabled(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" MinHeight="36" Padding="14,6" CornerRadius="8"
                                         AutomationProperties.Name="1-Click Smart Care"
                                         AutomationProperties.HelpText="Instantly scan and optimize system performance, RAM, and junk files in one single click.">
-                                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                         <FontIcon Glyph="&#xE9D9;" FontSize="13" Foreground="White"/>
-                                        <TextBlock Text="1-Click Care" FontWeight="SemiBold" FontSize="13" Foreground="White"/>
+                                        <TextBlock Text="{Binding Source='1-Click Care', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12.5" Foreground="White"/>
                                     </StackPanel>
                                 </Button>
 
                                 <ProgressRing x:Name="GaugeActionProgressRing" IsActive="{x:Bind GetProgressRingActive(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Visibility="{x:Bind GetProgressRingVisibility(ViewModel.IsScanning, ViewModel.IsOptimizing), Mode=OneWay}" Width="18" Height="18" Foreground="{StaticResource PrimaryCtaGradientBrush}" VerticalAlignment="Center" Margin="2,0" />
 
-                                <Button x:Name="ScanSystemBtn" Style="{StaticResource StandardSecondaryButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" Height="36" Padding="14,0" CornerRadius="8"
+                                <Button x:Name="ScanSystemBtn" Style="{StaticResource StandardSecondaryButtonStyle}" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" MinHeight="36" Padding="12,6" CornerRadius="8"
                                         AutomationProperties.Name="Scan System"
                                         AutomationProperties.HelpText="Initiates deep system scan for junk files, performance issues, and security status.">
                                     <Button.Flyout>
@@ -204,29 +205,29 @@
                                     </Button.Flyout>
                                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                         <FontIcon Glyph="&#xE721;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                        <TextBlock Text="Scan Hub" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="{Binding Source='Scan Hub', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12"/>
                                         <FontIcon Glyph="&#xE70D;" FontSize="9" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                     </StackPanel>
                                 </Button>
 
-                                <Button x:Name="OptimizeBtn" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" Height="36" Padding="14,0" CornerRadius="8"
+                                <Button x:Name="OptimizeBtn" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnOptimizeClick" Visibility="{x:Bind GetOptimizeVisibility(ViewModel.HasScanned, ViewModel.IsScanning), Mode=OneWay}" IsEnabled="{x:Bind IsNot(ViewModel.IsOptimizing), Mode=OneWay}" MinHeight="36" Padding="12,6" CornerRadius="8"
                                         AutomationProperties.Name="Optimize System"
                                         AutomationProperties.HelpText="Optimizes system performance using the selected profile mode.">
                                     <Button.ContextFlyout>
                                         <MenuFlyout Placement="Bottom">
-                                            <MenuFlyoutItem Text="Clean Cache &amp; Temp" Click="OnSafeOptimizeClick" />
-                                            <MenuFlyoutItem Text="Reclaim Memory (RAM)" Click="OnRecommendedOptimizeClick" />
+                                            <MenuFlyoutItem Text="{Binding Source='Clean Cache &amp; Temp', Converter={StaticResource TranslationConverter}}" Click="OnSafeOptimizeClick" />
+                                            <MenuFlyoutItem Text="{Binding Source='Reclaim Memory (RAM)', Converter={StaticResource TranslationConverter}}" Click="OnRecommendedOptimizeClick" />
                                         </MenuFlyout>
                                     </Button.ContextFlyout>
                                     <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                                         <FontIcon Glyph="&#xE945;" FontSize="12" Foreground="{ThemeResource AppStatusGoodBrush}"/>
-                                        <TextBlock Text="Clean &amp; Boost" FontWeight="SemiBold" FontSize="12"/>
+                                        <TextBlock Text="{Binding Source='Clean &amp; Boost', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="12"/>
                                     </StackPanel>
                                 </Button>
                             </StackPanel>
 
-                            <!-- Scan Progress Line Indicator -->
-                            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Visibility="{x:Bind GetProgressVisibility(ViewModel.IsScanning), Mode=OneWay}" Spacing="4" Margin="0,12,0,0">
+                            <!-- Scan Progress Line Indicator (Row 2 prevents collision with wrapped GaugeActionPanel on Row 1) -->
+                            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="{x:Bind GetProgressVisibility(ViewModel.IsScanning), Mode=OneWay}" Spacing="4" Margin="0,12,0,0">
                                 <ProgressBar Value="{x:Bind ViewModel.ScanProgress, Mode=OneWay}" Maximum="100" Height="3" Foreground="{StaticResource PrimaryCtaGradientBrush}" CornerRadius="1.5" />
                             </StackPanel>
                         </Grid>
@@ -637,11 +638,11 @@
                                     </Grid>
                                 </Border>
 
-                                <StackPanel x:Name="PerformanceFiltersPanel" Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
-                                    <CheckBox x:Name="CpuFilterCheck" Content="CPU" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                                    <CheckBox x:Name="RamFilterCheck" Content="RAM" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                                    <CheckBox x:Name="GpuFilterCheck" Content="GPU" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                                    <CheckBox x:Name="DiskFilterCheck" Content="Disk" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                <StackPanel x:Name="PerformanceFiltersPanel" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                                    <CheckBox x:Name="CpuFilterCheck" Content="CPU" MinWidth="0" Padding="6,0,0,0" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                    <CheckBox x:Name="RamFilterCheck" Content="RAM" MinWidth="0" Padding="6,0,0,0" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                    <CheckBox x:Name="GpuFilterCheck" Content="GPU" MinWidth="0" Padding="6,0,0,0" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                                    <CheckBox x:Name="DiskFilterCheck" Content="{Binding Source='Disk', Converter={StaticResource TranslationConverter}}" MinWidth="0" Padding="6,0,0,0" IsChecked="True" Checked="OnChartFilterChanged" Unchecked="OnChartFilterChanged" Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                                 </StackPanel>
                             </StackPanel>
 
@@ -708,26 +709,29 @@
                         CornerRadius="12"
                         Padding="16,12"
                         Margin="6,4,6,4">
-                    <Grid>
+                    <Grid ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                            <Border Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                        <Grid Grid.Column="0" ColumnSpacing="10" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" Width="34" Height="34" CornerRadius="8" Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
                                 <FontIcon Glyph="&#xE9D9;" FontSize="15" Foreground="{StaticResource PrimaryAccentBrush}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </Border>
-                            <StackPanel VerticalAlignment="Center" Spacing="2">
-                                <TextBlock Text="System Deep Layer Diagnostics" FontWeight="SemiBold" FontSize="13.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                <TextBlock Text="Detailed audits, itemized discoveries &amp; operation logs" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                                <TextBlock Text="{Binding Source='System Deep Layer Diagnostics', Converter={StaticResource TranslationConverter}}" FontWeight="SemiBold" FontSize="13.5" Foreground="{ThemeResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{Binding Source='Detailed audits, itemized discoveries &amp; operation logs', Converter={StaticResource TranslationConverter}}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
-                        </StackPanel>
+                        </Grid>
 
-                        <ToggleButton Grid.Column="2"
+                        <ToggleButton Grid.Column="1"
                                       x:Name="ShowDetailedInsightsBtn"
-                                      Content="Advanced Details &amp; History Log"
+                                      Content="{Binding Source='Advanced Details &amp; History Log', Converter={StaticResource TranslationConverter}}"
                                       Checked="OnShowDeepLayerChecked"
                                       Unchecked="OnShowDeepLayerUnchecked"
                                       Style="{StaticResource DefaultToggleButtonStyle}"
@@ -749,10 +753,11 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <Grid Grid.Row="0" Margin="0,0,0,16">
+                            <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
@@ -778,11 +783,11 @@
                                 </StackPanel>
                             </Grid>
 
-                            <StackPanel Grid.Row="0" Margin="0,0,0,16" VerticalAlignment="Bottom">
-                                <TextBlock x:Name="ExportStatusText" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="MediumSeaGreen" Visibility="Collapsed"/>
+                            <StackPanel Grid.Row="1" Margin="0,0,0,10">
+                                <TextBlock x:Name="ExportStatusText" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource AppStatusGoodBrush}" Visibility="Collapsed"/>
                             </StackPanel>
 
-                            <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.DiagnosticItems, Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False" MaxHeight="360">
+                            <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.DiagnosticItems, Mode=OneWay}" SelectionMode="None" IsItemClickEnabled="False" MaxHeight="360">
                                 <ListView.ItemContainerTransitions>
                                     <TransitionCollection>
                                         <AddDeleteThemeTransition />
@@ -983,37 +988,37 @@
                                         <!-- Safe Count -->
                                         <StackPanel Grid.Column="0" HorizontalAlignment="Center" Spacing="2">
                                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
-                                                <Ellipse Width="7" Height="7" Fill="#FF10B981" VerticalAlignment="Center"/>
-                                                <TextBlock Text="Safe" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                <Ellipse Width="7" Height="7" Fill="{ThemeResource AppStatusGoodBrush}" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Source='Safe', Converter={StaticResource TranslationConverter}}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Text="{x:Bind ViewModel.SafeCount, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="#FF10B981" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                            <TextBlock Text="{x:Bind ViewModel.SafeCount, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="{ThemeResource AppStatusGoodBrush}" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                         </StackPanel>
 
                                         <!-- Notice / Warning Count -->
                                         <StackPanel Grid.Column="1" HorizontalAlignment="Center" Spacing="2">
                                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
-                                                <Ellipse Width="7" Height="7" Fill="#FFF59E0B" VerticalAlignment="Center"/>
-                                                <TextBlock Text="Notice" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                <Ellipse Width="7" Height="7" Fill="{ThemeResource AppStatusWarningBrush}" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Source='Notice', Converter={StaticResource TranslationConverter}}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Text="{x:Bind ViewModel.WarningCount, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="#FFF59E0B" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                            <TextBlock Text="{x:Bind ViewModel.WarningCount, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="{ThemeResource AppStatusWarningBrush}" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                         </StackPanel>
 
                                         <!-- Risk / Danger Count -->
                                         <StackPanel Grid.Column="2" HorizontalAlignment="Center" Spacing="2">
                                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
-                                                <Ellipse Width="7" Height="7" Fill="#FFEF4444" VerticalAlignment="Center"/>
-                                                <TextBlock Text="Risk" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                <Ellipse Width="7" Height="7" Fill="{ThemeResource AppStatusDangerBrush}" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Source='Risk', Converter={StaticResource TranslationConverter}}" FontSize="11" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                                             </StackPanel>
-                                            <TextBlock Text="{x:Bind ViewModel.DangerCount, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="#FFEF4444" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
+                                            <TextBlock Text="{x:Bind ViewModel.DangerCount, Mode=OneWay}" FontSize="16" FontWeight="Bold" Foreground="{ThemeResource AppStatusDangerBrush}" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>
 
                                 <!-- Quick Fix Result Message if any -->
-                                <Border Visibility="{x:Bind GetQuickFixResultVisibility(ViewModel.QuickFixResultMessage), Mode=OneWay}" Background="#1510B981" BorderBrush="#3510B981" BorderThickness="1" CornerRadius="8" Padding="10,6">
+                                <Border Visibility="{x:Bind GetQuickFixResultVisibility(ViewModel.QuickFixResultMessage), Mode=OneWay}" Background="{ThemeResource V6BadgeGoodBg}" BorderBrush="{ThemeResource V6BadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="10,6">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="#FF10B981" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{x:Bind ViewModel.QuickFixResultMessage, Mode=OneWay}" FontSize="11.5" Foreground="#FF10B981" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                        <FontIcon Glyph="&#xE73E;" FontSize="12" Foreground="{ThemeResource AppStatusGoodBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{x:Bind ViewModel.QuickFixResultMessage, Mode=OneWay}" FontSize="11.5" Foreground="{ThemeResource AppStatusGoodBrush}" FontWeight="SemiBold" VerticalAlignment="Center" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Border>
 
@@ -1056,7 +1061,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                    <ProgressRing Width="16" Height="16" IsActive="True" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                    <controls:AuraCircularRing Value="{x:Bind ViewModel.ModeScanProgress, Mode=OneWay}" Size="22" StrokeThickness="3" ShowPercentage="False" VerticalAlignment="Center"/>
                                     <TextBlock Text="{x:Bind ViewModel.ModeCurrentModuleName, Mode=OneWay}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                                 </StackPanel>
                                 <TextBlock Grid.Column="1" Text="{x:Bind ViewModel.ModeScannedItemCount, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='{}{0} items'}" FontSize="12" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular" Foreground="{StaticResource PrimaryAccentBrush}"/>
@@ -1079,8 +1084,8 @@
                                 Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnCancelModeScanClick" Height="38" HorizontalAlignment="Stretch" CornerRadius="10"
                                 AutomationProperties.Name="Stop Scan">
                             <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xE71A;" FontSize="12" Foreground="#FFEF4444"/>
-                                <TextBlock Text="Stop Scan" FontWeight="Bold" FontSize="12" Foreground="#FFEF4444"/>
+                                <FontIcon Glyph="&#xE71A;" FontSize="12" Foreground="{ThemeResource AppStatusDangerBrush}"/>
+                                <TextBlock Text="{Binding Source='Stop Scan', Converter={StaticResource TranslationConverter}}" FontWeight="Bold" FontSize="12" Foreground="{ThemeResource AppStatusDangerBrush}"/>
                             </StackPanel>
                         </Button>
 

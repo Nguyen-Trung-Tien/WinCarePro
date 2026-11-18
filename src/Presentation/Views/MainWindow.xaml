@@ -70,8 +70,8 @@
             <!-- Drag Area Canvas (Acts as window drag region) -->
             <Grid x:Name="AppTitleDragArea" Grid.ColumnSpan="3" Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
 
-            <!-- Brand (Left) — Modern Spatial Glass Brand Badge -->
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Padding="16,0,8,0" VerticalAlignment="Center" Spacing="8" Canvas.ZIndex="10">
+            <!-- Brand (Left) — Hidden per minimalist titlebar layout -->
+            <StackPanel Grid.Column="0" Visibility="Collapsed" Orientation="Horizontal" Padding="16,0,8,0" VerticalAlignment="Center" Spacing="8" Canvas.ZIndex="10">
                 <Grid Width="26" Height="26" VerticalAlignment="Center">
                     <Border CornerRadius="8" Background="{StaticResource PrimaryAccentGradient}" Padding="3">
                         <Image Source="ms-appx:///Assets/Square150x150Logo.scale-200.png" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" Stretch="Uniform"/>

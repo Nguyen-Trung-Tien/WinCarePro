@@ -15,18 +15,18 @@
             <!-- Navigation Pane Footer -->
             <NavigationView.PaneFooter>
                 <StackPanel Padding="0,0,0,8">
-                    <Button x:Name="UserProfileButton" Visibility="Visible" Margin="8,0,8,4" Padding="8,6" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnUserProfileClick" AutomationProperties.Name="User Profile Settings">
+                    <Button x:Name="UserProfileButton" Visibility="Visible" Margin="6,0,6,4" Padding="9,6" MinWidth="0" CornerRadius="8" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Style="{StaticResource StandardSecondaryButtonStyle}" Click="OnUserProfileClick" AutomationProperties.Name="User Profile Settings">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Grid Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <Border x:Name="UserAvatarBorder" Width="32" Height="32" CornerRadius="16" Background="{StaticResource CyberAccentGradient}">
-                                    <FontIcon Glyph="&#xE77B;" FontSize="14" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <Grid Grid.Column="0" Width="28" Height="28" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Border x:Name="UserAvatarBorder" Width="28" Height="28" CornerRadius="14" Background="{StaticResource CyberAccentGradient}">
+                                    <FontIcon Glyph="&#xE77B;" FontSize="13" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 </Border>
                                 <!-- Online Status Beacon -->
-                                <Border Width="9" Height="9" CornerRadius="4.5" Background="#FF10B981" BorderBrush="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-1,-1"/>
+                                <Border Width="8" Height="8" CornerRadius="4" Background="{ThemeResource AppStatusGoodBrush}" BorderBrush="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderThickness="1.5" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
                             </Grid>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1" Margin="10,0,0,0" Visibility="{x:Bind NavView.IsPaneOpen, Mode=OneWay}">
                                 <TextBlock x:Name="NavUserName" Text="User" FontSize="12.5" FontWeight="Bold" Foreground="{ThemeResource NavigationViewItemForeground}" TextTrimming="CharacterEllipsis" MaxWidth="130" FontFamily="Segoe UI Variable Display"/>

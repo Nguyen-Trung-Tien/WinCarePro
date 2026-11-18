@@ -18,24 +18,12 @@ public sealed partial class DashboardPage : Page
         // 1. Initial gauge calculations
         UpdateAllCircularGauges();
 
-        // 2. Interactive Hover Lift (Offset.Y = -3f over 150ms cubic-bezier) & Specular Luminous Rim
-        if (HealthGaugeCard != null) FluidAnimationHelper.ApplyCardHoverElevation(HealthGaugeCard, -3f);
-        if (QuickStatsCardDisk != null) FluidAnimationHelper.ApplyCardHoverElevation(QuickStatsCardDisk, -3f);
-        if (QuickStatsCardStartup != null) FluidAnimationHelper.ApplyCardHoverElevation(QuickStatsCardStartup, -3f);
-        if (QuickStatsCardSecurity != null) FluidAnimationHelper.ApplyCardHoverElevation(QuickStatsCardSecurity, -3f);
-        if (QuickStatsCardRegistry != null) FluidAnimationHelper.ApplyCardHoverElevation(QuickStatsCardRegistry, -3f);
-        if (CpuCard != null) FluidAnimationHelper.ApplyCardHoverElevation(CpuCard, -3f);
-        if (RamCard != null) FluidAnimationHelper.ApplyCardHoverElevation(RamCard, -3f);
-        if (GpuCard != null) FluidAnimationHelper.ApplyCardHoverElevation(GpuCard, -3f);
-        if (DiskCard != null) FluidAnimationHelper.ApplyCardHoverElevation(DiskCard, -3f);
-        if (PerformanceChartCard != null) FluidAnimationHelper.ApplyCardHoverElevation(PerformanceChartCard, -3f);
-
-        // 3. Spring Natural Motion Button Physics (DampingRatio = 0.6f, Period = 100ms)
+        // 2. Spring Natural Motion Button Physics (DampingRatio = 0.6f, Period = 100ms) for primary CTAs only
         if (OneClickCareBtn != null) FluidAnimationHelper.ApplyButtonPressPhysics(OneClickCareBtn);
         if (ScanSystemBtn != null) FluidAnimationHelper.ApplyButtonPressPhysics(ScanSystemBtn);
         if (OptimizeBtn != null) FluidAnimationHelper.ApplyButtonPressPhysics(OptimizeBtn);
 
-        // 4. Shimmer Specular Sweep on Primary CTA Button
+        // 3. Shimmer Specular Sweep on Primary CTA Button
         ApplyPrimaryCtaShimmerSweep();
     }
 

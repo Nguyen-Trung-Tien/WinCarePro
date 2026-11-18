@@ -249,15 +249,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Row 1: Contextual Safety & Persistence Banner -->
-                <controls:InlineStatusCard
-                    Grid.Row="1"
-                    Margin="0,0,0,16"
-                    CardType="SafetyNotice"
-                    Title="{Binding Source='SQLite 3 WAL Persistence &amp; Policy Protection Active', Converter={StaticResource TranslationConverter}}"
-                    Message="{Binding Source='All settings changes and user preferences are atomically written using SQLite WAL mode with zero file locking conflicts.', Converter={StaticResource TranslationConverter}}"
-                    IsDismissible="True" />
-
                 <!-- Row 2: Modular Settings Content Sections Container -->
                 <Grid Grid.Row="2">
                     <!-- Section 0: General Configuration -->

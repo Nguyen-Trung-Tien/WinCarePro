@@ -146,14 +146,6 @@
 
         <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
         <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12" helpers:AnimationHelper.StaggerIndex="0">
-            <!-- Safety Notice Card -->
-            <controls:InlineStatusCard
-                CardType="SafetyNotice"
-                Title="{Binding Source='System Doctor &amp; Restore Point Armed', Converter={StaticResource TranslationConverter}}"
-                Message="{Binding Source='All repair actions create an automated Windows Restore Point and verify safe SFC/DISM parameters before execution.', Converter={StaticResource TranslationConverter}}"
-                IsDismissible="True"
-                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
             <!-- Summary / Post-Action Card -->
             <controls:InlineStatusCard
                 CardType="Summary"

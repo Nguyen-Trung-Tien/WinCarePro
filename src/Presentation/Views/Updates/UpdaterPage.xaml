@@ -160,14 +160,6 @@
 
         <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
         <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12" helpers:AnimationHelper.StaggerIndex="0">
-            <!-- Safety Notice Card -->
-            <controls:InlineStatusCard
-                CardType="SafetyNotice"
-                Title="{Binding Source='Software Repository &amp; Digital Signature Armor Active', Converter={StaticResource TranslationConverter}}"
-                Message="{Binding Source='All package updates are verified via official Winget SHA-256 manifests and Microsoft Store signatures before silent installation.', Converter={StaticResource TranslationConverter}}"
-                IsDismissible="True"
-                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
             <!-- Summary / Post-Action Card -->
             <controls:InlineStatusCard
                 CardType="Summary"

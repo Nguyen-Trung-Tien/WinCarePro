@@ -103,14 +103,6 @@
                 ActionCommand="{x:Bind ViewModel.ScanAllCommand}"
                 IsDismissible="False" />
 
-            <!-- Inline Safety Protection Notice Card -->
-            <controls:InlineStatusCard
-                CardType="SafetyNotice"
-                Title="{Binding Source='SafePathGuard Armor Active', Converter={StaticResource TranslationConverter}}"
-                Message="{Binding Source='Core Windows directories, user files, and system volumes are permanently shielded from deletion.', Converter={StaticResource TranslationConverter}}"
-                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                IsDismissible="True" />
-
             <!-- Inline Post-Action Summary Card -->
             <controls:InlineStatusCard
                 CardType="Summary"

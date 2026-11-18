@@ -109,14 +109,6 @@
 
         <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
         <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12" helpers:AnimationHelper.StaggerIndex="0">
-            <!-- Safety Notice Card -->
-            <controls:InlineStatusCard
-                CardType="SafetyNotice"
-                Title="{Binding Source='Network Stack &amp; DNS Safety Guard Active', Converter={StaticResource TranslationConverter}}"
-                Message="{Binding Source='Automated DNS backups are preserved prior to changes. Loopback and virtual hypervisor adapters are shielded from disruption.', Converter={StaticResource TranslationConverter}}"
-                IsDismissible="True"
-                Visibility="{x:Bind ViewModel.IsSafetyNoticeVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
             <!-- Summary / Post-Action Card -->
             <controls:InlineStatusCard
                 CardType="Summary"

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using WinCarePro.Core.Helpers;
 using WinCarePro.Infrastructure.Services;
+using WinCarePro.Models;
 using WinCarePro.Presentation.Controls;
 using WinCarePro.Services;
 using Xunit;
@@ -96,5 +97,24 @@ public class SecurityHardeningAndConsolidationTests
         var (glyph, bgKey, _, _) = AuraAlertBanner.ResolveSeverityTokens(severity);
         Assert.Equal(expectedGlyph, glyph);
         Assert.Equal(expectedBgKey, bgKey);
+    }
+
+    [Fact]
+    public void OptimizationSummary_TracksSuccessCancellationAndElapsedTime()
+    {
+        var summary = new OptimizationSummary
+        {
+            IsSuccess = false,
+            WasCancelled = true,
+            AbortReason = "Timed out",
+            ElapsedMs = 1234,
+            SnapshotCreated = true
+        };
+
+        Assert.False(summary.IsSuccess);
+        Assert.True(summary.WasCancelled);
+        Assert.Equal("Timed out", summary.AbortReason);
+        Assert.Equal(1234, summary.ElapsedMs);
+        Assert.True(summary.SnapshotCreated);
     }
 }

@@ -6,21 +6,27 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Margin="0,0,0,12">
+    <Grid x:Name="HeaderRootGrid" Margin="0,0,0,12" RowSpacing="8" ColumnSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition x:Name="TitleCol" Width="*" />
+            <ColumnDefinition x:Name="RightCol" Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-            <Border Width="40"
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+            <Border x:Name="IconBadgeBorder"
+                    Width="40"
                     Height="40"
                     CornerRadius="10"
                     Background="{x:Bind IconBackground, Mode=OneWay}"
                     BorderBrush="{x:Bind IconBorderBrush, Mode=OneWay}"
                     BorderThickness="1"
                     VerticalAlignment="Center">
-                <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}"
+                <FontIcon x:Name="HeaderIcon"
+                          Glyph="{x:Bind IconGlyph, Mode=OneWay}"
                           FontSize="18"
                           Foreground="{x:Bind IconForeground, Mode=OneWay}"
                           HorizontalAlignment="Center"
@@ -38,11 +44,13 @@
                            Visibility="{x:Bind HasSubtitleVisibility(Subtitle), Mode=OneWay}"
                            FontSize="12.5"
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                           TextTrimming="CharacterEllipsis" />
+                           TextWrapping="Wrap" />
             </StackPanel>
         </StackPanel>
 
-        <ContentPresenter Grid.Column="1"
+        <ContentPresenter x:Name="RightActionsPresenter"
+                          Grid.Row="0"
+                          Grid.Column="1"
                           Content="{x:Bind RightContent, Mode=OneWay}"
                           VerticalAlignment="Center" />
     </Grid>

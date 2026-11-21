@@ -392,18 +392,22 @@
                         </StackPanel>
                     </Grid>
 
-                    <Grid ColumnSpacing="14" RowSpacing="10">
+                    <Grid x:Name="FaqGrid" ColumnSpacing="14" RowSpacing="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition x:Name="FaqCol2" Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
+                        <Border x:Name="FaqLeftCard" Grid.Row="0" Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
                             <StackPanel Spacing="4">
                                 <TextBlock Text="Zero Risk Guarantee" FontSize="11.5" FontWeight="Bold" Foreground="#FF10B981"/>
                                 <TextBlock Text="WinCare Pro strictly adheres to official Microsoft APIs and Windows Service architectures. All operations create backups or restore points prior to execution." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                         </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
+                        <Border x:Name="FaqRightCard" Grid.Row="0" Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
                             <StackPanel Spacing="4">
                                 <TextBlock Text="Need Technical Support?" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                 <TextBlock Text="Visit the GitHub repository or submit an issue via Settings > About WinCare Pro for rapid technical guidance." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>

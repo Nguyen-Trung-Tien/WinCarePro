@@ -455,9 +455,31 @@ public sealed partial class DashboardPage : Page
             FluidAnimationHelper.ApplyStaggeredEntrance(rippleCards, 55f, 10f);
         }
 
-        if (summary != null)
+        if (summary != null && summary.IsSuccess)
         {
             await ShowOptimizationSummaryDialogAsync(summary);
+            string toastMsg = string.Format(
+                "Optimized in {0:F1}s • Freed {1:F1} MB junk".T(),
+                summary.ElapsedMs / 1000.0,
+                (summary.JunkBytesCleaned + summary.DoCacheBytesCleaned) / (1024.0 * 1024.0));
+            App.MainWindowInstance?.ShowToastNotification("Optimization Completed".T(), toastMsg, "Success");
+        }
+        else
+        {
+            string title = (summary?.WasCancelled == true ? "Optimization Cancelled" : "Optimization Notice").T();
+            string reason = summary?.AbortReason ?? "Optimization could not be completed.".T();
+            var dialog = WinCarePro.Presentation.Controls.Dialogs.AuraModalHelper.CreateThemedDialog(
+                this.XamlRoot,
+                new TextBlock
+                {
+                    Text = reason,
+                    TextWrapping = TextWrapping.Wrap,
+                    FontSize = 13.5
+                },
+                title: title,
+                closeButtonText: "Close".T());
+            await WinCarePro.Presentation.Controls.Dialogs.AuraModalHelper.ShowSafeAsync(dialog, "DashboardPage.OptimizationNotice");
+            App.MainWindowInstance?.ShowToastNotification(title, reason, "Warning");
         }
         ViewModel.RefreshActionLogs();
     }

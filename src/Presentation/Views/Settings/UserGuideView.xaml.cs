@@ -19,6 +19,25 @@ public sealed partial class UserGuideView : UserControl
         this.InitializeComponent();
         this.Loaded += UserGuideView_Loaded;
         this.Unloaded += UserGuideView_Unloaded;
+        this.SizeChanged += UserGuideView_SizeChanged;
+    }
+
+    private void UserGuideView_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (FaqCol2 == null || FaqRightCard == null) return;
+        bool isNarrow = e.NewSize.Width > 0 && e.NewSize.Width < 680;
+        if (isNarrow)
+        {
+            FaqCol2.Width = new GridLength(0, GridUnitType.Pixel);
+            Grid.SetRow(FaqRightCard, 1);
+            Grid.SetColumn(FaqRightCard, 0);
+        }
+        else
+        {
+            FaqCol2.Width = new GridLength(1, GridUnitType.Star);
+            Grid.SetRow(FaqRightCard, 0);
+            Grid.SetColumn(FaqRightCard, 1);
+        }
     }
 
     private void UserGuideView_Loaded(object sender, RoutedEventArgs e)
@@ -32,6 +51,7 @@ public sealed partial class UserGuideView : UserControl
     private void UserGuideView_Unloaded(object sender, RoutedEventArgs e)
     {
         TranslationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        this.SizeChanged -= UserGuideView_SizeChanged;
         if (_visibilityToken != 0)
         {
             this.UnregisterPropertyChangedCallback(VisibilityProperty, _visibilityToken);

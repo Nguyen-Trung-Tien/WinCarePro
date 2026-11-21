@@ -9,6 +9,51 @@ public sealed partial class AuraPageHeader : UserControl
     public AuraPageHeader()
     {
         InitializeComponent();
+        Loaded += OnLoaded;
+        ActualThemeChanged += OnActualThemeChanged;
+        SizeChanged += OnSizeChanged;
+        Unloaded += OnUnloaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e) => ApplyDefaultIconBrushes();
+    private void OnActualThemeChanged(FrameworkElement sender, object args) => ApplyDefaultIconBrushes();
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        Loaded -= OnLoaded;
+        ActualThemeChanged -= OnActualThemeChanged;
+        SizeChanged -= OnSizeChanged;
+        Unloaded -= OnUnloaded;
+    }
+
+    private void ApplyDefaultIconBrushes()
+    {
+        if (IconBackground == null && Application.Current?.Resources.TryGetValue("AppBadgeNeutralBg", out var bg) == true && bg is Brush bgBrush)
+            IconBadgeBorder.Background = bgBrush;
+        if (IconBorderBrush == null && Application.Current?.Resources.TryGetValue("AppBadgeNeutralBorder", out var br) == true && br is Brush brBrush)
+            IconBadgeBorder.BorderBrush = brBrush;
+        if (IconForeground == null && Application.Current?.Resources.TryGetValue("AppBadgeNeutralFg", out var fg) == true && fg is Brush fgBrush)
+            HeaderIcon.Foreground = fgBrush;
+    }
+
+    private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (RightActionsPresenter == null || RightCol == null) return;
+        bool isNarrow = e.NewSize.Width > 0 && e.NewSize.Width < 640;
+        if (isNarrow)
+        {
+            RightCol.Width = new GridLength(0, GridUnitType.Pixel);
+            Grid.SetRow(RightActionsPresenter, 1);
+            Grid.SetColumn(RightActionsPresenter, 0);
+            RightActionsPresenter.HorizontalAlignment = HorizontalAlignment.Left;
+        }
+        else
+        {
+            RightCol.Width = GridLength.Auto;
+            Grid.SetRow(RightActionsPresenter, 0);
+            Grid.SetColumn(RightActionsPresenter, 1);
+            RightActionsPresenter.HorizontalAlignment = HorizontalAlignment.Right;
+        }
     }
 
     public static readonly DependencyProperty TitleProperty =

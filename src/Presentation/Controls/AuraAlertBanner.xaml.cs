@@ -19,6 +19,16 @@ public sealed partial class AuraAlertBanner : UserControl
     {
         InitializeComponent();
         ApplySeverityVisuals(Severity);
+        ActualThemeChanged += OnActualThemeChanged;
+        Unloaded += OnUnloaded;
+    }
+
+    private void OnActualThemeChanged(FrameworkElement sender, object args) => ApplySeverityVisuals(Severity);
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        ActualThemeChanged -= OnActualThemeChanged;
+        Unloaded -= OnUnloaded;
     }
 
     public static readonly DependencyProperty IsOpenProperty =

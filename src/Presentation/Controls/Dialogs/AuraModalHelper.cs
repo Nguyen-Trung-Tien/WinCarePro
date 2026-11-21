@@ -20,9 +20,13 @@ public static class AuraModalHelper
         string? primaryButtonText = null,
         string? secondaryButtonText = null)
     {
-        var theme = Application.Current.RequestedTheme == ApplicationTheme.Dark
-            ? ElementTheme.Dark
-            : ElementTheme.Light;
+        var theme = WinCarePro.Services.ThemeManager.Instance.CurrentTheme;
+        if (theme == ElementTheme.Default)
+        {
+            theme = Application.Current.RequestedTheme == ApplicationTheme.Dark
+                ? ElementTheme.Dark
+                : ElementTheme.Light;
+        }
 
         var dialog = new ContentDialog
         {

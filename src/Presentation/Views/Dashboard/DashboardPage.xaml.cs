@@ -834,29 +834,25 @@ public sealed partial class DashboardPage : Page
             }
         }
 
-        AddDetailItem("\uE7F1", 
+        AddDetailItem("\uE7F1",
             Windows.UI.Color.FromArgb(255, 245, 158, 11), Windows.UI.Color.FromArgb(255, 254, 243, 199), Windows.UI.Color.FromArgb(255, 253, 230, 138), Windows.UI.Color.FromArgb(255, 217, 119, 6),
             "Disk Junk Cleaned".T(), "Temporary & cache storage".T(), $"{totalDiskCleanedMb:F1} MB", totalDiskCleanedBytes > 0);
 
-        AddDetailItem("\uE949", 
-            Windows.UI.Color.FromArgb(255, 168, 85, 247), Windows.UI.Color.FromArgb(255, 245, 243, 255), Windows.UI.Color.FromArgb(255, 221, 214, 254), Windows.UI.Color.FromArgb(255, 124, 58, 237),
-            "Registry Errors Fixed".T(), "Invalid keys & orphaned entries".T(), summary.RegistryIssuesFixed > 0 ? $"{summary.RegistryIssuesFixed} " + "resolved".T() : "0 resolved".T(), summary.RegistryIssuesFixed > 0);
-
-        AddDetailItem("\uE950", 
+        AddDetailItem("\uE950",
             Windows.UI.Color.FromArgb(255, 59, 130, 246), Windows.UI.Color.FromArgb(255, 239, 246, 255), Windows.UI.Color.FromArgb(255, 191, 219, 254), Windows.UI.Color.FromArgb(255, 37, 99, 235),
-            "RAM Reclaimed (Boost)".T(), "Working set memory freed".T(), ramReclaimedMb > 0 ? $"{ramReclaimedMb:F1} MB" : "0.0 MB", ramReclaimedMb > 0);
+            "RAM Reclaimed (Boost)".T(), "Working set memory freed".T(), ramReclaimedMb > 0 ? $"{ramReclaimedMb:F1} MB" : "Peak Ready".T(), ramReclaimedMb > 0);
 
-        AddDetailItem("\uE8F1", 
-            Windows.UI.Color.FromArgb(255, 20, 184, 166), Windows.UI.Color.FromArgb(255, 240, 253, 250), Windows.UI.Color.FromArgb(255, 153, 246, 228), Windows.UI.Color.FromArgb(255, 13, 148, 136),
-            "Active Apps Boosted".T(), "Background processes tuned".T(), summary.RamProcessesOptimized > 0 ? $"{summary.RamProcessesOptimized} " + "processes".T() : "0 processes".T(), summary.RamProcessesOptimized > 0);
-
-        AddDetailItem("\uE774", 
+        AddDetailItem("\uE774",
             Windows.UI.Color.FromArgb(255, 6, 182, 212), Windows.UI.Color.FromArgb(255, 236, 254, 255), Windows.UI.Color.FromArgb(255, 165, 243, 252), Windows.UI.Color.FromArgb(255, 8, 145, 178),
             "DNS Resolver Cache".T(), "Network socket & cache reset".T(), summary.DnsCacheFlushed ? "Flushed".T() : "Done".T(), summary.DnsCacheFlushed);
 
-        AddDetailItem("\uE945", 
-            Windows.UI.Color.FromArgb(255, 236, 72, 153), Windows.UI.Color.FromArgb(255, 253, 242, 248), Windows.UI.Color.FromArgb(255, 251, 207, 232), Windows.UI.Color.FromArgb(255, 219, 39, 119),
-            "Performance Tweaks".T(), "System responsiveness applied".T(), summary.TweaksApplied > 0 ? $"{summary.TweaksApplied} " + "activated".T() : "0 activated".T(), summary.TweaksApplied > 0, isLast: true);
+        AddDetailItem("\uE83D",
+            Windows.UI.Color.FromArgb(255, 16, 185, 129), Windows.UI.Color.FromArgb(255, 236, 253, 245), Windows.UI.Color.FromArgb(255, 167, 243, 208), Windows.UI.Color.FromArgb(255, 5, 150, 105),
+            "Snapshot Protection".T(), "Pre-optimization safety checkpoint".T(), summary.SnapshotCreated ? "Protected".T() : "Skipped".T(), summary.SnapshotCreated);
+
+        AddDetailItem("\uE916",
+            Windows.UI.Color.FromArgb(255, 168, 85, 247), Windows.UI.Color.FromArgb(255, 245, 243, 255), Windows.UI.Color.FromArgb(255, 221, 214, 254), Windows.UI.Color.FromArgb(255, 124, 58, 237),
+            "Completion Time".T(), "Total optimization duration".T(), $"{summary.ElapsedMs / 1000.0:F1}s", true, isLast: true);
 
         breakdownContainer.Child = breakdownStack;
         mainPanel.Children.Add(breakdownContainer);

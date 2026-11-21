@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -144,27 +145,25 @@ namespace WinCarePro.Shared.Animations
 
         public static void ApplyImplicitOffsetAndScale(UIElement element) { }
 
+        private static readonly ConditionalWeakTable<FrameworkElement, object> _hoverAttached = new();
+
         public static void ApplyCardHoverElevation(FrameworkElement element, float elevationOffset = -3f)
         {
-            if (element == null) return;
+            if (element == null || !ReducedMotionHelper.AreAnimationsEnabled) return;
+            if (_hoverAttached.TryGetValue(element, out _)) return;
+            _hoverAttached.Add(element, new object());
+
             try
             {
-                var visual = Microsoft.UI.Xaml.Hosting.ElementCompositionPreview.GetElementVisual(element);
-                if (visual == null) return;
-                var compositor = visual.Compositor;
+                Microsoft.UI.Xaml.Media.Brush? originalBorderBrush = element is Border b0 ? b0.BorderBrush : null;
 
                 element.PointerEntered += (s, e) =>
                 {
                     try
                     {
-                        var anim = compositor.CreateScalarKeyFrameAnimation();
-                        anim.InsertKeyFrame(1.0f, elevationOffset, compositor.CreateCubicBezierEasingFunction(
-                            new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
-                        anim.Duration = TimeSpan.FromMilliseconds(150);
-                        visual.StartAnimation("Offset.Y", anim);
-
                         if (element is Border border && Application.Current.Resources.TryGetValue("SpecularGlassBorderHoverBrush", out var hoverBrush) && hoverBrush is Microsoft.UI.Xaml.Media.Brush b)
                         {
+                            originalBorderBrush ??= border.BorderBrush;
                             border.BorderBrush = b;
                         }
                     }
@@ -175,15 +174,9 @@ namespace WinCarePro.Shared.Animations
                 {
                     try
                     {
-                        var anim = compositor.CreateScalarKeyFrameAnimation();
-                        anim.InsertKeyFrame(1.0f, 0f, compositor.CreateCubicBezierEasingFunction(
-                            new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
-                        anim.Duration = TimeSpan.FromMilliseconds(150);
-                        visual.StartAnimation("Offset.Y", anim);
-
-                        if (element is Border border && Application.Current.Resources.TryGetValue("SpecularGlassBorderBrush", out var normBrush) && normBrush is Microsoft.UI.Xaml.Media.Brush b)
+                        if (element is Border border && originalBorderBrush != null)
                         {
-                            border.BorderBrush = b;
+                            border.BorderBrush = originalBorderBrush;
                         }
                     }
                     catch { }

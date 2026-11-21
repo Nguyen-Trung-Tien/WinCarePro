@@ -11,6 +11,7 @@ namespace WinCarePro.Views;
 public sealed partial class UserGuideView : UserControl
 {
     private long _visibilityToken;
+    private bool _entrancePlayed;
     private string _currentCategory = "All";
     private string _currentSearchText = string.Empty;
 
@@ -102,8 +103,9 @@ public sealed partial class UserGuideView : UserControl
                 }
             }
 
-            if (visibleCards.Count > 0)
+            if (!_entrancePlayed && visibleCards.Count > 0)
             {
+                _entrancePlayed = true;
                 FluidAnimationHelper.ApplyStaggeredEntrance(visibleCards, 35);
             }
         }

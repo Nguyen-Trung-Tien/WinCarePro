@@ -142,11 +142,13 @@ public sealed partial class RepairPage : Page
         bool isLoading = ViewModel?.IsBusy == true || ViewModel?.IsScanningDiagnostics == true;
         if (isLoading)
         {
+            FadeOutLoading.Stop();
             LoadingOverlayGrid.Visibility = Visibility.Visible;
             FadeInLoading.Begin();
         }
-        else
+        else if (LoadingOverlayGrid.Visibility == Visibility.Visible)
         {
+            FadeInLoading.Stop();
             FadeOutLoading.Begin();
         }
     }
@@ -156,6 +158,8 @@ public sealed partial class RepairPage : Page
         bool isLoading = ViewModel?.IsBusy == true || ViewModel?.IsScanningDiagnostics == true;
         if (!isLoading && LoadingOverlayGrid != null)
         {
+            FadeOutLoading.Stop();
+            LoadingOverlayGrid.Opacity = 0;
             LoadingOverlayGrid.Visibility = Visibility.Collapsed;
         }
     }

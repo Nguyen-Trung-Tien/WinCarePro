@@ -8,16 +8,74 @@ using Microsoft.UI.Xaml.Controls;
 namespace WinCarePro.Shared.Animations
 {
     /// <summary>
-    /// Zero-Bloat flat stub: All spring physics, shimmer sweeps, parallax scrolling, and composition timers are disabled.
+    /// Unified GPU-composited animation helper for WinCare Pro Aura Glass UI.
+    /// Automatically respects <see cref="ReducedMotionHelper.AreAnimationsEnabled"/>.
     /// </summary>
     public static class FluidAnimationHelper
     {
-        public static void SafeSetCenterPoint(UIElement element, Visual visual) { }
-        public static void ApplySpringEntranceAnimation(UIElement element, float delayMs = 0) { }
-        public static void EnableHoverDepthEffect(FrameworkElement element, float maxScale = 1.0f) { }
+        public static void SafeSetCenterPoint(UIElement element, Visual visual)
+        {
+            if (element == null || visual == null) return;
+            if (element is FrameworkElement fe && fe.ActualWidth > 0 && fe.ActualHeight > 0)
+            {
+                visual.CenterPoint = new Vector3((float)(fe.ActualWidth / 2.0), (float)(fe.ActualHeight / 2.0), 0f);
+            }
+        }
+
+        public static void ApplySpringEntranceAnimation(UIElement element, float delayMs = 0)
+        {
+            if (element == null || !ReducedMotionHelper.AreAnimationsEnabled) return;
+            ApplyStaggeredEntrance(new[] { element }, delayMs, 14f);
+        }
+
+        public static void EnableHoverDepthEffect(FrameworkElement element, float maxScale = 1.02f)
+        {
+            ApplyCardHoverElevation(element, -3f);
+        }
+
         public static void PrepareConnectedAnimation(string key, UIElement sourceElement) { }
         public static bool TryStartConnectedAnimation(string key, UIElement targetElement) => false;
-        public static void ApplyStaggeredEntrance(IList<UIElement> elements, float baseDelayMs = 0, float slideDistanceY = 0) { }
+
+        public static void ApplyStaggeredEntrance(IList<UIElement> elements, float baseDelayMs = 35, float slideDistanceY = 14f)
+        {
+            if (elements == null || elements.Count == 0 || !ReducedMotionHelper.AreAnimationsEnabled) return;
+            float effectiveSlide = slideDistanceY > 0 ? slideDistanceY : 14f;
+            float stepDelay = baseDelayMs > 0 ? baseDelayMs : 30f;
+
+            for (int i = 0; i < elements.Count; i++)
+            {
+                var element = elements[i];
+                if (element == null) continue;
+                try
+                {
+                    var visual = Microsoft.UI.Xaml.Hosting.ElementCompositionPreview.GetElementVisual(element);
+                    var compositor = visual.Compositor;
+                    Microsoft.UI.Xaml.Hosting.ElementCompositionPreview.SetIsTranslationEnabled(element, true);
+
+                    visual.Opacity = 0f;
+                    var offsetAnim = compositor.CreateScalarKeyFrameAnimation();
+                    offsetAnim.InsertKeyFrame(0f, effectiveSlide);
+                    offsetAnim.InsertKeyFrame(1f, 0f, compositor.CreateCubicBezierEasingFunction(
+                        new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+                    offsetAnim.Duration = TimeSpan.FromMilliseconds(220);
+                    offsetAnim.DelayTime = TimeSpan.FromMilliseconds(Math.Min(i * stepDelay, 350f));
+
+                    var opacityAnim = compositor.CreateScalarKeyFrameAnimation();
+                    opacityAnim.InsertKeyFrame(0f, 0f);
+                    opacityAnim.InsertKeyFrame(1f, 1f);
+                    opacityAnim.Duration = TimeSpan.FromMilliseconds(200);
+                    opacityAnim.DelayTime = offsetAnim.DelayTime;
+
+                    visual.StartAnimation("Translation.Y", offsetAnim);
+                    visual.StartAnimation("Opacity", opacityAnim);
+                }
+                catch (Exception ex)
+                {
+                    WinCarePro.Infrastructure.Logging.CrashLogger.LogException("FluidAnimationHelper.ApplyStaggeredEntrance", ex);
+                }
+            }
+        }
+
         public static void ApplyShimmerEffect(UIElement element) { }
         public static void StopShimmerEffect(UIElement element) { }
         public static void ApplyPulseGlow(UIElement element, float minOpacity = 1.0f, float maxOpacity = 1.0f, int cycleDurationMs = 0) { }
@@ -36,7 +94,33 @@ namespace WinCarePro.Shared.Animations
         }
 
         public static void AnimateSmoothScaleTransition(UIElement element, float targetScale, int durationMs = 0) { }
-        public static void ApplyGlowSparkBurst(UIElement element, float peakScale = 1.0f, int durationMs = 0) { }
+
+        public static void ApplyGlowSparkBurst(UIElement element, float peakScale = 1.05f, int durationMs = 260)
+        {
+            if (element == null || !ReducedMotionHelper.AreAnimationsEnabled) return;
+            try
+            {
+                var visual = Microsoft.UI.Xaml.Hosting.ElementCompositionPreview.GetElementVisual(element);
+                var compositor = visual.Compositor;
+                SafeSetCenterPoint(element, visual);
+
+                float scale = peakScale > 1.0f ? peakScale : 1.05f;
+                int dur = durationMs > 0 ? durationMs : 260;
+
+                var scaleAnim = compositor.CreateVector3KeyFrameAnimation();
+                scaleAnim.InsertKeyFrame(0.0f, Vector3.One);
+                scaleAnim.InsertKeyFrame(0.4f, new Vector3(scale, scale, 1f), compositor.CreateCubicBezierEasingFunction(
+                    new Vector2(0.1f, 0.9f), new Vector2(0.2f, 1.0f)));
+                scaleAnim.InsertKeyFrame(1.0f, Vector3.One);
+                scaleAnim.Duration = TimeSpan.FromMilliseconds(dur);
+
+                visual.StartAnimation("Scale", scaleAnim);
+            }
+            catch (Exception ex)
+            {
+                WinCarePro.Infrastructure.Logging.CrashLogger.LogException("FluidAnimationHelper.ApplyGlowSparkBurst", ex);
+            }
+        }
 
         public static void AnimateFloatingDeck(UIElement deckElement, bool isVisible, float slideDistanceY = 0, int durationMs = 0)
         {

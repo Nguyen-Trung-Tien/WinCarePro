@@ -117,43 +117,25 @@ public sealed partial class MainWindow : Window
             else
 #endif
             {
-                string jsonUrl = $"https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json?t={DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
                 using var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(10));
-                using var req = new System.Net.Http.HttpRequestMessage(System.Net.Http.HttpMethod.Get, jsonUrl);
-                req.Headers.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true, NoStore = true, MustRevalidate = true };
-                using var resp = await _updateHttpClient.SendAsync(req, cts.Token);
-                resp.EnsureSuccessStatusCode();
-                response = await resp.Content.ReadAsStringAsync(cts.Token);
+                response = await Infrastructure.Services.AppUpdateService.FetchManifestJsonAsync(_updateHttpClient, cts.Token);
             }
             
             bool betaEnabled = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.BetaUpdates;
+            var manifest = Infrastructure.Services.AppUpdateService.ParseUpdateManifest(
+                response,
+                betaEnabled,
+                WinCarePro.Core.AppConstants.CurrentVersion);
 
-            using var doc = JsonDocument.Parse(response);
-            var root = doc.RootElement;
-            
-            string remoteVerStr;
-            string downloadUrl;
-            string expectedHash = "";
-
-            if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
-            {
-                remoteVerStr = betaVerProp.GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString;
-                downloadUrl = root.TryGetProperty("beta_url", out var betaUrlProp) ? betaUrlProp.GetString() ?? "" : "";
-                expectedHash = root.TryGetProperty("beta_sha256", out var betaHashProp) ? betaHashProp.GetString() ?? "" : "";
-            }
-            else
-            {
-                remoteVerStr = root.GetProperty("version").GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString;
-                downloadUrl = root.GetProperty("url").GetString() ?? "";
-                expectedHash = root.TryGetProperty("sha256", out var hashProp) ? hashProp.GetString() ?? "" : "";
-            }
-            
-            var currentVersion = WinCarePro.Core.AppConstants.CurrentVersion;
+            string remoteVerStr = manifest.VersionString;
+            string downloadUrl = manifest.DownloadUrl;
+            string expectedHash = manifest.ExpectedSha256;
             string cleanRemoteVer = System.Text.RegularExpressions.Regex.Replace(remoteVerStr, @"[^\d\.]", "").TrimEnd('.');
             if (!Version.TryParse(cleanRemoteVer, out var remoteVersion))
             {
                 remoteVersion = WinCarePro.Core.AppConstants.CurrentVersion;
             }
+            var currentVersion = WinCarePro.Core.AppConstants.CurrentVersion;
 
             if (remoteVersion > currentVersion)
             {
@@ -236,7 +218,17 @@ public sealed partial class MainWindow : Window
             // Guard against truncated or incomplete downloads
             if (totalBytes > 0 && totalRead < totalBytes)
             {
-                try { if (File.Exists(setupFilePath)) File.Delete(setupFilePath); } catch { }
+                try
+                {
+                    if (File.Exists(setupFilePath) && Core.Helpers.SafePathGuard.IsSafeToDelete(setupFilePath))
+                    {
+                        File.Delete(setupFilePath);
+                    }
+                }
+                catch (Exception delEx)
+                {
+                    Infrastructure.Logging.CrashLogger.LogException("MainWindow.ThemeUpdates.CleanupTruncatedSetup", delEx);
+                }
                 DbManager.LogAction($"Update download truncated: received {totalRead} of {totalBytes} bytes. Connection interrupted.", "Software Updater", "Failed");
                 return;
             }

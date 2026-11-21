@@ -108,7 +108,7 @@
         </Grid>
 
         <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
-        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12" helpers:AnimationHelper.StaggerIndex="0">
+        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12">
             <!-- Summary / Post-Action Card -->
             <controls:InlineStatusCard
                 CardType="Summary"
@@ -1070,12 +1070,12 @@
                                                    TextTrimming="CharacterEllipsis" />
                                     </StackPanel>
 
-                                    <!-- Restart Warning Banner (Rule 09 Localized) -->
-                                    <InfoBar IsOpen="{x:Bind ViewModel.RequiresRestart, Mode=OneWay}"
-                                             Severity="Warning"
-                                             IsClosable="False"
-                                             Title="{Binding Source='Restart Required', Converter={StaticResource TranslationConverter}}"
-                                             Message="{Binding Source='Please restart your computer to complete the Winsock and TCP/IP stack reset.', Converter={StaticResource TranslationConverter}}" />
+                                    <!-- Restart Warning Banner (Shared AuraAlertBanner, Rule 09 Localized) -->
+                                    <controls:AuraAlertBanner IsOpen="{x:Bind ViewModel.RequiresRestart, Mode=OneWay}"
+                                                              Severity="Warning"
+                                                              IsClosable="False"
+                                                              Title="{Binding Source='Restart Required', Converter={StaticResource TranslationConverter}}"
+                                                              Message="{Binding Source='Please restart your computer to complete the Winsock and TCP/IP stack reset.', Converter={StaticResource TranslationConverter}}" />
 
                                     <!-- 8 Action Buttons Grid (2 rows x 4 columns) -->
                                     <Grid ColumnSpacing="12" RowSpacing="12">

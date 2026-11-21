@@ -161,30 +161,14 @@ public sealed partial class JunkPage : Page
     {
         base.OnNavigatedFrom(e);
         TranslationManager.Instance.LanguageChanged -= _langChangedHandler;
-        try
-        {
-            WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(this);
-        }
-        catch (Exception ex)
-        {
-            Infrastructure.Logging.CrashLogger.LogException("JunkPage.Stop3DScanEffect", ex);
-        }
         ViewModel.Cleanup();
-    }
-
-    private void OnSwitchToSystemCleanerClick(object sender, RoutedEventArgs e)
-    {
-        this.Frame?.Navigate(typeof(CleanerPage), null, new Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo());
     }
 
     private async void OnScanJunkClick(object sender, RoutedEventArgs e)
     {
         var btn = ScanJunkBtn ?? (sender as Button);
-        if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 300);
-
         try
         {
-            WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(this, Windows.UI.Color.FromArgb(220, 167, 139, 250));
             await UiLoadingHelper.ExecuteWithLoadingAsync(
                 btn, ScanJunkRing, ScanJunkText, ScanJunkIcon,
                 "Scanning Debris...", "Scan Directories",
@@ -196,12 +180,7 @@ public sealed partial class JunkPage : Page
         }
         finally
         {
-            try
-            {
-                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(this);
-                if (btn != null) WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(btn, Windows.UI.Color.FromArgb(255, 167, 139, 250));
-            }
-            catch { }
+            if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.05f, 260);
         }
 
         ViewModel.FinalizeScan();
@@ -214,7 +193,6 @@ public sealed partial class JunkPage : Page
 
         try
         {
-            WinCarePro.Core.Helpers.Animation3DHelper.Start3DScanEffect(this, Windows.UI.Color.FromArgb(220, 16, 185, 129));
             await UiLoadingHelper.ExecuteWithLoadingAsync(
                 btn, CleanJunkRing, CleanJunkText, CleanJunkIcon,
                 "Cleaning Debris...", "Clean Now",
@@ -252,16 +230,7 @@ public sealed partial class JunkPage : Page
         }
         finally
         {
-            try
-            {
-                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(this);
-                if (btn != null)
-                {
-                    WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DOptimizeBurst(this, Windows.UI.Color.FromArgb(255, 16, 185, 129));
-                    WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(btn, 1.10f, 400);
-                }
-            }
-            catch { }
+            if (btn != null) FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.08f, 320);
         }
 
         ViewModel.FinalizeClean();

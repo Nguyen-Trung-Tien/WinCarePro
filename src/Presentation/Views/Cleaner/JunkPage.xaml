@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WinCarePro.Models"
     xmlns:helpers="using:WinCarePro.Core.Helpers"
+    xmlns:controls="using:WinCarePro.Presentation.Controls"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -114,25 +115,15 @@
 
                 <!-- Right: Scan & Clean Actions -->
                 <StackPanel x:Name="HeaderActionsPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <!-- Switch to Fast System Cleaner -->
-                    <Button Click="OnSwitchToSystemCleanerClick" Style="{StaticResource StandardSecondaryButtonStyle}" CornerRadius="8" Height="34" Padding="12,0" ToolTipService.ToolTip="Switch back to Fast System Cleaner" AutomationProperties.Name="Switch to Fast System Cleaner">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="&#xE72B;" FontSize="11.5"/>
-                            <TextBlock Text="{Binding Source='System Cleaner', Converter={StaticResource TranslationConverter}}" FontSize="12"/>
-                        </StackPanel>
-                    </Button>
-
                     <!-- Export Report -->
-                    <Button Click="OnExportReportClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="8" Height="34" Padding="10,0" ToolTipService.ToolTip="Export Junk &amp; Storage Report (CSV)"
-                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97">
+                    <Button Click="OnExportReportClick" Style="{StaticResource DefaultButtonStyle}" CornerRadius="8" Height="34" Padding="10,0" ToolTipService.ToolTip="Export Junk &amp; Storage Report (CSV)">
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <FontIcon Glyph="&#xEDE1;" FontSize="12.5"/>
-                            <TextBlock Text="Export CSV" FontSize="12"/>
+                            <TextBlock Text="{Binding Source='Export CSV', Converter={StaticResource TranslationConverter}}" FontSize="12"/>
                         </StackPanel>
                     </Button>
 
                     <Button x:Name="ScanJunkBtn" Style="{x:Bind GetScanButtonStyle(ViewModel.HasCleanableJunk), Mode=OneWay}" Click="OnScanJunkClick" IsEnabled="{x:Bind IsNot(ViewModel.IsScanning), Mode=OneWay}" MinWidth="125" Padding="14,7" CornerRadius="8"
-                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
                             AutomationProperties.Name="Scan Junk and System Cache"
                             AutomationProperties.HelpText="Evaluates safe-to-clean junk files and system caching logs.">
                         <StackPanel Orientation="Horizontal" Spacing="7">
@@ -142,13 +133,12 @@
                         </StackPanel>
                     </Button>
                     <Button x:Name="CleanJunkBtn" Style="{x:Bind GetCleanButtonStyle(ViewModel.HasCleanableJunk), Mode=OneWay}" Click="OnCleanJunkClick" Visibility="{x:Bind GetCleanButtonVisibility(ViewModel.HasCleanableJunk), Mode=OneWay}" IsEnabled="{x:Bind CanClean(ViewModel.IsCleaning, ViewModel.Categories.Count, ViewModel.TotalCleanableBytes), Mode=OneWay}" MinWidth="125" Padding="14,7" CornerRadius="8"
-                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
                             AutomationProperties.Name="Clean Selected Junk"
                             AutomationProperties.HelpText="Permanently removes selected temporary junk and cache files.">
                         <StackPanel Orientation="Horizontal" Spacing="7">
                             <ProgressRing x:Name="CleanJunkRing" IsActive="False" Visibility="Collapsed" Width="14" Height="14" Foreground="White" VerticalAlignment="Center"/>
                             <FontIcon x:Name="CleanJunkIcon" Glyph="&#xE74D;" FontSize="12.5" />
-                            <TextBlock x:Name="CleanJunkText" Text="Clean Now" VerticalAlignment="Center" FontSize="12" FontWeight="Bold" />
+                            <TextBlock x:Name="CleanJunkText" Text="{Binding Source='Clean Now', Converter={StaticResource TranslationConverter}}" VerticalAlignment="Center" FontSize="12" FontWeight="Bold" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -156,9 +146,7 @@
         </Grid>
 
         <!-- 1. Sleek Storage Cockpit Ribbon (Compact, Modern, Actionable) -->
-        <Border Grid.Row="1" Margin="0,0,0,10" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,8"
-                helpers:AnimationHelper.StaggerIndex="0"
-                helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.0" helpers:Animation3DHelper.DepthZ="8">
+        <Border Grid.Row="1" Margin="0,0,0,10" Style="{StaticResource CockpitBentoCardStyle}" Padding="12,8">
             <Grid x:Name="TopStatsGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -169,7 +157,6 @@
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnPresetSafeClick" Padding="10,6" CornerRadius="8"
                             Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1"
-                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
                             ToolTipService.ToolTip="Select only 100% safe items (Recommended)"
                             AutomationProperties.Name="Safe Only Preset">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
@@ -179,7 +166,6 @@
                     </Button>
                     <Button Style="{StaticResource TransparentWrapperButtonStyle}" Click="OnPresetAllClick" Padding="10,6" CornerRadius="8"
                             Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1"
-                            helpers:AnimationHelper.HoverScale="1.03" helpers:AnimationHelper.PressedScale="0.97"
                             ToolTipService.ToolTip="Select all detected junk categories"
                             AutomationProperties.Name="Select All Preset">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
@@ -192,8 +178,7 @@
                 <!-- Right: Breakdown Metrics Badges -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <!-- Tier 1: Safe Cache -->
-                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="#3010B981" BorderThickness="1" CornerRadius="8" Padding="10,5"
-                            helpers:AnimationHelper.HoverScale="1.02">
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="#3010B981" BorderThickness="1" CornerRadius="8" Padding="10,5">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                             <Ellipse Width="6" Height="6" Fill="#FF10B981"/>
                             <TextBlock Text="Safe Cache:" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
@@ -201,8 +186,7 @@
                         </StackPanel>
                     </Border>
                     <!-- Tier 2: Browser Data -->
-                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="#30F59E0B" BorderThickness="1" CornerRadius="8" Padding="10,5"
-                            helpers:AnimationHelper.HoverScale="1.02">
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="#30F59E0B" BorderThickness="1" CornerRadius="8" Padding="10,5">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                             <Ellipse Width="6" Height="6" Fill="#FFF59E0B"/>
                             <TextBlock Text="Browser Data:" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
@@ -210,8 +194,7 @@
                         </StackPanel>
                     </Border>
                     <!-- Tier 3: Advanced -->
-                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="#308B5CF6" BorderThickness="1" CornerRadius="8" Padding="10,5"
-                            helpers:AnimationHelper.HoverScale="1.02">
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="#308B5CF6" BorderThickness="1" CornerRadius="8" Padding="10,5">
                         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                             <Ellipse Width="6" Height="6" Fill="#FFA78BFA"/>
                             <TextBlock Text="Advanced:" FontSize="10.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
@@ -229,7 +212,6 @@
                     BorderThickness="1.5"
                     CornerRadius="14"
                     Padding="14,10"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10"
                     Visibility="{x:Bind GetCelebrationVisibility(ViewModel.IsCelebrationActive), Mode=OneWay}">
                 <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
@@ -330,15 +312,14 @@
         </StackPanel>
 
         <!-- 3. Dual-Pane Master-Detail Area (Categories & File Inspector with Virtualized Internal Scrolling) -->
-        <Grid Grid.Row="3" ColumnSpacing="16" helpers:AnimationHelper.StaggerIndex="1">
+        <Grid Grid.Row="3" ColumnSpacing="16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="LeftColumn" Width="1.15*" />
                 <ColumnDefinition x:Name="RightColumn" Width="0.85*" />
             </Grid.ColumnDefinitions>
 
             <!-- Left Pane: Categories List with Docked Action Footer -->
-            <Border x:Name="LeftPaneBorder" Grid.Column="0" Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14,16,12"
-                    helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
+            <Border x:Name="LeftPaneBorder" Grid.Column="0" Style="{StaticResource CockpitBentoCardStyle}" Padding="16,14,16,12">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -399,9 +380,7 @@
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Border Style="{StaticResource Tilt3DCardStyle}" Padding="12,10" BorderThickness="1"
-                                        helpers:AnimationHelper.HoverScale="1.015" helpers:AnimationHelper.PressedScale="0.985"
-                                        helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="8">
+                                <Border Style="{StaticResource Tilt3DCardStyle}" Padding="12,10" BorderThickness="1">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />  <!-- CheckBox -->
@@ -637,9 +616,10 @@
                                     <TextBlock Text="Progress" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" HorizontalAlignment="Left" FontWeight="SemiBold"/>
                                     <TextBlock Text="{x:Bind ViewModel.ProgressPercentFormatted, Mode=OneWay}" FontSize="13" Foreground="{StaticResource PrimaryAccentBrush}" HorizontalAlignment="Right" FontWeight="Bold" FontFamily="Segoe UI Variable Display" Typography.NumeralAlignment="Tabular"/>
                                 </Grid>
-                                <Border Background="#1AFFFFFF" CornerRadius="4" Height="8" BorderBrush="#25FFFFFF" BorderThickness="1" Padding="1">
-                                    <ProgressBar Value="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}" Maximum="100" Height="4" CornerRadius="2" Foreground="{StaticResource PrimaryAccentGradient}" Background="Transparent" HorizontalAlignment="Stretch" />
-                                </Border>
+                                <controls:ExecutionProgressBanner StatusText="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}"
+                                                                  ProgressPercentage="{x:Bind ViewModel.ProgressPercent, Mode=OneWay}"
+                                                                  IsIndeterminate="False"
+                                                                  CanCancel="False" />
                             </StackPanel>
                         </StackPanel>
                     </Border>

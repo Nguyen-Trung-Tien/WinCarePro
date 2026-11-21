@@ -11,7 +11,6 @@
         <!-- ==================== 1. HERO KNOWLEDGE DECK ==================== -->
         <Border Style="{StaticResource ElevatedGlassCardStyle}" Padding="22,18">
             <StackPanel Spacing="14">
-                <!-- Top Row: Title + Version Badge + Stats -->
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -25,14 +24,13 @@
                             </Border>
                             <TextBlock Text="{Binding Source='Feature Guide &amp; System Manual', Converter={StaticResource TranslationConverter}}" Style="{StaticResource PageHeaderTitleStyle}" VerticalAlignment="Center" FontSize="20"/>
                             <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="7,2" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Source='Evolution Suite', Converter={StaticResource TranslationConverter}}" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="Polaris v6" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                             </Border>
                         </StackPanel>
-                        <TextBlock Text="{Binding Source='Comprehensive documentation, step-by-step feature guides, and best practices.', Converter={StaticResource TranslationConverter}}" 
+                        <TextBlock Text="{Binding Source='Comprehensive documentation, step-by-step feature guides, and best practices.', Converter={StaticResource TranslationConverter}}"
                                    Style="{StaticResource PageHeaderSubtitleStyle}"/>
                     </StackPanel>
 
-                    <!-- Right Knowledge Badges -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="8" Padding="10,5">
                             <StackPanel Orientation="Horizontal" Spacing="6">
@@ -43,14 +41,13 @@
                         <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="8" Padding="10,5">
                             <StackPanel Orientation="Horizontal" Spacing="6">
                                 <FontIcon Glyph="&#xE7BE;" FontSize="12" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                <TextBlock Text="{Binding Source='14 Core Modules', Converter={StaticResource TranslationConverter}}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                                <TextBlock Text="{Binding Source='8 Core Modules', Converter={StaticResource TranslationConverter}}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
                 </Grid>
 
-                <!-- Search Input Box -->
-                <AutoSuggestBox x:Name="GuideSearchBox" 
+                <AutoSuggestBox x:Name="GuideSearchBox"
                                 PlaceholderText="{Binding Source='Search guide (e.g., RAM, DNS, SFC, junk)...', Converter={StaticResource TranslationConverter}}"
                                 QueryIcon="Find"
                                 CornerRadius="8"
@@ -58,7 +55,6 @@
                                 HorizontalAlignment="Stretch"
                                 TextChanged="OnGuideSearchTextChanged"/>
 
-                <!-- Category Filter Segmented Deck (Responsive 5-Column Grid, Zero Horizontal Scrolling!) -->
                 <Border Background="{ThemeResource ControlFillColorSecondaryBrush}" BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="9" Padding="4">
                     <Grid ColumnSpacing="6">
                         <Grid.ColumnDefinitions>
@@ -69,7 +65,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button x:Name="FilterBtnAll" Grid.Column="0" Click="OnCategoryFilterClick" Tag="All" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="View all 14 module guides">
+                        <Button x:Name="FilterBtnAll" Grid.Column="0" Click="OnCategoryFilterClick" Tag="All" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="View all 8 module guides">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE80F;" FontSize="11" Foreground="White"/>
                                 <TextBlock Text="All Modules" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
@@ -81,19 +77,19 @@
                                 <TextBlock Text="Care" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="FilterBtnTuning" Grid.Column="2" Click="OnCategoryFilterClick" Tag="Tuning" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="System &amp; Performance Tuning">
+                        <Button x:Name="FilterBtnTuning" Grid.Column="2" Click="OnCategoryFilterClick" Tag="Tuning" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Network &amp; Software Updates">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE7FC;" FontSize="11" Foreground="#FFF59E0B"/>
                                 <TextBlock Text="Tuning" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="FilterBtnSecurity" Grid.Column="3" Click="OnCategoryFilterClick" Tag="Security" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Security, Privacy &amp; Windows Repair">
+                        <Button x:Name="FilterBtnSecurity" Grid.Column="3" Click="OnCategoryFilterClick" Tag="Security" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="Windows Repair &amp; Safety">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE90F;" FontSize="11" Foreground="Teal"/>
                                 <TextBlock Text="Security" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
                         </Button>
-                        <Button x:Name="FilterBtnSystem" Grid.Column="4" Click="OnCategoryFilterClick" Tag="System" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="System Tools &amp; Windows Management">
+                        <Button x:Name="FilterBtnSystem" Grid.Column="4" Click="OnCategoryFilterClick" Tag="System" Style="{StaticResource StandardSecondaryButtonStyle}" Height="32" HorizontalAlignment="Stretch" Padding="2,0" CornerRadius="6" ToolTipService.ToolTip="App Management, Logs &amp; Settings">
                             <StackPanel Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE713;" FontSize="11" Foreground="{StaticResource PrimaryAccentBrush}"/>
                                 <TextBlock Text="System" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
@@ -104,12 +100,12 @@
             </StackPanel>
         </Border>
 
-        <!-- Search Status / Empty State Notification -->
+        <!-- Empty State -->
         <Border x:Name="NoResultsCard" Style="{StaticResource GlassmorphismCardStyle}" Padding="32,24" Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Center" Spacing="10">
                 <FontIcon Glyph="&#xE721;" FontSize="32" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
                 <TextBlock Text="No matching modules found" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center"/>
-                <TextBlock Text="Try searching for another keyword like 'clean', 'speed', 'ram', 'game', 'restore', or select 'All Modules'." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
+                <TextBlock Text="Try searching for another keyword like 'clean', 'speed', 'ram', 'dns', 'restore', or select 'All Modules'." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" HorizontalAlignment="Center"/>
                 <Button Click="OnResetSearchClick" Style="{StaticResource StandardSecondaryButtonStyle}" HorizontalAlignment="Center" Margin="0,8,0,0" Padding="14,6" CornerRadius="8">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon Glyph="&#xE894;" FontSize="11"/>
@@ -119,756 +115,279 @@
             </StackPanel>
         </Border>
 
-        <!-- ==================== 2. INTERACTIVE GUIDE CARDS CONTAINER ==================== -->
+        <!-- ==================== 2. ACTIVE 8 CORE MODULES + SAFETY FAQ ==================== -->
         <StackPanel x:Name="CardsContainer" Spacing="16">
 
             <!-- 1. Dashboard -->
-            <Border x:Name="Card_Dashboard" Tag="Care|All|Dashboard|monitor|health|score" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+            <Border x:Name="Card_Dashboard" Tag="Care|All|Dashboard|monitor|health|score|ram|cpu|boost" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                 <StackPanel Spacing="14">
                     <Grid ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="{StaticResource PrimaryAccentGradient}" VerticalAlignment="Center">
+                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FF0F6CBD" VerticalAlignment="Center">
                             <FontIcon Glyph="&#xE80F;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
                             <TextBlock Text="1. Dashboard &amp; System Health Monitor" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             <TextBlock Text="Live Telemetry • Quick RAM Boost • Kernel Diagnostics" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="100% Safe (No System Impact)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Dashboard" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE80F;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                <TextBlock Text="Provides real-time system monitoring for CPU, RAM, GPU, and Disk utilization, along with continuous Health Score tracking and one-click Quick Boost optimization." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <Button Grid.Column="2" Click="OnLaunchModuleClick" Tag="Dashboard" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="White"/>
+                                <TextBlock Text="Launch Module" FontSize="11.5" FontWeight="SemiBold" Foreground="White"/>
                             </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                <TextBlock Text="• Real-time animated hardware telemetry meters.&#x0a;• Instant RAM &amp; CPU Working Set flushing via Quick Boost.&#x0a;• Dynamic system health status alert indicators." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
+                        </Button>
                     </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
                         <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Open Dashboard from the top of the left navigation pane." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Observe hardware loads and current Health Score." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Click [Quick Boost] to instantly reclaim RAM and optimize system processes." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
+                            <TextBlock Text="Purpose &amp; Overview" FontSize="12" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Provides real-time system monitoring for CPU, RAM, GPU, and Disk utilization, along with continuous Health Score tracking and one-click Quick Boost optimization." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </Border>
 
-            <!-- 2. AI WinCare Engine -->
-            <Border x:Name="Card_AiAssistant" Tag="Care|All|AiWinCareEngine|ai|diagnostics|wincare|engine" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+            <!-- 2. System Cleaner (JunkPage) -->
+            <Border x:Name="Card_Junk" Tag="Care|All|Cleaner|junk|temp|cache|registry|leftovers" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                 <StackPanel Spacing="14">
                     <Grid ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="{StaticResource PrimaryAccentGradient}" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE99A;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="2. AI WinCare Engine &amp; Diagnostics" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Intelligent Health Engine • Predictive Storage • Kernel Analysis" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="100% Safe (No System Impact)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="dashboard" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE99A;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="#FF06B6D4"/>
-                                <TextBlock Text="Leverages intelligent AI algorithms to comprehensively scan Windows, analyze health indicators, detect accumulated junk, bottlenecks, and security risks." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="#FF06B6D4"/>
-                                <TextBlock Text="• Real-time Health Score calculation based on system telemetry.&#x0a;• Predictive analysis for C: drive storage and boot speed trends.&#x0a;• One-click automated recommendations for system optimizations." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Navigate to the AI Assistant module from the main sidebar." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Click [Run AI Diagnostics] to start deep system analysis." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Review findings and click [Apply Recommended Tweaks] to automatically optimize." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- 3. Junk Cleaner -->
-            <Border x:Name="Card_Junk" Tag="Care|All|Junk|clean|temp|cache" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                <StackPanel Spacing="14">
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="Orange" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xEA99;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="3. Junk Cleaner &amp; System Debris" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Temp Cache • Browser Cache • Windows Update Debris • Memory Dumps" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="100% Safe (No System Impact)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Junk" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xEA99;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="Orange"/>
-                                <TextBlock Text="Deeply scans storage drives to locate and wipe redundant junk files created by Windows OS, web browsers, and third-party applications during daily usage." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="Orange"/>
-                                <TextBlock Text="• Cleans Windows temporary files (%TEMP%, Logs, Crash Dumps).&#x0a;• Wipes browser caches (Chrome, Edge, Firefox, Brave).&#x0a;• Safely unchecks Shader Cache &amp; Prefetch by default to prevent frame stutter and maintain fast app launch." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Select [Junk Cleaner] on the main navigation panel." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Click [Scan Directories] to scan for removable system clutter." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Check target categories and click [Clean Now] to free up disk space." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- 4. App Uninstaller -->
-            <Border x:Name="Card_Uninstall" Tag="Care|All|Uninstall|app|software" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                <StackPanel Spacing="14">
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="Red" VerticalAlignment="Center">
+                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FFF59E0B" VerticalAlignment="Center">
                             <FontIcon Glyph="&#xE74D;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="4. App Uninstaller &amp; Leftovers Purge" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            <TextBlock Text="2. System Cleaner &amp; Junk Debris" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            <TextBlock Text="Temp Cache • Browser Cache • Locking App Guard • CSV Export" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                        <Button Grid.Column="2" Click="OnLaunchModuleClick" Tag="Cleaner" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="White"/>
+                                <TextBlock Text="Launch Module" FontSize="11.5" FontWeight="SemiBold" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Purpose &amp; Overview" FontSize="12" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Deeply scans storage drives protected by SafePathGuard to locate and clean temporary files, browser caches, and Windows Update debris with locking-app detection." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- 3. App Manager / Uninstaller -->
+            <Border x:Name="Card_Uninstall" Tag="System|All|Uninstall|app|software|leftover|bloatware" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+                <StackPanel Spacing="14">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FFEF4444" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE71D;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
+                            <TextBlock Text="3. App Manager &amp; Leftovers Purge" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             <TextBlock Text="Batch Uninstall • Leftover File &amp; Registry Sweeper • Bloatware Removal" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="Safe (Recommended)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Uninstall" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE74D;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="Red"/>
-                                <TextBlock Text="Uninstalls installed applications and default Windows Bloatware, followed by deep residual registry and directory cleanup." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <Button Grid.Column="2" Click="OnLaunchModuleClick" Tag="Uninstall" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="White"/>
+                                <TextBlock Text="Launch Module" FontSize="11.5" FontWeight="SemiBold" Foreground="White"/>
                             </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="Red"/>
-                                <TextBlock Text="• Batch uninstall multiple applications simultaneously.&#x0a;• Deep leftover scanner purges AppData, ProgramData, and Registry traces.&#x0a;• Complete removal of unused Windows Store packages." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
+                        </Button>
                     </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
                         <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Launch [App Uninstaller] module." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Select software applications to remove." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Click [Uninstall] and choose [Wipe Leftovers] to clean all residual data." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="Purpose &amp; Overview" FontSize="12" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Uninstalls desktop and Windows Store applications cleanly, followed by deep residual file and registry leftover scanning." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- 4. Software Updater -->
+            <Border x:Name="Card_Updater" Tag="Tuning|All|Updater|packages|winget|drivers" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+                <StackPanel Spacing="14">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FF0EA5E9" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE895;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
+                            <TextBlock Text="4. Software Updater &amp; Driver Backup" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            <TextBlock Text="Silent App Updates • Winget Integration • Driver Backup &amp; Restore" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+                        <Button Grid.Column="2" Click="OnLaunchModuleClick" Tag="Updater" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="White"/>
+                                <TextBlock Text="Launch Module" FontSize="11.5" FontWeight="SemiBold" Foreground="White"/>
                             </StackPanel>
+                        </Button>
+                    </Grid>
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Purpose &amp; Overview" FontSize="12" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Detects outdated third-party software via WinGet/verified feeds, verifies signatures before installation, and supports driver backup/restore." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </Border>
 
             <!-- 5. Network Center -->
-            <Border x:Name="Card_Network" Tag="Care|All|Network|ping|dns|speed" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+            <Border x:Name="Card_Network" Tag="Tuning|All|Network|ping|dns|speed|tcp|udp|doh" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                 <StackPanel Spacing="14">
                     <Grid ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="DodgerBlue" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE774;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FF06B6D4" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE968;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
                             <TextBlock Text="5. Network Center &amp; Speed Diagnostics" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Bandwidth Speed Test • Flush DNS Cache • TCP Auto-Tuning" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="Bandwidth Speed Test • Secure DNS &amp; DoH • Winsock Rescue" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="100% Safe (No System Impact)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Network" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE774;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="DodgerBlue"/>
-                                <TextBlock Text="Diagnoses internet connection health, tests bandwidth speeds, and resolves network connectivity issues or latency spikes." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <Button Grid.Column="2" Click="OnLaunchModuleClick" Tag="Network" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="White"/>
+                                <TextBlock Text="Launch Module" FontSize="11.5" FontWeight="SemiBold" Foreground="White"/>
                             </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="DodgerBlue"/>
-                                <TextBlock Text="• Precision Speed Test for Download, Upload, and Latency/Ping metrics.&#x0a;• One-click Flush DNS Resolver Cache.&#x0a;• TCP Auto-Tuning optimization and Secure DoH (DNS over HTTPS) toggles." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
+                        </Button>
                     </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
                         <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Open [Network Center]." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Click [Run Speed Test] to analyze latency and bandwidth." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Click [Flush DNS Cache] or [Reset TCP/IP Stack] to resolve network issues." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
+                            <TextBlock Text="Purpose &amp; Overview" FontSize="12" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Inspects active TCP/UDP connections, benchmarks DNS servers, switches secure DoH profiles, runs speed tests, and repairs broken network stacks." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </Border>
 
             <!-- 6. System Repair -->
-            <Border x:Name="Card_Repair" Tag="Security|All|Repair|sfc|dism|fix" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+            <Border x:Name="Card_Repair" Tag="Security|All|Repair|sfc|dism|fix|restore|services" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                 <StackPanel Spacing="14">
                     <Grid ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="Teal" VerticalAlignment="Center">
+                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FF8B5CF6" VerticalAlignment="Center">
                             <FontIcon Glyph="&#xE90F;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
                             <TextBlock Text="6. System Repair Center" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             <TextBlock Text="SFC Integrity Check • DISM Health Restore • Windows Update Auto-Fix" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeCriticalBg}" BorderBrush="{ThemeResource AppBadgeCriticalBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="Requires Admin Privileges" FontSize="10.5" Foreground="{ThemeResource AppBadgeCriticalFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Repair" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE90F;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="Teal"/>
-                                <TextBlock Text="Integrates advanced Windows diagnostic and repair utilities to automatically repair corrupt system files, component store corruption, and Windows Update errors." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <Button Grid.Column="2" Click="OnLaunchModuleClick" Tag="Repair" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="White"/>
+                                <TextBlock Text="Launch Module" FontSize="11.5" FontWeight="SemiBold" Foreground="White"/>
                             </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="Teal"/>
-                                <TextBlock Text="• SFC Repair (sfc /scannow): Scans and restores corrupted Windows binaries.&#x0a;• DISM Component Restore: Repairs damaged Component Store packages.&#x0a;• Windows Update Repair: Resets update cache and stuck services." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
+                        </Button>
                     </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
                         <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Go to [System Repair] section." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Select [SFC Repair] or [DISM Restore] based on system issues." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Allow process to complete and restart Windows if prompted." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
+                            <TextBlock Text="Purpose &amp; Overview" FontSize="12" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Runs SFC and DISM component store repairs, resets stuck Windows Update services, restores core services, and creates System Restore Points." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </Border>
 
-            <!-- 7. Security Shield -->
-            <Border x:Name="Card_Security" Tag="Security|All|Security|privacy|history" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+            <!-- 7. Notifications & Activity Logs -->
+            <Border x:Name="Card_Notifications" Tag="System|All|Notification|notifications|alerts|logs|history" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                 <StackPanel Spacing="14">
                     <Grid ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="MediumSpringGreen" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE727;" FontSize="18" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FF6366F1" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xEA8F;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="7. Security Shield &amp; Privacy Hardening" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Clipboard Sanitizer • Recent Files Purge • Telemetry Shield" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="7. Notifications &amp; Activity Logs" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            <TextBlock Text="System Alerts • SQLite Audit History • Log Export" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="100% Safe (No System Impact)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Security" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE727;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="MediumSpringGreen"/>
-                                <TextBlock Text="Protects personal privacy by purging activity histories, temporary clipboard data, and disabling Windows telemetry tracking." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <Button Grid.Column="2" Click="OnLaunchModuleClick" Tag="notification" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="White"/>
+                                <TextBlock Text="Launch Module" FontSize="11.5" FontWeight="SemiBold" Foreground="White"/>
                             </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="MediumSpringGreen"/>
-                                <TextBlock Text="• Wipes sensitive data stored in clipboard cache (Wipe Clipboard).&#x0a;• Clears Recent Files and application launch history.&#x0a;• Disables telemetry and diagnostic tracking services." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
+                        </Button>
                     </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
                         <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Open [Security Shield] section." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Click [Wipe Clipboard Cache] to secure clipboard contents." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Click [Clear Recent Files] to remove personal activity traces." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
+                            <TextBlock Text="Purpose &amp; Overview" FontSize="12" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Centralizes system notifications, SQLite WAL audit logs, quick module actions, and diagnostic log exporting." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </Border>
 
-            <!-- 8. System Optimizer -->
-            <Border x:Name="Card_Optimizer" Tag="Tuning|All|Optimizer|ram|speed|performance|tuning" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
+            <!-- 8. Settings & Maintenance -->
+            <Border x:Name="Card_Settings" Tag="System|All|Settings|theme|language|backup|updates|maintenance" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
                 <StackPanel Spacing="14">
                     <Grid ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FFF59E0B" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE7FC;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FF475569" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE713;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="8. System Optimizer" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Kernel Performance Tuning • UI Responsiveness • RAM Maintenance" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="8. Settings, Backups &amp; Maintenance" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            <TextBlock Text="Theme &amp; Language • App Updates • Database Maintenance" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="Safe (Recommended)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Optimizer" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE7FC;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="#FFF59E0B"/>
-                                <TextBlock Text="Applies safe Microsoft-compliant Registry tweaks to optimize CPU scheduling priority, reduce interface delay, and maintain optimal physical RAM usage." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        <Button Grid.Column="2" Click="OnLaunchModuleClick" Tag="Settings:0" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="White"/>
+                                <TextBlock Text="Launch Module" FontSize="11.5" FontWeight="SemiBold" Foreground="White"/>
                             </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="#FFF59E0B"/>
-                                <TextBlock Text="• Safe RAM Maintenance: Compares working set footprint and runs garbage collection safely.&#x0a;• Windows UI responsiveness tweaks (Menu Show Delay, Min/Max Animations).&#x0a;• Prioritize active foreground apps and disable telemetry background tracking." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
+                        </Button>
                     </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
+                    <Border Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" CornerRadius="8" Padding="14,10" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
                         <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Open the [System Optimizer] page from the left navigation panel." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Click [Optimize RAM] to perform safe working set maintenance." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Select desired system tweaks and click [Apply Selected Tweaks]." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
+                            <TextBlock Text="Purpose &amp; Overview" FontSize="12" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
+                            <TextBlock Text="Configures Dark/Light Aura theme, Vietnamese/English localization, self-updates, settings import/export, and SQLite database maintenance." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </Border>
 
-            <!-- 9. Context Menu -->
-            <Border x:Name="Card_ContextMenu" Tag="System|All|ContextMenu|shell" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                <StackPanel Spacing="14">
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="Thistle" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE71D;" FontSize="18" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="9. Context Menu Manager" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Explorer Shell Extension Cleaner • Right-Click Menu Speedup" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="Safe (Recommended)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="ContextMenu" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE71D;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="Thistle"/>
-                                <TextBlock Text="Manages shortcuts and background shell extensions displayed in the Windows Explorer right-click Context Menu for cleaner, faster File Explorer operation." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="Thistle"/>
-                                <TextBlock Text="• Easily enable or disable third-party context menu entries.&#x0a;• Removes legacy or broken shell extension links.&#x0a;• Prevents Explorer freeze when right-clicking files." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Navigate to [Context Menu] from the sidebar." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Review registered shell menu items." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Toggle off items you do not use to speed up File Explorer." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- 10. Startup & Services -->
-            <!-- 11. Registry Center -->
-            <Border x:Name="Card_Registry" Tag="System|All|Registry|cleaner" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                <StackPanel Spacing="14">
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="Tomato" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xEDA2;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="12. Registry Center &amp; Cleaner" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Invalid Keys Scanner • 1-Click Rollback Backup • Orphaned Traces" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="Safe (Recommended)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Registry" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xEDA2;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="Tomato"/>
-                                <TextBlock Text="Scans for invalid registry keys, orphaned file extensions, and broken installation entries while backing up HKLM and HKCU partitions for absolute safety." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="Tomato"/>
-                                <TextBlock Text="• Deep Registry error scanner targeting file associations &amp; CLSIDs.&#x0a;• Automatic 1-Click Registry Backup before cleaning operations.&#x0a;• Instant roll-back restore for created registry backups." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Open [Registry Center]." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Click [Scan Registry] to detect invalid registry keys." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Click [Clean Selected] (automatic backup will be created)." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- 13. Software Updater -->
-            <Border x:Name="Card_Updater" Tag="System|All|Updater|packages" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                <StackPanel Spacing="14">
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="Crimson" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE75C;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="13. Software Updater &amp; Package Manager" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Silent App Updates • Winget Integration • Security Patch Scanning" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="100% Safe (No System Impact)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchModuleClick" Tag="Updater" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE895;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Launch Module" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="Crimson"/>
-                                <TextBlock Text="Scans installed third-party applications for available security patches and software updates, enabling silent 1-click batch updates." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="Crimson"/>
-                                <TextBlock Text="• Automatic background checks for outdated software packages.&#x0a;• Silent installer execution without manual wizard clicking.&#x0a;• Direct integration with official winget package repositories." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Select [Software Updater]." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Click [Check for Updates] to scan installed apps." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Click [Update All] to upgrade software automatically." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- 14. Desktop Mini Widget -->
-            <Border x:Name="Card_Widget" Tag="System|All|DesktopWidget|widget|tray" Style="{StaticResource GlassmorphismCardStyle}" Padding="20">
-                <StackPanel Spacing="14">
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="{StaticResource PrimaryAccentGradient}" VerticalAlignment="Center">
-                            <FontIcon Glyph="&#xE8A7;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="14. Desktop Mini Widget &amp; System Tray Bar" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <TextBlock Text="Floating HUD Overlay • 1-Click Desktop RAM Boost • Always-on-Top" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <Border Background="{ThemeResource AppBadgeGoodBg}" BorderBrush="{ThemeResource AppBadgeGoodBorder}" BorderThickness="1" CornerRadius="6" Padding="8,3" VerticalAlignment="Center">
-                                <TextBlock Text="100% Safe (No System Impact)" FontSize="10.5" Foreground="{ThemeResource AppBadgeGoodFg}" FontWeight="Bold"/>
-                            </Border>
-                            <Button Click="OnLaunchWidgetClick" Style="{StaticResource VibrantPrimaryButtonStyle}" Height="32" Padding="12,0" CornerRadius="6">
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <FontIcon Glyph="&#xE8A7;" FontSize="11" Foreground="White"/>
-                                    <TextBlock Text="Toggle HUD Widget" FontSize="11" FontWeight="SemiBold"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Grid ColumnSpacing="14" RowSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Purpose &amp; Overview" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                <TextBlock Text="Offers a compact floating desktop toolbar displaying live CPU/RAM usage meters, quick boost trigger, and system tray notification controls." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Style="{StaticResource QuickStatCardStyle}" Padding="14,10">
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Key Capabilities" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource PrimaryAccentBrush}"/>
-                                <TextBlock Text="• Compact floating widget with customizable opacity.&#x0a;• 1-Click Quick RAM boost directly from desktop without opening main window.&#x0a;• Minimize to System Tray support for low resource overhead." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-
-                    <Border Background="{ThemeResource AppStatChipBackground}" BorderBrush="{ThemeResource AppStatChipBorder}" BorderThickness="1" CornerRadius="10" Padding="14,10">
-                        <StackPanel Spacing="6">
-                            <TextBlock Text="Step-by-Step Guide" FontSize="12" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="1. Enable [Desktop Widget] from Settings or System Tray menu." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="2. Position widget anywhere on screen." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                                <TextBlock Text="3. Click the rocket icon on widget to flush RAM anytime." FontSize="12" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Border>
-
-            <!-- 15. FAQ & Safe Operation Guidelines -->
+            <!-- 9. FAQ & Safe Operation Guidelines -->
             <Border x:Name="Card_SafetyFaq" Tag="All|Security|faq|safe|help" Style="{StaticResource ElevatedGlassCardStyle}" Padding="20">
                 <StackPanel Spacing="14">
                     <Grid ColumnSpacing="12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" Width="40" Height="40" CornerRadius="10" Background="#FF10B981" VerticalAlignment="Center">
                             <FontIcon Glyph="&#xE82F;" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="10,0,0,0">
-                            <TextBlock Text="15. FAQ &amp; Safe Operation Principles" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            <TextBlock Text="9. FAQ &amp; Safe Operation Principles" FontSize="15" FontWeight="Bold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             <TextBlock Text="System Restore Protection • Safe Deletion Standards • Reversible Optimization" FontSize="11.5" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                         </StackPanel>
                     </Grid>

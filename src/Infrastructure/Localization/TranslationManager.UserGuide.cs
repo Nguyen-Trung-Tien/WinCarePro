@@ -17,6 +17,7 @@ public partial class TranslationManager
         _translations["Comprehensive documentation, detailed feature capabilities, step-by-step guides & safety guidelines."] = "Tài liệu chi tiết mô tả mục đích, tính năng nổi bật, hướng dẫn thao tác từng bước và quy tắc an toàn.";
         _translations["Comprehensive documentation explaining the purpose, detailed features, step-by-step usage, and safety guidelines for each WinCare Pro module."] = "Tài liệu toàn diện giải thích mục đích, tính năng chi tiết, hướng dẫn từng bước và quy tắc an toàn cho từng phân hệ WinCare Pro.";
         _translations["100% Safe Guidelines"] = "Quy Tắc 100% An Toàn";
+        _translations["8 Core Modules"] = "8 Phân Hệ Cốt Lõi";
         _translations["14 Core Modules"] = "14 Phân Hệ Cốt Lõi";
         _translations["15 Core Modules"] = "15 Phân Hệ Cốt Lõi";
         _translations["Search guide (e.g., RAM, DNS, SFC, junk)..."] = "Tìm kiếm hướng dẫn (ví dụ: RAM, DNS, SFC, rác)...";
@@ -185,6 +186,29 @@ public partial class TranslationManager
         _translations["1. Select [Software Updater]."] = "1. Mở mục [Software Updater].";
         _translations["2. Click [Check for Updates] to scan installed apps."] = "2. Nhấn [Check for Updates] để kiểm tra phần mềm cũ.";
         _translations["3. Click [Update All] to upgrade software automatically."] = "3. Nhấn [Update All] để tự động cập nhật lên bản mới nhất.";
+
+        // --- Active 8 Modules & Updated Titles ---
+        _translations["2. System Cleaner & Junk Debris"] = "2. Dọn Dẹp Hệ Thống & Tệp Rác";
+        _translations["Temp Cache • Browser Cache • Locking App Guard • CSV Export"] = "Bộ nhớ tạm • Cache trình duyệt • Bảo vệ app đang chạy • Xuất CSV";
+        _translations["Deeply scans storage drives protected by SafePathGuard to locate and clean temporary files, browser caches, and Windows Update debris with locking-app detection."] = "Quét sâu ổ đĩa dưới sự bảo vệ của SafePathGuard để tìm và dọn tệp tạm, cache trình duyệt, rác Windows Update kèm phát hiện ứng dụng đang khóa file.";
+        _translations["3. App Manager & Leftovers Purge"] = "3. Quản Lý Ứng Dụng & Dọn Tàn Dư";
+        _translations["Uninstalls desktop and Windows Store applications cleanly, followed by deep residual file and registry leftover scanning."] = "Gỡ bỏ ứng dụng desktop và Windows Store sạch sẽ, tiếp theo là quét sâu tàn dư thư mục và Registry còn sót lại.";
+        _translations["4. Software Updater & Driver Backup"] = "4. Cập Nhật Phần Mềm & Sao Lưu Driver";
+        _translations["Silent App Updates • Winget Integration • Driver Backup & Restore"] = "Cập nhật chạy ngầm • Tích hợp Winget • Sao lưu & Khôi phục Driver";
+        _translations["Detects outdated third-party software via WinGet/verified feeds, verifies signatures before installation, and supports driver backup/restore."] = "Phát hiện phần mềm lỗi thời qua WinGet/nguồn xác thực, kiểm tra chữ ký số trước khi cài và hỗ trợ sao lưu/khôi phục Driver.";
+        _translations["Bandwidth Speed Test • Secure DNS & DoH • Winsock Rescue"] = "Đo tốc độ băng thông • DNS bảo mật & DoH • Khắc phục Winsock";
+        _translations["Inspects active TCP/UDP connections, benchmarks DNS servers, switches secure DoH profiles, runs speed tests, and repairs broken network stacks."] = "Kiểm tra kết nối TCP/UDP đang hoạt động, đo tốc độ DNS, chuyển cấu hình DoH bảo mật, đo băng thông và sửa lỗi ngăn xếp mạng.";
+        _translations["Runs SFC and DISM component store repairs, resets stuck Windows Update services, restores core services, and creates System Restore Points."] = "Chạy sửa lỗi SFC và kho thành phần DISM, đặt lại dịch vụ Windows Update bị kẹt, khôi phục dịch vụ cốt lõi và tạo điểm khôi phục hệ thống.";
+        _translations["7. Notifications & Activity Logs"] = "7. Trung Tâm Thông Báo & Nhật Ký";
+        _translations["System Alerts • SQLite Audit History • Log Export"] = "Cảnh báo hệ thống • Lịch sử SQLite • Xuất nhật ký";
+        _translations["Centralizes system notifications, SQLite WAL audit logs, quick module actions, and diagnostic log exporting."] = "Tập trung thông báo hệ thống, nhật ký kiểm toán SQLite WAL, thao tác nhanh các phân hệ và xuất nhật ký chẩn đoán.";
+        _translations["8. Settings, Backups & Maintenance"] = "8. Cài Đặt, Sao Lưu & Bảo Trì";
+        _translations["Theme & Language • App Updates • Database Maintenance"] = "Giao diện & Ngôn ngữ • Cập nhật App • Bảo trì Cơ sở dữ liệu";
+        _translations["Configures Dark/Light Aura theme, Vietnamese/English localization, self-updates, settings import/export, and SQLite database maintenance."] = "Cấu hình giao diện Sáng/Tối Aura, ngôn ngữ Tiếng Việt/English, tự động cập nhật, nhập/xuất cài đặt và bảo trì SQLite.";
+        _translations["9. FAQ & Safe Operation Principles"] = "9. Câu Hỏi Thường Gặp & Nguyên Tắc An Toàn";
+        _translations["System Restore Protection • Safe Deletion Standards • Reversible Optimization"] = "Bảo vệ điểm khôi phục • Chuẩn xóa an toàn • Tối ưu có thể hoàn tác";
+        _translations["Zero Risk Guarantee"] = "Cam Kết An Toàn Tuyệt Đối";
+        _translations["Need Technical Support?"] = "Cần Hỗ Trợ Kỹ Thuật?";
 
         // --- 14. Desktop Mini Widget & System Tray Bar ---
         _translations["14. Desktop Mini Widget & System Tray Bar"] = "14. Tiện Ích Desktop Widget & Thanh Khay Hệ Thống";

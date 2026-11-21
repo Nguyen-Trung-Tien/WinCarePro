@@ -922,12 +922,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
                 key.SetValue("LastKey", fullPath);
             }
             
-            string regeditPath = WinCarePro.Core.Helpers.ProcessRunner.ResolveSafeExecutablePath("regedit.exe") ?? "regedit.exe";
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(regeditPath)
-            {
-                UseShellExecute = true,
-                WorkingDirectory = Environment.SystemDirectory
-            });
+            WinCarePro.Core.Helpers.ShellLauncher.OpenRegedit("UninstallViewModel.OpenInRegistry");
         }
         catch (Exception ex)
         {
@@ -942,14 +937,7 @@ public class UninstallViewModel : ViewModelBase, IDisposable
         {
             string query = Uri.EscapeDataString($"{SelectedApp.DisplayName} {SelectedApp.Publisher}");
             string url = $"https://www.google.com/search?q={query}";
-            if (WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri(url))
-            {
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = url,
-                    UseShellExecute = true
-                });
-            }
+            WinCarePro.Core.Helpers.ShellLauncher.OpenUrl(url, "UninstallViewModel.SearchSelectedAppOnline");
         }
         catch (Exception ex)
         {

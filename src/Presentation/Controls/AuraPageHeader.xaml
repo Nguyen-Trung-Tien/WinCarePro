@@ -1,0 +1,49 @@
+<UserControl
+    x:Class="WinCarePro.Presentation.Controls.AuraPageHeader"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Margin="0,0,0,12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+            <Border Width="40"
+                    Height="40"
+                    CornerRadius="10"
+                    Background="{x:Bind IconBackground, Mode=OneWay}"
+                    BorderBrush="{x:Bind IconBorderBrush, Mode=OneWay}"
+                    BorderThickness="1"
+                    VerticalAlignment="Center">
+                <FontIcon Glyph="{x:Bind IconGlyph, Mode=OneWay}"
+                          FontSize="18"
+                          Foreground="{x:Bind IconForeground, Mode=OneWay}"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center" />
+            </Border>
+
+            <StackPanel Spacing="2" VerticalAlignment="Center">
+                <TextBlock Text="{x:Bind Title, Mode=OneWay}"
+                           FontSize="22"
+                           FontWeight="Bold"
+                           FontFamily="Segoe UI Variable Display"
+                           Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                           TextTrimming="CharacterEllipsis" />
+                <TextBlock Text="{x:Bind Subtitle, Mode=OneWay}"
+                           Visibility="{x:Bind HasSubtitleVisibility(Subtitle), Mode=OneWay}"
+                           FontSize="12.5"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                           TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+        </StackPanel>
+
+        <ContentPresenter Grid.Column="1"
+                          Content="{x:Bind RightContent, Mode=OneWay}"
+                          VerticalAlignment="Center" />
+    </Grid>
+</UserControl>

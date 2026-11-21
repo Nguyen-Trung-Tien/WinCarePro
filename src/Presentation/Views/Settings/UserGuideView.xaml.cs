@@ -62,7 +62,10 @@ public sealed partial class UserGuideView : UserControl
         {
             TranslationManager.Instance.Translate(this);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("UserGuideView.UpdateTranslations", ex);
+        }
     }
 
     private void ApplyStaggeredEntranceAnimation()
@@ -84,7 +87,10 @@ public sealed partial class UserGuideView : UserControl
                 FluidAnimationHelper.ApplyStaggeredEntrance(visibleCards, 35);
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("UserGuideView.ApplyStaggeredEntranceAnimation", ex);
+        }
     }
 
     private void OnGuideSearchTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -160,7 +166,10 @@ public sealed partial class UserGuideView : UserControl
                 return ContainsQueryInElement(sp, query);
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("UserGuideView.SearchCardContent", ex);
+        }
         return false;
     }
 
@@ -190,17 +199,13 @@ public sealed partial class UserGuideView : UserControl
     {
         if (sender is Button btn && btn.Tag is string moduleTag)
         {
-            FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.1f, 300);
+            FluidAnimationHelper.ApplyGlowSparkBurst(btn, 1.06f, 260);
             var mainPage = GetMainPage();
             if (mainPage != null)
             {
                 mainPage.NavigateToPageExternal(moduleTag);
             }
         }
-    }
-
-    private void OnLaunchWidgetClick(object sender, RoutedEventArgs e)
-    {
     }
 
     private MainPage? GetMainPage()

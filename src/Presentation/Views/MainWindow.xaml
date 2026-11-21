@@ -149,7 +149,7 @@
                         </StackPanel>
 
                         <!-- Notifications with Badge -->
-                        <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="NotificationButton_Click" helpers:AnimationHelper.HoverScale="1.08" helpers:AnimationHelper.PressedScale="0.92" ToolTipService.ToolTip="Notifications" AutomationProperties.Name="Notifications" AutomationProperties.HelpText="Open notification center and review recent system alerts.">
+                        <Button x:Name="NotificationButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" Click="NotificationButton_Click" ToolTipService.ToolTip="Notifications" AutomationProperties.Name="Notifications" AutomationProperties.HelpText="Open notification center and review recent system alerts.">
                             <Grid>
                                 <FontIcon Glyph="&#xEA8F;" FontSize="12.5" />
                                 <Border x:Name="NotificationBadge" Background="{ThemeResource AppStatusDangerBrush}" Width="7" Height="7" CornerRadius="3.5" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="2,-1,-1,2" Visibility="Collapsed" AutomationProperties.Name="Unread notification alert" AutomationProperties.LiveSetting="Polite"/>
@@ -157,7 +157,7 @@
                         </Button>
 
                         <!-- Unified Menu More (...) — User Guide, Theme & Power Options -->
-                        <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" helpers:AnimationHelper.HoverScale="1.08" helpers:AnimationHelper.PressedScale="0.92" ToolTipService.ToolTip="More Options &amp; Power" AutomationProperties.Name="More Options &amp; Power" AutomationProperties.HelpText="Open menu for theme, user guide, and power controls.">
+                        <Button x:Name="ExitAppButton" Style="{StaticResource DateTimeFlyoutCalendarButtonStyle}" Width="28" Height="28" CornerRadius="8" Padding="0" ToolTipService.ToolTip="More Options &amp; Power" AutomationProperties.Name="More Options &amp; Power" AutomationProperties.HelpText="Open menu for theme, user guide, and power controls.">
                             <FontIcon Glyph="&#xE712;" FontSize="12.5" />
                             <Button.Flyout>
                                 <MenuFlyout x:Name="ExitPowerFlyout" Placement="BottomEdgeAlignedRight" Opening="ExitPowerFlyout_Opening">

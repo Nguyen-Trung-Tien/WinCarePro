@@ -145,7 +145,7 @@
         </Grid>
 
         <!-- ==================== 1. CONTEXTUAL STATUS BANNERS ==================== -->
-        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12" helpers:AnimationHelper.StaggerIndex="0">
+        <StackPanel Grid.Row="1" Spacing="8" Margin="0,0,0,12">
             <!-- Summary / Post-Action Card -->
             <controls:InlineStatusCard
                 CardType="Summary"
@@ -175,7 +175,6 @@
 
                     <!-- Symptom 1: Auto Scan & Fix -->
                     <Button Grid.Column="0" Click="OnScanDiagnosticsClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3506B6D4" BorderThickness="1.2"
-                            helpers:AnimationHelper.HoverScale="1.025" helpers:AnimationHelper.PressedScale="0.975"
                             ToolTipService.ToolTip="Auto Scan &amp; Fix All: Comprehensive diagnostic scan of all system components">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
@@ -194,7 +193,6 @@
 
                     <!-- Symptom 2: Corrupted System Files -->
                     <Button Grid.Column="1" Click="OnTabSfcDismClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#353B82F6" BorderThickness="1.2"
-                            helpers:AnimationHelper.HoverScale="1.025" helpers:AnimationHelper.PressedScale="0.975"
                             ToolTipService.ToolTip="Corrupted System Files: Verify and restore damaged Windows components">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
@@ -213,7 +211,6 @@
 
                     <!-- Symptom 3: Network Issues -->
                     <Button Grid.Column="2" Click="OnTabNetworkClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#3510B981" BorderThickness="1.2"
-                            helpers:AnimationHelper.HoverScale="1.025" helpers:AnimationHelper.PressedScale="0.975"
                             ToolTipService.ToolTip="Network Issues &amp; Latency: Flush DNS and reset network stack">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
@@ -232,7 +229,6 @@
 
                     <!-- Symptom 4: Windows Update Errors -->
                     <Button Grid.Column="3" Click="OnTabNetworkClick" Style="{StaticResource CyberTactileButtonStyle}" HorizontalAlignment="Stretch" Padding="10,8" CornerRadius="10" BorderBrush="#35F59E0B" BorderThickness="1.2"
-                            helpers:AnimationHelper.HoverScale="1.025" helpers:AnimationHelper.PressedScale="0.975"
                             ToolTipService.ToolTip="Windows Update Errors: Fix update services and clear corrupted caches">
                         <Grid HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
@@ -262,25 +258,25 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button x:Name="BtnTabDiagnostics" Grid.Column="0" Click="OnTabDiagnosticsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                <Button x:Name="BtnTabDiagnostics" Grid.Column="0" Click="OnTabDiagnosticsClick" Style="{StaticResource VibrantPrimaryButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8">
                     <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE721;" FontSize="13" Foreground="{ThemeResource AppStatusInfoBrush}"/>
                         <TextBlock Text="Diagnostics &amp; Issues" FontWeight="Bold" FontSize="12"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="BtnTabSfcDism" Grid.Column="1" Click="OnTabSfcDismClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                <Button x:Name="BtnTabSfcDism" Grid.Column="1" Click="OnTabSfcDismClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8">
                     <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE727;" FontSize="13" Foreground="{ThemeResource AppStatusGoodBrush}"/>
                         <TextBlock Text="SFC &amp; DISM Servicing" FontWeight="SemiBold" FontSize="12"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="BtnTabRegistry" Grid.Column="2" Click="OnTabRegistryClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                <Button x:Name="BtnTabRegistry" Grid.Column="2" Click="OnTabRegistryClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8">
                     <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xEDA2;" FontSize="13" Foreground="{ThemeResource AppStatusPurpleBrush}"/>
                         <TextBlock Text="Registry Safeguards" FontWeight="SemiBold" FontSize="12"/>
                     </StackPanel>
                 </Button>
-                <Button x:Name="BtnTabNetwork" Grid.Column="3" Click="OnTabNetworkClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8" helpers:AnimationHelper.HoverScale="1.02" helpers:AnimationHelper.PressedScale="0.98">
+                <Button x:Name="BtnTabNetwork" Grid.Column="3" Click="OnTabNetworkClick" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Stretch" CornerRadius="8" Padding="0,8">
                     <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
                         <FontIcon Glyph="&#xE895;" FontSize="13" Foreground="{ThemeResource AppStatusCyanBrush}"/>
                         <TextBlock Text="Update &amp; Network" FontWeight="SemiBold" FontSize="12"/>
@@ -290,7 +286,7 @@
         </Border>
 
         <!-- ==================== 4. ACTIVE TAB CONTENT VIEWPORT ==================== -->
-        <Grid Grid.Row="4" helpers:AnimationHelper.StaggerIndex="1">
+        <Grid Grid.Row="4">
             <!-- Active Operation Progress Banner (Visible during active tasks) -->
             <Border Visibility="{x:Bind ViewModel.IsBusy, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource AuraGlassCardStyle}" Padding="14" Margin="0,0,0,12" VerticalAlignment="Top" Canvas.ZIndex="10">
                 <StackPanel Spacing="8">
@@ -330,10 +326,7 @@
                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                             BorderBrush="{StaticResource PrimaryAccentGradient}"
                             BorderThickness="1.5"
-                            CornerRadius="14"
-                            helpers:Animation3DHelper.Is3DTiltEnabled="True"
-                            helpers:Animation3DHelper.MaxTiltAngle="2.5"
-                            helpers:Animation3DHelper.DepthZ="8">
+                            CornerRadius="14">
                         <StackPanel Spacing="16">
                             <!-- Hero Top Banner: Status + Estimated Time -->
                             <Grid>
@@ -621,8 +614,7 @@
             <ScrollViewer x:Name="SectionSfcDism" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
                 <StackPanel Spacing="16">
                     <!-- SFC Component Verification & Repair -->
-                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="20"
-                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
+                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="20">
                         <StackPanel Spacing="14">
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" CornerRadius="10" Padding="8">
@@ -660,8 +652,7 @@
                     </Border>
 
                     <!-- DISM Image Servicing & Component Store Management -->
-                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="20"
-                            helpers:Animation3DHelper.Is3DTiltEnabled="True" helpers:Animation3DHelper.MaxTiltAngle="3.5" helpers:Animation3DHelper.DepthZ="10">
+                    <Border Style="{StaticResource Tilt3DCardStyle}" Padding="20">
                         <StackPanel Spacing="14">
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <Border Background="{StaticResource PrimaryAccentLightBrush}" BorderBrush="{StaticResource PrimaryAccentBorderBrush}" BorderThickness="1.2" CornerRadius="10" Padding="8">

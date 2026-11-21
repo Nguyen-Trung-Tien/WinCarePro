@@ -683,15 +683,9 @@ public static class UpdateDialogHelper
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Secondary)
         {
-            try
-            {
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases",
-                    UseShellExecute = true
-                });
-            }
-            catch { }
+            WinCarePro.Core.Helpers.ShellLauncher.OpenUrl(
+                "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases",
+                "UpdateDialogHelper.OpenReleases");
         }
 
         return result;
@@ -838,19 +832,11 @@ public static class UpdateDialogHelper
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
-            try
-            {
-                string targetUrl = !string.IsNullOrEmpty(directDownloadUrl) && (directDownloadUrl.StartsWith("http://") || directDownloadUrl.StartsWith("https://"))
-                    ? directDownloadUrl
-                    : "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases";
+            string targetUrl = !string.IsNullOrEmpty(directDownloadUrl) && WinCarePro.Infrastructure.Security.InputSanitizer.IsSafeUri(directDownloadUrl)
+                ? directDownloadUrl
+                : "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases";
 
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = targetUrl,
-                    UseShellExecute = true
-                });
-            }
-            catch { }
+            WinCarePro.Core.Helpers.ShellLauncher.OpenUrl(targetUrl, "UpdateDialogHelper.ShowDownloadFailedAsync");
         }
 
         return result;

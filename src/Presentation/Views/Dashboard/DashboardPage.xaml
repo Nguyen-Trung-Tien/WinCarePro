@@ -234,8 +234,7 @@
                     </Border>
 
                     <!-- Row 1: 4-Pillar Modular Scan Action Cards Hub (Precision Glass Cards, Full Width) -->
-                    <Grid x:Name="QuickStatsGrid" Margin="0,2,0,2" RowSpacing="0" ColumnSpacing="0" Visibility="Visible"
-                          helpers:AnimationHelper.StaggerIndex="2">
+                    <Grid x:Name="QuickStatsGrid" Margin="0,2,0,2" RowSpacing="0" ColumnSpacing="0" Visibility="Visible">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />

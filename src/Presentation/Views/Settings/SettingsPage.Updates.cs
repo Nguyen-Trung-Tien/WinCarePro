@@ -133,18 +133,9 @@ public sealed partial class SettingsPage
 
     private void OnManualDownloadWebClick(object sender, RoutedEventArgs e)
     {
-        try
+        if (WinCarePro.Core.Helpers.ShellLauncher.OpenUrl("https://github.com/Nguyen-Trung-Tien/WinCarePro/releases", "SettingsPage.OnManualDownloadWebClick"))
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://github.com/Nguyen-Trung-Tien/WinCarePro/releases",
-                UseShellExecute = true
-            });
             DbManager.LogAction("Launched manual download GitHub releases web page", "Updates", "Success");
-        }
-        catch (Exception ex)
-        {
-            App.MainWindowInstance?.ShowToastNotification("Browser Launch Failed".T(), ex.Message, "Warning");
         }
     }
 
@@ -279,55 +270,20 @@ public sealed partial class SettingsPage
 
     private async Task CheckForUpdatesInternalAsync(CancellationToken token)
     {
-        string updateUrl = $"https://raw.githubusercontent.com/Nguyen-Trung-Tien/WinCarePro/main/update.json?t={DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
-        
-        using var request = new HttpRequestMessage(HttpMethod.Get, updateUrl);
-        request.Headers.CacheControl = new System.Net.Http.Headers.CacheControlHeaderValue { NoCache = true, NoStore = true, MustRevalidate = true };
-        
-        using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, token);
-        response.EnsureSuccessStatusCode();
-
-        string json = await response.Content.ReadAsStringAsync(token);
-        using var doc = JsonDocument.Parse(json);
-        var root = doc.RootElement;
-
+        string json = await WinCarePro.Infrastructure.Services.AppUpdateService.FetchManifestJsonAsync(_httpClient, token);
         bool betaEnabled = WinCarePro.Services.Implementations.SettingsService.Instance.CurrentSettings.BetaUpdates;
-        string latestVerStr;
-        string downloadUrl;
-        string expectedSha256;
-        string changelog;
-        string releaseNotes = root.TryGetProperty("releaseNotes", out var rnProp) ? rnProp.GetString() ?? "" : "";
+        var manifest = WinCarePro.Infrastructure.Services.AppUpdateService.ParseUpdateManifest(
+            json,
+            betaEnabled,
+            WinCarePro.Core.AppConstants.CurrentVersion);
 
-        if (betaEnabled && root.TryGetProperty("beta_version", out var betaVerProp))
-        {
-            latestVerStr = betaVerProp.GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString;
-            downloadUrl = (root.TryGetProperty("beta_downloadUrl", out var bdlProp) ? bdlProp.GetString() : null)
-                ?? (root.TryGetProperty("beta_url", out var buProp) ? buProp.GetString() : "") ?? "";
-            expectedSha256 = root.TryGetProperty("beta_sha256", out var bshaProp) ? bshaProp.GetString() ?? "" : "";
-            changelog = root.TryGetProperty("beta_changelog", out var bclProp) ? bclProp.GetString() ?? "" : "";
-        }
-        else
-        {
-            latestVerStr = root.TryGetProperty("version", out var verProp) ? verProp.GetString() ?? WinCarePro.Core.AppConstants.DefaultVersionString : WinCarePro.Core.AppConstants.DefaultVersionString;
-            downloadUrl = (root.TryGetProperty("downloadUrl", out var dlProp) ? dlProp.GetString() : null)
-                ?? (root.TryGetProperty("url", out var uProp) ? uProp.GetString() : "") ?? "";
-            expectedSha256 = root.TryGetProperty("sha256", out var shaProp) ? shaProp.GetString() ?? "" : "";
-            changelog = root.TryGetProperty("changelog", out var clProp) ? clProp.GetString() ?? "" : "";
-        }
-
+        string latestVerStr = manifest.VersionString;
+        string downloadUrl = manifest.DownloadUrl;
+        string expectedSha256 = manifest.ExpectedSha256;
+        string changelog = manifest.Changelog;
+        string releaseNotes = manifest.ReleaseNotes;
         string currentVerStr = WinCarePro.Core.AppConstants.VersionString;
-
-        bool hasUpdate = false;
-        try
-        {
-            var curVer = new Version(currentVerStr.Split('-')[0].Trim());
-            var latVer = new Version(latestVerStr.Split('-')[0].Trim());
-            hasUpdate = latVer > curVer;
-        }
-        catch
-        {
-            hasUpdate = !string.Equals(latestVerStr.Trim(), currentVerStr.Trim(), StringComparison.OrdinalIgnoreCase);
-        }
+        bool hasUpdate = manifest.HasUpdate;
 
         if (hasUpdate)
         {
@@ -491,7 +447,17 @@ public sealed partial class SettingsPage
             // Guard against truncated or incomplete downloads
             if (totalBytes > 0 && totalRead < totalBytes)
             {
-                try { if (File.Exists(targetFile)) File.Delete(targetFile); } catch { }
+                try
+                {
+                    if (File.Exists(targetFile) && WinCarePro.Core.Helpers.SafePathGuard.IsSafeToDelete(targetFile))
+                    {
+                        File.Delete(targetFile);
+                    }
+                }
+                catch (Exception delEx)
+                {
+                    WinCarePro.Infrastructure.Logging.CrashLogger.LogException("SettingsPage.Updates.CleanupTruncatedSetup", delEx);
+                }
                 throw new IOException(string.Format("Download interrupted: received {0} of {1}. Please check your network connection and retry.".T(), 
                     FormatHelper.FormatBytes(totalRead), 
                     FormatHelper.FormatBytes(totalBytes)));

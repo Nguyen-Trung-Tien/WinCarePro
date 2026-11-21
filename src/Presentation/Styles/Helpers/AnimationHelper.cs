@@ -11,7 +11,7 @@ namespace WinCarePro.Core.Helpers;
 /// </summary>
 public static class AnimationHelper
 {
-    public static bool AreAnimationsEnabled() => false;
+    public static bool AreAnimationsEnabled() => WinCarePro.Shared.Animations.ReducedMotionHelper.AreAnimationsEnabled;
 
     public static readonly DependencyProperty HoverScaleProperty =
         DependencyProperty.RegisterAttached("HoverScale", typeof(double), typeof(AnimationHelper), new PropertyMetadata(1.0));

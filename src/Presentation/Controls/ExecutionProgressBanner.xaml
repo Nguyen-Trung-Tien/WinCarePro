@@ -15,8 +15,8 @@
         </LinearGradientBrush>
     </UserControl.Resources>
 
-    <Border Background="{ThemeResource V6SurfaceCardBackground}"
-            BorderBrush="{ThemeResource V6SurfaceCardBorder}"
+    <Border Background="{ThemeResource AppCardBackground}"
+            BorderBrush="{ThemeResource AppCardBorder}"
             BorderThickness="1"
             CornerRadius="10"
             Padding="14,10"
@@ -71,8 +71,8 @@
                     <!-- Cancel Button -->
                     <Button Command="{x:Bind CancelCommand, Mode=OneWay}"
                             IsEnabled="{x:Bind CanCancel, Mode=OneWay}"
-                            Background="{ThemeResource V6BadgeCriticalBg}"
-                            BorderBrush="{ThemeResource V6BadgeCriticalBorder}"
+                            Background="{ThemeResource AppStatusDangerBackground}"
+                            BorderBrush="{ThemeResource AppStatusDangerBorder}"
                             BorderThickness="1"
                             Foreground="{ThemeResource AppStatusDangerBrush}"
                             CornerRadius="6"
@@ -90,8 +90,8 @@
 
             <!-- Row 1: Live Status Ticker (Path, File, Registry, Package) -->
             <Border Grid.Row="1"
-                    Background="{ThemeResource V6SurfaceCardHover}"
-                    BorderBrush="{ThemeResource V6SubtleBorder}"
+                    Background="{ThemeResource AppSecondaryCardBackground}"
+                    BorderBrush="{ThemeResource AppCardSubtleBorder}"
                     BorderThickness="1"
                     CornerRadius="6"
                     Padding="8,4"

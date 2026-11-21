@@ -263,14 +263,6 @@ public sealed partial class DashboardPage : Page
     protected override void OnNavigatedFrom(Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        try
-        {
-            if (HealthGaugeCard != null)
-            {
-                WinCarePro.Core.Helpers.Animation3DHelper.Stop3DScanEffect(HealthGaugeCard);
-            }
-        }
-        catch { }
         ViewModel.StopMonitoring();
     }
 
@@ -454,18 +446,13 @@ public sealed partial class DashboardPage : Page
         }
         finally
         {
-            try
-            {
-                // Cascade 3D Quantum Ripple Wave through telemetry cards
-                var rippleCards = new System.Collections.Generic.List<FrameworkElement>();
-                if (CpuCard != null) rippleCards.Add(CpuCard);
-                if (RamCard != null) rippleCards.Add(RamCard);
-                if (GpuCard != null) rippleCards.Add(GpuCard);
-                if (DiskCard != null) rippleCards.Add(DiskCard);
+            var rippleCards = new System.Collections.Generic.List<UIElement>();
+            if (CpuCard != null) rippleCards.Add(CpuCard);
+            if (RamCard != null) rippleCards.Add(RamCard);
+            if (GpuCard != null) rippleCards.Add(GpuCard);
+            if (DiskCard != null) rippleCards.Add(DiskCard);
 
-                WinCarePro.Core.Helpers.Animation3DHelper.Trigger3DCascadeWave(rippleCards, 70);
-            }
-            catch { }
+            FluidAnimationHelper.ApplyStaggeredEntrance(rippleCards, 55f, 10f);
         }
 
         if (summary != null)
@@ -896,29 +883,11 @@ public sealed partial class DashboardPage : Page
             mainPanel.Children.Add(restartWarningBorder);
         }
 
-        ContentDialog dialog = new ContentDialog
-        {
-            Content = mainPanel,
-            CloseButtonText = "Done".T(),
-            DefaultButton = ContentDialogButton.Close,
-            XamlRoot = this.XamlRoot,
-            RequestedTheme = currentTheme,
-            Background = dialogBg,
-            BorderBrush = dialogBorder,
-            CornerRadius = new CornerRadius(12),
-            BorderThickness = new Thickness(1)
-        };
-
-        if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style accentStyle)
-        {
-            dialog.CloseButtonStyle = accentStyle;
-        }
-
-        try
-        {
-            await dialog.ShowAsync();
-        }
-        catch { }
+        ContentDialog dialog = WinCarePro.Presentation.Controls.Dialogs.AuraModalHelper.CreateThemedDialog(
+            this.XamlRoot,
+            mainPanel,
+            closeButtonText: "Done".T());
+        await WinCarePro.Presentation.Controls.Dialogs.AuraModalHelper.ShowSafeAsync(dialog, "DashboardPage.ShowDiagnosticSummary");
     }
 
     public string GetStatusText(int score)
@@ -1026,7 +995,7 @@ public sealed partial class DashboardPage : Page
         }
         if (DiskCard != null)
         {
-            WinCarePro.Core.Helpers.AnimationHelper.StartSuccessPopAnimation(DiskCard, 1.05f, 350);
+            FluidAnimationHelper.ApplyGlowSparkBurst(DiskCard, 1.05f, 320);
         }
         await ViewModel.CleanDiskJunkAsync();
     }

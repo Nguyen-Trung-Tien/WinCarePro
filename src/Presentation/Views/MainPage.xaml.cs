@@ -273,20 +273,17 @@ public sealed partial class MainPage : Page
                 {
                     NavView.SelectedItem = null;
                 }
-                UpdateHubSubNavBar(null);
                 return;
             }
             if (curType == typeof(NotificationPage))
             {
                 NavView.SelectedItem = null;
-                UpdateHubSubNavBar(null);
                 return;
             }
 
             string? activeSubTag = curType.Name switch
             {
                 nameof(DashboardPage) => "Dashboard",
-                nameof(CleanerPage) => "Cleaner",
                 nameof(JunkPage) => "Cleaner",
                 nameof(UninstallPage) => "Uninstall",
                 nameof(UpdaterPage) => "Updater",
@@ -306,27 +303,10 @@ public sealed partial class MainPage : Page
                     NavView.SelectedItem = match;
                 }
             }
-
-            UpdateHubSubNavBar(activeSubTag);
         }
         finally
         {
             _isUpdatingNavSelection = false;
-        }
-    }
-
-    private void UpdateHubSubNavBar(string? activeSubTag)
-    {
-        if (HubSubNavBar == null) return;
-        // Keep collapsed to eliminate layout overlap and ensure full vertical viewport for active page
-        HubSubNavBar.Visibility = Visibility.Collapsed;
-    }
-
-    private void OnHubSubTabClick(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is string tag)
-        {
-            NavigateToPageExternal(tag);
         }
     }
 
@@ -387,7 +367,7 @@ public sealed partial class MainPage : Page
         Type? pageType = tag.ToLower() switch
         {
             "dashboard" => typeof(DashboardPage),
-            "cleaner" => typeof(CleanerPage),
+            "cleaner" => typeof(JunkPage),
             "junk" => typeof(JunkPage),
             "uninstall" => typeof(UninstallPage),
             "network" => typeof(NetworkPage),
@@ -395,11 +375,6 @@ public sealed partial class MainPage : Page
             "updater" => typeof(UpdaterPage),
             "settings" => typeof(SettingsPage),
             "notification" => typeof(NotificationPage),
-            "security" => typeof(RepairPage),
-            "optimizer" => typeof(DashboardPage),
-            "startup" => typeof(UninstallPage),
-            "registry" => typeof(CleanerPage),
-            "contextmenu" => typeof(UninstallPage),
             _ => null
         };
 

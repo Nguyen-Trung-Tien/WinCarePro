@@ -86,43 +86,15 @@
             </NavigationView.FooterMenuItems>
 
             <!-- Navigation Frame Content Area without overlapping top bar -->
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <!-- Contextual Hub Sub-Navigation Bar collapsed by default to prevent overlapping page content -->
-                <Border x:Name="HubSubNavBar" Grid.Row="0" Margin="28,8,28,0" Padding="6,5" CornerRadius="12"
-                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                        BorderThickness="1" HorizontalAlignment="Left" Visibility="Collapsed">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <Button x:Name="HubTabBtn1" Click="OnHubSubTabClick" Tag="Dashboard" CornerRadius="8" Padding="12,5" Style="{StaticResource VibrantPrimaryButtonStyle}" AutomationProperties.Name="Primary Hub View">
-                            <StackPanel Orientation="Horizontal" Spacing="7">
-                                <FontIcon x:Name="HubTabIcon1" Glyph="&#xE80F;" FontSize="12.5"/>
-                                <TextBlock x:Name="HubTabText1" Text="Smart Cockpit" FontSize="12" FontWeight="SemiBold"/>
-                            </StackPanel>
-                        </Button>
-                        <Button x:Name="HubTabBtn3" Click="OnHubSubTabClick" Tag="ContextMenu" Visibility="Collapsed" CornerRadius="8" Padding="12,5" Style="{StaticResource StandardSecondaryButtonStyle}" AutomationProperties.Name="Tertiary Hub View">
-                            <StackPanel Orientation="Horizontal" Spacing="7">
-                                <FontIcon x:Name="HubTabIcon3" Glyph="&#xE8EC;" FontSize="12.5"/>
-                                <TextBlock x:Name="HubTabText3" Text="Context Menu" FontSize="12" FontWeight="SemiBold"/>
-                            </StackPanel>
-                        </Button>
-                    </StackPanel>
-                </Border>
-
-                <Frame x:Name="ContentFrame" Grid.Row="1" Margin="0,4,0,0">
-                    <Frame.ContentTransitions>
-                        <TransitionCollection>
-                            <NavigationThemeTransition>
-                                <EntranceNavigationTransitionInfo />
-                            </NavigationThemeTransition>
-                        </TransitionCollection>
-                    </Frame.ContentTransitions>
-                </Frame>
-            </Grid>
+            <Frame x:Name="ContentFrame" Margin="0,4,0,0">
+                <Frame.ContentTransitions>
+                    <TransitionCollection>
+                        <NavigationThemeTransition>
+                            <EntranceNavigationTransitionInfo />
+                        </NavigationThemeTransition>
+                    </TransitionCollection>
+                </Frame.ContentTransitions>
+            </Frame>
         </NavigationView>
     </Grid>
 </Page>

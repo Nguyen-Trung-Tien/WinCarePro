@@ -405,28 +405,18 @@ public sealed partial class SettingsPage
             };
             rootStack.Children.Add(scrollViewer);
 
-            var dialog = new ContentDialog
-            {
-                Title = $"What's New in {WinCarePro.Core.AppConstants.DisplayVersion}".T(),
-                Content = rootStack,
-                CloseButtonText = "Close".T(),
-                DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.Content.XamlRoot,
-                RequestedTheme = currentTheme,
-                Background = dialogBg,
-                BorderBrush = dialogBorder,
-                CornerRadius = new CornerRadius(12),
-                BorderThickness = new Thickness(1)
-            };
+            var dialog = WinCarePro.Presentation.Controls.Dialogs.AuraModalHelper.CreateThemedDialog(
+                this.Content.XamlRoot,
+                rootStack,
+                title: $"What's New in {WinCarePro.Core.AppConstants.DisplayVersion}".T(),
+                closeButtonText: "Close".T());
 
-            if (Application.Current.Resources.TryGetValue("AccentButtonStyle", out var styleObj) && styleObj is Style accentStyle)
-            {
-                dialog.CloseButtonStyle = accentStyle;
-            }
-
-            await dialog.ShowAsync();
+            await WinCarePro.Presentation.Controls.Dialogs.AuraModalHelper.ShowSafeAsync(dialog, "SettingsPage.OnViewChangelogClick");
         }
-        catch { }
+        catch (Exception ex)
+        {
+            WinCarePro.Infrastructure.Logging.CrashLogger.LogException("SettingsPage.OnViewChangelogClick", ex);
+        }
     }
 
     private void OnEmailDeveloperClick(object sender, RoutedEventArgs e)
@@ -464,35 +454,17 @@ public sealed partial class SettingsPage
 
     private void OnOpenGitHubClick(object sender, RoutedEventArgs e)
     {
-        try
+        if (WinCarePro.Core.Helpers.ShellLauncher.OpenUrl("https://github.com/Nguyen-Trung-Tien/WinCarePro", "SettingsPage.OnOpenGitHubClick"))
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://github.com/Nguyen-Trung-Tien/WinCarePro",
-                UseShellExecute = true
-            });
             DbManager.LogAction("Opened GitHub project repository", "Settings", "Success");
-        }
-        catch (Exception ex)
-        {
-            App.MainWindowInstance?.ShowToastNotification("Error".T(), ex.Message, "Critical");
         }
     }
 
     private void OnReportIssueClick(object sender, RoutedEventArgs e)
     {
-        try
+        if (WinCarePro.Core.Helpers.ShellLauncher.OpenUrl("https://github.com/Nguyen-Trung-Tien/WinCarePro/issues", "SettingsPage.OnReportIssueClick"))
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://github.com/Nguyen-Trung-Tien/WinCarePro/issues",
-                UseShellExecute = true
-            });
             DbManager.LogAction("Opened GitHub issue tracker", "Settings", "Success");
-        }
-        catch (Exception ex)
-        {
-            App.MainWindowInstance?.ShowToastNotification("Error".T(), ex.Message, "Critical");
         }
     }
 
@@ -647,18 +619,9 @@ public sealed partial class SettingsPage
 
     private void OnBrowsePluginsClick(object sender, RoutedEventArgs e)
     {
-        try
+        if (WinCarePro.Core.Helpers.ShellLauncher.OpenUrl("https://github.com/Nguyen-Trung-Tien/WinCarePro/wiki/Plugins", "SettingsPage.OnBrowsePluginsClick"))
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://github.com/Nguyen-Trung-Tien/WinCarePro/wiki/Plugins",
-                UseShellExecute = true
-            });
             DbManager.LogAction("Launched verified plugins browser URL", "Settings", "Success");
-        }
-        catch (Exception ex)
-        {
-            App.MainWindowInstance?.ShowToastNotification("Error".T(), ex.Message, "Critical");
         }
     }
 }
